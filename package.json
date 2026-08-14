@@ -1,0 +1,23 @@
+{
+  "name": "whatsapp-portfolio-bot",
+  "version": "1.1.0",
+  "description": "WhatsApp chatbot that generates AI-designed portfolio websites with immersive WebGL shaders",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node src/index.js",
+    "test:conversation": "node src/test-conversation.js",
+    "test:db": "node src/test-db.js",
+    "audit": "npx impeccable detect src/templates/"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "@supabase/supabase-js": "^2.47.0",
+    "axios": "^1.7.0",
+    "express": "^4.21.0",
+    "sharp": "^0.33.0",
+    "dotenv": "^16.4.0"
+  },
+  "devDependencies": {
+    "impeccable": "latest"
+  }
+}
