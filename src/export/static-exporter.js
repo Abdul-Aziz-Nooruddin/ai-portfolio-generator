@@ -120,7 +120,8 @@ class StaticExporter {
     clean = clean.replace(/<div[^>]*class="[^"]*preview-bar[^"]*"[\s\S]*?<\/div>/gi, '');
 
     // Replace localhost or internal preview URLs with relative links
-    clean = clean.replace(/http:\/\/localhost:\d+\/p\/[a-zA-Z0-9_-]+/gi, '#');
+    clean = clean.replace(/http:\/\/localhost:\d+[^\s"'>]*/gi, '#');
+    clean = clean.replace(/http:\/\/127\.0\.0\.1:\d+[^\s"'>]*/gi, '#');
     clean = clean.replace(/https?:\/\/[a-zA-Z0-9.-]+\/p\/[a-zA-Z0-9_-]+/gi, '#');
     clean = clean.replace(/\/api\/[a-zA-Z0-9_/-]+/gi, '#');
 

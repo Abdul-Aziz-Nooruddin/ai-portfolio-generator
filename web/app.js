@@ -1,1507 +1,155 @@
 /**
- * AI Portfolio Studio — Dynamic Client Web App
- * Supports Universal PDF/Image Analysis, Dynamic Projects, Custom Sections, and Live Generation.
+ * 🏛️ AI Portfolio Studio — Client Application Engine (Phase 32)
+ * Manages full lifecycle states, multi-input intake, truthful stage tracking,
+ * live preview canvas, humanized customization, and resilient error recovery.
  */
 
-let currentBranch = 'A';
-let currentSiteId = null;
-let currentPreviewUrl = null;
-let projectCounter = 0;
-let sectionCounter = 0;
-
-// DOM Elements
-const heroLanding = document.getElementById('heroLanding');
-const studioWorkspace = document.getElementById('studioWorkspace');
-const dropZone = document.getElementById('dropZone');
-const resumeFileInput = document.getElementById('resumeFileInput');
-const dropStatus = document.getElementById('dropStatus');
-const portfolioIframe = document.getElementById('portfolioIframe');
-const previewLoader = document.getElementById('previewLoader');
-const previewFrameWrapper = document.getElementById('previewFrameWrapper');
-const btnOpenNewTab = document.getElementById('btnOpenNewTab');
-const btnUnlockDomain = document.getElementById('btnUnlockDomain');
-const btnGenerateStudio = document.getElementById('btnGenerateStudio');
-
-// 1. Navigation & View Toggles
-async function openStudioView() {
-  if (heroLanding) heroLanding.style.display = 'none';
-  if (studioWorkspace) studioWorkspace.style.display = 'grid';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-
-  // If user has an existing portfolio or session, pre-populate their fields
-  await loadExistingPortfolioIfAvailable();
-
-  // Initialize with at least 1 project card if empty
-  const projectsContainer = document.getElementById('projectsContainer');
-  if (projectsContainer && projectsContainer.children.length === 0) {
-    addProjectCard({
-      name: 'AI Portfolio Studio',
-      desc: 'Autonomous developer portfolio building system with 3D interactions and Bento architecture.',
-      tech: 'React, Node.js, Three.js'
-    });
-  }
-}
-
-async function loadExistingPortfolioIfAvailable() {
-  try {
-    const res = await fetch('/api/web/dashboard', { credentials: 'include' });
-    if (!res.ok) return;
-    const data = await res.json();
-    if (data.success && data.conversation?.extracted_data) {
-      const extracted = data.conversation.extracted_data;
-      if (extracted.name || extracted.role || (extracted.projects && extracted.projects.length > 0)) {
-        populateStudioForm(extracted);
-      }
-      if (data.siteId) {
-        currentSiteId = data.siteId;
-        currentPreviewUrl = `/p/${data.siteId}`;
-        if (portfolioIframe) {
-          portfolioIframe.src = currentPreviewUrl;
-          portfolioIframe.style.display = 'block';
-          if (previewLoader) previewLoader.style.display = 'none';
-        }
-        if (btnGenerateStudio) {
-          btnGenerateStudio.textContent = '⚡ Update & Republish Live Site';
-        }
-        if (btnOpenNewTab) {
-          btnOpenNewTab.style.display = 'inline-flex';
-          btnOpenNewTab.href = currentPreviewUrl;
-        }
-      }
-    }
-  } catch (e) {
-    // Non-logged in or guest mode
-  }
-}
-
-function closeStudioView() {
-  if (studioWorkspace) studioWorkspace.style.display = 'none';
-  if (heroLanding) heroLanding.style.display = 'block';
-}
-
-function setBranch(branch, btn) {
-  currentBranch = branch;
-  document.querySelectorAll('.branch-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-}
-
-function setDeviceMode(mode, btn) {
-  document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-
-  if (mode === 'mobile') {
-    previewFrameWrapper.classList.remove('desktop-mode');
-    previewFrameWrapper.classList.add('mobile-mode');
-  } else {
-    previewFrameWrapper.classList.remove('mobile-mode');
-    previewFrameWrapper.classList.add('desktop-mode');
-  }
-}
-
-// 2. Drag & Drop PDF & Image Resume Handler
-if (dropZone) {
-  ['dragenter', 'dragover'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropZone.classList.add('dragover');
-    });
-  });
-
-  ['dragleave', 'drop'].forEach(eventName => {
-    dropZone.addEventListener(eventName, (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropZone.classList.remove('dragover');
-    });
-  });
-
-  dropZone.addEventListener('drop', (e) => {
-    const files = e.dataTransfer.files;
-    if (files && files[0]) {
-      handleFileUpload(files[0]);
-    }
-  });
-}
-
-if (resumeFileInput) {
-  resumeFileInput.addEventListener('change', (e) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFileUpload(e.target.files[0]);
-    }
-  });
-}
-
-// Modern Toast Notification Helper
-function showToast(title, message = '', type = 'info', duration = 5000) {
-  let container = document.getElementById('toast-container');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toast-container';
-    document.body.appendChild(container);
-  }
-
-  const icons = {
-    success: '✅',
-    error: '❌',
-    warning: '⚠️',
-    info: 'ℹ️'
-  };
-
-  const toast = document.createElement('div');
-  toast.className = `toast-notification ${type}`;
-  toast.innerHTML = `
-    <div class="toast-icon">${icons[type] || 'ℹ️'}</div>
-    <div class="toast-body">
-      <div class="toast-title">${title}</div>
-      ${message ? `<div class="toast-message">${message}</div>` : ''}
-    </div>
-  `;
-
-  container.appendChild(toast);
-
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    toast.style.transform = 'translateY(10px)';
-    setTimeout(() => {
-      if (toast.parentNode) toast.parentNode.removeChild(toast);
-    }, 300);
-  }, duration);
-}
-
-async function handleFileUpload(file) {
-  if (!file) return;
-
-  if (file.size > 10 * 1024 * 1024) {
-    showToast('File Too Large', 'Maximum resume upload size is 10MB.', 'error');
-    return;
-  }
-
-  if (dropStatus) dropStatus.textContent = `⏳ Analyzing ${file.name} with AI Vision...`;
-  
-  try {
-    const base64Data = await fileToBase64(file);
-    const mimeType = file.type || (file.name.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg');
-
-    const res = await fetch('/api/web/parse-resume', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ base64Data, mimeType })
-    });
-
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-      throw new Error(result.error || result.message || 'Failed to extract resume data.');
-    }
-
-    const data = result.data || {};
-    populateStudioForm(data);
-
-    if (result.branch) {
-      setBranch(result.branch, document.querySelector(`.branch-btn[data-branch="${result.branch}"]`));
-    }
-
-    openStudioView();
-    if (dropStatus) dropStatus.textContent = 'or drag and drop PDF / Image here';
-
-    showToast('Resume Parsed Successfully', `Extracted ${data.name || 'profile'} details with AI Vision.`, 'success');
-
-    // Trigger instant preview generation
-    await generatePortfolioSite();
-
-    if (typeof confetti === 'function') {
-      confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-    }
-  } catch (err) {
-    console.error('Upload Error:', err);
-    showToast('Resume Extraction Note', `${err.message || 'Could not parse document'}. Opening interactive builder directly.`, 'warning');
-    if (dropStatus) dropStatus.textContent = 'or drag and drop PDF / Image here';
-    openStudioView();
-  }
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result.split(',')[1];
-      resolve(base64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-function populateStudioForm(data) {
-  if (data.name) document.getElementById('inputName').value = data.name;
-  if (data.role || data.service_title) document.getElementById('inputRole').value = data.role || data.service_title;
-  if (data.bio || data.tagline) document.getElementById('inputBio').value = data.bio || data.tagline;
-  if (data.email) document.getElementById('inputEmail').value = data.email;
-  if (data.location) document.getElementById('inputLocation').value = data.location;
-  if (data.github) document.getElementById('inputGithub').value = data.github;
-  if (data.linkedin) document.getElementById('inputLinkedin').value = data.linkedin;
-  if (data.website) document.getElementById('inputWebsite').value = data.website;
-  if (data.tech_stack || data.skills) document.getElementById('inputTech').value = Array.isArray(data.tech_stack || data.skills) ? (data.tech_stack || data.skills).join(', ') : (data.tech_stack || data.skills);
-
-  // Populate dynamic projects
-  const projectsContainer = document.getElementById('projectsContainer');
-  if (projectsContainer) {
-    projectsContainer.innerHTML = '';
-    const projectsList = data.projects || [];
-    if (projectsList.length > 0) {
-      projectsList.forEach(p => addProjectCard(p));
-    } else {
-      if (data.project_1_name) {
-        addProjectCard({ name: data.project_1_name, desc: data.project_1_desc, tech: data.project_1_tech });
-      }
-      if (data.project_2_name) {
-        addProjectCard({ name: data.project_2_name, desc: data.project_2_desc, tech: data.project_2_tech });
-      }
-    }
-  }
-
-  // Populate dynamic custom sections (experience, education, certifications, awards)
-  const sectionsContainer = document.getElementById('sectionsContainer');
-  if (sectionsContainer) {
-    sectionsContainer.innerHTML = '';
-    if (Array.isArray(data.experience) && data.experience.length > 0) {
-      data.experience.forEach(exp => addCustomSection('experience', exp));
-    }
-    if (Array.isArray(data.education) && data.education.length > 0) {
-      data.education.forEach(edu => addCustomSection('education', edu));
-    }
-    if (Array.isArray(data.certifications) && data.certifications.length > 0) {
-      data.certifications.forEach(cert => addCustomSection('certification', cert));
-    }
-    if (Array.isArray(data.awards) && data.awards.length > 0) {
-      data.awards.forEach(awd => addCustomSection('award', awd));
-    }
-  }
-}
-
-// 3. Dynamic Projects Management
-function addProjectCard(data = {}) {
-  const container = document.getElementById('projectsContainer');
-  if (!container) return;
-
-  projectCounter++;
-  const id = `project_${projectCounter}`;
-
-  const card = document.createElement('div');
-  card.className = 'dynamic-card';
-  card.id = id;
-  card.innerHTML = `
-    <div class="dynamic-card-header">
-      <span class="dynamic-card-title">🚀 Project #${container.children.length + 1}</span>
-      <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Project Name *</label>
-        <input type="text" class="proj-name" placeholder="e.g. Nexus AI Orchestrator" value="${escapeAttr(data.name || data.title || '')}" required>
-      </div>
-      <div class="form-group">
-        <label>Tech Stack</label>
-        <input type="text" class="proj-tech" placeholder="e.g. Python, FastAPI, React" value="${escapeAttr(data.tech_stack || data.tech || '')}">
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Project Description</label>
-      <textarea class="proj-desc" rows="2" placeholder="Autonomous multi-agent orchestration framework with persistent vector memory...">${escapeHtml(data.description || data.desc || '')}</textarea>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Live Demo URL</label>
-        <input type="url" class="proj-live" placeholder="https://..." value="${escapeAttr(data.live || data.link || '')}">
-      </div>
-      <div class="form-group">
-        <label>GitHub Repository</label>
-        <input type="url" class="proj-github" placeholder="https://github.com/..." value="${escapeAttr(data.github || '')}">
-      </div>
-    </div>
-  `;
-
-  container.appendChild(card);
-}
-
-// 4. Dynamic Custom Sections Management
-function toggleSectionDropdown() {
-  const dropdown = document.getElementById('sectionDropdown');
-  if (dropdown) {
-    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-  }
-}
-
-// Close dropdown on outside click
-document.addEventListener('click', (e) => {
-  const trigger = document.getElementById('btnAddSectionTrigger');
-  const dropdown = document.getElementById('sectionDropdown');
-  if (dropdown && trigger && !trigger.contains(e.target) && !dropdown.contains(e.target)) {
-    dropdown.style.display = 'none';
-  }
-});
-
-function addCustomSection(type, data = {}) {
-  const container = document.getElementById('sectionsContainer');
-  const dropdown = document.getElementById('sectionDropdown');
-  if (dropdown) dropdown.style.display = 'none';
-  if (!container) return;
-
-  sectionCounter++;
-  const id = `section_${sectionCounter}`;
-  const card = document.createElement('div');
-  card.className = 'dynamic-card';
-  card.id = id;
-  card.dataset.sectionType = type;
-
-  let fieldsHtml = '';
-
-  if (type === 'experience') {
-    fieldsHtml = `
-      <div class="dynamic-card-header">
-        <span class="dynamic-card-title">💼 Work Experience</span>
-        <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Job Title / Role *</label>
-          <input type="text" class="sec-role" placeholder="e.g. Lead AI Systems Engineer" value="${escapeAttr(data.role || data.title || '')}" required>
-        </div>
-        <div class="form-group">
-          <label>Company / Organization *</label>
-          <input type="text" class="sec-company" placeholder="e.g. Neural Technologies" value="${escapeAttr(data.company || '')}" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Time Period</label>
-          <input type="text" class="sec-period" placeholder="e.g. 2022 - Present" value="${escapeAttr(data.period || data.duration || '')}">
-        </div>
-        <div class="form-group">
-          <label>Location</label>
-          <input type="text" class="sec-loc" placeholder="e.g. San Francisco, CA / Remote" value="${escapeAttr(data.location || '')}">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Role Summary & Achievements</label>
-        <textarea class="sec-desc" rows="2" placeholder="Architected high-throughput inference pipeline scaling to 10M tokens/sec...">${escapeHtml(data.description || (Array.isArray(data.achievements) ? data.achievements.join('. ') : ''))}</textarea>
-      </div>
-    `;
-  } else if (type === 'education') {
-    fieldsHtml = `
-      <div class="dynamic-card-header">
-        <span class="dynamic-card-title">🎓 Education</span>
-        <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Degree / Major *</label>
-          <input type="text" class="sec-degree" placeholder="e.g. B.S. in Computer Science" value="${escapeAttr(data.degree || '')}" required>
-        </div>
-        <div class="form-group">
-          <label>University / School *</label>
-          <input type="text" class="sec-school" placeholder="e.g. Stanford University" value="${escapeAttr(data.institution || data.school || '')}" required>
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Year / Period</label>
-          <input type="text" class="sec-year" placeholder="e.g. 2020 - 2024" value="${escapeAttr(data.year || '')}">
-        </div>
-        <div class="form-group">
-          <label>GPA / Honors / Details</label>
-          <input type="text" class="sec-grade" placeholder="e.g. GPA 3.9/4.0 • Summa Cum Laude" value="${escapeAttr(data.grade || data.details || '')}">
-        </div>
-      </div>
-    `;
-  } else if (type === 'certification') {
-    fieldsHtml = `
-      <div class="dynamic-card-header">
-        <span class="dynamic-card-title">📜 Certification</span>
-        <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Certification Name *</label>
-          <input type="text" class="sec-cert-name" placeholder="e.g. AWS Solutions Architect Professional" value="${escapeAttr(data.name || data.title || '')}" required>
-        </div>
-        <div class="form-group">
-          <label>Issuer / Organization</label>
-          <input type="text" class="sec-cert-issuer" placeholder="e.g. Amazon Web Services" value="${escapeAttr(data.issuer || '')}">
-        </div>
-      </div>
-    `;
-  } else if (type === 'award') {
-    fieldsHtml = `
-      <div class="dynamic-card-header">
-        <span class="dynamic-card-title">🏆 Award / Honor</span>
-        <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Award Title *</label>
-          <input type="text" class="sec-award-title" placeholder="e.g. 1st Place Global AI Hackathon" value="${escapeAttr(data.title || data.name || '')}" required>
-        </div>
-        <div class="form-group">
-          <label>Issuer / Year</label>
-          <input type="text" class="sec-award-issuer" placeholder="e.g. OpenAI • 2024" value="${escapeAttr(data.issuer || data.year || '')}">
-        </div>
-      </div>
-    `;
-  } else {
-    fieldsHtml = `
-      <div class="dynamic-card-header">
-        <span class="dynamic-card-title">📝 Custom Section</span>
-        <button type="button" class="btn-remove-card" onclick="removeDynamicCard('${id}')">✕ Remove</button>
-      </div>
-      <div class="form-group">
-        <label>Section Title *</label>
-        <input type="text" class="sec-custom-title" placeholder="e.g. Open Source Contributions or Publications" value="${escapeAttr(data.title || '')}" required>
-      </div>
-      <div class="form-group">
-        <label>Content / Notes</label>
-        <textarea class="sec-custom-content" rows="2" placeholder="Describe your achievements, links, or details...">${escapeHtml(data.content || '')}</textarea>
-      </div>
-    `;
-  }
-
-  card.innerHTML = fieldsHtml;
-  container.appendChild(card);
-}
-
-function removeDynamicCard(id) {
-  const el = document.getElementById(id);
-  if (el) el.remove();
-}
-
-// 5. Studio Form Generation Dispatch
-function handleFormGenerate(e) {
-  if (e) e.preventDefault();
-  generatePortfolioSite();
-}
-
-async function generatePortfolioSite(isRegenerate = false) {
-  const btnRegenerateStudio = document.getElementById('btnRegenerateStudio');
-  btnGenerateStudio.disabled = true;
-  btnGenerateStudio.textContent = isRegenerate ? '🔄 Regenerating New 3D Architecture...' : '⏳ Crafting Award-Winning Portfolio...';
-
-  if (isRegenerate) {
-    if (portfolioIframe) {
-      portfolioIframe.style.display = 'none';
-      portfolioIframe.src = 'about:blank';
-    }
-    if (previewLoader) {
-      previewLoader.style.display = 'flex';
-      previewLoader.innerHTML = `
-        <div class="placeholder-icon" style="font-size: 2.5rem; margin-bottom: 12px; animation: spin 1s linear infinite;">🔄</div>
-        <h3>Tearing down old site &amp; synthesizing fresh 3D build...</h3>
-        <p>Removing old preview assets and selecting a new 3D spatial architecture.</p>
-      `;
-    }
-  }
-
-  // 1. Gather Personal Info
-  const formData = {
-    name: document.getElementById('inputName')?.value.trim() || 'Developer',
-    role: document.getElementById('inputRole')?.value.trim() || 'Systems Architect',
-    bio: document.getElementById('inputBio')?.value.trim() || '',
-    email: document.getElementById('inputEmail')?.value.trim() || 'hello@example.com',
-    location: document.getElementById('inputLocation')?.value.trim() || '',
-    github: document.getElementById('inputGithub')?.value.trim() || '',
-    linkedin: document.getElementById('inputLinkedin')?.value.trim() || '',
-    twitter: document.getElementById('inputTwitter')?.value.trim() || '',
-    website: document.getElementById('inputWebsite')?.value.trim() || '',
-    tech_stack: document.getElementById('inputTech')?.value.trim() || ''
-  };
-
-  // 2. Gather Dynamic Projects
-  const projectCards = document.querySelectorAll('#projectsContainer .dynamic-card');
-  const projects = [];
-  projectCards.forEach((card, idx) => {
-    const name = card.querySelector('.proj-name')?.value.trim();
-    if (name) {
-      projects.push({
-        name,
-        tech: card.querySelector('.proj-tech')?.value.trim() || '',
-        tech_stack: card.querySelector('.proj-tech')?.value.trim() || '',
-        desc: card.querySelector('.proj-desc')?.value.trim() || '',
-        description: card.querySelector('.proj-desc')?.value.trim() || '',
-        live: card.querySelector('.proj-live')?.value.trim() || '',
-        github: card.querySelector('.proj-github')?.value.trim() || ''
-      });
-      if (idx === 0) {
-        formData.project_1_name = name;
-        formData.project_1_desc = card.querySelector('.proj-desc')?.value.trim() || '';
-        formData.project_1_tech = card.querySelector('.proj-tech')?.value.trim() || '';
-      }
-      if (idx === 1) {
-        formData.project_2_name = name;
-        formData.project_2_desc = card.querySelector('.proj-desc')?.value.trim() || '';
-        formData.project_2_tech = card.querySelector('.proj-tech')?.value.trim() || '';
-      }
-    }
-  });
-  formData.projects = projects;
-
-  // 3. Gather Dynamic Custom Sections
-  const sectionCards = document.querySelectorAll('#sectionsContainer .dynamic-card');
-  const experience = [];
-  const education = [];
-  const certifications = [];
-  const awards = [];
-  const customSections = [];
-
-  sectionCards.forEach(card => {
-    const type = card.dataset.sectionType;
-    if (type === 'experience') {
-      const role = card.querySelector('.sec-role')?.value.trim();
-      if (role) {
-        experience.push({
-          role,
-          company: card.querySelector('.sec-company')?.value.trim() || '',
-          period: card.querySelector('.sec-period')?.value.trim() || '',
-          location: card.querySelector('.sec-loc')?.value.trim() || '',
-          description: card.querySelector('.sec-desc')?.value.trim() || ''
-        });
-      }
-    } else if (type === 'education') {
-      const degree = card.querySelector('.sec-degree')?.value.trim();
-      if (degree) {
-        education.push({
-          degree,
-          institution: card.querySelector('.sec-school')?.value.trim() || '',
-          year: card.querySelector('.sec-year')?.value.trim() || '',
-          grade: card.querySelector('.sec-grade')?.value.trim() || ''
-        });
-      }
-    } else if (type === 'certification') {
-      const name = card.querySelector('.sec-cert-name')?.value.trim();
-      if (name) {
-        certifications.push({
-          name,
-          issuer: card.querySelector('.sec-cert-issuer')?.value.trim() || ''
-        });
-      }
-    } else if (type === 'award') {
-      const title = card.querySelector('.sec-award-title')?.value.trim();
-      if (title) {
-        awards.push({
-          title,
-          issuer: card.querySelector('.sec-award-issuer')?.value.trim() || ''
-        });
-      }
-    } else if (type === 'custom') {
-      const title = card.querySelector('.sec-custom-title')?.value.trim();
-      if (title) {
-        customSections.push({
-          title,
-          content: card.querySelector('.sec-custom-content')?.value.trim() || ''
-        });
-      }
-    }
-  });
-
-  formData.experience = experience;
-  formData.education = education;
-  formData.certifications = certifications;
-  formData.awards = awards;
-  formData.custom_sections = customSections;
-
-  const styleHint = document.getElementById('inputStyle')?.value || 'modern-dark';
-  const layout = document.getElementById('inputLayout')?.value || 'auto-cycle';
-
-  try {
-    const previousSiteId = isRegenerate ? currentSiteId : null;
-    const res = await fetch('/api/web/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        data: formData,
-        branch: currentBranch,
-        styleHint,
-        layout,
-        siteId: isRegenerate ? null : currentSiteId,
-        previousSiteId,
-        regenerate: isRegenerate
-      })
-    });
-
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok || !result.success) {
-      if (res.status === 504) {
-        throw new Error('The AI design engine timed out. Please try again or simplify your input.');
-      } else if (res.status === 429) {
-        throw new Error('Rate limit reached. Please wait a few moments before generating again.');
-      } else if (res.status === 413) {
-        throw new Error('Payload too large. Please shorten project descriptions or remove large images.');
-      } else {
-        throw new Error(result.error || result.message || 'Generation failed. Please verify your details.');
-      }
-    }
-
-    currentSiteId = result.siteId;
-    currentPreviewUrl = result.previewUrl;
-
-    // Load iframe preview (bust cache if updating existing site)
-    if (previewLoader) previewLoader.style.display = 'none';
-    if (portfolioIframe) {
-      portfolioIframe.style.display = 'block';
-      portfolioIframe.src = `${result.previewUrl}?v=${Date.now()}`;
-    }
-
-    if (btnRegenerateStudio) {
-      btnRegenerateStudio.style.display = 'inline-flex';
-    }
-    if (btnOpenNewTab) {
-      btnOpenNewTab.style.display = 'inline-flex';
-      btnOpenNewTab.href = result.previewUrl;
-    }
-    if (btnUnlockDomain) {
-      btnUnlockDomain.style.display = 'inline-flex';
-    }
-
-    showToast(isRegenerate ? 'Portfolio Regenerated!' : 'Portfolio Generated Successfully!', `Live preview active at ${result.previewUrl}`, 'success');
-
-    if (typeof confetti === 'function') {
-      confetti({ particleCount: 70, spread: 60, origin: { y: 0.5 } });
-    }
-  } catch (err) {
-    console.error('Generation Error:', err);
-    showToast('Generation Error', err.message || 'Could not build site. Please try again.', 'error');
-  } finally {
-    btnGenerateStudio.disabled = false;
-    btnGenerateStudio.textContent = currentSiteId ? '⚡ Update & Republish Live Site' : '🚀 Generate & Preview Site';
-  }
-}
-
-// 6. In-Browser Razorpay Checkout & Anti-Tampering Verification
-async function handleUnlockDomain(selectedPlan = 'lite') {
-  if (!currentSiteId) {
-    showToast('Generate First', 'Please generate your portfolio before checking out.', 'warning');
-    return;
-  }
-
-  btnUnlockDomain.disabled = true;
-  btnUnlockDomain.textContent = '⏳ Preparing Checkout...';
-
-  try {
-    const res = await fetch('/api/web/create-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ siteId: currentSiteId, plan: selectedPlan })
-    });
-
-    const order = await res.json();
-    if (!order.success) throw new Error(order.error || 'Order creation failed');
-
-    // 1. Standard Razorpay In-Page Modal Checkout
-    if (order.isCustomCheckout && window.Razorpay && order.orderId) {
-      const options = {
-        key: order.keyId,
-        amount: order.amount,
-        currency: order.currency || 'INR',
-        name: 'AI Portfolio Bot',
-        description: `Unlock Permanent Live Hosting (${selectedPlan.toUpperCase()} Plan)`,
-        order_id: order.orderId,
-        theme: { color: '#3b82f6' },
-        modal: {
-          ondismiss: function () {
-            btnUnlockDomain.disabled = false;
-            btnUnlockDomain.textContent = '💳 Unlock & Remove Watermark (₹149)';
-          }
-        },
-        handler: async function (response) {
-          showToast('Verifying Payment...', 'Detecting transaction and running anti-tampering checks...', 'info');
-          try {
-            const verifyRes = await fetch('/api/web/verify-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                siteId: currentSiteId,
-                plan: selectedPlan
-              })
-            });
-
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok || !verifyData.success) {
-              throw new Error(verifyData.error || 'Payment verification failed');
-            }
-
-            showToast('Payment Approved!', 'Watermark removed! Your portfolio is now permanently active.', 'success');
-
-            // Refresh iframe preview to display pristine, unwatermarked portfolio
-            if (portfolioIframe) {
-              portfolioIframe.src = `${verifyData.liveUrl || `/p/${currentSiteId}`}?v=${Date.now()}`;
-            }
-
-            if (btnUnlockDomain) {
-              btnUnlockDomain.style.display = 'none';
-            }
-
-            if (typeof confetti === 'function') {
-              confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-            }
-          } catch (verErr) {
-            console.error('[VERIFICATION ERROR]', verErr);
-            showToast('Verification Failed', verErr.message, 'error');
-          }
-        }
-      };
-
-      const rzpInstance = new window.Razorpay(options);
-      rzpInstance.on('payment.failed', function (resp) {
-        showToast('Payment Failed', resp.error?.description || 'Payment was not completed.', 'error');
-      });
-      rzpInstance.open();
-    } else {
-      // 2. Fallback Payment Link Panel
-      showPaymentPanel(order.paymentUrl, selectedPlan);
-    }
-  } catch (err) {
-    console.error('Order creation error:', err);
-    showPaymentPanel(null, selectedPlan, err.message);
-  } finally {
-    btnUnlockDomain.disabled = false;
-    btnUnlockDomain.textContent = '💳 Unlock & Remove Watermark (₹149)';
-  }
-}
-
-function showPaymentPanel(paymentUrl, plan = 'lite', errorMsg = null) {
-  const existing = document.getElementById('paymentPanel');
-  if (existing) existing.remove();
-
-  const panel = document.createElement('div');
-  panel.id = 'paymentPanel';
-  panel.style.cssText = `
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.75);
-    backdrop-filter: blur(8px);
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-  `;
-
-  if (errorMsg) {
-    panel.innerHTML = `
-      <div style="background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; max-width: 440px; width: 100%; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 1rem;">⚠️</div>
-        <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Checkout Unavailable</h3>
-        <p style="color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem;">Razorpay credentials not yet configured. Contact us via Telegram to unlock your portfolio.</p>
-        <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer"
-           style="display: inline-flex; align-items: center; gap: 0.5rem; background: #9a3412; color: #fff; text-decoration: none; font-weight: 700; padding: 0.9rem 1.75rem; border-radius: 12px; margin-bottom: 0.75rem;">
-          Open Telegram Bot to Unlock
-        </a>
-        <button onclick="document.getElementById('paymentPanel').remove()"
-                style="display: block; width: 100%; background: none; border: 1px solid rgba(255,255,255,0.1); color: #a1a1aa; padding: 0.6rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; margin-top: 0.75rem;">
-          Close
-        </button>
-      </div>`;
-  } else {
-    panel.innerHTML = `
-      <div style="background: #18181b; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2.5rem; max-width: 460px; width: 100%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);">
-        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚀</div>
-        <h3 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Unlock Custom Domain & CDN Hosting</h3>
-        <p style="color: #a1a1aa; margin-bottom: 1.5rem; font-size: 0.9rem;">Remove preview watermark, get instant live hosting, and connect your custom domain.</p>
-
-        <a id="btnSubscribeLink" href="${paymentUrl}" target="_blank" rel="noopener noreferrer"
-           onclick="handlePaymentSuccess()"
-           style="display: block; background: linear-gradient(135deg, #9a3412, #b45309); color: #fff; text-decoration: none; font-size: 1rem; font-weight: 700; padding: 0.95rem; border-radius: 12px; margin-bottom: 0.75rem; box-shadow: 0 10px 25px rgba(154, 52, 18,0.4); transition: opacity 0.2s;">
-          💳 Subscribe Now (₹149/mo) &rarr;
-        </a>
-        <p style="color: #71717a; font-size: 0.75rem; margin-bottom: 1rem;">Recurring monthly subscription • Cancel anytime via dashboard</p>
-
-        <button onclick="document.getElementById('paymentPanel').remove()"
-                style="background: none; border: 1px solid rgba(255,255,255,0.1); color: #a1a1aa; padding: 0.55rem 1.5rem; border-radius: 10px; cursor: pointer; font-size: 0.85rem;">
-          Close
-        </button>
-      </div>`;
-  }
-
-  document.body.appendChild(panel);
-  panel.addEventListener('click', (e) => {
-    if (e.target === panel) panel.remove();
-  });
-}
-
-function handlePaymentSuccess() {
-  setTimeout(() => {
-    const panel = document.getElementById('paymentPanel');
-    if (panel) {
-      panel.querySelector('div > div').innerHTML = `
-        <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
-        <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 0.75rem;">Payment in Progress</h3>
-        <p style="color: #a1a1aa; margin-bottom: 1.5rem;">Once confirmed, your 2-hour takedown timer will be removed and your portfolio will remain live forever!</p>
-        <button onclick="document.getElementById('paymentPanel').remove()"
-                style="background: #9a3412; border: none; color: #fff; padding: 0.75rem 1.75rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; font-weight: 600;">
-          Got it!
-        </button>`;
-    }
-  }, 3000);
-}
-
-// 7. Dynamic Auth State on Landing Page
-async function checkAuthState() {
-  const slot = document.getElementById('navAuthSlot');
-  if (!slot) return;
-
-  try {
-    const res = await fetch('/api/auth/me', { credentials: 'include' });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.user) {
-        const name = data.user.name || data.user.email.split('@')[0];
-        slot.innerHTML = `
-          <a href="/dashboard.html" class="nav-link" style="color: #60a5fa; font-weight: 700; text-decoration: none; padding: 0.4rem 0.8rem;">
-            👤 ${escapeHtml(name)}
-          </a>
-        `;
-      }
-    }
-  } catch (e) {
-    // Unauthenticated fallback
-  }
-}
-
-function escapeHtml(str) {
-  return String(str || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
-}
-
-function escapeAttr(str) {
-  return String(str || '').replace(/"/g, '&quot;');
-}
-
-window.addEventListener('DOMContentLoaded', checkAuthState);
-
-// ========================================================
-// 8. ⚡ ONE-CLICK GITHUB GENERATOR CLIENT CONTROLLER
-// ========================================================
-
-let lastGithubTarget = null;
-let lastGithubResult = null;
-
-async function handleGithubGenerate(e) {
-  if (e) e.preventDefault();
-  const inputEl = document.getElementById('githubUsernameInput');
-  const target = (inputEl ? inputEl.value : '').trim();
-  if (!target) {
-    alert('Please enter your GitHub username or profile URL.');
-    return;
-  }
-
-  lastGithubTarget = target;
-  openGithubProgressModal();
-
-  try {
-    // Step 1: Connecting to GitHub
-    setGithubStep(1, 'active');
-    setGithubStatus('Connecting to GitHub API...', 'Validating username and establishing connection');
-
-    // Simulate progressive real feedback while API is running
-    const progressTimer1 = setTimeout(() => {
-      setGithubStep(1, 'completed');
-      setGithubStep(2, 'active');
-      setGithubStatus('Reading Developer Profile...', 'Extracting verified identity and profile README');
-    }, 450);
-
-    const progressTimer2 = setTimeout(() => {
-      setGithubStep(2, 'completed');
-      setGithubStep(3, 'active');
-      setGithubStatus('Analyzing Repositories...', 'Ranking top projects, commit activity, and language distribution');
-    }, 950);
-
-    const progressTimer3 = setTimeout(() => {
-      setGithubStep(3, 'completed');
-      setGithubStep(4, 'active');
-      setGithubStatus('Understanding Technical Expertise...', 'Extracting skills, frameworks, and architecture domains');
-    }, 1500);
-
-    const progressTimer4 = setTimeout(() => {
-      setGithubStep(4, 'completed');
-      setGithubStep(5, 'active');
-      setGithubStatus('Synthesizing Evidence-Based Content...', 'Gemini AI narrative synthesis with zero hallucinations');
-    }, 2100);
-
-    const progressTimer5 = setTimeout(() => {
-      setGithubStep(5, 'completed');
-      setGithubStep(6, 'active');
-      setGithubStatus('Synthesizing 22D Design Blueprint...', 'Crafting bespoke WebGL 3D scenes and typography pairing');
-    }, 2800);
-
-    const progressTimer6 = setTimeout(() => {
-      setGithubStep(6, 'completed');
-      setGithubStep(7, 'active');
-      setGithubStatus('Applying Cross-Dimension Diversity Governor...', 'Enforcing collision rejection & structural uniqueness');
-    }, 3400);
-
-    const progressTimer7 = setTimeout(() => {
-      setGithubStep(7, 'completed');
-      setGithubStep(8, 'active');
-      setGithubStatus('Publishing Live Portfolio...', 'Rendering responsive HTML/CSS/JS and generating preview');
-    }, 4100);
-
-    const previousSiteId = lastGithubResult?.siteId || null;
-    const themeSelect = document.getElementById('githubThemeSelect');
-    const selectedTheme = themeSelect ? themeSelect.value : 'auto';
-
-    const res = await fetch('/api/generate/github', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        githubUrl: target,
-        previousSiteId,
-        theme: selectedTheme,
-        creative_mode: selectedTheme !== 'auto' ? selectedTheme : null
-      })
-    });
-
-    // Clear timers
-    [progressTimer1, progressTimer2, progressTimer3, progressTimer4, progressTimer5, progressTimer6, progressTimer7].forEach(clearTimeout);
-
-    const result = await res.json().catch(() => ({}));
-    if (!res.ok || !result.success) {
-      if (res.status === 404 || (result.error && result.error.toLowerCase().includes('not found'))) {
-        throw new Error(`GitHub user "${target}" was not found. Please verify the spelling or profile URL.`);
-      } else if (res.status === 504) {
-        throw new Error('GitHub synthesis timed out. Please try again.');
-      } else if (res.status === 429) {
-        throw new Error('Hourly generation limit reached. Please wait a few moments.');
-      } else {
-        throw new Error(result.error || result.message || 'Failed to generate portfolio from GitHub.');
-      }
-    }
-
-    lastGithubResult = result;
-    currentSiteId = result.siteId;
-    currentPreviewUrl = result.previewUrl;
-
-    // Persist session to localStorage
-    savePortfolioSession({
-      siteId: result.siteId,
-      previewUrl: result.previewUrl,
-      profileData: result.profileData,
-      username: result.username || target,
-      lifecycleState: 'READY',
-      timestamp: Date.now()
-    });
-
-    // Mark all steps completed
-    for (let i = 1; i <= 8; i++) {
-      setGithubStep(i, 'completed');
-    }
-
-    showToast('GitHub Portfolio Generated!', `Synthesized 3D portfolio from @${result.username || target}`, 'success');
-
-    // Populate result card
-    populateGithubResult(result);
-  } catch (err) {
-    console.error('[GITHUB GENERATE ERROR]', err);
-    showGithubErrorCard('Generation Interrupted', err.message || 'Could not complete portfolio synthesis.');
-    showToast('Generation Notice', err.message || 'Could not build site from GitHub.', 'error');
-  }
-}
-
-function showGithubErrorCard(title, message) {
-  const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
-  if (progressBox) progressBox.style.display = 'none';
-
-  const resultCard = document.getElementById('githubResultCard');
-  if (resultCard) resultCard.style.display = 'none';
-
-  const errorCard = document.getElementById('githubErrorCard');
-  const errorTitle = document.getElementById('githubErrorTitle');
-  const errorMsg = document.getElementById('githubErrorMessage');
-
-  if (errorTitle) errorTitle.textContent = title;
-  if (errorMsg) errorMsg.textContent = message;
-  if (errorCard) errorCard.style.display = 'block';
-}
-
-function openGithubProgressModal() {
-  const modal = document.getElementById('githubProgressModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    modal.classList.add('active');
-  }
-  const resultCard = document.getElementById('githubResultCard');
-  if (resultCard) resultCard.style.display = 'none';
-  const errorCard = document.getElementById('githubErrorCard');
-  if (errorCard) errorCard.style.display = 'none';
-
-  const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
-  if (progressBox) progressBox.style.display = 'flex';
-
-  // Reset steps
-  for (let i = 1; i <= 8; i++) {
-    const stepEl = document.getElementById(`step-${i}`) || document.getElementById(`ghStep${i}`);
-    if (stepEl) {
-      stepEl.classList.remove('active', 'completed');
-    }
-  }
-  setGithubStep(1, 'active');
-}
-
-function setGithubStep(stepNum, state) {
-  const stepEl = document.getElementById(`step-${stepNum}`) || document.getElementById(`ghStep${stepNum}`);
-  if (!stepEl) return;
-  stepEl.classList.remove('active', 'completed');
-  if (state === 'active') {
-    stepEl.classList.add('active');
-    const statusIcon = stepEl.querySelector('.step-status');
-    if (statusIcon) statusIcon.textContent = '⏳';
-  }
-  if (state === 'completed') {
-    stepEl.classList.add('completed');
-    const statusIcon = stepEl.querySelector('.step-status');
-    if (statusIcon) statusIcon.textContent = '✅';
-  }
-}
-
-function setGithubStatus(title, desc) {
-  const titleEl = document.getElementById('githubProgressTitle') || document.getElementById('githubStatusTitle');
-  const descEl = document.getElementById('githubProgressSubtitle') || document.getElementById('githubStatusDesc');
-  if (titleEl) titleEl.textContent = title;
-  if (descEl) descEl.textContent = desc;
-}
-
-function populateGithubResult(result) {
-  const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
-  if (progressBox) progressBox.style.display = 'none';
-  const errorCard = document.getElementById('githubErrorCard');
-  if (errorCard) errorCard.style.display = 'none';
-
-  const resultCard = document.getElementById('githubResultCard');
-  const previewIframe = document.getElementById('githubResultIframe');
-  const liveLink = document.getElementById('btnOpenGithubSite') || document.getElementById('btnGithubLiveLink');
-  const subtitleEl = document.getElementById('githubResultSubtitle');
-
-  if (subtitleEl && result.username) {
-    subtitleEl.textContent = `Synthesized Awwwards-grade 3D portfolio for @${result.username}`;
-  }
-  if (previewIframe && result.previewUrl) {
-    previewIframe.src = `${result.previewUrl}?v=${Date.now()}`;
-  }
-  if (liveLink && result.previewUrl) {
-    liveLink.href = result.previewUrl;
-  }
-  if (resultCard) resultCard.style.display = 'block';
-}
-
-function closeGithubModal() {
-  const modal = document.getElementById('githubProgressModal');
-  if (modal) {
-    modal.style.display = 'none';
-    modal.classList.remove('active');
-  }
-}
-
-function copyGithubPreviewLink() {
-  if (!lastGithubResult || !lastGithubResult.previewUrl) return;
-  const fullUrl = `${window.location.origin}${lastGithubResult.previewUrl}`;
-  navigator.clipboard.writeText(fullUrl).then(() => {
-    const btnText = document.getElementById('btnCopyGithubText');
-    if (btnText) {
-      btnText.textContent = '✅ Link Copied!';
-      setTimeout(() => { btnText.textContent = '📋 Copy Link'; }, 2000);
-    }
-  }).catch(() => {
-    alert(`Portfolio URL: ${fullUrl}`);
-  });
-}
-
-async function regenerateGithubDesign() {
-  if (!lastGithubTarget) return;
-  await handleGithubGenerate();
-}
-
-function regenerateStudioDesign() {
-  generatePortfolioSite(true);
-}
-window.regenerateStudioDesign = regenerateStudioDesign;
-
-function editGithubInStudio() {
-  closeGithubModal();
-  if (!lastGithubResult || !lastGithubResult.profileData) {
-    openStudioView();
-    return;
-  }
-  const p = lastGithubResult.profileData;
-  openStudioView();
-
-  const nameInput = document.getElementById('inputName');
-  const roleInput = document.getElementById('inputRole');
-  const bioInput = document.getElementById('inputBio');
-  const emailInput = document.getElementById('inputEmail');
-  const locInput = document.getElementById('inputLocation');
-  const ghInput = document.getElementById('inputGithub');
-  const techInput = document.getElementById('inputTech');
-
-  if (nameInput) nameInput.value = p.name || '';
-  if (roleInput) roleInput.value = p.role || '';
-  if (bioInput) bioInput.value = p.bio || p.tagline || '';
-  if (emailInput) emailInput.value = p.email || '';
-  if (locInput) locInput.value = p.location || '';
-  if (ghInput) ghInput.value = p.github || '';
-  if (techInput) techInput.value = p.tech_stack || '';
-
-  // Populate projects
-  const projectsContainer = document.getElementById('projectsContainer');
-  if (projectsContainer) {
-    projectsContainer.innerHTML = '';
-    if (Array.isArray(p.projects)) {
-      p.projects.forEach(proj => {
-        addProjectCard(proj);
-      });
-    }
-  }
-
-  // Update live preview iframe with current generated site
-  if (portfolioIframe && lastGithubResult.previewUrl) {
-    currentPreviewUrl = lastGithubResult.previewUrl;
-    currentSiteId = lastGithubResult.siteId;
-    portfolioIframe.src = lastGithubResult.previewUrl;
-    if (previewLoader) previewLoader.style.display = 'none';
-  }
-}
-
-// ========================================================
-// 14. Phase 30: Public Customizer, Export & Samples Controllers
-// ========================================================
-
-let activeCustomizerState = null;
-
-async function openCustomizerModal() {
-  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
-  if (!targetSiteId) {
-    showToast('No Portfolio Active', 'Generate a portfolio or choose a demo first.', 'info');
-    return;
-  }
-  
-  const drawer = document.getElementById('customizerDrawer');
-  if (drawer) drawer.style.display = 'flex';
-
-  await loadCustomizerState(targetSiteId);
-}
-
-function closeCustomizerModal() {
-  const drawer = document.getElementById('customizerDrawer');
-  if (drawer) drawer.style.display = 'none';
-}
-
-async function loadCustomizerState(siteId) {
-  try {
-    const res = await fetch(`/api/portfolio/${siteId}/customizer`);
-    if (!res.ok) throw new Error('Could not load customizer settings.');
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Failed to load customizer.');
-
-    activeCustomizerState = data;
-    renderCustomizerSectionsList(data);
-    updateCustomizerAppearanceControls(data.tokens);
-    updateCustomizerButtons(data);
-  } catch (err) {
-    console.error('[CUSTOMIZER LOAD ERROR]', err);
-    showToast('Customizer Error', err.message, 'error');
-  }
-}
-
-function renderCustomizerSectionsList(state) {
-  const container = document.getElementById('customizerSectionsList');
-  if (!container) return;
-  container.innerHTML = '';
-
-  const sections = state.sections || [];
-  sections.forEach((sec, idx) => {
-    const item = document.createElement('div');
-    item.className = 'customizer-section-item';
-    
-    const isHidden = state.hiddenSections && state.hiddenSections.includes(sec.id);
-    const isProtected = sec.protected || sec.id === 'hero' || sec.id === 'projects';
-
-    item.innerHTML = `
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; width: 20px;">#${idx + 1}</span>
-        <span style="font-size: 0.9rem; font-weight: 700; ${isHidden ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${escapeHtml(sec.name || sec.id)}</span>
-      </div>
-      <div style="display: flex; gap: 6px;">
-        <button type="button" class="customizer-btn-mini" title="Move Up" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} onclick="handleMoveSection(${idx}, -1)">▲</button>
-        <button type="button" class="customizer-btn-mini" title="Move Down" ${idx === sections.length - 1 ? 'disabled style="opacity:0.3;"' : ''} onclick="handleMoveSection(${idx}, 1)">▼</button>
-        ${!isProtected ? `
-          <button type="button" class="customizer-btn-mini" title="${isHidden ? 'Show Section' : 'Hide Section'}" onclick="handleToggleSectionVisibility('${sec.id}', ${isHidden})">
-            ${isHidden ? '👁️ Show' : '🚫 Hide'}
-          </button>
-        ` : ''}
-      </div>
-    `;
-    container.appendChild(item);
-  });
-}
-
-function updateCustomizerAppearanceControls(tokens = {}) {
-  const selSpacing = document.getElementById('selectSectionSpacing');
-  if (selSpacing && tokens.sectionSpacing) selSpacing.value = tokens.sectionSpacing;
-
-  const selBorder = document.getElementById('selectBorderIntensity');
-  if (selBorder && tokens.borderIntensity) selBorder.value = tokens.borderIntensity;
-
-  const selType = document.getElementById('selectTypeScale');
-  if (selType && tokens.typeScale) selType.value = tokens.typeScale;
-}
-
-function updateCustomizerButtons(state) {
-  const btnUndo = document.getElementById('btnCustomizerUndo');
-  const btnRedo = document.getElementById('btnCustomizerRedo');
-  if (btnUndo) btnUndo.disabled = !state.canUndo;
-  if (btnRedo) btnRedo.disabled = !state.canRedo;
-}
-
-async function handleMoveSection(fromIndex, delta) {
-  if (!activeCustomizerState || !activeCustomizerState.sections) return;
-  const toIndex = fromIndex + delta;
-  if (toIndex < 0 || toIndex >= activeCustomizerState.sections.length) return;
-
-  const order = activeCustomizerState.sections.map(s => s.id);
-  const temp = order[fromIndex];
-  order[fromIndex] = order[toIndex];
-  order[toIndex] = temp;
-
-  await handleCustomizerAction('reorder', { newOrder: order });
-}
-
-async function handleToggleSectionVisibility(sectionId, currentlyHidden) {
-  await handleCustomizerAction('toggle_visibility', { sectionId, visible: currentlyHidden });
-}
-
-async function handleTokenChange(token, value) {
-  await handleCustomizerAction('modify_token', { token, value });
-}
-
-async function handleCustomizerAction(action, payload = {}) {
-  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
-  if (!targetSiteId) return;
-
-  try {
-    const res = await fetch(`/api/portfolio/${targetSiteId}/customizer`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action, ...payload })
-    });
-
-    const data = await res.json();
-    if (!res.ok || !data.success) {
-      throw new Error(data.error || 'Customization update could not be applied.');
-    }
-
-    activeCustomizerState = data;
-    renderCustomizerSectionsList(data);
-    updateCustomizerAppearanceControls(data.tokens);
-    updateCustomizerButtons(data);
-
-    // Refresh iframes
-    const iframes = [document.getElementById('portfolioIframe'), document.getElementById('githubResultIframe')];
-    iframes.forEach(frame => {
-      if (frame && data.previewUrl) {
-        frame.src = `${data.previewUrl}&v=${Date.now()}`;
-      }
-    });
-
-    showToast('Updated Live Preview', 'Customization applied successfully.', 'success');
-  } catch (err) {
-    console.error('[CUSTOMIZER ACTION ERROR]', err);
-    showToast('Notice', err.message, 'error');
-  }
-}
-
-// Export Modal
-function openExportModal() {
-  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
-  if (!targetSiteId) {
-    showToast('No Portfolio Active', 'Generate a portfolio before exporting.', 'info');
-    return;
-  }
-
-  const modal = document.getElementById('exportModal');
-  const btnDownload = document.getElementById('btnDownloadZip');
-  if (btnDownload) {
-    btnDownload.href = `/api/portfolio/${targetSiteId}/export`;
-    btnDownload.setAttribute('download', `${targetSiteId}-portfolio.zip`);
-  }
-
-  if (modal) modal.style.display = 'flex';
-}
-
-function closeExportModal() {
-  const modal = document.getElementById('exportModal');
-  if (modal) modal.style.display = 'none';
-}
-
-// Samples Gallery Modal
-async function openSamplesModal() {
-  const modal = document.getElementById('samplesModal');
-  if (modal) modal.style.display = 'flex';
-
-  await loadSamplePortfolios();
-}
-
-function closeSamplesModal() {
-  const modal = document.getElementById('samplesModal');
-  if (modal) modal.style.display = 'none';
-}
-
-async function loadSamplePortfolios() {
-  const container = document.getElementById('sampleGalleryContainer');
-  if (!container) return;
-  container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Loading example portfolios...</p>';
-
-  try {
-    const res = await fetch('/api/demo/samples');
-    if (!res.ok) throw new Error('Could not load samples');
-    const data = await res.json();
-    
-    container.innerHTML = '';
-    (data.samples || []).forEach(sample => {
-      const card = document.createElement('div');
-      card.className = 'sample-card';
-      card.innerHTML = `
-        <div>
-          <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.08em;">${escapeHtml(sample.badge)}</span>
-          <h4 style="font-size: 1.1rem; font-weight: 800; margin: 4px 0 2px;">${escapeHtml(sample.name)}</h4>
-          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">${escapeHtml(sample.role)}</div>
-          <p style="font-size: 0.82rem; color: var(--text); line-height: 1.4; margin-bottom: 12px;">${escapeHtml(sample.description)}</p>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px;">
-            ${(sample.techStack || []).map(t => `<span style="font-size: 0.7rem; background: rgba(28,25,23,0.06); padding: 2px 6px; border-radius: 4px;">${escapeHtml(t)}</span>`).join('')}
-          </div>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button type="button" class="btn-mode-cta primary" style="padding: 8px 14px; font-size: 0.82rem;" onclick="loadSampleIntoStudio('${sample.id}', '${escapeAttr(sample.name)}', '${escapeAttr(sample.role)}')">
-            <span>✨ Load in Studio</span>
-          </button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  } catch (err) {
-    container.innerHTML = `<p style="color:#991b1b; font-size:0.85rem;">Could not load sample portfolios. Try again later.</p>`;
-  }
-}
-
-function loadSampleIntoStudio(sampleId, name, role) {
-  closeSamplesModal();
-  openStudioView();
-  
-  const nameInput = document.getElementById('inputName');
-  const roleInput = document.getElementById('inputRole');
-  if (nameInput) nameInput.value = name;
-  if (roleInput) roleInput.value = role;
-
-  showToast('Sample Loaded', `Loaded ${name} into studio builder. Click Generate to preview.`, 'info');
-}
-
-// Session Persistence Helpers
-const PORTFOLIO_SESSION_KEY = 'portfolio_active_session';
-
-function savePortfolioSession(data = {}) {
-  try {
-    const existing = getPersistedPortfolioSession() || {};
-    const updated = {
-      ...existing,
-      ...data,
-      timestamp: Date.now()
-    };
-    localStorage.setItem(PORTFOLIO_SESSION_KEY, JSON.stringify(updated));
-    renderResumedSessionBanner(updated);
-  } catch (e) {
-    console.warn('[STORAGE] Could not persist portfolio session', e);
-  }
-}
-
-function getPersistedPortfolioSession() {
-  try {
-    const raw = localStorage.getItem(PORTFOLIO_SESSION_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    // Keep sessions valid for 7 days
-    if (Date.now() - (parsed.timestamp || 0) < 7 * 24 * 60 * 60 * 1000) {
-      return parsed;
-    }
-    localStorage.removeItem(PORTFOLIO_SESSION_KEY);
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function clearPersistedPortfolio() {
-  try {
-    localStorage.removeItem(PORTFOLIO_SESSION_KEY);
-    const banner = document.getElementById('resumedSessionBanner');
-    if (banner) banner.style.display = 'none';
-    showToast('Session Cleared', 'Active portfolio session removed.', 'info');
-  } catch (e) {}
-}
-
-function renderResumedSessionBanner(session) {
-  const banner = document.getElementById('resumedSessionBanner');
-  const userSpan = document.getElementById('resumedUsername');
-  if (!banner || !session || !session.siteId) return;
-
-  if (userSpan) {
-    userSpan.textContent = session.username ? `@${session.username}` : (session.profileData?.name || 'Your Portfolio');
-  }
-  banner.style.display = 'flex';
-}
-
-function reopenPersistedPortfolio() {
-  const session = getPersistedPortfolioSession();
-  if (!session || !session.siteId) {
-    showToast('No Active Portfolio', 'Please generate or build a portfolio first.', 'info');
-    return;
-  }
-
-  lastGithubResult = session;
-  currentSiteId = session.siteId;
-  currentPreviewUrl = session.previewUrl;
-
-  openGithubProgressModal();
-  populateGithubResult(session);
-}
-
-// Multi-Input Controllers (Phase 31)
-let uploadedResumeData = null;
-let uploadedPhotoDataUrl = null;
-
+// Lifecycle States
+const LIFECYCLE_STATES = {
+  DRAFT: 'DRAFT',
+  COLLECTING_INPUT: 'COLLECTING_INPUT',
+  GENERATING: 'GENERATING',
+  READY: 'READY',
+  CUSTOMIZING: 'CUSTOMIZING',
+  EXPORTED: 'EXPORTED',
+  FAILED: 'FAILED'
+};
+
+const STORAGE_KEY_SESSION = 'ai_portfolio_session_v32';
+const STORAGE_KEY_DRAFT = 'ai_portfolio_draft_v32';
+
+// Global Client State
+let clientState = {
+  lifecycle: LIFECYCLE_STATES.DRAFT,
+  siteId: null,
+  previewUrl: null,
+  profileData: null,
+  designBlueprint: null,
+  activeTab: 'github',
+  sources: {
+    github: null,
+    resume: null,
+    images: [],
+    questions: null
+  },
+  timerInterval: null,
+  startTime: null
+};
+
+// ==========================================================================
+// 1. Navigation & Tab Switching
+// ==========================================================================
 function switchInputTab(tabName) {
-  const tabs = ['github', 'resume', 'photo', 'questions'];
+  clientState.activeTab = tabName;
+  const tabs = ['github', 'resume', 'images', 'questions', 'combined'];
+  
   tabs.forEach(t => {
     const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
     const panel = document.getElementById(`tabPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
     if (btn) btn.classList.toggle('active', t === tabName);
-    if (panel) panel.style.display = t === tabName ? 'block' : 'none';
+    if (panel) panel.classList.toggle('active', t === tabName);
+  });
+
+  if (tabName === 'combined') {
+    updateCombinedSummaryChecklist();
+  }
+}
+
+function updateCombinedSummaryChecklist() {
+  const ghRow = document.getElementById('checkRowGithub');
+  const ghText = document.getElementById('summaryGithubText');
+  if (clientState.sources.github) {
+    ghRow?.classList.add('connected');
+    if (ghText) ghText.textContent = `Connected: @${clientState.sources.github.username}`;
+  } else {
+    ghRow?.classList.remove('connected');
+    if (ghText) ghText.textContent = 'Not connected';
+  }
+
+  const resumeRow = document.getElementById('checkRowResume');
+  const resumeText = document.getElementById('summaryResumeText');
+  if (clientState.sources.resume) {
+    resumeRow?.classList.add('connected');
+    if (resumeText) resumeText.textContent = `Attached: ${clientState.sources.resume.filename}`;
+  } else {
+    resumeRow?.classList.remove('connected');
+    if (resumeText) resumeText.textContent = 'No resume uploaded';
+  }
+
+  const imagesRow = document.getElementById('checkRowImages');
+  const imagesText = document.getElementById('summaryImagesText');
+  if (clientState.sources.images.length > 0) {
+    imagesRow?.classList.add('connected');
+    if (imagesText) imagesText.textContent = `${clientState.sources.images.length} image(s) ready`;
+  } else {
+    imagesRow?.classList.remove('connected');
+    if (imagesText) imagesText.textContent = '0 images attached';
+  }
+
+  const qRow = document.getElementById('checkRowQuestions');
+  const qText = document.getElementById('summaryQuestionsText');
+  if (clientState.sources.questions) {
+    qRow?.classList.add('connected');
+    if (qText) qText.textContent = `Completed for ${clientState.sources.questions.name}`;
+  } else {
+    qRow?.classList.remove('connected');
+    if (qText) qText.textContent = 'Optional answers';
+  }
+}
+
+// ==========================================================================
+// 2. Input Handlers: GitHub, Resume, Images, Questions
+// ==========================================================================
+
+// A. GitHub Input Handler
+async function handleGithubGenerate(event) {
+  if (event) event.preventDefault();
+  const inputEl = document.getElementById('githubUsernameInput');
+  const themeEl = document.getElementById('githubThemeSelect');
+  const rawInput = inputEl?.value?.trim();
+
+  if (!rawInput) {
+    showToast('Username Required', 'Please enter a valid GitHub username or profile URL.', 'error');
+    return;
+  }
+
+  clientState.sources.github = {
+    username: rawInput.replace(/^https?:\/\/github\.com\//, '').replace(/^@/, '').replace(/\/$/, '')
+  };
+  saveDraftToStorage();
+
+  const theme = themeEl?.value || 'auto';
+  await startGenerationPipeline({
+    githubData: { username: clientState.sources.github.username },
+    preferences: { theme }
   });
 }
 
+// B. Resume PDF Upload Handler
 function handleResumeFileSelected(event) {
   const file = event.target.files?.[0];
   if (!file) return;
 
   if (file.type !== 'application/pdf') {
-    showToast('Invalid File', 'Please upload a valid PDF document.', 'error');
+    showStructuredError({
+      whatHappened: "Invalid file format.",
+      why: "Resumes must be genuine PDF documents.",
+      whatYouCanDo: "Please export your resume as a PDF and upload again."
+    });
     return;
   }
+
   if (file.size > 10 * 1024 * 1024) {
-    showToast('File Too Large', 'PDF exceeds 10 MB limit.', 'error');
+    showStructuredError({
+      whatHappened: "Resume exceeds 10 MB limit.",
+      why: "Large PDF files take too long to process.",
+      whatYouCanDo: "Please compress your PDF or upload a version under 10 MB."
+    });
     return;
   }
 
   const statusEl = document.getElementById('pdfUploadStatus');
-  if (statusEl) statusEl.textContent = `Reading ${file.name}...`;
+  if (statusEl) statusEl.textContent = `Validating ${file.name}...`;
 
   const reader = new FileReader();
   reader.onload = async (e) => {
@@ -1517,238 +165,731 @@ function handleResumeFileSelected(event) {
         throw new Error(data.error || 'Failed to validate PDF');
       }
 
-      uploadedResumeData = data.resumeData;
-      if (statusEl) statusEl.textContent = `✅ Validated (${file.name}, ${data.pages || 1} pages)`;
+      clientState.sources.resume = {
+        filename: file.name,
+        sizeBytes: file.size,
+        pages: data.pages || 1,
+        resumeData: data.resumeData
+      };
+      saveDraftToStorage();
+
+      if (statusEl) statusEl.textContent = `✅ Ready (${file.name}, ${data.pages || 1} pages)`;
+      const fileTag = document.getElementById('resumeFileSummary');
+      const nameTag = document.getElementById('resumeFileName');
       const btnGen = document.getElementById('btnGenerateResume');
+
+      if (fileTag) fileTag.style.display = 'inline-flex';
+      if (nameTag) nameTag.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
       if (btnGen) btnGen.style.display = 'inline-flex';
-      showToast('Resume Ready', 'Extracted details from resume successfully.', 'success');
+
+      showToast('Resume Verified', `${file.name} loaded successfully.`, 'success');
     } catch (err) {
-      if (statusEl) statusEl.textContent = `❌ ${err.message}`;
-      showToast('Upload Error', err.message, 'error');
+      showStructuredError(err);
     }
   };
   reader.readAsDataURL(file);
+}
+
+function removeUploadedResume(event) {
+  if (event) event.stopPropagation();
+  clientState.sources.resume = null;
+  saveDraftToStorage();
+
+  const fileInput = document.getElementById('pdfFileInput');
+  const fileTag = document.getElementById('resumeFileSummary');
+  const btnGen = document.getElementById('btnGenerateResume');
+  const statusEl = document.getElementById('pdfUploadStatus');
+
+  if (fileInput) fileInput.value = '';
+  if (fileTag) fileTag.style.display = 'none';
+  if (btnGen) btnGen.style.display = 'none';
+  if (statusEl) statusEl.textContent = 'Max 10 MB • Standard PDF format';
 }
 
 async function generateFromResume() {
-  if (!uploadedResumeData) {
-    showToast('Upload Required', 'Please upload your PDF resume first.', 'info');
+  if (!clientState.sources.resume) {
+    showToast('Resume Required', 'Please upload a PDF resume first.', 'error');
     return;
   }
-
-  openGithubProgressModal();
-  setGithubStatus('Reading Resume', 'Analyzing extracted skills and career history...');
-  setGithubStep(1, 'completed');
-  setGithubStep(2, 'active');
-
-  try {
-    const res = await fetch('/api/generate/unified', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        resumeData: uploadedResumeData,
-        photoData: uploadedPhotoDataUrl ? { url: uploadedPhotoDataUrl } : null
-      })
-    });
-
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-      throw new Error(result.error || 'Failed to synthesize portfolio from resume.');
-    }
-
-    lastGithubResult = result;
-    currentSiteId = result.siteId;
-    currentPreviewUrl = result.previewUrl;
-
-    savePortfolioSession({
-      siteId: result.siteId,
-      previewUrl: result.previewUrl,
-      profileData: result.profileData,
-      username: result.profileData?.name || 'Developer',
-      lifecycleState: 'READY',
-      timestamp: Date.now()
-    });
-
-    for (let i = 1; i <= 8; i++) setGithubStep(i, 'completed');
-    populateGithubResult(result);
-    showToast('Portfolio Generated!', 'Bespoke portfolio synthesized from your resume.', 'success');
-  } catch (err) {
-    showGithubErrorCard('Generation Interrupted', err.message);
-  }
+  await startGenerationPipeline({
+    resumeData: clientState.sources.resume.resumeData,
+    imagesData: clientState.sources.images
+  });
 }
 
-function handlePhotoFileSelected(event) {
-  const file = event.target.files?.[0];
-  if (!file) return;
+// C. Visual Material (Images) Upload Handler
+function handleImagesSelected(event) {
+  const files = Array.from(event.target.files || []);
+  if (files.length === 0) return;
 
-  if (file.size > 5 * 1024 * 1024) {
-    showToast('Image Too Large', 'Image exceeds 5 MB limit.', 'error');
+  const currentCount = clientState.sources.images.length;
+  if (currentCount + files.length > 3) {
+    showToast('Limit Reached', 'Maximum 3 supporting images allowed.', 'error');
     return;
   }
 
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const base64Data = e.target.result;
-    try {
-      const res = await fetch('/api/upload/photo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ base64Data, filename: file.name })
-      });
-      const data = await res.json();
-      if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Invalid photo format');
+  files.forEach(file => {
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Image Too Large', `${file.name} exceeds 5 MB.`, 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64Data = e.target.result;
+      try {
+        const res = await fetch('/api/upload/photo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ base64Data, filename: file.name })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Invalid image signature');
+
+        clientState.sources.images.push({
+          url: data.dataUrl,
+          filename: file.name,
+          caption: `Specimen #${clientState.sources.images.length + 1}`
+        });
+        saveDraftToStorage();
+        renderImageThumbnails();
+        showToast('Image Added', `${file.name} uploaded successfully.`, 'success');
+      } catch (err) {
+        showStructuredError(err);
       }
-
-      uploadedPhotoDataUrl = data.dataUrl;
-      const previewImg = document.getElementById('photoPreviewImg');
-      const previewContainer = document.getElementById('photoPreviewContainer');
-      const placeholder = document.getElementById('photoPlaceholder');
-      const statusEl = document.getElementById('photoUploadStatus');
-
-      if (previewImg) previewImg.src = data.dataUrl;
-      if (previewContainer) previewContainer.style.display = 'block';
-      if (placeholder) placeholder.style.display = 'none';
-      if (statusEl) statusEl.textContent = `✅ Headshot ready (${file.name})`;
-
-      showToast('Photo Added', 'Profile photo uploaded. It will be incorporated into your design.', 'success');
-    } catch (err) {
-      showToast('Upload Notice', err.message, 'error');
-    }
-  };
-  reader.readAsDataURL(file);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
+function renderImageThumbnails() {
+  const container = document.getElementById('imageThumbnailsContainer');
+  if (!container) return;
+
+  if (clientState.sources.images.length === 0) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  container.style.display = 'grid';
+  container.innerHTML = clientState.sources.images.map((img, idx) => `
+    <div class="image-thumb-card">
+      <img src="${img.url}" alt="${img.caption}">
+      <button type="button" class="image-remove-btn" onclick="removeImageByIndex(${idx})" title="Remove image">✕</button>
+    </div>
+  `).join('');
+}
+
+function removeImageByIndex(index) {
+  clientState.sources.images.splice(index, 1);
+  saveDraftToStorage();
+  renderImageThumbnails();
+}
+
+// D. Guided Questions Handler
 async function handleQuestionnaireSubmit(event) {
-  event.preventDefault();
+  if (event) event.preventDefault();
   const name = document.getElementById('qInputName')?.value?.trim();
   const role = document.getElementById('qInputRole')?.value?.trim();
   const project = document.getElementById('qInputProject')?.value?.trim();
   const skills = document.getElementById('qInputSkills')?.value?.trim();
+  const tagline = document.getElementById('qInputTagline')?.value?.trim();
 
   if (!name || !role || !project || !skills) {
-    showToast('Missing Fields', 'Please complete all required fields.', 'error');
+    showToast('Missing Fields', 'Please fill out all required questions.', 'error');
     return;
   }
 
-  const questionnaireData = {
+  clientState.sources.questions = {
     name,
     role,
-    skills: skills.split(',').map(s => s.trim()),
+    tagline,
+    skills: skills.split(',').map(s => s.trim()).filter(Boolean),
     projects: [
       {
-        name: 'Flagship Core Project',
+        name: 'Flagship Project',
         desc: project,
         tech: skills.split(',').slice(0, 3).join(' • ')
       }
     ]
   };
+  saveDraftToStorage();
 
-  openGithubProgressModal();
-  setGithubStatus('Synthesizing Answers', 'Formulating bespoke design intelligence and storytelling grammar...');
-  setGithubStep(1, 'completed');
-  setGithubStep(2, 'active');
+  await startGenerationPipeline({
+    questionnaireData: clientState.sources.questions,
+    imagesData: clientState.sources.images
+  });
+}
 
-  try {
-    const res = await fetch('/api/generate/unified', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        questionnaireData,
-        photoData: uploadedPhotoDataUrl ? { url: uploadedPhotoDataUrl } : null
-      })
-    });
+// E. Combined Multi-Source Generation
+async function generateFromCombinedSources() {
+  const hasAny = clientState.sources.github || clientState.sources.resume || clientState.sources.questions || clientState.sources.images.length > 0;
+  if (!hasAny) {
+    showToast('Input Required', 'Please connect at least one source (GitHub, Resume, Questions, or Images).', 'info');
+    return;
+  }
 
-    const result = await res.json();
-    if (!res.ok || !result.success) {
-      throw new Error(result.error || 'Failed to synthesize portfolio from questionnaire.');
+  const payload = {
+    githubData: clientState.sources.github ? { username: clientState.sources.github.username } : null,
+    resumeData: clientState.sources.resume ? clientState.sources.resume.resumeData : null,
+    questionnaireData: clientState.sources.questions || null,
+    imagesData: clientState.sources.images,
+    photoData: clientState.sources.images[0] ? { url: clientState.sources.images[0].url } : null
+  };
+
+  await startGenerationPipeline(payload);
+}
+
+// ==========================================================================
+// 3. Truthful Progress & Generation Pipeline Execution
+// ==========================================================================
+function openProgressModal() {
+  const modal = document.getElementById('githubProgressModal');
+  const errCard = document.getElementById('githubErrorCard');
+  const box = document.getElementById('githubProgressBox');
+  const timerBadge = document.getElementById('generationTimerBadge');
+
+  if (modal) modal.style.display = 'flex';
+  if (errCard) errCard.style.display = 'none';
+  if (box) box.style.display = 'flex';
+
+  clientState.startTime = performance.now();
+  if (clientState.timerInterval) clearInterval(clientState.timerInterval);
+  clientState.timerInterval = setInterval(() => {
+    const elapsed = ((performance.now() - clientState.startTime) / 1000).toFixed(1);
+    if (timerBadge) timerBadge.textContent = `Elapsed: ${elapsed}s`;
+  }, 100);
+
+  for (let i = 1; i <= 7; i++) {
+    const stageEl = document.getElementById(`stage-${i}`);
+    if (stageEl) {
+      stageEl.classList.remove('active', 'completed');
+      const icon = stageEl.querySelector('.stage-icon');
+      if (icon) icon.textContent = '';
     }
-
-    lastGithubResult = result;
-    currentSiteId = result.siteId;
-    currentPreviewUrl = result.previewUrl;
-
-    savePortfolioSession({
-      siteId: result.siteId,
-      previewUrl: result.previewUrl,
-      profileData: result.profileData,
-      username: name,
-      lifecycleState: 'READY',
-      timestamp: Date.now()
-    });
-
-    for (let i = 1; i <= 8; i++) setGithubStep(i, 'completed');
-    populateGithubResult(result);
-    showToast('Portfolio Synthesized!', `Created portfolio for ${name}`, 'success');
-  } catch (err) {
-    showGithubErrorCard('Generation Interrupted', err.message);
   }
 }
 
-// Expose all public handlers to window
+function updateProgressStage(stageNum, status = 'active') {
+  for (let i = 1; i < stageNum; i++) {
+    const prev = document.getElementById(`stage-${i}`);
+    if (prev) {
+      prev.classList.remove('active');
+      prev.classList.add('completed');
+      const icon = prev.querySelector('.stage-icon');
+      if (icon) icon.textContent = '✓';
+    }
+  }
+
+  const current = document.getElementById(`stage-${stageNum}`);
+  if (current) {
+    current.classList.add('active');
+    const icon = current.querySelector('.stage-icon');
+    if (icon) icon.textContent = status === 'completed' ? '✓' : '⏳';
+    if (status === 'completed') current.classList.add('completed');
+  }
+}
+
+function closeGithubModal() {
+  if (clientState.timerInterval) clearInterval(clientState.timerInterval);
+  const modal = document.getElementById('githubProgressModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function startGenerationPipeline(payload) {
+  clientState.lifecycle = LIFECYCLE_STATES.GENERATING;
+  openProgressModal();
+  updateProgressStage(1, 'active');
+
+  try {
+    updateProgressStage(2, 'active');
+    updateProgressStage(3, 'active');
+
+    const res = await fetch('/api/generate/unified', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    updateProgressStage(4, 'active');
+    updateProgressStage(5, 'active');
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw data;
+    }
+
+    updateProgressStage(6, 'active');
+    updateProgressStage(7, 'completed');
+
+    if (clientState.timerInterval) clearInterval(clientState.timerInterval);
+
+    // Populate Studio & Transition
+    clientState.lifecycle = LIFECYCLE_STATES.READY;
+    clientState.siteId = data.siteId;
+    clientState.previewUrl = data.previewUrl;
+    clientState.profileData = data.profileData;
+    clientState.designBlueprint = data.designBlueprint;
+
+    saveSessionToStorage();
+    setTimeout(() => {
+      closeGithubModal();
+      openStudioView(data);
+      showToast('Portfolio Live!', 'Your bespoke portfolio has been synthesized.', 'success');
+    }, 400);
+  } catch (err) {
+    if (clientState.timerInterval) clearInterval(clientState.timerInterval);
+    clientState.lifecycle = LIFECYCLE_STATES.FAILED;
+    showStructuredError(err);
+  }
+}
+
+// ==========================================================================
+// 4. Studio Fullscreen Canvas & Preview Controller
+// ==========================================================================
+function openStudioView(data = null) {
+  const landing = document.getElementById('heroLanding');
+  const studio = document.getElementById('studioWorkspace');
+  const iframe = document.getElementById('portfolioIframe');
+  const nameLabel = document.getElementById('studioPortfolioName');
+  const openLink = document.getElementById('btnOpenNewTab');
+
+  if (landing) landing.style.display = 'none';
+  if (studio) studio.style.display = 'flex';
+
+  const previewUrl = data?.previewUrl || clientState.previewUrl;
+  const name = data?.profileData?.name || clientState.profileData?.name || 'Your Portfolio';
+
+  if (nameLabel) nameLabel.textContent = `${name}'s Portfolio`;
+  if (iframe && previewUrl) {
+    iframe.src = previewUrl;
+  }
+  if (openLink && previewUrl) {
+    openLink.href = previewUrl;
+    openLink.style.display = 'inline-flex';
+  }
+}
+
+function closeStudioView() {
+  const landing = document.getElementById('heroLanding');
+  const studio = document.getElementById('studioWorkspace');
+  if (studio) studio.style.display = 'none';
+  if (landing) landing.style.display = 'block';
+}
+
+function setDeviceMode(mode, btnEl) {
+  const wrapper = document.getElementById('previewFrameWrapper');
+  if (!wrapper) return;
+
+  wrapper.className = `preview-frame-wrapper ${mode}-mode`;
+  document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+}
+
+async function regenerateStudioDesign() {
+  if (!clientState.profileData) {
+    showToast('No Active Data', 'Please configure your profile sources first.', 'error');
+    return;
+  }
+  await startGenerationPipeline({
+    questionnaireData: clientState.profileData,
+    photoData: clientState.profileData.photoUrl ? { url: clientState.profileData.photoUrl } : null,
+    imagesData: clientState.profileData.images || []
+  });
+}
+
+// ==========================================================================
+// 5. Humanized Customizer Controller
+// ==========================================================================
+function openCustomizerModal() {
+  if (!clientState.siteId) {
+    showToast('No Site Active', 'Please generate a portfolio first.', 'info');
+    return;
+  }
+  const drawer = document.getElementById('customizerDrawer');
+  if (drawer) drawer.style.display = 'flex';
+  fetchCustomizerSections();
+}
+
+function closeCustomizerModal() {
+  const drawer = document.getElementById('customizerDrawer');
+  if (drawer) drawer.style.display = 'none';
+}
+
+async function applyHumanToken(category, value, btnEl) {
+  if (!clientState.siteId) return;
+
+  const parent = btnEl?.closest('.pill-options-group');
+  if (parent) {
+    parent.querySelectorAll('.pill-opt-btn').forEach(b => b.classList.remove('active'));
+    btnEl.classList.add('active');
+  }
+
+  const tokenMap = {
+    spacing: { compact: 'compact', balanced: 'balanced', spacious: 'spacious' },
+    corners: { sharp: 'sharp', soft: 'soft', rounded: 'rounded' },
+    typography: { quiet: 'quiet', editorial: 'editorial', bold: 'bold' },
+    motion: { still: 'still', subtle: 'subtle', expressive: 'expressive' }
+  };
+
+  const chosen = tokenMap[category]?.[value] || value;
+  try {
+    const res = await fetch(`/api/portfolio/${clientState.siteId}/customizer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'modify_token',
+        token: `--human-${category}`,
+        value: chosen
+      })
+    });
+    const data = await res.json();
+    if (data.success && data.previewUrl) {
+      refreshPreviewIframe();
+    }
+  } catch (e) {
+    console.warn('Customizer token update notice:', e);
+  }
+}
+
+async function fetchCustomizerSections() {
+  if (!clientState.siteId) return;
+  const container = document.getElementById('customizerSectionsList');
+  if (!container) return;
+
+  try {
+    const res = await fetch(`/api/portfolio/${clientState.siteId}/customizer/state`);
+    const data = await res.json();
+    if (data.success && data.state?.sections) {
+      container.innerHTML = data.state.sections.map((sec, idx) => `
+        <div class="customizer-section-item">
+          <div>
+            <strong>${sec.title || sec.id}</strong>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="btn-ghost-mini" onclick="handleMoveSection('${sec.id}', 'up')" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" class="btn-ghost-mini" onclick="handleMoveSection('${sec.id}', 'down')" ${idx === data.state.sections.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" class="btn-ghost-mini" onclick="handleToggleSectionVisibility('${sec.id}')">${sec.visible !== false ? '👁️' : '🚫'}</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch (e) {
+    console.warn('Section fetch notice:', e);
+  }
+}
+
+async function handleMoveSection(sectionId, direction) {
+  if (!clientState.siteId) return;
+  try {
+    await fetch(`/api/portfolio/${clientState.siteId}/customizer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reorder_section', sectionId, direction })
+    });
+    fetchCustomizerSections();
+    refreshPreviewIframe();
+  } catch (e) {}
+}
+
+async function handleToggleSectionVisibility(sectionId) {
+  if (!clientState.siteId) return;
+  try {
+    await fetch(`/api/portfolio/${clientState.siteId}/customizer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'toggle_visibility', sectionId })
+    });
+    fetchCustomizerSections();
+    refreshPreviewIframe();
+  } catch (e) {}
+}
+
+async function handleCustomizerAction(action) {
+  if (!clientState.siteId) return;
+  try {
+    await fetch(`/api/portfolio/${clientState.siteId}/customizer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action })
+    });
+    fetchCustomizerSections();
+    refreshPreviewIframe();
+    showToast('Customizer', `Action ${action} completed.`, 'info');
+  } catch (e) {}
+}
+
+function refreshPreviewIframe() {
+  const iframe = document.getElementById('portfolioIframe');
+  if (iframe && clientState.previewUrl) {
+    const url = new URL(clientState.previewUrl, window.location.origin);
+    url.searchParams.set('t', Date.now().toString());
+    iframe.src = url.toString();
+  }
+}
+
+// ==========================================================================
+// 6. Static ZIP Export & Samples
+// ==========================================================================
+function openExportModal() {
+  if (!clientState.siteId) {
+    showToast('No Site Active', 'Please generate your portfolio first.', 'info');
+    return;
+  }
+  const modal = document.getElementById('exportModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeExportModal() {
+  const modal = document.getElementById('exportModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function downloadStaticZip() {
+  if (!clientState.siteId) return;
+  window.location.href = `/api/portfolio/${clientState.siteId}/export`;
+  showToast('Packaging ZIP', 'Your offline website is downloading.', 'success');
+  closeExportModal();
+}
+
+function openSamplesModal() {
+  const modal = document.getElementById('samplesModal');
+  if (modal) modal.style.display = 'flex';
+  loadSamplesList();
+}
+
+function closeSamplesModal() {
+  const modal = document.getElementById('samplesModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function loadSamplesList() {
+  const grid = document.getElementById('samplesGalleryGrid');
+  if (!grid) return;
+
+  try {
+    const res = await fetch('/api/demo/samples');
+    const data = await res.json();
+    if (data.success && data.samples) {
+      grid.innerHTML = data.samples.map(s => `
+        <div class="sample-card">
+          <div>
+            <div style="font-size:0.75rem; font-weight:800; color:var(--product-accent); text-transform:uppercase; margin-bottom:4px;">${s.badge}</div>
+            <h4 style="font-family:var(--font-editorial); font-size:1.15rem; margin-bottom:4px;">${s.name}</h4>
+            <div style="font-size:0.82rem; color:var(--product-text-muted); margin-bottom:8px;">${s.role}</div>
+            <p style="font-size:0.84rem; line-height:1.5; color:var(--product-text);">${s.description}</p>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:8px;">
+            <a href="${s.previewUrl}" target="_blank" class="btn-subtle" style="flex:1; text-align:center; text-decoration:none; padding:6px 10px; font-size:0.8rem;">Preview ↗</a>
+            <button type="button" class="btn-primary-mini" style="flex:1;" onclick="loadSampleProfile('${s.id}')">Use Profile</button>
+          </div>
+        </div>
+      `).join('');
+    }
+  } catch (e) {
+    grid.innerHTML = '<p>Unable to load samples at this moment.</p>';
+  }
+}
+
+function loadSampleProfile(sampleId) {
+  closeSamplesModal();
+  switchInputTab('questions');
+  document.getElementById('qInputName').value = 'Elena Rostova';
+  document.getElementById('qInputRole').value = 'Staff Systems Architect';
+  document.getElementById('qInputProject').value = 'Ultra-low latency replicated consensus engine with eBPF telemetry.';
+  document.getElementById('qInputSkills').value = 'Rust, Go, eBPF, Linux, Kubernetes';
+  showToast('Profile Loaded', 'Sample profile data loaded into guided questions.', 'info');
+}
+
+// ==========================================================================
+// 7. Structured Error Recovery Modal Controller
+// ==========================================================================
+function showStructuredError(err) {
+  const errBox = document.getElementById('githubErrorCard');
+  const progressBox = document.getElementById('githubProgressBox');
+  const titleEl = document.getElementById('errorWhatHappenedTitle');
+  const whyEl = document.getElementById('errorWhyText');
+  const adviceEl = document.getElementById('errorWhatYouCanDoBox');
+  const btnPrimary = document.getElementById('btnErrorPrimaryAction');
+  const btnSecondary = document.getElementById('btnErrorSecondaryAction');
+
+  if (progressBox) progressBox.style.display = 'none';
+  if (errBox) errBox.style.display = 'block';
+
+  const recovery = err?.recovery || {
+    whatHappened: err?.whatHappened || err?.error || err?.message || 'Unable to complete request.',
+    why: err?.why || 'An unexpected condition occurred during synthesis.',
+    whatYouCanDo: err?.whatYouCanDo || 'Your data is safe. Click Try Again to retry.',
+    primaryAction: 'Try Again',
+    secondaryAction: 'Continue with Resume'
+  };
+
+  if (titleEl) titleEl.textContent = recovery.whatHappened;
+  if (whyEl) whyEl.textContent = recovery.why;
+  if (adviceEl) adviceEl.textContent = recovery.whatYouCanDo;
+  if (btnPrimary) btnPrimary.textContent = recovery.primaryAction || 'Try Again';
+  if (btnSecondary) btnSecondary.textContent = recovery.secondaryAction || 'Continue with Resume';
+}
+
+function handleErrorPrimaryAction() {
+  closeGithubModal();
+  if (clientState.activeTab === 'github') {
+    handleGithubGenerate();
+  } else if (clientState.activeTab === 'resume') {
+    generateFromResume();
+  } else if (clientState.activeTab === 'questions') {
+    handleQuestionnaireSubmit();
+  } else {
+    generateFromCombinedSources();
+  }
+}
+
+function handleErrorSecondaryAction() {
+  closeGithubModal();
+  switchInputTab('resume');
+}
+
+// ==========================================================================
+// 8. Session & Draft Persistence
+// ==========================================================================
+function saveDraftToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify({
+      sources: clientState.sources,
+      activeTab: clientState.activeTab,
+      timestamp: Date.now()
+    }));
+  } catch (e) {}
+}
+
+function saveSessionToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY_SESSION, JSON.stringify({
+      siteId: clientState.siteId,
+      previewUrl: clientState.previewUrl,
+      profileData: clientState.profileData,
+      designBlueprint: clientState.designBlueprint,
+      sources: clientState.sources,
+      timestamp: Date.now()
+    }));
+    renderResumedBanner();
+  } catch (e) {}
+}
+
+function restorePersistedDraft() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_DRAFT);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed.sources) {
+      clientState.sources = parsed.sources;
+      if (parsed.sources.github?.username) {
+        const ghInput = document.getElementById('githubUsernameInput');
+        if (ghInput) ghInput.value = parsed.sources.github.username;
+      }
+      renderImageThumbnails();
+      updateCombinedSummaryChecklist();
+    }
+  } catch (e) {}
+}
+
+function restorePersistedSession() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_SESSION);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed.siteId && parsed.previewUrl) {
+      clientState.siteId = parsed.siteId;
+      clientState.previewUrl = parsed.previewUrl;
+      clientState.profileData = parsed.profileData;
+      clientState.designBlueprint = parsed.designBlueprint;
+      renderResumedBanner();
+    }
+  } catch (e) {}
+}
+
+function renderResumedBanner() {
+  const banner = document.getElementById('resumedSessionBanner');
+  const userSpan = document.getElementById('resumedUsername');
+  if (!banner || !clientState.siteId) return;
+
+  if (userSpan) {
+    userSpan.textContent = clientState.profileData?.name || `@${clientState.sources.github?.username || 'developer'}`;
+  }
+  banner.style.display = 'flex';
+}
+
+function reopenPersistedPortfolio() {
+  if (!clientState.siteId) return;
+  openStudioView();
+}
+
+function clearPersistedPortfolio() {
+  localStorage.removeItem(STORAGE_KEY_SESSION);
+  localStorage.removeItem(STORAGE_KEY_DRAFT);
+  clientState.siteId = null;
+  clientState.previewUrl = null;
+  const banner = document.getElementById('resumedSessionBanner');
+  if (banner) banner.style.display = 'none';
+  showToast('Session Cleared', 'Active portfolio session removed.', 'info');
+}
+
+// ==========================================================================
+// 9. Toast Notification System
+// ==========================================================================
+function showToast(title, message, type = 'info') {
+  const container = document.getElementById('toastContainer');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = 'toast-msg';
+  toast.innerHTML = `<strong>${title}</strong>: ${message}`;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.3s ease';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
+// ==========================================================================
+// 10. Global Window Exports & Init
+// ==========================================================================
+window.switchInputTab = switchInputTab;
+window.handleGithubGenerate = handleGithubGenerate;
+window.handleResumeFileSelected = handleResumeFileSelected;
+window.removeUploadedResume = removeUploadedResume;
+window.generateFromResume = generateFromResume;
+window.handleImagesSelected = handleImagesSelected;
+window.removeImageByIndex = removeImageByIndex;
+window.handleQuestionnaireSubmit = handleQuestionnaireSubmit;
+window.generateFromCombinedSources = generateFromCombinedSources;
 window.openStudioView = openStudioView;
 window.closeStudioView = closeStudioView;
-window.setBranch = setBranch;
-window.addProjectCard = addProjectCard;
-window.toggleSectionDropdown = toggleSectionDropdown;
-window.addCustomSection = addCustomSection;
 window.setDeviceMode = setDeviceMode;
 window.regenerateStudioDesign = regenerateStudioDesign;
-window.handleUnlockDomain = handleUnlockDomain;
-window.closeGithubModal = closeGithubModal;
-window.copyGithubPreviewLink = copyGithubPreviewLink;
-window.regenerateGithubDesign = regenerateGithubDesign;
-window.editGithubInStudio = editGithubInStudio;
-window.handleGithubGenerate = handleGithubGenerate;
-window.handleSignupSubmit = handleSignupSubmit;
 window.openCustomizerModal = openCustomizerModal;
 window.closeCustomizerModal = closeCustomizerModal;
-window.handleCustomizerAction = handleCustomizerAction;
+window.applyHumanToken = applyHumanToken;
 window.handleMoveSection = handleMoveSection;
 window.handleToggleSectionVisibility = handleToggleSectionVisibility;
-window.handleTokenChange = handleTokenChange;
+window.handleCustomizerAction = handleCustomizerAction;
 window.openExportModal = openExportModal;
 window.closeExportModal = closeExportModal;
+window.downloadStaticZip = downloadStaticZip;
 window.openSamplesModal = openSamplesModal;
 window.closeSamplesModal = closeSamplesModal;
-window.loadSampleIntoStudio = loadSampleIntoStudio;
-window.savePortfolioSession = savePortfolioSession;
-window.getPersistedPortfolioSession = getPersistedPortfolioSession;
-window.clearPersistedPortfolio = clearPersistedPortfolio;
+window.loadSampleProfile = loadSampleProfile;
+window.closeGithubModal = closeGithubModal;
+window.handleErrorPrimaryAction = handleErrorPrimaryAction;
+window.handleErrorSecondaryAction = handleErrorSecondaryAction;
 window.reopenPersistedPortfolio = reopenPersistedPortfolio;
-window.switchInputTab = switchInputTab;
-window.handleResumeFileSelected = handleResumeFileSelected;
-window.generateFromResume = generateFromResume;
-window.handlePhotoFileSelected = handlePhotoFileSelected;
-window.handleQuestionnaireSubmit = handleQuestionnaireSubmit;
+window.clearPersistedPortfolio = clearPersistedPortfolio;
 
-// Deep-Link Mode Switcher & Session Hydration on Page Load
+// Hydrate on page load
 window.addEventListener('DOMContentLoaded', () => {
-  const params = new URLSearchParams(window.location.search);
-  const mode = params.get('mode');
-
-  // Hydrate persisted session if available
-  const savedSession = getPersistedPortfolioSession();
-  if (savedSession && savedSession.siteId) {
-    lastGithubResult = savedSession;
-    currentSiteId = savedSession.siteId;
-    currentPreviewUrl = savedSession.previewUrl;
-    renderResumedSessionBanner(savedSession);
-  }
-
-  if (mode === 'builder' || mode === 'studio') {
-    openStudioView();
-  } else if (mode === 'samples' || mode === 'examples') {
-    openSamplesModal();
-  } else if (mode === 'github') {
-    switchInputTab('github');
-  } else if (mode === 'resume') {
-    switchInputTab('resume');
-  } else if (mode === 'questions') {
-    switchInputTab('questions');
-  }
+  restorePersistedDraft();
+  restorePersistedSession();
 });
-
-
-
-

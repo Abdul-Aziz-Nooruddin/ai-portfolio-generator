@@ -41,6 +41,7 @@ const { UploadValidator } = require('./services/upload-validator');
 const { AdaptiveQuestionnaire } = require('./services/adaptive-questionnaire');
 const { UnifiedProfileNormalizer } = require('./services/unified-profile-normalizer');
 const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
+const { ErrorRecoveryService } = require('./services/error-recovery-service');
 
 const app = express();
 const securityService = new SecurityService();
@@ -706,7 +707,49 @@ app.post('/api/upload/photo', (req, res) => {
     });
   } catch (err) {
     console.error('[API] /api/upload/photo error:', err);
-    res.status(500).json({ error: 'Failed to process photo upload.' });
+    const recovery = ErrorRecoveryService.mapError(err, 'image');
+    res.status(500).json({ error: recovery.whatHappened, recovery });
+  }
+});
+
+app.post('/api/upload/images', (req, res) => {
+  try {
+    const { images = [] } = req.body || {};
+    if (!Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({ error: 'No images provided.' });
+    }
+    if (images.length > 3) {
+      return res.status(400).json({ error: 'Maximum 3 images allowed.' });
+    }
+
+    const validatedImages = [];
+    for (let i = 0; i < images.length; i++) {
+      const item = images[i];
+      const rawBase64 = typeof item === 'string' ? item : item.base64Data || item.url || '';
+      const cleanBase64 = rawBase64.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
+      const buffer = Buffer.from(cleanBase64, 'base64');
+      const validation = UploadValidator.validateImage(buffer, { originalName: item.filename || `image-${i + 1}` });
+
+      if (!validation.valid) {
+        return res.status(400).json({ error: `Image #${i + 1} is invalid: ${validation.error}` });
+      }
+
+      validatedImages.push({
+        url: `data:image/${validation.format};base64,${cleanBase64}`,
+        format: validation.format,
+        caption: item.caption || `Artifact Specimen #${i + 1}`
+      });
+    }
+
+    res.json({
+      success: true,
+      count: validatedImages.length,
+      images: validatedImages
+    });
+  } catch (err) {
+    console.error('[API] /api/upload/images error:', err);
+    const recovery = ErrorRecoveryService.mapError(err, 'image');
+    res.status(500).json({ error: recovery.whatHappened, recovery });
   }
 });
 

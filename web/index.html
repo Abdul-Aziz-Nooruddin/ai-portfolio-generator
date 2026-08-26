@@ -3,94 +3,95 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Portfolio Studio — Build an Award-Winning Portfolio in 60 Seconds</title>
-  <meta name="description" content="Generate an award-winning developer, creator, or student portfolio website in 60 seconds with AI design intelligence and instant custom domains.">
+  <title>AI Portfolio Studio — Turn Your Work Into a Portfolio Worth Remembering</title>
+  <meta name="description" content="Turn your GitHub repositories, resume, images, or guided answers into a bespoke, award-winning portfolio in seconds.">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   
-  <!-- Canvas Confetti & Razorpay Checkout -->
+  <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
   <link rel="stylesheet" href="/style.css">
   <script src="/sidebar.js"></script>
 </head>
 <body>
-  <!-- Ambient Aurora Glow & Grid -->
-  <div class="aurora-bg" aria-hidden="true"></div>
-  <div class="grid-mesh-layer" aria-hidden="true"></div>
-  <canvas id="studioInk" aria-hidden="true"></canvas>
+  <!-- Ambient Warm Texture Layer -->
+  <div class="product-mesh-layer" aria-hidden="true"></div>
 
   <div class="app-shell-layout">
     <!-- Universal Sidebar Mount -->
     <div id="sidebarMount"></div>
 
-    <!-- Main Content Panel -->
-    <div class="app-main-content" style="flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto;">
-      <!-- Hero Section -->
+    <!-- Main Content Canvas -->
+    <div class="app-main-content">
+      <!-- 1. Hero Landing View -->
       <section id="heroLanding" class="hero-landing">
-        <div class="hero-badge">
-          <span class="pulse-indicator"></span>
-          <span>AI-Powered Portfolio Studio</span>
-        </div>
-        <h1 class="hero-headline">Turn your GitHub into a portfolio designed around <strong>your actual work</strong></h1>
-        <p class="hero-subtext">No cookie-cutter templates or generic cards. We analyze your real repositories, identify your technical strengths, and craft a bespoke portfolio in seconds.</p>
-
-        <!-- Resumed Session Notice (Dynamically shown if previous generation is stored in localStorage) -->
-        <div id="resumedSessionBanner" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px 18px; margin: 0 auto 20px; max-width: 640px; align-items: center; justify-content: space-between; gap: 12px;">
-          <div style="font-size: 0.85rem; color: var(--text);">
-            <span>✨ <strong>Active Portfolio Found</strong>: <span id="resumedUsername">@developer</span></span>
+        <div class="hero-header-block">
+          <div class="hero-badge-pill">
+            <span class="pulse-dot"></span>
+            <span>AI Portfolio Studio</span>
           </div>
-          <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn-mode-cta primary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="reopenPersistedPortfolio()">
+          <h1 class="hero-headline">Turn your work into a portfolio <em>worth remembering</em></h1>
+          <p class="hero-subtext">Turn your GitHub into a portfolio designed around your actual work, or start with your resume, images, or quick questions. We synthesize your real achievements into a bespoke, high-craft web portfolio.</p>
+        </div>
+
+        <!-- Resumed Session Notice -->
+        <div id="resumedSessionBanner" style="display: none;" class="resumed-session-card">
+          <div class="resumed-text">
+            <span>✨ <strong>Active Portfolio Saved</strong>: <span id="resumedUsername">@developer</span></span>
+          </div>
+          <div class="resumed-actions">
+            <button type="button" class="btn-primary-mini" onclick="reopenPersistedPortfolio()">
               <span>👁️ View Portfolio</span>
             </button>
-            <button type="button" class="btn-mode-cta" style="padding: 6px 10px; font-size: 0.78rem;" title="Start New Session" onclick="clearPersistedPortfolio()">
+            <button type="button" class="btn-ghost-mini" title="Start New Session" onclick="clearPersistedPortfolio()">
               <span>✕</span>
             </button>
           </div>
         </div>
 
-        <!-- Multi-Input Navigation Tabs (Phase 31) -->
-        <div class="input-tabs-nav" style="display: flex; justify-content: center; gap: 8px; margin: 0 auto 20px; max-width: 680px; flex-wrap: wrap;">
-          <button type="button" class="input-tab-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
-            <span>⚡ GitHub Sync</span>
-          </button>
-          <button type="button" class="input-tab-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
-            <span>📄 Upload Resume (PDF)</span>
-          </button>
-          <button type="button" class="input-tab-btn" id="tabBtnPhoto" onclick="switchInputTab('photo')">
-            <span>📷 Profile Photo</span>
-          </button>
-          <button type="button" class="input-tab-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
-            <span>💬 Answer Questions</span>
-          </button>
-        </div>
+        <!-- "How do you want to build your portfolio?" Multi-Input Container -->
+        <div class="multi-input-container">
+          <div class="input-selector-bar">
+            <button type="button" class="input-nav-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
+              <span class="tab-icon">⚡</span>
+              <span>GitHub</span>
+            </button>
+            <button type="button" class="input-nav-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
+              <span class="tab-icon">📄</span>
+              <span>Resume (PDF)</span>
+            </button>
+            <button type="button" class="input-nav-btn" id="tabBtnImages" onclick="switchInputTab('images')">
+              <span class="tab-icon">🖼️</span>
+              <span>Images</span>
+            </button>
+            <button type="button" class="input-nav-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
+              <span class="tab-icon">💬</span>
+              <span>Questions</span>
+            </button>
+            <button type="button" class="input-nav-btn" id="tabBtnCombined" onclick="switchInputTab('combined')">
+              <span class="tab-icon">✨</span>
+              <span>Combined</span>
+            </button>
+          </div>
 
-        <!-- Tab 1: GitHub Input Panel -->
-        <div id="tabPanelGithub" class="input-tab-panel" style="display: block;">
-          <div class="mode-card github-mode-card" style="max-width: 640px; margin: 0 auto;">
-            <div class="mode-badge-pill">RECOMMENDED</div>
-            <div class="mode-card-content">
-              <div class="mode-icon github-mode-icon">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+          <!-- Tab A: GitHub Input -->
+          <div id="tabPanelGithub" class="input-panel active">
+            <div class="input-panel-card">
+              <div class="panel-card-head">
+                <h3>Generate with GitHub</h3>
+                <p>Turn your GitHub into a portfolio. We analyze your public repositories, languages, documentation, and technical depth.</p>
               </div>
-              <h3>Generate with GitHub</h3>
-              <p>Turn your repositories, starred work, and languages into a live, interactive portfolio.</p>
-            </div>
-            
-            <div class="mode-card-actions">
-              <form id="githubGenerateForm" class="github-mini-form" onsubmit="handleGithubGenerate(event)">
-                <div class="github-mini-input-wrapper">
-                  <span class="github-mini-prefix">github.com/</span>
-                  <input type="text" id="githubUsernameInput" placeholder="username or URL" autocomplete="off" required>
+              <form id="githubGenerateForm" class="github-flow-form" onsubmit="handleGithubGenerate(event)">
+                <div class="input-prefix-box">
+                  <span class="prefix-label">github.com/</span>
+                  <input type="text" id="githubUsernameInput" placeholder="username or profile URL" autocomplete="off" required>
                 </div>
-                <div class="theme-select-wrapper" style="margin: 8px 0 10px;">
-                  <select id="githubThemeSelect" style="width: 100%; background: #ffffff; border: 1px solid rgba(28,25,23,0.14); color: #1c1917; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
-                    <option value="auto">✨ Auto Art Direction (Recommended)</option>
+                <div class="theme-select-box" style="margin-top: 10px;">
+                  <select id="githubThemeSelect" class="form-select-control">
+                    <option value="auto">✨ Automatic Art Direction (Recommended)</option>
                     <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
                     <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
                     <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
@@ -100,104 +101,150 @@
                     <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
                   </select>
                 </div>
-                <button type="submit" id="btnGithubSubmit" class="btn-mode-cta github-cta hvr-grow">
+                <button type="submit" id="btnGithubSubmit" class="btn-cta-main">
                   <span>⚡ Generate My Portfolio</span>
                 </button>
               </form>
-              <div class="drop-status-text">Accepts username or URL • Instant Free Preview</div>
             </div>
           </div>
-        </div>
 
-        <!-- Tab 2: Resume PDF Upload Panel -->
-        <div id="tabPanelResume" class="input-tab-panel" style="display: none;">
-          <div class="mode-card" style="max-width: 640px; margin: 0 auto; text-align: center;">
-            <div class="mode-icon">📄</div>
-            <h3>Upload Your Resume (PDF)</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">We extract your experience, skills, and projects automatically. Max 10 MB, up to 5 pages.</p>
-            
-            <div id="resumeDropZone" class="upload-drop-box" onclick="document.getElementById('pdfFileInput').click()">
-              <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
-              <div style="font-size: 2rem; margin-bottom: 8px;">📥</div>
-              <div style="font-weight: 700; font-size: 0.95rem;">Click or Drag &amp; Drop PDF Resume</div>
-              <div id="pdfUploadStatus" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">PDF format only • Strictly validated</div>
-            </div>
-
-            <button type="button" id="btnGenerateResume" class="btn-generate-main" style="width: 100%; margin-top: 16px; justify-content: center; display: none;" onclick="generateFromResume()">
-              <span>⚡ Generate Portfolio from Resume</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Tab 3: Profile Photo Upload Panel -->
-        <div id="tabPanelPhoto" class="input-tab-panel" style="display: none;">
-          <div class="mode-card" style="max-width: 640px; margin: 0 auto; text-align: center;">
-            <div class="mode-icon">📷</div>
-            <h3>Add Your Profile Photo</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">We adapt your photo into an editorial plate or architectural specimen. Max 5 MB (JPEG, PNG, WebP).</p>
-            
-            <div id="photoDropZone" class="upload-drop-box" onclick="document.getElementById('photoFileInput').click()">
-              <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handlePhotoFileSelected(event)">
-              <div id="photoPreviewContainer" style="display: none; margin-bottom: 10px;">
-                <img id="photoPreviewImg" src="" alt="Profile Preview" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; border: 2px solid var(--primary);">
+          <!-- Tab B: Resume PDF Input -->
+          <div id="tabPanelResume" class="input-panel">
+            <div class="input-panel-card text-center">
+              <div class="panel-card-head">
+                <h3>Upload your CV / Resume</h3>
+                <p>Extract your career milestones, skills, and projects automatically. (PDF only, max 10 MB, up to 5 pages)</p>
               </div>
-              <div id="photoPlaceholder">
-                <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
-                <div style="font-weight: 700; font-size: 0.95rem;">Click to Upload Headshot or Photo</div>
+              <div id="resumeDropZone" class="file-drop-target" onclick="document.getElementById('pdfFileInput').click()">
+                <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
+                <div class="drop-icon">📥</div>
+                <div class="drop-title">Drop PDF resume here or click to browse</div>
+                <div id="pdfUploadStatus" class="drop-status">Max 10 MB • Standard PDF format</div>
               </div>
-              <div id="photoUploadStatus" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">JPEG, PNG, WebP up to 5 MB</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 4: Adaptive Questionnaire Panel -->
-        <div id="tabPanelQuestions" class="input-tab-panel" style="display: none;">
-          <div class="mode-card" style="max-width: 640px; margin: 0 auto;">
-            <div class="mode-icon">💬</div>
-            <h3>Quick Profile Questions</h3>
-            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">Answer 4 quick questions and we'll craft your portfolio instantly.</p>
-            
-            <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
-              <div class="form-group" style="margin-bottom: 12px;">
-                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Full Name *</label>
-                <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
+              <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
+                <span id="resumeFileName">resume.pdf</span>
+                <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
               </div>
-
-              <div class="form-group" style="margin-bottom: 12px;">
-                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Specialization / Role *</label>
-                <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
-              </div>
-
-              <div class="form-group" style="margin-bottom: 12px;">
-                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Flagship Project &amp; What It Does *</label>
-                <textarea id="qInputProject" rows="2" placeholder="e.g. Distributed raft consensus engine with sub-millisecond failover." style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong); resize: vertical;" required></textarea>
-              </div>
-
-              <div class="form-group" style="margin-bottom: 16px;">
-                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Core Skills &amp; Technologies *</label>
-                <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
-              </div>
-
-              <button type="submit" class="btn-generate-main" style="width: 100%; justify-content: center;">
-                <span>⚡ Build My Portfolio</span>
+              <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
+                <span>⚡ Create Portfolio from Resume</span>
               </button>
-            </form>
+            </div>
+          </div>
+
+          <!-- Tab C: Visual Material (Images) -->
+          <div id="tabPanelImages" class="input-panel">
+            <div class="input-panel-card text-center">
+              <div class="panel-card-head">
+                <h3>Add Visual Material</h3>
+                <p>Upload profile portraits or project screenshot specimens. (JPEG, PNG, WebP — up to 3 images, max 5 MB each)</p>
+              </div>
+              <div id="imagesDropZone" class="file-drop-target" onclick="document.getElementById('multiImageInput').click()">
+                <input type="file" id="multiImageInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;" onchange="handleImagesSelected(event)">
+                <div class="drop-icon">🖼️</div>
+                <div class="drop-title">Drop up to 3 images here or click to browse</div>
+                <div id="imagesUploadStatus" class="drop-status">JPEG, PNG, WebP up to 5 MB each</div>
+              </div>
+              <!-- Image Previews Container -->
+              <div id="imageThumbnailsContainer" class="image-previews-grid" style="display: none; margin-top: 16px;"></div>
+            </div>
+          </div>
+
+          <!-- Tab D: Guided Questions -->
+          <div id="tabPanelQuestions" class="input-panel">
+            <div class="input-panel-card">
+              <div class="panel-card-head">
+                <h3>Answer a few quick questions</h3>
+                <p>Share your discipline, best project, and career objective in your own words.</p>
+              </div>
+              <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
+                <div class="form-group-field">
+                  <label>1. What is your full name? *</label>
+                  <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" required>
+                </div>
+                <div class="form-group-field">
+                  <label>2. What do you do &amp; what is your specialization? *</label>
+                  <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect &amp; Core Infrastructure" required>
+                </div>
+                <div class="form-group-field">
+                  <label>3. Which project or technical achievement are you most proud of? *</label>
+                  <textarea id="qInputProject" rows="2" placeholder="e.g. Built an ultra-low latency raft consensus engine with zero-copy networking." required></textarea>
+                </div>
+                <div class="form-group-field">
+                  <label>4. What core technologies and tools power your work? *</label>
+                  <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" required>
+                </div>
+                <div class="form-group-field">
+                  <label>5. In one sentence, what makes your approach different or what are you building next?</label>
+                  <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
+                </div>
+                <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
+                  <span>⚡ Create My Portfolio</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Tab E: Combined Multi-Source Summary -->
+          <div id="tabPanelCombined" class="input-panel">
+            <div class="input-panel-card">
+              <div class="panel-card-head">
+                <h3>Combine Multiple Sources</h3>
+                <p>Merge GitHub code facts, PDF career history, images, and answers into a single unified profile.</p>
+              </div>
+              <div class="sources-summary-checklist">
+                <div class="source-check-row" id="checkRowGithub">
+                  <span class="check-icon">⚪</span>
+                  <div class="check-info">
+                    <strong>GitHub Account</strong>
+                    <span id="summaryGithubText">Not connected</span>
+                  </div>
+                  <button type="button" class="btn-link-action" onclick="switchInputTab('github')">Configure</button>
+                </div>
+                <div class="source-check-row" id="checkRowResume">
+                  <span class="check-icon">⚪</span>
+                  <div class="check-info">
+                    <strong>Resume / CV (PDF)</strong>
+                    <span id="summaryResumeText">No resume uploaded</span>
+                  </div>
+                  <button type="button" class="btn-link-action" onclick="switchInputTab('resume')">Upload</button>
+                </div>
+                <div class="source-check-row" id="checkRowImages">
+                  <span class="check-icon">⚪</span>
+                  <div class="check-info">
+                    <strong>Visual Material</strong>
+                    <span id="summaryImagesText">0 images attached</span>
+                  </div>
+                  <button type="button" class="btn-link-action" onclick="switchInputTab('images')">Add</button>
+                </div>
+                <div class="source-check-row" id="checkRowQuestions">
+                  <span class="check-icon">⚪</span>
+                  <div class="check-info">
+                    <strong>Guided Questions</strong>
+                    <span id="summaryQuestionsText">Optional answers</span>
+                  </div>
+                  <button type="button" class="btn-link-action" onclick="switchInputTab('questions')">Edit</button>
+                </div>
+              </div>
+              <button type="button" class="btn-cta-main" style="margin-top: 18px;" onclick="generateFromCombinedSources()">
+                <span>✨ Generate Portfolio from All Sources</span>
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Secondary Actions Card: Samples & Interactive Builder -->
-        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
-          <button type="button" class="btn-mode-cta hvr-grow" onclick="openSamplesModal()">
+        <!-- Sample Demos & Manual Builder Links -->
+        <div class="hero-secondary-links">
+          <button type="button" class="btn-subtle" onclick="openSamplesModal()">
             <span>🎨 Explore Example Portfolios</span>
           </button>
-          <button type="button" class="btn-mode-cta primary hvr-grow" onclick="openStudioView()">
-            <span>✏️ Manual Studio Builder</span>
+          <button type="button" class="btn-subtle" onclick="openStudioView()">
+            <span>✏️ Manual Profile Studio</span>
           </button>
         </div>
 
-        <!-- Trust & Privacy Transparency Note -->
-        <div style="margin-top: 28px; text-align: center; font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
-          <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata. No passwords or tokens requested.</span>
+        <!-- Trust & Privacy Transparency -->
+        <div class="trust-footer-note">
+          <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata and uploaded documents.</span>
           <span>•</span>
           <span>⚡ <strong>100% Free Live Preview</strong></span>
           <span>•</span>
@@ -205,381 +252,254 @@
         </div>
       </section>
 
-      <!-- Studio Split-Screen Workspace (Existing) -->
-      <section id="studioWorkspace" class="studio-workspace" style="display: none;">
-        <!-- Left Editor Panel -->
-        <div class="studio-editor-panel">
-          <div class="panel-header">
-            <div>
-              <h2>🛠️ Profile &amp; Project Builder</h2>
-              <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Customize your content, skills, and evidence</p>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button class="btn-close-studio" onclick="closeStudioView()">✕</button>
-            </div>
-          </div>
-
-          <form id="studioForm" onsubmit="handleFormGenerate(event)">
-            <!-- Personal Info -->
-            <div class="form-row">
-              <div class="form-group">
-                <label>Full Name *</label>
-                <input type="text" id="inputName" placeholder="e.g. Alex Rivera" required>
-              </div>
-              <div class="form-group">
-                <label>Professional Role *</label>
-                <input type="text" id="inputRole" placeholder="e.g. Senior Distributed Systems Engineer" required>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>Tagline / Bio</label>
-              <textarea id="inputBio" rows="2" placeholder="Building high-throughput distributed systems and interactive tools..."></textarea>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>Email *</label>
-                <input type="email" id="inputEmail" placeholder="alex@domain.dev" required>
-              </div>
-              <div class="form-group">
-                <label>Location (City / Remote)</label>
-                <input type="text" id="inputLocation" placeholder="San Francisco, CA or Remote">
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-group">
-                <label>GitHub Profile</label>
-                <input type="url" id="inputGithub" placeholder="https://github.com/username">
-              </div>
-              <div class="form-group">
-                <label>Tech Stack &amp; Skills</label>
-                <input type="text" id="inputTech" placeholder="Rust, Go, TypeScript, Docker, Kubernetes">
-              </div>
-            </div>
-
-            <!-- Featured Projects -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px;">
-              <div class="form-section-title" style="margin: 0;">🚀 Featured Projects</div>
-              <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 9999px; background: rgba(154,52,18,0.1); color: var(--primary); border: 1px solid var(--primary);" onclick="addProjectCard()">
-                + Add Project
-              </button>
-            </div>
-
-            <div id="projectsContainer"></div>
-
-            <button type="submit" id="btnGenerateStudio" class="btn-generate-main" style="margin-top: 20px; width: 100%; justify-content: center;">
-              <span>⚡ Generate Portfolio</span>
+      <!-- 2. Fullscreen Studio Preview Canvas -->
+      <section id="studioWorkspace" class="studio-fullscreen-view" style="display: none;">
+        <!-- Clean Studio Top Navigation Bar -->
+        <header class="studio-topbar">
+          <div class="topbar-left">
+            <button type="button" class="btn-topbar-nav" onclick="closeStudioView()" title="Back to Builder">
+              <span>← Builder</span>
             </button>
-          </form>
-        </div>
-
-        <!-- Right Live Preview Panel -->
-        <div class="studio-preview-panel">
-          <div class="preview-toolbar">
-            <div class="device-toggle-group">
-              <button type="button" class="device-btn active" onclick="setDeviceMode('desktop', this)">🖥️ Desktop</button>
-              <button type="button" class="device-btn" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
-            </div>
-            <div style="display: flex; gap: 8px;">
-              <button type="button" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;" onclick="openCustomizerModal()">
-                🛠️ Customizer
-              </button>
-              <button type="button" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;" onclick="openExportModal()">
-                📦 Export ZIP
-              </button>
-              <a id="btnOpenNewTab" href="#" target="_blank" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px; text-decoration: none; display: none;">
-                ↗ Open Live
-              </a>
+            <div class="topbar-title-block">
+              <span id="studioPortfolioName" class="portfolio-name-label">Portfolio Studio</span>
+              <span class="status-live-dot">Live</span>
             </div>
           </div>
 
+          <div class="topbar-center">
+            <div class="device-switcher-pill">
+              <button type="button" class="device-btn active" id="btnDeviceDesktop" onclick="setDeviceMode('desktop', this)">🖥️ Desktop</button>
+              <button type="button" class="device-btn" id="btnDeviceTablet" onclick="setDeviceMode('tablet', this)">📱 Tablet</button>
+              <button type="button" class="device-btn" id="btnDeviceMobile" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <button type="button" class="btn-topbar-action" onclick="openCustomizerModal()">
+              <span>🛠️ Customize</span>
+            </button>
+            <button type="button" class="btn-topbar-action" onclick="regenerateStudioDesign()">
+              <span>🔄 Regenerate</span>
+            </button>
+            <button type="button" class="btn-topbar-action primary" onclick="openExportModal()">
+              <span>📦 Export ZIP</span>
+            </button>
+            <a id="btnOpenNewTab" href="#" target="_blank" class="btn-topbar-action" style="display: none; text-decoration: none;">
+              <span>↗ Live View</span>
+            </a>
+          </div>
+        </header>
+
+        <!-- Viewport Stage -->
+        <main class="studio-canvas-stage">
           <div id="previewFrameWrapper" class="preview-frame-wrapper desktop-mode">
             <div id="previewLoader" class="preview-loader-overlay">
               <div class="spinner-ring"></div>
-              <p>Generating your portfolio...</p>
+              <p id="previewLoaderText">Generating your portfolio...</p>
             </div>
             <iframe id="portfolioIframe" src="about:blank" title="Portfolio Preview"></iframe>
           </div>
-        </div>
+        </main>
       </section>
     </div>
   </div>
 
-  <!-- GitHub Generation Progress & Result Modal -->
-  <div id="githubProgressModal" class="github-modal-backdrop" style="display: none;">
-    <div class="github-modal-card">
-      <button type="button" class="btn-modal-close-icon" onclick="closeGithubModal()" aria-label="Close Modal">✕</button>
+  <!-- 3. Truthful Generation Progress Modal -->
+  <div id="githubProgressModal" class="product-modal-backdrop" style="display: none;">
+    <div class="product-modal-card">
+      <button type="button" class="btn-modal-close" onclick="closeGithubModal()" aria-label="Close Modal">✕</button>
       
-      <div class="github-modal-header">
-        <div class="modal-icon-badge">⚡</div>
-        <h2 id="githubProgressTitle">Designing Your Portfolio</h2>
-        <p id="githubProgressSubtitle" style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Connecting to GitHub API and extracting repository facts...</p>
+      <div class="modal-head-block">
+        <h2 id="githubProgressTitle">Synthesizing Your Portfolio</h2>
+        <p id="githubProgressSubtitle" class="modal-subtext">Executing design intelligence and storytelling architecture...</p>
+        <div class="elapsed-timer-badge" id="generationTimerBadge">Elapsed: 0.0s</div>
       </div>
 
-      <!-- Real Pipeline Progress Steps -->
-      <div class="github-steps-container" id="githubProgressBox">
-        <div class="github-step-item active" id="step-1">
-          <div class="step-icon">🔗</div>
-          <div class="step-content">
-            <div class="step-title">Connecting to GitHub</div>
-            <div class="step-desc">Validating username and profile endpoints</div>
+      <!-- 7 Truthful Stages -->
+      <div class="truthful-stages-list" id="githubProgressBox">
+        <div class="stage-item active" id="stage-1">
+          <span class="stage-num">01</span>
+          <div class="stage-text">
+            <strong>Understanding your work</strong>
+            <span>Extracting verified achievements, repositories, and career trajectory</span>
           </div>
-          <div class="step-status">⏳</div>
+          <span class="stage-icon">⏳</span>
         </div>
-        <div class="github-step-item" id="step-2">
-          <div class="step-icon">👤</div>
-          <div class="step-content">
-            <div class="step-title">Reading Profile &amp; README</div>
-            <div class="step-desc">Extracting verified developer identity and documentation</div>
+        <div class="stage-item" id="stage-2">
+          <span class="stage-num">02</span>
+          <div class="stage-text">
+            <strong>Organizing your story</strong>
+            <span>Establishing macro information architecture and section hierarchies</span>
           </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
-        <div class="github-step-item" id="step-3">
-          <div class="step-icon">📦</div>
-          <div class="step-content">
-            <div class="step-title">Analyzing Repositories &amp; Tech Stack</div>
-            <div class="step-desc">Ranking top projects, languages, and commit activity</div>
+        <div class="stage-item" id="stage-3">
+          <span class="stage-num">03</span>
+          <div class="stage-text">
+            <strong>Choosing a visual direction</strong>
+            <span>Harmonizing editorial typography, color scales, and spatial geometry</span>
           </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
-        <div class="github-step-item" id="step-4">
-          <div class="step-icon">🧠</div>
-          <div class="step-content">
-            <div class="step-title">Identifying Core Strengths</div>
-            <div class="step-desc">Evaluating architectural domain and technical depth</div>
+        <div class="stage-item" id="stage-4">
+          <span class="stage-num">04</span>
+          <div class="stage-text">
+            <strong>Designing the page</strong>
+            <span>Assembling composition-driven headers, navigation, and identity plates</span>
           </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
-        <div class="github-step-item" id="step-5">
-          <div class="step-icon">🎨</div>
-          <div class="step-content">
-            <div class="step-title">Choosing Art Direction</div>
-            <div class="step-desc">Selecting typography, color harmony, and visual universe</div>
+        <div class="stage-item" id="stage-5">
+          <span class="stage-num">05</span>
+          <div class="stage-text">
+            <strong>Shaping your projects</strong>
+            <span>Structuring technical case studies, key metrics, and artifact cards</span>
           </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
-        <div class="github-step-item" id="step-6">
-          <div class="step-icon">📖</div>
-          <div class="step-content">
-            <div class="step-title">Crafting Project Stories</div>
-            <div class="step-desc">Structuring narrative cadences and evidence presentation</div>
+        <div class="stage-item" id="stage-6">
+          <span class="stage-num">06</span>
+          <div class="stage-text">
+            <strong>Checking the result</strong>
+            <span>Running accessibility, contrast, and legacy vibe quality gates</span>
           </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
-        <div class="github-step-item" id="step-7">
-          <div class="step-icon">🛡️</div>
-          <div class="step-content">
-            <div class="step-title">Running Visual Quality Audit</div>
-            <div class="step-desc">Verifying contrast, mobile geometry, and accessibility</div>
+        <div class="stage-item" id="stage-7">
+          <span class="stage-num">07</span>
+          <div class="stage-text">
+            <strong>Preparing your portfolio</strong>
+            <span>Packaging responsive single-page web document</span>
           </div>
-          <div class="step-status"></div>
-        </div>
-        <div class="github-step-item" id="step-8">
-          <div class="step-icon">🚀</div>
-          <div class="step-content">
-            <div class="step-title">Publishing Live Portfolio</div>
-            <div class="step-desc">Rendering responsive HTML/CSS/JS and generating preview</div>
-          </div>
-          <div class="step-status"></div>
+          <span class="stage-icon"></span>
         </div>
       </div>
 
-      <!-- Error Recovery Card (Shown on failure) -->
-      <div id="githubErrorCard" style="display: none; margin-top: 24px; text-align: center;">
-        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
-          <div style="font-size: 2rem; margin-bottom: 6px;">⚠️</div>
-          <h3 id="githubErrorTitle" style="font-size: 1.15rem; font-weight: 800; color: #991b1b;">Generation Interrupted</h3>
-          <p id="githubErrorMessage" style="color: var(--text); font-size: 0.88rem; margin-top: 6px; line-height: 1.4;"></p>
-        </div>
-
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <button type="button" class="btn-generate-main" style="justify-content: center;" onclick="regenerateGithubDesign()">
-            <span>🔄 Retry Generation</span>
-          </button>
-          <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn-result-action" style="flex: 1;" onclick="closeGithubModal(); openSamplesModal();">
-              <span>🎨 Load Demo</span>
-            </button>
-            <button type="button" class="btn-result-action" style="flex: 1;" onclick="closeGithubModal(); openStudioView();">
-              <span>✏️ Build Manually</span>
-            </button>
-          </div>
-          <button type="button" class="btn-result-action secondary" style="margin-top: 4px;" onclick="closeGithubModal()">
-            <span>✕ Dismiss</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Result Card (Shown when complete) -->
-      <div id="githubResultCard" style="display: none; margin-top: 24px;">
-        <div class="github-result-banner">
-          <div style="font-size: 2.2rem; margin-bottom: 8px;">🎉</div>
-          <h3 style="font-size: 1.3rem; font-weight: 800;">Your Portfolio is Ready!</h3>
-          <p id="githubResultSubtitle" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;"></p>
-        </div>
-
-        <div class="github-result-preview-frame">
-          <iframe id="githubResultIframe" src="about:blank" title="Generated Portfolio Result" style="width: 100%; height: 380px; border: 1px solid rgba(28, 25, 23,0.12); border-radius: 12px; background: #fff;"></iframe>
-        </div>
-
-        <div class="github-result-actions" style="margin-top: 16px;">
-          <button type="button" class="btn-result-action primary" onclick="openCustomizerModal()">
-            <span>🛠️ Customize</span>
-          </button>
-          <a id="btnOpenGithubSite" href="#" target="_blank" class="btn-result-action">
-            <span>👁️ Open Live View</span>
-          </a>
-          <button type="button" class="btn-result-action" onclick="openExportModal()">
-            <span>📦 Export ZIP</span>
-          </button>
-          <button type="button" class="btn-result-action" onclick="regenerateGithubDesign()">
-            <span>🔄 Generate Another</span>
-          </button>
-          <button type="button" class="btn-result-action secondary" onclick="closeGithubModal()">
-            <span>✕ Close</span>
-          </button>
+      <!-- Structured Error Card (Shown on failure) -->
+      <div id="githubErrorCard" style="display: none;" class="structured-error-card">
+        <div class="error-status-badge">⚠️ Action Required</div>
+        <h3 id="errorWhatHappenedTitle" class="error-title">We encountered an issue</h3>
+        <p id="errorWhyText" class="error-reason"></p>
+        <div id="errorWhatYouCanDoBox" class="error-advice-box"></div>
+        <div class="error-action-buttons">
+          <button type="button" id="btnErrorPrimaryAction" class="btn-cta-main" onclick="handleErrorPrimaryAction()">Try Again</button>
+          <button type="button" id="btnErrorSecondaryAction" class="btn-subtle" onclick="handleErrorSecondaryAction()">Continue with Resume</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Customizer Drawer / Modal (Phase 30) -->
+  <!-- 4. Humanized Customizer Sheet / Drawer -->
   <div id="customizerDrawer" class="customizer-drawer-backdrop" style="display: none;">
     <div class="customizer-drawer-panel">
-      <div class="customizer-header">
+      <div class="drawer-header">
         <div>
-          <h3 style="font-size: 1.25rem; font-weight: 800;">🛠️ Portfolio Customizer</h3>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Reorder sections, toggle visibility, and tune appearance</p>
+          <h3>Customize Portfolio</h3>
+          <p>Fine-tune content, appearance, and layout</p>
         </div>
-        <button type="button" class="customizer-btn-mini" onclick="closeCustomizerModal()">✕</button>
+        <button type="button" class="btn-modal-close" onclick="closeCustomizerModal()">✕</button>
       </div>
 
-      <!-- Action Toolbar (Undo / Redo / Reset) -->
-      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-        <button type="button" id="btnCustomizerUndo" class="customizer-btn-mini" onclick="handleCustomizerAction('undo')">↩ Undo</button>
-        <button type="button" id="btnCustomizerRedo" class="customizer-btn-mini" onclick="handleCustomizerAction('redo')">↪ Redo</button>
-        <button type="button" class="customizer-btn-mini" onclick="handleCustomizerAction('reset')">🔄 Reset</button>
-      </div>
+      <div class="customizer-sections-scroll">
+        <!-- Group 1: Appearance & Style -->
+        <div class="customizer-group">
+          <h4 class="group-title">Style &amp; Appearance</h4>
+          
+          <div class="control-row">
+            <label>Section Spacing</label>
+            <div class="pill-options-group">
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('spacing', 'compact', this)">Compact</button>
+              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('spacing', 'balanced', this)">Balanced</button>
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('spacing', 'spacious', this)">Spacious</button>
+            </div>
+          </div>
 
-      <!-- Section Reordering & Visibility -->
-      <div style="margin-bottom: 24px;">
-        <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;">Page Sections &amp; Order</h4>
-        <div id="customizerSectionsList">
-          <!-- Populated dynamically via /api/portfolio/:siteId/customizer -->
+          <div class="control-row">
+            <label>Corner Radius</label>
+            <div class="pill-options-group">
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('corners', 'sharp', this)">Sharp</button>
+              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('corners', 'soft', this)">Soft</button>
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('corners', 'rounded', this)">Rounded</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <label>Typography Scale</label>
+            <div class="pill-options-group">
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('typography', 'quiet', this)">Quiet</button>
+              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('typography', 'editorial', this)">Editorial</button>
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('typography', 'bold', this)">Bold</button>
+            </div>
+          </div>
+
+          <div class="control-row">
+            <label>Motion Treatment</label>
+            <div class="pill-options-group">
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('motion', 'still', this)">Still</button>
+              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('motion', 'subtle', this)">Subtle</button>
+              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('motion', 'expressive', this)">Expressive</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Group 2: Content & Sections -->
+        <div class="customizer-group">
+          <h4 class="group-title">Section Ordering &amp; Visibility</h4>
+          <div id="customizerSectionsList" class="customizer-sections-stack"></div>
         </div>
       </div>
 
-      <!-- Appearance & Design Settings -->
-      <div style="margin-bottom: 24px;">
-        <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;">Appearance Controls</h4>
-        
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Section Spacing</label>
-          <select id="selectSectionSpacing" onchange="handleTokenChange('--space-section', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
-            <option value="compact">Compact (Tight rhythm)</option>
-            <option value="medium" selected>Balanced (Standard)</option>
-            <option value="spacious">Spacious (Airy gallery)</option>
-          </select>
+      <!-- Drawer Footer Actions -->
+      <div class="drawer-footer">
+        <div class="drawer-undo-redo">
+          <button type="button" class="btn-drawer-tool" id="btnUndo" onclick="handleCustomizerAction('undo')" title="Undo change">↶ Undo</button>
+          <button type="button" class="btn-drawer-tool" id="btnRedo" onclick="handleCustomizerAction('redo')" title="Redo change">↷ Redo</button>
+          <button type="button" class="btn-drawer-tool" onclick="handleCustomizerAction('reset')" title="Reset to original">🔄 Reset</button>
         </div>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Border &amp; Divider Intensity</label>
-          <select id="selectBorderIntensity" onchange="handleTokenChange('--border-opacity', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
-            <option value="subtle" selected>Subtle (Minimal lines)</option>
-            <option value="medium">Medium (Defined boundaries)</option>
-            <option value="sharp">Sharp (High contrast)</option>
-          </select>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Typography Scale</label>
-          <select id="selectTypeScale" onchange="handleTokenChange('--type-scale', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
-            <option value="compact">Compact &amp; Dense</option>
-            <option value="balanced" selected>Balanced &amp; Readable</option>
-            <option value="expressive">Expressive &amp; Large Headers</option>
-          </select>
-        </div>
+        <button type="button" class="btn-cta-main" style="margin-top: 8px; width: 100%;" onclick="closeCustomizerModal()">
+          <span>✓ Done Customizing</span>
+        </button>
       </div>
-
-      <button type="button" class="btn-generate-main" style="margin-top: auto; justify-content: center;" onclick="closeCustomizerModal()">
-        <span>✅ Done Customizing</span>
-      </button>
     </div>
   </div>
 
-  <!-- Standalone Export Modal (Phase 30) -->
-  <div id="exportModal" class="export-modal-backdrop" style="display: none;">
-    <div class="export-modal-card">
-      <button type="button" class="btn-modal-close-icon" onclick="closeExportModal()" aria-label="Close Modal">✕</button>
-      <div style="text-align: center; margin-bottom: 20px;">
-        <div style="font-size: 2.2rem; margin-bottom: 8px;">📦</div>
-        <h3 style="font-size: 1.4rem; font-weight: 800;">Export Your Static Portfolio</h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Download a clean, standalone ZIP archive with zero dependencies and host anywhere.</p>
+  <!-- 5. Static ZIP Export Modal -->
+  <div id="exportModal" class="product-modal-backdrop" style="display: none;">
+    <div class="product-modal-card">
+      <button type="button" class="btn-modal-close" onclick="closeExportModal()">✕</button>
+      <div class="modal-head-block">
+        <h2>Export Standalone Website</h2>
+        <p class="modal-subtext">Download your complete, offline-ready portfolio ZIP with zero watermarks or dependencies.</p>
       </div>
 
-      <div style="text-align: center; margin: 24px 0;">
-        <a id="btnDownloadZip" href="#" class="btn-generate-main" style="display: inline-flex; text-decoration: none; padding: 14px 28px; font-size: 1rem;">
-          <span>⬇️ Download Standalone ZIP</span>
-        </a>
-        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px;">Includes <code>index.html</code>, clean CSS/JS, and zero preview watermarks.</p>
-      </div>
-
-      <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Zero-Config Deployment Guides:</h4>
-      <div class="deployment-guide-grid">
-        <div class="deployment-guide-card">
-          <h4>▲ Vercel</h4>
-          <ol>
-            <li>Unzip the archive</li>
-            <li>Run <code>vercel</code> or drag folder onto Vercel dashboard</li>
-            <li>Instantly live on global Edge CDN</li>
-          </ol>
-        </div>
-        <div class="deployment-guide-card">
-          <h4>🌐 Netlify</h4>
-          <ol>
-            <li>Unzip the archive</li>
-            <li>Drag into <a href="https://app.netlify.com/drop" target="_blank" rel="noopener">Netlify Drop</a></li>
-            <li>Instant free HTTPS site</li>
-          </ol>
-        </div>
-        <div class="deployment-guide-card">
-          <h4>🐙 GitHub Pages</h4>
-          <ol>
-            <li>Create a new repository</li>
-            <li>Upload files to <code>main</code> branch</li>
-            <li>Enable Pages in Settings</li>
-          </ol>
+      <div class="export-options-list">
+        <div class="export-option-card">
+          <div class="export-icon">📦</div>
+          <div class="export-details">
+            <strong>Static Production ZIP</strong>
+            <p>Includes HTML, CSS, JavaScript, assets, and 1-click deployment guides for Vercel, Netlify, &amp; GitHub Pages.</p>
+          </div>
+          <button type="button" class="btn-primary-mini" onclick="downloadStaticZip()">Download ZIP</button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Sample Portfolios Gallery Modal (Phase 30) -->
-  <div id="samplesModal" class="samples-modal-backdrop" style="display: none;">
-    <div class="samples-modal-card">
-      <button type="button" class="btn-modal-close-icon" onclick="closeSamplesModal()" aria-label="Close Modal">✕</button>
-      <div style="text-align: center; margin-bottom: 20px;">
-        <div style="font-size: 2.2rem; margin-bottom: 8px;">🎨</div>
-        <h3 style="font-size: 1.4rem; font-weight: 800;">Generated Portfolio Gallery</h3>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">Explore genuine portfolios produced by our art-direction and storytelling engine.</p>
+  <!-- 6. Samples & Demo Explorer Modal -->
+  <div id="samplesModal" class="product-modal-backdrop" style="display: none;">
+    <div class="product-modal-card" style="max-width: 780px;">
+      <button type="button" class="btn-modal-close" onclick="closeSamplesModal()">✕</button>
+      <div class="modal-head-block">
+        <h2>Explore Example Portfolios</h2>
+        <p class="modal-subtext">See how different engineering and design specializations synthesize into unique visual worlds.</p>
       </div>
-
-      <div class="sample-gallery-grid" id="sampleGalleryContainer">
-        <!-- Loaded dynamically via /api/demo/samples -->
-      </div>
+      <div id="samplesGalleryGrid" class="sample-gallery-grid"></div>
     </div>
   </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="/app.js"></script>
-  <script src="/ink.js"></script>
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      if (typeof initUniversalSidebar === 'function') {
-        initUniversalSidebar('studio');
-      }
-    });
-  </script>
 </body>
 </html>
