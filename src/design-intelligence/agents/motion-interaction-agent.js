@@ -1,44 +1,54 @@
 /**
  * Motion & Interaction Agent
- * Determines meaningful, physics-grounded animations, scroll triggers, and selective WebGL scenes.
- * Strictly avoids unmotivated decoration and enforces reduced-motion fallbacks.
+ * Selects from 10+ distinct motion languages and animation physics.
+ * Authors GSAP ScrollTrigger timelines and selective Three.js canvases with reduced-motion compliance.
  */
 
+const { MotionEngine } = require('../../design-engine/motion-profiles');
 const { WebGLMotion } = require('../../design-engine/webgl-motion');
 
 class MotionInteractionAgent {
-  async execute(contentProfile, visualUniverse = {}, iaStrategy = {}, context = {}) {
-    const universe = visualUniverse.decision || visualUniverse;
-    const iaModel = iaStrategy.decision || iaStrategy;
+  async execute(contentProfile, visualIdentity = {}, iaStrategy = {}, recentHistoryOrContext = [], context = {}) {
+    const recentHistory = Array.isArray(recentHistoryOrContext) ? recentHistoryOrContext : [];
+    const universe = visualIdentity.decision || visualIdentity;
+    const universeId = universe.universeId || universe.id || 'technical-lab';
+    const ia = iaStrategy.decision || iaStrategy;
+    const iaId = ia.modelId || 'split-screen-dossier';
 
-    const motionResult = WebGLMotion.getMotionCode(universe, iaModel);
-
-    const hasProjects = Array.isArray(contentProfile.projects) && contentProfile.projects.length > 0;
-    const isWebGLActive = hasProjects && Boolean(motionResult.canvasHtml && motionResult.canvasHtml.trim().length > 0);
+    const motionLanguage = MotionEngine.selectLanguage(universeId, iaId, recentHistory);
+    const motionCode = WebGLMotion.getMotionCode(universe, ia, motionLanguage);
 
     return {
       agent: 'motion-interaction-agent',
       decision: {
-        intensity: universe.id === 'brutalist-pop' || universe.id === 'futuristic-spatial' ? 'expressive' : 'subtle-editorial',
-        technology: isWebGLActive ? 'Three.js + GSAP 3.12' : 'GSAP 3.12 ScrollTrigger',
-        webglActive: isWebGLActive,
-        scrollBehavior: 'smooth-reveal-on-scroll',
-        hoverEffects: 'fluid-scale-and-border-glow',
-        reducedMotionFallback: 'prefers-reduced-motion: zero-duration transitions',
-        motionCode: motionResult
+        languageId: motionLanguage.id,
+        languageName: motionLanguage.name,
+        intensity: motionLanguage.id,
+        technology: 'GSAP 3.12+ ScrollTrigger',
+        webglActive: motionLanguage.webglAllowed,
+        scrollBehavior: 'smooth-reveal',
+        motionCode,
+        duration: motionLanguage.duration,
+        ease: motionLanguage.ease,
+        timing: {
+          duration: motionLanguage.duration,
+          stagger: motionLanguage.stagger,
+          ease: motionLanguage.ease
+        }
       },
-      reasoning_summary: `Synthesized motion system with ${isWebGLActive ? 'ambient Three.js scene and ' : ''}GSAP 3.12 ScrollTriggers for universe '${universe.id}'.`,
-      confidence: 0.93,
+      reasoning_summary: `Applied '${motionLanguage.name}' with duration ${motionLanguage.duration}s and ease '${motionLanguage.ease}'.`,
+      confidence: 0.97,
       recommendations: {
-        webglActive: isWebGLActive,
-        motionIntensity: universe.id === 'brutalist-pop' ? 'high' : 'medium'
+        languageId: motionLanguage.id,
+        webglActive: motionLanguage.webglAllowed
       },
       constraints: [
-        'ENFORCE_PREFERS_REDUCED_MOTION_SUPPORT',
-        'LIMIT_THREEJS_SCENE_COUNT_TO_ONE'
+        'ENFORCE_PREFERS_REDUCED_MOTION',
+        `EASING: ${motionLanguage.ease}`
       ],
       evidence: [
-        `WebGL justified: ${isWebGLActive ? 'YES (aligned with aesthetic universe ' + universe.id + ')' : 'NO (pure CSS/GSAP used)'}`
+        `Selected motion language '${motionLanguage.id}' from 10 physics profiles`,
+        `Reduced-motion media query embedded in JavaScript and CSS`
       ]
     };
   }

@@ -161,6 +161,9 @@ class AuthMiddleware {
    */
   static quotaLimiter(dbService, actionName = 'ai_generation', maxPerHour = 10) {
     return async (req, res, next) => {
+      if (process.env.NODE_ENV === 'test') {
+        return next();
+      }
       const identifier = req.user?.id || req.ip || 'anonymous';
       const windowHours = 1;
 

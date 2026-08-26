@@ -1,0 +1,542 @@
+{
+  "sites": [
+    {
+      "id": "truth-audit-1",
+      "persona": "Liam Chen",
+      "role": "Staff Full-Stack Engineer",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-2",
+      "persona": "Dr. Aisha Patel",
+      "role": "AI/ML Research Scientist",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-3",
+      "persona": "Viktor Kane",
+      "role": "Principal Security Architect",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-4",
+      "persona": "Carlos Mendez",
+      "role": "Senior Frontend Developer",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    },
+    {
+      "id": "truth-audit-5",
+      "persona": "Dr. Marcus Vance",
+      "role": "Distributed Systems Architect",
+      "visualSilhouette": "work-first-runway-lead",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "work-runway-lead-bar",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-6",
+      "persona": "Aria Chen",
+      "role": "Product & Spatial Designer",
+      "visualSilhouette": "typographic-poster-index",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "asymmetric-statement-masthead",
+      "navTopology": "minimal-index-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-7",
+      "persona": "Maya Lin",
+      "role": "Creative Developer & 3D Artist",
+      "visualSilhouette": "single-column-monograph",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "monumental-typography-cover",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-8",
+      "persona": "Devon Miller",
+      "role": "Startup Founder & CEO",
+      "visualSilhouette": "windowed-cli-terminal",
+      "projectModel": "terminal-session-log",
+      "heroGeometry": "terminal-boot-sequence",
+      "navTopology": "command-prompt-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-9",
+      "persona": "Dr. Evelyn Ward",
+      "role": "Principal Academic Researcher",
+      "visualSilhouette": "split-dossier-rail",
+      "projectModel": "code-architecture-dossier",
+      "heroGeometry": "sidebar-identity-rail",
+      "navTopology": "left-sidebar-rail",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-10",
+      "persona": "Julian Vance",
+      "role": "Architectural Photographer",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-11",
+      "persona": "Liam Chen",
+      "role": "Staff Full-Stack Engineer",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-12",
+      "persona": "Dr. Aisha Patel",
+      "role": "AI/ML Research Scientist",
+      "visualSilhouette": "horizontal-filmstrip-track",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "exhibition-title-monument",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-13",
+      "persona": "Viktor Kane",
+      "role": "Principal Security Architect",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-14",
+      "persona": "Carlos Mendez",
+      "role": "Senior Frontend Developer",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    },
+    {
+      "id": "truth-audit-15",
+      "persona": "Dr. Marcus Vance",
+      "role": "Distributed Systems Architect",
+      "visualSilhouette": "typographic-poster-index",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "asymmetric-statement-masthead",
+      "navTopology": "minimal-index-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-16",
+      "persona": "Aria Chen",
+      "role": "Product & Spatial Designer",
+      "visualSilhouette": "work-first-runway-lead",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "work-runway-lead-bar",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-17",
+      "persona": "Maya Lin",
+      "role": "Creative Developer & 3D Artist",
+      "visualSilhouette": "single-column-monograph",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "monumental-typography-cover",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-18",
+      "persona": "Devon Miller",
+      "role": "Startup Founder & CEO",
+      "visualSilhouette": "split-dossier-rail",
+      "projectModel": "code-architecture-dossier",
+      "heroGeometry": "sidebar-identity-rail",
+      "navTopology": "left-sidebar-rail",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-19",
+      "persona": "Dr. Evelyn Ward",
+      "role": "Principal Academic Researcher",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-20",
+      "persona": "Julian Vance",
+      "role": "Architectural Photographer",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-21",
+      "persona": "Liam Chen",
+      "role": "Staff Full-Stack Engineer",
+      "visualSilhouette": "horizontal-filmstrip-track",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "exhibition-title-monument",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-22",
+      "persona": "Dr. Aisha Patel",
+      "role": "AI/ML Research Scientist",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-23",
+      "persona": "Viktor Kane",
+      "role": "Principal Security Architect",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    },
+    {
+      "id": "truth-audit-24",
+      "persona": "Carlos Mendez",
+      "role": "Senior Frontend Developer",
+      "visualSilhouette": "windowed-cli-terminal",
+      "projectModel": "terminal-session-log",
+      "heroGeometry": "terminal-boot-sequence",
+      "navTopology": "command-prompt-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-25",
+      "persona": "Dr. Marcus Vance",
+      "role": "Distributed Systems Architect",
+      "visualSilhouette": "typographic-poster-index",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "asymmetric-statement-masthead",
+      "navTopology": "minimal-index-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-26",
+      "persona": "Aria Chen",
+      "role": "Product & Spatial Designer",
+      "visualSilhouette": "work-first-runway-lead",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "work-runway-lead-bar",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-27",
+      "persona": "Maya Lin",
+      "role": "Creative Developer & 3D Artist",
+      "visualSilhouette": "split-dossier-rail",
+      "projectModel": "code-architecture-dossier",
+      "heroGeometry": "sidebar-identity-rail",
+      "navTopology": "left-sidebar-rail",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-28",
+      "persona": "Devon Miller",
+      "role": "Startup Founder & CEO",
+      "visualSilhouette": "single-column-monograph",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "monumental-typography-cover",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-29",
+      "persona": "Dr. Evelyn Ward",
+      "role": "Principal Academic Researcher",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-30",
+      "persona": "Julian Vance",
+      "role": "Architectural Photographer",
+      "visualSilhouette": "horizontal-filmstrip-track",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "exhibition-title-monument",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-31",
+      "persona": "Liam Chen",
+      "role": "Staff Full-Stack Engineer",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-32",
+      "persona": "Dr. Aisha Patel",
+      "role": "AI/ML Research Scientist",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    },
+    {
+      "id": "truth-audit-33",
+      "persona": "Viktor Kane",
+      "role": "Principal Security Architect",
+      "visualSilhouette": "windowed-cli-terminal",
+      "projectModel": "terminal-session-log",
+      "heroGeometry": "terminal-boot-sequence",
+      "navTopology": "command-prompt-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-34",
+      "persona": "Carlos Mendez",
+      "role": "Senior Frontend Developer",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-35",
+      "persona": "Dr. Marcus Vance",
+      "role": "Distributed Systems Architect",
+      "visualSilhouette": "typographic-poster-index",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "asymmetric-statement-masthead",
+      "navTopology": "minimal-index-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-36",
+      "persona": "Aria Chen",
+      "role": "Product & Spatial Designer",
+      "visualSilhouette": "work-first-runway-lead",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "work-runway-lead-bar",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-37",
+      "persona": "Maya Lin",
+      "role": "Creative Developer & 3D Artist",
+      "visualSilhouette": "split-dossier-rail",
+      "projectModel": "code-architecture-dossier",
+      "heroGeometry": "sidebar-identity-rail",
+      "navTopology": "left-sidebar-rail",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-38",
+      "persona": "Devon Miller",
+      "role": "Startup Founder & CEO",
+      "visualSilhouette": "single-column-monograph",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "monumental-typography-cover",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-39",
+      "persona": "Dr. Evelyn Ward",
+      "role": "Principal Academic Researcher",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-40",
+      "persona": "Julian Vance",
+      "role": "Architectural Photographer",
+      "visualSilhouette": "horizontal-filmstrip-track",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "exhibition-title-monument",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-41",
+      "persona": "Liam Chen",
+      "role": "Staff Full-Stack Engineer",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    },
+    {
+      "id": "truth-audit-42",
+      "persona": "Dr. Aisha Patel",
+      "role": "AI/ML Research Scientist",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-43",
+      "persona": "Viktor Kane",
+      "role": "Principal Security Architect",
+      "visualSilhouette": "standard",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "top-bar",
+      "visScore": 60
+    },
+    {
+      "id": "truth-audit-44",
+      "persona": "Carlos Mendez",
+      "role": "Senior Frontend Developer",
+      "visualSilhouette": "typographic-poster-index",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "asymmetric-statement-masthead",
+      "navTopology": "minimal-index-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-45",
+      "persona": "Dr. Marcus Vance",
+      "role": "Distributed Systems Architect",
+      "visualSilhouette": "windowed-cli-terminal",
+      "projectModel": "terminal-session-log",
+      "heroGeometry": "terminal-boot-sequence",
+      "navTopology": "command-prompt-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-46",
+      "persona": "Aria Chen",
+      "role": "Product & Spatial Designer",
+      "visualSilhouette": "split-dossier-rail",
+      "projectModel": "code-architecture-dossier",
+      "heroGeometry": "sidebar-identity-rail",
+      "navTopology": "left-sidebar-rail",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-47",
+      "persona": "Maya Lin",
+      "role": "Creative Developer & 3D Artist",
+      "visualSilhouette": "single-column-monograph",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "monumental-typography-cover",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-48",
+      "persona": "Devon Miller",
+      "role": "Startup Founder & CEO",
+      "visualSilhouette": "work-first-runway-lead",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "work-runway-lead-bar",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-49",
+      "persona": "Dr. Evelyn Ward",
+      "role": "Principal Academic Researcher",
+      "visualSilhouette": "asymmetric-bento-mosaic",
+      "projectModel": "asymmetric-media-mosaic",
+      "heroGeometry": "bento-grid-canopy",
+      "navTopology": "top-bar",
+      "visScore": 95
+    },
+    {
+      "id": "truth-audit-50",
+      "persona": "Julian Vance",
+      "role": "Architectural Photographer",
+      "visualSilhouette": "central-spine-timeline",
+      "projectModel": "horizontal-filmstrip",
+      "heroGeometry": "standard",
+      "navTopology": "chapter-bottom-dock",
+      "visScore": 80
+    }
+  ],
+  "distinctSilhouettes": [
+    "asymmetric-bento-mosaic",
+    "standard",
+    "central-spine-timeline",
+    "work-first-runway-lead",
+    "typographic-poster-index",
+    "single-column-monograph",
+    "windowed-cli-terminal",
+    "split-dossier-rail",
+    "horizontal-filmstrip-track"
+  ],
+  "distinctHeroGeometries": [
+    "bento-grid-canopy",
+    "standard",
+    "work-runway-lead-bar",
+    "asymmetric-statement-masthead",
+    "monumental-typography-cover",
+    "terminal-boot-sequence",
+    "sidebar-identity-rail",
+    "exhibition-title-monument"
+  ],
+  "distinctProjectModels": [
+    "asymmetric-media-mosaic",
+    "horizontal-filmstrip",
+    "terminal-session-log",
+    "code-architecture-dossier"
+  ],
+  "distinctNavTopologies": [
+    "top-bar",
+    "chapter-bottom-dock",
+    "minimal-index-bar",
+    "command-prompt-bar",
+    "left-sidebar-rail"
+  ],
+  "sameFamilyRate": 12,
+  "differentWorldRate": 88,
+  "avgVisScore": 86.2,
+  "minVisScore": 60
+}

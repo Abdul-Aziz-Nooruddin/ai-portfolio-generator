@@ -92,20 +92,20 @@ class DesignGate {
       // 5. Information Architecture Agent (Selects model with anti-repetition memory)
       const iaStrategy = await this.iaAgent.execute(contentProfile, uxStrategy.decision, recentHistory, context);
 
-      // 6. Spatial Composition Agent
-      const compositionStrategy = await this.compositionAgent.execute(contentProfile, iaStrategy, context);
+      // 6. Spatial Composition Agent (Decoupled from IA)
+      const compositionStrategy = await this.compositionAgent.execute(contentProfile, iaStrategy, recentHistory, context);
 
-      // 7. Color / Visual Identity Agent
-      const visualIdentity = await this.colorAgent.execute(contentProfile, figmaAnalysis, context);
+      // 7. Color / Visual Identity Agent (10+ Accessible Palettes)
+      const visualIdentity = await this.colorAgent.execute(contentProfile, figmaAnalysis, recentHistory, context);
 
-      // 8. Typography Agent
-      const typographySystem = await this.typographyAgent.execute(contentProfile, visualIdentity, context);
+      // 8. Typography Agent (10+ Mathematical Typography Systems)
+      const typographySystem = await this.typographyAgent.execute(contentProfile, visualIdentity, recentHistory, context);
 
       // 9. Project Storytelling Agent
       const projectStorytelling = await this.storytellingAgent.execute(contentProfile, iaStrategy, context);
 
-      // 10. Motion & Interaction Agent
-      const motionSystem = await this.motionAgent.execute(contentProfile, visualIdentity, iaStrategy, context);
+      // 10. Motion & Interaction Agent (10+ Motion Physics Profiles)
+      const motionSystem = await this.motionAgent.execute(contentProfile, visualIdentity, iaStrategy, recentHistory, context);
 
       // 11. Accessibility Agent
       const accessibilityReport = await this.a11yAgent.execute(contentProfile, visualIdentity, typographySystem);

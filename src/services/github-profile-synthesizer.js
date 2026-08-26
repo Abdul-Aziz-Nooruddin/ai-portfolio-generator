@@ -157,21 +157,51 @@ Respond ONLY with a valid JSON object in this exact schema:
         followers: github.followers || 0,
         stars: projects.reduce((acc, p) => acc + (p.stars || 0), 0)
       },
-      projects: Array.isArray(aiOutput.projects) && aiOutput.projects.length >= 2
-        ? aiOutput.projects.map((p, idx) => ({
-            name: p.name || projects[idx]?.name || `Project ${idx + 1}`,
-            desc: p.desc || projects[idx]?.description || 'Engineered scalable software solution with modern design principles.',
-            tech: p.tech || projects[idx]?.tech || 'Code',
-            github: p.github || projects[idx]?.github || github.profileUrl,
-            live: p.live || projects[idx]?.live || github.profileUrl
-          }))
-        : projects.map(p => ({
-            name: p.name,
-            desc: p.description,
-            tech: p.tech,
-            github: p.github,
-            live: p.live
-          })),
+      projects: (() => {
+        let projs = Array.isArray(aiOutput.projects) && aiOutput.projects.length >= 2
+          ? aiOutput.projects.map((p, idx) => ({
+              name: p.name || projects[idx]?.name || `Project ${idx + 1}`,
+              desc: p.desc || projects[idx]?.description || 'Engineered scalable software solution with modern design principles.',
+              tech: p.tech || projects[idx]?.tech || 'Code',
+              github: p.github || projects[idx]?.github || github.profileUrl,
+              live: p.live || projects[idx]?.live || github.profileUrl
+            }))
+          : projects.map(p => ({
+              name: p.name,
+              desc: p.description,
+              tech: p.tech,
+              github: p.github,
+              live: p.live
+            }));
+
+        if (projs.length === 0) {
+          projs = [
+            {
+              name: `${identity.name || identity.username} Core Repository`,
+              desc: 'Primary developer repository and open source workspace showcasing clean architecture and modern tooling.',
+              tech: skills.languages.slice(0, 3).join(' • ') || 'TypeScript • Node.js',
+              github: github.profileUrl,
+              live: github.profileUrl
+            },
+            {
+              name: 'Developer Tooling & Scripts',
+              desc: 'Automated configuration, developer workflow utilities, and personal software library.',
+              tech: skills.languages[0] || 'Modern Tooling',
+              github: github.profileUrl,
+              live: github.profileUrl
+            }
+          ];
+        } else if (projs.length === 1) {
+          projs.push({
+            name: 'Developer Infrastructure & Tooling',
+            desc: 'Continuous integration pipelines, developer environment automation, and reusable software modules.',
+            tech: skills.languages.slice(0, 2).join(' • ') || 'Modern Tooling',
+            github: github.profileUrl,
+            live: github.profileUrl
+          });
+        }
+        return projs;
+      })(),
       personality_signals: aiOutput.personality_signals || { vibe: 'technical-architect', theme_hint: 'dark' }
     };
 
@@ -217,6 +247,41 @@ Respond ONLY with a valid JSON object in this exact schema:
       description: `Engineered and maintained ${github.publicRepositories || projects.length}+ public repositories with clean code, testing, and modern tooling.`
     });
 
+    let projs = projects.map(p => ({
+      name: p.name,
+      desc: p.description,
+      tech: p.tech,
+      github: p.github,
+      live: p.live
+    }));
+
+    if (projs.length === 0) {
+      projs = [
+        {
+          name: `${identity.name || identity.username} Core Repository`,
+          desc: 'Primary developer repository and open source workspace showcasing clean architecture and modern tooling.',
+          tech: skills.languages.slice(0, 3).join(' • ') || 'TypeScript • Node.js',
+          github: github.profileUrl,
+          live: github.profileUrl
+        },
+        {
+          name: 'Developer Tooling & Scripts',
+          desc: 'Automated configuration, developer workflow utilities, and personal software library.',
+          tech: skills.languages[0] || 'Modern Tooling',
+          github: github.profileUrl,
+          live: github.profileUrl
+        }
+      ];
+    } else if (projs.length === 1) {
+      projs.push({
+        name: 'Developer Infrastructure & Tooling',
+        desc: 'Continuous integration pipelines, developer environment automation, and reusable software modules.',
+        tech: skills.languages.slice(0, 2).join(' • ') || 'Modern Tooling',
+        github: github.profileUrl,
+        live: github.profileUrl
+      });
+    }
+
     return {
       name: identity.name || identity.username,
       role,
@@ -245,13 +310,7 @@ Respond ONLY with a valid JSON object in this exact schema:
         followers: github.followers || 0,
         stars: projects.reduce((acc, p) => acc + (p.stars || 0), 0)
       },
-      projects: projects.map(p => ({
-        name: p.name,
-        desc: p.description,
-        tech: p.tech,
-        github: p.github,
-        live: p.live
-      })),
+      projects: projs,
       personality_signals: {
         vibe: skills.languages.includes('Rust') || skills.languages.includes('Go') ? 'technical-architect' : 'visual-creative',
         theme_hint: 'dynamic'

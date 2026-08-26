@@ -31,11 +31,19 @@ const { SecurityService } = require('./services/security-service');
 const { SecurityMiddleware } = require('./middleware/security-middleware');
 const { AuthMiddleware } = require('./middleware/auth-middleware');
 const { AuthHandler } = require('./handlers/auth-handler');
+const { PortfolioState } = require('./customizer/portfolio-state');
+const { StaticExporter } = require('./export/static-exporter');
+const { CustomizationQualityGate } = require('./customizer/customization-quality-gate');
+const { SectionRegistry } = require('./customizer/section-registry');
+const { BetaDashboard } = require('./analytics/beta-dashboard');
+const { productTelemetry, EVENT_TYPES } = require('./analytics/product-events');
 
 const app = express();
 const securityService = new SecurityService();
 const figmaService = new FigmaService();
 const designEngine = new DesignEngine();
+const customizationQualityGate = new CustomizationQualityGate();
+const portfolioCustomizerMap = new Map();
 
 // Global Security Middleware Pipeline
 app.use(SecurityMiddleware.requestTimeout(90000));
@@ -404,6 +412,236 @@ app.get('/api/generate/github/status/:jobId', (req, res) => {
     return res.status(404).json({ error: 'Generation job not found.' });
   }
   res.json(job);
+});
+
+// Helper to get or initialize PortfolioState for a siteId
+function getOrInitPortfolioState(siteId) {
+  if (portfolioCustomizerMap.has(siteId)) {
+    return portfolioCustomizerMap.get(siteId);
+  }
+  const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+  const siteDir = path.join(sitesBaseDir, siteId);
+  const htmlPath = path.join(siteDir, 'index.html');
+  if (!fs.existsSync(htmlPath)) {
+    return null;
+  }
+  const html = fs.readFileSync(htmlPath, 'utf8');
+  const cssPath = path.join(siteDir, 'style.css');
+  const jsPath = path.join(siteDir, 'script.js');
+  const css = fs.existsSync(cssPath) ? fs.readFileSync(cssPath, 'utf8') : '';
+  const js = fs.existsSync(jsPath) ? fs.readFileSync(jsPath, 'utf8') : '';
+  const state = new PortfolioState({ html, css, js, id: siteId });
+  portfolioCustomizerMap.set(siteId, state);
+  return state;
+}
+
+// 6. Portfolio Customizer State Endpoint (GET)
+app.get('/api/portfolio/:siteId/customizer', (req, res) => {
+  try {
+    const { siteId } = req.params;
+    const state = getOrInitPortfolioState(siteId);
+    if (!state) {
+      return res.status(404).json({ error: 'Portfolio not found or expired.' });
+    }
+
+    res.json({
+      success: true,
+      siteId,
+      sections: state.getSectionsSummary(),
+      hiddenSections: Array.from(state.hiddenSections),
+      canUndo: state.canUndo(),
+      canRedo: state.canRedo(),
+      tokens: {
+        sectionSpacing: state.designTokens.sectionSpacing || 'medium',
+        borderIntensity: state.designTokens.borderOpacity || 'subtle',
+        typeScale: state.designTokens.typeScale || 'balanced',
+        theme: state.themeMode || 'auto'
+      }
+    });
+  } catch (err) {
+    console.error('[API] /api/portfolio/:siteId/customizer GET error:', err);
+    res.status(500).json({ error: 'Could not load customizer state.' });
+  }
+});
+
+// 7. Portfolio Customizer Action Endpoint (POST)
+app.post('/api/portfolio/:siteId/customizer', async (req, res) => {
+  try {
+    const { siteId } = req.params;
+    const { action, newOrder, sectionId, visible, token, value } = req.body;
+
+    const state = getOrInitPortfolioState(siteId);
+    if (!state) {
+      return res.status(404).json({ error: 'Portfolio not found.' });
+    }
+
+    let validationResult = { valid: true };
+
+    if (action === 'reorder') {
+      validationResult = customizationQualityGate.validateReorder(state, newOrder);
+      if (!validationResult.valid) {
+        return res.status(400).json({ error: validationResult.reason, code: 'INVALID_REORDER' });
+      }
+      state.reorderSections(newOrder);
+    } else if (action === 'toggle_visibility') {
+      validationResult = customizationQualityGate.validateVisibility(state, sectionId, visible);
+      if (!validationResult.valid) {
+        return res.status(400).json({ error: validationResult.reason, code: 'PROTECTED_SECTION' });
+      }
+      state.toggleSectionVisibility(sectionId, visible);
+    } else if (action === 'modify_token') {
+      validationResult = customizationQualityGate.validateToken(state, token, value);
+      if (!validationResult.valid) {
+        return res.status(400).json({ error: validationResult.reason, code: 'INVALID_TOKEN' });
+      }
+      state.setToken(token, value);
+    } else if (action === 'undo') {
+      if (!state.undo()) {
+        return res.status(400).json({ error: 'No further undo steps available.' });
+      }
+    } else if (action === 'redo') {
+      if (!state.redo()) {
+        return res.status(400).json({ error: 'No further redo steps available.' });
+      }
+    } else if (action === 'reset') {
+      state.reset();
+    } else {
+      return res.status(400).json({ error: 'Invalid customization action.' });
+    }
+
+    // Render updated HTML/CSS/JS and update hosting provider
+    const rendered = state.render();
+    await hostingProvider.deploy(siteId, rendered);
+
+    res.json({
+      success: true,
+      siteId,
+      previewUrl: `/p/${siteId}?v=${Date.now()}`,
+      sections: state.getSectionsSummary(),
+      hiddenSections: Array.from(state.hiddenSections),
+      canUndo: state.canUndo(),
+      canRedo: state.canRedo(),
+      tokens: {
+        sectionSpacing: state.designTokens.sectionSpacing || 'medium',
+        borderIntensity: state.designTokens.borderOpacity || 'subtle',
+        typeScale: state.designTokens.typeScale || 'balanced',
+        theme: state.themeMode || 'auto'
+      }
+    });
+  } catch (err) {
+    console.error('[API] /api/portfolio/:siteId/customizer POST error:', err);
+    res.status(500).json({ error: err.message || 'Customization failed.' });
+  }
+});
+
+// 8. Static ZIP Export Endpoint (POST)
+app.post('/api/portfolio/:siteId/export', async (req, res) => {
+  try {
+    const { siteId } = req.params;
+    const state = getOrInitPortfolioState(siteId);
+    if (!state) {
+      return res.status(404).json({ error: 'Portfolio not found or expired.' });
+    }
+
+    const zipBuffer = await StaticExporter.exportToZipBuffer(state, {
+      siteId,
+      exportedAt: new Date().toISOString()
+    });
+
+    if (req.query.format === 'json') {
+      return res.json({
+        success: true,
+        siteId,
+        sizeBytes: zipBuffer.length,
+        deploymentGuides: {
+          vercel: ['Download ZIP', 'Run vercel deploy or drag onto Vercel dashboard', 'Your site is live globally on Edge CDN'],
+          netlify: ['Download ZIP', 'Drag project folder into Netlify Drop (app.netlify.com/drop)', 'Instant HTTPS static deployment'],
+          githubPages: ['Download ZIP', 'Push files to a new GitHub repo', 'Go to Settings -> Pages -> Deploy from Main branch']
+        }
+      });
+    }
+
+    res.setHeader('Content-Type', 'application/zip');
+    res.setHeader('Content-Disposition', `attachment; filename="${siteId}-portfolio.zip"`);
+    res.setHeader('X-Export-Guarantees', 'zero-localhost,zero-watermark,sanitized');
+    res.send(zipBuffer);
+  } catch (err) {
+    console.error('[API] /api/portfolio/:siteId/export error:', err);
+    res.status(500).json({ error: 'Could not package portfolio ZIP.' });
+  }
+});
+
+// 9. Demo & Sample Portfolios Endpoint
+app.get('/api/demo/samples', (req, res) => {
+  const samples = [
+    {
+      id: 'demo-systems-architect',
+      name: 'Elena Rostova',
+      role: 'Staff Systems Architect & Core Infra',
+      badge: 'Systems & Terminal',
+      description: 'Distributed consensus engines, low-latency network protocols, and Linux eBPF telemetry.',
+      techStack: ['Rust', 'Go', 'eBPF', 'Tokio', 'Docker', 'Kubernetes'],
+      previewUrl: '/p/demo-systems-architect'
+    },
+    {
+      id: 'demo-ai-researcher',
+      name: 'Dr. Aris Thorne',
+      role: 'Principal AI / ML Researcher',
+      badge: 'Research & Academics',
+      description: 'Sparse mixture-of-experts architectures, attention latency reduction, and diffusion model alignment.',
+      techStack: ['PyTorch', 'JAX', 'CUDA', 'Python', 'Transformers'],
+      previewUrl: '/p/demo-ai-researcher'
+    },
+    {
+      id: 'demo-3d-creative',
+      name: 'Kai Takahashi',
+      role: 'Creative Technologist & 3D Artist',
+      badge: '3D & Spatial',
+      description: 'Procedural GLSL shader simulations, WebGL compute graphs, and interactive spatial stages.',
+      techStack: ['Three.js', 'WebGL2', 'GLSL', 'TypeScript', 'Blender', 'WebGPU'],
+      previewUrl: '/p/demo-3d-creative'
+    },
+    {
+      id: 'demo-editorial-monograph',
+      name: 'Siddharth Roy',
+      role: 'Design Director & Brand Architect',
+      badge: 'Editorial & Monograph',
+      description: 'Typography systems, award-winning editorial spreads, and bespoke design engineering.',
+      techStack: ['Design Systems', 'Figma', 'Typography', 'Next.js', 'CSS Architecture'],
+      previewUrl: '/p/demo-editorial-monograph'
+    }
+  ];
+  res.json({ success: true, samples });
+});
+
+// 10. Admin Observability & Health Telemetry Endpoints
+app.get('/api/admin/observability', (req, res) => {
+  try {
+    const report = BetaDashboard.generateReport({ isRealUserData: true });
+    res.json({
+      success: true,
+      report
+    });
+  } catch (err) {
+    console.error('[API] /api/admin/observability error:', err);
+    res.status(500).json({ error: 'Failed to generate observability report.' });
+  }
+});
+
+app.get('/api/admin/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    uptimeSeconds: process.uptime(),
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    features: {
+      githubSynthesis: true,
+      customizer: true,
+      staticExport: true,
+      supabasePersistence: !!dbService,
+      originIsolation: true
+    }
+  });
 });
 
 /// Studio & Design Engine API Endpoints

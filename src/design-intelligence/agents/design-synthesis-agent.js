@@ -5,6 +5,7 @@
  */
 
 const { DesignBriefSchema } = require('../design-brief-schema');
+const { MacroDirectiveManager } = require('../../design-engine/macro-design-directives');
 
 class DesignSynthesisAgent {
   /**
@@ -57,6 +58,8 @@ class DesignSynthesisAgent {
     const perf = performanceReport.decision || performanceReport;
     const research = designResearch.decision || designResearch || {};
 
+    const macroDirective = MacroDirectiveManager.selectDirective(contentProfile);
+
     const sectionSequence = ia.sectionOrder || [
       'identity',
       'projects',
@@ -68,6 +71,10 @@ class DesignSynthesisAgent {
     const designThesis = this.generateDesignThesis(contentProfile, visual, ia, project, research);
 
     const brief = {
+      macroDirective,
+      densityProfile: macroDirective.densityProfile,
+      compositionGravity: macroDirective.compositionGravity,
+      contentDominance: macroDirective.contentDominance,
       designEvidence: research.designEvidence || {
         timestamp: Date.now(),
         skills: {
@@ -136,6 +143,8 @@ class DesignSynthesisAgent {
         fontUrls: visual.fontUrls || ''
       },
       typography: {
+        systemId: type.systemId || 'swiss-grotesk',
+        systemName: type.systemName || 'Swiss International Grotesk',
         headingFont: type.headingFont || 'Space Grotesk',
         bodyFont: type.bodyFont || 'Inter',
         monoFont: type.monoFont || 'JetBrains Mono',
@@ -144,25 +153,32 @@ class DesignSynthesisAgent {
         tracking: type.tracking || '-0.02em',
         weights: type.weights || { heading: 800, body: 400 }
       },
-      colorSystem: visual.colors || {
-        bg: '#0F172A',
-        surface: '#1E293B',
-        surfaceAlt: '#334155',
-        text: '#F8FAFC',
-        textMuted: '#94A3B8',
-        border: 'rgba(255,255,255,0.1)',
-        borderStrong: 'rgba(255,255,255,0.25)',
-        primary: '#38BDF8',
-        primaryOn: '#000000',
-        accent: '#818CF8',
-        glow: 'rgba(56,189,248,0.25)'
+      colorSystem: {
+        paletteId: visual.paletteId || 'swiss-light',
+        paletteName: visual.paletteName || 'Swiss Architectural Light',
+        ...(visual.colors || {
+          bg: '#0F172A',
+          surface: '#1E293B',
+          surfaceAlt: '#334155',
+          text: '#F8FAFC',
+          textMuted: '#94A3B8',
+          border: 'rgba(255,255,255,0.1)',
+          borderStrong: 'rgba(255,255,255,0.25)',
+          primary: '#38BDF8',
+          primaryOn: '#000000',
+          accent: '#818CF8',
+          glow: 'rgba(56,189,248,0.25)'
+        })
       },
       motionSystem: {
+        languageId: motion.languageId || 'technical-stagger',
+        languageName: motion.languageName || 'Technical Stagger',
         intensity: motion.intensity || 'subtle-editorial',
-        technology: motion.technology || 'GSAP 3.12',
+        technology: motion.technology || 'GSAP 3.12+ ScrollTrigger',
         webglActive: motion.webglActive || false,
         scrollBehavior: motion.scrollBehavior || 'smooth-reveal',
-        motionCode: motion.motionCode || {}
+        motionCode: motion.motionCode || {},
+        timing: motion.timing || { duration: 0.7, stagger: 0.08, ease: 'power2.out' }
       },
       interactionModel: {
         pattern: ux.interactionModel || 'scroll-guided-reveal',

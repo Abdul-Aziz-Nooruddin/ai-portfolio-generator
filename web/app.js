@@ -979,6 +979,18 @@ async function handleGithubGenerate(e) {
     }
 
     lastGithubResult = result;
+    currentSiteId = result.siteId;
+    currentPreviewUrl = result.previewUrl;
+
+    // Persist session to localStorage
+    savePortfolioSession({
+      siteId: result.siteId,
+      previewUrl: result.previewUrl,
+      profileData: result.profileData,
+      username: result.username || target,
+      lifecycleState: 'READY',
+      timestamp: Date.now()
+    });
 
     // Mark all steps completed
     for (let i = 1; i <= 8; i++) {
@@ -991,9 +1003,25 @@ async function handleGithubGenerate(e) {
     populateGithubResult(result);
   } catch (err) {
     console.error('[GITHUB GENERATE ERROR]', err);
-    setGithubStatus('Generation Failed', err.message || 'Could not complete GitHub synthesis.');
-    showToast('Generation Error', err.message || 'Could not build site from GitHub.', 'error');
+    showGithubErrorCard('Generation Interrupted', err.message || 'Could not complete portfolio synthesis.');
+    showToast('Generation Notice', err.message || 'Could not build site from GitHub.', 'error');
   }
+}
+
+function showGithubErrorCard(title, message) {
+  const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
+  if (progressBox) progressBox.style.display = 'none';
+
+  const resultCard = document.getElementById('githubResultCard');
+  if (resultCard) resultCard.style.display = 'none';
+
+  const errorCard = document.getElementById('githubErrorCard');
+  const errorTitle = document.getElementById('githubErrorTitle');
+  const errorMsg = document.getElementById('githubErrorMessage');
+
+  if (errorTitle) errorTitle.textContent = title;
+  if (errorMsg) errorMsg.textContent = message;
+  if (errorCard) errorCard.style.display = 'block';
 }
 
 function openGithubProgressModal() {
@@ -1004,6 +1032,9 @@ function openGithubProgressModal() {
   }
   const resultCard = document.getElementById('githubResultCard');
   if (resultCard) resultCard.style.display = 'none';
+  const errorCard = document.getElementById('githubErrorCard');
+  if (errorCard) errorCard.style.display = 'none';
+
   const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
   if (progressBox) progressBox.style.display = 'flex';
 
@@ -1043,6 +1074,8 @@ function setGithubStatus(title, desc) {
 function populateGithubResult(result) {
   const progressBox = document.getElementById('githubProgressBox') || document.querySelector('.github-steps-container');
   if (progressBox) progressBox.style.display = 'none';
+  const errorCard = document.getElementById('githubErrorCard');
+  if (errorCard) errorCard.style.display = 'none';
 
   const resultCard = document.getElementById('githubResultCard');
   const previewIframe = document.getElementById('githubResultIframe');
@@ -1138,7 +1171,309 @@ function editGithubInStudio() {
   }
 }
 
-// 12. Global Window Function Exports for Bulletproof HTML Onclick Handlers
+// ========================================================
+// 14. Phase 30: Public Customizer, Export & Samples Controllers
+// ========================================================
+
+let activeCustomizerState = null;
+
+async function openCustomizerModal() {
+  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
+  if (!targetSiteId) {
+    showToast('No Portfolio Active', 'Generate a portfolio or choose a demo first.', 'info');
+    return;
+  }
+  
+  const drawer = document.getElementById('customizerDrawer');
+  if (drawer) drawer.style.display = 'flex';
+
+  await loadCustomizerState(targetSiteId);
+}
+
+function closeCustomizerModal() {
+  const drawer = document.getElementById('customizerDrawer');
+  if (drawer) drawer.style.display = 'none';
+}
+
+async function loadCustomizerState(siteId) {
+  try {
+    const res = await fetch(`/api/portfolio/${siteId}/customizer`);
+    if (!res.ok) throw new Error('Could not load customizer settings.');
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Failed to load customizer.');
+
+    activeCustomizerState = data;
+    renderCustomizerSectionsList(data);
+    updateCustomizerAppearanceControls(data.tokens);
+    updateCustomizerButtons(data);
+  } catch (err) {
+    console.error('[CUSTOMIZER LOAD ERROR]', err);
+    showToast('Customizer Error', err.message, 'error');
+  }
+}
+
+function renderCustomizerSectionsList(state) {
+  const container = document.getElementById('customizerSectionsList');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const sections = state.sections || [];
+  sections.forEach((sec, idx) => {
+    const item = document.createElement('div');
+    item.className = 'customizer-section-item';
+    
+    const isHidden = state.hiddenSections && state.hiddenSections.includes(sec.id);
+    const isProtected = sec.protected || sec.id === 'hero' || sec.id === 'projects';
+
+    item.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; width: 20px;">#${idx + 1}</span>
+        <span style="font-size: 0.9rem; font-weight: 700; ${isHidden ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${escapeHtml(sec.name || sec.id)}</span>
+      </div>
+      <div style="display: flex; gap: 6px;">
+        <button type="button" class="customizer-btn-mini" title="Move Up" ${idx === 0 ? 'disabled style="opacity:0.3;"' : ''} onclick="handleMoveSection(${idx}, -1)">▲</button>
+        <button type="button" class="customizer-btn-mini" title="Move Down" ${idx === sections.length - 1 ? 'disabled style="opacity:0.3;"' : ''} onclick="handleMoveSection(${idx}, 1)">▼</button>
+        ${!isProtected ? `
+          <button type="button" class="customizer-btn-mini" title="${isHidden ? 'Show Section' : 'Hide Section'}" onclick="handleToggleSectionVisibility('${sec.id}', ${isHidden})">
+            ${isHidden ? '👁️ Show' : '🚫 Hide'}
+          </button>
+        ` : ''}
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function updateCustomizerAppearanceControls(tokens = {}) {
+  const selSpacing = document.getElementById('selectSectionSpacing');
+  if (selSpacing && tokens.sectionSpacing) selSpacing.value = tokens.sectionSpacing;
+
+  const selBorder = document.getElementById('selectBorderIntensity');
+  if (selBorder && tokens.borderIntensity) selBorder.value = tokens.borderIntensity;
+
+  const selType = document.getElementById('selectTypeScale');
+  if (selType && tokens.typeScale) selType.value = tokens.typeScale;
+}
+
+function updateCustomizerButtons(state) {
+  const btnUndo = document.getElementById('btnCustomizerUndo');
+  const btnRedo = document.getElementById('btnCustomizerRedo');
+  if (btnUndo) btnUndo.disabled = !state.canUndo;
+  if (btnRedo) btnRedo.disabled = !state.canRedo;
+}
+
+async function handleMoveSection(fromIndex, delta) {
+  if (!activeCustomizerState || !activeCustomizerState.sections) return;
+  const toIndex = fromIndex + delta;
+  if (toIndex < 0 || toIndex >= activeCustomizerState.sections.length) return;
+
+  const order = activeCustomizerState.sections.map(s => s.id);
+  const temp = order[fromIndex];
+  order[fromIndex] = order[toIndex];
+  order[toIndex] = temp;
+
+  await handleCustomizerAction('reorder', { newOrder: order });
+}
+
+async function handleToggleSectionVisibility(sectionId, currentlyHidden) {
+  await handleCustomizerAction('toggle_visibility', { sectionId, visible: currentlyHidden });
+}
+
+async function handleTokenChange(token, value) {
+  await handleCustomizerAction('modify_token', { token, value });
+}
+
+async function handleCustomizerAction(action, payload = {}) {
+  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
+  if (!targetSiteId) return;
+
+  try {
+    const res = await fetch(`/api/portfolio/${targetSiteId}/customizer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, ...payload })
+    });
+
+    const data = await res.json();
+    if (!res.ok || !data.success) {
+      throw new Error(data.error || 'Customization update could not be applied.');
+    }
+
+    activeCustomizerState = data;
+    renderCustomizerSectionsList(data);
+    updateCustomizerAppearanceControls(data.tokens);
+    updateCustomizerButtons(data);
+
+    // Refresh iframes
+    const iframes = [document.getElementById('portfolioIframe'), document.getElementById('githubResultIframe')];
+    iframes.forEach(frame => {
+      if (frame && data.previewUrl) {
+        frame.src = `${data.previewUrl}&v=${Date.now()}`;
+      }
+    });
+
+    showToast('Updated Live Preview', 'Customization applied successfully.', 'success');
+  } catch (err) {
+    console.error('[CUSTOMIZER ACTION ERROR]', err);
+    showToast('Notice', err.message, 'error');
+  }
+}
+
+// Export Modal
+function openExportModal() {
+  const targetSiteId = currentSiteId || lastGithubResult?.siteId;
+  if (!targetSiteId) {
+    showToast('No Portfolio Active', 'Generate a portfolio before exporting.', 'info');
+    return;
+  }
+
+  const modal = document.getElementById('exportModal');
+  const btnDownload = document.getElementById('btnDownloadZip');
+  if (btnDownload) {
+    btnDownload.href = `/api/portfolio/${targetSiteId}/export`;
+    btnDownload.setAttribute('download', `${targetSiteId}-portfolio.zip`);
+  }
+
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeExportModal() {
+  const modal = document.getElementById('exportModal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Samples Gallery Modal
+async function openSamplesModal() {
+  const modal = document.getElementById('samplesModal');
+  if (modal) modal.style.display = 'flex';
+
+  await loadSamplePortfolios();
+}
+
+function closeSamplesModal() {
+  const modal = document.getElementById('samplesModal');
+  if (modal) modal.style.display = 'none';
+}
+
+async function loadSamplePortfolios() {
+  const container = document.getElementById('sampleGalleryContainer');
+  if (!container) return;
+  container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Loading example portfolios...</p>';
+
+  try {
+    const res = await fetch('/api/demo/samples');
+    if (!res.ok) throw new Error('Could not load samples');
+    const data = await res.json();
+    
+    container.innerHTML = '';
+    (data.samples || []).forEach(sample => {
+      const card = document.createElement('div');
+      card.className = 'sample-card';
+      card.innerHTML = `
+        <div>
+          <span style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: var(--primary); letter-spacing: 0.08em;">${escapeHtml(sample.badge)}</span>
+          <h4 style="font-size: 1.1rem; font-weight: 800; margin: 4px 0 2px;">${escapeHtml(sample.name)}</h4>
+          <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">${escapeHtml(sample.role)}</div>
+          <p style="font-size: 0.82rem; color: var(--text); line-height: 1.4; margin-bottom: 12px;">${escapeHtml(sample.description)}</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 16px;">
+            ${(sample.techStack || []).map(t => `<span style="font-size: 0.7rem; background: rgba(28,25,23,0.06); padding: 2px 6px; border-radius: 4px;">${escapeHtml(t)}</span>`).join('')}
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px;">
+          <button type="button" class="btn-mode-cta primary" style="padding: 8px 14px; font-size: 0.82rem;" onclick="loadSampleIntoStudio('${sample.id}', '${escapeAttr(sample.name)}', '${escapeAttr(sample.role)}')">
+            <span>✨ Load in Studio</span>
+          </button>
+        </div>
+      `;
+      container.appendChild(card);
+    });
+  } catch (err) {
+    container.innerHTML = `<p style="color:#991b1b; font-size:0.85rem;">Could not load sample portfolios. Try again later.</p>`;
+  }
+}
+
+function loadSampleIntoStudio(sampleId, name, role) {
+  closeSamplesModal();
+  openStudioView();
+  
+  const nameInput = document.getElementById('inputName');
+  const roleInput = document.getElementById('inputRole');
+  if (nameInput) nameInput.value = name;
+  if (roleInput) roleInput.value = role;
+
+  showToast('Sample Loaded', `Loaded ${name} into studio builder. Click Generate to preview.`, 'info');
+}
+
+// Session Persistence Helpers
+const PORTFOLIO_SESSION_KEY = 'portfolio_active_session';
+
+function savePortfolioSession(data = {}) {
+  try {
+    const existing = getPersistedPortfolioSession() || {};
+    const updated = {
+      ...existing,
+      ...data,
+      timestamp: Date.now()
+    };
+    localStorage.setItem(PORTFOLIO_SESSION_KEY, JSON.stringify(updated));
+    renderResumedSessionBanner(updated);
+  } catch (e) {
+    console.warn('[STORAGE] Could not persist portfolio session', e);
+  }
+}
+
+function getPersistedPortfolioSession() {
+  try {
+    const raw = localStorage.getItem(PORTFOLIO_SESSION_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    // Keep sessions valid for 7 days
+    if (Date.now() - (parsed.timestamp || 0) < 7 * 24 * 60 * 60 * 1000) {
+      return parsed;
+    }
+    localStorage.removeItem(PORTFOLIO_SESSION_KEY);
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function clearPersistedPortfolio() {
+  try {
+    localStorage.removeItem(PORTFOLIO_SESSION_KEY);
+    const banner = document.getElementById('resumedSessionBanner');
+    if (banner) banner.style.display = 'none';
+    showToast('Session Cleared', 'Active portfolio session removed.', 'info');
+  } catch (e) {}
+}
+
+function renderResumedSessionBanner(session) {
+  const banner = document.getElementById('resumedSessionBanner');
+  const userSpan = document.getElementById('resumedUsername');
+  if (!banner || !session || !session.siteId) return;
+
+  if (userSpan) {
+    userSpan.textContent = session.username ? `@${session.username}` : (session.profileData?.name || 'Your Portfolio');
+  }
+  banner.style.display = 'flex';
+}
+
+function reopenPersistedPortfolio() {
+  const session = getPersistedPortfolioSession();
+  if (!session || !session.siteId) {
+    showToast('No Active Portfolio', 'Please generate or build a portfolio first.', 'info');
+    return;
+  }
+
+  lastGithubResult = session;
+  currentSiteId = session.siteId;
+  currentPreviewUrl = session.previewUrl;
+
+  openGithubProgressModal();
+  populateGithubResult(session);
+}
+
+// Expose all public handlers to window
 window.openStudioView = openStudioView;
 window.closeStudioView = closeStudioView;
 window.setBranch = setBranch;
@@ -1154,13 +1489,40 @@ window.regenerateGithubDesign = regenerateGithubDesign;
 window.editGithubInStudio = editGithubInStudio;
 window.handleGithubGenerate = handleGithubGenerate;
 window.handleSignupSubmit = handleSignupSubmit;
+window.openCustomizerModal = openCustomizerModal;
+window.closeCustomizerModal = closeCustomizerModal;
+window.handleCustomizerAction = handleCustomizerAction;
+window.handleMoveSection = handleMoveSection;
+window.handleToggleSectionVisibility = handleToggleSectionVisibility;
+window.handleTokenChange = handleTokenChange;
+window.openExportModal = openExportModal;
+window.closeExportModal = closeExportModal;
+window.openSamplesModal = openSamplesModal;
+window.closeSamplesModal = closeSamplesModal;
+window.loadSampleIntoStudio = loadSampleIntoStudio;
+window.savePortfolioSession = savePortfolioSession;
+window.getPersistedPortfolioSession = getPersistedPortfolioSession;
+window.clearPersistedPortfolio = clearPersistedPortfolio;
+window.reopenPersistedPortfolio = reopenPersistedPortfolio;
 
-// 13. Deep-Link Mode Switcher on Page Load
+// Deep-Link Mode Switcher & Session Hydration on Page Load
 window.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
   const mode = params.get('mode');
+
+  // Hydrate persisted session if available
+  const savedSession = getPersistedPortfolioSession();
+  if (savedSession && savedSession.siteId) {
+    lastGithubResult = savedSession;
+    currentSiteId = savedSession.siteId;
+    currentPreviewUrl = savedSession.previewUrl;
+    renderResumedSessionBanner(savedSession);
+  }
+
   if (mode === 'builder' || mode === 'studio') {
     openStudioView();
+  } else if (mode === 'samples' || mode === 'examples') {
+    openSamplesModal();
   } else if (mode === 'github') {
     const input = document.getElementById('githubUsernameInput');
     if (input) {
@@ -1168,8 +1530,14 @@ window.addEventListener('DOMContentLoaded', () => {
       input.focus();
     }
   } else if (mode === 'resume') {
-    const drop = document.getElementById('dropZone');
-    if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (savedSession) {
+      reopenPersistedPortfolio();
+    } else {
+      const drop = document.getElementById('dropZone');
+      if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
   }
 });
+
+
 

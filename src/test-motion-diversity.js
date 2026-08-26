@@ -25,9 +25,9 @@ describe('🏛️ Phase 14: Motion Diversity & Physics Profiles', () => {
     const motionBrutalist = WebGLMotion.getMotionCode(brutalist, ia);
     const motionSwiss = WebGLMotion.getMotionCode(swiss, ia);
 
-    assert.strictEqual(motionObsidian.profileName, 'cinematic-obsidian');
-    assert.strictEqual(motionBrutalist.profileName, 'brutalist-pop');
-    assert.strictEqual(motionSwiss.profileName, 'swiss-editorial');
+    assert.strictEqual(motionObsidian.profileName, 'cinematic-drift');
+    assert.strictEqual(motionBrutalist.profileName, 'brutalist-snap');
+    assert.strictEqual(motionSwiss.profileName, 'editorial-reveal');
 
     // Obsidian has slow cinematic ease (power2.inOut), Brutalist has snappy (power4.out)
     assert.ok(motionObsidian.js.includes('power2.inOut'), 'Obsidian must feature cinematic power2.inOut');

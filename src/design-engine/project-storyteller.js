@@ -21,29 +21,56 @@ class ProjectStoryteller {
       metrics: p.metrics || p.impact || ''
     }));
 
-    switch (strategy) {
-      case 'fullscreen-interactive-slide':
-        return this.renderFullscreenSlides(safeProjects, visual);
+    const strategyKey = typeof strategy === 'string' ? strategy : (strategy?.strategyId || strategy?.id || 'asymmetric-media-mosaic');
+
+    switch (strategyKey) {
+      case 'case-study-narrative':
+        return this.renderCaseStudyNarrative(safeProjects, visual);
+      case 'technical-dossier':
       case 'code-architecture-dossier':
         return this.renderCodeArchitectureDossier(safeProjects, visual);
+      case 'visual-exhibition':
       case 'horizontal-filmstrip':
         return this.renderHorizontalFilmstrip(safeProjects, visual);
+      case 'minimal-project-index':
       case 'typographic-index-reveal':
         return this.renderTypographicIndexReveal(safeProjects, visual);
+      case 'project-log':
       case 'terminal-session-log':
         return this.renderTerminalSessionLog(safeProjects, visual);
+      case 'editorial-feature':
       case 'magazine-editorial-chapter':
         return this.renderMagazineEditorialChapters(safeProjects, visual);
+      case 'timeline':
       case 'timeline-milestone-card':
         return this.renderTimelineMilestones(safeProjects, visual);
+      case 'architecture-map':
       case 'interactive-canvas-node':
         return this.renderInteractiveCanvasNodes(safeProjects, visual);
+      case 'metrics-observatory':
       case 'compact-metrics-table':
         return this.renderCompactMetricsTable(safeProjects, visual);
       case 'spatial-orbit-dock':
         return this.renderSpatialOrbitDock(safeProjects, visual);
+      case 'split-technical-spec':
       case 'split-screen-comparison':
         return this.renderSplitScreenComparison(safeProjects, visual);
+      case 'research-paper':
+        return this.renderAcademicResearchPaper(safeProjects, visual);
+      case 'repository-archaeology':
+        return this.renderRepositoryArchaeology(safeProjects, visual);
+      case 'before-after':
+        return this.renderBeforeAfterMatrix(safeProjects, visual);
+      case 'failure-recovery':
+        return this.renderFailureRecoveryPostmortem(safeProjects, visual);
+      case 'build-journal':
+        return this.renderBuildJournal(safeProjects, visual);
+      case 'artifact-archive':
+        return this.renderArtifactArchive(safeProjects, visual);
+      case 'product-launch':
+      case 'fullscreen-interactive-slide':
+        return this.renderFullscreenSlides(safeProjects, visual);
+      case 'feature-atlas':
       case 'asymmetric-media-mosaic':
       default:
         return this.renderAsymmetricMediaMosaic(safeProjects, visual);
@@ -342,6 +369,137 @@ class ProjectStoryteller {
     }).join('');
 
     return `<div class="story-presentation presentation-asymmetric-mosaic" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">${mosaicHtml}</div>`;
+  }
+
+  // 13. Academic Research Paper Presentation
+  static renderAcademicResearchPaper(projects, visual) {
+    const papersHtml = projects.map((p, i) => `
+      <div class="academic-paper-section" style="padding: 2.5rem 0; border-bottom: 2px solid var(--border); margin-bottom: 2.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">[PUB-DOI: 10.1145/${p.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.2026]</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${p.name}: A Methodological Framework</h3>
+        <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">KEYWORDS: ${p.tech}</div>
+        <div style="background: var(--surface-alt); border-left: 3px solid var(--primary); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.7; color: var(--text);">
+          <strong style="color: var(--primary);">ABSTRACT:</strong> ${p.desc}
+        </div>
+        <div style="display: flex; gap: 14px; align-items: center;">
+          ${p.live ? `<a href="${p.live}" target="_blank" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); font-weight: 700; text-decoration: underline;">[Download PDF Spec ↗]</a>` : ''}
+          ${p.github ? `<a href="${p.github}" target="_blank" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-decoration: underline;">[Replication Artifacts ↗]</a>` : ''}
+        </div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-research-paper">${papersHtml}</div>`;
+  }
+
+  // 14. Repository Archaeology
+  static renderRepositoryArchaeology(projects, visual) {
+    const treesHtml = projects.map((p, i) => `
+      <div class="repo-archaeology-tree" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem; font-family: var(--font-mono);">
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+          <span>COMMIT_TREE: 0x${Math.abs(p.name.split('').reduce((a,c)=>a+c.charCodeAt(0),0)).toString(16).padStart(6, '0')}</span>
+          <span style="color: var(--primary);">EVOLUTION: VERIFIED</span>
+        </div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem;">tree://${p.name}</h3>
+        <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+        <div style="background: var(--surface-alt); padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.8rem; margin-bottom: 1rem; color: var(--text);">
+          <div>$ git log -n 1 --oneline</div>
+          <div style="color: var(--primary);">&gt; feat(core): implement ${p.tech} pipeline</div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-size: 0.85rem; text-decoration: underline;">git://checkout ↗</a>` : ''}
+          ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: underline;">view://diff</a>` : ''}
+        </div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-repository-archaeology">${treesHtml}</div>`;
+  }
+
+  // 15. Before / After Comparison Matrix
+  static renderBeforeAfterMatrix(projects, visual) {
+    const matricesHtml = projects.map((p, i) => `
+      <div class="before-after-matrix" style="border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 2.5rem; background: var(--surface);">
+        <div style="padding: 1.5rem; border-bottom: 1px solid var(--border); background: var(--surface-alt); display: flex; justify-content: space-between; align-items: baseline;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); margin: 0;">${p.name}</h3>
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">${p.tech}</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0;">
+          <div style="padding: 2rem; border-right: 1px solid var(--border); background: rgba(239, 68, 68, 0.03);">
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #ef4444; font-weight: 700; margin-bottom: 0.5rem;">[PRE-INTERVENTION STATE]</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin: 0;">Legacy architecture constrained by performance bottlenecks and unscalable synchronization.</p>
+          </div>
+          <div style="padding: 2rem; background: rgba(16, 185, 129, 0.03);">
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #10b981; font-weight: 700; margin-bottom: 0.5rem;">[DEPLOYED TRANSFORMATION]</div>
+            <p style="font-size: 0.9rem; color: var(--text); line-height: 1.6; margin: 0;">${p.desc}</p>
+          </div>
+        </div>
+        <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px;">
+          ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; text-decoration: none;">Verify Outcome ↗</a>` : ''}
+        </div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-before-after">${matricesHtml}</div>`;
+  }
+
+  // 16. Failure / Recovery Postmortem
+  static renderFailureRecoveryPostmortem(projects, visual) {
+    const postmortemsHtml = projects.map((p, i) => `
+      <div class="postmortem-dossier" style="background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: var(--radius); padding: 2rem; margin-bottom: 2rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">INCIDENT_POSTMORTEM // 0${i+1}</span>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 4px;">RESOLVED</span>
+        </div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+        <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between;">
+          <span>TOOLING: ${p.tech}</span>
+          ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); text-decoration: underline;">Postmortem Resolution ↗</a>` : ''}
+        </div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-failure-recovery">${postmortemsHtml}</div>`;
+  }
+
+  // 17. Build Journal & Dispatch
+  static renderBuildJournal(projects, visual) {
+    const journalsHtml = projects.map((p, i) => `
+      <div class="build-journal-entry" style="padding: 2rem 0; border-bottom: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">DISPATCH_ENTRY • DAY 0${i+1}</div>
+        <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
+        <p style="font-size: 0.98rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem;">${p.desc}</p>
+        <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">INSTRUMENTATION: ${p.tech}</div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-build-journal">${journalsHtml}</div>`;
+  }
+
+  // 18. Artifact Archive & Provenance
+  static renderArtifactArchive(projects, visual) {
+    const archiveHtml = projects.map((p, i) => `
+      <div class="archive-record-cell" style="background: var(--surface); border: 1px solid var(--border); padding: 1.75rem; margin-bottom: 1.5rem; display: grid; grid-template-columns: 80px 1fr; gap: 1.5rem; align-items: baseline;">
+        <div style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 800; color: var(--primary);">#${String(i+1).padStart(3, '0')}</div>
+        <div>
+          <h3 style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem;">${p.name}</h3>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">${p.desc}</p>
+          <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">SPEC: ${p.tech}</div>
+        </div>
+      </div>
+    `).join('');
+    return `<div class="story-presentation presentation-artifact-archive">${archiveHtml}</div>`;
+  }
+
+  // 19. Case Study Narrative
+  static renderCaseStudyNarrative(projects, visual) {
+    const caseStudiesHtml = projects.map((p, i) => `
+      <section class="case-study-chapter" style="padding: 3rem 0; border-bottom: 1px solid var(--border); margin-bottom: 3rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.75rem;">CASE STUDY NO. 0${i+1}</div>
+        <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">${p.name}</h3>
+        <p style="font-size: 1.1rem; color: var(--text); line-height: 1.75; max-width: 800px; margin-bottom: 1.75rem;">${p.desc}</p>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.25rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">Stack: ${p.tech}</span>
+          ${p.live ? `<a href="${p.live}" target="_blank" style="font-weight: 700; color: var(--primary); text-decoration: none;">Read Deep Dive ↗</a>` : ''}
+        </div>
+      </section>
+    `).join('');
+    return `<div class="story-presentation presentation-case-study">${caseStudiesHtml}</div>`;
   }
 
   static escapeHtml(str) {

@@ -120,8 +120,8 @@ class IAComposer {
     }
 
     // Filter against recent history to guarantee comprehensive structural rotation
-    const recentIaIds = recentHistory.map(h => h.iaModel).filter(Boolean);
-    const nonRecentCandidates = candidates.filter(id => !recentIaIds.slice(-5).includes(id));
+    const recentIaIds = recentHistory.map(h => h.iaModel || h.informationArchitecture?.modelId || h.modelId || h.structuralFingerprint?.traits?.iaModel).filter(Boolean);
+    const nonRecentCandidates = candidates.filter(id => !recentIaIds.slice(-8).includes(id));
     const pool = nonRecentCandidates.length > 0 ? nonRecentCandidates : candidates;
 
     const chosenId = pool[Math.floor(Math.random() * pool.length)];

@@ -32,355 +32,265 @@
     <div class="app-main-content" style="flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto;">
       <!-- Hero Section -->
       <section id="heroLanding" class="hero-landing">
-    <div class="hero-badge">
-      <span class="pulse-indicator"></span>
-      <span>AI-Powered Design Intelligence Studio</span>
-    </div>
-    <h1 class="hero-headline">Build an Award-Winning Portfolio in <strong>60 Seconds</strong></h1>
-    <p class="hero-subtext">Generate from your GitHub profile, drop your PDF resume, or customize interactively with our 22-Dimension Design Intelligence Studio.</p>
-
-    <!-- 3 Generation Modes Grid (GitHub, PDF/Image Resume, Interactive Builder) -->
-    <div class="generation-modes-container">
-      <!-- Mode 1: ⚡ 1-Click GitHub Portfolio -->
-      <div class="mode-card github-mode-card">
-        <div class="mode-badge-pill">POPULAR</div>
-        <div class="mode-card-content">
-          <div class="mode-icon github-mode-icon">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-          </div>
-          <h3>Generate with GitHub</h3>
-          <p>Turn your repositories, starred projects, and tech stack into a live 3D portfolio in 1 click.</p>
+        <div class="hero-badge">
+          <span class="pulse-indicator"></span>
+          <span>AI-Powered Portfolio Studio</span>
         </div>
-        
-        <div class="mode-card-actions">
-          <form id="githubGenerateForm" class="github-mini-form" onsubmit="handleGithubGenerate(event)">
-            <div class="github-mini-input-wrapper">
-              <span class="github-mini-prefix">github.com/</span>
-              <input type="text" id="githubUsernameInput" placeholder="username or URL" autocomplete="off" required>
+        <h1 class="hero-headline">Turn your GitHub into a portfolio designed around <strong>your actual work</strong></h1>
+        <p class="hero-subtext">No cookie-cutter templates or generic cards. We analyze your real repositories, identify your technical strengths, and craft a bespoke portfolio in seconds.</p>
+
+        <!-- Resumed Session Notice (Dynamically shown if previous generation is stored in localStorage) -->
+        <div id="resumedSessionBanner" style="display: none; background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 12px; padding: 12px 18px; margin: 0 auto 20px; max-width: 640px; align-items: center; justify-content: space-between; gap: 12px;">
+          <div style="font-size: 0.85rem; color: var(--text);">
+            <span>✨ <strong>Active Portfolio Found</strong>: <span id="resumedUsername">@developer</span></span>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-mode-cta primary" style="padding: 6px 12px; font-size: 0.78rem;" onclick="reopenPersistedPortfolio()">
+              <span>👁️ View Portfolio</span>
+            </button>
+            <button type="button" class="btn-mode-cta" style="padding: 6px 10px; font-size: 0.78rem;" title="Start New Session" onclick="clearPersistedPortfolio()">
+              <span>✕</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Generation Modes Container -->
+        <div class="generation-modes-container">
+          <!-- Primary Mode: 1-Click GitHub Portfolio -->
+          <div class="mode-card github-mode-card">
+            <div class="mode-badge-pill">RECOMMENDED</div>
+            <div class="mode-card-content">
+              <div class="mode-icon github-mode-icon">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </div>
+              <h3>Generate with GitHub</h3>
+              <p>Turn your repositories, starred work, and languages into a live, interactive portfolio.</p>
             </div>
-            <div class="theme-select-wrapper" style="margin: 8px 0 10px;">
-              <select id="githubThemeSelect" style="width: 100%; background: #ffffff; border: 1px solid rgba(28,25,23,0.14); color: #1c1917; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
-                <option value="auto">✨ Auto AI Match (Surprise Me)</option>
-                <option value="Cyberpunk">🌌 Cyberpunk Neo-Tokyo (Neon & 3D Torus)</option>
-                <option value="Luxury">🏛️ Luxury Obsidian & Champagne Serif</option>
-                <option value="Futuristic">🍏 VisionOS Cupertino Glassmorphism</option>
-                <option value="Terminal">⚡ Hacker CLI & Matrix Monospace</option>
-                <option value="Editorial">📰 High-Fashion Editorial Magazine</option>
-                <option value="Creative">🎨 Bold Agency & Vibrant Gradients</option>
-                <option value="Swiss">🧱 Swiss Bauhaus Grid & Brutalism</option>
-              </select>
+            
+            <div class="mode-card-actions">
+              <form id="githubGenerateForm" class="github-mini-form" onsubmit="handleGithubGenerate(event)">
+                <div class="github-mini-input-wrapper">
+                  <span class="github-mini-prefix">github.com/</span>
+                  <input type="text" id="githubUsernameInput" placeholder="username or URL" autocomplete="off" required>
+                </div>
+                <div class="theme-select-wrapper" style="margin: 8px 0 10px;">
+                  <select id="githubThemeSelect" style="width: 100%; background: #ffffff; border: 1px solid rgba(28,25,23,0.14); color: #1c1917; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
+                    <option value="auto">✨ Auto Art Direction (Recommended)</option>
+                    <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
+                    <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
+                    <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
+                    <option value="technical-lab">⚡ Technical Lab &amp; Monospace</option>
+                    <option value="contemporary-magazine">📰 Contemporary Editorial Magazine</option>
+                    <option value="brutalist-pop">🎨 Bold High-Contrast Accent</option>
+                    <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
+                  </select>
+                </div>
+                <button type="submit" id="btnGithubSubmit" class="btn-mode-cta github-cta hvr-grow">
+                  <span>⚡ Generate My Portfolio</span>
+                </button>
+              </form>
+              <div class="drop-status-text">Accepts username or URL • Instant Free Preview</div>
             </div>
-            <button type="submit" id="btnGithubSubmit" class="btn-mode-cta github-cta hvr-grow">
+          </div>
+
+          <!-- Secondary Actions Card: Samples & Interactive Builder -->
+          <div class="mode-card drop-card hvr-float-shadow">
+            <div class="mode-card-content">
+              <div class="mode-icon">🎯</div>
+              <h3>Explore Examples &amp; Demos</h3>
+              <p>Preview pre-generated portfolios across Systems, AI, 3D, and Editorial design styles.</p>
+            </div>
+            
+            <div class="mode-card-actions">
+              <button type="button" class="btn-mode-cta hvr-grow" onclick="openSamplesModal()">
+                <span>🎨 View Example Portfolios</span>
+              </button>
+              <button type="button" class="btn-mode-cta primary hvr-grow" style="margin-top: 10px;" onclick="openStudioView()">
+                <span>✏️ Manual Profile Builder</span>
+              </button>
+              <div class="drop-status-text">No signup required • 100% Free Preview</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trust & Privacy Transparency Note -->
+        <div style="margin-top: 28px; text-align: center; font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
+          <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata. No passwords or tokens requested.</span>
+          <span>•</span>
+          <span>⚡ <strong>100% Free Live Preview</strong></span>
+          <span>•</span>
+          <span>📦 <strong>Clean Static ZIP Export</strong></span>
+        </div>
+      </section>
+
+      <!-- Studio Split-Screen Workspace (Existing) -->
+      <section id="studioWorkspace" class="studio-workspace" style="display: none;">
+        <!-- Left Editor Panel -->
+        <div class="studio-editor-panel">
+          <div class="panel-header">
+            <div>
+              <h2>🛠️ Profile &amp; Project Builder</h2>
+              <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Customize your content, skills, and evidence</p>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button class="btn-close-studio" onclick="closeStudioView()">✕</button>
+            </div>
+          </div>
+
+          <form id="studioForm" onsubmit="handleFormGenerate(event)">
+            <!-- Personal Info -->
+            <div class="form-row">
+              <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="inputName" placeholder="e.g. Alex Rivera" required>
+              </div>
+              <div class="form-group">
+                <label>Professional Role *</label>
+                <input type="text" id="inputRole" placeholder="e.g. Senior Distributed Systems Engineer" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Tagline / Bio</label>
+              <textarea id="inputBio" rows="2" placeholder="Building high-throughput distributed systems and interactive tools..."></textarea>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="inputEmail" placeholder="alex@domain.dev" required>
+              </div>
+              <div class="form-group">
+                <label>Location (City / Remote)</label>
+                <input type="text" id="inputLocation" placeholder="San Francisco, CA or Remote">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>GitHub Profile</label>
+                <input type="url" id="inputGithub" placeholder="https://github.com/username">
+              </div>
+              <div class="form-group">
+                <label>Tech Stack &amp; Skills</label>
+                <input type="text" id="inputTech" placeholder="Rust, Go, TypeScript, Docker, Kubernetes">
+              </div>
+            </div>
+
+            <!-- Featured Projects -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px;">
+              <div class="form-section-title" style="margin: 0;">🚀 Featured Projects</div>
+              <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 9999px; background: rgba(154,52,18,0.1); color: var(--primary); border: 1px solid var(--primary);" onclick="addProjectCard()">
+                + Add Project
+              </button>
+            </div>
+
+            <div id="projectsContainer"></div>
+
+            <button type="submit" id="btnGenerateStudio" class="btn-generate-main" style="margin-top: 20px; width: 100%; justify-content: center;">
               <span>⚡ Generate Portfolio</span>
             </button>
           </form>
-          <div class="drop-status-text">Accepts URL or @username • 100% Free</div>
-        </div>
-      </div>
-
-      <!-- Mode 2: PDF Resume & Screenshot Drop -->
-      <div id="dropZone" class="mode-card drop-card hvr-float-shadow">
-        <div class="mode-card-content">
-          <div class="mode-icon">📄</div>
-          <h3>Drop PDF Resume</h3>
-          <p>AI extracts your experience, skills, and projects automatically in 10s from PDF or screenshot.</p>
-        </div>
-        
-        <div class="mode-card-actions">
-          <input type="file" id="resumeFileInput" accept=".pdf, .png, .jpg, .jpeg, .webp" style="display: none;">
-          <div class="theme-select-wrapper" style="margin-bottom: 10px;">
-            <select id="resumeThemeSelect" style="width: 100%; background: #18181b; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">
-              <option value="auto">✨ Auto AI Match (Surprise Me)</option>
-              <option value="Cyberpunk">🌌 Cyberpunk Neo-Tokyo (Neon & 3D Torus)</option>
-              <option value="Luxury">🏛️ Luxury Obsidian & Champagne Serif</option>
-              <option value="Futuristic">🍏 VisionOS Cupertino Glassmorphism</option>
-              <option value="Terminal">⚡ Hacker CLI & Matrix Monospace</option>
-              <option value="Editorial">📰 High-Fashion Editorial Magazine</option>
-              <option value="Creative">🎨 Bold Agency & Vibrant Gradients</option>
-              <option value="Swiss">🧱 Swiss Bauhaus Grid & Brutalism</option>
-            </select>
-          </div>
-          <button class="btn-mode-cta hvr-grow" onclick="document.getElementById('resumeFileInput').click()">
-            <span>Select PDF or Image</span>
-          </button>
-          <div id="dropStatus" class="drop-status-text">or drag and drop PDF / Image here</div>
-        </div>
-      </div>
-
-      <!-- Mode 3: Interactive Web Builder -->
-      <div class="mode-card builder-card hvr-float-shadow">
-        <div class="mode-card-content">
-          <div class="mode-icon">✨</div>
-          <h3>Interactive Builder</h3>
-          <p>Step-by-step customizer with live real-time split-screen preview and custom design tokens.</p>
-        </div>
-        
-        <div class="mode-card-actions">
-          <button class="btn-mode-cta primary hvr-grow" onclick="openStudioView()">
-            <span>Start Web Builder</span>
-          </button>
-          <div class="drop-status-text">No signup required • 100% Free Preview</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Studio Split-Screen Workspace -->
-  <section id="studioWorkspace" class="studio-workspace" style="display: none;">
-    <!-- Left Editor Panel -->
-    <div class="studio-editor-panel">
-      <div class="panel-header">
-        <div>
-          <h2>🛠️ Portfolio Customizer</h2>
-          <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 2px;">Customize every section or import with AI</p>
-        </div>
-        <div style="display: flex; gap: 8px;">
-          <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 6px 10px;" onclick="document.getElementById('resumeFileInput').click()">
-            📸 Import Resume/Image
-          </button>
-          <button class="btn-close-studio" onclick="closeStudioView()">✕</button>
-        </div>
-      </div>
-
-      <form id="studioForm" onsubmit="handleFormGenerate(event)">
-        <!-- Step 1: Career Branch -->
-        <div class="form-group">
-          <label>Profile Type</label>
-          <div class="branch-selector">
-            <button type="button" class="branch-btn active" data-branch="A" onclick="setBranch('A', this)">💻 Developer</button>
-            <button type="button" class="branch-btn" data-branch="B" onclick="setBranch('B', this)">🎨 Creator</button>
-            <button type="button" class="branch-btn" data-branch="C" onclick="setBranch('C', this)">🎓 Student</button>
-            <button type="button" class="branch-btn" data-branch="D" onclick="setBranch('D', this)">💼 Professional</button>
-          </div>
         </div>
 
-        <!-- Personal Info -->
-        <div class="form-row">
-          <div class="form-group">
-            <label>Full Name *</label>
-            <input type="text" id="inputName" placeholder="e.g. Alex Rivera" required>
-          </div>
-          <div class="form-group">
-            <label>Professional Role *</label>
-            <input type="text" id="inputRole" placeholder="e.g. Full-Stack AI Engineer" required>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Bio / Tagline</label>
-          <textarea id="inputBio" rows="2" placeholder="Building scalable systems and delightful user experiences..."></textarea>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Email *</label>
-            <input type="email" id="inputEmail" placeholder="alex@domain.dev" required>
-          </div>
-          <div class="form-group">
-            <label>Location (City / Remote)</label>
-            <input type="text" id="inputLocation" placeholder="San Francisco, CA or Remote">
-          </div>
-        </div>
-
-        <!-- Social & Online Presence -->
-        <div class="form-row">
-          <div class="form-group">
-            <label>GitHub Profile</label>
-            <input type="url" id="inputGithub" placeholder="https://github.com/username">
-          </div>
-          <div class="form-group">
-            <label>LinkedIn URL</label>
-            <input type="url" id="inputLinkedin" placeholder="https://linkedin.com/in/username">
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label>Twitter / X or Discord</label>
-            <input type="text" id="inputTwitter" placeholder="https://x.com/username">
-          </div>
-          <div class="form-group">
-            <label>Personal Website / Blog</label>
-            <input type="url" id="inputWebsite" placeholder="https://mywebsite.com">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label>Tech Stack &amp; Core Skills (comma separated)</label>
-          <input type="text" id="inputTech" placeholder="React, Node.js, Python, TypeScript, AWS, Docker, Next.js">
-        </div>
-
-        <!-- Dynamic Featured Projects -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 24px; margin-bottom: 12px;">
-          <div class="form-section-title" style="margin: 0;">🚀 Featured Projects</div>
-          <button type="button" class="btn-secondary" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 9999px; background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3);" onclick="addProjectCard()">
-            + Add Project
-          </button>
-        </div>
-
-        <div id="projectsContainer" style="display: flex; flex-direction: column; gap: 14px;">
-          <!-- Dynamic Project Cards will be inserted here -->
-        </div>
-
-        <!-- Dynamic Custom Sections (Experience, Education, Certifications, Awards, Custom) -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 28px; margin-bottom: 12px;">
-          <div class="form-section-title" style="margin: 0;">✨ Custom Sections &amp; Details</div>
-          <div style="position: relative;">
-            <button type="button" id="btnAddSectionTrigger" class="btn-secondary" style="font-size: 0.8rem; padding: 4px 12px; border-radius: 9999px; background: rgba(16,185,129,0.15); color: #34d399; border: 1px solid rgba(16,185,129,0.3);" onclick="toggleSectionDropdown()">
-              + Add Section ▾
-            </button>
-            <div id="sectionDropdown" style="display: none; position: absolute; right: 0; bottom: 100%; margin-bottom: 6px; background: #18181f; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 6px; width: 200px; box-shadow: 0 10px 25px rgba(0,0,0,0.6); z-index: 50;">
-              <button type="button" class="dropdown-item" onclick="addCustomSection('experience')">💼 Work Experience</button>
-              <button type="button" class="dropdown-item" onclick="addCustomSection('education')">🎓 Education</button>
-              <button type="button" class="dropdown-item" onclick="addCustomSection('certification')">📜 Certification</button>
-              <button type="button" class="dropdown-item" onclick="addCustomSection('award')">🏆 Award / Honor</button>
-              <button type="button" class="dropdown-item" onclick="addCustomSection('custom')">📝 Custom Text Block</button>
+        <!-- Right Live Preview Panel -->
+        <div class="studio-preview-panel">
+          <div class="preview-toolbar">
+            <div class="device-toggle-group">
+              <button type="button" class="device-btn active" onclick="setDeviceMode('desktop', this)">🖥️ Desktop</button>
+              <button type="button" class="device-btn" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;" onclick="openCustomizerModal()">
+                🛠️ Customizer
+              </button>
+              <button type="button" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px;" onclick="openExportModal()">
+                📦 Export ZIP
+              </button>
+              <a id="btnOpenNewTab" href="#" target="_blank" class="btn-secondary" style="font-size: 0.82rem; padding: 6px 12px; text-decoration: none; display: none;">
+                ↗ Open Live
+              </a>
             </div>
           </div>
-        </div>
 
-        <div id="sectionsContainer" style="display: flex; flex-direction: column; gap: 14px;">
-          <!-- Dynamic Custom Section Cards will be inserted here -->
-        </div>
-
-        <!-- Visual Style & Layout Archetype -->
-        <div class="form-row" style="margin-top: 24px;">
-          <div class="form-group">
-            <label>Aesthetic Color Vibe</label>
-            <select id="inputStyle">
-              <option value="modern-dark">🌌 Neo-Sleek Cyan &amp; Violet (Dark)</option>
-              <option value="light-swiss">☀️ Modern Crisp Light (Swiss Minimal)</option>
-              <option value="cream-forest">☕ Warm Paper &amp; Forest (Light Cream)</option>
-              <option value="neo-brutalist">⚡ Neo-Brutalist Pop (Bold &amp; Vibrant)</option>
-              <option value="matrix-emerald">💚 Cyberpunk Matrix (Emerald Green)</option>
-              <option value="amber-sunset">🔥 Sunset Amber &amp; Crimson</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Layout Architecture</label>
-            <select id="inputLayout">
-              <option value="auto-cycle">⚡ AI Auto-Selected Best Layout</option>
-              <option value="spatial-3d-cyber">🪐 Spatial 3D Orbit &amp; Cyber Grid</option>
-              <option value="swiss-grid-minimal">📐 Swiss Modernism 2.0 Grid</option>
-              <option value="bento-canvas-studio">🍱 Japanese Wabi-Sabi Bento</option>
-              <option value="terminal-matrix-os">💻 Interactive Hacker Terminal</option>
-              <option value="neo-brutalist-split">⚡ Neo-Brutalist High Contrast</option>
-              <option value="asymmetric-editorial">✨ Luxury Editorial Monograph</option>
-            </select>
+          <div id="previewFrameWrapper" class="preview-frame-wrapper desktop-mode">
+            <div id="previewLoader" class="preview-loader-overlay">
+              <div class="spinner-ring"></div>
+              <p>Generating your portfolio...</p>
+            </div>
+            <iframe id="portfolioIframe" src="about:blank" title="Portfolio Preview"></iframe>
           </div>
         </div>
-
-        <button type="submit" id="btnGenerateStudio" class="btn-generate-main" style="margin-top: 20px;">
-          <span>🚀 Generate &amp; Preview Site</span>
-        </button>
-      </form>
-    </div>
-
-    <!-- Right Live Preview Panel -->
-    <div class="studio-preview-panel">
-      <div class="preview-toolbar">
-        <div class="device-toggles">
-          <button class="device-btn active" onclick="setDeviceMode('desktop', this)">💻 Desktop</button>
-          <button class="device-btn" onclick="setDeviceMode('mobile', this)">📱 Mobile</button>
-        </div>
-        <div class="preview-actions">
-          <button id="btnRegenerateStudio" type="button" class="preview-action-btn" onclick="regenerateStudioDesign()" style="display: none; background: rgba(139,92,246,0.2); border-color: rgba(139,92,246,0.4); color: #c084fc;">🔄 Regenerate New Look</button>
-          <a id="btnOpenNewTab" href="#" target="_blank" class="preview-action-btn" style="display: none;">🔗 Open Live</a>
-          <button id="btnUnlockDomain" class="btn-unlock-cta" onclick="handleUnlockDomain()" style="display: none;">
-            <span>💳 Unlock & Remove Watermark (₹149)</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Preview Device Frame -->
-      <div id="previewFrameWrapper" class="preview-frame-container desktop-mode">
-        <div id="previewLoader" class="preview-placeholder">
-          <div class="placeholder-icon">🎨</div>
-          <h3>Your live portfolio will render here</h3>
-          <p>Fill in details on the left or upload a PDF resume to generate your instant interactive preview.</p>
-        </div>
-        <iframe id="portfolioIframe" class="portfolio-iframe" style="display: none;"></iframe>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="studio-footer">
-    <div>&copy; 2026 AI Portfolio Studio. All rights reserved.</div>
-  </footer>
+      </section>
     </div>
   </div>
 
-  <!-- ========================================================
-       STANDALONE ROOT-LEVEL MODALS (Fixed Full-Screen Dialogs)
-       ======================================================== -->
-
-  <!-- GitHub Progress Modal (Real Step-by-Step State Experience) -->
+  <!-- GitHub Generation Progress & Result Modal -->
   <div id="githubProgressModal" class="github-modal-backdrop" style="display: none;">
-    <div class="github-modal-box">
+    <div class="github-modal-card">
       <button type="button" class="btn-modal-close-icon" onclick="closeGithubModal()" aria-label="Close Modal">✕</button>
-      <div class="modal-header-badge">
-        <span class="pulse-indicator"></span>
-        <span id="githubProgressBadgeText">PIPELINE ACTIVE</span>
+      
+      <div class="github-modal-header">
+        <div class="modal-icon-badge">⚡</div>
+        <h2 id="githubProgressTitle">Designing Your Portfolio</h2>
+        <p id="githubProgressSubtitle" style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Connecting to GitHub API and extracting repository facts...</p>
       </div>
-      <h2 id="githubProgressTitle" class="github-modal-title">Generating Your Portfolio...</h2>
-      <p id="githubProgressSubtitle" class="github-modal-subtitle">Connecting to GitHub and analyzing repositories...</p>
 
-      <!-- Step List -->
-      <div id="githubProgressBox" class="github-steps-container">
+      <!-- Real Pipeline Progress Steps -->
+      <div class="github-steps-container" id="githubProgressBox">
         <div class="github-step-item active" id="step-1">
           <div class="step-icon">🔗</div>
           <div class="step-content">
             <div class="step-title">Connecting to GitHub</div>
-            <div class="step-desc">Validating profile and establishing API handshake</div>
+            <div class="step-desc">Validating username and profile endpoints</div>
           </div>
           <div class="step-status">⏳</div>
         </div>
         <div class="github-step-item" id="step-2">
           <div class="step-icon">👤</div>
           <div class="step-content">
-            <div class="step-title">Reading Developer Profile</div>
-            <div class="step-desc">Extracting verified identity, bio, and profile README</div>
+            <div class="step-title">Reading Profile &amp; README</div>
+            <div class="step-desc">Extracting verified developer identity and documentation</div>
           </div>
           <div class="step-status"></div>
         </div>
         <div class="github-step-item" id="step-3">
           <div class="step-icon">📦</div>
           <div class="step-content">
-            <div class="step-title">Analyzing Repositories</div>
-            <div class="step-desc">Ranking top projects by quality, activity, and languages</div>
+            <div class="step-title">Analyzing Repositories &amp; Tech Stack</div>
+            <div class="step-desc">Ranking top projects, languages, and commit activity</div>
           </div>
           <div class="step-status"></div>
         </div>
         <div class="github-step-item" id="step-4">
           <div class="step-icon">🧠</div>
           <div class="step-content">
-            <div class="step-title">Understanding Technical Expertise</div>
-            <div class="step-desc">Categorizing verified languages, tools, and frameworks</div>
+            <div class="step-title">Identifying Core Strengths</div>
+            <div class="step-desc">Evaluating architectural domain and technical depth</div>
           </div>
           <div class="step-status"></div>
         </div>
         <div class="github-step-item" id="step-5">
-          <div class="step-icon">✍️</div>
+          <div class="step-icon">🎨</div>
           <div class="step-content">
-            <div class="step-title">Synthesizing Evidence-Based Content</div>
-            <div class="step-desc">AI copywriting grounded in repository facts</div>
+            <div class="step-title">Choosing Art Direction</div>
+            <div class="step-desc">Selecting typography, color harmony, and visual universe</div>
           </div>
           <div class="step-status"></div>
         </div>
         <div class="github-step-item" id="step-6">
-          <div class="step-icon">🎨</div>
+          <div class="step-icon">📖</div>
           <div class="step-content">
-            <div class="step-title">Synthesizing 22D Design Blueprint</div>
-            <div class="step-desc">Crafting typography scales, color worlds, and WebGL scenes</div>
+            <div class="step-title">Crafting Project Stories</div>
+            <div class="step-desc">Structuring narrative cadences and evidence presentation</div>
           </div>
           <div class="step-status"></div>
         </div>
         <div class="github-step-item" id="step-7">
-          <div class="step-icon">✨</div>
+          <div class="step-icon">🛡️</div>
           <div class="step-content">
-            <div class="step-title">Applying Cross-Dimension Diversity Governor</div>
-            <div class="step-desc">Enforcing zero duplicate combinations & structural uniqueness</div>
+            <div class="step-title">Running Visual Quality Audit</div>
+            <div class="step-desc">Verifying contrast, mobile geometry, and accessibility</div>
           </div>
           <div class="step-status"></div>
         </div>
@@ -394,30 +304,56 @@
         </div>
       </div>
 
+      <!-- Error Recovery Card (Shown on failure) -->
+      <div id="githubErrorCard" style="display: none; margin-top: 24px; text-align: center;">
+        <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <div style="font-size: 2rem; margin-bottom: 6px;">⚠️</div>
+          <h3 id="githubErrorTitle" style="font-size: 1.15rem; font-weight: 800; color: #991b1b;">Generation Interrupted</h3>
+          <p id="githubErrorMessage" style="color: var(--text); font-size: 0.88rem; margin-top: 6px; line-height: 1.4;"></p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn-generate-main" style="justify-content: center;" onclick="regenerateGithubDesign()">
+            <span>🔄 Retry Generation</span>
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="btn-result-action" style="flex: 1;" onclick="closeGithubModal(); openSamplesModal();">
+              <span>🎨 Load Demo</span>
+            </button>
+            <button type="button" class="btn-result-action" style="flex: 1;" onclick="closeGithubModal(); openStudioView();">
+              <span>✏️ Build Manually</span>
+            </button>
+          </div>
+          <button type="button" class="btn-result-action secondary" style="margin-top: 4px;" onclick="closeGithubModal()">
+            <span>✕ Dismiss</span>
+          </button>
+        </div>
+      </div>
+
       <!-- Result Card (Shown when complete) -->
       <div id="githubResultCard" style="display: none; margin-top: 24px;">
         <div class="github-result-banner">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🎉</div>
-          <h3>Your Portfolio is Ready!</h3>
+          <div style="font-size: 2.2rem; margin-bottom: 8px;">🎉</div>
+          <h3 style="font-size: 1.3rem; font-weight: 800;">Your Portfolio is Ready!</h3>
           <p id="githubResultSubtitle" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;"></p>
         </div>
 
         <div class="github-result-preview-frame">
-          <iframe id="githubResultIframe" src="about:blank" style="width: 100%; height: 380px; border: 1px solid rgba(28, 25, 23,0.12); border-radius: 12px; background: #fff;"></iframe>
+          <iframe id="githubResultIframe" src="about:blank" title="Generated Portfolio Result" style="width: 100%; height: 380px; border: 1px solid rgba(28, 25, 23,0.12); border-radius: 12px; background: #fff;"></iframe>
         </div>
 
-        <div class="github-result-actions">
-          <a id="btnOpenGithubSite" href="#" target="_blank" class="btn-result-action primary">
-            <span>🚀 Open Full Portfolio</span>
+        <div class="github-result-actions" style="margin-top: 16px;">
+          <button type="button" class="btn-result-action primary" onclick="openCustomizerModal()">
+            <span>🛠️ Customize</span>
+          </button>
+          <a id="btnOpenGithubSite" href="#" target="_blank" class="btn-result-action">
+            <span>👁️ Open Live View</span>
           </a>
-          <button type="button" class="btn-result-action" onclick="copyGithubPreviewLink()">
-            <span id="btnCopyGithubText">📋 Copy Link</span>
+          <button type="button" class="btn-result-action" onclick="openExportModal()">
+            <span>📦 Export ZIP</span>
           </button>
           <button type="button" class="btn-result-action" onclick="regenerateGithubDesign()">
-            <span>🔄 Regenerate Design</span>
-          </button>
-          <button type="button" class="btn-result-action" onclick="editGithubInStudio()">
-            <span>🛠️ Edit in Studio</span>
+            <span>🔄 Generate Another</span>
           </button>
           <button type="button" class="btn-result-action secondary" onclick="closeGithubModal()">
             <span>✕ Close</span>
@@ -427,51 +363,130 @@
     </div>
   </div>
 
-  <!-- Sign-Up & Consent Modal (Section 4) -->
-  <div id="signupModal" class="signup-modal-backdrop" style="display: none;">
-    <div class="signup-modal-card">
-      <button type="button" class="btn-modal-close-icon" onclick="document.getElementById('signupModal').style.display = 'none'" aria-label="Close Modal">✕</button>
-      <div class="modal-badge">⚡ Free Instant Sign-Up</div>
-      <h2>Get Your 2-Hour Portfolio Preview</h2>
-      <p class="modal-subtitle">Sign up to create, preview, and customize your portfolio website in 60 seconds.</p>
+  <!-- Customizer Drawer / Modal (Phase 30) -->
+  <div id="customizerDrawer" class="customizer-drawer-backdrop" style="display: none;">
+    <div class="customizer-drawer-panel">
+      <div class="customizer-header">
+        <div>
+          <h3 style="font-size: 1.25rem; font-weight: 800;">🛠️ Portfolio Customizer</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Reorder sections, toggle visibility, and tune appearance</p>
+        </div>
+        <button type="button" class="customizer-btn-mini" onclick="closeCustomizerModal()">✕</button>
+      </div>
 
-      <form id="signupForm" onsubmit="handleSignupSubmit(event)">
-        <div class="form-group" style="text-align: left; margin-bottom: 1rem;">
-          <label style="color: #1c1917; font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Full Name</label>
-          <input type="text" id="signupName" placeholder="e.g. Alex Rivera" required style="width: 100%; padding: 0.75rem; background: #ffffff; border: 1px solid rgba(28, 25, 23,0.15); border-radius: 8px; color: #1c1917;">
+      <!-- Action Toolbar (Undo / Redo / Reset) -->
+      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <button type="button" id="btnCustomizerUndo" class="customizer-btn-mini" onclick="handleCustomizerAction('undo')">↩ Undo</button>
+        <button type="button" id="btnCustomizerRedo" class="customizer-btn-mini" onclick="handleCustomizerAction('redo')">↪ Redo</button>
+        <button type="button" class="customizer-btn-mini" onclick="handleCustomizerAction('reset')">🔄 Reset</button>
+      </div>
+
+      <!-- Section Reordering & Visibility -->
+      <div style="margin-bottom: 24px;">
+        <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;">Page Sections &amp; Order</h4>
+        <div id="customizerSectionsList">
+          <!-- Populated dynamically via /api/portfolio/:siteId/customizer -->
+        </div>
+      </div>
+
+      <!-- Appearance & Design Settings -->
+      <div style="margin-bottom: 24px;">
+        <h4 style="font-size: 0.9rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;">Appearance Controls</h4>
+        
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Section Spacing</label>
+          <select id="selectSectionSpacing" onchange="handleTokenChange('--space-section', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
+            <option value="compact">Compact (Tight rhythm)</option>
+            <option value="medium" selected>Balanced (Standard)</option>
+            <option value="spacious">Spacious (Airy gallery)</option>
+          </select>
         </div>
 
-        <div class="form-group" style="text-align: left; margin-bottom: 1.25rem;">
-          <label style="color: #1c1917; font-size: 0.85rem; font-weight: 600; display: block; margin-bottom: 0.35rem;">Email Address *</label>
-          <input type="email" id="signupEmail" placeholder="alex@gmail.com" required style="width: 100%; padding: 0.75rem; background: #ffffff; border: 1px solid rgba(28, 25, 23,0.15); border-radius: 8px; color: #1c1917;">
-          <small style="color: #78716c; font-size: 0.75rem; display: block; margin-top: 0.25rem;">We normalize email aliases to protect against abuse.</small>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Border &amp; Divider Intensity</label>
+          <select id="selectBorderIntensity" onchange="handleTokenChange('--border-opacity', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
+            <option value="subtle" selected>Subtle (Minimal lines)</option>
+            <option value="medium">Medium (Defined boundaries)</option>
+            <option value="sharp">Sharp (High contrast)</option>
+          </select>
         </div>
 
-        <!-- 3 Distinct Checkboxes (Section 4) -->
-        <div class="consent-checkboxes" style="text-align: left; background: #fcf9f5; border: 1px solid rgba(28, 25, 23,0.08); border-radius: 10px; padding: 1rem; margin-bottom: 1.25rem;">
-          <!-- 1. Privacy Policy (Mandatory) -->
-          <label style="display: flex; align-items: flex-start; gap: 0.6rem; color: #1c1917; font-size: 0.82rem; margin-bottom: 0.75rem; cursor: pointer;">
-            <input type="checkbox" id="cbPrivacy" required style="margin-top: 0.2rem;">
-            <span>I agree to the <a href="#" style="color: #9a3412; text-decoration: underline;">Privacy Policy</a> (Required to proceed)</span>
-          </label>
-
-          <!-- 2. Marketing / Promotional (Optional Opt-In) -->
-          <label style="display: flex; align-items: flex-start; gap: 0.6rem; color: #78716c; font-size: 0.82rem; margin-bottom: 0.75rem; cursor: pointer;">
-            <input type="checkbox" id="cbMarketing" style="margin-top: 0.2rem;">
-            <span>Send me portfolio tips, design templates, and promotional updates (Optional)</span>
-          </label>
-
-          <!-- 3. Service Terms & 2-Hour Preview Takedown Policy (Mandatory) -->
-          <label style="display: flex; align-items: flex-start; gap: 0.6rem; color: #1c1917; font-size: 0.82rem; cursor: pointer;">
-            <input type="checkbox" id="cbTerms" required style="margin-top: 0.2rem;">
-            <span>I accept the <a href="#" style="color: #9a3412; text-decoration: underline;">Terms of Service</a> & acknowledge unpaid previews are taken down after 2 hours.</span>
-          </label>
+        <div class="form-group" style="margin-bottom: 12px;">
+          <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Typography Scale</label>
+          <select id="selectTypeScale" onchange="handleTokenChange('--type-scale', this.value)" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);">
+            <option value="compact">Compact &amp; Dense</option>
+            <option value="balanced" selected>Balanced &amp; Readable</option>
+            <option value="expressive">Expressive &amp; Large Headers</option>
+          </select>
         </div>
+      </div>
 
-        <button type="submit" id="btnSignupSubmit" class="btn-generate-main" style="width: 100%; justify-content: center;">
-          <span>🚀 Continue & Generate Portfolio</span>
-        </button>
-      </form>
+      <button type="button" class="btn-generate-main" style="margin-top: auto; justify-content: center;" onclick="closeCustomizerModal()">
+        <span>✅ Done Customizing</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Standalone Export Modal (Phase 30) -->
+  <div id="exportModal" class="export-modal-backdrop" style="display: none;">
+    <div class="export-modal-card">
+      <button type="button" class="btn-modal-close-icon" onclick="closeExportModal()" aria-label="Close Modal">✕</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">📦</div>
+        <h3 style="font-size: 1.4rem; font-weight: 800;">Export Your Static Portfolio</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Download a clean, standalone ZIP archive with zero dependencies and host anywhere.</p>
+      </div>
+
+      <div style="text-align: center; margin: 24px 0;">
+        <a id="btnDownloadZip" href="#" class="btn-generate-main" style="display: inline-flex; text-decoration: none; padding: 14px 28px; font-size: 1rem;">
+          <span>⬇️ Download Standalone ZIP</span>
+        </a>
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 8px;">Includes <code>index.html</code>, clean CSS/JS, and zero preview watermarks.</p>
+      </div>
+
+      <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 12px;">Zero-Config Deployment Guides:</h4>
+      <div class="deployment-guide-grid">
+        <div class="deployment-guide-card">
+          <h4>▲ Vercel</h4>
+          <ol>
+            <li>Unzip the archive</li>
+            <li>Run <code>vercel</code> or drag folder onto Vercel dashboard</li>
+            <li>Instantly live on global Edge CDN</li>
+          </ol>
+        </div>
+        <div class="deployment-guide-card">
+          <h4>🌐 Netlify</h4>
+          <ol>
+            <li>Unzip the archive</li>
+            <li>Drag into <a href="https://app.netlify.com/drop" target="_blank" rel="noopener">Netlify Drop</a></li>
+            <li>Instant free HTTPS site</li>
+          </ol>
+        </div>
+        <div class="deployment-guide-card">
+          <h4>🐙 GitHub Pages</h4>
+          <ol>
+            <li>Create a new repository</li>
+            <li>Upload files to <code>main</code> branch</li>
+            <li>Enable Pages in Settings</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sample Portfolios Gallery Modal (Phase 30) -->
+  <div id="samplesModal" class="samples-modal-backdrop" style="display: none;">
+    <div class="samples-modal-card">
+      <button type="button" class="btn-modal-close-icon" onclick="closeSamplesModal()" aria-label="Close Modal">✕</button>
+      <div style="text-align: center; margin-bottom: 20px;">
+        <div style="font-size: 2.2rem; margin-bottom: 8px;">🎨</div>
+        <h3 style="font-size: 1.4rem; font-weight: 800;">Generated Portfolio Gallery</h3>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Explore genuine portfolios produced by our art-direction and storytelling engine.</p>
+      </div>
+
+      <div class="sample-gallery-grid" id="sampleGalleryContainer">
+        <!-- Loaded dynamically via /api/demo/samples -->
+      </div>
     </div>
   </div>
 

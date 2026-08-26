@@ -53,6 +53,7 @@ class SiteGenerator {
         designBlueprint: engineResult.designBlueprint,
         designDNA: engineResult.designBlueprint, // Backward compatibility
         contentProfile: engineResult.contentProfile,
+        designBrief: gateResult.brief,
         telemetry: {
           generationTimeMs: Date.now(),
           iaModel: engineResult.designBlueprint.iaModel,

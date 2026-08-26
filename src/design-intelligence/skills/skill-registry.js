@@ -1,6 +1,7 @@
 /**
- * Skill Registry
+ * Skill Registry with Dynamic Custom Skill Discovery
  * Explicitly registers, tracks, and verifies all mandatory free open-source design skills.
+ * Automatically discovers any custom skill placed under .agents/skills/<name>/SKILL.md.
  * Fails closed if any mandatory skill file is missing.
  */
 
@@ -50,6 +51,35 @@ class SkillRegistry {
   constructor(baseDir = process.cwd()) {
     this.baseDir = baseDir;
     this.registry = { ...MANDATORY_SKILLS };
+    this.discoverCustomSkills();
+  }
+
+  /**
+   * Dynamically discovers any custom skills under .agents/skills/
+   */
+  discoverCustomSkills() {
+    const skillsDir = path.join(this.baseDir, '.agents', 'skills');
+    if (!fs.existsSync(skillsDir)) return;
+
+    try {
+      const entries = fs.readdirSync(skillsDir, { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const skillFile = path.join(skillsDir, entry.name, 'SKILL.md');
+          if (fs.existsSync(skillFile) && !this.registry[entry.name]) {
+            this.registry[entry.name] = {
+              name: entry.name,
+              relativePath: `.agents/skills/${entry.name}/SKILL.md`,
+              category: 'custom-skill',
+              required: false,
+              description: `Custom discovered skill: ${entry.name}`
+            };
+          }
+        }
+      }
+    } catch (err) {
+      console.warn('[SkillRegistry] Error discovering custom skills:', err.message);
+    }
   }
 
   /**
