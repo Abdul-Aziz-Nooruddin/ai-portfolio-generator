@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Gulam Mahmood Hamza — CSE-AIML Student &amp; Software Development Intern | Terminal OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090c0a;
+      --term-bg: #0d120e;
+      --green: #22c55e;
+      --green-glow: rgba(34, 197, 94, 0.35);
+      --green-dim: #15803d;
+      --text: #dcfce7;
+      --text-muted: #86efac;
+      --border: rgba(34, 197, 94, 0.3);
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      line-height: 1.6;
+      padding: 30px 16px;
+    }
+    .terminal-window {
+      max-width: 1060px; margin: 0 auto; background: var(--term-bg);
+      border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 0 30px var(--green-glow);
+      overflow: hidden;
+    }
+    .terminal-topbar {
+      background: #141c15; border-bottom: 1px solid var(--border); padding: 12px 18px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
+    }
+    .term-dots { display: flex; gap: 8px; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #22c55e; }
+    .term-content { padding: 32px 24px 60px; }
+
+    .cli-prompt { color: var(--green); font-weight: 700; margin-bottom: 8px; }
+    .cli-cmd { color: #ffffff; font-weight: 700; }
+    .ascii-banner { color: var(--green); font-size: clamp(0.65rem, 1.5vw, 0.8rem); line-height: 1.2; margin-bottom: 24px; white-space: pre; overflow-x: auto; }
+
+    .term-section { margin-bottom: 40px; }
+    .term-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .term-table th, .term-table td {
+      border: 1px solid var(--border); padding: 10px 14px; text-align: left; font-size: clamp(0.8rem, 1.5vw, 0.92rem);
+    }
+    .term-table th { background: rgba(34, 197, 94, 0.1); color: var(--green); }
+
+    .interactive-cli {
+      background: #000000; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-top: 30px;
+    }
+    .cli-input-line { display: flex; align-items: center; gap: 10px; }
+    .cli-input {
+      background: transparent; border: none; outline: none; color: var(--green);
+      font-family: var(--font-mono); font-size: 1rem; width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal-window">
+    <div class="terminal-topbar">
+      <div class="term-dots">
+        <span class="term-dot dot-red"></span>
+        <span class="term-dot dot-yellow"></span>
+        <span class="term-dot dot-green"></span>
+      </div>
+      <div style="color: var(--green); font-weight: 700;">root@gulam mahmood hamza-system: ~</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem;">STATUS: ONLINE</div>
+    </div>
+
+    <div class="term-content">
+      <div class="ascii-banner">
+ _____ _____ _____ _____ _____ _____ _____ _____ _____ 
+|     |  _  | __  |   __|  _  |     |   __|   __|   __|
+| | | |     |    -|__   |     | | | |   __|__   |__   |
+|_|_|_|__|__|__|__|_____|__|__|_|_|_|_____|_____|_____|
+      </div>
+
+      <div class="cli-prompt">$ whoami</div>
+      <div style="font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-bottom: 6px;">Gulam Mahmood Hamza — CSE-AIML Student &amp; Software Development Intern</div>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Motivated CSE-AIML student with hands-on experience in Python programming, Machine Learning, Data Science, and AI-based projects. Skilled in developing applications using Python, Streamlit, Tkinter, and database technologies. Seeking an internship opportunity to apply technical skills, contribute to real-world projects, and grow as a software developer.</p>
+      <p style="color: var(--text); margin-bottom: 24px;">Motivated CSE-AIML student with hands-on experience in Python programming, Machine Learning, Data Science, and AI-based projects. Skilled in developing applications using Python, Streamlit, Tkinter, and database technologies. Seeking an internship opportunity to apply technical skills, contribute to real-world projects, and grow as a software developer.</p>
+
+      <!-- 1. DYNAMIC PROJECT PRESENTATION -->
+      
+      <section id="projects" class="section-presentation pres-stacked-posters" style="padding: 100px 0;">
+        <div style="margin-bottom: 60px; text-align: center;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--primary);">OVERLAPPING EXHIBIT</span>
+          <h2 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 900; margin-top: 6px;">Stacked Posters</h2>
+        </div>
+
+        <div class="posters-stack-container" style="display: flex; flex-direction: column; gap: 60px; max-width: 960px; margin: 0 auto;">
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 80px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">01</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">Student Profile Manager</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Developed a Python desktop application using Tkinter and SQLite to manage student records. Implemented CRUD operations with a graphical interface for efficient data handling.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // Python, Machine Learning, Data Science, Streamlit, Tkinter, SQL, Scikit-learn, Pandas, NumPy, NLTK, Keras
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(210, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(255, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(210, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 01 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(210, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(255, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(210, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_0)" />
+          <circle cx="150" cy="100" r="45" fill="none" stroke="hsla(210, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 60 Q 200 180 360 90" fill="none" stroke="hsla(255, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Student Profile Manager</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(210, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 110px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">02</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">Loan Approval Prediction</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Built a Streamlit-based ML application using Python to predict loan approval outcomes. Applied data preprocessing and transformations on applicant data using a trained model.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // Python, Machine Learning, Data Science, Streamlit, Tkinter, SQL, Scikit-learn, Pandas, NumPy, NLTK, Keras
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(278, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(323, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(278, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 02 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(278, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(323, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_1" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(278, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_1)" />
+          <circle cx="190" cy="100" r="55" fill="none" stroke="hsla(278, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 80 Q 200 150 360 105" fill="none" stroke="hsla(323, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Loan Approval Prediction</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(278, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 140px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">03</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">Forest Fire Prediction</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Developed a machine learning classification model using weather parameters and FWI features to predict forest fire risks. Performed data analysis and model training using Python.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // Python, Machine Learning, Data Science, Streamlit, Tkinter, SQL, Scikit-learn, Pandas, NumPy, NLTK, Keras
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(346, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(31, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(346, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 03 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(346, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(31, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_2" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(346, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_2)" />
+          <circle cx="230" cy="100" r="65" fill="none" stroke="hsla(346, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 100 Q 200 120 360 120" fill="none" stroke="hsla(31, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Forest Fire Prediction</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(346, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 170px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">04</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">SQL Query Helper Chatbot</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Created an NLP chatbot using Python, NLTK, Keras, and Streamlit to answer SQL-related queries. Implemented text preprocessing, Bag of Words, and neural network-based intent classification.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // Python, Machine Learning, Data Science, Streamlit, Tkinter, SQL, Scikit-learn, Pandas, NumPy, NLTK, Keras
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(54, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(99, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(54, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 04 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(54, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(99, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_3" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(54, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_3)" />
+          <circle cx="270" cy="100" r="75" fill="none" stroke="hsla(54, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 120 Q 200 90 360 135" fill="none" stroke="hsla(99, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">SQL Query Helper Chatbot</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(54, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 200px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">05</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">Housing Price Prediction</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Developed a regression model using Python to predict housing prices. Performed data preprocessing, EDA, feature selection, and model training using machine learning techniques.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // Python, Machine Learning, Data Science, Streamlit, Tkinter, SQL, Scikit-learn, Pandas, NumPy, NLTK, Keras
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(122, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(167, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(122, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 05 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(122, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(167, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_4" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(122, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_4)" />
+          <circle cx="160" cy="100" r="85" fill="none" stroke="hsla(122, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 140 Q 200 60 360 150" fill="none" stroke="hsla(167, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Housing Price Prediction</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(122, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+        </div>
+      </section>
+    
+
+      <!-- 2. CAREER HISTORY -->
+      
+
+      <!-- 3. EDUCATION & CERTS -->
+      
+      <div class="term-section">
+        <div class="cli-prompt">$ grep -i "credentials" /etc/profile</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">Bachelor of Engineering (B.E.) - CSE Artificial Intelligence & Machine Learning</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Lords Institute of Engineering and Technology, Hyderabad, Telangana • Expected 2028</div>
+            </div>
+          
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">Machine Learning with Artificial Intelligence Training</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Internshala • Verified</div>
+            </div>
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">Internship and Job Preparation Training</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Internshala • Verified</div>
+            </div>
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">Python Programming Certification Course</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Tutedude • Verified</div>
+            </div>
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">Data Science Training and Internship</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Manac Infotech • Verified</div>
+            </div>
+          
+        </div>
+      </div>
+      
+
+      <!-- 4. SKILLS -->
+      <div class="term-section">
+        <div class="cli-prompt">$ echo $TECH_STACK</div>
+        <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
+          Python • Machine Learning • Data Science • Streamlit • Tkinter • SQL • Scikit-learn • Pandas • NumPy • NLTK • Keras
+        </div>
+      </div>
+
+      <div class="interactive-cli">
+        <div style="color: var(--green-dim); font-size: 0.8rem; margin-bottom: 8px;">// Type 'help', 'projects', 'contact', 'clear'</div>
+        <div class="cli-input-line">
+          <span style="color: var(--green); font-weight: 700;">$</span>
+          <input type="text" id="cli-in" class="cli-input" placeholder="type a command..." autofocus autocomplete="off">
+        </div>
+        <div id="cli-out" style="margin-top: 10px; font-size: 0.9rem; color: var(--text);"></div>
+      </div>
+    </div>
+  </div>
+
+  
+
+    <!-- DIAGONAL REPEATING WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; flex-direction: column; justify-content: space-around; align-items: center; overflow: hidden; opacity: 0.14; user-select: none;">
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    
+    
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

@@ -1,36 +1,198 @@
+/**
+ * Hosting Provider - Zero-Credit Self-Hosted & Supabase CDN Engine
+ * Hosts generated portfolios directly with zero external build credit limits.
+ */
+
+const fs = require('fs');
+const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 const { NetlifyDeployer } = require('./netlify-deployer');
 
 class HostingProvider {
-  constructor(netlifyToken, supabaseUrl, supabaseKey) {
-    this.deployer = new NetlifyDeployer(netlifyToken, supabaseUrl, supabaseKey);
+  constructor(netlifyToken = null, supabaseUrl = null, supabaseKey = null) {
+    this.hostUrl = process.env.HOST_URL || 'http://localhost:3000';
+    this.useNetlify = process.env.USE_NETLIFY === 'true' && !!netlifyToken;
+    
+    if (this.useNetlify) {
+      this.netlifyDeployer = new NetlifyDeployer(netlifyToken, supabaseUrl, supabaseKey);
+    } else {
+      this.netlifyDeployer = null;
+    }
+
+    if (supabaseUrl && supabaseKey) {
+      try {
+        this.supabase = createClient(supabaseUrl, supabaseKey);
+      } catch (e) {
+        this.supabase = null;
+      }
+    } else {
+      this.supabase = null;
+    }
   }
 
-  async createSite(clientId, siteConfig) {
-    return { siteId: `portfolio-${clientId}`, url: null };
+  /**
+   * Deploy site files locally and to Supabase Storage CDN (0 credit limits)
+   * Netlify is restricted strictly to PAID / ACTIVE subscribers.
+   */
+  async deploy(siteId, siteFiles, userData = {}, isPaid = false) {
+    const { html = '', css = '', js = '' } = siteFiles || {};
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+
+    // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 2 hours)
+    if (!fs.existsSync(siteDir)) {
+      fs.mkdirSync(siteDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(siteDir, 'index.html'), html);
+    if (css) fs.writeFileSync(path.join(siteDir, 'style.css'), css);
+    if (js) fs.writeFileSync(path.join(siteDir, 'script.js'), js);
+
+    let deployUrl = `${this.hostUrl}/p/${siteId}`;
+    let provider = 'self_hosted';
+
+    // 2. Sync to Supabase Storage Bucket for paid accounts
+    if (isPaid && this.supabase) {
+      try {
+        await this.supabase.storage
+          .from('portfolios')
+          .upload(`${siteId}/index.html`, Buffer.from(html), {
+            contentType: 'text/html',
+            upsert: true
+          });
+      } catch (sbErr) {
+        // Non-blocking
+      }
+    }
+
+    // 3. ONLY deploy to Netlify if user is PAID / ACTIVE subscriber
+    // Unpaid preview trials (2-hour limit) are strictly self-hosted with watermarks
+    if (isPaid && this.useNetlify && this.netlifyDeployer) {
+      try {
+        const netlifyRes = await this.netlifyDeployer.deploySite(siteId, siteFiles, userData);
+        if (netlifyRes?.deployUrl) {
+          deployUrl = netlifyRes.deployUrl;
+          provider = 'netlify';
+        }
+      } catch (netErr) {
+        console.warn('[HOSTING] Netlify unavailable/credit exhausted. Using zero-credit self-hosted URL:', deployUrl);
+      }
+    }
+
+    return {
+      siteId,
+      deployUrl,
+      url: deployUrl,
+      provider
+    };
   }
 
-  async deploy(clientId, siteFiles) {
-    const result = await this.deployer.deploySite(clientId, siteFiles);
-    return { deployUrl: result.deployUrl, siteId: result.siteId };
+  /**
+   * Complete multi-surface purge for 2-hour preview timeouts or lapsed subscriptions
+   */
+  async purge(siteId) {
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    if (fs.existsSync(siteDir)) {
+      try {
+        fs.rmSync(siteDir, { recursive: true, force: true });
+      } catch (e) {}
+    }
+    if (this.useNetlify && this.netlifyDeployer) {
+      try {
+        await this.netlifyDeployer.deleteSite(siteId);
+      } catch (e) {}
+    }
+    if (this.supabase) {
+      try {
+        await this.supabase.storage.from('portfolios').remove([`${siteId}/index.html`]);
+      } catch (e) {}
+    }
   }
 
-  async setCustomDomain(siteId, domain) {
-    return this.deployer.setCustomDomain(siteId, domain);
+  async suspend(siteId) {
+    const suspendedHtml = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Portfolio Paused</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; text-align: center; padding: 4rem 1rem; background: #090d16; color: #f3f4f6; }
+    .card { max-width: 480px; margin: 0 auto; background: #111827; border: 1px solid rgba(255,255,255,0.08); padding: 2.5rem; border-radius: 16px; }
+    h1 { font-size: 1.5rem; margin-bottom: 0.75rem; }
+    p { color: #9ca3af; font-size: 0.95rem; line-height: 1.5; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="font-size: 3rem; margin-bottom: 1rem;">⏸️</div>
+    <h1>Portfolio Temporarily Paused</h1>
+    <p>This portfolio is currently inactive due to subscription renewal grace period.</p>
+  </div>
+</body>
+</html>`;
+
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    if (fs.existsSync(siteDir)) {
+      fs.writeFileSync(path.join(siteDir, 'index.html'), suspendedHtml);
+    }
   }
 
-  async suspend(clientId) {
-    const siteId = `portfolio-${clientId}`;
-    return this.deployer.suspendSite(siteId);
+  async restore(siteId, originalHtml) {
+    if (!originalHtml) return;
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    if (!fs.existsSync(siteDir)) {
+      fs.mkdirSync(siteDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(siteDir, 'index.html'), originalHtml);
   }
 
-  async restore(clientId, originalHtml) {
-    const siteId = `portfolio-${clientId}`;
-    return this.deployer.restoreSite(siteId, originalHtml);
+  /**
+   * Approves paid portfolio and strips preview watermark overlay & bottom banner
+   */
+  async approveAndUnwatermark(siteId, userData = {}) {
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    const indexPath = path.join(siteDir, 'index.html');
+    
+    if (fs.existsSync(indexPath)) {
+      let html = fs.readFileSync(indexPath, 'utf8');
+      
+      // Strip watermark overlay and floating bar
+      html = html.replace(/<!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->[\s\S]*?<!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->[\s\S]*?<\/script>/i, '');
+      html = html.replace(/<div id="preview-watermark-overlay"[\s\S]*?<\/div>\s*<\/div>/i, '');
+      html = html.replace(/<div id="preview-floating-bar"[\s\S]*?<\/div>/i, '');
+      html = html.replace(/<script>[\s\S]*?updateWatermarkLuminance[\s\S]*?<\/script>/i, '');
+
+      fs.writeFileSync(indexPath, html, 'utf8');
+
+      // Sync clean unwatermarked site to Supabase / Netlify for paid subscriber
+      let css = '';
+      let js = '';
+      if (fs.existsSync(path.join(siteDir, 'style.css'))) {
+        css = fs.readFileSync(path.join(siteDir, 'style.css'), 'utf8');
+      }
+      if (fs.existsSync(path.join(siteDir, 'script.js'))) {
+        js = fs.readFileSync(path.join(siteDir, 'script.js'), 'utf8');
+      }
+
+      return await this.deploy(siteId, { html, css, js }, userData, true);
+    }
+
+    return { siteId, deployUrl: `${this.hostUrl}/p/${siteId}`, provider: 'self_hosted' };
   }
 
-  async delete(clientId) {
-    const siteId = `portfolio-${clientId}`;
-    return this.deployer.deleteSite(siteId);
+  async delete(siteId) {
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    if (fs.existsSync(siteDir)) {
+      try {
+        fs.rmSync(siteDir, { recursive: true, force: true });
+      } catch (e) {
+        console.warn(`[HOSTING] Failed to delete directory ${siteDir}:`, e.message);
+      }
+    }
+
+    if (this.supabase) {
+      try {
+        await this.supabase.storage.from('portfolios').remove([`${siteId}/index.html`]);
+      } catch (e) {}
+    }
   }
 }
 

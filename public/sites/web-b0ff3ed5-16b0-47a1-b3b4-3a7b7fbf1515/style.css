@@ -1,0 +1,24 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #09090b;
+      --muted: #52525b;
+      --primary: #9a3412;
+      --border: rgba(0,0,0,0.12);
+      --card-bg: #ffffff;
+      --font-heading: 'Instrument Serif', sans-serif;
+      --font-body: 'Manrope', sans-serif;
+      --radius: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: clamp(24px, 4vw, 48px); overflow-x: hidden; }
+    .canvas-container { max-width: 1200px; margin: 0 auto; }
+    .canvas-quadrant-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--text); padding-bottom: 16px; margin-bottom: 50px; flex-wrap: wrap; gap: 16px; }
+    .quadrant-title { font-family: var(--font-heading); font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1; color: var(--text); }
+    .quadrant-meta { text-align: right; font-family: monospace; font-size: 0.85rem; color: var(--primary); font-weight: 700; }
+    .staggered-canvas-grid { display: flex; flex-direction: column; gap: 32px; }
+    .asym-card {
+      border: 1.5px solid var(--border); border-radius: var(--radius); padding: 32px;
+      background: var(--card-bg); transition: border-color 0.2s; height: auto;
+    }
+    .asym-card:hover { border-color: var(--primary); }
+    .asym-card h2 { font-family: var(--font-heading); font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 800; margin-bottom: 10px; color: var(--text); }

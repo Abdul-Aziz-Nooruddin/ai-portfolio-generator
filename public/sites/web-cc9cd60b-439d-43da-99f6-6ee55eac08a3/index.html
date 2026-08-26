@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abdul Aziz Nooruddin — Selected Works First</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,800;1,6..96,400&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafafa;
+      --text: #09090b;
+      --muted: #71717a;
+      --primary: #18181b;
+      --border: #e4e4e7;
+      --card-bg: #ffffff;
+      --font-heading: 'Bodoni Moda', sans-serif;
+      --font-body: 'Urbanist', sans-serif;
+      --radius: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: 32px 24px; }
+    .runway-wrapper { max-width: 1200px; margin: 0 auto; }
+    .runway-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 16px; }
+    .nav-identity { font-size: 1.2rem; font-weight: 800; color: var(--text); }
+    .nav-role { font-size: 0.85rem; color: var(--muted); font-family: monospace; }
+    .featured-hero-stage {
+      background: var(--card-bg); border: 1.5px solid var(--border); border-radius: var(--radius);
+      padding: clamp(24px, 4vw, 48px); margin-bottom: 48px; display: grid; grid-template-columns: 1fr; gap: 24px;
+    }
+    .featured-badge { display: inline-block; background: var(--primary); color: #fff; font-family: monospace; font-size: 0.75rem; font-weight: 800; padding: 4px 10px; border-radius: 4px; margin-bottom: 14px; width: fit-content; }
+    .featured-title { font-family: var(--font-heading); font-size: clamp(2rem, 4.5vw, 3.4rem); font-weight: 900; line-height: 1.15; margin-bottom: 16px; color: var(--text); }
+    .featured-desc { font-size: 1.1rem; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+    .works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; margin-bottom: 60px; }
+    .work-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; background: var(--card-bg); display: flex; flex-direction: column; gap: 16px; }
+    .work-card h3 { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); }
+    .work-card p { font-size: 0.95rem; color: var(--muted); line-height: 1.65; flex-grow: 1; }
+    .bottom-bio-section { border-top: 1px solid var(--border); padding-top: 40px; display: grid; grid-template-columns: 1fr 1.5fr; gap: 32px; margin-bottom: 40px; }
+    @media (max-width: 768px) { .bottom-bio-section { grid-template-columns: 1fr; } }
+    .bottom-bio-section h2 { font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="runway-wrapper">
+    <header class="runway-nav">
+      <div>
+        <div class="nav-identity">Abdul Aziz Nooruddin</div>
+        <div class="nav-role">// Smart Contract & Full-Stack Web3 Developer</div>
+      </div>
+      <a href="#about" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 700;">About & Credentials ➔</a>
+    </header>
+
+    <main>
+      <section class="featured-hero-stage">
+        <div>
+          <span class="featured-badge">FEATURED WORK 01</span>
+          <h1 class="featured-title">ConsentChain Algorand</h1>
+          <p class="featured-desc">A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.</p>
+          <div style="font-family: monospace; font-size: 0.85rem; color: var(--primary); margin-bottom: 20px;">STACK: TypeScript • JavaScript • CSS</div>
+          <a href="https://consent-chain-algorand.vercel.app" target="_blank" rel="noopener noreferrer" style="display: inline-block; background: var(--primary); color: #fff; padding: 10px 22px; border-radius: 6px; font-weight: 700; text-decoration: none;">View Live System ➔</a>
+        </div>
+      </section>
+
+      <h2 style="font-family: var(--font-heading); font-size: 1.6rem; margin-bottom: 20px; color: var(--text);">Production Systems</h2>
+      <div class="works-grid">
+        
+          <div class="work-card">
+            <div>
+              <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary); font-weight: 700;">SYSTEM 02</span>
+              <h3 style="margin-top: 4px;">Consentchain</h3>
+            </div>
+            <p>Blockchain-powered consent registry and data monetization protocol engineered for seamless regulatory compliance under the DPDP Act 2023.</p>
+            <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary); border-top: 1px solid var(--border); padding-top: 12px;">
+              JavaScript • Solidity • CSS • Python • HTML
+            </div>
+          </div>
+        
+          <div class="work-card">
+            <div>
+              <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary); font-weight: 700;">SYSTEM 03</span>
+              <h3 style="margin-top: 4px;">Youtube Shorts Bot</h3>
+            </div>
+            <p>An automated Python-based system that handles end-to-end content generation including topic selection, AI script writing, text-to-speech, and automated uploading.</p>
+            <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary); border-top: 1px solid var(--border); padding-top: 12px;">
+              Python • C • Cython • C++ • Fortran
+            </div>
+          </div>
+        
+          <div class="work-card">
+            <div>
+              <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary); font-weight: 700;">SYSTEM 04</span>
+              <h3 style="margin-top: 4px;">Portfolio</h3>
+            </div>
+            <p>Personal developer portfolio featuring glassmorphism design, particle animations, and live project showcases across Polygon and Algorand.</p>
+            <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary); border-top: 1px solid var(--border); padding-top: 12px;">
+              CSS • TypeScript • HTML • JavaScript
+            </div>
+          </div>
+        
+      </div>
+
+      <section id="about" class="bottom-bio-section">
+        <div>
+          <h2>About the Engineer</h2>
+          <div style="font-family: monospace; font-size: 0.85rem; color: var(--primary); margin-top: 6px;">STATUS: ACTIVE & DEPLOYING</div>
+        </div>
+        <div>
+          <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text); margin-bottom: 16px;">Abdul Aziz Nooruddin is a Smart Contract and Full-Stack Developer based in Hyderabad, specializing in decentralized applications, blockchain protocols, and RegTech solutions. His engineering philosophy centers on bridging trustless architecture with real-world regulatory frameworks, demonstrated through innovative consent management platforms that automate compliance like the DPDP Act 2023 via escrow-based data micro-payment systems.
+
+Beyond his core focus in Web3 and smart contract engineering across Algorand, Polygon, and Solidity ecosystems, Abdul demonstrates deep systems-level versatility through high-performance automation scripts and AI-driven content pipelines. Equipped with a robust tech stack spanning Python, TypeScript, JavaScript, and systems programming languages, he consistently builds end-to-end digital experiences characterized by modern design and practical utility.</p>
+          <div style="font-family: monospace; font-size: 0.88rem; color: var(--muted); line-height: 1.8;">TypeScript, JavaScript, Solidity, Python, Algorand, Polygon, HTML, CSS, C, C++</div>
+        </div>
+      </section>
+
+      <section style="margin: 32px 0;">
+        <h3 style="font-family: var(--font-heading, sans-serif); font-size: 1.4rem; margin-bottom: 12px; color: var(--text);">Experience</h3>
+        <div style="margin-bottom: 12px;"><strong>Open Source Creator &amp; Maintainer</strong> — GitHub Ecosystem <p style="color: var(--muted); font-size: 0.9rem; margin-top: 4px;">Authored and maintained 5+ public repositories with continuous integration, unit testing, and modular architecture.</p></div>
+      </section><section style="margin: 32px 0;">
+        <h3 style="font-family: var(--font-heading, sans-serif); font-size: 1.4rem; margin-bottom: 12px; color: var(--text);">Education</h3>
+        <div style="margin-bottom: 8px;"><strong>Software Engineering &amp; Computer Systems</strong> — Verified Engineering Practice</div>
+      </section><section style="margin: 32px 0;">
+        <h3 style="font-family: var(--font-heading, sans-serif); font-size: 1.4rem; margin-bottom: 12px; color: var(--text);">Certifications</h3>
+        <div style="margin-bottom: 8px;">✦ Verified GitHub Creator (5 Repositories) (GitHub)</div><div style="margin-bottom: 8px;">✦ Modern Full-Stack Development Proficiency (Open Source Standard)</div>
+      </section>
+    </main>
+
+    <footer class="portfolio-global-footer" style="border-top: 1px solid var(--border, rgba(255,255,255,0.08)); margin-top: 60px; padding: 32px 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 0.88rem; color: var(--muted, #94a3b8);">
+      <div style="font-family: monospace; font-size: 0.82rem; letter-spacing: 0.05em;">
+        © 2026 Abdul Aziz Nooruddin // Smart Contract &amp; Full-Stack Web3 Developer
+      </div>
+      <div style="display: flex; align-items: center; gap: 24px;">
+        
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 7px; color: var(--text, #f8fafc); text-decoration: none; font-weight: 600; font-size: 0.9rem;" title="GitHub Profile">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          <span>Abdul-Aziz-Nooruddin</span>
+        </a>
+        
+        <a href="mailto:Abdul-Aziz-Nooruddin@users.noreply.github.com" style="color: var(--muted); text-decoration: none; font-weight: 500;">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

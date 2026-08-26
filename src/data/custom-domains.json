@@ -1,0 +1,62 @@
+{
+  "abdulaziz.portfolio.site": {
+    "domain": "abdulaziz.portfolio.site",
+    "handle": "abdulaziz",
+    "siteId": "test_custom_site_123",
+    "userId": null,
+    "type": "subdomain",
+    "status": "active",
+    "createdAt": "2026-08-22T15:51:48.606Z",
+    "verifiedAt": "2026-08-22T15:51:48.607Z"
+  },
+  "abdulaziz.localhost": {
+    "domain": "abdulaziz.portfolio.site",
+    "handle": "abdulaziz",
+    "siteId": "test_custom_site_123",
+    "userId": null,
+    "type": "subdomain",
+    "status": "active",
+    "createdAt": "2026-08-22T15:51:48.606Z",
+    "verifiedAt": "2026-08-22T15:51:48.607Z"
+  },
+  "abdulaziz.dev": {
+    "domain": "abdulaziz.dev",
+    "siteId": "test_custom_site_123",
+    "userId": null,
+    "type": "custom",
+    "status": "pending_dns",
+    "cnameTarget": "cname.portfolio.site",
+    "createdAt": "2026-08-22T15:51:48.607Z",
+    "verifiedAt": null
+  },
+  "alexsmith.dev": {
+    "domain": "alexsmith.dev",
+    "siteId": "site_abdulaziz",
+    "userId": "u1",
+    "type": "custom",
+    "status": "pending_dns",
+    "cnameTarget": "cname.portfolio.site",
+    "createdAt": "2026-08-22T15:52:01.258Z",
+    "verifiedAt": null
+  },
+  "alex.portfolio.site": {
+    "domain": "alex.portfolio.site",
+    "handle": "alex",
+    "siteId": "site_abdulaziz",
+    "userId": "u1",
+    "type": "subdomain",
+    "status": "active",
+    "createdAt": "2026-08-22T15:52:01.260Z",
+    "verifiedAt": "2026-08-22T15:52:01.260Z"
+  },
+  "alex.localhost": {
+    "domain": "alex.portfolio.site",
+    "handle": "alex",
+    "siteId": "site_abdulaziz",
+    "userId": "u1",
+    "type": "subdomain",
+    "status": "active",
+    "createdAt": "2026-08-22T15:52:01.260Z",
+    "verifiedAt": "2026-08-22T15:52:01.260Z"
+  }
+}

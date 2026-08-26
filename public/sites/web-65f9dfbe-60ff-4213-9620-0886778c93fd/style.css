@@ -1,0 +1,26 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #09090b;
+      --muted: #52525b;
+      --primary: #9a3412;
+      --border: rgba(0,0,0,0.12);
+      --card-bg: #ffffff;
+      --font-heading: 'Syne', serif;
+      --font-body: 'Inter', sans-serif;
+      --radius: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.8; padding: 60px 24px; }
+    .essay-container { max-width: 860px; margin: 0 auto; }
+    .essay-header { border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 50px; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 16px; }
+    .author-mark { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--text); }
+    .author-meta { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
+    .essay-statement { font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 3.6rem); font-weight: 800; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 32px; color: var(--text); }
+    .essay-intro-lead { font-size: 1.2rem; line-height: 1.8; color: var(--text); margin-bottom: 40px; font-weight: 400; border-left: 3px solid var(--primary); padding-left: 20px; }
+    .essay-body-prose p { font-size: 1.05rem; color: var(--muted); margin-bottom: 24px; }
+    
+    .embedded-monograph { margin: 40px 0; border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; background: var(--card-bg); }
+    .monograph-fig { font-family: monospace; font-size: 0.78rem; color: var(--primary); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
+    .monograph-title { font-family: var(--font-heading); font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 700; margin-bottom: 12px; color: var(--text); }
+    .monograph-desc { font-size: 1rem; color: var(--muted); margin-bottom: 18px; line-height: 1.7; }
+    .monograph-tech { font-family: monospace; font-size: 0.84rem; color: var(--primary); }

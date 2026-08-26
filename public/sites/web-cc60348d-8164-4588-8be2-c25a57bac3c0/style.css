@@ -1,0 +1,19 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #1c1917;
+      --muted: #78716c;
+      --primary: #9a3412;
+      --border: #e7e5e4;
+      --card-bg: #f5ede4;
+      --font-heading: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.6; padding: 50px 24px; position: relative; min-height: 100vh; }
+    .bento-wrap { max-width: 1280px; margin: 0 auto; position: relative; z-index: 2; }
+    .bento-grid { display: grid; grid-template-columns: 1fr; gap: 24px; margin-bottom: 40px; }
+    @media (min-width: 900px) {
+      .bento-grid { grid-template-columns: 1.5fr 1fr; }
+    }
+    .bento-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 36px; backdrop-filter: blur(12px); }

@@ -1,0 +1,23 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #1c1917;
+      --muted: #78716c;
+      --primary: #9a3412;
+      --border: #e7e5e4;
+      --card-bg: #f5ede4;
+      --font-heading: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Public Sans', sans-serif;
+      --radius: 4px;
+      --fluid-h1: clamp(2.4rem, 6vw, 4.5rem);
+      --fluid-h2: clamp(1.8rem, 3.5vw, 2.8rem);
+      --fluid-body: clamp(0.95rem, 1.2vw, 1.15rem);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.6; padding: 60px 24px; position: relative; min-height: 100vh; }
+    .asymmetric-canvas { max-width: 1300px; margin: 0 auto; position: relative; z-index: 2; }
+    .canvas-hero { display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 70px; }
+    @media (min-width: 900px) {
+      .canvas-hero { grid-template-columns: 1.4fr 0.8fr; align-items: end; }
+    }
+    .canvas-headline { font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 4.8rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.03em; }
+    .canvas-sidebar { border-left: 2px solid var(--primary); padding-left: 24px; }

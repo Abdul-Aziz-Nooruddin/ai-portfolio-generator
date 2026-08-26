@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Abdul Aziz Nooruddin | Asymmetric Canvas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fcf9f5;
+      --text: #f8fafc;
+      --muted: #78716c;
+      --primary: #9a3412;
+      --border: #e7e5e4;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Sora', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: 48px; overflow-x: hidden; }
+    .canvas-quadrant-header { display: flex; justify-content: space-between; border-bottom: 2px solid var(--text); padding-bottom: 16px; margin-bottom: 80px; }
+    .quadrant-title { font-family: var(--font-heading); font-size: clamp(2rem, 6vw, 4.5rem); font-weight: 900; line-height: 0.95; }
+    .quadrant-meta { text-align: right; font-family: monospace; font-size: 0.85rem; color: var(--primary); }
+    .staggered-canvas-grid { display: flex; flex-direction: column; gap: 100px; max-width: 1300px; margin: 0 auto; }
+    .asym-node-left { max-width: 620px; align-self: flex-start; }
+    .asym-node-right { max-width: 620px; align-self: flex-end; }
+    .asym-node-center { max-width: 780px; align-self: center; }
+    .asym-card {
+      border: 2px solid var(--border); border-radius: 20px; padding: 40px;
+      background: rgba(255,255,255,0.02); transition: border-color 0.2s;
+    }
+    .asym-card:hover { border-color: var(--primary); }
+    .asym-card h2 { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <header class="canvas-quadrant-header">
+    <div class="quadrant-title">Abdul Aziz Nooruddin</div>
+    <div class="quadrant-meta">
+      <div>[ ASYMMETRIC TOPOLOGY ]</div>
+      <div>// Computer Science (AI-ML) Undergraduate</div>
+    </div>
+  </header>
+
+  <main class="staggered-canvas-grid">
+    <div class="asym-node-left">
+      <div style="font-size: 1.3rem; line-height: 1.7; color: var(--text); font-weight: 500;">
+        Computer Science (AI-ML) undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end, seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.
+      </div>
+    </div>
+
+    
+        <article class="asym-node-right asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 01</span>
+          <h2>ConsentChain</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Designed a dual-chain blockchain consent-management platform using Solidity on Polygon and AlgoKit on Algorand. Directed AI-assisted implementation of four smart contracts covered by 27 passing tests; advanced to Round 2 of AlgoBharat Hack Series 3.0.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">Solidity, Polygon, AlgoKit, Algorand</div>
+        </article>
+      
+        <article class="asym-node-left asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 02</span>
+          <h2>YouTube Shorts Automation Bot</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Built an end-to-end Python pipeline that generates and publishes YouTube Shorts automatically, chaining script generation, text-to-speech, image sourcing, and video assembly. Implemented OAuth authentication and topic deduplication for unattended posting.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">Python, OAuth, Text-to-Speech</div>
+        </article>
+      
+        <article class="asym-node-center asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 03</span>
+          <h2>LMS User Management System</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Designed and built a role-based user management REST API in Java/Spring Boot with MySQL persistence. Directed AI-assisted implementation of the React frontend; supports full CRUD across a decoupled architecture.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">Java, Spring Boot, MySQL, React</div>
+        </article>
+      
+        <article class="asym-node-right asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 04</span>
+          <h2>AirFist</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Designed a cross-platform Flutter app enabling file transfer via MediaPipe hand-gesture recognition, with a FastAPI and Supabase backend. Directed AI-assisted implementation and deployed the full stack on Koyeb.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">Flutter, MediaPipe, FastAPI, Supabase, Koyeb</div>
+        </article>
+      
+        <article class="asym-node-left asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 05</span>
+          <h2>Gesture Blocks</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Designed a browser-based 3D block editor controlled by real-time hand gestures using MediaPipe. Directed AI-assisted implementation of the Three.js frontend and Python/aiohttp backend.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">MediaPipe, Three.js, Python, aiohttp</div>
+        </article>
+      
+        <article class="asym-node-center asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 06</span>
+          <h2>Youtube Shorts Bot</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">An automated Python-based system that generates and publishes YouTube Shorts. It handles topic selection, AI script generation, image fetching, text-to-speech narration, video assembly, and automated YouTube uploading, creating an end-to-end content generation pipeline.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">Python</div>
+        </article>
+      
+        <article class="asym-node-right asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 07</span>
+          <h2>Pass A Note</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">Open source software project hosted on GitHub.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">HTML</div>
+        </article>
+      
+        <article class="asym-node-left asym-card">
+          <span style="font-family: monospace; font-size: 0.75rem; color: var(--primary);">PROJECT // 08</span>
+          <h2>Portfolio</h2>
+          <p style="color: var(--muted); line-height: 1.7; margin-bottom: 18px;">🚀 Personal portfolio — AI Student, Full-Stack &amp; Blockchain Developer. Built with HTML, CSS &amp; JS. Features glassmorphism design, particle animations, and showcases projects on Polygon &amp; Algorand.</p>
+          <div style="font-family: monospace; font-size: 0.82rem; color: var(--primary);">CSS</div>
+        </article>
+      
+
+    <section style="margin: 40px 0;">
+        <h3 style="font-family: var(--font-heading, sans-serif); font-size: 1.5rem; margin-bottom: 12px;">Education</h3>
+        <div style="margin-bottom: 8px;"><strong>B.Tech in Computer Science (AI &amp; Machine Learning)</strong> — Lords Institute of Engineering and Technology</div>
+      </section>
+    <footer class="portfolio-global-footer" style="border-top: 1px solid var(--border, rgba(255,255,255,0.08)); margin-top: 80px; padding: 40px 0 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 0.88rem; color: var(--muted, #94a3b8);">
+      <div style="font-family: monospace; font-size: 0.82rem; letter-spacing: 0.05em;">
+        © 2026 Abdul Aziz Nooruddin // Computer Science (AI-ML) Undergraduate
+      </div>
+      <div style="display: flex; align-items: center; gap: 24px;">
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 7px; color: var(--text, #f8fafc); text-decoration: none; font-weight: 600; font-size: 0.9rem;" title="View GitHub Profile">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+          <span>Abdul-Aziz-Nooruddin</span>
+        </a>
+        
+        <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--muted); text-decoration: none; font-weight: 500;">Contact</a>
+      </div>
+    </footer>
+  </main>
+
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    
+    </body>
+</html>

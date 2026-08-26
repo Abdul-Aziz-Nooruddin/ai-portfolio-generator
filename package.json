@@ -1,21 +1,36 @@
 {
-  "name": "whatsapp-portfolio-bot",
+  "name": "ai-portfolio-studio",
   "version": "1.1.0",
-  "description": "WhatsApp chatbot that generates AI-designed portfolio websites with immersive WebGL shaders",
+  "description": "AI Portfolio Studio that generates award-winning, mobile-first 3D portfolio websites with Telegram bot & Web customizer",
   "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "dev": "node src/index.js",
+    "test": "node --test src/test-telegram.js src/test-web-api.js src/test-lifecycle.js src/test-auth-security.js src/test-project-diversity.js src/test-github-generator.js",
+    "test:github": "node --test src/test-github-generator.js",
+    "test:composition": "node --test src/test-100-page-composition-benchmark.js",
+    "test:coherence": "node --test src/test-50-coherence-benchmark.js",
+    "test:stress50": "node --test src/test-50-diversity-stress.js",
+    "test:diversity": "node --test src/test-project-diversity.js",
+    "test:security": "node --test src/test-auth-security.js",
+    "test:telegram": "node --test src/test-telegram.js",
+    "test:web": "node --test src/test-web-api.js",
+    "test:lifecycle": "node --test src/test-lifecycle.js",
     "test:conversation": "node src/test-conversation.js",
-    "test:db": "node src/test-db.js",
-    "audit": "npx impeccable detect src/templates/"
+    "audit:security": "node src/security-audit.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "@supabase/supabase-js": "^2.47.0",
+    "archiver": "^7.0.1",
     "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
     "express": "^4.21.0",
-    "sharp": "^0.33.0",
-    "dotenv": "^16.4.0"
+    "node-cron": "^4.6.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^9.0.5",
+    "pdf-parse": "^1.1.1",
+    "sharp": "^0.33.0"
   },
   "devDependencies": {
     "impeccable": "latest"

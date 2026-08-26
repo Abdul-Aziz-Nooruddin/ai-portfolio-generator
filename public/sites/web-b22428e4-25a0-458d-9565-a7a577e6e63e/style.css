@@ -1,0 +1,48 @@
+:root {
+      --bg: #fafafa;
+      --text: #18181b;
+      --text-muted: #71717a;
+      --accent: #52525b;
+      --border: #e4e4e7;
+      --font-display: 'Archivo', 'Helvetica Neue', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 48px 32px;
+    }
+    .swiss-grid { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+
+    .swiss-nav { grid-column: span 12; border-bottom: 2px solid var(--text); padding-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
+    .swiss-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; }
+    
+    .swiss-hero { grid-column: span 12; padding: 60px 0; border-bottom: 1px solid var(--border); }
+    .swiss-num { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .swiss-headline {
+      font-family: var(--font-display); font-size: clamp(2.6rem, 6vw, 4.4rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; max-width: 960px;
+    }
+    .swiss-lead { font-size: 1.25rem; color: var(--text-muted); max-width: 820px; line-height: 1.7; }
+
+    .swiss-col-4 { grid-column: span 4; }
+    .swiss-col-8 { grid-column: span 8; }
+    .swiss-col-12 { grid-column: span 12; }
+
+    .swiss-section-header {
+      border-top: 2px solid var(--text); padding-top: 14px; font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-top: 40px;
+    }
+
+    /* Projects */
+    .p-item { border-bottom: 1px solid var(--border); padding: 24px 0; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: baseline; }
+    .p-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; }
+    .p-tag { font-size: 0.8rem; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .swiss-col-4, .swiss-col-8 { grid-column: span 12; }
+      .p-item { grid-template-columns: 1fr; }
+    }

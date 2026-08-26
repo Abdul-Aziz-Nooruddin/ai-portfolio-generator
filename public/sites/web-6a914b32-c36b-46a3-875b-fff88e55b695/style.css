@@ -1,0 +1,193 @@
+:root {
+      --bg: #fcf9f2;
+      --primary: #0f172a;
+      --accent: #059669;
+      --text: #1c1917;
+      --border: #e7e5e4;
+      --surface: #ffffff;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Outfit', sans-serif; }
+    
+    /* 3D WebGL Canvas Layer */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Magnetic Custom Cursor */
+    .cursor-dot {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background: var(--primary, #38bdf8);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999999;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.2s, transform 0.1s;
+      box-shadow: 0 0 10px var(--primary, #38bdf8);
+    }
+    .cursor-ring {
+      position: fixed;
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--primary, #38bdf8);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 999998;
+      transform: translate(-50%, -50%);
+      transition: width 0.25s, height 0.25s, background-color 0.25s, border-color 0.25s;
+    }
+    .cursor-ring.active-hover {
+      width: 60px;
+      height: 60px;
+      background-color: rgba(56, 189, 248, 0.15);
+      border-color: var(--primary, #38bdf8);
+      backdrop-filter: blur(2px);
+    }
+    .cursor-ring.card-hover {
+      width: 80px;
+      height: 80px;
+      border-color: var(--accent, #22c55e);
+      background-color: rgba(34, 197, 94, 0.12);
+    }
+
+    /* Spotlight Glow Cards */
+    .spotlight-card {
+      position: relative;
+      background: var(--surface, #18181b);
+      border: 1px solid var(--border, rgba(255,255,255,0.1));
+      border-radius: 20px;
+      padding: 2.25rem;
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.2s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .spotlight-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 20px;
+      background: radial-gradient(600px circle at var(--mouse-x, 0) var(--mouse-y, 0), rgba(56, 189, 248, 0.18), transparent 40%);
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .spotlight-card:hover::before { opacity: 1; }
+    
+
+    .editorial-wrap { position: relative; z-index: 10; max-width: 1080px; margin: 0 auto; padding: 5rem 2rem; }
+    .hero-name-serif {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(3.5rem, 8vw, 6.5rem);
+      font-weight: 700;
+      line-height: 0.98;
+      margin-bottom: 1.5rem;
+    }
+    
+      .watermark-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999990;
+        pointer-events: none;
+        overflow: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='340' height='220' viewBox='0 0 340 220'><g transform='rotate(-28, 170, 110)' fill='rgba(150,150,150,0.13)'><path d='M80 95 C80 95 85 105 90 95' stroke='rgba(150,150,150,0.15)' fill='none'/><text x='170' y='115' font-size='16' font-family='-apple-system,BlinkMacSystemFont,sans-serif' font-weight='800' letter-spacing='2' text-anchor='middle'>@ai_portfolio_generator_bot</text></g></svg>");
+        background-repeat: repeat;
+      }
+      .watermark-top-bar {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999991;
+        background: rgba(15, 23, 42, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(34, 158, 217, 0.3);
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.55rem 1.25rem;
+        font-size: 0.875rem;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      }
+      .watermark-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .watermark-tg-icon {
+        width: 18px;
+        height: 18px;
+        fill: #229ED9;
+        flex-shrink: 0;
+      }
+      .watermark-bot-link {
+        color: #38bdf8;
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s ease;
+      }
+      .watermark-bot-link:hover {
+        color: #7dd3fc;
+        text-decoration: underline;
+      }
+      .watermark-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: linear-gradient(135deg, #0088cc, #229ED9);
+        color: #ffffff;
+        text-decoration: none;
+        padding: 0.35rem 0.85rem;
+        border-radius: 9999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        box-shadow: 0 2px 8px rgba(0, 136, 204, 0.35);
+      }
+      .watermark-cta-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 136, 204, 0.5);
+      }
+      .watermark-diagonal-big {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-32deg);
+        z-index: 999989;
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        font-size: clamp(3.5rem, 12vw, 9.5rem);
+        font-weight: 900;
+        letter-spacing: 0.16em;
+        color: rgba(255, 255, 255, 0.04);
+        -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.08);
+        white-space: nowrap;
+        text-transform: uppercase;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      @media (max-width: 640px) {
+        .watermark-top-bar {
+          flex-direction: column;
+          gap: 0.4rem;
+          padding: 0.5rem 0.75rem;
+          text-align: center;
+        }
+      }

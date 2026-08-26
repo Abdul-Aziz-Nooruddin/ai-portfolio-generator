@@ -10,9 +10,50 @@ class NetlifyDeployer {
     this.supabase = createClient(supabaseUrl, supabaseKey);
   }
 
-  async deploySite(conversationId, siteFiles) {
-    const { html, css, js } = siteFiles;
-    
+  cleanSlug(text) {
+    if (!text) return '';
+    return String(text)
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .substring(0, 32);
+  }
+
+  generateCandidateSubdomains(name, role = '') {
+    const baseName = this.cleanSlug(name) || 'portfolio';
+    const cleanRole = this.cleanSlug(role);
+
+    const candidates = [
+      `${baseName}-portfolio`,
+      baseName,
+      cleanRole ? `${baseName}-${cleanRole}` : null,
+      `${baseName}-dev`,
+      `${baseName}-studio`,
+      `${baseName}-site`,
+      `${baseName}-${Math.floor(100 + Math.random() * 900)}`
+    ].filter(Boolean);
+
+    return [...new Set(candidates)];
+  }
+
+  async deploySite(conversationId, siteFilesOrHtml, maybeCss, maybeJs, maybeUserData) {
+    let html, css, js, userData = {};
+    if (typeof siteFilesOrHtml === 'object' && siteFilesOrHtml !== null && siteFilesOrHtml.html) {
+      html = siteFilesOrHtml.html;
+      css = siteFilesOrHtml.css || '';
+      js = siteFilesOrHtml.js || '';
+      userData = maybeCss || {};
+    } else {
+      html = siteFilesOrHtml || '';
+      css = maybeCss || '';
+      js = maybeJs || '';
+      userData = maybeUserData || {};
+    }
+
+    const userName = userData.name || (userData.extracted_data && userData.extracted_data.name) || '';
+    const userRole = userData.role || (userData.extracted_data && userData.extracted_data.role) || '';
+
     const siteId = `portfolio-${conversationId.substring(0, 8)}`;
     const deployDir = path.join('/tmp', siteId);
     
@@ -20,16 +61,58 @@ class NetlifyDeployer {
     
     const zipBuffer = await this.createZip(deployDir);
     
-    const site = await this.createOrGetSite(siteId);
+    const site = await this.createOrGetSite(siteId, userName, userRole);
     const deploy = await this.deployZip(site.id, zipBuffer);
     
     await this.cleanup(deployDir);
     
+    const finalUrl = deploy.ssl_url || deploy.url || site.ssl_url || site.url || `https://${site.name}.netlify.app`;
     return {
       siteId: site.id,
-      deployUrl: deploy.ssl_url || deploy.url,
+      deployUrl: finalUrl,
+      url: finalUrl,
+      name: site.name,
       deployId: deploy.id
     };
+  }
+
+  async createOrGetSite(siteName, userName = '', userRole = '') {
+    const candidates = this.generateCandidateSubdomains(userName || siteName, userRole);
+    
+    for (const nameCandidate of candidates) {
+      try {
+        const response = await fetch(`${this.baseUrl}/sites`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name: nameCandidate })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`[NETLIFY] Created clean site: https://${nameCandidate}.netlify.app`);
+          return data;
+        }
+      } catch (err) {
+        console.warn(`[NETLIFY] Candidate "${nameCandidate}" unavailable, trying next candidate...`);
+      }
+    }
+
+    // Fallback if named candidates are all taken
+    const fallbackRes = await fetch(`${this.baseUrl}/sites`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
+    });
+    if (fallbackRes.ok) return fallbackRes.json();
+
+    const error = await fallbackRes.text();
+    throw new Error(`Netlify createSite failed: ${error}`);
   }
 
   async prepareDeployDirectory(dir, files) {
@@ -75,44 +158,22 @@ class NetlifyDeployer {
     const archiver = require('archiver');
     const { PassThrough } = require('stream');
     
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    const stream = new PassThrough();
-    
-    const chunks = [];
-    stream.on('data', chunk => chunks.push(chunk));
-    
-    archive.pipe(stream);
-    archive.directory(dir, false);
-    await archive.finalize();
-    
     return new Promise((resolve, reject) => {
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      const stream = new PassThrough();
+      const chunks = [];
+      
+      stream.on('data', chunk => chunks.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(chunks)));
       stream.on('error', reject);
+      archive.on('error', reject);
+      
+      archive.pipe(stream);
+      archive.directory(dir, false);
+      archive.finalize();
     });
   }
 
-  async createOrGetSite(siteName) {
-    const response = await fetch(`${this.baseUrl}/sites`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${this.token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: siteName })
-    });
-    
-    if (!response.ok) {
-      const error = await response.text();
-      if (error.includes('already exists') || error.includes('409')) {
-        const sites = await this.listSites();
-        const existing = sites.find(s => s.name === siteName);
-        if (existing) return existing;
-      }
-      throw new Error(`Netlify createSite failed: ${error}`);
-    }
-    
-    return response.json();
-  }
 
   async listSites() {
     const response = await fetch(`${this.baseUrl}/sites`, {
@@ -170,19 +231,19 @@ class NetlifyDeployer {
     const archiver = require('archiver');
     const { PassThrough } = require('stream');
     
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    const stream = new PassThrough();
-    
-    const chunks = [];
-    stream.on('data', chunk => chunks.push(chunk));
-    
-    archive.pipe(stream);
-    archive.append(html, { name: 'index.html' });
-    await archive.finalize();
-    
     return new Promise((resolve, reject) => {
+      const archive = archiver('zip', { zlib: { level: 9 } });
+      const stream = new PassThrough();
+      const chunks = [];
+      
+      stream.on('data', chunk => chunks.push(chunk));
       stream.on('end', () => resolve(Buffer.concat(chunks)));
       stream.on('error', reject);
+      archive.on('error', reject);
+      
+      archive.pipe(stream);
+      archive.append(html, { name: 'index.html' });
+      archive.finalize();
     });
   }
 

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Abdul Aziz Nooruddin — Computer Science (AI-ML) Undergraduate | Wabi-Sabi Monograph</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,800;1,6..96,400&family=Urbanist:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #fcf9f5;
+      --ink: #9a3412;
+      --ink-muted: #78716c;
+      --accent: #047857;
+      --border-line: #e7e5e4;
+      --font-serif: 'Bodoni Moda', serif;
+      --font-body: 'Urbanist', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.8;
+      padding: 48px 24px;
+    }
+    .wabi-page { max-width: 980px; margin: 0 auto; }
+    
+    /* Wabi-Sabi Zen Masthead */
+    .zen-masthead {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      border-bottom: 1px solid var(--border-line); padding-bottom: 28px; margin-bottom: 60px;
+    }
+    .zen-kanji-badge {
+      font-family: var(--font-serif); font-size: 1.2rem; font-weight: 700;
+      letter-spacing: 0.15em; color: var(--ink); display: flex; align-items: center; gap: 12px;
+    }
+    .zen-links { display: flex; gap: 20px; flex-wrap: wrap; }
+    .zen-links a {
+      color: var(--ink-muted); text-decoration: none; font-size: 0.9rem;
+      transition: color 0.2s; border-bottom: 1px dotted transparent;
+    }
+    .zen-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* Editorial Statement Hero */
+    .editorial-statement { margin-bottom: 80px; }
+    .zen-pretitle {
+      font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 16px;
+    }
+    .zen-hero-title {
+      font-family: var(--font-serif); font-size: clamp(2.4rem, 5vw, 3.8rem); font-weight: 600;
+      line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 24px; max-width: 840px;
+    }
+    .zen-tagline {
+      font-size: 1.2rem; color: var(--ink-muted); max-width: 740px; line-height: 1.85; margin-bottom: 24px;
+    }
+    .zen-bio { font-size: 1.05rem; color: var(--ink); max-width: 740px; line-height: 1.85; }
+
+    /* Section Headings */
+    .section-divider {
+      font-family: var(--font-serif); font-size: 1.5rem; border-bottom: 1px solid var(--ink);
+      padding-bottom: 12px; margin-bottom: 36px; margin-top: 70px; display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .section-counter { font-size: 0.85rem; font-family: var(--font-body); color: var(--accent); letter-spacing: 0.1em; }
+
+    /* Numbered Editorial Project Archive (NO Cards!) */
+    .project-row {
+      display: grid; grid-template-columns: 60px 1.5fr 2fr 120px; gap: 20px;
+      padding: 28px 0; border-bottom: 1px solid var(--border-line); align-items: baseline;
+      transition: background-color 0.2s;
+    }
+    .project-row:hover { background-color: rgba(140, 72, 48, 0.03); }
+    .project-num { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); }
+    .project-name { font-family: var(--font-serif); font-size: 1.25rem; font-weight: 600; }
+    .project-tag { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); letter-spacing: 0.1em; margin-top: 4px; }
+    .project-desc { color: var(--ink-muted); font-size: 0.95rem; line-height: 1.7; }
+    .project-action a { color: var(--ink); text-decoration: none; font-size: 0.85rem; font-weight: 600; border-bottom: 1px solid var(--ink); }
+
+    /* Experience Journey Timeline */
+    .experience-list { display: flex; flex-direction: column; gap: 36px; }
+    .exp-item {
+      display: grid; grid-template-columns: 200px 1fr; gap: 30px;
+      padding-bottom: 30px; border-bottom: 1px solid var(--border-line);
+    }
+    .exp-period { font-size: 0.85rem; color: var(--accent); letter-spacing: 0.05em; }
+    .exp-company { font-size: 0.95rem; color: var(--ink-muted); margin-top: 4px; }
+    .exp-role { font-family: var(--font-serif); font-size: 1.3rem; font-weight: 600; margin-bottom: 8px; }
+    .exp-desc { color: var(--ink-muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+    .exp-bullets { list-style: square inside; color: var(--ink); font-size: 0.9rem; line-height: 1.75; }
+
+    /* Education & Certifications Grid */
+    .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; }
+    .edu-card { padding: 20px 0; border-bottom: 1px solid var(--border-line); }
+    .edu-degree { font-family: var(--font-serif); font-size: 1.2rem; font-weight: 600; }
+    .edu-institution { color: var(--accent); font-size: 0.95rem; margin-top: 4px; }
+    .edu-meta { font-size: 0.85rem; color: var(--ink-muted); margin-top: 4px; }
+
+    /* Zen Monograph Bio & Toolchain */
+    .skills-section {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 20px;
+    }
+    .skill-cat-title { font-family: var(--font-serif); font-size: 1.1rem; color: var(--accent); margin-bottom: 12px; }
+    .skills-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .zen-skill { font-size: 0.88rem; color: var(--ink); background: rgba(0,0,0,0.03); padding: 4px 10px; border-radius: 2px; }
+
+    /* Minimal Colophon Footer */
+    .zen-colophon {
+      border-top: 1px solid var(--border-line); padding-top: 48px; margin-top: 80px; display: flex;
+      justify-content: space-between; align-items: flex-start; font-size: 0.9rem; color: var(--ink-muted); flex-wrap: wrap; gap: 24px;
+    }
+    .zen-contact-direct a { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--ink); }
+
+    @media (max-width: 768px) {
+      .project-row { grid-template-columns: 1fr !important; gap: 8px !important; }
+      .exp-item { grid-template-columns: 1fr !important; gap: 10px !important; }
+      .edu-grid { grid-template-columns: 1fr !important; }
+      .zen-masthead { flex-direction: column; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wabi-page">
+    <header class="zen-masthead">
+      <div class="zen-kanji-badge">
+        <span>侘寂</span>
+        <span>Abdul Aziz Nooruddin</span>
+      </div>
+      <nav class="zen-links">
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank">GitHub</a>
+        
+        <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank">Website</a>
+        <a href="mailto:abdulaziznoor9876@gmail.com">abdulaziznoor9876@gmail.com</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="editorial-statement">
+        <div class="zen-pretitle">Computer Science (AI-ML) Undergraduate • Hyderabad, India</div>
+        <h1 class="zen-hero-title">Computer Science (AI-ML) undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end. Seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</h1>
+        <p class="zen-bio">Computer Science (AI-ML) undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end. Seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</p>
+      </section>
+
+      <!-- 1. DYNAMIC PROJECT PRESENTATION -->
+      
+      <section id="projects" class="section-presentation pres-editorial-magazine" style="padding: 120px 0;">
+        <div class="pres-magazine-masthead" style="border-bottom: 2px solid var(--border-color, rgba(255,255,255,0.12)); padding-bottom: 24px; margin-bottom: 80px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <span style="font-family: var(--font-mono, monospace); font-size: 0.8rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--primary);">ISSUE NO. 04 // SELECTED MONOGRAPHS</span>
+            <h2 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.05; margin-top: 8px; letter-spacing: -0.03em;">Selected Works</h2>
+          </div>
+          <div style="text-align: right; font-family: var(--font-mono, monospace); font-size: 0.85rem; color: var(--text-muted);">
+            <div>INDEX // 01—08</div>
+            <div>CURATED PORTFOLIO</div>
+          </div>
+        </div>
+
+        <div class="magazine-articles-flow" style="display: flex; flex-direction: column; gap: 140px;">
+          
+            <article class="magazine-article " style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 1;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(210, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(255, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(210, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 01 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(210, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(255, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(210, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_0)" />
+          <circle cx="150" cy="100" r="45" fill="none" stroke="hsla(210, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 60 Q 200 180 360 90" fill="none" stroke="hsla(255, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">ConsentChain</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(210, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 01</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 2;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 01 // Engine & Platform</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">ConsentChain</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Designed a dual-chain blockchain consent-management platform using Solidity on Polygon and AlgoKit on Algorand. Directed AI-assisted implementation of four smart contracts covered by 27 passing tests; advanced to Round 2 of AlgoBharat Hack Series 3.0."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  <a href="https://consent-chain-algorand.vercel.app" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary); text-decoration: none; border-bottom: 2px solid var(--primary); padding-bottom: 2px;">Read Case Study &rarr;</a>
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand" target="_blank" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">[ Source Code ]</a>
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article article-reverse" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 2;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(278, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(323, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(278, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 02 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(278, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(323, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_1" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(278, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_1)" />
+          <circle cx="190" cy="100" r="55" fill="none" stroke="hsla(278, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 80 Q 200 150 360 105" fill="none" stroke="hsla(323, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">YouTube Shorts Automation Bot</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(278, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 02</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 1;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 02 // Interactive Interface</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">YouTube Shorts Automation Bot</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Built an end-to-end Python pipeline that generates and publishes YouTube Shorts automatically, chaining script generation, text-to-speech, image sourcing, and video assembly. Implemented OAuth authentication and topic deduplication for unattended posting."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  
+                  
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article " style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 1;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(346, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(31, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(346, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 03 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(346, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(31, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_2" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(346, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_2)" />
+          <circle cx="230" cy="100" r="65" fill="none" stroke="hsla(346, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 100 Q 200 120 360 120" fill="none" stroke="hsla(31, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">LMS User Management System</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(346, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 03</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 2;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 03 // Engine & Platform</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">LMS User Management System</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Designed and built a role-based user management REST API in Java/Spring Boot with MySQL persistence. Directed AI-assisted implementation of the React frontend; supports full CRUD across a decoupled architecture."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  
+                  
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article article-reverse" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 2;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(54, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(99, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(54, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 04 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(54, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(99, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_3" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(54, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_3)" />
+          <circle cx="270" cy="100" r="75" fill="none" stroke="hsla(54, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 120 Q 200 90 360 135" fill="none" stroke="hsla(99, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">AirFist</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(54, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 04</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 1;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 04 // Interactive Interface</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">AirFist</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Designed a cross-platform Flutter app enabling file transfer via MediaPipe hand-gesture recognition, with a FastAPI and Supabase backend. Directed AI-assisted implementation and deployed the full stack on Koyeb."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  
+                  
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article " style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 1;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(122, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(167, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(122, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 05 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(122, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(167, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_4" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(122, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_4)" />
+          <circle cx="160" cy="100" r="85" fill="none" stroke="hsla(122, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 140 Q 200 60 360 150" fill="none" stroke="hsla(167, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Gesture Blocks</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(122, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 05</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 2;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 05 // Engine & Platform</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">Gesture Blocks</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Designed a browser-based 3D block editor controlled by real-time hand gestures using MediaPipe. Directed AI-assisted implementation of the Three.js frontend and Python/aiohttp backend."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  
+                  
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article article-reverse" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 2;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(190, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(235, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(190, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 06 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(190, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(235, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_5" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(190, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_5)" />
+          <circle cx="200" cy="100" r="95" fill="none" stroke="hsla(190, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 160 Q 200 30 360 165" fill="none" stroke="hsla(235, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Youtube Shorts Bot</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(190, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 06</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 1;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 06 // Interactive Interface</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">Youtube Shorts Bot</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "An automated Python-based system that generates and publishes YouTube Shorts. It handles topic selection, AI script generation, image fetching, text-to-speech narration, video assembly, and automated YouTube uploading, creating an end-to-end content generation pipeline."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/youtube-shorts-bot" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary); text-decoration: none; border-bottom: 2px solid var(--primary); padding-bottom: 2px;">Read Case Study &rarr;</a>
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/youtube-shorts-bot" target="_blank" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">[ Source Code ]</a>
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article " style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 1;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(258, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(303, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(258, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 07 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(258, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(303, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_6" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(258, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_6)" />
+          <circle cx="240" cy="100" r="105" fill="none" stroke="hsla(258, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 180 Q 200 0 360 180" fill="none" stroke="hsla(303, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Pass A Note</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(258, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 07</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 2;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 07 // Engine & Platform</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">Pass A Note</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "Open source software project hosted on GitHub."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  <a href="https://pass-a-note-iota.vercel.app" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary); text-decoration: none; border-bottom: 2px solid var(--primary); padding-bottom: 2px;">Read Case Study &rarr;</a>
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/pass-a-note" target="_blank" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">[ Source Code ]</a>
+                </div>
+              </div>
+            </article>
+          
+            <article class="magazine-article article-reverse" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center;">
+              <div class="article-visual-wrapper" style="order: 2;">
+                <div style="position: relative; border-radius: 4px; overflow: hidden; box-shadow: 0 30px 60px rgba(0,0,0,0.4);">
+                  
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(326, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(11, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(326, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 08 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(326, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(11, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_7" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(326, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_7)" />
+          <circle cx="280" cy="100" r="115" fill="none" stroke="hsla(326, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 200 Q 200 -30 360 195" fill="none" stroke="hsla(11, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Portfolio</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(326, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+                  <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono, monospace); font-size: 0.75rem; background: rgba(0,0,0,0.7); padding: 4px 10px; border-radius: 2px; color: #fff;">VOL. 08</div>
+                </div>
+              </div>
+
+              <div class="article-text-body" style="order: 1;">
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">CHAPTER 08 // Interactive Interface</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; letter-spacing: -0.02em;">Portfolio</h3>
+                
+                <blockquote style="border-left: 3px solid var(--primary); padding-left: 20px; font-size: 1.1rem; font-style: italic; color: var(--text-color, #fff); margin-bottom: 20px; line-height: 1.6;">
+                  "🚀 Personal portfolio — AI Student, Full-Stack & Blockchain Developer. Built with HTML, CSS & JS. Features glassmorphism design, particle animations, and showcases projects on Polygon & Algorand."
+                </blockquote>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px;">
+                  <span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Python</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Java</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">C</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">React</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Next.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">FastAPI</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Flutter</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Solidity</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Hardhat</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">MediaPipe</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Three.js</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Supabase</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">PostgreSQL</span><span style="font-family: var(--font-mono, monospace); font-size: 0.75rem; background: var(--surface-subtle, rgba(255,255,255,0.06)); padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border-color, rgba(255,255,255,0.1));">Git</span>
+                </div>
+
+                <div style="display: flex; gap: 20px; align-items: center;">
+                  <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--primary); text-decoration: none; border-bottom: 2px solid var(--primary); padding-bottom: 2px;">Read Case Study &rarr;</a>
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/portfolio" target="_blank" style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: var(--text-muted); text-decoration: none;">[ Source Code ]</a>
+                </div>
+              </div>
+            </article>
+          
+        </div>
+      </section>
+    
+
+      <!-- 2. PROFESSIONAL EXPERIENCE TIMELINE -->
+      
+
+      <!-- 3. EDUCATION & CERTIFICATIONS -->
+      
+      <section>
+        <div class="section-divider">
+          <span>Academic Background & Accreditations</span>
+          <span class="section-counter">CREDENTIALS</span>
+        </div>
+        <div class="edu-grid">
+          
+            <div class="edu-card">
+              <h3 class="edu-degree">B.Tech in Computer Science (AI & Machine Learning)</h3>
+              <div class="edu-institution">Lords Institute of Engineering and Technology</div>
+              <div class="edu-meta">Expected 2028 • Honors/Grade: CGPA: 9.23</div>
+              
+            </div>
+          
+          
+        </div>
+      </section>
+      
+
+      <!-- 4. TECHNICAL ARSENAL -->
+      <section>
+        <div class="section-divider">
+          <span>Technical Arsenal & Tooling</span>
+          <span class="section-counter">SYSTEMS</span>
+        </div>
+        <div class="skills-section">
+          
+            <div>
+              <div class="skill-cat-title">Languages & Core</div>
+              <div class="skills-list"><span class="zen-skill">Python</span><span class="zen-skill">Java</span><span class="zen-skill">PostgreSQL</span></div>
+            </div>
+          
+          
+            <div>
+              <div class="skill-cat-title">Frameworks & Libraries</div>
+              <div class="skills-list"><span class="zen-skill">React</span><span class="zen-skill">Next.js</span><span class="zen-skill">FastAPI</span><span class="zen-skill">Three.js</span></div>
+            </div>
+          
+          
+            <div>
+              <div class="skill-cat-title">Cloud & Infrastructure</div>
+              <div class="skills-list"><span class="zen-skill">Git</span></div>
+            </div>
+          
+          
+            <div>
+              <div class="skill-cat-title">Databases & Storage</div>
+              <div class="skills-list"><span class="zen-skill">Supabase</span><span class="zen-skill">PostgreSQL</span></div>
+            </div>
+          
+        </div>
+      </section>
+    </main>
+
+    <footer class="zen-colophon">
+      <div>
+        <p>Direct Inquiries & Architecture Advisory</p>
+        <p class="zen-contact-direct"><a href="mailto:abdulaziznoor9876@gmail.com">abdulaziznoor9876@gmail.com</a> </p>
+      </div>
+      <div>
+        <p>© 2026 Abdul Aziz Nooruddin. Handcrafted with intentional typography.</p>
+      </div>
+    </footer>
+  </div>
+  
+
+    <!-- DIAGONAL REPEATING WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; flex-direction: column; justify-content: space-around; align-items: center; overflow: hidden; opacity: 0.14; user-select: none;">
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    
+    
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

@@ -5,7 +5,7 @@ module.exports = [
   { key: 'service_desc', label: 'Service Description', text: "Describe your service in your own words. What makes you special?", type: 'text', required: true },
 
   // === CONTACT ===
-  { key: 'phone', label: 'Phone/WhatsApp', text: "Your phone/WhatsApp number for clients?", type: 'text', required: true },
+  { key: 'phone', label: 'Phone / Contact', text: "Your phone/contact number for clients?", type: 'text', required: true },
   { key: 'email', label: 'Email', text: "Your email? (Or type SKIP)", type: 'email', required: false },
   { key: 'instagram', label: 'Instagram', text: "Your Instagram handle? (Great for visual work, or type SKIP)", type: 'text', required: false },
   { key: 'facebook', label: 'Facebook', text: "Facebook page link? (Or type SKIP)", type: 'url', required: false },

@@ -1,0 +1,47 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #09090b;
+      --muted: #52525b;
+      --primary: #9a3412;
+      --border: rgba(0,0,0,0.12);
+      --card-bg: #ffffff;
+      --font-heading: 'Bricolage Grotesque', sans-serif;
+      --font-body: 'Public Sans', sans-serif;
+      --radius: 4px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: clamp(24px, 4vw, 48px); }
+    .grid-container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 32px; }
+    
+    /* Dynamic Hero Section that fits text naturally */
+    .hero-box {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px);
+      background: var(--card-bg); display: flex; flex-direction: column; gap: 16px;
+    }
+    .hero-eyebrow { font-family: monospace; font-size: 0.82rem; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+    .hero-name { font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1.1; color: var(--text); }
+    .hero-role { font-size: 1.15rem; font-weight: 700; color: var(--primary); }
+    .hero-bio { font-size: 1.05rem; color: var(--muted); line-height: 1.75; }
+
+    /* Fluid Projects Grid: Cards size dynamically to content with equal baseline */
+    .projects-fluid-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      gap: 24px;
+    }
+    .fluid-card {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+      background: var(--card-bg); display: flex; flex-direction: column; gap: 14px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .fluid-card:hover { border-color: var(--primary); transform: translateY(-2px); }
+    .card-tag { font-family: monospace; font-size: 0.75rem; color: var(--primary); font-weight: 700; letter-spacing: 0.1em; }
+    .card-title { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); line-height: 1.25; }
+    .card-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.65; flex-grow: 1; }
+    .card-stack { font-family: monospace; font-size: 0.82rem; color: var(--primary); border-top: 1px solid var(--border); padding-top: 12px; }
+
+    /* Tech Stack & Credentials Container */
+    .info-box {
+      border: 1px solid var(--border); border-radius: var(--radius); padding: 28px;
+      background: var(--card-bg);
+    }

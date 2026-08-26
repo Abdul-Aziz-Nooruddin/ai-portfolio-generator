@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>/design Command — Portfolio Generator Design System Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Archivo:wght@400;600;800&family=Fraunces:opsz,wght@9..144,400;600;800&family=Syne:wght@600;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js"></script>
+
+  <style>
+    /* =========================================================================
+       1. DYNAMIC DESIGN SYSTEM TOKENS (Managed via /design command)
+       ========================================================================= */
+    :root {
+      --bg: #06080f;
+      --bg-gradient: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 60%),
+                     radial-gradient(circle at 100% 100%, rgba(129, 140, 248, 0.08) 0%, transparent 50%);
+      --surface: rgba(13, 17, 28, 0.85);
+      --surface-card: rgba(22, 27, 46, 0.65);
+      --surface-glow: rgba(56, 189, 248, 0.15);
+      --primary: #38bdf8;
+      --primary-on: #04101e;
+      --secondary: #818cf8;
+      --accent: #22c55e;
+      --pink: #f43f5e;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: rgba(255, 255, 255, 0.12);
+      --border-focus: #38bdf8;
+      --card-radius: 18px;
+      --card-shadow: 0 20px 45px -15px rgba(0, 0, 0, 0.6);
+      --card-border: 1px solid rgba(255, 255, 255, 0.1);
+      
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --motion-timing: cubic-bezier(0.16, 1, 0.3, 1);
+      --motion-duration: 0.35s;
+    }
+
+    /* THEME 2: NEO-BRUTALIST POP (/design style: neo-brutalist) */
+    [data-theme="neo-brutalist"] {
+      --bg: #fffdf7;
+      --bg-gradient: radial-gradient(#e2e8f0 1.5px, transparent 1.5px);
+      --bg-size: 24px 24px;
+      --surface: #ffffff;
+      --surface-card: #ffffff;
+      --surface-glow: rgba(236, 72, 153, 0.2);
+      --primary: #ec4899;
+      --primary-on: #ffffff;
+      --secondary: #06b6d4;
+      --accent: #eab308;
+      --pink: #f43f5e;
+      --text: #09090b;
+      --text-muted: #52525b;
+      --border: #09090b;
+      --border-focus: #ec4899;
+      --card-radius: 0px;
+      --card-shadow: 6px 6px 0px #09090b;
+      --card-border: 2.5px solid #09090b;
+      --font-display: 'Archivo', sans-serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* THEME 3: WARM EDITORIAL MINIMAL (/design style: editorial-magazine) */
+    [data-theme="editorial"] {
+      --bg: #fcf9f2;
+      --bg-gradient: linear-gradient(180deg, #fbf7ed 0%, #f4ede0 100%);
+      --surface: #ffffff;
+      --surface-card: #ffffff;
+      --surface-glow: rgba(5, 150, 105, 0.1);
+      --primary: #059669;
+      --primary-on: #ffffff;
+      --secondary: #d97706;
+      --accent: #2563eb;
+      --pink: #be123c;
+      --text: #1c1917;
+      --text-muted: #78716c;
+      --border: #e7e5e4;
+      --border-focus: #059669;
+      --card-radius: 12px;
+      --card-shadow: 0 10px 30px -10px rgba(28, 25, 23, 0.08);
+      --card-border: 1px solid #e7e5e4;
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    /* THEME 4: KINETIC GLASS LUXE (/design style: glassmorphism) */
+    [data-theme="glass-luxe"] {
+      --bg: #090a16;
+      --bg-gradient: radial-gradient(circle at 20% 20%, rgba(192, 132, 252, 0.2) 0%, transparent 50%),
+                     radial-gradient(circle at 80% 80%, rgba(56, 189, 248, 0.2) 0%, transparent 50%);
+      --surface: rgba(255, 255, 255, 0.05);
+      --surface-card: rgba(255, 255, 255, 0.07);
+      --surface-glow: rgba(192, 132, 252, 0.3);
+      --primary: #c084fc;
+      --primary-on: #1a0826;
+      --secondary: #38bdf8;
+      --accent: #34d399;
+      --pink: #f472b6;
+      --text: #fdf4ff;
+      --text-muted: #cbd5e1;
+      --border: rgba(255, 255, 255, 0.18);
+      --border-focus: #c084fc;
+      --card-radius: 24px;
+      --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      --card-border: 1px solid rgba(255, 255, 255, 0.2);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color var(--motion-duration) var(--motion-timing),
+                  border-color var(--motion-duration) var(--motion-timing),
+                  color var(--motion-duration) var(--motion-timing),
+                  box-shadow var(--motion-duration) var(--motion-timing);
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: var(--bg-gradient);
+      background-size: var(--bg-size, auto);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* =========================================================================
+       2. TOP BAR & DESIGN SYSTEM COMMAND BAR
+       ========================================================================= */
+    .command-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-on);
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: 0 0 15px var(--surface-glow);
+    }
+
+    .logo-text h1 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .logo-text span {
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Style Switcher Pill Bar */
+    .style-switcher {
+      display: flex;
+      align-items: center;
+      background: var(--surface-card);
+      padding: 4px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .style-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .style-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .style-btn.active {
+      background: var(--primary);
+      color: var(--primary-on);
+      box-shadow: 0 2px 10px var(--surface-glow);
+    }
+
+    .action-badge {
+      font-family: var(--font-mono);
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--accent);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* =========================================================================
+       3. HERO SHOWCASE: /design INTELLIGENCE EXPLAINER
+       ========================================================================= */
+    .hero-section {
+      padding: 60px 0 40px;
+      text-align: center;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      margin-bottom: 24px;
+      box-shadow: 0 4px 20px var(--surface-glow);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      max-width: 950px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: 12px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-on);
+      border: none;
+      box-shadow: 0 10px 25px -5px var(--surface-glow);
+    }
+
+    .btn-secondary {
+      background: var(--surface-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+
+    /* =========================================================================
+       4. LIVE TOKEN INSPECTOR: WHAT /design OUTPUTS
+       ========================================================================= */
+    .token-bar {
+      margin: 40px 0;
+      background: var(--surface);
+      border: var(--card-border);
+      box-shadow: var(--card-shadow);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .token-bar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .token-bar-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .token-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .token-card-label {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .token-card-value {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* =========================================================================
+       5. LIVE PORTFOLIO GENERATOR PREVIEW CANVAS
+       ========================================================================= */
+    .preview-wrapper {
+      margin: 50px 0;
+      background: var(--surface);
+      border: var(--card-border);
+      border-radius: var(--card-radius);
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .preview-browser-bar {
+      background: rgba(0, 0, 0, 0.25);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .browser-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .browser-dot.red { background: #ef4444; }
+    .browser-dot.yellow { background: #f59e0b; }
+    .browser-dot.green { background: #10b981; }
+
+    .browser-url-bar {
+      flex: 1;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Generated Site Hero Inside Canvas */
+    .demo-portfolio {
+      padding: 60px 40px;
+    }
+
+    .portfolio-hero {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 900px) {
+      .portfolio-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .portfolio-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.25);
+      padding: 4px 14px;
+      border-radius: 999px;
+      margin-bottom: 16px;
+    }
+
+    .portfolio-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 4vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .portfolio-role {
+      font-family: var(--font-mono);
+      color: var(--primary);
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .portfolio-bio {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .portfolio-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-box {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* 3D Visual Card */
+    .visual-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 30px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .avatar-orb {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary-on);
+      font-size: 3.5rem;
+      font-weight: 800;
+      font-family: var(--font-display);
+      box-shadow: 0 0 35px var(--surface-glow);
+      margin-bottom: 20px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(2deg); }
+    }
+
+    /* Projects Grid Showcase */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 30px;
+    }
+
+    .project-card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 24px;
+      transition: transform 0.3s var(--motion-timing), border-color 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .project-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--border-focus);
+    }
+
+    .project-tag {
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .project-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-family: var(--font-mono);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* =========================================================================
+       6. COMPARISON SECTION: GENERIC AI VS /design DRIVEN
+       ========================================================================= */
+    .comparison-section {
+      padding: 60px 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comp-card {
+      border-radius: var(--card-radius);
+      padding: 30px;
+      position: relative;
+    }
+
+    .comp-card.bad {
+      background: rgba(239, 68, 68, 0.04);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .comp-card.good {
+      background: rgba(34, 197, 94, 0.04);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      box-shadow: 0 10px 30px -10px var(--surface-glow);
+    }
+
+    .comp-badge {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .comp-card.bad .comp-badge {
+      background: rgba(239, 68, 68, 0.15);
+      color: #ef4444;
+    }
+
+    .comp-card.good .comp-badge {
+      background: rgba(34, 197, 94, 0.15);
+      color: #22c55e;
+    }
+
+    .comp-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .comp-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    /* Footer */
+    footer {
+      padding: 40px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+  </style>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js"></script>
+</head>
+<body data-theme="spatial">
+
+  <!-- Background Three.js Particle Grid -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <div class="app-shell-layout">
+    <!-- Universal Sidebar Mount -->
+    <div id="sidebarMount"></div>
+
+    <!-- Main Content Panel -->
+    <div class="app-main-content" style="flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto;">
+      <!-- Sticky Command Bar -->
+      <header class="command-header">
+        <div class="container header-content">
+          <a href="#" class="logo-badge">
+        <div class="logo-icon">/d</div>
+        <div class="logo-text">
+          <h1>/design Intelligence Engine</h1>
+          <span>UI/UX Pro Max • Portfolio Studio</span>
+        </div>
+      </a>
+
+      <!-- Style Switcher -->
+      <div class="style-switcher">
+        <button class="style-btn active" onclick="switchTheme('spatial', this)">
+          <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Spatial 3D Cyber
+        </button>
+        <button class="style-btn" onclick="switchTheme('neo-brutalist', this)">
+          <i data-lucide="zap" style="width:14px;height:14px;"></i> Neo-Brutalist Pop
+        </button>
+        <button class="style-btn" onclick="switchTheme('editorial', this)">
+          <i data-lucide="book-open" style="width:14px;height:14px;"></i> Warm Editorial
+        </button>
+        <button class="style-btn" onclick="switchTheme('glass-luxe', this)">
+          <i data-lucide="layers" style="width:14px;height:14px;"></i> Kinetic Glass Luxe
+        </button>
+      </div>
+
+      <div class="action-badge">
+        <i data-lucide="check-circle" style="width:14px;height:14px;"></i> WCAG AA Verified
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-pill">
+        <i data-lucide="terminal" style="width:14px;height:14px;"></i>
+        Command: <code>/design developer portfolio modern 3d</code>
+      </div>
+      <h2 class="hero-title">
+        Elevate AI-Generated Sites with <span class="gradient-text">Deterministic Design Tokens</span>
+      </h2>
+      <p class="hero-desc">
+        Instead of generic AI placeholders, the <code>/design</code> command extracts high-contrast color palettes, Google font pairings, GSAP motion curves, and layout patterns tailored to the developer's exact craft.
+      </p>
+
+      <div class="hero-cta-group">
+        <button class="btn btn-primary" onclick="triggerConfetti()">
+          <i data-lucide="wand-2" style="width:16px;height:16px;"></i> Test Interactive Animation
+        </button>
+        <a href="/index.html" class="btn btn-secondary">
+          <i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to Web Studio
+        </a>
+      </div>
+    </section>
+
+    <!-- Token Inspector -->
+    <section class="token-bar">
+      <div class="token-bar-header">
+        <div class="token-bar-title">
+          <i data-lucide="sliders" style="color:var(--primary);width:18px;height:18px;"></i>
+          <span>Live Extracted Design Tokens (Source: <code>ui-ux-pro-max</code>)</span>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);">Auto-Injected via CSS Variables</span>
+      </div>
+
+      <div class="token-grid">
+        <div class="token-card">
+          <div class="token-card-label">Primary / CTA Token</div>
+          <div class="token-card-value">
+            <span class="color-swatch" id="token-primary-swatch" style="background:var(--primary);"></span>
+            <span id="token-primary-val">#38bdf8</span>
+          </div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-label">Secondary / Gradient</div>
+          <div class="token-card-value">
+            <span class="color-swatch" id="token-secondary-swatch" style="background:var(--secondary);"></span>
+            <span id="token-secondary-val">#818cf8</span>
+          </div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-label">Heading Typography</div>
+          <div class="token-card-value" id="token-heading-val">Space Grotesk</div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-label">Body Typography</div>
+          <div class="token-card-value" id="token-body-val">Plus Jakarta Sans</div>
+        </div>
+
+        <div class="token-card">
+          <div class="token-card-label">Contrast Rating</div>
+          <div class="token-card-value" style="color:var(--accent);">
+            <i data-lucide="shield-check" style="width:18px;height:18px;"></i> 7.4:1 (AAA Pass)
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Portfolio Canvas Generated With Tokens -->
+    <section class="preview-wrapper">
+      <div class="preview-browser-bar">
+        <div class="browser-dots">
+          <div class="browser-dot red"></div>
+          <div class="browser-dot yellow"></div>
+          <div class="browser-dot green"></div>
+        </div>
+        <div class="browser-url-bar">
+          <i data-lucide="lock" style="width:12px;height:12px;color:var(--accent);"></i>
+          <span>https://alexchen.devfolio.live — Generated via /design Engine</span>
+        </div>
+      </div>
+
+      <div class="demo-portfolio">
+        <div class="portfolio-hero">
+          <div>
+            <div class="portfolio-badge">
+              <i data-lucide="sparkle" style="width:12px;height:12px;"></i> Available for Q3 Projects
+            </div>
+            <h1 class="portfolio-name">Alex Chen</h1>
+            <div class="portfolio-role">Senior Full-Stack Architect & AI Engineer</div>
+            <p class="portfolio-bio">
+              Crafting production-grade distributed microservices, real-time WebGL experiences, and generative AI workflows. Built systems scaled to 4M+ monthly active users.
+            </p>
+
+            <div class="portfolio-stats">
+              <div class="stat-box">
+                <div class="stat-number">7+</div>
+                <div class="stat-label">Years Exp</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">32</div>
+                <div class="stat-label">Shipped Apps</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Uptime SLA</div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <a href="mailto:alex.rivera@devfolio.live?subject=Portfolio%20Inquiry%20from%20Devfolio" class="btn btn-primary" onclick="triggerConfetti()" style="text-decoration: none;">
+                <i data-lucide="send" style="width:15px;height:15px;"></i> Get in Touch
+              </a>
+              <button type="button" class="btn btn-secondary" onclick="handleResumeDownload()">
+                <i data-lucide="download" style="width:15px;height:15px;"></i> Resume (PDF)
+              </button>
+            </div>
+          </div>
+
+          <div class="visual-card">
+            <div class="avatar-orb">AC</div>
+            <h3 style="font-family:var(--font-display);font-size:1.3rem;margin-bottom:6px;">San Francisco, CA</h3>
+            <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:16px;">Software Engineer @ CloudScale</p>
+            <div style="display:flex;gap:8px;">
+              <span style="font-size:0.75rem;padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-family:var(--font-mono);">TypeScript</span>
+              <span style="font-size:0.75rem;padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-family:var(--font-mono);">Three.js</span>
+              <span style="font-size:0.75rem;padding:4px 10px;background:var(--surface);border:1px solid var(--border);border-radius:6px;font-family:var(--font-mono);">Python</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Featured Projects -->
+        <div>
+          <h3 style="font-family:var(--font-display);font-size:1.6rem;font-weight:700;margin-bottom:6px;">Featured Engineering Works</h3>
+          <p style="color:var(--text-muted);font-size:0.95rem;margin-bottom:20px;">Curated software architecture and high-performance applications.</p>
+
+          <div class="projects-grid">
+            <div class="project-card">
+              <div>
+                <div class="project-tag">DISTRIBUTED SYSTEMS • RUST</div>
+                <h4 class="project-title">Aether DB Streaming</h4>
+                <p class="project-desc">Ultra-low latency columnar storage engine processing 1.2M events/sec with sub-millisecond query latency.</p>
+              </div>
+              <div class="project-footer">
+                <span>View Architecture</span>
+                <i data-lucide="arrow-up-right" style="width:16px;height:16px;"></i>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div>
+                <div class="project-tag">AI WORKFLOWS • FASTAPI</div>
+                <h4 class="project-title">NeuralGraph Engine</h4>
+                <p class="project-desc">Autonomous multi-agent orchestration pipeline with vector RAG caching and structured telemetry.</p>
+              </div>
+              <div class="project-footer">
+                <span>GitHub Repo</span>
+                <i data-lucide="arrow-up-right" style="width:16px;height:16px;"></i>
+              </div>
+            </div>
+
+            <div class="project-card">
+              <div>
+                <div class="project-tag">WEBGL 3D • REACT</div>
+                <h4 class="project-title">Cosmic Spatial Explorer</h4>
+                <p class="project-desc">Interactive 3D planetary physics simulation rendered using custom GLSL shaders and GSAP camera tracks.</p>
+              </div>
+              <div class="project-footer">
+                <span>Live Demo</span>
+                <i data-lucide="arrow-up-right" style="width:16px;height:16px;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why /design Command Transforms Portfolio Generators -->
+    <section class="comparison-section">
+      <div class="section-header">
+        <h3 class="section-title">Why <code>/design</code> is Essential for Portfolio Generators</h3>
+        <p style="color:var(--text-muted);max-width:640px;margin:0 auto;">Comparing vanilla generic LLM code generation with token-guided design system intelligence.</p>
+      </div>
+
+      <div class="comparison-grid">
+        <div class="comp-card bad">
+          <div class="comp-badge">WITHOUT /design (Generic LLM Defaults)</div>
+          <ul class="comp-list">
+            <li>
+              <i data-lucide="x" style="color:#ef4444;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>AI Slop Colors:</strong> Dull generic blues or jarring contrasts failing WCAG AA.</span>
+            </li>
+            <li>
+              <i data-lucide="x" style="color:#ef4444;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>Default Fonts:</strong> Generic Roboto/Arial with no typographic hierarchy or mood pairing.</span>
+            </li>
+            <li>
+              <i data-lucide="x" style="color:#ef4444;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>Static Layout:</strong> Rigid square boxes with no micro-interactions or motion tokens.</span>
+            </li>
+            <li>
+              <i data-lucide="x" style="color:#ef4444;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>No Design Tokens:</strong> Hardcoded inline styles that break dark/light mode reflow.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="comp-card good">
+          <div class="comp-badge">WITH /design (UI/UX Pro Max Tokens)</div>
+          <ul class="comp-list">
+            <li>
+              <i data-lucide="check" style="color:#22c55e;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>Curated Palettes:</strong> 192 harmonized palettes tailored to developer domain (Cyber, Minimal, Brutalist).</span>
+            </li>
+            <li>
+              <i data-lucide="check" style="color:#22c55e;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>74 Google Font Pairings:</strong> Expressive typographic contrast (e.g. Space Grotesk + Plus Jakarta).</span>
+            </li>
+            <li>
+              <i data-lucide="check" style="color:#22c55e;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>Smooth GSAP & WebGL:</strong> Polished hover states, 3D interactive particle grid, and fluid micro-transitions.</span>
+            </li>
+            <li>
+              <i data-lucide="check" style="color:#22c55e;width:18px;height:18px;flex-shrink:0;"></i>
+              <span><strong>WCAG AA Compliance:</strong> Guaranteed 4.5:1+ contrast ratios and full responsive grid scaling.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Built with <code>/design</code> UI/UX Pro Max Design Intelligence • Devfolio Live Demo</p>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Theme Switcher Functionality
+    const themeTokenData = {
+      'spatial': {
+        primary: '#38bdf8',
+        secondary: '#818cf8',
+        heading: 'Space Grotesk',
+        body: 'Plus Jakarta Sans'
+      },
+      'neo-brutalist': {
+        primary: '#ec4899',
+        secondary: '#06b6d4',
+        heading: 'Archivo',
+        body: 'Space Grotesk'
+      },
+      'editorial': {
+        primary: '#059669',
+        secondary: '#d97706',
+        heading: 'Fraunces',
+        body: 'Outfit'
+      },
+      'glass-luxe': {
+        primary: '#c084fc',
+        secondary: '#38bdf8',
+        heading: 'Syne',
+        body: 'Inter'
+      }
+    };
+
+    function switchTheme(themeKey, btn) {
+      document.body.setAttribute('data-theme', themeKey);
+      document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const data = themeTokenData[themeKey];
+      if (data) {
+        document.getElementById('token-primary-val').innerText = data.primary;
+        document.getElementById('token-primary-swatch').style.background = data.primary;
+        document.getElementById('token-secondary-val').innerText = data.secondary;
+        document.getElementById('token-secondary-swatch').style.background = data.secondary;
+        document.getElementById('token-heading-val').innerText = data.heading;
+        document.getElementById('token-body-val').innerText = data.body;
+      }
+      
+      // Update ThreeJS particle color
+      if (particleMaterial) {
+        particleMaterial.color.set(data.primary);
+      }
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 },
+          colors: ['#38bdf8', '#818cf8', '#22c55e', '#ec4899']
+        });
+      }
+    }
+
+    function handleResumeDownload() {
+      triggerConfetti();
+      const resumeContent = `=====================================================
+ALEX RIVERA — STAFF FULL-STACK & 3D WEBGL ENGINEER
+=====================================================
+Email: alex.rivera@devfolio.live | Location: San Francisco, CA
+GitHub: github.com/Abdul-Aziz-Nooruddin
+Portfolio: devfolio.live/p/alex-rivera
+
+PROFILE:
+High-impact software engineer specializing in scalable distributed architectures,
+performant WebGL 3D rendering engines, and modern developer tooling.
+
+CORE SKILLS:
+• Frontend: TypeScript, React, Next.js, Three.js, WebGL/GLSL, GSAP
+• Backend & Cloud: Node.js, Python, Go, Fastify, Docker, Edge CDN, PostgreSQL
+• Architecture: Distributed Systems, Low-Latency Streaming, Micro-Frontends
+
+FEATURED PROJECTS:
+1. Aether DB Streaming — Ultra-low latency columnar storage engine processing 1.2M events/sec.
+2. NeuralGraph Engine — Multi-agent orchestration pipeline with vector RAG caching.
+3. Cosmic Spatial Explorer — 3D planetary simulation rendered with custom GLSL shaders.
+
+EDUCATION:
+B.S. in Computer Science — University of California, Berkeley (3.9 GPA)
+=====================================================`;
+
+      const blob = new Blob([resumeContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'Alex_Rivera_Resume.txt';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+
+    window.triggerConfetti = triggerConfetti;
+    window.handleResumeDownload = handleResumeDownload;
+
+    // Three.js Interactive Particle Field Background
+    let scene, camera, renderer, particles, particleMaterial;
+    function initThree() {
+      const canvas = document.getElementById('webgl-canvas');
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 1, 1000);
+      camera.position.z = 400;
+
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      const particleCount = 200;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 800;
+        positions[i + 1] = (Math.random() - 0.5) * 600;
+        positions[i + 2] = (Math.random() - 0.5) * 600;
+      }
+
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      particleMaterial = new THREE.PointsMaterial({
+        color: 0x38bdf8,
+        size: 3.5,
+        transparent: true,
+        opacity: 0.6
+      });
+
+      particles = new THREE.Points(geometry, particleMaterial);
+      scene.add(particles);
+
+      window.addEventListener('resize', onWindowResize);
+      animate();
+    }
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      if (particles) {
+        particles.rotation.y += 0.001;
+        particles.rotation.x += 0.0005;
+      }
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof initUniversalSidebar === 'function') {
+        initUniversalSidebar('design');
+      }
+      initThree();
+    });
+  </script>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

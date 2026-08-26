@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Elena Rostova — Full-Stack Web Architect | Swiss Modernism</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@600;700;800;900&family=Mulish:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #fcf9f5;
+      --text: #9a3412;
+      --text-muted: #78716c;
+      --accent: #047857;
+      --border: #e7e5e4;
+      --font-display: 'Epilogue', 'Helvetica Neue', sans-serif;
+      --font-body: 'Mulish', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      padding: 48px 32px;
+    }
+    .swiss-grid { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; }
+
+    .swiss-nav { grid-column: span 12; border-bottom: 2px solid var(--text); padding-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
+    .swiss-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; }
+    
+    .swiss-hero { grid-column: span 12; padding: 60px 0; border-bottom: 1px solid var(--border); }
+    .swiss-num { font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 16px; }
+    .swiss-headline {
+      font-family: var(--font-display); font-size: clamp(2.6rem, 6vw, 4.4rem); font-weight: 800;
+      line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 24px; max-width: 960px;
+    }
+    .swiss-lead { font-size: 1.25rem; color: var(--text-muted); max-width: 820px; line-height: 1.7; }
+
+    .swiss-col-4 { grid-column: span 4; }
+    .swiss-col-8 { grid-column: span 8; }
+    .swiss-col-12 { grid-column: span 12; }
+
+    .swiss-section-header {
+      border-top: 2px solid var(--text); padding-top: 14px; font-family: var(--font-display);
+      font-size: 1.2rem; font-weight: 800; text-transform: uppercase; margin-top: 40px;
+    }
+
+    /* Projects */
+    .p-item { border-bottom: 1px solid var(--border); padding: 24px 0; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: baseline; }
+    .p-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; }
+    .p-tag { font-size: 0.8rem; text-transform: uppercase; color: var(--accent); font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .swiss-col-4, .swiss-col-8 { grid-column: span 12; }
+      .p-item { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="swiss-grid">
+    <nav class="swiss-nav">
+      <div class="swiss-logo">Elena Rostova</div>
+      <div style="font-size: 0.9rem; color: var(--text-muted);">
+        Full-Stack Web Architect • Global • <a href="mailto:elena@example.com" style="color: var(--text); font-weight: 600;">elena@example.com</a>
+      </div>
+    </nav>
+
+    <header class="swiss-hero">
+      <div class="swiss-num">00 / STATEMENT</div>
+      <h1 class="swiss-headline">Crafting intelligent cloud platforms and interactive UI experiences.</h1>
+      <p class="swiss-lead">Crafting intelligent cloud platforms and interactive UI experiences.</p>
+    </header>
+
+    <!-- 1. DYNAMIC PROJECT PRESENTATION -->
+    <div style="grid-column: span 12;">
+      
+      <section id="projects" class="section-presentation pres-stacked-posters" style="padding: 100px 0;">
+        <div style="margin-bottom: 60px; text-align: center;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.8rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--primary);">OVERLAPPING EXHIBIT</span>
+          <h2 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 6vw, 4.2rem); font-weight: 900; margin-top: 6px;">Stacked Posters</h2>
+        </div>
+
+        <div class="posters-stack-container" style="display: flex; flex-direction: column; gap: 60px; max-width: 960px; margin: 0 auto;">
+          
+            <div class="stacked-poster-item" style="position: sticky; top: 80px; background: #0e111a; border: 1px solid var(--border-color, rgba(255,255,255,0.15)); border-radius: 24px; padding: 48px; box-shadow: 0 -20px 40px rgba(0,0,0,0.6); display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center;">
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 3rem; font-weight: 900; color: var(--primary); opacity: 0.6; line-height: 1;">01</div>
+                <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 800; margin: 12px 0 16px; letter-spacing: -0.02em;">Cloud Studio Engine</h3>
+                <p style="color: var(--text-muted); font-size: 1rem; line-height: 1.6; margin-bottom: 24px;">Next-gen cloud interface for developer productivity.</p>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.85rem; color: #94a3b8; margin-bottom: 28px;">
+                  STACK // React, Node.js, TypeScript, Next.js, TailwindCSS
+                </div>
+                
+              </div>
+              <div style="border-radius: 16px; overflow: hidden; height: 320px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(210, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(255, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(210, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 01 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(210, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(255, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(210, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_0)" />
+          <circle cx="150" cy="100" r="45" fill="none" stroke="hsla(210, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 60 Q 200 180 360 90" fill="none" stroke="hsla(255, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px;">Cloud Studio Engine</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(210, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+            </div>
+          
+        </div>
+      </section>
+    
+    </div>
+
+    <!-- EXPERIENCE -->
+    
+
+    <!-- EDUCATION -->
+    
+
+    <!-- SKILLS -->
+    <div class="swiss-col-4">
+      <div class="swiss-section-header">04 / SYSTEM CAPABILITIES</div>
+    </div>
+    <div class="swiss-col-8" style="padding: 24px 0;">
+      <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        <span style="background: #f1f5f9; color: var(--text); padding: 6px 14px; font-weight: 600; font-size: 0.85rem;">React</span><span style="background: #f1f5f9; color: var(--text); padding: 6px 14px; font-weight: 600; font-size: 0.85rem;">Node.js</span><span style="background: #f1f5f9; color: var(--text); padding: 6px 14px; font-weight: 600; font-size: 0.85rem;">TypeScript</span><span style="background: #f1f5f9; color: var(--text); padding: 6px 14px; font-weight: 600; font-size: 0.85rem;">Next.js</span><span style="background: #f1f5f9; color: var(--text); padding: 6px 14px; font-weight: 600; font-size: 0.85rem;">TailwindCSS</span>
+      </div>
+    </div>
+
+    <footer class="swiss-col-12" style="border-top: 2px solid var(--text); padding: 30px 0; margin-top: 60px; display: flex; justify-content: space-between;">
+      <div>© 2026 Elena Rostova • Swiss Architectural Grid</div>
+      <div><a href="mailto:elena@example.com" style="color: var(--text); font-weight: 700;">elena@example.com</a> </div>
+    </footer>
+  </div>
+
+    <!-- DIAGONAL REPEATING WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; flex-direction: column; justify-content: space-around; align-items: center; overflow: hidden; opacity: 0.14; user-select: none;">
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div class="watermark-text-item" style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: rgba(128,128,128,0.35); text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap;">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    
+    
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

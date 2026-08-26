@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Abdul Aziz Nooruddin — Computer Science (AI-ML) Undergraduate | Terminal OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=IBM+Plex+Sans:wght@400;600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg: #090c0a;
+      --term-bg: #0d120e;
+      --green: #22c55e;
+      --green-glow: rgba(34, 197, 94, 0.35);
+      --green-dim: #15803d;
+      --text: #dcfce7;
+      --text-muted: #86efac;
+      --border: rgba(34, 197, 94, 0.3);
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      line-height: 1.6;
+      padding: 30px 16px;
+    }
+    .terminal-window {
+      max-width: 1060px; margin: 0 auto; background: var(--term-bg);
+      border: 1px solid var(--border); border-radius: 10px; box-shadow: 0 0 30px var(--green-glow);
+      overflow: hidden;
+    }
+    .terminal-topbar {
+      background: #141c15; border-bottom: 1px solid var(--border); padding: 12px 18px;
+      display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;
+    }
+    .term-dots { display: flex; gap: 8px; }
+    .term-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+    .dot-red { background: #ef4444; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-green { background: #22c55e; }
+    .term-content { padding: 32px 24px 60px; }
+
+    .cli-prompt { color: var(--green); font-weight: 700; margin-bottom: 8px; }
+    .cli-cmd { color: #ffffff; font-weight: 700; }
+    .ascii-banner { color: var(--green); font-size: clamp(0.65rem, 1.5vw, 0.8rem); line-height: 1.2; margin-bottom: 24px; white-space: pre; overflow-x: auto; }
+
+    .term-section { margin-bottom: 40px; }
+    .term-table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    .term-table th, .term-table td {
+      border: 1px solid var(--border); padding: 10px 14px; text-align: left; font-size: clamp(0.8rem, 1.5vw, 0.92rem);
+    }
+    .term-table th { background: rgba(34, 197, 94, 0.1); color: var(--green); }
+
+    .interactive-cli {
+      background: #000000; border: 1px solid var(--border); border-radius: 6px; padding: 16px; margin-top: 30px;
+    }
+    .cli-input-line { display: flex; align-items: center; gap: 10px; }
+    .cli-input {
+      background: transparent; border: none; outline: none; color: var(--green);
+      font-family: var(--font-mono); font-size: 1rem; width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="terminal-window">
+    <div class="terminal-topbar">
+      <div class="term-dots">
+        <span class="term-dot dot-red"></span>
+        <span class="term-dot dot-yellow"></span>
+        <span class="term-dot dot-green"></span>
+      </div>
+      <div style="color: var(--green); font-weight: 700;">root@abdul aziz nooruddin-system: ~</div>
+      <div style="color: var(--text-muted); font-size: 0.8rem;">STATUS: ONLINE</div>
+    </div>
+
+    <div class="term-content">
+      <div class="ascii-banner">
+ _____ _____ _____ _____ _____ _____ _____ _____ _____ 
+|     |  _  | __  |   __|  _  |     |   __|   __|   __|
+| | | |     |    -|__   |     | | | |   __|__   |__   |
+|_|_|_|__|__|__|__|_____|__|__|_|_|_|_____|_____|_____|
+      </div>
+
+      <div class="cli-prompt">$ whoami</div>
+      <div style="font-size: 1.1rem; color: #ffffff; font-weight: 700; margin-bottom: 6px;">Abdul Aziz Nooruddin — Computer Science (AI-ML) Undergraduate</div>
+      <p style="color: var(--text-muted); margin-bottom: 24px;">Computer Science (AI-ML) undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end, seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</p>
+      <p style="color: var(--text); margin-bottom: 24px;">Computer Science (AI-ML) undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end, seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</p>
+
+      <!-- 1. PROJECTS -->
+      <div class="term-section">
+        <div class="cli-prompt">$ ./load_projects.sh --all (8 Total)</div>
+        <table class="term-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>NAME</th>
+              <th>TAG</th>
+              <th>DESCRIPTION</th>
+              <th>LINK</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>#01</td>
+                <td style="color: #ffffff; font-weight: 700;">ConsentChain</td>
+                <td style="color: var(--green); font-size: 0.8rem;">Solidity, Polygon, AlgoKit, Algorand</td>
+                <td style="color: var(--text-muted);">Designed a dual-chain blockchain consent-management platform using Solidity on Polygon and AlgoKit on Algorand. Directed AI-assisted implementation of four smart contracts covered by 27 passing tests; advanced to Round 2 of AlgoBharat Hack Series 3.0.</td>
+                <td>
+                  <a href="https://consent-chain-algorand.vercel.app" target="_blank" style="color: var(--green);">[LAUNCH]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#02</td>
+                <td style="color: #ffffff; font-weight: 700;">YouTube Shorts Automation Bot</td>
+                <td style="color: var(--green); font-size: 0.8rem;">Python, OAuth, Text-to-Speech</td>
+                <td style="color: var(--text-muted);">Built an end-to-end Python pipeline that generates and publishes YouTube Shorts automatically, chaining script generation, text-to-speech, image sourcing, and video assembly. Implemented OAuth authentication and topic deduplication for unattended posting.</td>
+                <td>
+                  <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--green);">[INQUIRE]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#03</td>
+                <td style="color: #ffffff; font-weight: 700;">LMS User Management System</td>
+                <td style="color: var(--green); font-size: 0.8rem;">Java, Spring Boot, MySQL, React</td>
+                <td style="color: var(--text-muted);">Designed and built a role-based user management REST API in Java/Spring Boot with MySQL persistence. Directed AI-assisted implementation of the React frontend; supports full CRUD across a decoupled architecture.</td>
+                <td>
+                  <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--green);">[INQUIRE]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#04</td>
+                <td style="color: #ffffff; font-weight: 700;">AirFist</td>
+                <td style="color: var(--green); font-size: 0.8rem;">Flutter, MediaPipe, FastAPI, Supabase, Koyeb</td>
+                <td style="color: var(--text-muted);">Designed a cross-platform Flutter app enabling file transfer via MediaPipe hand-gesture recognition, with a FastAPI and Supabase backend. Directed AI-assisted implementation and deployed the full stack on Koyeb.</td>
+                <td>
+                  <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--green);">[INQUIRE]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#05</td>
+                <td style="color: #ffffff; font-weight: 700;">Gesture Blocks</td>
+                <td style="color: var(--green); font-size: 0.8rem;">MediaPipe, Three.js, Python, aiohttp</td>
+                <td style="color: var(--text-muted);">Designed a browser-based 3D block editor controlled by real-time hand gestures using MediaPipe. Directed AI-assisted implementation of the Three.js frontend and Python/aiohttp backend.</td>
+                <td>
+                  <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--green);">[INQUIRE]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#06</td>
+                <td style="color: #ffffff; font-weight: 700;">Personal Portfolio</td>
+                <td style="color: var(--green); font-size: 0.8rem;">HTML, CSS, JavaScript, Vercel, Git</td>
+                <td style="color: var(--text-muted);">Designed and deployed a personal portfolio site with a glassmorphism and futuristic aesthetic on Vercel via GitHub.</td>
+                <td>
+                  <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank" style="color: var(--green);">[LAUNCH]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#07</td>
+                <td style="color: #ffffff; font-weight: 700;">Youtube Shorts Bot</td>
+                <td style="color: var(--green); font-size: 0.8rem;">Python</td>
+                <td style="color: var(--text-muted);">An automated Python-based system that generates and publishes YouTube Shorts. It handles topic selection, AI script generation, image fetching, text-to-speech narration, video assembly, and automated YouTube uploading, creating an end-to-end content generation pipeline.</td>
+                <td>
+                  <a href="https://github.com/Abdul-Aziz-Nooruddin/youtube-shorts-bot" target="_blank" style="color: var(--green);">[LAUNCH]</a>
+                </td>
+              </tr>
+            
+              <tr>
+                <td>#08</td>
+                <td style="color: #ffffff; font-weight: 700;">Pass A Note</td>
+                <td style="color: var(--green); font-size: 0.8rem;">HTML</td>
+                <td style="color: var(--text-muted);">Open source software project hosted on GitHub.</td>
+                <td>
+                  <a href="https://pass-a-note-iota.vercel.app" target="_blank" style="color: var(--green);">[LAUNCH]</a>
+                </td>
+              </tr>
+            
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2. CAREER HISTORY -->
+      
+
+      <!-- 3. EDUCATION & CERTS -->
+      
+      <div class="term-section">
+        <div class="cli-prompt">$ grep -i "credentials" /etc/profile</div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-top: 10px;">
+          
+            <div style="border: 1px solid var(--border); padding: 12px;">
+              <div style="color: #ffffff; font-weight: 700;">B.Tech in Computer Science (AI & Machine Learning)</div>
+              <div style="color: var(--green); font-size: 0.85rem;">Lords Institute of Engineering and Technology • Expected 2028</div>
+            </div>
+          
+          
+        </div>
+      </div>
+      
+
+      <!-- 4. SKILLS -->
+      <div class="term-section">
+        <div class="cli-prompt">$ echo $TECH_STACK</div>
+        <div style="color: var(--text-muted); font-size: 0.95rem; margin-top: 6px;">
+          Python • Java • C • React • Next.js • FastAPI • Flutter • Solidity • Hardhat • MediaPipe • Three.js • Supabase • PostgreSQL • Git
+        </div>
+      </div>
+
+      <div class="interactive-cli">
+        <div style="color: var(--green-dim); font-size: 0.8rem; margin-bottom: 8px;">// Type 'help', 'projects', 'contact', 'clear'</div>
+        <div class="cli-input-line">
+          <span style="color: var(--green); font-weight: 700;">$</span>
+          <input type="text" id="cli-in" class="cli-input" placeholder="type a command..." autofocus autocomplete="off">
+        </div>
+        <div id="cli-out" style="margin-top: 10px; font-size: 0.9rem; color: var(--text);"></div>
+      </div>
+    </div>
+  </div>
+
+  
+
+    <!-- DIAGONAL REPEATING WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; flex-direction: column; justify-content: space-around; align-items: center; overflow: hidden; opacity: 0.22; user-select: none;">
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: #0f172a; border: 2px solid #ef4444; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#ef4444; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+    
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

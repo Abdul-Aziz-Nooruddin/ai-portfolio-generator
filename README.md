@@ -1,6 +1,6 @@
 # WhatsApp Portfolio Bot
 
-> AI-powered WhatsApp chatbot that interviews users and generates stunning portfolio websites with immersive WebGL shaders. Zero friction — no laptop, no forms, no design skills needed.
+> AI-powered WhatsApp chatbot that interviews users and generates clean, mobile-first portfolio websites. Zero friction — no laptop, no forms, no design skills needed.
 
 ## 🚀 Quick Start
 
@@ -64,7 +64,10 @@ whatsapp-portfolio-bot/
 │       ├── ai-service.js          # Gemini API (AIza + AQ keys)
 │       ├── db-service.js          # Supabase wrapper
 │       ├── hosting-provider.js    # Netlify/Cloudflare
-│       └── shader-loader.js       # Radiant Shaders
+│       ├── netlify-deployer.js    # Netlify deploy adapter
+│       ├── razorpay-service.js    # Razorpay payments
+│       ├── site-generator.js      # CSS/HTML/JS portfolio builder
+│       └── uiux-integration.js    # UI/UX Pro Max design foundation
 ├── .env.example                    # API key placeholders
 ├── .gitignore
 ├── Dockerfile
@@ -96,8 +99,8 @@ whatsapp-portfolio-bot/
 
 - **4 Portfolio Branches**: Developer, Freelancer, Student, Professional
 - **25+ Questions per branch**: GitHub links, testimonials, pricing, certifications
-- **AI Design Director**: taste-skill dials + impeccable anti-slop rules
-- **Radiant Shaders**: 18 WebGL backgrounds matched to personality
+- **AI Design Director**: taste-skill dials + anti-slop rules
+- **Open-source UI foundation**: UI/UX Pro Max + shadcn-style components + CSS/SVG
 - **48h Preview**: Watermarked demo before payment
 - **UPI Payments**: Razorpay/Cashfree integration
 - **Auto-suspend**: Grace period + renewal workflow
@@ -105,11 +108,11 @@ whatsapp-portfolio-bot/
 ## 🧪 Testing
 
 ```bash
-# Test AI without any external services
-node src/test-conversation.js
+# Run webhook tests (offline, no external services)
+npm test
 
-# Test database connection
-node -e "require('dotenv').config(); const {DatabaseService} = require('./src/services/db-service'); new DatabaseService(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY).client.from('users').select('id').limit(1).then(r => console.log('DB OK:', !!r.data))"
+# AI smoke test (requires GEMINI_API_KEY)
+npm run test:conversation
 
 # Health check
 curl http://localhost:3000/health

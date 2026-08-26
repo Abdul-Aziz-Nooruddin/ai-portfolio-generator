@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio Bot — Admin Control Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #111827;
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --primary: #3b82f6;
+      --primary-hover: #9a3412;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #ef4444, #f59e0b);
+      color: #fff;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* KPI Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-accent, var(--primary));
+    }
+    .stat-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .stat-value {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    /* Section Cards */
+    .panel-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    /* Search & Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--surface-border);
+      color: #fff;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      outline: none;
+      min-width: 250px;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+    .filter-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-pill.active {
+      background: rgba(59, 130, 246, 0.15);
+      border-color: var(--primary);
+      color: #60a5fa;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+    th {
+      padding: 0.75rem 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--surface-border);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+    .status-live { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .status-lapsed { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .status-preview { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .status-deleted { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    /* Action Buttons */
+    .action-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-action {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--surface-border);
+      color: #fff;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
+    }
+    .btn-action.grace { color: #fbbf24; border-color: rgba(245, 158, 11, 0.3); }
+    .btn-action.restore { color: #34d399; border-color: rgba(16, 185, 129, 0.3); }
+    .btn-action.takedown { color: #f87171; border-color: rgba(239, 68, 68, 0.3); }
+
+    /* Audit Log Stream */
+    .log-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      max-height: 280px;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+    }
+    .log-item {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--surface-border);
+      border-radius: 8px;
+      padding: 0.6rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .log-actor { color: #60a5fa; font-weight: 600; }
+    .log-action { color: #e4e4e7; }
+    .log-time { color: var(--text-muted); font-size: 0.75rem; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: #1e293b;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Standalone Admin Suite Header -->
+  <header style="background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--surface-border); padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.15rem; font-weight: 800;">
+      <span style="font-size: 1.3rem;">🛡️</span>
+      <span>Devfolio Admin Control Suite</span>
+      <span style="background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px; letter-spacing: 0.05em;">SUPERADMIN</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <a href="/" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">⚡ Web Studio</a>
+      <a href="/dashboard.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">📊 User Dashboard</a>
+    </div>
+  </header>
+
+  <main style="max-width: 1300px; width: 100%; margin: 0 auto; padding: 2.5rem clamp(1rem, 3vw, 2.5rem);">
+
+    <!-- KPI Overview -->
+    <div class="stats-grid">
+      <div class="stat-card" style="--card-accent: #3b82f6;">
+        <span class="stat-title">Total Users</span>
+        <span id="statTotalUsers" class="stat-value">...</span>
+      </div>
+      <div class="stat-card" style="--card-accent: #10b981;">
+        <span class="stat-title">Active Subscribers</span>
+        <span id="statActiveSubs" class="stat-value">...</span>
+      </div>
+      <div class="stat-card" style="--card-accent: #f59e0b;">
+        <span class="stat-title">Lapsed (Grace Period)</span>
+        <span id="statLapsed" class="stat-value">...</span>
+      </div>
+      <div class="stat-card" style="--card-accent: #047857;">
+        <span class="stat-title">2-Hour Previews</span>
+        <span id="statPreviews" class="stat-value">...</span>
+      </div>
+      <div class="stat-card" style="--card-accent: #ec4899;">
+        <span class="stat-title">Revenue (Est. ₹)</span>
+        <span id="statRevenue" class="stat-value">...</span>
+      </div>
+    </div>
+
+    <!-- User & Site Management Table -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2 class="panel-title">👥 User Accounts & Site Management</h2>
+        <div class="filter-bar">
+          <input type="text" id="userSearch" class="search-input" placeholder="Search by email, phone, or ID..." oninput="renderUsersTable()">
+          <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
+          <button class="filter-pill" onclick="setFilter('live', this)">Live</button>
+          <button class="filter-pill" onclick="setFilter('preview_lapsed', this)">Lapsed</button>
+          <button class="filter-pill" onclick="setFilter('preview_unpaid', this)">Previews</button>
+          <button class="filter-pill" onclick="setFilter('deleted', this)">Deleted</button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User / Identifier</th>
+              <th>Status</th>
+              <th>Site Link</th>
+              <th>Created</th>
+              <th>Manual Overrides</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody">
+            <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">Loading user accounts...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Terms of Service & Content Safety Violations Inspector -->
+    <div class="panel-card" style="border-color: rgba(239, 68, 68, 0.3);">
+      <div class="panel-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.2);">
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.2rem;">🛡️</span>
+          <h2 class="panel-title" style="color: #f87171;">Terms of Service & Content Safety Violations</h2>
+        </div>
+        <span id="violationCountBadge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px;">0 FLAGGED</span>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User / Site ID</th>
+              <th>Violated TOS Clause</th>
+              <th>Severity</th>
+              <th>Reason & Flagged Evidence Snippet</th>
+              <th>Detected At</th>
+              <th>Enforcement Action</th>
+            </tr>
+          </thead>
+          <tbody id="violationsTableBody">
+            <tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Scanning content safety logs...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Audit Log Feed -->
+    <div class="panel-card">
+      <div class="panel-header">
+        <h2 class="panel-title">📜 Admin & System Audit Trail</h2>
+        <button class="btn-action" onclick="fetchData()">🔄 Refresh Feed</button>
+      </div>
+      <div id="logStream" class="log-stream">
+        <div style="color: var(--text-muted); padding: 1rem;">Loading audit logs...</div>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast"></div>
+
+  <script>
+    let allUsers = [];
+    let allViolations = [];
+    let currentFilter = 'all';
+
+    async function fetchData() {
+      try {
+        const [overviewRes, usersRes, violRes] = await Promise.all([
+          fetch('/api/admin/overview').then(r => r.json()),
+          fetch('/api/admin/users').then(r => r.json()),
+          fetch('/api/admin/violations').then(r => r.json()).catch(() => ({ success: true, violations: [] }))
+        ]);
+
+        if (overviewRes.success && overviewRes.stats) {
+          document.getElementById('statTotalUsers').textContent = overviewRes.stats.totalUsers || 0;
+          document.getElementById('statActiveSubs').textContent = overviewRes.stats.activeSubscribers || 0;
+          document.getElementById('statLapsed').textContent = overviewRes.stats.lapsedAccounts || 0;
+          document.getElementById('statPreviews').textContent = overviewRes.stats.activePreviews || 0;
+          document.getElementById('statRevenue').textContent = '₹' + (overviewRes.stats.totalRevenue || 0).toLocaleString();
+        }
+
+        if (overviewRes.success && overviewRes.logs) {
+          renderLogs(overviewRes.logs);
+        }
+
+        if (usersRes.success && usersRes.users) {
+          allUsers = usersRes.users;
+          renderUsersTable();
+        }
+
+        if (violRes.success && violRes.violations) {
+          allViolations = violRes.violations;
+          renderViolationsTable();
+        }
+      } catch (err) {
+        showToast('Error loading admin data: ' + err.message);
+      }
+    }
+
+    function renderViolationsTable() {
+      const tbody = document.getElementById('violationsTableBody');
+      const badge = document.getElementById('violationCountBadge');
+      if (badge) badge.textContent = `${allViolations.length} FLAGGED`;
+
+      if (allViolations.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">✅ Zero TOS or Content Safety Violations Detected. All active sites are compliant.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = allViolations.map(v => {
+        const sevColor = v.severity === 'CRITICAL' ? '#ef4444' : (v.severity === 'HIGH' ? '#f59e0b' : '#3b82f6');
+        const sevBg = v.severity === 'CRITICAL' ? 'rgba(239, 68, 68, 0.15)' : (v.severity === 'HIGH' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(59, 130, 246, 0.15)');
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 700; font-family: var(--font-mono); font-size: 0.82rem;">${v.userId || v.siteId}</div>
+              ${v.siteId ? `<a href="/p/${v.siteId}" target="_blank" style="color: var(--primary); font-size: 0.78rem; text-decoration: none;">Inspect Site ↗</a>` : ''}
+            </td>
+            <td>
+              <div style="font-weight: 700; color: #fff; font-size: 0.88rem;">${v.section}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">${v.termTitle}</div>
+            </td>
+            <td>
+              <span style="background: ${sevBg}; color: ${sevColor}; border: 1px solid ${sevColor}; font-size: 0.72rem; font-weight: 800; padding: 0.2rem 0.5rem; border-radius: 6px; text-transform: uppercase;">
+                ${v.severity}
+              </span>
+            </td>
+            <td>
+              <div style="font-size: 0.82rem; color: #fca5a5; font-weight: 600; margin-bottom: 4px;">${v.reason}</div>
+              <div style="font-family: monospace; font-size: 0.76rem; background: rgba(0,0,0,0.4); padding: 6px 10px; border-radius: 6px; border-left: 2px solid ${sevColor}; color: #e2e8f0; word-break: break-all;">
+                ${v.evidenceSnippet}
+              </div>
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.78rem; white-space: nowrap;">
+              ${new Date(v.createdAt).toLocaleString()}
+            </td>
+            <td>
+              <button class="btn-action takedown" onclick="handleForceTakedown('${v.userId || v.siteId}')" style="white-space: nowrap;">
+                ⛔ Take Down
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function setFilter(filter, el) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      renderUsersTable();
+    }
+
+    function renderUsersTable() {
+      const search = document.getElementById('userSearch').value.toLowerCase();
+      const tbody = document.getElementById('userTableBody');
+
+      const filtered = allUsers.filter(u => {
+        const email = (u.email || u.normalized_email || '').toLowerCase();
+        const phone = (u.phone_number || '').toLowerCase();
+        const id = (u.id || '').toLowerCase();
+        const matchesSearch = email.includes(search) || phone.includes(search) || id.includes(search);
+
+        const conv = (u.conversations && u.conversations[0]) || {};
+        const state = conv.lifecycle_state || conv.status || 'preview_unpaid';
+
+        if (currentFilter === 'all') return matchesSearch;
+        return matchesSearch && state === currentFilter;
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">No matching users found</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(u => {
+        const conv = (u.conversations && u.conversations[0]) || {};
+        const state = conv.lifecycle_state || conv.status || 'preview_unpaid';
+        const siteId = conv.id;
+        const siteUrl = siteId ? `/p/${siteId}` : '#';
+
+        let badgeClass = 'status-preview';
+        if (state === 'live' || state === 'paid') badgeClass = 'status-live';
+        else if (state === 'preview_lapsed' || state === 'grace_period') badgeClass = 'status-lapsed';
+        else if (state === 'deleted') badgeClass = 'status-deleted';
+
+        return `
+          <tr>
+            <td>
+              <div style="font-weight: 600;">${u.name || (conv.extracted_data && conv.extracted_data.name) || 'User'}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">${u.email || u.normalized_email || u.phone_number || u.id}</div>
+            </td>
+            <td><span class="status-badge ${badgeClass}">${state}</span></td>
+            <td>
+              ${siteId ? `<a href="${siteUrl}" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">View Portfolio ↗</a>` : '<span style="color: var(--text-muted)">None</span>'}
+            </td>
+            <td style="color: var(--text-muted); font-size: 0.8rem;">
+              ${new Date(u.created_at || Date.now()).toLocaleDateString()}
+            </td>
+            <td>
+              <div class="action-btn-group">
+                <button class="btn-action grace" onclick="handleOverrideGrace('${u.id}')">+5d Grace</button>
+                <button class="btn-action restore" onclick="handleForceRestore('${u.id}')">Restore</button>
+                <button class="btn-action takedown" onclick="handleForceTakedown('${u.id}')">Takedown</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderLogs(logs) {
+      const stream = document.getElementById('logStream');
+      if (logs.length === 0) {
+        stream.innerHTML = `<div style="color: var(--text-muted); padding: 1rem;">No audit records found.</div>`;
+        return;
+      }
+
+      stream.innerHTML = logs.map(l => `
+        <div class="log-item">
+          <div>
+            <span class="log-actor">${l.admin_identifier}</span>:
+            <span class="log-action">${l.action} ${l.reason ? `(${l.reason})` : ''}</span>
+          </div>
+          <div class="log-time">${new Date(l.created_at).toLocaleTimeString()}</div>
+        </div>
+      `).join('');
+    }
+
+    async function handleOverrideGrace(userId) {
+      if (!confirm('Extend grace period by 5 days for this user?')) return;
+      try {
+        const res = await fetch('/api/admin/override-grace', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, extraDays: 5, adminId: 'admin-dashboard' })
+        }).then(r => r.json());
+
+        if (res.success) {
+          showToast('Extended grace period by 5 days');
+          fetchData();
+        } else {
+          showToast('Failed: ' + (res.error || 'Unknown error'));
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message);
+      }
+    }
+
+    async function handleForceRestore(userId) {
+      if (!confirm('Force-restore this account to active live status?')) return;
+      try {
+        const res = await fetch('/api/admin/force-restore', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, adminId: 'admin-dashboard' })
+        }).then(r => r.json());
+
+        if (res.success) {
+          showToast('Account restored to LIVE status');
+          fetchData();
+        } else {
+          showToast('Failed: ' + (res.error || 'Unknown error'));
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message);
+      }
+    }
+
+    async function handleForceTakedown(userId) {
+      if (!confirm('Are you sure you want to force takedown & delete this account?')) return;
+      try {
+        const res = await fetch('/api/admin/force-takedown', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, adminId: 'admin-dashboard' })
+        }).then(r => r.json());
+
+        if (res.success) {
+          showToast('Account taken down and marked DELETED');
+          fetchData();
+        } else {
+          showToast('Failed: ' + (res.error || 'Unknown error'));
+        }
+      } catch (err) {
+        showToast('Error: ' + err.message);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    fetchData();
+  </script>
+  </main>
+</body>
+</html>

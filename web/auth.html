@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Authentication — Portfolio Bot</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fcf9f5;
+      --surface: #ffffff;
+      --surface-border: rgba(28, 25, 23, 0.08);
+      --primary: #9a3412;
+      --primary-hover: #7c2d12;
+      --accent: #047857;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text: #1c1917;
+      --text-muted: #78716c;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 24px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glow */
+    .ambient-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(154, 52, 18, 0.08) 0%, rgba(248, 250, 252, 0) 70%);
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-container {
+      background: #ffffff;
+      border: 1px solid rgba(28, 25, 23, 0.08);
+      border-radius: 24px;
+      max-width: 480px;
+      width: 100%;
+      padding: 40px 36px;
+      box-shadow: 0 20px 40px -15px rgba(28, 25, 23, 0.08);
+      position: relative;
+      z-index: 1;
+    }
+
+    .brand-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #1c1917;
+      text-decoration: none;
+      margin-bottom: 8px;
+    }
+
+    .brand-logo .dot {
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      box-shadow: 0 0 12px rgba(154, 52, 18, 0.4);
+    }
+
+    .view-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #1c1917;
+      margin-bottom: 6px;
+    }
+
+    .view-subtitle {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      background: #ffffff;
+      border: 1px solid rgba(28, 25, 23, 0.15);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: #1c1917;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(154, 52, 18, 0.15);
+    }
+
+    .pwd-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 4px 8px;
+    }
+
+    .pwd-toggle:hover {
+      color: #1c1917;
+    }
+
+    /* Password Strength Meter */
+    .strength-meter {
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meter-bar {
+      height: 4px;
+      background: rgba(28, 25, 23, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0%;
+      transition: all 0.3s;
+      border-radius: 2px;
+    }
+
+    .meter-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Checkbox & Options */
+    .form-options {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      font-size: 0.85rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .checkbox-label input {
+      accent-color: var(--primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    .link-btn {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+    }
+
+    .link-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Action Button */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, #9a3412, #7c2d12);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(154, 52, 18, 0.25);
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: linear-gradient(135deg, #7c2d12, #5f1d0a);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(154, 52, 18, 0.35);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Alerts */
+    .alert-box {
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 0.88rem;
+      margin-bottom: 20px;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #fca5a5;
+    }
+
+    .alert-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #6ee7b7;
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 24px;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .view-card {
+      display: none;
+    }
+
+    .view-card.active {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js"></script>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="app-shell-layout">
+    <!-- Universal Sidebar Mount -->
+    <div id="sidebarMount"></div>
+
+    <!-- Main Content Panel -->
+    <div class="app-main-content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding: 2rem 1rem; overflow-y: auto;">
+      <div class="auth-container">
+    <div class="brand-header">
+      <a href="/" class="brand-logo">
+        <span class="dot"></span>
+        <span>Portfolio Bot</span>
+      </a>
+    </div>
+
+    <!-- Alert Box -->
+    <div id="authAlert" class="alert-box" role="alert"></div>
+
+    <!-- 1. LOGIN VIEW -->
+    <div id="viewLogin" class="view-card active">
+      <h1 class="view-title">Welcome Back</h1>
+      <p class="view-subtitle">Sign in to manage your AI portfolios and domains.</p>
+      
+      <form id="loginForm" style="margin-top: 24px;" novalidate>
+        <div class="form-group">
+          <label for="loginIdentifier">Email or Username</label>
+          <div class="input-wrap">
+            <input type="text" id="loginIdentifier" name="identifier" autocomplete="username" placeholder="alex@example.com or alexpro" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">
+            <span>Password</span>
+            <button type="button" class="link-btn" onclick="switchView('forgot')">Forgot?</button>
+          </label>
+          <div class="input-wrap">
+            <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
+            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('loginPassword', this)">Show</button>
+          </div>
+        </div>
+
+        <div class="form-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+            <span>Remember me (30 days)</span>
+          </label>
+        </div>
+
+        <button type="submit" id="btnLoginSubmit" class="btn-submit">
+          <span>Sign In</span> &rarr;
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Don't have an account? <button type="button" class="link-btn" onclick="switchView('signup')">Sign up for free</button>
+      </div>
+    </div>
+
+    <!-- 2. SIGNUP VIEW -->
+    <div id="viewSignup" class="view-card">
+      <h1 class="view-title">Create Your Account</h1>
+      <p class="view-subtitle">Build, deploy, and host your AI-designed portfolio in 60s.</p>
+
+      <form id="signupForm" style="margin-top: 24px;" novalidate>
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" name="name" autocomplete="name" placeholder="Alex Morgan" required>
+        </div>
+
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" name="email" autocomplete="email" placeholder="alex@example.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="signupUsername">Username (Optional)</label>
+          <input type="text" id="signupUsername" name="username" autocomplete="username" placeholder="alexmorgan">
+        </div>
+
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="signupPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
+            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupPassword', this)">Show</button>
+          </div>
+          <div class="strength-meter">
+            <div class="meter-bar">
+              <div id="strengthFill" class="meter-fill"></div>
+            </div>
+            <div class="meter-label">
+              <span id="strengthText">Enter password</span>
+              <span id="strengthScore">0 / 4</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="signupConfirmPassword">Confirm Password</label>
+          <div class="input-wrap">
+            <input type="password" id="signupConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
+            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupConfirmPassword', this)">Show</button>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 24px;">
+          <label class="checkbox-label" style="font-size: 0.82rem; line-height: 1.4; align-items: flex-start;">
+            <input type="checkbox" id="termsAccepted" name="termsAccepted" required style="margin-top: 2px;">
+            <span>
+              I accept the 
+              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('terms')">Terms of Service</button>, 
+              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('privacy')">Privacy Policy</button> &amp; 
+              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('hosting')">2-hour preview hosting guidelines</button>.
+            </span>
+          </label>
+        </div>
+
+        <button type="submit" id="btnSignupSubmit" class="btn-submit">
+          <span>Create Account</span> &rarr;
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <button type="button" class="link-btn" onclick="switchView('login')">Sign in</button>
+      </div>
+    </div>
+
+    <!-- 3. FORGOT PASSWORD VIEW -->
+    <div id="viewForgot" class="view-card">
+      <h1 class="view-title">Reset Password</h1>
+      <p class="view-subtitle">Enter your email address and we'll send you secure recovery instructions.</p>
+
+      <form id="forgotForm" style="margin-top: 24px;" novalidate>
+        <div class="form-group">
+          <label for="forgotEmail">Email Address</label>
+          <input type="email" id="forgotEmail" name="email" autocomplete="email" placeholder="alex@example.com" required>
+        </div>
+
+        <button type="submit" id="btnForgotSubmit" class="btn-submit" style="margin-top: 10px;">
+          <span>Send Reset Link</span> &rarr;
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Remembered your password? <button type="button" class="link-btn" onclick="switchView('login')">Back to Sign In</button>
+      </div>
+    </div>
+
+    <!-- 4. RESET PASSWORD VIEW -->
+    <div id="viewReset" class="view-card">
+      <h1 class="view-title">Set New Password</h1>
+      <p class="view-subtitle">Create a strong new password for your account.</p>
+
+      <form id="resetForm" style="margin-top: 24px;" novalidate>
+        <input type="hidden" id="resetTokenInput" name="token">
+
+        <div class="form-group">
+          <label for="resetPassword">New Password</label>
+          <div class="input-wrap">
+            <input type="password" id="resetPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
+            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetPassword', this)">Show</button>
+          </div>
+          <div class="strength-meter">
+            <div class="meter-bar">
+              <div id="resetStrengthFill" class="meter-fill"></div>
+            </div>
+            <div class="meter-label">
+              <span id="resetStrengthText">Enter password</span>
+              <span id="resetStrengthScore">0 / 4</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="resetConfirmPassword">Confirm New Password</label>
+          <div class="input-wrap">
+            <input type="password" id="resetConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
+            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetConfirmPassword', this)">Show</button>
+          </div>
+        </div>
+
+        <button type="submit" id="btnResetSubmit" class="btn-submit" style="margin-top: 10px;">
+          <span>Update Password</span> &rarr;
+        </button>
+      </form>
+    </div>
+
+    <!-- 5. VERIFY EMAIL VIEW -->
+    <div id="viewVerify" class="view-card">
+      <h1 class="view-title">Verifying Email...</h1>
+      <p id="verifyStatusText" class="view-subtitle">Please wait while we confirm your email address.</p>
+      <div style="margin-top: 28px; text-align: center;">
+        <a id="btnVerifyDashboard" href="/dashboard.html" class="btn-submit" style="display: none; text-decoration: none;">
+          Go to Dashboard &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEGAL MODAL (Terms of Service, Privacy Policy & 2-Hour Hosting Guidelines) -->
+  <div id="legalModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(28, 25, 23,0.5); backdrop-filter: blur(10px); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+    <div style="background: #ffffff; border: 1px solid rgba(28, 25, 23,0.12); border-radius: 20px; max-width: 680px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(28, 25, 23,0.2); overflow: hidden; color: #1c1917;">
+      
+      <!-- Modal Header -->
+      <div style="padding: 20px 24px; border-bottom: 1px solid rgba(28, 25, 23,0.08); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; gap: 8px;">
+          <button id="tabBtnTerms" onclick="switchLegalTab('terms')" style="background: rgba(154, 52, 18,0.12); color: #9a3412; border: 1px solid rgba(154, 52, 18,0.3); border-radius: 8px; padding: 6px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Terms of Service</button>
+          <button id="tabBtnPrivacy" onclick="switchLegalTab('privacy')" style="background: transparent; color: #78716c; border: 1px solid rgba(28, 25, 23,0.08); border-radius: 8px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Privacy Policy</button>
+          <button id="tabBtnHosting" onclick="switchLegalTab('hosting')" style="background: transparent; color: #78716c; border: 1px solid rgba(28, 25, 23,0.08); border-radius: 8px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Hosting Guidelines</button>
+        </div>
+        <button onclick="closeLegalModal()" style="background: none; border: none; color: #78716c; font-size: 1.4rem; cursor: pointer; padding: 4px;">&times;</button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <div id="legalContentArea" style="padding: 24px; overflow-y: auto; color: #334155; font-size: 0.92rem; line-height: 1.6; flex: 1;">
+        <!-- Dynamically injected tab content -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div style="padding: 16px 24px; border-top: 1px solid rgba(28, 25, 23,0.08); display: flex; justify-content: flex-end;">
+        <button onclick="closeLegalModal()" class="btn-submit" style="width: auto; padding: 8px 24px; font-size: 0.9rem;">
+          I Understand &amp; Agree
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/auth.js"></script>
+  <script>
+    const legalTexts = {
+      terms: `
+        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">Terms of Service</h2>
+        <p style="margin-bottom: 14px;">Welcome to Portfolio Bot. By creating an account or using our AI-generated portfolio hosting services, you agree to these terms:</p>
+        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. AI Portfolio Generation & Intellectual Property</h4>
+        <p style="margin-bottom: 14px;">You own all content, experience details, and personal data you provide. We grant you full ownership of the generated frontend portfolios for your professional and personal branding.</p>
+        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Acceptable Use</h4>
+        <p style="margin-bottom: 14px;">You agree not to use Portfolio Bot to deploy phishing, malware, illegal content, harassment, or defamatory material. Accounts found violating this policy are terminated immediately without refund.</p>
+        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Subscriptions & Payments</h4>
+        <p style="margin-bottom: 14px;">Lite Plans (₹149/mo) and Pro Plans (₹299/mo) provide custom domains, watermark removal, and lightning CDN hosting. Subscriptions can be managed or cancelled anytime via your dashboard.</p>
+      `,
+      privacy: `
+        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">Privacy Policy</h2>
+        <p style="margin-bottom: 14px;">Your privacy and data security are our top priorities. Here is how your data is handled:</p>
+        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. What We Collect</h4>
+        <p style="margin-bottom: 14px;">We collect your name, email address, username, hashed passwords (using Scrypt), session IP/User-Agent strictly for multi-device security monitoring, and your portfolio bio details.</p>
+        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Zero Data Selling</h4>
+        <p style="margin-bottom: 14px;">We never sell, rent, or monetize your resume, contact information, or portfolio data to third-party advertisers or data brokers.</p>
+        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Cookie & Session Security</h4>
+        <p style="margin-bottom: 14px;">We use strictly essential HttpOnly, SameSite=Lax session cookies. We do not use third-party tracking or advertising cookies.</p>
+        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">4. Right to Deletion</h4>
+        <p style="margin-bottom: 14px;">You can permanently wipe your account, active sessions, and portfolio websites anytime via the Security Settings tab in your dashboard.</p>
+      `,
+      hosting: `
+        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">2-Hour Preview Hosting Guidelines</h2>
+        <p style="margin-bottom: 14px;">To provide fast, instant free previews for all developers worldwide, our hosting lifecycle operates under these rules:</p>
+        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. Free Instant Preview Window (2 Hours)</h4>
+        <p style="margin-bottom: 14px;">Newly generated preview portfolios remain live on our edge CDN for 2 hours with a subtle preview banner. If a monthly subscription is not activated within 2 hours, the preview site is automatically cleaned up.</p>
+        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Subscribed Websites (Permanent Hosting)</h4>
+        <p style="margin-bottom: 14px;">Active subscriptions have no takedown timers, zero watermarks, custom domain routing, and 99.99% CDN uptime.</p>
+        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Grace Period</h4>
+        <p style="margin-bottom: 14px;">If a subscription lapses, you receive an automated 5-day grace period with email reminders before any files are permanently purged.</p>
+      `
+    };
+
+    function openLegalModal(tab = 'terms') {
+      const modal = document.getElementById('legalModal');
+      modal.style.display = 'flex';
+      switchLegalTab(tab);
+    }
+
+    function closeLegalModal() {
+      const modal = document.getElementById('legalModal');
+      modal.style.display = 'none';
+    }
+
+    function switchLegalTab(tab) {
+      document.getElementById('legalContentArea').innerHTML = legalTexts[tab] || legalTexts.terms;
+      
+      const tabs = ['terms', 'privacy', 'hosting'];
+      tabs.forEach(t => {
+        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (t === tab) {
+          btn.style.background = 'rgba(59,130,246,0.2)';
+          btn.style.color = '#60a5fa';
+          btn.style.borderColor = 'rgba(59,130,246,0.4)';
+        } else {
+          btn.style.background = 'transparent';
+          btn.style.color = '#9ca3af';
+          btn.style.borderColor = 'rgba(255,255,255,0.08)';
+        }
+      });
+    }
+
+    // Close on backdrop click
+    document.getElementById('legalModal').addEventListener('click', (e) => {
+      if (e.target.id === 'legalModal') closeLegalModal();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof initUniversalSidebar === 'function') {
+        initUniversalSidebar('auth');
+      }
+    });
+  </script>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+:root {
+      --bg: #fcf9f5;
+      --text: #ffffff;
+      --muted: #78716c;
+      --primary: #9a3412;
+      --border: #e7e5e4;
+      --font-heading: 'Epilogue', sans-serif;
+      --font-body: 'Mulish', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); padding: 40px; }
+    .swiss-bento-grid {
+      max-width: 1240px; margin: 0 auto; display: grid;
+      grid-template-columns: repeat(12, 1fr); gap: 24px;
+    }
+    .bento-card {
+      border: 1px solid var(--border); border-radius: 4px; padding: 32px;
+      background: rgba(255,255,255,0.02); display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .card-hero { grid-column: span 8; min-height: 280px; }
+    .card-meta { grid-column: span 4; }
+    .card-proj-lg { grid-column: span 6; min-height: 240px; }
+    .card-proj-sm { grid-column: span 4; }
+    .card-skills { grid-column: span 12; }
+    
+    @media (max-width: 900px) {
+      .card-hero, .card-meta, .card-proj-lg, .card-proj-sm, .card-skills { grid-column: span 12; }
+    }

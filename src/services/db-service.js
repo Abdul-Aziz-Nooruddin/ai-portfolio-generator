@@ -7,8 +7,41 @@ const { createClient } = require('@supabase/supabase-js');
 
 class DatabaseService {
   constructor(supabaseUrl, supabaseKey) {
-    this.client = createClient(supabaseUrl, supabaseKey);
+    if (supabaseUrl && supabaseKey) {
+      this.client = createClient(supabaseUrl, supabaseKey);
+    } else {
+      // In-memory / Mock client fallback for localized testing & graceful degradation
+      this.client = this._createMockClient();
+    }
+    this._memoryStore = {
+      users: new Map(),
+      sessions: new Map(),
+      verificationTokens: new Map(),
+      passwordResetTokens: new Map(),
+      rateLimits: new Map(),
+      conversations: new Map(),
+      clientSites: new Map(),
+      payments: new Map(),
+      auditLogs: [],
+      emailLogs: [],
+      analytics: []
+    };
   }
+
+  _createMockClient() {
+    return {
+      from: (table) => ({
+        select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+        insert: () => ({ select: () => ({ single: async () => ({ data: {}, error: null }) }) }),
+        update: () => ({ eq: async () => ({ data: null, error: null }) }),
+        delete: () => ({ eq: async () => ({ data: null, error: null }) })
+      })
+    };
+  }
+
+  // ==========================================
+  // Core User Operations
+  // ==========================================
 
   async getUser(phoneNumber) {
     const { data, error } = await this.client
@@ -31,6 +64,391 @@ class DatabaseService {
     if (error) throw error;
     return data;
   }
+
+  async createUserWithPassword({ name, email, username, passwordHash, role = 'user', phone = null }) {
+    const normalizedEmail = DatabaseService.normalizeEmail(email);
+    const cleanUsername = username ? username.trim().toLowerCase() : null;
+
+    const payload = {
+      name: name || '',
+      email: email.trim(),
+      normalized_email: normalizedEmail,
+      username: cleanUsername,
+      password_hash: passwordHash,
+      role: role || 'user',
+      phone_number: phone || `web_${normalizedEmail.replace(/[^a-z0-9]/g, '')}`,
+      email_verified: false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    const { data, error } = await this.client
+      .from('users')
+      .insert(payload)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getUserById(userId) {
+    const { data, error } = await this.client
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return data;
+  }
+
+  async getUserByNormalizedEmail(email) {
+    const normalized = DatabaseService.normalizeEmail(email);
+    try {
+      const { data, error } = await this.client
+        .from('users')
+        .select('*')
+        .eq('normalized_email', normalized)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        if (error.code === '42703' || (error.message && error.message.includes('column'))) {
+          const { data: fallbackData } = await this.client
+            .from('users')
+            .select('*')
+            .eq('phone_number', `web_${normalized.replace(/[^a-z0-9]/g, '')}`)
+            .single();
+          return fallbackData || null;
+        }
+        throw error;
+      }
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getUserByUsername(username) {
+    if (!username || typeof username !== 'string') return null;
+    const clean = username.trim().toLowerCase();
+    try {
+      const { data, error } = await this.client
+        .from('users')
+        .select('*')
+        .eq('username', clean)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getUserByEmailOrUsername(identifier) {
+    if (!identifier || typeof identifier !== 'string') return null;
+    const clean = identifier.trim().toLowerCase();
+    if (clean.includes('@')) {
+      return await this.getUserByNormalizedEmail(clean);
+    }
+    const userByUsername = await this.getUserByUsername(clean);
+    if (userByUsername) return userByUsername;
+    return await this.getUser(clean); // In case it's a phone number
+  }
+
+  async updateUser(userId, updates) {
+    const cleanUpdates = { ...updates, updated_at: new Date().toISOString() };
+    const { error } = await this.client
+      .from('users')
+      .update(cleanUpdates)
+      .eq('id', userId);
+
+    if (error) {
+      if (error.code === '42703' || error.code === 'PGRST204' || (error.message && error.message.includes('column'))) {
+        const safeUpdates = { ...cleanUpdates };
+        delete safeUpdates.normalized_email;
+        delete safeUpdates.email_marketing_opt_in;
+        delete safeUpdates.email_verified;
+        delete safeUpdates.password_hash;
+        delete safeUpdates.failed_login_attempts;
+        delete safeUpdates.locked_until;
+        await this.client.from('users').update(safeUpdates).eq('id', userId);
+        return;
+      }
+      throw error;
+    }
+  }
+
+  // ==========================================
+  // Session Management
+  // ==========================================
+
+  async createSession({ userId, tokenHash, userAgent = '', ipAddress = '', maxAgeMs = 7 * 24 * 60 * 60 * 1000 }) {
+    const now = new Date();
+    const expiresAt = new Date(now.getTime() + maxAgeMs).toISOString();
+
+    const { data, error } = await this.client
+      .from('sessions')
+      .insert({
+        user_id: userId,
+        token_hash: tokenHash,
+        user_agent: userAgent ? userAgent.substring(0, 500) : 'Unknown Device',
+        ip_address: ipAddress ? ipAddress.substring(0, 100) : 'Unknown IP',
+        expires_at: expiresAt,
+        created_at: now.toISOString(),
+        last_active_at: now.toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getSessionByTokenHash(tokenHash) {
+    if (!tokenHash) return null;
+    const { data, error } = await this.client
+      .from('sessions')
+      .select('*, users(*)')
+      .eq('token_hash', tokenHash)
+      .single();
+
+    if (error && error.code !== 'PGRST116') return null;
+    if (!data) return null;
+
+    // Check expiration
+    if (new Date(data.expires_at).getTime() < Date.now()) {
+      await this.deleteSession(data.id);
+      return null;
+    }
+
+    return data;
+  }
+
+  async getUserActiveSessions(userId) {
+    const now = new Date().toISOString();
+    const { data, error } = await this.client
+      .from('sessions')
+      .select('id, user_agent, ip_address, created_at, last_active_at, expires_at')
+      .eq('user_id', userId)
+      .gt('expires_at', now)
+      .order('last_active_at', { ascending: false });
+
+    if (error) return [];
+    return data || [];
+  }
+
+  async touchSession(sessionId) {
+    try {
+      await this.client
+        .from('sessions')
+        .update({ last_active_at: new Date().toISOString() })
+        .eq('id', sessionId);
+    } catch (e) {
+      // Non-critical touch failure
+    }
+  }
+
+  async deleteSession(sessionId, userId = null) {
+    let query = this.client.from('sessions').delete().eq('id', sessionId);
+    if (userId) {
+      query = query.eq('user_id', userId);
+    }
+    const { error } = await query;
+    if (error) throw error;
+    return true;
+  }
+
+  async deleteAllUserSessions(userId, exceptSessionId = null) {
+    let query = this.client.from('sessions').delete().eq('user_id', userId);
+    if (exceptSessionId) {
+      query = query.neq('id', exceptSessionId);
+    }
+    const { error } = await query;
+    if (error) throw error;
+    return true;
+  }
+
+  // ==========================================
+  // Verification Tokens
+  // ==========================================
+
+  async createVerificationToken(userId, tokenHash, expiresInMs = 24 * 60 * 60 * 1000) {
+    const expiresAt = new Date(Date.now() + expiresInMs).toISOString();
+
+    // Invalidate any existing unused tokens for this user
+    await this.client
+      .from('verification_tokens')
+      .delete()
+      .eq('user_id', userId);
+
+    const { data, error } = await this.client
+      .from('verification_tokens')
+      .insert({
+        user_id: userId,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getVerificationToken(tokenHash) {
+    if (!tokenHash) return null;
+    const { data, error } = await this.client
+      .from('verification_tokens')
+      .select('*, users(*)')
+      .eq('token_hash', tokenHash)
+      .is('used_at', null)
+      .single();
+
+    if (error && error.code !== 'PGRST116') return null;
+    if (!data) return null;
+
+    if (new Date(data.expires_at).getTime() < Date.now()) {
+      return null;
+    }
+    return data;
+  }
+
+  async markVerificationTokenUsed(tokenId, userId) {
+    await this.client
+      .from('verification_tokens')
+      .update({ used_at: new Date().toISOString() })
+      .eq('id', tokenId);
+
+    await this.updateUser(userId, { email_verified: true });
+  }
+
+  // ==========================================
+  // Password Reset Tokens
+  // ==========================================
+
+  async createPasswordResetToken(userId, tokenHash, expiresInMs = 60 * 60 * 1000) {
+    const expiresAt = new Date(Date.now() + expiresInMs).toISOString();
+
+    // Invalidate any older reset tokens
+    await this.client
+      .from('password_reset_tokens')
+      .delete()
+      .eq('user_id', userId);
+
+    const { data, error } = await this.client
+      .from('password_reset_tokens')
+      .insert({
+        user_id: userId,
+        token_hash: tokenHash,
+        expires_at: expiresAt,
+        created_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getPasswordResetToken(tokenHash) {
+    if (!tokenHash) return null;
+    const { data, error } = await this.client
+      .from('password_reset_tokens')
+      .select('*, users(*)')
+      .eq('token_hash', tokenHash)
+      .is('used_at', null)
+      .single();
+
+    if (error && error.code !== 'PGRST116') return null;
+    if (!data) return null;
+
+    if (new Date(data.expires_at).getTime() < Date.now()) {
+      return null;
+    }
+    return data;
+  }
+
+  async markPasswordResetTokenUsed(tokenId, userId, newPasswordHash) {
+    // 1. Mark token used
+    await this.client
+      .from('password_reset_tokens')
+      .update({ used_at: new Date().toISOString() })
+      .eq('id', tokenId);
+
+    // 2. Update password hash & reset failed attempts
+    await this.updateUser(userId, {
+      password_hash: newPasswordHash,
+      failed_login_attempts: 0,
+      locked_until: null
+    });
+
+    // 3. Invalidate ALL existing active sessions for security
+    await this.deleteAllUserSessions(userId);
+  }
+
+  // ==========================================
+  // Progressive Delays & Brute Force Management
+  // ==========================================
+
+  async recordLoginAttempt(identifier, success, ip = '') {
+    const user = await this.getUserByEmailOrUsername(identifier);
+    if (!user) return;
+
+    if (success) {
+      await this.updateUser(user.id, {
+        failed_login_attempts: 0,
+        locked_until: null,
+        last_login_at: new Date().toISOString(),
+        last_login_ip: ip
+      });
+    } else {
+      const attempts = (user.failed_login_attempts || 0) + 1;
+      let lockedUntil = null;
+
+      // Progressive temporary backoff (never permanent)
+      if (attempts >= 5) {
+        const cooldownMinutes = Math.min(60, Math.pow(2, attempts - 5) * 5); // 5m, 10m, 20m, 40m, max 60m
+        lockedUntil = new Date(Date.now() + cooldownMinutes * 60 * 1000).toISOString();
+      }
+
+      await this.updateUser(user.id, {
+        failed_login_attempts: attempts,
+        locked_until: lockedUntil
+      });
+    }
+  }
+
+  // ==========================================
+  // Secure Account Deletion
+  // ==========================================
+
+  async deleteUserAccount(userId) {
+    if (!userId) throw new Error('User ID is required');
+
+    // 1. Invalidate all sessions
+    await this.deleteAllUserSessions(userId);
+
+    // 2. Remove tokens
+    await this.client.from('verification_tokens').delete().eq('user_id', userId);
+    await this.client.from('password_reset_tokens').delete().eq('user_id', userId);
+
+    // 3. Delete user's conversations and client sites
+    await this.client.from('conversations').delete().eq('user_id', userId);
+    await this.client.from('client_sites').delete().eq('user_id', userId);
+
+    // 4. Delete user record
+    const { error } = await this.client.from('users').delete().eq('id', userId);
+    if (error) throw error;
+
+    return true;
+  }
+
+  // ==========================================
+  // Existing Conversation, Site, Payment Methods
+  // ==========================================
 
   async getConversation(userId) {
     const { data, error } = await this.client
@@ -57,12 +475,28 @@ class DatabaseService {
   }
 
   async updateConversation(conversationId, updates) {
+    const cleanUpdates = { ...updates, updated_at: new Date().toISOString() };
     const { error } = await this.client
       .from('conversations')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update(cleanUpdates)
       .eq('id', conversationId);
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === 'PGRST204' || (error.message && error.message.includes('column'))) {
+        const safeUpdates = { ...cleanUpdates };
+        delete safeUpdates.lifecycle_state;
+        delete safeUpdates.state_entered_at;
+        const { error: retryErr } = await this.client
+          .from('conversations')
+          .update(safeUpdates)
+          .eq('id', conversationId);
+        if (retryErr) {
+          console.warn('[DB] updateConversation fallback error:', retryErr.message);
+        }
+        return;
+      }
+      throw error;
+    }
   }
 
   async isMessageProcessed(messageId) {
@@ -147,13 +581,13 @@ class DatabaseService {
     if (error) throw error;
   }
 
-  async checkRateLimit(userId, action, maxCount = 10, windowMinutes = 1) {
+  async checkRateLimit(identifier, action, maxCount = 10, windowMinutes = 1) {
     const windowStart = new Date(Date.now() - windowMinutes * 60 * 1000).toISOString();
 
     const { data, error } = await this.client
       .from('rate_limits')
       .select('*')
-      .eq('user_id', userId)
+      .eq('identifier', identifier)
       .eq('action', action)
       .gte('window_start', windowStart)
       .single();
@@ -164,7 +598,7 @@ class DatabaseService {
       await this.client
         .from('rate_limits')
         .upsert({
-          user_id: userId,
+          identifier,
           action,
           count: 1,
           window_start: new Date().toISOString()
@@ -177,34 +611,369 @@ class DatabaseService {
     await this.client
       .from('rate_limits')
       .update({ count: data.count + 1 })
-      .eq('user_id', userId)
+      .eq('identifier', identifier)
       .eq('action', action);
 
     return true;
   }
 
-  async getExpiredPreviews() {
-    const { data, error } = await this.client
-      .from('client_sites')
-      .select('*, conversations(*)')
-      .eq('status', 'preview')
-      .lt('preview_expires_at', new Date().toISOString());
+  static normalizeEmail(email) {
+    if (!email || typeof email !== 'string') return '';
+    const clean = email.trim().toLowerCase();
+    const parts = clean.split('@');
+    if (parts.length !== 2) return clean;
+    let [local, domain] = parts;
+    local = local.split('+')[0];
+    return `${local}@${domain}`;
+  }
 
-    if (error) throw error;
+  async recordEmailLog(logData) {
+    const { error } = await this.client
+      .from('email_logs')
+      .insert({
+        user_id: logData.user_id,
+        email: logData.email,
+        sequence_type: logData.sequence_type,
+        email_index: logData.email_index || 0,
+        trigger_name: logData.trigger_name,
+        status: logData.status || 'sent',
+        sent_at: new Date().toISOString()
+      });
+
+    if (error && error.code !== '42P01') {
+      console.warn('[DB] recordEmailLog warning:', error.message);
+    }
+  }
+
+  async hasEmailBeenSent(userId, triggerName) {
+    const { data, error } = await this.client
+      .from('email_logs')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('trigger_name', triggerName)
+      .limit(1);
+
+    if (error && error.code !== 'PGRST116') return false;
+    return Array.isArray(data) && data.length > 0;
+  }
+
+  async recordAuditLog(auditData) {
+    const { error } = await this.client
+      .from('admin_audit_logs')
+      .insert({
+        admin_identifier: auditData.admin_identifier || 'system',
+        action: auditData.action,
+        target_user_id: auditData.target_user_id,
+        reason: auditData.reason,
+        details: auditData.details || {},
+        created_at: new Date().toISOString()
+      });
+
+    if (error && error.code !== '42P01' && !error.message?.includes('schema cache')) {
+      console.warn('[DB] recordAuditLog warning:', error.message);
+    }
+  }
+
+  async getUnpaidPreviews() {
+    const { data, error } = await this.client
+      .from('conversations')
+      .select('*, users(*)')
+      .in('status', ['preview_live', 'preview_unpaid']);
+
+    if (error) return [];
     return data || [];
   }
 
-  async getGracePeriodExpired() {
-    const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-
+  async getLapsedAccounts() {
     const { data, error } = await this.client
       .from('conversations')
-      .select('*, client_sites(*)')
-      .eq('status', 'grace_period')
-      .lt('updated_at', threeDaysAgo);
+      .select('*, users(*)')
+      .in('status', ['preview_lapsed', 'grace_period', 'suspended']);
 
-    if (error) throw error;
+    if (error) return [];
     return data || [];
+  }
+
+  async getOptedInUnconvertedUsers() {
+    const { data, error } = await this.client
+      .from('users')
+      .select('*')
+      .eq('email_marketing_opt_in', true);
+
+    if (error) return [];
+    return data || [];
+  }
+
+  async updateSiteByProviderId(providerSiteId, updates) {
+    try {
+      const cleanUpdates = { ...updates, updated_at: new Date().toISOString() };
+      const { error } = await this.client
+        .from('client_sites')
+        .update(cleanUpdates)
+        .eq('provider_site_id', providerSiteId);
+
+      if (error) {
+        if (error.code === 'PGRST204') {
+          const safeUpdates = { ...cleanUpdates };
+          delete safeUpdates.lifecycle_state;
+          await this.client.from('client_sites').update(safeUpdates).eq('provider_site_id', providerSiteId);
+          return;
+        }
+        console.warn('[DB] updateSiteByProviderId warning:', error.message);
+      }
+    } catch (e) {
+      console.warn('[DB] updateSiteByProviderId catch warning:', e.message);
+    }
+  }
+
+  async checkWeeklyLimit(userId, maxGenerations = 1) {
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data, error } = await this.client
+      .from('rate_limits')
+      .select('*')
+      .eq('identifier', userId)
+      .eq('action', 'weekly_preview_generation')
+      .gte('window_start', oneWeekAgo)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+
+    if (!data) {
+      await this.client
+        .from('rate_limits')
+        .upsert({
+          identifier: userId,
+          action: 'weekly_preview_generation',
+          count: 1,
+          window_start: new Date().toISOString()
+        });
+      return true;
+    }
+
+    if (data.count >= maxGenerations) return false;
+
+    await this.client
+      .from('rate_limits')
+      .update({ count: data.count + 1 })
+      .eq('identifier', userId)
+      .eq('action', 'weekly_preview_generation');
+
+    return true;
+  }
+
+  async recordAnalyticsEvent(siteId, eventType = 'page_view', visitorHash = null, referrer = null, metadata = {}) {
+    const { error } = await this.client
+      .from('site_analytics')
+      .insert({
+        site_id: siteId,
+        event_type: eventType,
+        visitor_hash: visitorHash,
+        referrer: referrer,
+        metadata: metadata,
+        created_at: new Date().toISOString()
+      });
+
+    if (error && error.code !== '42P01') {
+      console.warn('[DB] recordAnalyticsEvent warning:', error.message);
+    }
+  }
+
+  async getSiteAnalytics(siteId) {
+    const { data, error } = await this.client
+      .from('site_analytics')
+      .select('*')
+      .eq('site_id', siteId);
+
+    if (error || !data) return { totalViews: 0, uniqueVisitors: 0, events: [] };
+
+    const uniqueHashes = new Set(data.map(d => d.visitor_hash).filter(Boolean));
+    return {
+      totalViews: data.filter(d => d.event_type === 'page_view').length,
+      uniqueVisitors: uniqueHashes.size,
+      contactSubmissions: data.filter(d => d.event_type === 'contact_submit').length,
+      events: data
+    };
+  }
+
+  async getAdminOverviewStats() {
+    try {
+      const { data: convs } = await this.client.from('conversations').select('id, status, lifecycle_state, created_at, state_entered_at');
+      const { data: users } = await this.client.from('users').select('id');
+      const { data: payments } = await this.client.from('payments').select('amount, status').eq('status', 'captured');
+
+      const allConvs = convs || [];
+      const liveCount = allConvs.filter(c => c.lifecycle_state === 'live' || c.status === 'paid').length;
+      const lapsedCount = allConvs.filter(c => c.lifecycle_state === 'preview_lapsed' || c.status === 'preview_lapsed').length;
+      const previewCount = allConvs.filter(c => c.lifecycle_state === 'preview_unpaid' || c.status === 'preview_live').length;
+      const totalRevenue = (payments || []).reduce((acc, p) => acc + (p.amount ? p.amount / 100 : 0), 0);
+
+      return {
+        totalUsers: (users || []).length,
+        activeSubscribers: liveCount,
+        lapsedAccounts: lapsedCount,
+        activePreviews: previewCount,
+        totalRevenue: Math.round(totalRevenue)
+      };
+    } catch (e) {
+      return { totalUsers: 0, activeSubscribers: 0, lapsedAccounts: 0, activePreviews: 0, totalRevenue: 0 };
+    }
+  }
+
+  async getAllAdminUsers(limit = 100) {
+    try {
+      const { data: users, error } = await this.client
+        .from('users')
+        .select('*, conversations(*)')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) return [];
+      return users || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async getRecentAuditLogs(limit = 30) {
+    try {
+      const { data, error } = await this.client
+        .from('admin_audit_logs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) return [];
+      return data || [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async recordTosViolation(violationData) {
+    try {
+      const logRecord = {
+        admin_identifier: 'content_safety_sentinel',
+        action: 'tos_violation_flagged',
+        target_user_id: violationData.userId || violationData.siteId || 'anonymous_user',
+        reason: `${violationData.section} (${violationData.severity})`,
+        details: {
+          siteId: violationData.siteId,
+          ruleId: violationData.ruleId,
+          section: violationData.section,
+          termTitle: violationData.termTitle,
+          severity: violationData.severity,
+          reason: violationData.reason,
+          evidenceSnippet: violationData.evidenceSnippet,
+          status: 'FLAGGED',
+          contentPreview: violationData.contentPreview || ''
+        },
+        created_at: new Date().toISOString()
+      };
+      await this.recordAuditLog(logRecord);
+      return logRecord;
+    } catch (e) {
+      console.warn('[DB] recordTosViolation error:', e.message);
+      return null;
+    }
+  }
+
+  async getTosViolations(limit = 50) {
+    try {
+      const { data, error } = await this.client
+        .from('admin_audit_logs')
+        .select('*')
+        .eq('action', 'tos_violation_flagged')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) return [];
+      return (data || []).map(d => ({
+        id: d.id || `viol-${Math.random().toString(36).substr(2, 9)}`,
+        userId: d.target_user_id,
+        siteId: d.details?.siteId || d.target_user_id,
+        ruleId: d.details?.ruleId || 'TOS_POLICY',
+        section: d.details?.section || d.reason || 'General Terms of Service',
+        termTitle: d.details?.termTitle || 'Prohibited Content & Activity Clause',
+        severity: d.details?.severity || 'HIGH',
+        reason: d.details?.reason || d.reason || 'Flagged for Terms of Service review.',
+        evidenceSnippet: d.details?.evidenceSnippet || 'Evidence captured during generation scan.',
+        status: d.details?.status || 'FLAGGED',
+        createdAt: d.created_at
+      }));
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async getUserDashboardData(userId) {
+    try {
+      const user = await this.getUserById(userId);
+      let conversation = await this.getConversation(userId);
+      
+      // Also look up conversation by phone number
+      if (!conversation?.id && user?.phone_number) {
+        conversation = await this.getConversation(user.phone_number);
+      }
+
+      // Check if user has sites in public/sites or sites table
+      let siteId = conversation?.id || null;
+      let hasSite = false;
+
+      const fs = require('fs');
+      const path = require('path');
+      const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+
+      if (siteId && fs.existsSync(path.join(sitesBaseDir, siteId, 'index.html'))) {
+        hasSite = true;
+      }
+
+      // Fallback: check sites table
+      if (!hasSite && user?.id) {
+        try {
+          const { data: siteRecord } = await this.client
+            .from('sites')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+          if (siteRecord) {
+            const sid = siteRecord.provider_site_id || siteRecord.id;
+            if (fs.existsSync(path.join(sitesBaseDir, sid, 'index.html'))) {
+              siteId = sid;
+              hasSite = true;
+            }
+          }
+        } catch (e) {}
+      }
+
+      // Fallback: check candidate directory names
+      if (!hasSite && user) {
+        const candidateNames = [user.username, user.name?.toLowerCase().replace(/\s+/g, '-'), user.id].filter(Boolean);
+        for (const cand of candidateNames) {
+          if (fs.existsSync(path.join(sitesBaseDir, cand, 'index.html'))) {
+            siteId = cand;
+            hasSite = true;
+            break;
+          }
+        }
+      }
+
+      let analytics = { totalViews: 0, uniqueVisitors: 0 };
+      if (siteId) {
+        analytics = await this.getSiteAnalytics(siteId);
+      }
+
+      return {
+        user,
+        conversation,
+        siteId: hasSite ? siteId : null,
+        analytics: analytics || { totalViews: 0, uniqueVisitors: 0 },
+        regensUsed: conversation?.extracted_data?._regens_used || 0
+      };
+    } catch (e) {
+      return null;
+    }
   }
 }
 

@@ -1,7 +1,8 @@
-/**
- * Conversation Engine - State Machine
- * Manages the entire interview flow from first contact to site generation
- */
+const fs = require('fs');
+const path = require('path');
+const { SiteGenerator } = require('./services/site-generator');
+const { HostingProvider } = require('./services/hosting-provider');
+const { CustomDomainService } = require('./services/custom-domain-service');
 
 const BRANCHES = {
   A: { name: 'Developer / Designer', questions: require('./questions/branch-a') },
@@ -17,25 +18,44 @@ const STATES = {
   CONFIRMING_DATA: 'confirming_data',
   GENERATING_SITE: 'generating_site',
   PREVIEW_LIVE: 'preview_live',
+  PREVIEW_UNPAID: 'preview_unpaid',
   AWAITING_PAYMENT: 'awaiting_payment',
   PAID: 'paid',
+  PREVIEW_LAPSED: 'preview_lapsed',
   GRACE_PERIOD: 'grace_period',
-  SUSPENDED: 'suspended'
+  SUSPENDED: 'suspended',
+  DELETED: 'deleted'
 };
 
 const PRICING = {
-  PREVIEW: { name: 'Preview', price: 0, period: '48 hours' },
-  LITE: { name: 'Lite', price: 149, period: 'month', yearlyPrice: 1499 },
-  PRO: { name: 'Pro', price: 299, period: 'month', yearlyPrice: 2999 }
+  PREVIEW: { name: 'Preview', price: 0, period: '2 hours' },
+  LITE: { name: 'Lite', price: 149, period: 'month' },
+  PRO: { name: 'Pro', price: 299, period: 'month' },
+  EXTRA_PREVIEW: { name: 'Extra Preview', price: 49, period: 'one-time' }
 };
 
 class ConversationEngine {
-  constructor(aiService, dbService) {
+  constructor(aiService, dbService, siteGenerator = null, netlifyDeployer = null, razorpayService = null, emailService = null) {
     this.ai = aiService;
     this.db = dbService;
+    this.siteGenerator = siteGenerator || new SiteGenerator();
+    this.hostingProvider = new HostingProvider(process.env.NETLIFY_TOKEN, process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY);
+    this.netlifyDeployer = netlifyDeployer;
+    this.razorpayService = razorpayService;
+    this.emailService = emailService;
+    this.customDomainService = new CustomDomainService(this.db);
+    this.notifier = null;
   }
 
-  async processMessage(phoneNumber, messageText, messageId, mediaUrl = null) {
+  setNotifier(notifyFn) {
+    this.notifier = notifyFn;
+  }
+
+  setEmailService(emailService) {
+    this.emailService = emailService;
+  }
+
+  async processMessage(phoneNumber, messageText, messageId, mediaUrl = null, username = null) {
     const isDuplicate = await this.db.isMessageProcessed(messageId);
     if (isDuplicate) {
       console.log(`[DEDUP] Message ${messageId} already processed`);
@@ -61,20 +81,38 @@ class ConversationEngine {
     if (!conversation) {
       conversation = await this.db.createConversation(user.id);
     }
+    conversation.phone_number = phoneNumber;
+    conversation.username = username;
 
     return await this.handleState(conversation, messageText, mediaUrl);
+  }
+
+  isAdmin(phoneNumber, username) {
+    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro').toLowerCase().split(',').map(s => s.trim().replace(/^@/, ''));
+    const adminIds = (process.env.ADMIN_IDS || '7535327243').split(',').map(s => s.trim());
+    
+    if (username && adminUsernames.includes(username.toLowerCase().replace(/^@/, ''))) {
+      return true;
+    }
+    if (phoneNumber && adminIds.includes(String(phoneNumber).trim())) {
+      return true;
+    }
+    return false;
   }
 
   async handleState(conversation, messageText, mediaUrl) {
     const { status, branch, extracted_data } = conversation;
     const lowerMsg = (messageText || '').toLowerCase().trim();
 
-    // Global reset keywords at any state
+    // 1. Global reset keywords (Full Clean Slate)
     if (['start', 'restart', 'reset', 'menu'].includes(lowerMsg)) {
       await this.db.updateConversation(conversation.id, {
         status: STATES.IDLE,
+        lifecycle_state: STATES.IDLE,
         extracted_data: {},
-        branch: null
+        branch: null,
+        design_brief: null,
+        taste_skill_dials: null
       });
 
       return {
@@ -94,15 +132,131 @@ Just reply with A, B, C, or D.`
       };
     }
 
+    // 2. Figma Design Import Detection (Figma MCP)
+    const figmaMatch = (messageText || '').match(/https?:\/\/(?:www\.)?figma\.com\/(?:file|design)\/([a-zA-Z0-9]+)[^\s]*/);
+    if (figmaMatch) {
+      const figmaUrl = figmaMatch[0];
+      const updatedData = { ...(extracted_data || {}), figma_url: figmaUrl };
+      await this.db.updateConversation(conversation.id, { extracted_data: updatedData });
+      return {
+        action: 'reply',
+        message: `🎨 **Figma Design Detected!**\n\nI have linked your Figma design file to your portfolio generation pipeline.\nI will extract your custom color palette, typography tokens, and UI layout directly from Figma!\n\nWhat is your name and professional title? (e.g. *"Alex Rivera, Full-Stack & 3D WebGL Engineer"*)\n\n*(Or send your GitHub username / resume to autofill)*`
+      };
+    }
+
+    // 3. Stats / Analytics Command (Pro Feature)
+    if (lowerMsg === 'stats' || lowerMsg === '/stats' || lowerMsg === 'analytics') {
+      const analytics = await this.db.getSiteAnalytics(conversation.id);
+      return {
+        action: 'reply',
+        message: `📊 **Your Portfolio Live Analytics (Pro):**
+ 
+• **Total Page Views:** ${analytics.totalViews}
+• **Unique Visitors:** ${analytics.uniqueVisitors}
+• **Contact Form Inquiries:** ${analytics.contactSubmissions}
+ 
+💡 *Share your portfolio link to track more recruiter visits!*`
+      };
+    }
+
+    // 4. Custom Domain Connection (Pro Feature)
+    if (lowerMsg.startsWith('domain ') || lowerMsg.startsWith('/domain ')) {
+      const domainInput = lowerMsg.replace(/^\/?domain\s+/, '').trim();
+      try {
+        const siteRecord = await this.db.getSiteByConversation(conversation.id);
+        const siteId = siteRecord?.provider_site_id || conversation.id;
+        const res = await this.customDomainService.registerCustomDomain(siteId, domainInput, conversation.user_id);
+        return {
+          action: 'reply',
+          message: `🌐 **Custom Domain Registered: ${res.domain}**\n\nTo connect your domain to your live portfolio, add this **DNS CNAME record** in your domain registrar (GoDaddy, Namecheap, Google Domains):\n\n• **Type:** CNAME\n• **Name / Host:** \`@\` (or \`www\`)\n• **Target / Value:** \`${res.cnameTarget}\`\n\n⏳ *Once you have added the record, type **CHECK DOMAIN** to verify SSL & propagation!*`
+        };
+      } catch (err) {
+        return {
+          action: 'reply',
+          message: `⚠️ **Domain Error:** ${err.message}`
+        };
+      }
+    }
+
+    // 5. Instant Free Subdomain Claim (e.g. SUBDOMAIN alex)
+    if (lowerMsg.startsWith('subdomain ') || lowerMsg.startsWith('/subdomain ')) {
+      const handleInput = lowerMsg.replace(/^\/?subdomain\s+/, '').trim();
+      try {
+        const siteRecord = await this.db.getSiteByConversation(conversation.id);
+        const siteId = siteRecord?.provider_site_id || conversation.id;
+        const res = await this.customDomainService.claimSubdomain(siteId, handleInput, conversation.user_id);
+        return {
+          action: 'reply',
+          message: `🎉 **Subdomain Claimed & Live!**\n\nYour portfolio is instantly accessible at:\n🔗 **https://${res.domain}**\n\n*(SSL is automatically active)*`
+        };
+      } catch (err) {
+        return {
+          action: 'reply',
+          message: `⚠️ **Subdomain Error:** ${err.message}`
+        };
+      }
+    }
+
+    // 6. Check DNS Status
+    if (lowerMsg === 'check domain' || lowerMsg === 'domain status' || lowerMsg === '/check_domain') {
+      const siteRecord = await this.db.getSiteByConversation(conversation.id);
+      const siteId = siteRecord?.provider_site_id || conversation.id;
+      const info = this.customDomainService.getDomainInfo(siteId);
+      if (!info) {
+        return {
+          action: 'reply',
+          message: `ℹ️ No custom domain connected yet.\n\nReply with **DOMAIN [yourname.com]** or **SUBDOMAIN [handle]** to connect one!`
+        };
+      }
+      const check = await this.customDomainService.checkDNSStatus(info.domain);
+      return {
+        action: 'reply',
+        message: `🌐 **Domain Status for ${info.domain}:**\n\n• **Status:** ${check.status.toUpperCase()}\n• **Details:** ${check.message}`
+      };
+    }
+
+    // 3. Theme Quick Change
+    if (lowerMsg.startsWith('theme_') || lowerMsg.startsWith('theme ')) {
+      const themeKey = lowerMsg.replace(/^theme[_ ]/, '').trim();
+      let themeHint = '';
+      let themeLabel = '';
+
+      if (themeKey.includes('terminal') || themeKey.includes('code') || themeKey.includes('dev')) {
+        themeHint = 'terminal';
+        themeLabel = '💻 Hacker Terminal OS';
+      } else if (themeKey.includes('editorial') || themeKey.includes('warm') || themeKey.includes('magazine')) {
+        themeHint = 'editorial';
+        themeLabel = '📰 Editorial Magazine';
+      } else if (themeKey.includes('neo') || themeKey.includes('brutalist')) {
+        themeHint = 'neo-brutalist';
+        themeLabel = '🎨 Neo-Brutalist Pop';
+      } else {
+        themeHint = 'glassmorphism';
+        themeLabel = '✨ 21st Glassmorphic Aurora';
+      }
+
+      const updatedData = { ...(conversation.extracted_data || {}), style_hint: themeHint };
+      await this.db.updateConversation(conversation.id, {
+        extracted_data: updatedData
+      });
+
+      return {
+        action: 'reply',
+        message: `🎨 Selected template: **${themeLabel}**!\n\nClick **🚀 Build Portfolio Now** to build your portfolio with this template.`
+      };
+    }
+
     switch (status) {
       case STATES.IDLE:
         return await this.handleIdle(conversation, messageText);
       case STATES.BRANCH_SELECTED:
+        return await this.handleBranchSelected(conversation, messageText);
       case STATES.COLLECTING_FIELDS:
         return await this.handleCollectingFields(conversation, messageText, mediaUrl);
       case STATES.CONFIRMING_DATA:
         return await this.handleConfirmation(conversation, messageText);
       case STATES.PREVIEW_LIVE:
+      case STATES.PREVIEW_UNPAID:
         return await this.handlePreviewLive(conversation, messageText);
       case STATES.GENERATING_SITE:
         return {
@@ -112,15 +266,44 @@ Just reply with A, B, C, or D.`
       case STATES.PAID:
         return await this.handleEditRequest(conversation, messageText, mediaUrl);
       case STATES.SUSPENDED:
-        return await this.handleSuspended(conversation, messageText);
+      case STATES.PREVIEW_LAPSED:
       case STATES.GRACE_PERIOD:
         return await this.handleGracePeriod(conversation, messageText);
+      case STATES.DELETED:
+        return {
+          action: 'reply',
+          message: "Your previous preview has expired and been removed. Type **START** to create a new portfolio!"
+        };
       default:
         return {
           action: 'reply',
           message: "Something went wrong. Please type START to begin again."
         };
     }
+  }
+
+  async handleBranchSelected(conversation, messageText) {
+    const lower = (messageText || '').toLowerCase().trim();
+
+    if (lower === 'intake_resume' || lower === '2' || lower.includes('resume') || lower.includes('pdf')) {
+      return {
+        action: 'reply',
+        message: "📎 Please send your **Resume (PDF file)** now, and I'll extract your information automatically!"
+      };
+    }
+
+    // Default or 'intake_manual' -> switch to collecting fields and ask Question 1
+    await this.db.updateConversation(conversation.id, {
+      status: STATES.COLLECTING_FIELDS
+    });
+
+    const firstQuestion = BRANCHES[conversation.branch].questions[0];
+    return {
+      action: 'reply',
+      message: `Let's start!
+
+${firstQuestion.text}`
+    };
   }
 
   async handleIdle(conversation, messageText) {
@@ -160,15 +343,15 @@ Just reply with A, B, C, or D.`
       });
 
       const branchName = BRANCHES[branchGuess].name;
-      const firstQuestion = BRANCHES[branchGuess].questions[0];
 
       return {
         action: 'reply',
         message: `Great! I'll build a portfolio for a **${branchName}**.
 
-Let's start:
+How would you like to provide your information?
 
-${firstQuestion.text}`
+1️⃣ 📝 **Answer Questions Step-by-Step**
+2️⃣ 📄 **Upload Resume (PDF)** (Instant auto-extraction)`
       };
     }
 
@@ -176,19 +359,20 @@ ${firstQuestion.text}`
     if (branchGuess) {
       await this.db.updateConversation(conversation.id, {
         status: STATES.BRANCH_SELECTED,
-        branch: branchGuess
+        branch: branchGuess,
+        extracted_data: {}
       });
 
       const branchName = BRANCHES[branchGuess].name;
-      const firstQuestion = BRANCHES[branchGuess].questions[0];
 
       return {
         action: 'reply',
         message: `Great! I'll build a portfolio for a **${branchName}**.
 
-Let's start:
+How would you like to provide your information?
 
-${firstQuestion.text}`
+1️⃣ 📝 **Answer Questions Step-by-Step**
+2️⃣ 📄 **Upload Resume (PDF)** (Instant auto-extraction)`
       };
     }
 
@@ -233,6 +417,35 @@ Or just describe what you do!`
       return await this.handleConfirmation(conversation, null);
     }
 
+    // Handle Back / Previous button click
+    const lowerMsg = (messageText || '').toLowerCase().trim();
+    if (lowerMsg === 'back' || lowerMsg === 'previous' || lowerMsg.includes('back')) {
+      if (answeredKeys.length === 0) {
+        return {
+          action: 'reply',
+          message: `You are at the first step:\n\n${currentQuestion.text}`
+        };
+      }
+      const lastKey = answeredKeys[answeredKeys.length - 1];
+      const updatedData = { ...extracted_data };
+      delete updatedData[lastKey];
+      await this.db.updateConversation(conversation.id, {
+        extracted_data: updatedData
+      });
+      const prevQuestion = questions.find(q => q.key === lastKey) || questions[0];
+      return {
+        action: 'reply',
+        message: `⬅️ Moved back to previous step:\n\n${prevQuestion.text}`
+      };
+    }
+
+    if (messageText && (lowerMsg === 'intake_manual' || lowerMsg === 'intake_resume')) {
+      return {
+        action: 'reply',
+        message: `Let's start!\n\n${currentQuestion.text}`
+      };
+    }
+
     let answer = messageText;
     if (currentQuestion.type === 'image' && mediaUrl) {
       answer = mediaUrl;
@@ -253,7 +466,36 @@ Or just describe what you do!`
       answer = '';
     }
 
-    const updatedData = { ...extracted_data, [currentQuestion.key]: answer };
+    let updatedData = { ...extracted_data, [currentQuestion.key]: answer };
+
+    // Smart cascade skip for optional sections (projects, photos, testimonials)
+    const isSkipped = !answer || answer.trim() === '' || answer.toLowerCase() === 'skip' || answer.toLowerCase() === 'done';
+
+    if (isSkipped) {
+      if (currentQuestion.key === 'project_2_name' || currentQuestion.key === 'project_2') {
+        [
+          'project_2_desc', 'project_2_tech', 'project_2_github', 'project_2_live', 'project_2_image', 'project_2_link',
+          'project_3_name', 'project_3_desc', 'project_3_tech', 'project_3_github', 'project_3_live'
+        ].forEach(k => { updatedData[k] = ''; });
+      } else if (currentQuestion.key === 'project_3_name') {
+        [
+          'project_3_desc', 'project_3_tech', 'project_3_github', 'project_3_live'
+        ].forEach(k => { updatedData[k] = ''; });
+      } else if (currentQuestion.key === 'photo_2') {
+        [
+          'photo_2_caption', 'photo_3', 'photo_3_caption', 'photo_4', 'photo_4_caption', 'photo_5', 'photo_5_caption'
+        ].forEach(k => { updatedData[k] = ''; });
+      } else if (currentQuestion.key === 'photo_3') {
+        [
+          'photo_3_caption', 'photo_4', 'photo_4_caption', 'photo_5', 'photo_5_caption'
+        ].forEach(k => { updatedData[k] = ''; });
+      } else if (currentQuestion.key === 'testimonial_2') {
+        [
+          'testimonial_3'
+        ].forEach(k => { updatedData[k] = ''; });
+      }
+    }
+
     await this.db.updateConversation(conversation.id, {
       extracted_data: updatedData
     });
@@ -297,6 +539,26 @@ Does everything look correct? Reply:
     const lower = messageText.toLowerCase().trim();
 
     if (lower === 'yes' || lower === 'y' || lower === '✅') {
+      const isUserAdmin = this.isAdmin(conversation.phone_number, conversation.username);
+
+      // Enforce 1 portfolio build per week for regular users (Admins exempt)
+      if (!isUserAdmin) {
+        const canBuild = await this.db.checkWeeklyLimit(conversation.user_id, 1);
+        if (!canBuild) {
+          return {
+            action: 'reply',
+            message: `⏳ **Weekly Free Preview Limit Reached**
+
+Free users can generate **1 free portfolio per week**.
+Your next free preview generation will reset next week!
+
+Options:
+• Reply **PREVIEW** (₹49) for an additional instant preview generation.
+• Reply **PAY** (₹149/mo) to unlock permanent live hosting & your custom domain!`
+          };
+        }
+      }
+
       await this.db.updateConversation(conversation.id, {
         status: STATES.GENERATING_SITE
       });
@@ -309,7 +571,7 @@ Does everything look correct? Reply:
 
 I'll design it with:
 • Your info and projects
-• A stunning animated shader background
+• A clean, modern visual style
 • Professional typography and layout
 • Mobile-responsive design
 
@@ -352,15 +614,46 @@ Sit tight — I'll send you the preview link soon!`
 
   formatSummary(data, branch) {
     const lines = [];
-    const questions = BRANCHES[branch].questions;
 
-    for (const q of questions) {
-      const val = data[q.key];
-      if (val && val.trim() !== '') {
-        const display = q.type === 'image' ? '[Photo uploaded]' : 
-                       val.length > 50 ? val.substring(0, 50) + '...' : val;
-        lines.push(`• ${q.label}: ${display}`);
+    // Basic profile info
+    if (data.name) lines.push(`• **Name:** ${data.name}`);
+    if (data.role || data.service_title) lines.push(`• **Role:** ${data.role || data.service_title}`);
+    if (data.bio || data.tagline) lines.push(`• **Bio:** ${data.bio || data.tagline}`);
+    if (data.email) lines.push(`• **Email:** ${data.email}`);
+    if (data.github) lines.push(`• **GitHub:** ${data.github}`);
+    if (data.tech_stack || data.skills) lines.push(`• **Skills:** ${data.tech_stack || data.skills}`);
+
+    // All Projects
+    const projects = [];
+    if (Array.isArray(data.projects) && data.projects.length > 0) {
+      projects.push(...data.projects);
+    } else {
+      for (let i = 1; i <= 20; i++) {
+        if (data[`project_${i}_name`]) {
+          projects.push({
+            name: data[`project_${i}_name`],
+            tech: data[`project_${i}_tech`],
+            github: data[`project_${i}_github`]
+          });
+        }
       }
+    }
+
+    if (projects.length > 0) {
+      lines.push(`\n🚀 **Projects (${projects.length} included):**`);
+      projects.forEach((p, idx) => {
+        const pName = p.name || p.title;
+        const pTech = p.tech || p.tech_stack ? ` (${p.tech || p.tech_stack})` : '';
+        const pGh = p.github ? ` [Repo: ${p.github}]` : '';
+        lines.push(`  ${idx + 1}. **${pName}**${pTech}${pGh}`);
+      });
+    }
+
+    if (data.experience || data.experience_summary) {
+      lines.push(`\n• **Experience:** ${data.experience || data.experience_summary}`);
+    }
+    if (data.education) {
+      lines.push(`• **Education:** ${data.education}`);
     }
 
     return lines.join('\n') || 'No data collected yet.';
@@ -369,42 +662,29 @@ Sit tight — I'll send you the preview link soon!`
   async handlePreviewLive(conversation, messageText) {
     const lower = messageText.toLowerCase().trim();
 
-    if (lower === 'pay' || lower === 'publish' || lower === '₹149' || lower === 'buy' || lower === 'subscribe') {
+    if (lower === 'pay' || lower === 'publish' || lower === '₹149' || lower === 'buy' || lower === 'subscribe' || lower === 'pro' || lower === '₹299') {
       const paymentLink = await this.generatePaymentLink(conversation.user_id, 'lite');
       return {
         action: 'reply',
-        message: `Perfect! Here's your payment link:
+        message: `Perfect! Here's your All-Access subscription link:
 
 ${paymentLink}
 
-Pay ₹${PRICING.LITE.price}/month to:
-✅ Remove the watermark
-✅ Get your own custom domain
-✅ Unlimited edits
-✅ Keep your site live forever
-
-Or go Pro for ₹${PRICING.PRO.price}/month and get:
-✅ Everything in Lite
-✅ Analytics (see who visits your site)
-✅ SEO optimization
-✅ Priority support`
+Pay ₹${PRICING.LITE.price}/month to get everything:
+✅ Remove 2-hour takedown timer & watermarks
+✅ Keep your portfolio hosted live 24/7
+✅ Real-time visitor analytics & telemetry
+✅ Automated SEO, OpenGraph & social cards
+✅ Interactive contact form with instant leads
+✅ Unlimited live edits & rebuilds`
       };
     }
 
-    if (lower === 'pro' || lower === '₹299') {
-      const paymentLink = await this.generatePaymentLink(conversation.user_id, 'pro');
+    if (lower === 'preview' || lower === '₹49' || lower === 'extra') {
+      const paymentLink = await this.generatePaymentLink(conversation.user_id, 'extra_preview');
       return {
         action: 'reply',
-        message: `Pro plan it is! Here's your payment link:
-
-${paymentLink}
-
-₹${PRICING.PRO.price}/month includes:
-✅ Everything in Lite
-✅ Visitor analytics
-✅ SEO meta tags
-✅ Contact form
-✅ Priority support`
+        message: `Here's your link for an Extra Preview build (₹49):\n\n${paymentLink}`
       };
     }
 
@@ -417,72 +697,165 @@ ${paymentLink}
       message: `Your preview is live! Check it out above 👆
 
 Reply:
-💳 PAY - Publish your site (₹${PRICING.LITE.price}/month)
-⭐ PRO - Go Pro (₹${PRICING.PRO.price}/month)
+💳 PAY - Full Access (₹${PRICING.LITE.price}/month)
 ✏️ EDIT [field] - Change something`
     };
   }
 
   async triggerSiteGeneration(conversation) {
     try {
-      const { id, branch, extracted_data } = conversation;
+      const { id, branch, extracted_data, user_id } = conversation;
 
+      // 1. Takedown & Purge: If regenerating an existing preview, take down the old site first
+      try {
+        await this.hostingProvider.purge(id);
+      } catch (purgeErr) {}
+
+      // 2. Generate design brief using Gemini AI + UI/UX Pro Max
       const designBrief = await this.ai.generateDesignBrief(extracted_data, branch);
-      const shader = this.selectShader(branch, extracted_data, designBrief);
 
-      await this.db.updateConversation(id, {
-        design_brief: designBrief,
-        selected_shader: shader.id,
-        taste_skill_dials: designBrief.dials
-      });
+      // 3. Generate HTML/CSS/JS site bundle
+      const siteFiles = await this.siteGenerator.generateSite(conversation, extracted_data, designBrief);
 
-      console.log(`[GENERATED] Portfolio for conversation ${id}`);
+      // 4. Deploy via Zero-Credit HostingProvider (Self-Hosted + Supabase CDN)
+      const deployRes = await this.hostingProvider.deploy(id, siteFiles, extracted_data);
+      const liveUrl = deployRes.deployUrl;
+      const hostingProvider = deployRes.provider;
+      const providerSiteId = deployRes.siteId;
+
+      // 4. Save client site record to database
+      try {
+        await this.db.createSite(user_id, hostingProvider, providerSiteId);
+      } catch (dbErr) {
+        console.warn('[DB] createSite warning:', dbErr.message);
+      }
+
+      // 6. Update conversation state with 2-Hour Preview Timer
+      const nowIso = new Date().toISOString();
+      try {
+        await this.db.updateConversation(id, {
+          status: STATES.PREVIEW_LIVE,
+          lifecycle_state: 'preview_unpaid',
+          state_entered_at: nowIso,
+          design_brief: designBrief,
+          taste_skill_dials: designBrief.dials
+        });
+      } catch (updErr) {
+        console.warn('[DB] updateConversation preview warning:', updErr.message);
+      }
+
+      console.log(`[GENERATED & DEPLOYED] Live at ${liveUrl} for conversation ${id}`);
+
+      // Track 5b: Send Email 1 if user provided email and opted in
+      if (this.emailService && extracted_data.email) {
+        try {
+          const user = await this.db.getUserById(user_id);
+          if (user && user.email_marketing_opt_in) {
+            const subscribeUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/subscribe?userId=${user_id}`;
+            await this.emailService.sendConversionEmail1(extracted_data.email, {
+              userId: user_id,
+              name: extracted_data.name || 'there',
+              previewUrl: liveUrl,
+              subscribeUrl
+            });
+          }
+        } catch (eErr) {
+          console.warn('[EMAIL] Failed sending conversion email 1:', eErr.message);
+        }
+      }
+
+      // 7. Notify user via Telegram / webhook notifier
+      if (this.notifier) {
+        let recipient = conversation.phone_number;
+        if (!recipient && user_id) {
+          try {
+            const { data } = await this.db.client.from('users').select('phone_number').eq('id', user_id).single();
+            recipient = data?.phone_number;
+          } catch (e) {
+            console.warn('[NOTIFIER] Error getting user phone number:', e.message);
+          }
+        }
+        if (recipient) {
+          const msg = `🎉 **Your Portfolio Preview is Live!** ⏳ *(2-Hour Timer Active)*\n\n🔗 **Preview link:**\n${liveUrl}\n\n⚠️ *This preview will automatically expire in 2 hours unless subscribed.*\n\nKeep your portfolio live forever with full features:\n💳 Reply **PAY** — All-Access (₹149/mo)\n✏️ Reply **EDIT [field]** — 1 free edit`;
+          await this.notifier(recipient, msg, { liveUrl });
+        } else {
+          console.warn('[NOTIFIER] Could not find recipient for conversation', id);
+        }
+      }
 
     } catch (error) {
       console.error('[GENERATION ERROR]', error);
-      await this.db.updateConversation(conversation.id, {
-        status: STATES.IDLE
-      });
+      if (this.notifier && conversation.phone_number) {
+        try {
+          await this.notifier(conversation.phone_number, "⚠️ An error occurred while generating your portfolio. Please type START to try again!");
+        } catch (nErr) {}
+      }
+      try {
+        await this.db.updateConversation(conversation.id, {
+          status: STATES.IDLE
+        });
+      } catch (dbE) {}
     }
-  }
-
-  selectShader(branch, extractedData, designBrief) {
-    const SHADERS = {
-      'digital-rain': { id: 'digital-rain', name: 'Digital Rain', branch: 'A', vibe: 'code' },
-      'event-horizon': { id: 'event-horizon', name: 'Event Horizon', branch: 'A', vibe: 'visual' },
-      'feedback-loop': { id: 'feedback-loop', name: 'Feedback Loop', branch: 'A', vibe: 'animation' },
-      'clockwork-mind': { id: 'clockwork-mind', name: 'Clockwork Mind', branch: 'A', vibe: 'design' },
-      'tesseract-shadow': { id: 'tesseract-shadow', name: 'Tesseract Shadow', branch: 'A', vibe: 'creative-tech' },
-      'neon-drive': { id: 'neon-drive', name: 'Neon Drive', branch: 'A', vibe: 'cyberpunk' },
-      'rain-on-glass': { id: 'rain-on-glass', name: 'Rain on Glass', branch: 'B', vibe: 'photographer' },
-      'aurora-veil': { id: 'aurora-veil', name: 'Aurora Veil', branch: 'B', vibe: 'wedding' },
-      'liquid-gold': { id: 'liquid-gold', name: 'Liquid Gold', branch: 'B', vibe: 'luxury' },
-      'gilt-mosaic': { id: 'gilt-mosaic', name: 'Gilt Mosaic', branch: 'B', vibe: 'interior' },
-      'smolder': { id: 'smolder', name: 'Smolder', branch: 'B', vibe: 'coach' },
-      'chromatic-bloom': { id: 'chromatic-bloom', name: 'Chromatic Bloom', branch: 'B', vibe: 'beauty' },
-      'flow-field': { id: 'flow-field', name: 'Flow Field', branch: 'C', vibe: 'cs' },
-      'phyllotaxis-spiral': { id: 'phyllotaxis-spiral', name: 'Phyllotaxis Spiral', branch: 'C', vibe: 'design' },
-      'painted-strata': { id: 'painted-strata', name: 'Painted Strata', branch: 'C', vibe: 'simple' },
-      'silk-groove': { id: 'silk-groove', name: 'Silk Groove', branch: 'D', vibe: 'corporate' },
-      'ink-calligraphy': { id: 'ink-calligraphy', name: 'Ink Calligraphy', branch: 'D', vibe: 'creative' },
-      'signal-decay': { id: 'signal-decay', name: 'Signal Decay', branch: 'D', vibe: 'tech' }
-    };
-
-    const branchShaders = Object.values(SHADERS).filter(s => s.branch === branch);
-    const allText = JSON.stringify(extractedData).toLowerCase();
-
-    for (const shader of branchShaders) {
-      if (allText.includes(shader.vibe)) return shader;
-    }
-
-    return branchShaders[0] || SHADERS['flow-field'];
   }
 
   async handleEditRequest(conversation, messageText, mediaUrl) {
-    return {
-      action: 'reply',
-      message: "Edit feature coming soon! For now, contact support for changes."
-    };
+    const isUserAdmin = this.isAdmin(conversation.phone_number, conversation.username);
+    const regensUsed = conversation.extracted_data?._regens_used || 0;
+
+    // Enforce 1 free regeneration limit for regular users (Admins exempt)
+    if (!isUserAdmin && regensUsed >= 1) {
+      return {
+        action: 'reply',
+        message: `⚠️ **Regeneration Limit Reached**
+
+You have already used your **1 free portfolio edit & rebuild**.
+
+Reply **PAY** (₹149) to unlock unlimited live edits, remove watermarks, and connect your custom domain!`
+      };
+    }
+
+    const text = (messageText || '').replace(/^edit\s*/i, '').trim();
+    if (!text) {
+      return {
+        action: 'reply',
+        message: "What would you like to edit? For example:\n• `EDIT name Jane Doe`\n• `EDIT bio Building AI tools at scale`\n• `EDIT role Senior Developer`"
+      };
+    }
+
+    const firstSpace = text.indexOf(' ');
+    let field = text;
+    let newValue = '';
+    if (firstSpace !== -1) {
+      field = text.substring(0, firstSpace).toLowerCase();
+      newValue = text.substring(firstSpace + 1).trim();
+    }
+
+    const updatedData = { ...conversation.extracted_data };
+    if (!isUserAdmin) {
+      updatedData._regens_used = regensUsed + 1;
+    }
+
+    if (newValue) {
+      updatedData[field] = newValue;
+      await this.db.updateConversation(conversation.id, {
+        extracted_data: updatedData,
+        status: STATES.CONFIRMING_DATA
+      });
+      return {
+        action: 'reply',
+        message: `Updated **${field}** to: "${newValue}"\n\nReply **YES** to rebuild your site, or **EDIT** to change another field.`
+      };
+    } else {
+      delete updatedData[field];
+      await this.db.updateConversation(conversation.id, {
+        extracted_data: updatedData,
+        status: STATES.COLLECTING_FIELDS
+      });
+      return {
+        action: 'reply',
+        message: `Let's update ${field}. What is your new ${field}?`
+      };
+    }
   }
 
   async handleSuspended(conversation, messageText) {
@@ -491,9 +864,7 @@ Reply:
       const paymentLink = await this.generatePaymentLink(conversation.user_id, 'lite');
       return {
         action: 'reply',
-        message: `Your site is paused. Pay ₹${PRICING.LITE.price}/month to restore it instantly:
-
-${paymentLink}`
+        message: `Your site is paused. Pay ₹${PRICING.LITE.price}/month to restore it instantly:\n\n${paymentLink}`
       };
     }
     return {
@@ -508,9 +879,7 @@ ${paymentLink}`
       const paymentLink = await this.generatePaymentLink(conversation.user_id, 'lite');
       return {
         action: 'reply',
-        message: `Your payment failed. Update it here to keep your site live:
-
-${paymentLink}`
+        message: `Your payment failed. Update it here to keep your site live:\n\n${paymentLink}`
       };
     }
     return {
@@ -524,6 +893,20 @@ ${paymentLink}`
   }
 
   async generatePaymentLink(userId, plan) {
+    if (this.razorpayService && process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
+      try {
+        const linkObj = await this.razorpayService.createPaymentLink(userId, plan);
+        if (linkObj && linkObj.shortUrl) return linkObj.shortUrl;
+      } catch (err) {
+        console.error('[RAZORPAY] Payment link creation error:', err.message);
+      }
+    }
+
+    const upiId = process.env.PERSONAL_UPI_ID;
+    const price = plan === 'pro' ? PRICING.PRO.price : PRICING.LITE.price;
+    if (upiId && upiId.trim() !== '') {
+      return `upi://pay?pa=${encodeURIComponent(upiId)}&pn=PortfolioBot&am=${price}&cu=INR&tn=Portfolio_${plan}`;
+    }
     return `https://rzp.io/payment-link-placeholder?plan=${plan}&user=${userId}`;
   }
 }

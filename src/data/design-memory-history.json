@@ -1,0 +1,2271 @@
+[
+  {
+    "generationId": "dna_1787453939665_nx4tz",
+    "timestamp": 1787453939667,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "Sora",
+      "pairingKey": "Space Grotesk + Sora"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "neo-brutalist-3d",
+    "informationArchitecture": [
+      "intro",
+      "projects",
+      "experience",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787453953582_kc954",
+    "timestamp": 1787453954008,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Space Mono",
+      "body": "Geist",
+      "pairingKey": "Space Mono + Geist"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787453959183_hmnab",
+    "timestamp": 1787453960324,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Archivo",
+      "body": "Space Grotesk",
+      "pairingKey": "Archivo + Space Grotesk"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "hero",
+      "about",
+      "skills",
+      "projects",
+      "testimonials",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787453974501_74xjr",
+    "timestamp": 1787453975671,
+    "creativeMode": "Neo-Brutalist",
+    "creativeDirection": "Neo-Brutalist Pop Studio • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Bebas Neue",
+      "body": "DM Sans",
+      "pairingKey": "Bebas Neue + DM Sans"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787453986429_kkxc3",
+    "timestamp": 1787453986789,
+    "creativeMode": "Terminal",
+    "creativeDirection": "Cyberpunk Terminal OS & Matrix Grid • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "JetBrains Mono",
+      "body": "IBM Plex Sans",
+      "pairingKey": "JetBrains Mono + IBM Plex Sans"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "mechanical-cli",
+    "threeDStyle": "procedural-terrain-matrix",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787454560184_n06me",
+    "timestamp": 1787454560187,
+    "creativeMode": "Luxury",
+    "creativeDirection": "Luxury Architectural Atelier • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Cormorant Garamond",
+      "body": "Montserrat",
+      "pairingKey": "Cormorant Garamond + Montserrat"
+    },
+    "colorSystem": {
+      "id": "sunset-amber-charcoal",
+      "name": "Sunset Amber & Obsidian Charcoal",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#0c0a09",
+      "primary": "#f59e0b",
+      "secondary": "#ef4444",
+      "accent": "#10b981"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787454571234_vg8sv",
+    "timestamp": 1787454571962,
+    "creativeMode": "Neo-Brutalist",
+    "creativeDirection": "Neo-Brutalist Pop Studio • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "pairingKey": "Fraunces + Outfit"
+    },
+    "colorSystem": {
+      "id": "neo-brutalist-pop",
+      "name": "Neo-Brutalist Pop Pink & Cyber Yellow",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fffdf5",
+      "primary": "#4f46e5",
+      "secondary": "#ec4899",
+      "accent": "#fde047"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787454581211_58kyi",
+    "timestamp": 1787454583505,
+    "creativeMode": "Terminal",
+    "creativeDirection": "Cyberpunk Terminal OS & Matrix Grid • Abdul Aziz Nooruddin",
+    "fonts": {
+      "heading": "Fira Code",
+      "body": "Fira Sans",
+      "pairingKey": "Fira Code + Fira Sans"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "mechanical-cli",
+    "threeDStyle": "procedural-terrain-matrix",
+    "layoutArchitecture": "terminal-3d-matrix",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ]
+  },
+  {
+    "generationId": "dna_1787455054601_xdxyu",
+    "timestamp": 1787455054603,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Syne",
+      "body": "Inter",
+      "pairingKey": "Syne + Inter"
+    },
+    "colorSystem": {
+      "id": "swiss-crisp-white",
+      "name": "Swiss Architectural Clean White",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#ffffff",
+      "primary": "#0f172a",
+      "secondary": "#2563eb",
+      "accent": "#059669"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "hero",
+      "projects",
+      "case-studies",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455054750_3td1g",
+    "timestamp": 1787455055160,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Unbounded",
+      "body": "Urbanist",
+      "pairingKey": "Unbounded + Urbanist"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "intro",
+      "projects",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455055936_bchbs",
+    "timestamp": 1787455056010,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "Space Mono",
+      "body": "Geist",
+      "pairingKey": "Space Mono + Geist"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "spatial-3d-gallery"
+  },
+  {
+    "generationId": "dna_1787455056305_199j1",
+    "timestamp": 1787455056306,
+    "creativeMode": "Japanese Minimal",
+    "creativeDirection": "Japanese Wabi-Sabi Minimalism • Alex Rivera",
+    "fonts": {
+      "heading": "Libre Baskerville",
+      "body": "Figtree",
+      "pairingKey": "Libre Baskerville + Figtree"
+    },
+    "colorSystem": {
+      "id": "japanese-wabi-cream",
+      "name": "Japanese Wabi-Sabi Cream & Sumi Ink",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#f9f6f0",
+      "primary": "#1c1b18",
+      "secondary": "#8c4830",
+      "accent": "#5a6b5c"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455056527_kdepp",
+    "timestamp": 1787455056859,
+    "creativeMode": "Terminal",
+    "creativeDirection": "Cyberpunk Terminal OS & Matrix Grid • Alex Rivera",
+    "fonts": {
+      "heading": "Instrument Serif",
+      "body": "Manrope",
+      "pairingKey": "Instrument Serif + Manrope"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "mechanical-cli",
+    "threeDStyle": "procedural-terrain-matrix",
+    "layoutArchitecture": "terminal-matrix-os",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "interactive-map"
+  },
+  {
+    "generationId": "dna_1787455057006_4zxws",
+    "timestamp": 1787455057153,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Alex Rivera",
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "Sora",
+      "pairingKey": "Space Grotesk + Sora"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455057374_lfd2d",
+    "timestamp": 1787455057448,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Epilogue",
+      "body": "Mulish",
+      "pairingKey": "Epilogue + Mulish"
+    },
+    "colorSystem": {
+      "id": "luxury-gold-champagne",
+      "name": "Haute Horlogerie Black & Champagne Gold",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#09090b",
+      "primary": "#d4af37",
+      "secondary": "#f3e5ab",
+      "accent": "#e5c158"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "intro",
+      "projects",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "masonry-art-wall"
+  },
+  {
+    "generationId": "dna_1787455058191_ilgub",
+    "timestamp": 1787455058266,
+    "creativeMode": "Neo-Brutalist",
+    "creativeDirection": "Neo-Brutalist Pop Studio • Alex Rivera",
+    "fonts": {
+      "heading": "Bricolage Grotesque",
+      "body": "Public Sans",
+      "pairingKey": "Bricolage Grotesque + Public Sans"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "interactive-map"
+  },
+  {
+    "generationId": "dna_1787455058340_pdi34",
+    "timestamp": 1787455058818,
+    "creativeMode": "Japanese Minimal",
+    "creativeDirection": "Japanese Wabi-Sabi Minimalism • Alex Rivera",
+    "fonts": {
+      "heading": "Shippori Mincho",
+      "body": "Zen Kaku Gothic New",
+      "pairingKey": "Shippori Mincho + Zen Kaku Gothic New"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455059300_784eg",
+    "timestamp": 1787455059373,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "JetBrains Mono",
+      "body": "IBM Plex Sans",
+      "pairingKey": "JetBrains Mono + IBM Plex Sans"
+    },
+    "colorSystem": {
+      "id": "neo-brutalist-pop",
+      "name": "Neo-Brutalist Pop Pink & Cyber Yellow",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fffdf5",
+      "primary": "#4f46e5",
+      "secondary": "#ec4899",
+      "accent": "#fde047"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "figma-community-master",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455059929_nh8bl",
+    "timestamp": 1787455059929,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Bodoni Moda",
+      "body": "Urbanist",
+      "pairingKey": "Bodoni Moda + Urbanist"
+    },
+    "colorSystem": {
+      "id": "japanese-wabi-cream",
+      "name": "Japanese Wabi-Sabi Cream & Sumi Ink",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#f9f6f0",
+      "primary": "#1c1b18",
+      "secondary": "#8c4830",
+      "accent": "#5a6b5c"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "terminal-matrix-os",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455060076_g4tps",
+    "timestamp": 1787455060224,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Syne",
+      "body": "Inter",
+      "pairingKey": "Syne + Inter"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455060702_k2off",
+    "timestamp": 1787455060776,
+    "creativeMode": "Luxury",
+    "creativeDirection": "Luxury Architectural Atelier • Alex Rivera",
+    "fonts": {
+      "heading": "Cormorant Garamond",
+      "body": "Montserrat",
+      "pairingKey": "Cormorant Garamond + Montserrat"
+    },
+    "colorSystem": {
+      "id": "sunset-amber-charcoal",
+      "name": "Sunset Amber & Obsidian Charcoal",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#0c0a09",
+      "primary": "#f59e0b",
+      "secondary": "#ef4444",
+      "accent": "#10b981"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455061112_6oef1",
+    "timestamp": 1787455061589,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "Bebas Neue",
+      "body": "DM Sans",
+      "pairingKey": "Bebas Neue + DM Sans"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "spatial-3d-gallery"
+  },
+  {
+    "generationId": "dna_1787455061883_rfq5l",
+    "timestamp": 1787455061884,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Alex Rivera",
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "Sora",
+      "pairingKey": "Space Grotesk + Sora"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455061957_qyrt1",
+    "timestamp": 1787455062179,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Epilogue",
+      "body": "Mulish",
+      "pairingKey": "Epilogue + Mulish"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "figma-community-master",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455062513_5snz5",
+    "timestamp": 1787455062996,
+    "creativeMode": "Editorial",
+    "creativeDirection": "High-Fashion Editorial Magazine • Alex Rivera",
+    "fonts": {
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "pairingKey": "Fraunces + Outfit"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455063474_umcjx",
+    "timestamp": 1787455063548,
+    "creativeMode": "Editorial",
+    "creativeDirection": "High-Fashion Editorial Magazine • Alex Rivera",
+    "fonts": {
+      "heading": "Instrument Serif",
+      "body": "Manrope",
+      "pairingKey": "Instrument Serif + Manrope"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "fullscreen-case-study"
+  },
+  {
+    "generationId": "dna_1787455064118_a1d0e",
+    "timestamp": 1787455064118,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "Cinzel",
+      "body": "Plus Jakarta Sans",
+      "pairingKey": "Cinzel + Plus Jakarta Sans"
+    },
+    "colorSystem": {
+      "id": "neo-brutalist-pop",
+      "name": "Neo-Brutalist Pop Pink & Cyber Yellow",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fffdf5",
+      "primary": "#4f46e5",
+      "secondary": "#ec4899",
+      "accent": "#fde047"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "hero",
+      "projects",
+      "case-studies",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "terminal-cli-stream"
+  },
+  {
+    "generationId": "dna_1787455064353_8uj7c",
+    "timestamp": 1787455064428,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Fira Code",
+      "body": "Fira Sans",
+      "pairingKey": "Fira Code + Fira Sans"
+    },
+    "colorSystem": {
+      "id": "luxury-gold-champagne",
+      "name": "Haute Horlogerie Black & Champagne Gold",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#09090b",
+      "primary": "#d4af37",
+      "secondary": "#f3e5ab",
+      "accent": "#e5c158"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "figma-community-master",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "terminal-cli-stream"
+  },
+  {
+    "generationId": "dna_1787455104166_ce7a4",
+    "timestamp": 1787455104907,
+    "creativeMode": "Terminal",
+    "creativeDirection": "Cyberpunk Terminal OS & Matrix Grid • Alex Rivera",
+    "fonts": {
+      "heading": "JetBrains Mono",
+      "body": "IBM Plex Sans",
+      "pairingKey": "JetBrains Mono + IBM Plex Sans"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "mechanical-cli",
+    "threeDStyle": "procedural-terrain-matrix",
+    "layoutArchitecture": "terminal-matrix-os",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455105130_ayprc",
+    "timestamp": 1787455105205,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Bricolage Grotesque",
+      "body": "Public Sans",
+      "pairingKey": "Bricolage Grotesque + Public Sans"
+    },
+    "colorSystem": {
+      "id": "swiss-crisp-white",
+      "name": "Swiss Architectural Clean White",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#ffffff",
+      "primary": "#0f172a",
+      "secondary": "#2563eb",
+      "accent": "#059669"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "hero",
+      "about",
+      "skills",
+      "projects",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455105426_nf8am",
+    "timestamp": 1787455105501,
+    "creativeMode": "Luxury",
+    "creativeDirection": "Luxury Architectural Atelier • Alex Rivera",
+    "fonts": {
+      "heading": "Bodoni Moda",
+      "body": "Urbanist",
+      "pairingKey": "Bodoni Moda + Urbanist"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455106060_ame0j",
+    "timestamp": 1787455106061,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Libre Baskerville",
+      "body": "Figtree",
+      "pairingKey": "Libre Baskerville + Figtree"
+    },
+    "colorSystem": {
+      "id": "japanese-wabi-cream",
+      "name": "Japanese Wabi-Sabi Cream & Sumi Ink",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#f9f6f0",
+      "primary": "#1c1b18",
+      "secondary": "#8c4830",
+      "accent": "#5a6b5c"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "intro",
+      "projects",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "interactive-map"
+  },
+  {
+    "generationId": "dna_1787455106466_8zd8r",
+    "timestamp": 1787455106614,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Alex Rivera",
+    "fonts": {
+      "heading": "Syne",
+      "body": "Inter",
+      "pairingKey": "Syne + Inter"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "masonry-art-wall"
+  },
+  {
+    "generationId": "dna_1787455106687_bev4i",
+    "timestamp": 1787455106910,
+    "creativeMode": "Japanese Minimal",
+    "creativeDirection": "Japanese Wabi-Sabi Minimalism • Alex Rivera",
+    "fonts": {
+      "heading": "Shippori Mincho",
+      "body": "Zen Kaku Gothic New",
+      "pairingKey": "Shippori Mincho + Zen Kaku Gothic New"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455107390_2mzth",
+    "timestamp": 1787455107464,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "DM Serif Display",
+      "body": "Work Sans",
+      "pairingKey": "DM Serif Display + Work Sans"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "spatial-3d-gallery"
+  },
+  {
+    "generationId": "dna_1787455107872_r7mw2",
+    "timestamp": 1787455108020,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Cinzel",
+      "body": "Plus Jakarta Sans",
+      "pairingKey": "Cinzel + Plus Jakarta Sans"
+    },
+    "colorSystem": {
+      "id": "acid-lime-industrial",
+      "name": "Industrial Acid Lime & Heavy Carbon",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fbfbfb",
+      "primary": "#84cc16",
+      "secondary": "#18181b",
+      "accent": "#f97316"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "figma-community-master",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "masonry-art-wall"
+  },
+  {
+    "generationId": "dna_1787455108168_n0n9u",
+    "timestamp": 1787455108575,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Instrument Serif",
+      "body": "Manrope",
+      "pairingKey": "Instrument Serif + Manrope"
+    },
+    "colorSystem": {
+      "id": "sunset-amber-charcoal",
+      "name": "Sunset Amber & Obsidian Charcoal",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#0c0a09",
+      "primary": "#f59e0b",
+      "secondary": "#ef4444",
+      "accent": "#10b981"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455109139_wul8v",
+    "timestamp": 1787455109139,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "Unbounded",
+      "body": "Urbanist",
+      "pairingKey": "Unbounded + Urbanist"
+    },
+    "colorSystem": {
+      "id": "acid-lime-industrial",
+      "name": "Industrial Acid Lime & Heavy Carbon",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fbfbfb",
+      "primary": "#84cc16",
+      "secondary": "#18181b",
+      "accent": "#f97316"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "terminal-matrix-os",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "fullscreen-case-study"
+  },
+  {
+    "generationId": "dna_1787455109360_ht1hy",
+    "timestamp": 1787455109691,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Alex Rivera",
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "Sora",
+      "pairingKey": "Space Grotesk + Sora"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455109840_z5kl5",
+    "timestamp": 1787455110249,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Bricolage Grotesque",
+      "body": "Public Sans",
+      "pairingKey": "Bricolage Grotesque + Public Sans"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455110397_4j5p3",
+    "timestamp": 1787455110545,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Cormorant Garamond",
+      "body": "Montserrat",
+      "pairingKey": "Cormorant Garamond + Montserrat"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455110619_5a2ds",
+    "timestamp": 1787455110841,
+    "creativeMode": "Neo-Brutalist",
+    "creativeDirection": "Neo-Brutalist Pop Studio • Alex Rivera",
+    "fonts": {
+      "heading": "Archivo",
+      "body": "Space Grotesk",
+      "pairingKey": "Archivo + Space Grotesk"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455111317_lak8j",
+    "timestamp": 1787455111654,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Bebas Neue",
+      "body": "DM Sans",
+      "pairingKey": "Bebas Neue + DM Sans"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455111877_yjrsi",
+    "timestamp": 1787455111951,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Syne",
+      "body": "Inter",
+      "pairingKey": "Syne + Inter"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "video-reel"
+  },
+  {
+    "generationId": "dna_1787455112246_ruzab",
+    "timestamp": 1787455112246,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "DM Serif Display",
+      "body": "Work Sans",
+      "pairingKey": "DM Serif Display + Work Sans"
+    },
+    "colorSystem": {
+      "id": "luxury-gold-champagne",
+      "name": "Haute Horlogerie Black & Champagne Gold",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#09090b",
+      "primary": "#d4af37",
+      "secondary": "#f3e5ab",
+      "accent": "#e5c158"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "swiss-grid-minimal",
+    "informationArchitecture": [
+      "hero",
+      "about",
+      "skills",
+      "projects",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "spatial-3d-gallery"
+  },
+  {
+    "generationId": "dna_1787455112581_o9ky6",
+    "timestamp": 1787455113613,
+    "creativeMode": "Editorial",
+    "creativeDirection": "High-Fashion Editorial Magazine • Alex Rivera",
+    "fonts": {
+      "heading": "Fraunces",
+      "body": "Outfit",
+      "pairingKey": "Fraunces + Outfit"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "interactive-map"
+  },
+  {
+    "generationId": "dna_1787455113762_orkjh",
+    "timestamp": 1787455113915,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Alex Rivera",
+    "fonts": {
+      "heading": "Unbounded",
+      "body": "Urbanist",
+      "pairingKey": "Unbounded + Urbanist"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "spatial-3d-gallery"
+  },
+  {
+    "generationId": "dna_1787455114214_bfavf",
+    "timestamp": 1787455114214,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Epilogue",
+      "body": "Mulish",
+      "pairingKey": "Epilogue + Mulish"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "image-first-gallery"
+  },
+  {
+    "generationId": "dna_1787455120319_6wi5y",
+    "timestamp": 1787455120837,
+    "creativeMode": "Neo-Brutalist",
+    "creativeDirection": "Neo-Brutalist Pop Studio • Alex Rivera",
+    "fonts": {
+      "heading": "Bricolage Grotesque",
+      "body": "Public Sans",
+      "pairingKey": "Bricolage Grotesque + Public Sans"
+    },
+    "colorSystem": {
+      "id": "neo-brutalist-pop",
+      "name": "Neo-Brutalist Pop Pink & Cyber Yellow",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fffdf5",
+      "primary": "#4f46e5",
+      "secondary": "#ec4899",
+      "accent": "#fde047"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "neo-brutalist-split",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455120915_97hj1",
+    "timestamp": 1787455121408,
+    "creativeMode": "Swiss",
+    "creativeDirection": "Swiss Modernism 2.0 • Alex Rivera",
+    "fonts": {
+      "heading": "Cormorant Garamond",
+      "body": "Montserrat",
+      "pairingKey": "Cormorant Garamond + Montserrat"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "terminal-matrix-os",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "masonry-art-wall"
+  },
+  {
+    "generationId": "dna_1787455122235_nhir9",
+    "timestamp": 1787455122235,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Alex Rivera",
+    "fonts": {
+      "heading": "Shippori Mincho",
+      "body": "Zen Kaku Gothic New",
+      "pairingKey": "Shippori Mincho + Zen Kaku Gothic New"
+    },
+    "colorSystem": {
+      "id": "acid-lime-industrial",
+      "name": "Industrial Acid Lime & Heavy Carbon",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fbfbfb",
+      "primary": "#84cc16",
+      "secondary": "#18181b",
+      "accent": "#f97316"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "figma-community-master",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "interactive-map"
+  },
+  {
+    "generationId": "dna_1787455122384_mzs9n",
+    "timestamp": 1787455122533,
+    "creativeMode": "Japanese Minimal",
+    "creativeDirection": "Japanese Wabi-Sabi Minimalism • Alex Rivera",
+    "fonts": {
+      "heading": "Libre Baskerville",
+      "body": "Figtree",
+      "pairingKey": "Libre Baskerville + Figtree"
+    },
+    "colorSystem": {
+      "id": "haute-monochrome",
+      "name": "Haute Couture High-Fashion Monochrome",
+      "theme": "light",
+      "family": "crisp-swiss-white",
+      "background": "#fafafa",
+      "primary": "#18181b",
+      "secondary": "#52525b",
+      "accent": "#000000"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455122607_6ck6x",
+    "timestamp": 1787455122832,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Syne",
+      "body": "Inter",
+      "pairingKey": "Syne + Inter"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "asymmetric-editorial",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455123649_zsgrh",
+    "timestamp": 1787455123650,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Alex Rivera",
+    "fonts": {
+      "heading": "Archivo",
+      "body": "Space Grotesk",
+      "pairingKey": "Archivo + Space Grotesk"
+    },
+    "colorSystem": {
+      "id": "nordic-frost-slate",
+      "name": "Nordic Frost Slate & Ice Azure",
+      "theme": "light",
+      "family": "nordic-ice-slate",
+      "background": "#f0f4f8",
+      "primary": "#0284c7",
+      "secondary": "#475569",
+      "accent": "#0d9488"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "project-orbit"
+  },
+  {
+    "generationId": "dna_1787455123724_yp7kt",
+    "timestamp": 1787455123945,
+    "creativeMode": "Cinematic",
+    "creativeDirection": "Cinematic Visual Monograph • Alex Rivera",
+    "fonts": {
+      "heading": "Instrument Serif",
+      "body": "Manrope",
+      "pairingKey": "Instrument Serif + Manrope"
+    },
+    "colorSystem": {
+      "id": "sunset-amber-charcoal",
+      "name": "Sunset Amber & Obsidian Charcoal",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#0c0a09",
+      "primary": "#f59e0b",
+      "secondary": "#ef4444",
+      "accent": "#10b981"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "wireframe-dodecahedron-core",
+    "layoutArchitecture": "bento-canvas-studio",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "editorial-magazine"
+  },
+  {
+    "generationId": "dna_1787455125980_w8wwj",
+    "timestamp": 1787455126372,
+    "creativeMode": "Futuristic",
+    "creativeDirection": "VisionOS Spatial 3D Interface • Abdulaziz Dev",
+    "fonts": {
+      "heading": "Space Grotesk",
+      "body": "Sora",
+      "pairingKey": "Space Grotesk + Sora"
+    },
+    "colorSystem": {
+      "id": "cyberpunk-matrix-emerald",
+      "name": "Matrix Cyberpunk & Phosphor Green",
+      "theme": "dark",
+      "family": "cyber-emerald",
+      "background": "#090c0a",
+      "primary": "#22c55e",
+      "secondary": "#10b981",
+      "accent": "#4ade80"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "scroll-driven-parallax",
+    "threeDStyle": "interactive-torus-refraction",
+    "layoutArchitecture": "spatial-vision-3d",
+    "informationArchitecture": [
+      "intro",
+      "projects",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "split-screen-story"
+  },
+  {
+    "generationId": "dna_1787455128454_42ekv",
+    "timestamp": 1787455128455,
+    "creativeMode": "Luxury",
+    "creativeDirection": "Luxury Architectural Atelier • Abdulaziz Dev",
+    "fonts": {
+      "heading": "Bodoni Moda",
+      "body": "Urbanist",
+      "pairingKey": "Bodoni Moda + Urbanist"
+    },
+    "colorSystem": {
+      "id": "sunset-amber-charcoal",
+      "name": "Sunset Amber & Obsidian Charcoal",
+      "theme": "dark",
+      "family": "warm-luxury-gold",
+      "background": "#0c0a09",
+      "primary": "#f59e0b",
+      "secondary": "#ef4444",
+      "accent": "#10b981"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "cinematic-fade",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "kinetic-3d-glass",
+    "informationArchitecture": [
+      "editorial-statement",
+      "selected-work",
+      "archive",
+      "about",
+      "contact"
+    ],
+    "projectPresentation": "stacked-posters"
+  },
+  {
+    "generationId": "dna_1787455129239_zemkl",
+    "timestamp": 1787455130750,
+    "creativeMode": "Japanese Minimal",
+    "creativeDirection": "Japanese Wabi-Sabi Minimalism • Abdulaziz Dev",
+    "fonts": {
+      "heading": "Noto Serif JP",
+      "body": "Plus Jakarta Sans",
+      "pairingKey": "Noto Serif JP + Plus Jakarta Sans"
+    },
+    "colorSystem": {
+      "id": "editorial-terracotta",
+      "name": "Editorial Terracotta & Sage Olive",
+      "theme": "light",
+      "family": "warm-paper-zen",
+      "background": "#fcf9f5",
+      "primary": "#9a3412",
+      "secondary": "#047857",
+      "accent": "#b45309"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "paper",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "terminal-3d-matrix",
+    "informationArchitecture": [
+      "minimal-index",
+      "monograph",
+      "experience",
+      "contact"
+    ],
+    "projectPresentation": "terminal-cli-stream"
+  },
+  {
+    "generationId": "dna_1787455132317_mzxu5",
+    "timestamp": 1787455132644,
+    "creativeMode": "Playful",
+    "creativeDirection": "Playful Kinetic Sandbox • Abdulaziz Dev",
+    "fonts": {
+      "heading": "Epilogue",
+      "body": "Mulish",
+      "pairingKey": "Epilogue + Mulish"
+    },
+    "colorSystem": {
+      "id": "tokyo-night-obsidian",
+      "name": "Tokyo Night Obsidian & Electric Indigo",
+      "theme": "dark",
+      "family": "cyber-indigo-neon",
+      "background": "#1a1b26",
+      "primary": "#7aa2f7",
+      "secondary": "#bb9af7",
+      "accent": "#7dcfff"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "thick-solid",
+      "shadowStyle": "hard-offset",
+      "radiusStyle": "sharp"
+    },
+    "motionLanguage": "elastic-physics",
+    "threeDStyle": "none-pure-2d",
+    "layoutArchitecture": "neo-brutalist-3d",
+    "informationArchitecture": [
+      "figma-nav",
+      "header-hero",
+      "logo-bar",
+      "skills-bento",
+      "gallery",
+      "testimonials",
+      "contact"
+    ],
+    "projectPresentation": "minimalist-art-direction"
+  },
+  {
+    "generationId": "dna_1787455134772_mbdxz",
+    "timestamp": 1787455135180,
+    "creativeMode": "Experimental",
+    "creativeDirection": "Avant-Garde Digital Gallery • Abdulaziz Dev",
+    "fonts": {
+      "heading": "Cormorant Garamond",
+      "body": "Montserrat",
+      "pairingKey": "Cormorant Garamond + Montserrat"
+    },
+    "colorSystem": {
+      "id": "acid-lime-industrial",
+      "name": "Industrial Acid Lime & Heavy Carbon",
+      "theme": "neo-brutalist",
+      "family": "pop-brutalist",
+      "background": "#fbfbfb",
+      "primary": "#84cc16",
+      "secondary": "#18181b",
+      "accent": "#f97316"
+    },
+    "visualLanguage": {
+      "surfaceStyle": "glass",
+      "borderStyle": "hairline",
+      "shadowStyle": "soft-ambient",
+      "radiusStyle": "smooth"
+    },
+    "motionLanguage": "smooth-inertia",
+    "threeDStyle": "gyroscopic-orbital-rings",
+    "layoutArchitecture": "editorial-3d-minimal",
+    "informationArchitecture": [
+      "terminal-cli",
+      "commands",
+      "projects",
+      "contact"
+    ],
+    "projectPresentation": "stacked-posters"
+  }
+]

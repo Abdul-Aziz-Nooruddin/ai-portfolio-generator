@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elena Rostova — Spatial Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #0284c7;
+      --border: #cbd5e1;
+      --card-bg: #e2e8f0;
+      --font-heading: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius: 20px;
+      --fluid-h1: clamp(2.4rem, 6vw, 4.5rem);
+      --fluid-h2: clamp(1.8rem, 3.5vw, 2.8rem);
+      --fluid-body: clamp(0.95rem, 1.2vw, 1.15rem);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); line-height: 1.6; padding: 60px 24px; position: relative; min-height: 100vh; }
+    .spatial-wrap { max-width: 1250px; margin: 0 auto; position: relative; z-index: 2; }
+    .spatial-hero { min-height: 60vh; display: flex; flex-direction: column; justify-content: center; margin-bottom: 60px; }
+  </style>
+</head>
+<body>
+  
+    <!-- BESPOKE 3D WEBGL CANVAS BACKGROUND -->
+    <canvas id="canvas3d-scene" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.85;"></canvas>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+      (function init3D() {
+        const canvas = document.getElementById('canvas3d-scene');
+        if (!canvas || typeof THREE === 'undefined') return;
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
+
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const primaryCol = new THREE.Color('#0284c7');
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const sceneType = 'interactive-torus-refraction';
+
+        // 1. Torus Knot / Glass Refraction
+        if (sceneType === 'interactive-torus-refraction' || sceneType === 'glass-sculpture') {
+          const geom = new THREE.TorusKnotGeometry(9, 2.8, 120, 16);
+          const mat = new THREE.MeshBasicMaterial({ color: primaryCol, wireframe: true, transparent: true, opacity: 0.35 });
+          const mesh = new THREE.Mesh(geom, mat);
+          group.add(mesh);
+        }
+        // 2. Neural Network Synapse
+        else if (sceneType === 'neural-network' || sceneType === 'constellation-graph') {
+          const count = 75;
+          const pointsGeom = new THREE.BufferGeometry();
+          const positions = new Float32Array(count * 3);
+          for (let i = 0; i < count * 3; i += 3) {
+            positions[i] = (Math.random() - 0.5) * 60;
+            positions[i + 1] = (Math.random() - 0.5) * 60;
+            positions[i + 2] = (Math.random() - 0.5) * 30;
+          }
+          pointsGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+          const pMat = new THREE.PointsMaterial({ color: primaryCol, size: 1.2, transparent: true, opacity: 0.8 });
+          const points = new THREE.Points(pointsGeom, pMat);
+          group.add(points);
+
+          const lineMat = new THREE.LineBasicMaterial({ color: primaryCol, transparent: true, opacity: 0.15 });
+          const linesGeom = new THREE.BufferGeometry();
+          const linePositions = [];
+          for (let i = 0; i < count; i++) {
+            for (let j = i + 1; j < count; j++) {
+              const dx = positions[i*3] - positions[j*3];
+              const dy = positions[i*3+1] - positions[j*3+1];
+              const dz = positions[i*3+2] - positions[j*3+2];
+              const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
+              if (dist < 15) {
+                linePositions.push(positions[i*3], positions[i*3+1], positions[i*3+2]);
+                linePositions.push(positions[j*3], positions[j*3+1], positions[j*3+2]);
+              }
+            }
+          }
+          linesGeom.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+          const lines = new THREE.LineSegments(linesGeom, lineMat);
+          group.add(lines);
+        }
+        // 3. Procedural Terrain / Wireframe Grid
+        else if (sceneType === 'procedural-terrain' || sceneType === 'wireframe-architecture') {
+          const planeGeom = new THREE.PlaneGeometry(80, 80, 24, 24);
+          const pos = planeGeom.attributes.position;
+          for (let i = 0; i < pos.count; i++) {
+            const u = pos.getX(i);
+            const v = pos.getY(i);
+            pos.setZ(i, Math.sin(u * 0.15) * Math.cos(v * 0.15) * 4);
+          }
+          planeGeom.computeVertexNormals();
+          const planeMat = new THREE.MeshBasicMaterial({ color: primaryCol, wireframe: true, transparent: true, opacity: 0.22 });
+          const plane = new THREE.Mesh(planeGeom, planeMat);
+          plane.rotation.x = -Math.PI / 3;
+          plane.position.y = -10;
+          group.add(plane);
+        }
+        // 4. Abstract Platonian Geometries (Octahedrons, Icosahedrons)
+        else if (sceneType === 'abstract-geometry' || sceneType === 'orbital-system') {
+          const geom1 = new THREE.IcosahedronGeometry(7, 1);
+          const mat1 = new THREE.MeshBasicMaterial({ color: primaryCol, wireframe: true, transparent: true, opacity: 0.35 });
+          const mesh1 = new THREE.Mesh(geom1, mat1);
+          group.add(mesh1);
+
+          const geom2 = new THREE.OctahedronGeometry(13, 0);
+          const mat2 = new THREE.MeshBasicMaterial({ color: primaryCol, wireframe: true, transparent: true, opacity: 0.15 });
+          const mesh2 = new THREE.Mesh(geom2, mat2);
+          group.add(mesh2);
+        }
+        // 5. Default Particle Dust Field / LiDAR / Noise Field Flow
+        else {
+          const pCount = 180;
+          const pGeom = new THREE.BufferGeometry();
+          const pPos = new Float32Array(pCount * 3);
+          for (let i = 0; i < pCount * 3; i += 3) {
+            pPos[i] = (Math.random() - 0.5) * 80;
+            pPos[i + 1] = (Math.random() - 0.5) * 80;
+            pPos[i + 2] = (Math.random() - 0.5) * 40;
+          }
+          pGeom.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+          const pMat = new THREE.PointsMaterial({ color: primaryCol, size: 1.5, transparent: true, opacity: 0.55 });
+          const pField = new THREE.Points(pGeom, pMat);
+          group.add(pField);
+        }
+
+        let mouseX = 0, mouseY = 0;
+        let targetX = 0, targetY = 0;
+        window.addEventListener('mousemove', (e) => {
+          mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+          mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        function animate() {
+          requestAnimationFrame(animate);
+          targetX += (mouseX - targetX) * 0.05;
+          targetY += (mouseY - targetY) * 0.05;
+
+          group.rotation.x += 0.002 + targetY * 0.01;
+          group.rotation.y += 0.003 + targetX * 0.01;
+          renderer.render(scene, camera);
+        }
+        animate();
+      })();
+    </script>
+  <div class="spatial-wrap">
+    <header class="spatial-hero">
+      <div style="font-family: monospace; font-size: 0.9rem; color: var(--primary); margin-bottom: 16px;">✦ SPATIAL 3D COMPUTING PLATFORM</div>
+      <h1 style="font-family: var(--font-heading); font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 900; line-height: 1.05;">Elena Rostova</h1>
+      <div style="font-size: 1.4rem; color: var(--primary); font-family: monospace; margin: 16px 0;">// Full-Stack Web Architect</div>
+      <p style="font-size: 1.25rem; color: var(--muted); max-width: 750px; line-height: 1.8;">Crafting intelligent cloud platforms and interactive UI experiences.</p>
+    </header>
+
+    <main>
+      <section style="margin-bottom: 80px;">
+        <h2 style="font-family: var(--font-heading); font-size: 2rem; margin-bottom: 32px;">Orbital Deployments & Systems</h2>
+        
+      <section id="projects" class="section-presentation pres-masonry" style="padding: 100px 0;">
+        <div style="margin-bottom: 50px;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.2em;">MASONRY ARCHIVE</span>
+          <h2 style="font-family: var(--font-heading); font-size: 3rem; font-weight: 800; margin-top: 6px;">Engineered Works</h2>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;">
+          
+            <div style="background: rgba(255,255,255,0.03); border: var(--border-width, 1px) solid var(--border, rgba(255,255,255,0.1)); border-radius: var(--radius, 14px); padding: 28px; display: flex; flex-direction: column; justify-content: space-between;">
+              <div style="min-height: 260px; border-radius: var(--radius, 8px); overflow: hidden; margin-bottom: 20px;">
+                
+      <div class="generative-project-visual" style="background: radial-gradient(circle at 30% 30%, hsla(210, 85%, 60%, 0.18), transparent 70%), radial-gradient(circle at 70% 70%, hsla(255, 90%, 55%, 0.12), transparent 70%), #0c0d12; border-radius: inherit; width: 100%; height: 100%; min-height: 240px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 24px; box-sizing: border-box;">
+        <div style="display: flex; justify-content: space-between; align-items: center; z-index: 2;">
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; letter-spacing: 0.15em; color: hsla(210, 90%, 75%, 0.9); text-transform: uppercase;">FIG. 01 // ARCHITECTURE</span>
+          <div style="display: flex; gap: 6px;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(210, 80%, 65%, 0.8);"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: hsla(255, 80%, 65%, 0.4);"></span>
+          </div>
+        </div>
+
+        <svg viewBox="0 0 400 200" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; z-index: 1;" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid_0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsla(210, 70%, 60%, 0.3)" stroke-width="0.75"/>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#grid_0)" />
+          <circle cx="150" cy="100" r="45" fill="none" stroke="hsla(210, 80%, 65%, 0.6)" stroke-width="1.5" stroke-dasharray="4 6"/>
+          <path d="M 40 60 Q 200 180 360 90" fill="none" stroke="hsla(255, 90%, 65%, 0.8)" stroke-width="2"/>
+        </svg>
+
+        <div style="z-index: 2; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div>
+            <div style="font-family: var(--font-mono, monospace); font-size: 0.68rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;">DEPLOYED TELEMETRY</div>
+            <div style="font-size: 0.95rem; font-weight: 700; color: var(--text); margin-top: 2px;">Cloud Studio Engine</div>
+          </div>
+          <span style="font-family: var(--font-mono, monospace); font-size: 0.72rem; color: hsla(210, 90%, 75%, 0.9);">STATUS: 200 OK</span>
+        </div>
+      </div>
+    
+              </div>
+              <div>
+                <div style="font-family: var(--font-mono, monospace); font-size: 0.75rem; color: var(--primary); margin-bottom: 6px;">01 // Engine & Platform</div>
+                <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 8px;">Cloud Studio Engine</h3>
+                <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px;">Next-gen cloud interface for developer productivity.</p>
+                <span style="font-family: var(--font-mono, monospace); font-size: 0.78rem; color: var(--text-muted);">React, Node.js, TypeScript, Next.js, TailwindCSS</span>
+              </div>
+            </div>
+          
+        </div>
+      </section>
+    
+      </section>
+
+      
+    </main>
+
+    <footer class="portfolio-global-footer" style="border-top: 1px solid var(--border, rgba(255,255,255,0.08)); margin-top: 60px; padding: 32px 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; font-size: 0.88rem; color: var(--muted, #94a3b8);">
+      <div style="font-family: monospace; font-size: 0.82rem; letter-spacing: 0.05em;">
+        © 2026 Elena Rostova // Full-Stack Web Architect
+      </div>
+      <div style="display: flex; align-items: center; gap: 24px;">
+        
+        
+        <a href="mailto:elena@example.com" style="color: var(--muted); text-decoration: none; font-weight: 500;">Contact</a>
+      </div>
+    </footer>
+  </div>
+
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>

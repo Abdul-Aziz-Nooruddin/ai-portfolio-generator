@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  
+  <title>Abdul Aziz Nooruddin — Computer Science (AI-ML) Undergraduate | Spatial 3D Interface</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700;800&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --surface: rgba(18, 24, 40, 0.7);
+      --primary: #0284c7;
+      --secondary: #475569;
+      --accent: #0d9488;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #cbd5e1;
+      --font-heading: 'Space Grotesk', sans-serif;
+      --font-body: 'Sora', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    #canvas3d {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0; pointer-events: none; opacity: 0.65;
+    }
+    .spatial-container {
+      position: relative; z-index: 10; max-width: 1140px; margin: 0 auto; padding: 40px 24px 100px;
+    }
+    .glass-card {
+      background: var(--surface);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
+    }
+    .glass-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+
+    /* Floating Capsule Dock Nav */
+    .spatial-dock {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(24px);
+      border: 1px solid var(--border); border-radius: 9999px; padding: 12px 28px;
+      margin-bottom: 60px;
+    }
+    .dock-logo { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .dock-links { display: flex; gap: 20px; align-items: center; }
+    .dock-links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .dock-links a:hover { color: var(--text); }
+    .dock-cta { background: var(--primary); color: #000 !important; font-weight: 600; padding: 8px 18px; border-radius: 9999px; }
+
+    /* Spatial Hero */
+    .spatial-hero { margin-bottom: 70px; text-align: left; }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem;
+      background: rgba(74, 222, 128, 0.1); color: var(--accent); border: 1px solid rgba(74, 222, 128, 0.3);
+      padding: 6px 16px; border-radius: 9999px; margin-bottom: 24px;
+    }
+    .status-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    .spatial-title {
+      font-family: var(--font-heading); font-size: clamp(2.6rem, 5.5vw, 4.2rem); font-weight: 800;
+      line-height: 1.1; margin-bottom: 24px; max-width: 880px;
+      background: linear-gradient(135deg, #ffffff 0%, var(--primary) 60%, var(--secondary) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .spatial-tagline { font-size: 1.25rem; color: var(--text-muted); max-width: 760px; line-height: 1.7; margin-bottom: 24px; }
+    .spatial-bio { font-size: 1.05rem; color: var(--text); max-width: 760px; line-height: 1.75; margin-bottom: 36px; }
+
+    /* Headings */
+    .spatial-section-title {
+      font-family: var(--font-heading); font-size: 1.8rem; font-weight: 700; margin-bottom: 30px; margin-top: 70px;
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    /* Projects Bento Grid */
+    .bento-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;
+    }
+    .project-card { display: flex; flex-direction: column; justify-content: space-between; }
+    .project-badge { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); font-weight: 700; margin-bottom: 12px; }
+    .project-heading { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; margin-bottom: 12px; }
+    .project-body { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 20px; flex-grow: 1; }
+    .project-btn {
+      display: inline-flex; align-items: center; gap: 8px; color: var(--primary); text-decoration: none;
+      font-weight: 600; font-size: 0.9rem;
+    }
+
+    /* Career Timeline */
+    .timeline-list { display: flex; flex-direction: column; gap: 20px; }
+    .timeline-card { border-left: 3px solid var(--primary); border-radius: 0 16px 16px 0; }
+    .timeline-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 8px; }
+    .timeline-role { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; }
+    .timeline-period { font-size: 0.85rem; color: var(--primary); font-weight: 600; }
+    .timeline-company { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 12px; }
+    .timeline-desc { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+    .timeline-bullets { list-style: disc inside; color: var(--text-muted); font-size: 0.9rem; line-height: 1.7; }
+
+    /* Education & Certifications */
+    .edu-bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+
+    /* Skills Cloud */
+    .skills-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    .skill-chip {
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.2);
+      color: var(--text); padding: 8px 16px; border-radius: 9999px; font-size: 0.9rem;
+    }
+
+    /* Footer */
+    .spatial-footer {
+      margin-top: 90px; text-align: center; border-top: 1px solid var(--border); padding-top: 50px; color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas3d"></canvas>
+
+  <div class="spatial-container">
+    <nav class="spatial-dock">
+      <div class="dock-logo"><i data-lucide="box"></i> Abdul Aziz Nooruddin</div>
+      <div class="dock-links">
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank">GitHub</a>
+        
+        <a href="mailto:abdulaziznoor9876@gmail.com" class="dock-cta">Get in Touch</a>
+      </div>
+    </nav>
+
+    <main>
+      <section class="spatial-hero">
+        <div class="status-badge"><span class="status-dot"></span> Available for Strategic Architecture & Lead Roles</div>
+        <h1 class="spatial-title">Computer Science undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end. Seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</h1>
+        <p class="spatial-bio">Computer Science undergraduate with a track record of independently shipping full-stack, blockchain, and computer-vision projects end-to-end. Seeking an AI/ML Internship to apply applied ML and software engineering skills on a production team.</p>
+      </section>
+
+      <!-- 1. PROJECTS BENTO -->
+      <section>
+        <h2 class="spatial-section-title"><i data-lucide="layers"></i> Architected Systems & Projects (8)</h2>
+        <div class="bento-grid">
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">Solidity, Polygon, AlgoKit, Algorand</div>
+                <h3 class="project-heading">ConsentChain</h3>
+                <p class="project-body">Designed a dual-chain blockchain consent-management platform using Solidity on Polygon and AlgoKit on Algorand. Directed AI-assisted implementation of four smart contracts covered by 27 passing tests; advanced to Round 2 of AlgoBharat Hack Series 3.0.</p>
+              </div>
+              <div>
+                <a href="https://consent-chain-algorand.vercel.app" target="_blank" class="project-btn">Live Deployment ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">Python, OAuth, Text-to-Speech</div>
+                <h3 class="project-heading">YouTube Shorts Automation Bot</h3>
+                <p class="project-body">Built an end-to-end Python pipeline that generates and publishes YouTube Shorts automatically, chaining script generation, text-to-speech, image sourcing, and video assembly. Implemented OAuth authentication and topic deduplication for unattended posting.</p>
+              </div>
+              <div>
+                <a href="mailto:abdulaziznoor9876@gmail.com?subject=YouTube%20Shorts%20Automation%20Bot" class="project-btn">Architecture Review ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">Java, Spring Boot, MySQL, React</div>
+                <h3 class="project-heading">LMS User Management System</h3>
+                <p class="project-body">Designed and built a role-based user management REST API in Java/Spring Boot with MySQL persistence. Directed AI-assisted implementation of the React frontend; supports full CRUD across a decoupled architecture.</p>
+              </div>
+              <div>
+                <a href="mailto:abdulaziznoor9876@gmail.com?subject=LMS%20User%20Management%20System" class="project-btn">Architecture Review ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">Flutter, MediaPipe, FastAPI, Supabase, Koyeb</div>
+                <h3 class="project-heading">AirFist</h3>
+                <p class="project-body">Designed a cross-platform Flutter app enabling file transfer via MediaPipe hand-gesture recognition, with a FastAPI and Supabase backend. Directed AI-assisted implementation and deployed the full stack on Koyeb.</p>
+              </div>
+              <div>
+                <a href="mailto:abdulaziznoor9876@gmail.com?subject=AirFist" class="project-btn">Architecture Review ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">MediaPipe, Three.js, Python, aiohttp</div>
+                <h3 class="project-heading">Gesture Blocks</h3>
+                <p class="project-body">Designed a browser-based 3D block editor controlled by real-time hand gestures using MediaPipe. Directed AI-assisted implementation of the Three.js frontend and Python/aiohttp backend.</p>
+              </div>
+              <div>
+                <a href="mailto:abdulaziznoor9876@gmail.com?subject=Gesture%20Blocks" class="project-btn">Architecture Review ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">Python</div>
+                <h3 class="project-heading">Youtube Shorts Bot</h3>
+                <p class="project-body">An automated Python-based system that generates and publishes YouTube Shorts. It handles topic selection, AI script generation, image fetching, text-to-speech narration, video assembly, and automated YouTube uploading, creating an end-to-end content generation pipeline.</p>
+              </div>
+              <div>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/youtube-shorts-bot" target="_blank" class="project-btn">Live Deployment ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">HTML</div>
+                <h3 class="project-heading">Pass A Note</h3>
+                <p class="project-body">Open source software project hosted on GitHub.</p>
+              </div>
+              <div>
+                <a href="https://pass-a-note-iota.vercel.app" target="_blank" class="project-btn">Live Deployment ↗</a>
+              </div>
+            </div>
+          
+            <div class="glass-card project-card">
+              <div>
+                <div class="project-badge">CSS</div>
+                <h3 class="project-heading">Portfolio</h3>
+                <p class="project-body">🚀 Personal portfolio — AI Student, Full-Stack & Blockchain Developer. Built with HTML, CSS & JS. Features glassmorphism design, particle animations, and showcases projects on Polygon & Algorand.</p>
+              </div>
+              <div>
+                <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank" class="project-btn">Live Deployment ↗</a>
+              </div>
+            </div>
+          
+        </div>
+      </section>
+
+      <!-- 2. CAREER HISTORY -->
+      
+
+      <!-- 3. EDUCATION & CREDENTIALS -->
+      
+      <section>
+        <h2 class="spatial-section-title"><i data-lucide="graduation-cap"></i> Academic Credentials & Certifications</h2>
+        <div class="edu-bento">
+          
+            <div class="glass-card">
+              <h3 style="font-family: var(--font-heading); font-size: 1.15rem; margin-bottom: 6px;">B.Tech in Computer Science (AI & Machine Learning)</h3>
+              <div style="color: var(--primary); font-size: 0.95rem; margin-bottom: 4px;">Lords Institute of Engineering and Technology</div>
+              <div style="color: var(--text-muted); font-size: 0.85rem;">Expected 2028 • CGPA: 9.23</div>
+              
+            </div>
+          
+          
+        </div>
+      </section>
+      
+
+      <!-- 4. TECH MATRIX -->
+      <section>
+        <h2 class="spatial-section-title"><i data-lucide="cpu"></i> Technical Capabilities</h2>
+        <div class="glass-card">
+          <div class="skills-cloud">
+            <span class="skill-chip">Python</span><span class="skill-chip">Java</span><span class="skill-chip">C</span><span class="skill-chip">React</span><span class="skill-chip">Next.js</span><span class="skill-chip">FastAPI</span><span class="skill-chip">Flutter</span><span class="skill-chip">Solidity</span><span class="skill-chip">MediaPipe</span><span class="skill-chip">Three.js</span><span class="skill-chip">Supabase</span><span class="skill-chip">PostgreSQL</span><span class="skill-chip">Git</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="spatial-footer">
+      <p style="margin-bottom: 12px;">© 2026 Abdul Aziz Nooruddin • Spatial WebGL Interface</p>
+      <p style="font-size: 0.9rem;">Direct: <a href="mailto:abdulaziznoor9876@gmail.com" style="color: var(--primary); text-decoration: none;">abdulaziznoor9876@gmail.com</a> </p>
+    </footer>
+  </div>
+
+  
+
+    <!-- DIAGONAL REPEATING WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; flex-direction: column; justify-content: space-around; align-items: center; overflow: hidden; opacity: 0.22; user-select: none;">
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+      <div style="transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.2rem, 5.5vw, 4.5rem); font-weight: 900; color: #ef4444; text-transform: uppercase; letter-spacing: 0.25em; white-space: nowrap; text-shadow: 0 0 25px rgba(239,68,68,0.5);">
+        PREVIEW ONLY • @ai_portfolio_generator_bot
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: #0f172a; border: 2px solid #ef4444; box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#ef4444; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+    
+    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
+      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+
+      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
+          OFFICIAL PREVIEW TRIAL • @ai_portfolio_generator_bot
+        </div>
+        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
+          PREVIEW ONLY
+        </div>
+        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
+          2-HOUR TRIAL DEMO • UNLOCK AT @ai_portfolio_generator_bot
+        </div>
+      </div>
+
+      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
+      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
+        ✦ CREATED WITH @ai_portfolio_generator_bot • UNLOCK FULL PORTFOLIO • @ai_portfolio_generator_bot ✦
+      </div>
+    </div>
+
+    <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
+        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @ai_portfolio_generator_bot</span>
+      </div>
+      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
+        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      </a>
+    </div>
+
+    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
+    <script>
+      (function() {
+        function updateWatermarkLuminance() {
+          try {
+            var bg = window.getComputedStyle(document.body).backgroundColor;
+            var overlay = document.getElementById('preview-watermark-overlay');
+            if (!overlay) return;
+            var rgb = bg.match(/\d+/g);
+            var isLight = false;
+            if (rgb && rgb.length >= 3) {
+              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
+              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
+              isLight = luminance > 128;
+            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
+              isLight = true;
+            }
+            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var box = overlay.querySelector('.watermark-stamp-box');
+            if (box) {
+              box.style.color = targetColor;
+              box.style.borderColor = targetColor;
+            }
+            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
+            tickers.forEach(function(el) { el.style.color = targetColor; });
+          } catch (e) {}
+        }
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+        } else {
+          updateWatermarkLuminance();
+        }
+      })();
+    </script>
+    </body>
+</html>
