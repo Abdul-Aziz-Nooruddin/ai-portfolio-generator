@@ -125,8 +125,11 @@ class DesignEngine {
   }
 }
 
+const { DesignAgentOrchestrator } = require('./design-agent-orchestrator');
+
 module.exports = {
   DesignEngine,
+  DesignAgentOrchestrator,
   ContentAnalyzer,
   IAComposer,
   LayoutGrammar,

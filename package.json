@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "node src/index.js",
-    "test": "node --test src/test-design-agent-integration.js src/test-design-intelligence-benchmarks.js src/test-structural-diversity-benchmark.js src/test-github-generator.js src/test-lifecycle.js src/test-auth-security.js src/test-razorpay-security.js src/test-telegram.js src/test-web-api.js",
+    "test": "node --test src/test-design-agent-pipeline.js src/test-design-agent-integration.js src/test-design-intelligence-benchmarks.js src/test-structural-diversity-benchmark.js src/test-github-generator.js src/test-lifecycle.js src/test-auth-security.js src/test-razorpay-security.js src/test-telegram.js src/test-web-api.js",
+    "test:pipeline": "node --test src/test-design-agent-pipeline.js",
     "test:agents": "node --test src/test-design-agent-integration.js",
     "test:benchmarks": "node --test src/test-design-intelligence-benchmarks.js",
     "test:structural": "node --test src/test-structural-diversity-benchmark.js",
