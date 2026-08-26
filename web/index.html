@@ -54,10 +54,25 @@
           </div>
         </div>
 
-        <!-- Generation Modes Container -->
-        <div class="generation-modes-container">
-          <!-- Primary Mode: 1-Click GitHub Portfolio -->
-          <div class="mode-card github-mode-card">
+        <!-- Multi-Input Navigation Tabs (Phase 31) -->
+        <div class="input-tabs-nav" style="display: flex; justify-content: center; gap: 8px; margin: 0 auto 20px; max-width: 680px; flex-wrap: wrap;">
+          <button type="button" class="input-tab-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
+            <span>⚡ GitHub Sync</span>
+          </button>
+          <button type="button" class="input-tab-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
+            <span>📄 Upload Resume (PDF)</span>
+          </button>
+          <button type="button" class="input-tab-btn" id="tabBtnPhoto" onclick="switchInputTab('photo')">
+            <span>📷 Profile Photo</span>
+          </button>
+          <button type="button" class="input-tab-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
+            <span>💬 Answer Questions</span>
+          </button>
+        </div>
+
+        <!-- Tab 1: GitHub Input Panel -->
+        <div id="tabPanelGithub" class="input-tab-panel" style="display: block;">
+          <div class="mode-card github-mode-card" style="max-width: 640px; margin: 0 auto;">
             <div class="mode-badge-pill">RECOMMENDED</div>
             <div class="mode-card-content">
               <div class="mode-icon github-mode-icon">
@@ -92,25 +107,92 @@
               <div class="drop-status-text">Accepts username or URL • Instant Free Preview</div>
             </div>
           </div>
+        </div>
 
-          <!-- Secondary Actions Card: Samples & Interactive Builder -->
-          <div class="mode-card drop-card hvr-float-shadow">
-            <div class="mode-card-content">
-              <div class="mode-icon">🎯</div>
-              <h3>Explore Examples &amp; Demos</h3>
-              <p>Preview pre-generated portfolios across Systems, AI, 3D, and Editorial design styles.</p>
-            </div>
+        <!-- Tab 2: Resume PDF Upload Panel -->
+        <div id="tabPanelResume" class="input-tab-panel" style="display: none;">
+          <div class="mode-card" style="max-width: 640px; margin: 0 auto; text-align: center;">
+            <div class="mode-icon">📄</div>
+            <h3>Upload Your Resume (PDF)</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">We extract your experience, skills, and projects automatically. Max 10 MB, up to 5 pages.</p>
             
-            <div class="mode-card-actions">
-              <button type="button" class="btn-mode-cta hvr-grow" onclick="openSamplesModal()">
-                <span>🎨 View Example Portfolios</span>
-              </button>
-              <button type="button" class="btn-mode-cta primary hvr-grow" style="margin-top: 10px;" onclick="openStudioView()">
-                <span>✏️ Manual Profile Builder</span>
-              </button>
-              <div class="drop-status-text">No signup required • 100% Free Preview</div>
+            <div id="resumeDropZone" class="upload-drop-box" onclick="document.getElementById('pdfFileInput').click()">
+              <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
+              <div style="font-size: 2rem; margin-bottom: 8px;">📥</div>
+              <div style="font-weight: 700; font-size: 0.95rem;">Click or Drag &amp; Drop PDF Resume</div>
+              <div id="pdfUploadStatus" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">PDF format only • Strictly validated</div>
+            </div>
+
+            <button type="button" id="btnGenerateResume" class="btn-generate-main" style="width: 100%; margin-top: 16px; justify-content: center; display: none;" onclick="generateFromResume()">
+              <span>⚡ Generate Portfolio from Resume</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab 3: Profile Photo Upload Panel -->
+        <div id="tabPanelPhoto" class="input-tab-panel" style="display: none;">
+          <div class="mode-card" style="max-width: 640px; margin: 0 auto; text-align: center;">
+            <div class="mode-icon">📷</div>
+            <h3>Add Your Profile Photo</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">We adapt your photo into an editorial plate or architectural specimen. Max 5 MB (JPEG, PNG, WebP).</p>
+            
+            <div id="photoDropZone" class="upload-drop-box" onclick="document.getElementById('photoFileInput').click()">
+              <input type="file" id="photoFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" onchange="handlePhotoFileSelected(event)">
+              <div id="photoPreviewContainer" style="display: none; margin-bottom: 10px;">
+                <img id="photoPreviewImg" src="" alt="Profile Preview" style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; border: 2px solid var(--primary);">
+              </div>
+              <div id="photoPlaceholder">
+                <div style="font-size: 2rem; margin-bottom: 8px;">🖼️</div>
+                <div style="font-weight: 700; font-size: 0.95rem;">Click to Upload Headshot or Photo</div>
+              </div>
+              <div id="photoUploadStatus" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 6px;">JPEG, PNG, WebP up to 5 MB</div>
             </div>
           </div>
+        </div>
+
+        <!-- Tab 4: Adaptive Questionnaire Panel -->
+        <div id="tabPanelQuestions" class="input-tab-panel" style="display: none;">
+          <div class="mode-card" style="max-width: 640px; margin: 0 auto;">
+            <div class="mode-icon">💬</div>
+            <h3>Quick Profile Questions</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 16px;">Answer 4 quick questions and we'll craft your portfolio instantly.</p>
+            
+            <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Full Name *</label>
+                <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Specialization / Role *</label>
+                <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Flagship Project &amp; What It Does *</label>
+                <textarea id="qInputProject" rows="2" placeholder="e.g. Distributed raft consensus engine with sub-millisecond failover." style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong); resize: vertical;" required></textarea>
+              </div>
+
+              <div class="form-group" style="margin-bottom: 16px;">
+                <label style="font-size: 0.82rem; font-weight: 700; display: block; margin-bottom: 4px;">Core Skills &amp; Technologies *</label>
+                <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border-strong);" required>
+              </div>
+
+              <button type="submit" class="btn-generate-main" style="width: 100%; justify-content: center;">
+                <span>⚡ Build My Portfolio</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Secondary Actions Card: Samples & Interactive Builder -->
+        <div style="display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+          <button type="button" class="btn-mode-cta hvr-grow" onclick="openSamplesModal()">
+            <span>🎨 Explore Example Portfolios</span>
+          </button>
+          <button type="button" class="btn-mode-cta primary hvr-grow" onclick="openStudioView()">
+            <span>✏️ Manual Studio Builder</span>
+          </button>
         </div>
 
         <!-- Trust & Privacy Transparency Note -->

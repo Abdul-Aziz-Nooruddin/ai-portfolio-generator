@@ -1473,6 +1473,218 @@ function reopenPersistedPortfolio() {
   populateGithubResult(session);
 }
 
+// Multi-Input Controllers (Phase 31)
+let uploadedResumeData = null;
+let uploadedPhotoDataUrl = null;
+
+function switchInputTab(tabName) {
+  const tabs = ['github', 'resume', 'photo', 'questions'];
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    const panel = document.getElementById(`tabPanel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+    if (btn) btn.classList.toggle('active', t === tabName);
+    if (panel) panel.style.display = t === tabName ? 'block' : 'none';
+  });
+}
+
+function handleResumeFileSelected(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (file.type !== 'application/pdf') {
+    showToast('Invalid File', 'Please upload a valid PDF document.', 'error');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('File Too Large', 'PDF exceeds 10 MB limit.', 'error');
+    return;
+  }
+
+  const statusEl = document.getElementById('pdfUploadStatus');
+  if (statusEl) statusEl.textContent = `Reading ${file.name}...`;
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64Data = e.target.result;
+    try {
+      const res = await fetch('/api/upload/resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64Data, filename: file.name })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to validate PDF');
+      }
+
+      uploadedResumeData = data.resumeData;
+      if (statusEl) statusEl.textContent = `✅ Validated (${file.name}, ${data.pages || 1} pages)`;
+      const btnGen = document.getElementById('btnGenerateResume');
+      if (btnGen) btnGen.style.display = 'inline-flex';
+      showToast('Resume Ready', 'Extracted details from resume successfully.', 'success');
+    } catch (err) {
+      if (statusEl) statusEl.textContent = `❌ ${err.message}`;
+      showToast('Upload Error', err.message, 'error');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function generateFromResume() {
+  if (!uploadedResumeData) {
+    showToast('Upload Required', 'Please upload your PDF resume first.', 'info');
+    return;
+  }
+
+  openGithubProgressModal();
+  setGithubStatus('Reading Resume', 'Analyzing extracted skills and career history...');
+  setGithubStep(1, 'completed');
+  setGithubStep(2, 'active');
+
+  try {
+    const res = await fetch('/api/generate/unified', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        resumeData: uploadedResumeData,
+        photoData: uploadedPhotoDataUrl ? { url: uploadedPhotoDataUrl } : null
+      })
+    });
+
+    const result = await res.json();
+    if (!res.ok || !result.success) {
+      throw new Error(result.error || 'Failed to synthesize portfolio from resume.');
+    }
+
+    lastGithubResult = result;
+    currentSiteId = result.siteId;
+    currentPreviewUrl = result.previewUrl;
+
+    savePortfolioSession({
+      siteId: result.siteId,
+      previewUrl: result.previewUrl,
+      profileData: result.profileData,
+      username: result.profileData?.name || 'Developer',
+      lifecycleState: 'READY',
+      timestamp: Date.now()
+    });
+
+    for (let i = 1; i <= 8; i++) setGithubStep(i, 'completed');
+    populateGithubResult(result);
+    showToast('Portfolio Generated!', 'Bespoke portfolio synthesized from your resume.', 'success');
+  } catch (err) {
+    showGithubErrorCard('Generation Interrupted', err.message);
+  }
+}
+
+function handlePhotoFileSelected(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Image Too Large', 'Image exceeds 5 MB limit.', 'error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64Data = e.target.result;
+    try {
+      const res = await fetch('/api/upload/photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64Data, filename: file.name })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Invalid photo format');
+      }
+
+      uploadedPhotoDataUrl = data.dataUrl;
+      const previewImg = document.getElementById('photoPreviewImg');
+      const previewContainer = document.getElementById('photoPreviewContainer');
+      const placeholder = document.getElementById('photoPlaceholder');
+      const statusEl = document.getElementById('photoUploadStatus');
+
+      if (previewImg) previewImg.src = data.dataUrl;
+      if (previewContainer) previewContainer.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+      if (statusEl) statusEl.textContent = `✅ Headshot ready (${file.name})`;
+
+      showToast('Photo Added', 'Profile photo uploaded. It will be incorporated into your design.', 'success');
+    } catch (err) {
+      showToast('Upload Notice', err.message, 'error');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+async function handleQuestionnaireSubmit(event) {
+  event.preventDefault();
+  const name = document.getElementById('qInputName')?.value?.trim();
+  const role = document.getElementById('qInputRole')?.value?.trim();
+  const project = document.getElementById('qInputProject')?.value?.trim();
+  const skills = document.getElementById('qInputSkills')?.value?.trim();
+
+  if (!name || !role || !project || !skills) {
+    showToast('Missing Fields', 'Please complete all required fields.', 'error');
+    return;
+  }
+
+  const questionnaireData = {
+    name,
+    role,
+    skills: skills.split(',').map(s => s.trim()),
+    projects: [
+      {
+        name: 'Flagship Core Project',
+        desc: project,
+        tech: skills.split(',').slice(0, 3).join(' • ')
+      }
+    ]
+  };
+
+  openGithubProgressModal();
+  setGithubStatus('Synthesizing Answers', 'Formulating bespoke design intelligence and storytelling grammar...');
+  setGithubStep(1, 'completed');
+  setGithubStep(2, 'active');
+
+  try {
+    const res = await fetch('/api/generate/unified', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        questionnaireData,
+        photoData: uploadedPhotoDataUrl ? { url: uploadedPhotoDataUrl } : null
+      })
+    });
+
+    const result = await res.json();
+    if (!res.ok || !result.success) {
+      throw new Error(result.error || 'Failed to synthesize portfolio from questionnaire.');
+    }
+
+    lastGithubResult = result;
+    currentSiteId = result.siteId;
+    currentPreviewUrl = result.previewUrl;
+
+    savePortfolioSession({
+      siteId: result.siteId,
+      previewUrl: result.previewUrl,
+      profileData: result.profileData,
+      username: name,
+      lifecycleState: 'READY',
+      timestamp: Date.now()
+    });
+
+    for (let i = 1; i <= 8; i++) setGithubStep(i, 'completed');
+    populateGithubResult(result);
+    showToast('Portfolio Synthesized!', `Created portfolio for ${name}`, 'success');
+  } catch (err) {
+    showGithubErrorCard('Generation Interrupted', err.message);
+  }
+}
+
 // Expose all public handlers to window
 window.openStudioView = openStudioView;
 window.closeStudioView = closeStudioView;
@@ -1504,6 +1716,11 @@ window.savePortfolioSession = savePortfolioSession;
 window.getPersistedPortfolioSession = getPersistedPortfolioSession;
 window.clearPersistedPortfolio = clearPersistedPortfolio;
 window.reopenPersistedPortfolio = reopenPersistedPortfolio;
+window.switchInputTab = switchInputTab;
+window.handleResumeFileSelected = handleResumeFileSelected;
+window.generateFromResume = generateFromResume;
+window.handlePhotoFileSelected = handlePhotoFileSelected;
+window.handleQuestionnaireSubmit = handleQuestionnaireSubmit;
 
 // Deep-Link Mode Switcher & Session Hydration on Page Load
 window.addEventListener('DOMContentLoaded', () => {
@@ -1524,20 +1741,14 @@ window.addEventListener('DOMContentLoaded', () => {
   } else if (mode === 'samples' || mode === 'examples') {
     openSamplesModal();
   } else if (mode === 'github') {
-    const input = document.getElementById('githubUsernameInput');
-    if (input) {
-      input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      input.focus();
-    }
+    switchInputTab('github');
   } else if (mode === 'resume') {
-    if (savedSession) {
-      reopenPersistedPortfolio();
-    } else {
-      const drop = document.getElementById('dropZone');
-      if (drop) drop.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    switchInputTab('resume');
+  } else if (mode === 'questions') {
+    switchInputTab('questions');
   }
 });
+
 
 
 

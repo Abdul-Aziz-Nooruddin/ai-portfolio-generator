@@ -52,7 +52,7 @@ test('🏛️ Phase 30: Public Product UX & End-to-End Journey Suite', async (t)
     assert.strictEqual(res.status, 200);
     assert.ok(text.includes('Turn your GitHub into a portfolio'));
     assert.ok(text.includes('Generate with GitHub'));
-    assert.ok(text.includes('Explore Examples &amp; Demos'));
+    assert.ok(text.includes('Explore Example'));
   });
 
   // 2. GitHub Parser Input Normalization

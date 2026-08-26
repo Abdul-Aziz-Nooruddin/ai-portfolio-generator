@@ -60,7 +60,7 @@ class DesignEngine {
         monoFont: designBrief.typography?.monoFont || baseUniverse.monoFont
       };
 
-      projectStrategy = strategyId || iaModel.defaultStorytelling;
+      projectStrategy = strategyId || (iaModel.id === 'editorial-monograph' ? 'magazine-editorial-chapter' : 'code-architecture-dossier');
       motion = designBrief.motionSystem?.motionCode && Object.keys(designBrief.motionSystem.motionCode).length > 0
         ? designBrief.motionSystem.motionCode
         : WebGLMotion.getMotionCode(visualUniverse, iaModel);
@@ -97,7 +97,7 @@ class DesignEngine {
       motion = WebGLMotion.getMotionCode(visualUniverse, iaModel);
     }
 
-    // 3. Render HTML/CSS/JS Output with Section Morphing & Motion Profiles
+    // 3. Render HTML/CSS/JS Output with Section Morphing, Component Grammar & Motion Profiles
     const rendered = HtmlRenderer.render(
       contentProfile,
       iaModel,

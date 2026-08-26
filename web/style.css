@@ -1645,21 +1645,55 @@ h1, h2, h3 {
   flex-wrap: wrap;
 }
 
-/* Mobile Responsiveness at 390px */
-@media (max-width: 480px) {
-  .customizer-drawer-panel {
-    max-width: 100%;
-    padding: 16px;
-  }
-  .export-modal-card, .samples-modal-card {
-    padding: 20px 16px;
-  }
-  .deployment-guide-grid, .sample-gallery-grid {
-    grid-template-columns: 1fr;
-  }
-  .customizer-btn-mini {
-    min-width: 44px;
-    min-height: 44px;
-  }
+/* Multi-Input Tabs & Drop Boxes (Phase 31) */
+.input-tabs-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  justify-content: center;
 }
+
+.input-tab-btn {
+  background: rgba(28, 25, 23, 0.05);
+  border: 1px solid rgba(28, 25, 23, 0.12);
+  color: var(--text-muted);
+  padding: 8px 16px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.input-tab-btn:hover {
+  background: rgba(28, 25, 23, 0.08);
+  color: var(--text);
+}
+
+.input-tab-btn.active {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.upload-drop-box {
+  border: 2px dashed rgba(28, 25, 23, 0.2);
+  border-radius: 16px;
+  padding: 32px 20px;
+  background: rgba(28, 25, 23, 0.02);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.upload-drop-box:hover {
+  border-color: var(--primary);
+  background: rgba(56, 189, 248, 0.04);
+}
+
+.upload-drop-box.dragover {
+  border-color: var(--primary);
+  background: rgba(56, 189, 248, 0.08);
+}
+
 

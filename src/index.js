@@ -37,6 +37,10 @@ const { CustomizationQualityGate } = require('./customizer/customization-quality
 const { SectionRegistry } = require('./customizer/section-registry');
 const { BetaDashboard } = require('./analytics/beta-dashboard');
 const { productTelemetry, EVENT_TYPES } = require('./analytics/product-events');
+const { UploadValidator } = require('./services/upload-validator');
+const { AdaptiveQuestionnaire } = require('./services/adaptive-questionnaire');
+const { UnifiedProfileNormalizer } = require('./services/unified-profile-normalizer');
+const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
 
 const app = express();
 const securityService = new SecurityService();
@@ -642,6 +646,127 @@ app.get('/api/admin/health', (req, res) => {
       originIsolation: true
     }
   });
+});
+
+// 11. Multi-Input Upload & Adaptive Questionnaire Endpoints (Phase 31)
+app.post('/api/upload/resume', (req, res) => {
+  try {
+    const { base64Data, filename } = req.body || {};
+    if (!base64Data) {
+      return res.status(400).json({ error: 'No resume data provided.' });
+    }
+
+    const buffer = Buffer.from(base64Data.replace(/^data:application\/pdf;base64,/, ''), 'base64');
+    const validation = UploadValidator.validatePdf(buffer, { originalName: filename });
+
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.error });
+    }
+
+    // Extract basic text hints from buffer safely
+    const textContent = buffer.toString('latin1');
+    const emailMatch = textContent.match(/[\w.-]+@[\w.-]+\.\w+/);
+    const resumeText = textContent.replace(/[^\x20-\x7E\n]/g, ' ').slice(0, 4000);
+
+    res.json({
+      success: true,
+      message: 'Resume validated successfully',
+      pages: validation.pages,
+      resumeData: {
+        extractedTextSnippet: resumeText.slice(0, 500),
+        email: emailMatch ? emailMatch[0] : null
+      }
+    });
+  } catch (err) {
+    console.error('[API] /api/upload/resume error:', err);
+    res.status(500).json({ error: 'Failed to process resume upload.' });
+  }
+});
+
+app.post('/api/upload/photo', (req, res) => {
+  try {
+    const { base64Data, filename } = req.body || {};
+    if (!base64Data) {
+      return res.status(400).json({ error: 'No image data provided.' });
+    }
+
+    const cleanBase64 = base64Data.replace(/^data:image\/[a-zA-Z]+;base64,/, '');
+    const buffer = Buffer.from(cleanBase64, 'base64');
+    const validation = UploadValidator.validateImage(buffer, { originalName: filename });
+
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.error });
+    }
+
+    const dataUrl = `data:image/${validation.format};base64,${cleanBase64}`;
+    res.json({
+      success: true,
+      format: validation.format,
+      dataUrl
+    });
+  } catch (err) {
+    console.error('[API] /api/upload/photo error:', err);
+    res.status(500).json({ error: 'Failed to process photo upload.' });
+  }
+});
+
+app.post('/api/questionnaire/adaptive', (req, res) => {
+  try {
+    const currentProfile = req.body?.currentProfile || {};
+    const questions = AdaptiveQuestionnaire.getAdaptiveQuestions(currentProfile);
+    res.json({
+      success: true,
+      questions
+    });
+  } catch (err) {
+    console.error('[API] /api/questionnaire/adaptive error:', err);
+    res.status(500).json({ error: 'Failed to generate adaptive questions.' });
+  }
+});
+
+app.post('/api/generate/unified', async (req, res) => {
+  try {
+    const input = req.body || {};
+    const normalized = UnifiedProfileNormalizer.normalize(input);
+    const siteGen = new SiteGenerator();
+
+    const siteResult = await siteGen.generateSite({
+      id: `unified-${Date.now()}`,
+      status: 'active'
+    }, normalized, {
+      theme: input.preferences?.theme || 'auto',
+      creative_mode: input.preferences?.theme !== 'auto' ? input.preferences?.theme : null
+    });
+
+    const siteId = `web-${crypto.randomUUID()}`;
+    const hostingProvider = new HostingProvider();
+    const deployResult = await hostingProvider.deploySite(siteId, siteResult.html);
+
+    // Audit with Legacy Vibe Detector
+    const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
+      iaModel: siteResult.designBrief?.informationArchitecture,
+      visualUniverse: siteResult.designBrief?.visualUniverse
+    });
+
+    // Record Telemetry
+    productTelemetry.recordEvent(EVENT_TYPES.GENERATION_COMPLETED, null, {
+      siteId,
+      source: 'unified',
+      vibeScore: vibeAudit.score
+    });
+
+    res.json({
+      success: true,
+      siteId,
+      previewUrl: deployResult.url,
+      profileData: normalized,
+      vibeAudit,
+      designBlueprint: siteResult.designBlueprint
+    });
+  } catch (err) {
+    console.error('[API] /api/generate/unified error:', err);
+    res.status(500).json({ error: err.message || 'Failed to synthesize portfolio from unified input.' });
+  }
 });
 
 /// Studio & Design Engine API Endpoints

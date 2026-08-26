@@ -5,6 +5,7 @@
  */
 
 const { ProjectStoryteller } = require('./project-storyteller');
+const { ComponentGrammar } = require('./component-grammar');
 
 class HtmlRenderer {
   static render(contentProfile, iaModel, layoutGrammar, visualUniverse, projectStrategy, motion) {
@@ -16,26 +17,23 @@ class HtmlRenderer {
     const safeTagline = this.escapeHtml(tagline);
     const safeBio = this.escapeHtml(bio);
 
-    // 1. Render Project Section (12 Distinct Presentational Forms)
+    // Resolve Grammar Archetype for Visual World
+    const grammar = ComponentGrammar.resolve(visualUniverse, iaModel);
+
+    // 1. Render Project Section (18 Distinct Presentational Forms)
     const projectsHtml = ProjectStoryteller.render(projects, projectStrategy, visualUniverse);
 
-    // 2. Render Skills Badges / Matrix
-    const skillsHtml = skills.map(s => `
-      <span class="skill-tag" style="display: inline-block; padding: 6px 14px; background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); font-size: 0.85rem; font-weight: 600; color: var(--text); margin: 0 6px 8px 0;">${this.escapeHtml(s)}</span>
-    `).join('');
+    // 2. Render Skills via Component Grammar (No generic pill tag monopoly)
+    const skillsHtml = grammar.skillsGrammar.render(skills, s => this.escapeHtml(s));
 
-    // 3. Render Experience List
-    const experienceHtml = experience.map((exp) => `
-      <div class="experience-entry" style="padding: 1.5rem 0; border-bottom: 1px solid var(--border);">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
-          <h4 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: var(--text); margin: 0;">${this.escapeHtml(exp.role || exp.title || 'Role')} <span style="color: var(--primary);">@ ${this.escapeHtml(exp.company || exp.org || 'Organization')}</span></h4>
-          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${this.escapeHtml(exp.period || exp.duration || 'Present')}</span>
-        </div>
-        <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">${this.escapeHtml(exp.desc || exp.summary || '')}</p>
-      </div>
-    `).join('');
+    // 3. Render Experience via Component Grammar (No identical stacked rows)
+    const experienceHtml = grammar.experienceGrammar.render(experience, s => this.escapeHtml(s));
 
-    // 4. Section Morphing: Education & Certifications tailored across all 10 IA Models
+    // 4. Render Photo Specimen via Photo Grammar (No forced circular avatars)
+    const photoUrl = contentProfile.photoUrl || contentProfile.avatar_url || contentProfile.avatarUrl;
+    const photoHtml = grammar.photoGrammar.render(photoUrl, name, s => this.escapeHtml(s));
+
+    // 5. Section Morphing: Education & Certifications tailored across all 10 IA Models
     const { morphedEducationHtml, morphedCertificationsHtml, morphedFooterHtml } = this.renderMorphedSections(
       education || [],
       certifications || [],
@@ -44,7 +42,7 @@ class HtmlRenderer {
       safeName
     );
 
-    // 5. Dynamic Body Layout Builder based on 8 Distinct Hero Archetypes & 10 IA Models
+    // 6. Dynamic Body Layout Builder based on 8 Distinct Hero Archetypes & 10 IA Models
     let bodyContent = '';
 
     if (iaModel.id === 'split-screen-dossier') {
@@ -53,6 +51,7 @@ class HtmlRenderer {
           <aside class="dossier-identity-panel">
             <div>
               <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 1rem;">[PROFILE_VERIFIED]</div>
+              ${photoHtml}
               <h1 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 0.75rem; color: var(--text);">${safeName}</h1>
               <div style="font-size: 1.15rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
               <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">${safeTagline || safeBio}</p>
@@ -148,6 +147,7 @@ class HtmlRenderer {
         <div class="layout-root monograph-reading-column">
           <header style="margin-bottom: 4rem; padding-bottom: 2.5rem; border-bottom: 2px solid var(--text);">
             <div style="font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 1rem; text-transform: uppercase;">MONOGRAPH • ISSUE VOL. I</div>
+            ${photoHtml}
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.05; margin-bottom: 1.25rem; color: var(--text);">${safeName}</h1>
             <div style="font-size: 1.35rem; font-style: italic; font-weight: 500; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
             <p style="font-size: 1.15rem; line-height: 1.75; color: var(--text); max-width: 780px;">${safeTagline || safeBio}</p>
@@ -172,6 +172,7 @@ class HtmlRenderer {
         <div class="layout-root horizontal-track">
           <header style="margin-bottom: 3rem;">
             <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">GALLERY EXHIBITION</div>
+            ${photoHtml}
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; color: var(--text);">${safeName}</h1>
             <div style="font-size: 1.2rem; color: var(--text-muted);">${safeRole} — ${safeTagline}</div>
           </header>
@@ -198,6 +199,7 @@ class HtmlRenderer {
         <div class="layout-root bento-grid-canvas">
           <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2.5rem;">
             <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem;">BENTO CANOPY</div>
+            ${photoHtml}
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</h1>
             <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
             <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 750px; margin-bottom: 1.5rem;">${safeTagline || safeBio}</p>
@@ -220,6 +222,7 @@ class HtmlRenderer {
       bodyContent = `
         <div class="layout-root single-screen-masthead">
           <header style="margin-bottom: 3.5rem;">
+            ${photoHtml}
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; color: var(--text); line-height: 1.0; margin-bottom: 1rem;">${safeName}</h1>
             <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem;">${safeRole}</div>
             <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 700px;">${safeTagline || safeBio}</p>
