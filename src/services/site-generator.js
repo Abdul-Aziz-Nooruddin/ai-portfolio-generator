@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
 const { DesignEngine } = require('../design-engine');
+const { DesignGate } = require('../design-intelligence');
 
 class SiteGenerator {
   constructor() {
+    this.gate = new DesignGate();
     this.engine = new DesignEngine();
   }
 
@@ -11,11 +13,20 @@ class SiteGenerator {
     const { extracted_data = {}, branch = 'A' } = conversation || {};
     const data = { ...extracted_data, ...userData };
 
-    // Leverage Compositional Design Engine with Structural Anti-Repetition
-    const engineResult = await this.engine.generatePortfolio(data, {
+    // 1. Mandatory Design Intelligence Gate
+    const gateResult = await this.gate.generateDesignBrief(data, {
       mode: designBrief?.creative_mode || designBrief?.theme || null,
-      layout: (designBrief?.layout && designBrief.layout !== 'auto-cycle') ? designBrief.layout : null
+      layout: (designBrief?.layout && designBrief.layout !== 'auto-cycle') ? designBrief.layout : null,
+      projectStrategy: designBrief?.projectStrategy || null,
+      figmaUrl: data.figma_url || data.figmaUrl || null
     });
+
+    if (!gateResult || !gateResult.brief) {
+      throw new Error('[DESIGN GATE FAILURE] Design intelligence failed to produce a valid DesignBrief.');
+    }
+
+    // 2. Compositional Design Engine renders the validated DesignBrief
+    const engineResult = await this.engine.generatePortfolio(data, gateResult.brief);
 
     if (engineResult?.html) {
       const isPaid = conversation?.status === 'active' || conversation?.status === 'paid';

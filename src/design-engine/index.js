@@ -1,7 +1,8 @@
 /**
  * Generative Design Engine
- * Coordinates Content Intelligence, Information Architecture, Spatial Layout Grammar,
- * Project Storytelling, Coherent Visual Universes, and Structural Anti-Repetition.
+ * Consumes the formal DesignBrief produced by the Design Intelligence Ecosystem.
+ * The DesignBrief is the SINGLE SOURCE OF TRUTH for information architecture,
+ * layout grammar, project storytelling, and visual universe.
  */
 
 const { ContentAnalyzer } = require('./content-analyzer');
@@ -17,61 +18,109 @@ class DesignEngine {
     this.memory = new StructuralMemory(50);
   }
 
-  async generatePortfolio(userData = {}, options = {}) {
-    // 1. Content Intelligence Analysis
-    const contentProfile = ContentAnalyzer.analyze(userData);
+  /**
+   * Generates a portfolio adhering strictly to the provided DesignBrief or context
+   * @param {Object} userData - User content or ContentProfile
+   * @param {Object} designBriefOrOptions - Formal DesignBrief or generation options
+   */
+  async generatePortfolio(userData = {}, designBriefOrOptions = {}) {
+    let contentProfile = userData.signals ? userData : ContentAnalyzer.analyze(userData);
+    let iaModel = null;
+    let layoutGrammar = null;
+    let visualUniverse = null;
+    let projectStrategy = null;
+    let motion = null;
+    let designBrief = null;
 
-    // 2. Multi-Candidate Generation Loop with Structural Anti-Repetition
-    let candidate = null;
-    const recentHistory = this.memory.getRecentHistory();
+    // 1. Check if a formal DesignBrief was provided directly from Design Intelligence
+    if (designBriefOrOptions && designBriefOrOptions.informationArchitecture) {
+      designBrief = designBriefOrOptions;
+      const iaId = designBrief.informationArchitecture.modelId;
+      const layoutId = designBrief.layoutGrammar?.layoutId || iaId;
+      const universeId = designBrief.visualUniverse?.universeId;
+      const strategyId = designBrief.projectStorytelling?.strategyId;
 
-    for (let attempt = 0; attempt < 5; attempt++) {
-      const iaModel = IAComposer.selectModel(contentProfile, options.layout, recentHistory);
-      const layoutGrammar = LayoutGrammar.getGrammar(iaModel.layoutId);
-      const visualUniverse = VisualGrammar.selectUniverse(contentProfile, options.mode);
-      const projectStrategy = options.projectStrategy || iaModel.defaultStorytelling;
+      iaModel = IA_MODELS[iaId] || IA_MODELS['split-screen-dossier'];
+      // If sectionOrder was customized by IA Agent, apply it
+      if (Array.isArray(designBrief.sectionSequence)) {
+        iaModel = { ...iaModel, sectionOrder: designBrief.sectionSequence };
+      }
 
-      const proposed = {
-        iaModel,
-        layoutGrammar,
-        visualUniverse,
-        projectStrategy
+      layoutGrammar = LayoutGrammar.getGrammar(layoutId);
+      
+      const baseUniverse = VISUAL_UNIVERSES[universeId] || VISUAL_UNIVERSES['technical-lab'];
+      visualUniverse = {
+        ...baseUniverse,
+        theme: designBrief.visualUniverse.theme || baseUniverse.theme,
+        colors: designBrief.colorSystem ? { ...baseUniverse.colors, ...designBrief.colorSystem } : baseUniverse.colors,
+        headingFont: designBrief.typography?.headingFont || baseUniverse.headingFont,
+        bodyFont: designBrief.typography?.bodyFont || baseUniverse.bodyFont,
+        monoFont: designBrief.typography?.monoFont || baseUniverse.monoFont
       };
 
-      if (!this.memory.isRepetitive(proposed) || attempt === 4) {
-        candidate = proposed;
-        break;
+      projectStrategy = strategyId || iaModel.defaultStorytelling;
+      motion = designBrief.motionSystem?.motionCode && Object.keys(designBrief.motionSystem.motionCode).length > 0
+        ? designBrief.motionSystem.motionCode
+        : WebGLMotion.getMotionCode(visualUniverse, iaModel);
+    } else {
+      // 2. Multi-Candidate Generation Loop with Structural Anti-Repetition
+      const recentHistory = this.memory.getRecentHistory();
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const selectedIa = IAComposer.selectModel(contentProfile, designBriefOrOptions.layout, recentHistory);
+        const selectedLayout = LayoutGrammar.getGrammar(selectedIa.layoutId);
+        const selectedUniverse = VisualGrammar.selectUniverse(contentProfile, designBriefOrOptions.mode);
+        const selectedStrategy = designBriefOrOptions.projectStrategy || selectedIa.defaultStorytelling;
+
+        const proposed = {
+          iaModel: selectedIa,
+          layoutGrammar: selectedLayout,
+          visualUniverse: selectedUniverse,
+          projectStrategy: selectedStrategy
+        };
+
+        if (!this.memory.isRepetitive(proposed) || attempt === 4) {
+          iaModel = selectedIa;
+          layoutGrammar = selectedLayout;
+          visualUniverse = selectedUniverse;
+          projectStrategy = selectedStrategy;
+          break;
+        }
       }
+
+      motion = WebGLMotion.getMotionCode(visualUniverse, iaModel);
     }
 
-    // 3. WebGL Motion & Interactivity Strategy
-    const motion = WebGLMotion.getMotionCode(candidate.visualUniverse, candidate.iaModel);
-
-    // 4. Render HTML/CSS/JS Output
+    // 3. Render HTML/CSS/JS Output adhering strictly to DesignBrief
     const rendered = HtmlRenderer.render(
       contentProfile,
-      candidate.iaModel,
-      candidate.layoutGrammar,
-      candidate.visualUniverse,
-      candidate.projectStrategy,
+      iaModel,
+      layoutGrammar,
+      visualUniverse,
+      projectStrategy,
       motion
     );
 
-    // 5. Record in Structural Memory
-    this.memory.record(candidate);
+    // 4. Record in Structural Memory
+    this.memory.record({
+      iaModel,
+      layoutGrammar,
+      visualUniverse,
+      projectStrategy
+    });
 
     return {
       html: rendered.html,
       css: rendered.css,
       js: rendered.js,
       designBlueprint: {
-        iaModel: candidate.iaModel.id,
-        layoutGrammar: candidate.layoutGrammar.id,
-        visualUniverse: candidate.visualUniverse.id,
-        projectStrategy: candidate.projectStrategy,
-        sectionOrder: candidate.iaModel.sectionOrder
+        iaModel: iaModel.id,
+        layoutGrammar: layoutGrammar.id,
+        visualUniverse: visualUniverse.id,
+        projectStrategy,
+        sectionOrder: iaModel.sectionOrder
       },
-      contentProfile: contentProfile.signals
+      contentProfile: contentProfile.signals,
+      designBrief
     };
   }
 }

@@ -105,18 +105,14 @@ class IAComposer {
     const allIds = Object.keys(IA_MODELS);
 
     // Filter by content suitability
-    let candidates = allIds;
-    if (signals.projectCount >= 4) {
-      candidates = ['work-first-runway', 'horizontal-exhibition', 'asymmetric-bento-canvas', 'minimal-single-screen'];
-    } else if (signals.technicalDepth === 'high') {
-      candidates = ['computational-terminal', 'split-screen-dossier', 'spatial-3d-stage', 'work-first-runway'];
-    } else if (signals.narrativeDepth === 'high') {
-      candidates = ['editorial-monograph', 'narrative-timeline', 'magazine-spread-columns', 'split-screen-dossier'];
+    let candidates = [...allIds];
+    if (signals?.projectCount === 0) {
+      candidates = ['minimal-single-screen', 'editorial-monograph', 'narrative-timeline'];
     }
 
-    // Filter against recent history to ensure structural anti-repetition
+    // Filter against recent history to guarantee comprehensive structural rotation
     const recentIaIds = recentHistory.map(h => h.iaModel).filter(Boolean);
-    const nonRecentCandidates = candidates.filter(id => !recentIaIds.slice(0, 3).includes(id));
+    const nonRecentCandidates = candidates.filter(id => !recentIaIds.slice(-5).includes(id));
     const pool = nonRecentCandidates.length > 0 ? nonRecentCandidates : candidates;
 
     const chosenId = pool[Math.floor(Math.random() * pool.length)];

@@ -350,4 +350,19 @@ class ProjectStoryteller {
   }
 }
 
-module.exports = { ProjectStoryteller };
+const PROJECT_PRESENTATIONS = {
+  'fullscreen-interactive-slide': { id: 'fullscreen-interactive-slide', name: 'Fullscreen Interactive Slide', domStructure: 'section.slide-stage', dataDensity: 'high-visual' },
+  'code-architecture-dossier': { id: 'code-architecture-dossier', name: 'Code Architecture Dossier', domStructure: 'article.dossier-node', dataDensity: 'deep-code-metrics' },
+  'horizontal-filmstrip': { id: 'horizontal-filmstrip', name: 'Horizontal Snapped Filmstrip', domStructure: 'div.filmstrip-track', dataDensity: 'curated-highlights' },
+  'typographic-index-reveal': { id: 'typographic-index-reveal', name: 'Typographic Index Reveal', domStructure: 'ul.interactive-index-list', dataDensity: 'ultra-minimal' },
+  'terminal-session-log': { id: 'terminal-session-log', name: 'Terminal Session Log', domStructure: 'div.terminal-console', dataDensity: 'cli-technical' },
+  'magazine-editorial-chapter': { id: 'magazine-editorial-chapter', name: 'Magazine Editorial Chapters', domStructure: 'section.editorial-chapter', dataDensity: 'rich-narrative' },
+  'timeline-milestone-card': { id: 'timeline-milestone-card', name: 'Chronological Timeline Milestones', domStructure: 'div.timeline-track', dataDensity: 'evolutionary-career' },
+  'interactive-canvas-node': { id: 'interactive-canvas-node', name: 'Interactive Graph Nodes', domStructure: 'div.canvas-node-grid', dataDensity: 'relational-systems' },
+  'compact-metrics-table': { id: 'compact-metrics-table', name: 'Compact Engineering Metrics Table', domStructure: 'table.metrics-spec', dataDensity: 'dense-tabular' },
+  'spatial-orbit-dock': { id: 'spatial-orbit-dock', name: 'Spatial Orbiting Dock', domStructure: 'div.orbit-dock-stage', dataDensity: '3d-spatial' },
+  'split-screen-comparison': { id: 'split-screen-comparison', name: 'Split-Screen Comparison', domStructure: 'div.split-comparison-grid', dataDensity: 'comparative-dual' },
+  'asymmetric-media-mosaic': { id: 'asymmetric-media-mosaic', name: 'Asymmetric Bento Media Mosaic', domStructure: 'div.asymmetric-mosaic-grid', dataDensity: 'asymmetric-rich' }
+};
+
+module.exports = { ProjectStoryteller, PROJECT_PRESENTATIONS };
