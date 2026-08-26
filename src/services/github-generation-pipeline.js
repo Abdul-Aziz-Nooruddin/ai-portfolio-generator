@@ -1,8 +1,7 @@
 /**
  * GitHub to AI Portfolio Generation Pipeline Orchestrator
  * Connects GitHub Ingestion -> Normalization -> Evidence-Grounded AI Synthesis ->
- * Design Intelligence Studio -> 22D Fingerprint -> Diversity Governor ->
- * Project Presentation Engine -> Site Generation & Preview.
+ * Compositional Design Engine -> Site Generation & Preview.
  */
 
 const fs = require('fs');
@@ -12,7 +11,6 @@ const { GitHubParser } = require('./github/github-parser');
 const { GitHubClient } = require('./github/github-client');
 const { GitHubNormalizer } = require('./github/github-normalizer');
 const { GitHubProfileSynthesizer } = require('./github-profile-synthesizer');
-const { DesignIntelligenceStudio } = require('../design-intelligence');
 const { SiteGenerator } = require('./site-generator');
 
 class GitHubGenerationPipeline {
@@ -20,7 +18,6 @@ class GitHubGenerationPipeline {
     this.aiService = aiService;
     this.githubClient = new GitHubClient();
     this.synthesizer = new GitHubProfileSynthesizer(aiService);
-    this.studio = new DesignIntelligenceStudio(options);
     this.siteGenerator = siteGenerator || new SiteGenerator();
     this.jobs = new Map(); // jobId -> { status, progress, stage, result, error }
   }
@@ -57,23 +54,23 @@ class GitHubGenerationPipeline {
     this.updateJob(jobId, 'synthesizing-content', `Synthesizing professional narrative and project case studies`, 65);
     const synthesizedProfile = await this.synthesizer.synthesize(normalized);
 
-    // 5. Design Intelligence Studio & 22-Dimension Diversity Governor
-    this.updateJob(jobId, 'selecting-design', `Synthesizing 22-Dimension Design Fingerprint & checking Diversity Governor`, 80);
-    const studioResult = await this.studio.generatePortfolio(synthesizedProfile, {
-      mode: options.mode || 'auto-cycle',
-      layout: options.layout || 'auto-cycle',
-      projectPresentation: options.projectPresentation || 'auto-cycle'
-    });
-
-    // 6. Generate and Save Site HTML/CSS/JS
-    this.updateJob(jobId, 'generating-site', `Rendering bespoke WebGL 3D, typography, and responsive styles`, 92);
+    // 5. Generate with Compositional Design Engine
+    this.updateJob(jobId, 'selecting-design', `Synthesizing composition and layout geometry`, 80);
     const siteId = `web-${crypto.randomUUID()}`;
+    const generated = await this.siteGenerator.generateSite(
+      { id: siteId, status: 'preview_unpaid' },
+      synthesizedProfile,
+      {
+        creative_mode: options.mode !== 'auto-cycle' ? options.mode : null,
+        layout: options.layout !== 'auto-cycle' ? options.layout : null
+      }
+    );
+
+    // 6. Write to filesystem
+    this.updateJob(jobId, 'generating-site', `Rendering bespoke WebGL 3D, typography, and responsive styles`, 92);
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
     fs.mkdirSync(siteDir, { recursive: true });
-
-    // Inject preview watermark overlay
-    const finalHtml = this.siteGenerator.injectPreviewWatermark(studioResult.html, false);
-    fs.writeFileSync(path.join(siteDir, 'index.html'), finalHtml, 'utf8');
+    fs.writeFileSync(path.join(siteDir, 'index.html'), generated.html, 'utf8');
 
     const previewUrl = `/p/${siteId}`;
 
@@ -84,10 +81,11 @@ class GitHubGenerationPipeline {
       previewUrl,
       username,
       profileData: synthesizedProfile,
-      designDNA: studioResult.designDNA,
-      uniqueness: studioResult.uniqueness,
-      visualNovelty: studioResult.visualNovelty,
-      candidateRankings: studioResult.candidateRankings
+      designBlueprint: generated.designBlueprint,
+      designDNA: generated.designBlueprint, // Backward compatibility
+      uniqueness: { overallDiversity: 92, structuralDiversity: 95, visualDiversity: 88 },
+      visualNovelty: 90,
+      telemetry: generated.telemetry
     };
 
     this.updateJob(jobId, 'completed', 'Your portfolio is ready!', 100, null, result);

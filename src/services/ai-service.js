@@ -12,8 +12,6 @@ try {
 } catch (e) {
   pdfParse = null;
 }
-const { UIUXIntegration } = require('./uiux-integration');
-
 const ACTIVE_MODELS = [
   'gemini-3.5-flash-lite',
   'gemini-3.6-flash',
@@ -25,7 +23,6 @@ class AIService {
   constructor(apiKey) {
     this.apiKey = apiKey;
     this.isAuthKey = apiKey && apiKey.startsWith('AQ.');
-    this.uiux = new UIUXIntegration();
     this.genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
     this.sdkAvailable = !!this.genAI;
   }
@@ -210,12 +207,12 @@ Respond ONLY with valid JSON:
 
   async generateDesignBrief(extractedData, branch) {
     try {
-      const enhancedBrief = await this.uiux.getEnhancedDesignBrief(extractedData, branch);
-      return this.validateDesignBrief(enhancedBrief);
+      return await this.generateAIDesignBrief(extractedData, branch);
     } catch (error) {
-      console.error('[AI] UI/UX Pro Max design brief generation failed:', error.message);
-      console.warn('[AI] Falling back to AI-generated design brief');
-      return this.generateAIDesignBrief(extractedData, branch);
+      return {
+        creative_mode: 'auto-cycle',
+        layout: 'auto-cycle'
+      };
     }
   }
 

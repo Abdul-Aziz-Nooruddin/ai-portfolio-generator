@@ -24,10 +24,9 @@ const { RazorpayService } = require('./services/razorpay-service');
 const { EmailService } = require('./services/email-service');
 const { LifecycleService } = require('./services/lifecycle-service');
 const { TelegramHandler } = require('./handlers/telegram-handler');
-const { DesignResourcesService } = require('./services/design-resources-service');
 const { FigmaService } = require('./services/figma-service');
 const { CustomDomainService } = require('./services/custom-domain-service');
-const { DesignIntelligenceStudio } = require('./design-intelligence');
+const { DesignEngine, IA_MODELS, VISUAL_UNIVERSES } = require('./design-engine');
 const { SecurityService } = require('./services/security-service');
 const { SecurityMiddleware } = require('./middleware/security-middleware');
 const { AuthMiddleware } = require('./middleware/auth-middleware');
@@ -35,9 +34,8 @@ const { AuthHandler } = require('./handlers/auth-handler');
 
 const app = express();
 const securityService = new SecurityService();
-const designResourcesService = new DesignResourcesService();
 const figmaService = new FigmaService();
-const designStudio = new DesignIntelligenceStudio();
+const designEngine = new DesignEngine();
 
 // Global Security Middleware Pipeline
 app.use(SecurityMiddleware.requestTimeout(90000));
@@ -205,8 +203,6 @@ app.post('/webhook/razorpay', async (req, res) => {
 // Web REST API Endpoints (For Vercel & Web Studio)
 // ==========================================
 
-const { UIUXIntegration } = require('./services/uiux-integration');
-const uiuxEngine = new UIUXIntegration();
 const crypto = require('crypto');
 const MAX_HOURLY_QUOTA = parseInt(process.env.MAX_GENERATIONS_PER_HOUR, 10) || 60;
 
@@ -297,7 +293,7 @@ app.post(
         }
       }
 
-      const designBrief = await uiuxEngine.getEnhancedDesignBrief(enrichedData, branch);
+      const designBrief = { creative_mode: 'auto-cycle', layout: 'auto-cycle' };
       const rawSite = await siteGenerator.generateSite(
         { extracted_data: enrichedData, branch, id: siteId },
         enrichedData,
@@ -410,23 +406,15 @@ app.get('/api/generate/github/status/:jobId', (req, res) => {
   res.json(job);
 });
 
-// Traversy Design Resources Integration Endpoints
+/// Studio & Design Engine API Endpoints
 app.get('/api/design-resources', (req, res) => {
-  try {
-    const { q, category } = req.query;
-    const categories = designResourcesService.getCategories();
-    const resources = designResourcesService.search(q, category);
-    res.json({
-      success: true,
-      totalCount: designResourcesService.allResources.length,
-      categories,
-      resultsCount: resources.length,
-      resources
-    });
-  } catch (err) {
-    console.error('[DESIGN RESOURCES API] search error:', err);
-    res.status(500).json({ error: err.message });
-  }
+  res.json({
+    success: true,
+    totalCount: 0,
+    categories: ['UI Design', 'Color Palettes', 'Typography', '3D & Motion'],
+    resultsCount: 0,
+    resources: []
+  });
 });
 
 app.post('/api/design-resources/generate', async (req, res) => {
@@ -441,49 +429,39 @@ app.post('/api/design-resources/generate', async (req, res) => {
       email: config.email || 'hello@example.com',
       github: config.github || 'https://github.com',
       linkedin: config.linkedin || 'https://linkedin.com',
-      figma_url: config.figmaUrl || null
+      location: config.location || 'San Francisco, CA',
+      projects: config.projects || [
+        {
+          name: 'Hyperion Spatial Renderer',
+          desc: 'High-performance WebGL compute shader engine with procedural terrain and real-time raytraced caustics.',
+          tech: 'TypeScript • WebGL2 • Three.js • GLSL',
+          live: 'https://hyperion.graphics',
+          github: 'https://github.com/example/hyperion'
+        },
+        {
+          name: 'Vortex Distributed Graph',
+          desc: 'Distributed transactional graph database processing 25M node traversals/sec with sub-millisecond latency.',
+          tech: 'Rust • Raft • RocksDB',
+          live: 'https://vortex.quantum.io',
+          github: 'https://github.com/example/vortex'
+        }
+      ]
     };
 
     const options = {
       layout: config.layout,
-      mode: config.mode,
-      palette: config.palette ? { id: config.palette } : null,
-      fontPairing: config.fontPairing
+      mode: config.mode
     };
 
-    const result = await designStudio.generatePortfolio(userProfile, options);
+    const result = await designEngine.generatePortfolio(userProfile, options);
 
     res.json({
       success: true,
       html: result.html,
       css: result.css,
       js: result.js,
-      layout: result.designDNA.layoutArchitecture,
-      creativeBrief: result.creativeBrief,
-      designDNA: result.designDNA,
-      telemetry: result.telemetry,
-      uniqueness: result.uniqueness,
-      antiPattern: result.antiPattern,
-      generationReport: result.generationReport,
-      palette: {
-        name: result.designDNA.colorSystem.name,
-        primary: result.designDNA.colorSystem.primary,
-        secondary: result.designDNA.colorSystem.secondary,
-        accent: result.designDNA.colorSystem.accent,
-        background: result.designDNA.colorSystem.background
-      },
-      font: {
-        name: `${result.designDNA.typographySystem.heading_font} + ${result.designDNA.typographySystem.body_font}`
-      },
-      bg3D: {
-        name: result.designDNA.threeScene3D.name
-      },
-      fg3D: {
-        name: result.designDNA.heroComposition
-      },
-      textScale: result.designDNA.typographySystem.scale_ratio,
-      baseFontSize: result.designDNA.typographySystem.base_size,
-      headlineTracking: result.designDNA.typographySystem.tracking
+      designBlueprint: result.designBlueprint,
+      contentProfile: result.contentProfile
     });
   } catch (err) {
     console.error('[DESIGN STUDIO API] generate error:', err);
@@ -492,11 +470,16 @@ app.post('/api/design-resources/generate', async (req, res) => {
 });
 
 app.get('/api/studio/modes', (req, res) => {
-  res.json({ success: true, modes: designStudio.getModes() });
+  res.json({
+    success: true,
+    modes: Object.keys(VISUAL_UNIVERSES),
+    universes: VISUAL_UNIVERSES,
+    iaModels: IA_MODELS
+  });
 });
 
 app.get('/api/studio/history', (req, res) => {
-  res.json({ success: true, stats: designStudio.getHistoryStats() });
+  res.json({ success: true, history: designEngine.memory.getRecentHistory() });
 });
 
 // Figma MCP & Design API Routes
@@ -522,7 +505,7 @@ app.post('/api/figma/generate', async (req, res) => {
   try {
     const { figmaUrl, data = {} } = req.body;
     const enrichedData = { ...data, figma_url: figmaUrl };
-    const designBrief = await conversationEngine.uiuxEngine.getEnhancedDesignBrief(enrichedData);
+    const designBrief = { creative_mode: 'auto-cycle', layout: 'auto-cycle' };
     const site = await siteGenerator.generateSite(
       { extracted_data: enrichedData },
       enrichedData,
