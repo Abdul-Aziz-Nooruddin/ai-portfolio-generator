@@ -8,9 +8,10 @@ const { PROJECT_STORYTELLING_SYSTEMS } = require('../../design-engine/project-st
 const { ProjectPresentationDiversityGovernor } = require('../project-presentation-diversity-governor');
 
 class ProjectStorytellingAffinityAgent {
+  static recentGlobalSelections = [];
+
   constructor() {
     this.governor = new ProjectPresentationDiversityGovernor();
-    this.recentGlobalSelections = [];
   }
 
   /**
@@ -23,7 +24,7 @@ class ProjectStorytellingAffinityAgent {
   async execute(contentProfile = {}, artDirection = {}, recentHistory = [], context = {}) {
     const roleLower = (contentProfile.role || '').toLowerCase();
     const projects = contentProfile.projects || [];
-    const override = context.projectStrategy || (artDirection.decision?.defaultStorytelling && !artDirection.decision?.modelId ? artDirection.decision.defaultStorytelling : null);
+    const override = context.projectStrategy || (!artDirection.decision?.modelId && artDirection.decision?.defaultStorytelling ? artDirection.decision.defaultStorytelling : null);
 
     let affinityPool = [];
 
@@ -57,15 +58,15 @@ class ProjectStorytellingAffinityAgent {
     let candidatePool = (roll < 0.70 && affinityPool.length > 0) ? affinityPool : allKeys;
 
     // Filter against recent history to ensure broad distribution
-    const recentKeys = this.recentGlobalSelections.slice(-4);
+    const recentKeys = ProjectStorytellingAffinityAgent.recentGlobalSelections.slice(-4);
     const nonRecent = candidatePool.filter(k => !recentKeys.includes(k));
     const finalPool = nonRecent.length > 0 ? nonRecent : candidatePool;
 
     const chosenStrategyKey = override || finalPool[Math.floor(Math.random() * finalPool.length)] || 'technical-dossier';
 
-    this.recentGlobalSelections.push(chosenStrategyKey);
-    if (this.recentGlobalSelections.length > 30) {
-      this.recentGlobalSelections.shift();
+    ProjectStorytellingAffinityAgent.recentGlobalSelections.push(chosenStrategyKey);
+    if (ProjectStorytellingAffinityAgent.recentGlobalSelections.length > 30) {
+      ProjectStorytellingAffinityAgent.recentGlobalSelections.shift();
     }
 
     const system = PROJECT_STORYTELLING_SYSTEMS[chosenStrategyKey] || PROJECT_STORYTELLING_SYSTEMS['technical-dossier'];

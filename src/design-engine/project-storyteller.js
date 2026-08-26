@@ -105,7 +105,7 @@ class ProjectStoryteller {
   // 2. Code & Architecture Dossier
   static renderCodeArchitectureDossier(projects, visual) {
     const itemsHtml = projects.map((p, i) => `
-      <div class="architecture-dossier-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border);">
+      <div class="dossier-card architecture-dossier-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border);">
         <div class="dossier-specs-column">
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">[MODULE_SPEC_${i+1}]</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>
@@ -135,7 +135,7 @@ class ProjectStoryteller {
   // 3. Horizontal Filmstrip Runway
   static renderHorizontalFilmstrip(projects, visual) {
     const cardsHtml = projects.map((p, i) => `
-      <div class="filmstrip-card" style="flex: 0 0 clamp(320px, 45vw, 550px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow);">
+      <div class="filmstrip-slide filmstrip-card" style="flex: 0 0 clamp(320px, 45vw, 550px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow);">
         <div>
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem;">RUNWAY // 0${i+1}</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>

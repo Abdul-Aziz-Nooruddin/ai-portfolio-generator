@@ -15,6 +15,7 @@ process.on('uncaughtException', (err) => {
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { ConversationEngine } = require('./conversation-engine');
 const { AIService } = require('./services/ai-service');
 const { DatabaseService } = require('./services/db-service');
@@ -216,7 +217,6 @@ app.post('/webhook/razorpay', async (req, res) => {
 // Web REST API Endpoints (For Vercel & Web Studio)
 // ==========================================
 
-const crypto = require('crypto');
 const MAX_HOURLY_QUOTA = parseInt(process.env.MAX_GENERATIONS_PER_HOUR, 10) || 60;
 
 // 1. Web Resume PDF & Image Parsing (Protected with 50MB payload limit & per-user/IP quota)
@@ -782,8 +782,7 @@ app.post('/api/generate/unified', async (req, res) => {
     });
 
     const siteId = `web-${crypto.randomUUID()}`;
-    const hostingProvider = new HostingProvider();
-    const deployResult = await hostingProvider.deploySite(siteId, siteResult.html);
+    await hostingProvider.deploy(siteId, siteResult.html);
 
     // Audit with Legacy Vibe Detector
     const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
@@ -801,7 +800,7 @@ app.post('/api/generate/unified', async (req, res) => {
     res.json({
       success: true,
       siteId,
-      previewUrl: deployResult.url,
+      previewUrl: `/p/${siteId}`,
       profileData: normalized,
       vibeAudit,
       designBlueprint: siteResult.designBlueprint
