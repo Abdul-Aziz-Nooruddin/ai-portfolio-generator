@@ -236,6 +236,15 @@ describe('🏛️ Design Intelligence Agent Ecosystem Integration Test Suite', (
 
     // Passing candidate
     const goodCandidate = {
+      designEvidence: {
+        skills: {
+          'ui-ux-pro-max': { consulted: true },
+          'design-it': { consulted: true },
+          'better-interface': { consulted: true },
+          'web-design': { consulted: true },
+          'gsap': { consulted: true }
+        }
+      },
       projectStorytelling: { strategyId: 'code-architecture-dossier' },
       visualUniverse: { universeId: 'swiss-editorial', theme: 'light' },
       contentProfile: { projects: [{ name: 'A' }, { name: 'B' }] },

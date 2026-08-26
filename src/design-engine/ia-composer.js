@@ -97,8 +97,17 @@ class IAComposer {
   }
 
   static selectModel(contentProfile, preferredLayout = null, recentHistory = []) {
-    if (preferredLayout && IA_MODELS[preferredLayout]) {
-      return IA_MODELS[preferredLayout];
+    const layoutAliases = {
+      'spatial-3d-cyber': 'spatial-3d-stage',
+      'kinetic-3d-glass': 'asymmetric-bento-canvas',
+      'terminal-3d-matrix': 'computational-terminal',
+      'neo-brutalist-3d': 'magazine-spread-columns',
+      'editorial-3d-minimal': 'editorial-monograph'
+    };
+
+    const targetLayout = layoutAliases[preferredLayout] || preferredLayout;
+    if (targetLayout && IA_MODELS[targetLayout]) {
+      return IA_MODELS[targetLayout];
     }
 
     const { signals } = contentProfile;

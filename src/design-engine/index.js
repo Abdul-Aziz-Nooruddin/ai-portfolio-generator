@@ -2,7 +2,9 @@
  * Generative Design Engine
  * Consumes the formal DesignBrief produced by the Design Intelligence Ecosystem.
  * The DesignBrief is the SINGLE SOURCE OF TRUTH for information architecture,
- * layout grammar, project storytelling, and visual universe.
+ * layout grammar, project storytelling, visual universe, and motion profiles.
+ * 
+ * Strict Gate Policy: Direct invocation without a valid DesignBrief is blocked in production.
  */
 
 const { ContentAnalyzer } = require('./content-analyzer');
@@ -63,7 +65,12 @@ class DesignEngine {
         ? designBrief.motionSystem.motionCode
         : WebGLMotion.getMotionCode(visualUniverse, iaModel);
     } else {
-      // 2. Multi-Candidate Generation Loop with Structural Anti-Repetition
+      // 2. Production Bypass Guard (Phase 9 requirement)
+      if (!designBriefOrOptions.allowInternalTestMode) {
+        throw new Error('[DESIGN ENGINE BLOCKED] Direct invocation without a valid DesignBrief is prohibited in production. Pass candidate through SiteGenerator / DesignGate first.');
+      }
+
+      // Internal test fallback loop
       const recentHistory = this.memory.getRecentHistory();
       for (let attempt = 0; attempt < 5; attempt++) {
         const selectedIa = IAComposer.selectModel(contentProfile, designBriefOrOptions.layout, recentHistory);
@@ -90,7 +97,7 @@ class DesignEngine {
       motion = WebGLMotion.getMotionCode(visualUniverse, iaModel);
     }
 
-    // 3. Render HTML/CSS/JS Output adhering strictly to DesignBrief
+    // 3. Render HTML/CSS/JS Output with Section Morphing & Motion Profiles
     const rendered = HtmlRenderer.render(
       contentProfile,
       iaModel,

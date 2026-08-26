@@ -1,12 +1,14 @@
 /**
  * Mandatory Design Intelligence Gate
  * Enforces the strict rule: NO DESIGN INTELLIGENCE -> NO PORTFOLIO GENERATION.
- * Coordinates all 15 specialized design agents, runs iterative critique revisions,
- * prevents structural repetition via StructuralMemory, and passes the validated DesignBrief to DesignEngine.
+ * Coordinates all 15 specialized design agents, enforces skill parsing,
+ * runs iterative critique revisions, and passes the validated DesignBrief to DesignEngine.
  */
 
 const { config } = require('./config');
 const { DesignBriefSchema } = require('./design-brief-schema');
+const { SkillRegistry } = require('./skills/skill-registry');
+const { SkillEvidence } = require('./skills/skill-evidence');
 
 const { LocalDesignReferenceProvider } = require('./providers/local-design-reference-provider');
 const { FigmaProvider } = require('./providers/figma-provider');
@@ -30,6 +32,9 @@ const { DesignSynthesisAgent } = require('./agents/design-synthesis-agent');
 
 class DesignGate {
   constructor(options = {}) {
+    this.registry = new SkillRegistry();
+    this.evidenceTracker = new SkillEvidence(this.registry);
+
     this.localProvider = new LocalDesignReferenceProvider();
     this.figmaProvider = new FigmaProvider();
     this.webProvider = new WebDesignProvider();
@@ -62,6 +67,9 @@ class DesignGate {
       throw new Error('[DESIGN GATE BLOCKED] Design Intelligence is disabled but mandatory (DESIGN_AGENT_REQUIRED=true).');
     }
 
+    // 0. Pre-Flight Skill Registry Verification (Fail-Closed)
+    this.registry.verifyAllSkills();
+
     // 1. Content Analysis Agent
     const contentAnalysis = await this.contentAgent.execute(rawUserData);
     const contentProfile = contentAnalysis.decision;
@@ -72,16 +80,16 @@ class DesignGate {
     const recentHistory = this.diversityAgent.getRecentHistory();
 
     for (let attempt = 1; attempt <= config.maxRevisionAttempts; attempt++) {
-      // 2. Design Research Agent
+      // 2. Design Research Agent (Parses active SKILL.md rules + CSV datasets)
       const designResearch = await this.researchAgent.execute(contentProfile, context);
 
-      // 3. Figma Design Agent (extracts tokens if Figma URL provided)
+      // 3. Figma Design Agent (Extracts tokens if Figma URL provided)
       const figmaAnalysis = await this.figmaAgent.execute(contentProfile, context);
 
       // 4. UI/UX Pattern Agent
       const uxStrategy = await this.uxAgent.execute(contentProfile, designResearch.decision, context);
 
-      // 5. Information Architecture Agent (selects model with anti-repetition memory)
+      // 5. Information Architecture Agent (Selects model with anti-repetition memory)
       const iaStrategy = await this.iaAgent.execute(contentProfile, uxStrategy.decision, recentHistory, context);
 
       // 6. Spatial Composition Agent
@@ -121,7 +129,7 @@ class DesignGate {
         continue;
       }
 
-      // 14. Design Synthesis Agent
+      // 14. Design Synthesis Agent (Combines all agents into validated DesignBrief)
       candidateBrief = await this.synthesisAgent.synthesize({
         contentAnalysis,
         designResearch,

@@ -62,7 +62,7 @@ describe('🏛️ Compositional Design Engine: Real Structural Diversity Benchma
 
     for (let i = 1; i <= TOTAL_RUNS; i++) {
       const profile = sampleProfiles[(i - 1) % sampleProfiles.length];
-      const result = await engine.generatePortfolio(profile);
+      const result = await engine.generatePortfolio(profile, { allowInternalTestMode: true });
       const bp = result.designBlueprint;
       const html = result.html;
 

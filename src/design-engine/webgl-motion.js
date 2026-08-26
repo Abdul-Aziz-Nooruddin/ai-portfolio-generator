@@ -1,33 +1,98 @@
 /**
- * WebGL & Motion Architecture
- * Selectively injects high-performance Three.js scenes and GSAP 3.12+ motion curves.
- * Only applies 3D when it enhances the chosen aesthetic universe (no gratuitous WebGL).
+ * WebGL & Motion Architecture with Universe-Specific Motion Profiles
+ * Authors high-performance GSAP 3.12+ motion choreography and selective Three.js scenes.
+ * Adapts duration, stagger, and easing curves based on the active Visual Universe.
+ * Guarantees strict prefers-reduced-motion compliance.
  */
 
 class WebGLMotion {
-  static getMotionCode(visualUniverse, iaModel) {
-    const isSpatialOrDark = visualUniverse.theme === 'dark' || iaModel.id === 'spatial-3d-stage' || visualUniverse.id === 'futuristic-spatial';
-    
-    // Core GSAP Micro-Interactions Script
+  /**
+   * Generates motion scripts and libraries tailored to the visual universe and IA model
+   */
+  static getMotionCode(visualUniverse = {}, iaModel = {}) {
+    const universeId = visualUniverse.id || 'technical-lab';
+    const isSpatialOrDark = visualUniverse.theme === 'dark' || iaModel.id === 'spatial-3d-stage' || universeId === 'futuristic-spatial';
+
+    // Universe-specific motion profiles
+    const motionProfiles = {
+      'cinematic-obsidian': {
+        duration: 1.2,
+        stagger: 0.15,
+        yOffset: 32,
+        ease: 'power2.inOut',
+        tiltSensitivity: 0.02
+      },
+      'brutalist-pop': {
+        duration: 0.45,
+        stagger: 0.06,
+        yOffset: 20,
+        ease: 'power4.out',
+        tiltSensitivity: 0.045
+      },
+      'technical-lab': {
+        duration: 0.65,
+        stagger: 0.09,
+        yOffset: 24,
+        ease: 'power3.out',
+        tiltSensitivity: 0.03
+      },
+      'swiss-editorial': {
+        duration: 0.85,
+        stagger: 0.1,
+        yOffset: 16,
+        ease: 'expo.out',
+        tiltSensitivity: 0.015
+      },
+      'futuristic-spatial': {
+        duration: 1.0,
+        stagger: 0.14,
+        yOffset: 28,
+        ease: 'sine.out',
+        tiltSensitivity: 0.05
+      },
+      'monochrome-gallery': {
+        duration: 0.95,
+        stagger: 0.12,
+        yOffset: 12,
+        ease: 'power1.out',
+        tiltSensitivity: 0.02
+      },
+      'luxury-minimal': {
+        duration: 1.1,
+        stagger: 0.16,
+        yOffset: 18,
+        ease: 'power2.out',
+        tiltSensitivity: 0.015
+      }
+    };
+
+    const profile = motionProfiles[universeId] || motionProfiles['technical-lab'];
+
+    // Core GSAP Micro-Interactions Script using selected Motion Profile
     const gsapScript = `
-      // GSAP 3.12+ Micro-Interactions & Scroll Animations
+      // GSAP 3.12+ Motion Profile for '${universeId}'
       document.addEventListener('DOMContentLoaded', () => {
         if (typeof gsap !== 'undefined') {
+          // Check prefers-reduced-motion
+          if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+          }
+
           gsap.from('.layout-root > *', {
             opacity: 0,
-            y: 24,
-            duration: 0.8,
-            stagger: 0.12,
-            ease: 'power3.out'
+            y: ${profile.yOffset},
+            duration: ${profile.duration},
+            stagger: ${profile.stagger},
+            ease: '${profile.ease}'
           });
 
           // 3D Card Hover Physics
-          document.querySelectorAll('.filmstrip-card, .mosaic-project-item, .spatial-orbit-pod, .canvas-project-module').forEach(card => {
+          document.querySelectorAll('.filmstrip-card, .mosaic-project-item, .spatial-orbit-pod, .canvas-project-module, .dossier-node').forEach(card => {
             card.addEventListener('mousemove', (e) => {
               const rect = card.getBoundingClientRect();
               const x = e.clientX - rect.left - rect.width / 2;
               const y = e.clientY - rect.top - rect.height / 2;
-              card.style.transform = \`perspective(1000px) rotateX(\${-y * 0.03}deg) rotateY(\${x * 0.03}deg) scale3d(1.015, 1.015, 1.015)\`;
+              card.style.transform = \`perspective(1000px) rotateX(\${-y * ${profile.tiltSensitivity}}deg) rotateY(\${x * ${profile.tiltSensitivity}}deg) scale3d(1.015, 1.015, 1.015)\`;
             });
             card.addEventListener('mouseleave', () => {
               card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
@@ -39,6 +104,7 @@ class WebGLMotion {
 
     if (!isSpatialOrDark) {
       return {
+        profileName: universeId,
         libraries: `<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>`,
         js: gsapScript,
         canvasHtml: ''
@@ -46,9 +112,9 @@ class WebGLMotion {
     }
 
     // Three.js WebGL Spatial Canvas for Dark / Spatial Universes
-    const primaryHex = visualUniverse.colors.primary.replace('#', '0x');
-    const accentHex = (visualUniverse.colors.accent || '#38bdf8').replace('#', '0x');
-    const isPeachSpatial = visualUniverse.id === 'futuristic-spatial';
+    const primaryHex = (visualUniverse.colors?.primary || '#38bdf8').replace('#', '0x');
+    const accentHex = (visualUniverse.colors?.accent || '#818cf8').replace('#', '0x');
+    const isPeachSpatial = universeId === 'futuristic-spatial';
 
     const threeJsScript = `
       ${gsapScript}
@@ -56,6 +122,8 @@ class WebGLMotion {
       // Three.js WebGL Spatial Canvas
       (function() {
         if (typeof THREE === 'undefined') return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
         const container = document.getElementById('webgl-canvas-container');
         if (!container) return;
 
@@ -80,7 +148,7 @@ class WebGLMotion {
         pointLight2.position.set(-10, -10, 8);
         scene.add(pointLight2);
 
-        // Core 3D Mesh (Torus Knot / Geodesic Sphere)
+        // Core 3D Mesh
         const geometry = ${isPeachSpatial ? 'new THREE.TorusKnotGeometry(7, 2.2, 120, 18)' : 'new THREE.IcosahedronGeometry(7, 2)'};
         const material = new THREE.MeshPhysicalMaterial({
           color: ${primaryHex},
@@ -96,42 +164,11 @@ class WebGLMotion {
         mesh.position.set(window.innerWidth > 900 ? 9 : 0, 0, 0);
         scene.add(mesh);
 
-        // Particle Mist
-        const particleCount = 180;
-        const partGeo = new THREE.BufferGeometry();
-        const positions = new Float32Array(particleCount * 3);
-        for(let i = 0; i < particleCount * 3; i++) {
-          positions[i] = (Math.random() - 0.5) * 60;
-        }
-        partGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const partMat = new THREE.PointsMaterial({
-          size: 0.18,
-          color: ${accentHex},
-          transparent: true,
-          opacity: 0.4
-        });
-        const particles = new THREE.Points(partGeo, partMat);
-        scene.add(particles);
-
-        let mouseX = 0, mouseY = 0;
-        window.addEventListener('mousemove', (e) => {
-          mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-          mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-        });
-
-        let scrollY = 0;
-        window.addEventListener('scroll', () => {
-          scrollY = window.scrollY;
-        });
-
+        let animationFrameId;
         function animate() {
-          requestAnimationFrame(animate);
+          animationFrameId = requestAnimationFrame(animate);
           mesh.rotation.x += 0.003;
           mesh.rotation.y += 0.005;
-          mesh.position.x = (window.innerWidth > 900 ? 9 : 0) + mouseX * 1.5;
-          mesh.position.y = -mouseY * 1.5 - (scrollY * 0.005);
-          camera.position.z = 24 - Math.min(scrollY * 0.01, 8);
-          particles.rotation.y += 0.0008;
           renderer.render(scene, camera);
         }
         animate();
@@ -140,17 +177,19 @@ class WebGLMotion {
           camera.aspect = window.innerWidth / window.innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(window.innerWidth, window.innerHeight);
+          mesh.position.set(window.innerWidth > 900 ? 9 : 0, 0, 0);
         });
       })();
     `;
 
     return {
+      profileName: universeId,
       libraries: `
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
       `,
       js: threeJsScript,
-      canvasHtml: `<div id="webgl-canvas-container" style="position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.7;"></div>`
+      canvasHtml: `<div id="webgl-canvas-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0; opacity: 0.85;"></div>`
     };
   }
 }

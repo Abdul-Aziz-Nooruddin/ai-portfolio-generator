@@ -33,33 +33,6 @@ The **Portfolio Design Intelligence Ecosystem** introduces a formal, multi-agent
                                    │
                                    ▼
                        [2. Design Research Agent]
-                       • Curated design datasets
-                       • Abstract principles
-                       • Anti-pattern avoidance
-                                   │
-                                   ▼
-        ┌──────────────────────────────────────────────────────┐
-        │                 SPECIALIZED AGENTS                   │
-        │                                                      │
-        │ • 3. Figma Design Agent (FigmaProvider tokens)       │
-        │ • 4. UI/UX Pattern Agent (UX rules & density)        │
-        │ • 5. IA Agent (10 distinct IA models)                │
-        │ • 6. Spatial Composition Agent (10 layout grammars)  │
-        │ • 7. Typography Agent (Scales & font pairings)       │
-        │ • 8. Color / Identity Agent (10 visual universes)    │
-        │ • 9. Project Storytelling Agent (12 presentation     │
-        │      models with distinct DOM structures)            │
-        │ • 10. Motion & Interaction Agent (GSAP / WebGL)      │
-        │ • 11. Accessibility Agent (WCAG AAA verification)    │
-        │ • 12. Performance Agent (Payload budgets)            │
-        │ • 13. Structural Diversity Agent (DOM fingerprints)  │
-        └──────────────────────────┬───────────────────────────┘
-                                   │
-                                   ▼
-                      [14. Design Synthesis Agent]
-                       Combines all agent decisions
-                                   │
-                                   ▼
                         FORMAL DESIGN BRIEF
                                    │
                                    ▼
