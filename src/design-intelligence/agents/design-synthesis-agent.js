@@ -6,6 +6,7 @@
 
 const { DesignBriefSchema } = require('../design-brief-schema');
 const { MacroDirectiveManager } = require('../../design-engine/macro-design-directives');
+const { CompositionPlan } = require('../../design-engine/composition-plan');
 
 class DesignSynthesisAgent {
   /**
@@ -70,7 +71,15 @@ class DesignSynthesisAgent {
 
     const designThesis = this.generateDesignThesis(contentProfile, visual, ia, project, research);
 
+    const compositionPlan = CompositionPlan.buildPlan(contentProfile, {
+      universeId: visual.universeId,
+      pageTopology: composition.layoutId || ia.layoutId,
+      projectStrategy: project.strategyId,
+      sectionSequence
+    }, []);
+
     const brief = {
+      compositionPlan,
       macroDirective,
       densityProfile: macroDirective.densityProfile,
       compositionGravity: macroDirective.compositionGravity,

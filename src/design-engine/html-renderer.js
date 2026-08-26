@@ -6,9 +6,10 @@
 
 const { ProjectStoryteller } = require('./project-storyteller');
 const { ComponentGrammar } = require('./component-grammar');
+const { CompositionPrimitives } = require('./composition-primitives');
 
 class HtmlRenderer {
-  static render(contentProfile, iaModel, layoutGrammar, visualUniverse, projectStrategy, motion) {
+  static render(contentProfile, iaModel, layoutGrammar, visualUniverse, projectStrategy, motion, compositionPlan = null) {
     const { name, role, tagline, bio, projects, skills, experience, education, certifications } = contentProfile;
     const colors = visualUniverse.colors || {};
 
@@ -20,8 +21,9 @@ class HtmlRenderer {
     // Resolve Grammar Archetype for Visual World
     const grammar = ComponentGrammar.resolve(visualUniverse, iaModel);
 
-    // 1. Render Project Section (18 Distinct Presentational Forms)
-    const projectsHtml = ProjectStoryteller.render(projects, projectStrategy, visualUniverse);
+    // 1. Render Project Section (Multi-Artifact Suite or 18 Distinct Presentational Forms)
+    const effectiveStrategy = compositionPlan?.projectArtifactPlan || projectStrategy;
+    const projectsHtml = ProjectStoryteller.render(projects, effectiveStrategy, visualUniverse);
 
     // 2. Render Skills via Component Grammar (No generic pill tag monopoly)
     const skillsHtml = grammar.skillsGrammar.render(skills, s => this.escapeHtml(s));
@@ -42,7 +44,28 @@ class HtmlRenderer {
       safeName
     );
 
-    // 6. Dynamic Body Layout Builder based on 8 Distinct Hero Archetypes & 10 IA Models
+    // 6. Navigation Grammar Builder
+    let navHtml = '';
+    if (compositionPlan?.navigationGrammar) {
+      const ng = compositionPlan.navigationGrammar;
+      if (ng.id === 'top-editorial-masthead') {
+        navHtml = CompositionPrimitives.renderEditorialMasthead(safeName, safeRole, safeTagline);
+      } else if (ng.id === 'vertical-identity-rail') {
+        navHtml = CompositionPrimitives.renderNavigationRail(ng, ['Artifacts', 'Progression', 'Stack', 'Contact']);
+      } else if (ng.id === 'bottom-chapter-nav') {
+        navHtml = `<nav class="bottom-chapter-nav" style="${ng.css}"><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">NAV //</span> <a href="#artifacts" style="color: var(--text); text-decoration: none; margin: 0 8px;">Artifacts</a> • <a href="#progression" style="color: var(--text); text-decoration: none; margin: 0 8px;">Progression</a> • <a href="#contact" style="color: var(--text); text-decoration: none; margin: 0 8px;">Contact</a></nav>`;
+      } else if (ng.id === 'floating-coordinate-nav') {
+        navHtml = `<nav class="floating-coordinate-nav" style="${ng.css}">SYS // LAT: 47.37° N • LON: 8.54° E • <span style="color: var(--primary);">ACTIVE</span></nav>`;
+      } else if (ng.id === 'command-prompt-nav') {
+        navHtml = `<nav class="command-prompt-nav" style="${ng.css}">$ goto --sections [artifacts, timeline, stack, exit]</nav>`;
+      } else if (ng.id === 'gallery-selector') {
+        navHtml = `<nav class="gallery-selector" style="${ng.css}"><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">EXHIBITION //</span> <span style="font-size: 0.85rem; color: var(--text);">ROOM 01: ARTIFACTS</span> • <span style="font-size: 0.85rem; color: var(--text-muted);">ROOM 02: ARCHIVE</span></nav>`;
+      } else if (ng.id === 'numbered-archive-index') {
+        navHtml = `<nav class="numbered-archive-index" style="${ng.css}"><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">[01] VERIFIED ARTIFACTS</div><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">[02] PROGRESSION</div><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">[03] CAPABILITIES</div></nav>`;
+      }
+    }
+
+    // 7. Dynamic Body Layout Builder based on 8 Distinct Hero Archetypes & 10 IA Models
     let bodyContent = '';
 
     if (iaModel.id === 'split-screen-dossier') {
@@ -84,13 +107,15 @@ class HtmlRenderer {
     } else if (iaModel.id === 'work-first-runway') {
       bodyContent = `
         <div class="layout-root">
-          <div class="runway-lead-bar" style="border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-            <div>
-              <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">ACTIVE PORTFOLIO RUNWAY</span>
-              <h1 style="font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800; color: var(--text);">${safeName}</h1>
+          ${navHtml ? navHtml : `
+            <div class="runway-lead-bar" style="border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+              <div>
+                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">ACTIVE PORTFOLIO RUNWAY</span>
+                <h1 style="font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800; color: var(--text);">${safeName}</h1>
+              </div>
+              <div style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">${safeRole}</div>
             </div>
-            <div style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">${safeRole}</div>
-          </div>
+          `}
           <section style="margin-bottom: 5rem;">
             <div style="margin-bottom: 2rem;">
               <h2 style="font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">Featured Systems & Case Studies</h2>
@@ -116,6 +141,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'computational-terminal') {
       bodyContent = `
         <div class="layout-root">
+          ${navHtml}
           <div class="terminal-window" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);">
             <div style="background: var(--surface-alt); padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
               <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></span>
@@ -145,6 +171,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'editorial-monograph') {
       bodyContent = `
         <div class="layout-root monograph-reading-column">
+          ${navHtml}
           <header style="margin-bottom: 4rem; padding-bottom: 2.5rem; border-bottom: 2px solid var(--text);">
             <div style="font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 1rem; text-transform: uppercase;">MONOGRAPH • ISSUE VOL. I</div>
             ${photoHtml}
@@ -170,6 +197,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'horizontal-exhibition') {
       bodyContent = `
         <div class="layout-root horizontal-track">
+          ${navHtml}
           <header style="margin-bottom: 3rem;">
             <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">GALLERY EXHIBITION</div>
             ${photoHtml}
@@ -197,6 +225,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'asymmetric-bento-canvas') {
       bodyContent = `
         <div class="layout-root bento-grid-canvas">
+          ${navHtml}
           <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2.5rem;">
             <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem;">BENTO CANOPY</div>
             ${photoHtml}
@@ -221,6 +250,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'minimal-single-screen') {
       bodyContent = `
         <div class="layout-root single-screen-masthead">
+          ${navHtml}
           <header style="margin-bottom: 3.5rem;">
             ${photoHtml}
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; color: var(--text); line-height: 1.0; margin-bottom: 1rem;">${safeName}</h1>
@@ -242,6 +272,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'narrative-timeline') {
       bodyContent = `
         <div class="layout-root timeline-spine">
+          ${navHtml}
           <header style="margin-bottom: 4rem;">
             <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem;">CHRONOLOGICAL DOSSIER</div>
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</h1>
@@ -265,6 +296,7 @@ class HtmlRenderer {
     } else if (iaModel.id === 'magazine-spread-columns') {
       bodyContent = `
         <div class="layout-root magazine-grid-columns">
+          ${navHtml}
           <header style="margin-bottom: 3.5rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem;">
             <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">SPECIAL FEATURE EDITION</div>
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.6rem, 5.5vw, 4.5rem); font-weight: 900; color: var(--text); line-height: 1.05; margin-bottom: 1rem;">${safeName}</h1>
@@ -292,6 +324,7 @@ class HtmlRenderer {
       // Spatial 3D Stage & General Structural Composition
       bodyContent = `
         <div class="layout-root stage-orbit-wrapper">
+          ${navHtml}
           <header style="margin-bottom: 4.5rem;">
             <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">[SPATIAL_STAGE]</div>
             <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.5rem); font-weight: 800; color: var(--text); line-height: 1.05; margin-bottom: 1.25rem;">${safeName}</h1>

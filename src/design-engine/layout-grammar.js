@@ -45,9 +45,11 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-work-runway',
     cssGrid: `
       .layout-root {
-        max-width: 1380px;
-        margin: 0 auto;
-        padding: 0 clamp(1.25rem, 4vw, 3.5rem);
+        width: 100%;
+        max-width: 100vw;
+        margin: 0;
+        padding: 0 clamp(1.25rem, 5vw, 5rem);
+        box-sizing: border-box;
       }
       .runway-lead-bar {
         padding: 2.5rem 0;
@@ -67,21 +69,24 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-horizontal-exhibition',
     cssGrid: `
       .layout-root {
-        padding: clamp(2rem, 4vw, 4rem);
-        max-width: 1400px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 100vw;
+        overflow-x: hidden;
+        padding: clamp(2rem, 4vw, 4rem) clamp(1rem, 3vw, 3rem);
+        box-sizing: border-box;
       }
     `
   },
   'editorial-monograph': {
     id: 'editorial-monograph',
-    name: 'Asymmetric 2-Column Monograph Essay',
+    name: 'Asymmetric Offset Monograph Essay',
     containerType: 'asymmetric-essay',
     bodyClass: 'layout-editorial-monograph',
     cssGrid: `
       .layout-root {
-        max-width: 1080px;
-        margin: 0 auto;
+        max-width: 880px;
+        margin-left: clamp(1rem, 6vw, 10rem);
+        margin-right: auto;
         padding: clamp(2rem, 5vw, 6rem) 1.5rem;
       }
       .monograph-section {
@@ -96,9 +101,9 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-computational-terminal',
     cssGrid: `
       .layout-root {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem 4rem;
+        max-width: 1180px;
+        margin: 2rem auto;
+        padding: 0 1.5rem 4rem;
       }
     `
   },
@@ -109,11 +114,13 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-spatial-stage',
     cssGrid: `
       .layout-root {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: clamp(2rem, 4vw, 4rem) 1.5rem;
+        width: 100%;
+        min-height: 100vh;
+        margin: 0;
+        padding: clamp(2rem, 4vw, 5rem) clamp(1.5rem, 4vw, 4rem);
         position: relative;
         z-index: 2;
+        box-sizing: border-box;
       }
     `
   },
@@ -137,13 +144,13 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-single-screen',
     cssGrid: `
       .layout-root {
-        max-width: 1150px;
-        margin: 0 auto;
+        width: 100%;
         min-height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        padding: clamp(2rem, 4vw, 4rem) 1.5rem;
+        padding: clamp(2rem, 5vw, 5rem) clamp(1.5rem, 4vw, 4rem);
+        box-sizing: border-box;
       }
     `
   },
@@ -154,9 +161,11 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-bento-canvas',
     cssGrid: `
       .layout-root {
-        max-width: 1280px;
-        margin: 0 auto;
-        padding: clamp(2rem, 4vw, 4rem) 1.5rem;
+        max-width: 1440px;
+        margin-left: auto;
+        margin-right: 0;
+        padding: clamp(2rem, 5vw, 5rem) clamp(1.5rem, 4vw, 4rem);
+        box-sizing: border-box;
       }
     `
   },
@@ -167,7 +176,7 @@ const LAYOUT_GRAMMARS = {
     bodyClass: 'layout-magazine-spread',
     cssGrid: `
       .layout-root {
-        max-width: 1300px;
+        max-width: 1380px;
         margin: 0 auto;
         padding: clamp(2rem, 4vw, 4.5rem) 1.5rem;
       }

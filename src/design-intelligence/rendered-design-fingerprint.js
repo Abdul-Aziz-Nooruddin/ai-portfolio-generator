@@ -41,7 +41,10 @@ class RenderedDesignFingerprint {
 
     // 3. Project Presentation Archetype in DOM
     let projectTopology = 'generic-card';
-    if (rawHtml.includes('presentation-research-paper') || rawHtml.includes('academic-paper') || rawHtml.includes('research-paper')) projectTopology = 'research-paper';
+    const matchStrat = rawHtml.match(/data-primary-strategy="([^"]+)"/);
+    if (matchStrat) {
+      projectTopology = matchStrat[1];
+    } else if (rawHtml.includes('presentation-research-paper') || rawHtml.includes('academic-paper')) projectTopology = 'research-paper';
     else if (rawHtml.includes('presentation-terminal-log') || rawHtml.includes('terminal-log') || rawHtml.includes('cli-session')) projectTopology = 'terminal-log';
     else if (rawHtml.includes('presentation-architecture-dossier') || rawHtml.includes('architecture-dossier') || rawHtml.includes('dossier-card')) projectTopology = 'architecture-dossier';
     else if (rawHtml.includes('presentation-horizontal-filmstrip') || rawHtml.includes('filmstrip-card') || rawHtml.includes('filmstrip-slide')) projectTopology = 'filmstrip-track';

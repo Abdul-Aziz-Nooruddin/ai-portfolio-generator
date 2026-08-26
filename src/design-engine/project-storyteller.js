@@ -21,6 +21,17 @@ class ProjectStoryteller {
       metrics: p.metrics || p.impact || ''
     }));
 
+    // Multi-Artifact Within-Portfolio Strategy Plan
+    if (Array.isArray(strategy) && strategy.length > 0 && strategy[0].artifactStrategy) {
+      const primaryStratKey = strategy[0].artifactStrategy || 'technical-dossier';
+      const renderedArtifacts = safeProjects.map((p, idx) => {
+        const itemPlan = strategy[idx] || strategy[strategy.length - 1];
+        const stratKey = itemPlan.artifactStrategy || 'technical-dossier';
+        return this.renderSingleProject(p, idx, stratKey, visual, itemPlan.artifactRole);
+      });
+      return `<div class="story-presentation presentation-multi-artifact-suite presentation-${primaryStratKey}" data-primary-strategy="${primaryStratKey}">${renderedArtifacts.join('')}</div>`;
+    }
+
     const strategyKey = typeof strategy === 'string' ? strategy : (strategy?.strategyId || strategy?.id || 'asymmetric-media-mosaic');
 
     switch (strategyKey) {
@@ -74,6 +85,53 @@ class ProjectStoryteller {
       case 'asymmetric-media-mosaic':
       default:
         return this.renderAsymmetricMediaMosaic(safeProjects, visual);
+    }
+  }
+
+  static renderSingleProject(p, idx, stratKey, visual, role = 'primary') {
+    switch (stratKey) {
+      case 'case-study-narrative':
+        return this.renderCaseStudyNarrative([p], visual);
+      case 'technical-dossier':
+      case 'code-architecture-dossier':
+        return this.renderCodeArchitectureDossier([p], visual);
+      case 'research-paper':
+        return this.renderAcademicResearchPaper([p], visual);
+      case 'failure-recovery':
+        return this.renderFailureRecoveryPostmortem([p], visual);
+      case 'metrics-observatory':
+      case 'compact-metrics-table':
+        return this.renderCompactMetricsTable([p], visual);
+      case 'build-journal':
+        return this.renderBuildJournal([p], visual);
+      case 'repository-archaeology':
+        return this.renderRepositoryArchaeology([p], visual);
+      case 'before-after':
+        return this.renderBeforeAfterMatrix([p], visual);
+      case 'artifact-archive':
+        return this.renderArtifactArchive([p], visual);
+      case 'minimal-project-index':
+      case 'typographic-index-reveal':
+        return this.renderTypographicIndexReveal([p], visual);
+      case 'visual-exhibition':
+      case 'horizontal-filmstrip':
+        return this.renderHorizontalFilmstrip([p], visual);
+      case 'project-log':
+      case 'terminal-session-log':
+        return this.renderTerminalSessionLog([p], visual);
+      case 'spatial-orbit-dock':
+        return this.renderSpatialOrbitDock([p], visual);
+      case 'split-technical-spec':
+      case 'split-screen-comparison':
+        return this.renderSplitScreenComparison([p], visual);
+      case 'fullscreen-interactive-slide':
+      case 'product-launch':
+        return this.renderFullscreenSlides([p], visual);
+      case 'editorial-feature':
+      case 'magazine-editorial-chapter':
+        return this.renderMagazineEditorialChapters([p], visual);
+      default:
+        return this.renderAsymmetricMediaMosaic([p], visual);
     }
   }
 

@@ -98,13 +98,22 @@ class DesignEngine {
     }
 
     // 3. Render HTML/CSS/JS Output with Section Morphing, Component Grammar & Motion Profiles
+    const { CompositionPlan } = require('./composition-plan');
+    const compositionPlan = designBrief?.compositionPlan || CompositionPlan.buildPlan(contentProfile, {
+      universeId: visualUniverse.id,
+      pageTopology: layoutGrammar.id,
+      projectStrategy,
+      sectionSequence: iaModel.sectionOrder
+    }, this.memory.getRecentHistory());
+
     const rendered = HtmlRenderer.render(
       contentProfile,
       iaModel,
       layoutGrammar,
       visualUniverse,
       projectStrategy,
-      motion
+      motion,
+      compositionPlan
     );
 
     // 4. Record in Structural Memory

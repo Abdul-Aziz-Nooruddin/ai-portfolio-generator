@@ -173,13 +173,13 @@ class CandidateDesignPool {
 
     // Coherence Check: Detect clashing system combinations
     let coherenceScore = 1.0;
-    if (typography.id === 'technical-mono' && universe.id === 'luxury-minimal') {
+    if (typographyId === 'technical-mono' && universeId === 'luxury-minimal') {
       coherenceScore -= 0.25;
     }
-    if (universe.id === 'brutalist-pop' && typography.id === 'classical-editorial') {
+    if (universeId === 'brutalist-pop' && typographyId === 'classical-editorial') {
       coherenceScore -= 0.20;
     }
-    if (iaId === 'computational-terminal' && palette.id === 'luxury-obsidian-gold') {
+    if (iaId === 'computational-terminal' && paletteId === 'luxury-obsidian-gold') {
       coherenceScore -= 0.20;
     }
 
