@@ -77,7 +77,6 @@ function updateNavAuthDock() {
 
 function requireAuth(actionCallback) {
   if (currentUser) {
-    if (typeof actionCallback === 'function') actionCallback();
     return true;
   }
   pendingAuthAction = actionCallback;
@@ -674,6 +673,10 @@ function closeGithubModal() {
 }
 
 async function startGenerationPipeline(payload) {
+  if (clientState.lifecycle === LIFECYCLE_STATES.GENERATING) {
+    console.warn('[GENERATION] Already in progress, ignoring duplicate trigger.');
+    return;
+  }
   clientState.lifecycle = LIFECYCLE_STATES.GENERATING;
   openProgressModal();
   updateProgressStage(1, 'active');
