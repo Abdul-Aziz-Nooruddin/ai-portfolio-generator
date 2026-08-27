@@ -26,16 +26,47 @@
 
     <!-- Main Content Canvas -->
     <div class="app-main-content">
-      <!-- 1. Hero Landing View -->
-      <section id="heroLanding" class="hero-landing">
-        <div class="hero-header-block">
-          <div class="hero-badge-pill">
-            <span class="pulse-dot"></span>
-            <span>AI Portfolio Studio</span>
+      <!-- 1. Reference-Inspired Main Homepage -->
+      <section id="heroLanding" class="hero-landing-reference">
+        <!-- Top Nav Header -->
+        <nav class="reference-top-nav">
+          <div class="nav-brand">
+            <span class="nav-monogram">✦</span>
+            <span class="nav-brand-text">AI PORTFOLIO STUDIO</span>
           </div>
-          <h1 class="hero-headline">Turn your work into a portfolio <em>worth remembering</em></h1>
-          <p class="hero-subtext">Turn your GitHub into a portfolio designed around your actual work, or start with your resume, images, or quick questions. We synthesize your real achievements into a bespoke, high-craft web portfolio.</p>
-        </div>
+          <div class="nav-links">
+            <a href="#sectionSpeakers" class="nav-link-item">SPEAKERS</a>
+            <a href="#sectionSchedule" class="nav-link-item">SCHEDULE</a>
+            <a href="#sectionCollage" class="nav-link-item">SYNTHESIS</a>
+            <a href="#sectionCtaSpot" class="nav-link-item">GET IN TOUCH</a>
+            <button type="button" class="nav-btn-pill" onclick="document.getElementById('multiInputSection').scrollIntoView({ behavior: 'smooth' })">LAUNCH STUDIO</button>
+          </div>
+        </nav>
+
+        <!-- Main Hero Section (Vibrant Electric Cobalt / Purple with 3D Assets) -->
+        <header class="ref-hero-banner">
+          <div class="ref-hero-bg-media">
+            <img src="/assets/hero-3d.jpg" alt="3D Geometric Spheres and Capsules" class="ref-hero-3d-img" />
+            <div class="ref-hero-gradient-overlay"></div>
+          </div>
+
+          <div class="ref-hero-content">
+            <div class="ref-hero-badge">
+              <span class="pulse-dot"></span>
+              <span>15 AUTONOMOUS DESIGN AGENTS • 100% ZERO-LOSS</span>
+            </div>
+            <h1 class="ref-hero-title">
+              <span class="ref-title-line">AI Portfolio</span>
+              <span class="ref-title-line">Studio</span>
+            </h1>
+            <p class="ref-hero-subtitle">Turn your work into a portfolio worth remembering. Synthesize your GitHub repositories, PDF resume, visual specimens, or career answers into a bespoke, high-craft web portfolio in seconds.</p>
+            
+            <div class="ref-hero-cta-row">
+              <a href="#multiInputSection" class="btn-ref-pill-outline">START GENERATING</a>
+              <button type="button" class="btn-ref-pill-solid" onclick="openSamplesModal()">EXPLORE SAMPLES</button>
+            </div>
+          </div>
+        </header>
 
         <!-- Resumed Session Notice -->
         <div id="resumedSessionBanner" style="display: none;" class="resumed-session-card">
@@ -52,204 +83,367 @@
           </div>
         </div>
 
-        <!-- "How do you want to build your portfolio?" Multi-Input Container -->
-        <div class="multi-input-container">
-          <div class="input-selector-bar">
-            <button type="button" class="input-nav-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
-              <span class="tab-icon">⚡</span>
-              <span>GitHub</span>
-            </button>
-            <button type="button" class="input-nav-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
-              <span class="tab-icon">📄</span>
-              <span>Resume (PDF)</span>
-            </button>
-            <button type="button" class="input-nav-btn" id="tabBtnImages" onclick="switchInputTab('images')">
-              <span class="tab-icon">🖼️</span>
-              <span>Images</span>
-            </button>
-            <button type="button" class="input-nav-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
-              <span class="tab-icon">💬</span>
-              <span>Questions</span>
-            </button>
-            <button type="button" class="input-nav-btn" id="tabBtnCombined" onclick="switchInputTab('combined')">
-              <span class="tab-icon">✨</span>
-              <span>Combined</span>
-            </button>
-          </div>
+        <!-- Interactive Generation Studio Dock -->
+        <div id="multiInputSection" class="ref-input-dock-section">
+          <div class="multi-input-container">
+            <div class="input-selector-bar">
+              <button type="button" class="input-nav-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
+                <span class="tab-icon">⚡</span>
+                <span>GitHub</span>
+              </button>
+              <button type="button" class="input-nav-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
+                <span class="tab-icon">📄</span>
+                <span>Resume (PDF)</span>
+              </button>
+              <button type="button" class="input-nav-btn" id="tabBtnImages" onclick="switchInputTab('images')">
+                <span class="tab-icon">🖼️</span>
+                <span>Images</span>
+              </button>
+              <button type="button" class="input-nav-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
+                <span class="tab-icon">💬</span>
+                <span>Questions</span>
+              </button>
+              <button type="button" class="input-nav-btn" id="tabBtnCombined" onclick="switchInputTab('combined')">
+                <span class="tab-icon">✨</span>
+                <span>Combined</span>
+              </button>
+            </div>
 
-          <!-- Tab A: GitHub Input -->
-          <div id="tabPanelGithub" class="input-panel active">
-            <div class="input-panel-card">
-              <div class="panel-card-head">
-                <h3>Generate with GitHub</h3>
-                <p>Turn your GitHub into a portfolio. We analyze your public repositories, languages, documentation, and technical depth.</p>
+            <!-- Tab A: GitHub Input -->
+            <div id="tabPanelGithub" class="input-panel active">
+              <div class="input-panel-card">
+                <div class="panel-card-head">
+                  <h3>Generate with GitHub</h3>
+                  <p>Turn your GitHub into a portfolio. We analyze your public repositories, languages, documentation, and technical depth.</p>
+                </div>
+                <form id="githubGenerateForm" class="github-flow-form" onsubmit="handleGithubGenerate(event)">
+                  <div class="input-prefix-box">
+                    <span class="prefix-label">github.com/</span>
+                    <input type="text" id="githubUsernameInput" placeholder="username or profile URL" autocomplete="off" required>
+                  </div>
+                  <div class="theme-select-box" style="margin-top: 10px;">
+                    <select id="githubThemeSelect" class="form-select-control">
+                      <option value="auto">✨ Automatic Art Direction (Recommended)</option>
+                      <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
+                      <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
+                      <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
+                      <option value="technical-lab">⚡ Technical Lab &amp; Monospace</option>
+                      <option value="contemporary-magazine">📰 Contemporary Editorial Magazine</option>
+                      <option value="brutalist-pop">🎨 Bold High-Contrast Accent</option>
+                      <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
+                    </select>
+                  </div>
+                  <button type="submit" id="btnGithubSubmit" class="btn-cta-main">
+                    <span>⚡ Generate My Portfolio</span>
+                  </button>
+                </form>
               </div>
-              <form id="githubGenerateForm" class="github-flow-form" onsubmit="handleGithubGenerate(event)">
-                <div class="input-prefix-box">
-                  <span class="prefix-label">github.com/</span>
-                  <input type="text" id="githubUsernameInput" placeholder="username or profile URL" autocomplete="off" required>
+            </div>
+
+            <!-- Tab B: Resume PDF Input -->
+            <div id="tabPanelResume" class="input-panel">
+              <div class="input-panel-card text-center">
+                <div class="panel-card-head">
+                  <h3>Upload your CV / Resume</h3>
+                  <p>Extract your career milestones, skills, and projects automatically. (PDF only, max 10 MB, up to 5 pages)</p>
                 </div>
-                <div class="theme-select-box" style="margin-top: 10px;">
-                  <select id="githubThemeSelect" class="form-select-control">
-                    <option value="auto">✨ Automatic Art Direction (Recommended)</option>
-                    <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
-                    <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
-                    <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
-                    <option value="technical-lab">⚡ Technical Lab &amp; Monospace</option>
-                    <option value="contemporary-magazine">📰 Contemporary Editorial Magazine</option>
-                    <option value="brutalist-pop">🎨 Bold High-Contrast Accent</option>
-                    <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
-                  </select>
+                <div id="resumeDropZone" class="file-drop-target" onclick="document.getElementById('pdfFileInput').click()">
+                  <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
+                  <div class="drop-icon">📥</div>
+                  <div class="drop-title">Drop PDF resume here or click to browse</div>
+                  <div id="pdfUploadStatus" class="drop-status">Max 10 MB • Standard PDF format</div>
                 </div>
-                <button type="submit" id="btnGithubSubmit" class="btn-cta-main">
-                  <span>⚡ Generate My Portfolio</span>
+                <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
+                  <span id="resumeFileName">resume.pdf</span>
+                  <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
+                </div>
+                <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
+                  <span>⚡ Create Portfolio from Resume</span>
                 </button>
-              </form>
+              </div>
+            </div>
+
+            <!-- Tab C: Visual Material (Images) -->
+            <div id="tabPanelImages" class="input-panel">
+              <div class="input-panel-card text-center">
+                <div class="panel-card-head">
+                  <h3>Add Visual Material</h3>
+                  <p>Upload profile portraits or project screenshot specimens. (JPEG, PNG, WebP — up to 3 images, max 5 MB each)</p>
+                </div>
+                <div id="imagesDropZone" class="file-drop-target" onclick="document.getElementById('multiImageInput').click()">
+                  <input type="file" id="multiImageInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;" onchange="handleImagesSelected(event)">
+                  <div class="drop-icon">🖼️</div>
+                  <div class="drop-title">Drop up to 3 images here or click to browse</div>
+                  <div id="imagesUploadStatus" class="drop-status">JPEG, PNG, WebP up to 5 MB each</div>
+                </div>
+                <!-- Image Previews Container -->
+                <div id="imageThumbnailsContainer" class="image-previews-grid" style="display: none; margin-top: 16px;"></div>
+              </div>
+            </div>
+
+            <!-- Tab D: Guided Questions -->
+            <div id="tabPanelQuestions" class="input-panel">
+              <div class="input-panel-card">
+                <div class="panel-card-head">
+                  <h3>Answer a few quick questions</h3>
+                  <p>Share your discipline, best project, and career objective in your own words.</p>
+                </div>
+                <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
+                  <div class="form-group-field">
+                    <label>1. What is your full name? *</label>
+                    <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" required>
+                  </div>
+                  <div class="form-group-field">
+                    <label>2. What do you do &amp; what is your specialization? *</label>
+                    <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect &amp; Core Infrastructure" required>
+                  </div>
+                  <div class="form-group-field">
+                    <label>3. Which project or technical achievement are you most proud of? *</label>
+                    <textarea id="qInputProject" rows="2" placeholder="e.g. Built an ultra-low latency raft consensus engine with zero-copy networking." required></textarea>
+                  </div>
+                  <div class="form-group-field">
+                    <label>4. What core technologies and tools power your work? *</label>
+                    <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" required>
+                  </div>
+                  <div class="form-group-field">
+                    <label>5. In one sentence, what makes your approach different or what are you building next?</label>
+                    <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
+                  </div>
+                  <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
+                    <span>⚡ Create My Portfolio</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Tab E: Combined Multi-Source Summary -->
+            <div id="tabPanelCombined" class="input-panel">
+              <div class="input-panel-card">
+                <div class="panel-card-head">
+                  <h3>Combine Multiple Sources</h3>
+                  <p>Merge GitHub code facts, PDF career history, images, and answers into a single unified profile.</p>
+                </div>
+                <div class="sources-summary-checklist">
+                  <div class="source-check-row" id="checkRowGithub">
+                    <span class="check-icon">⚪</span>
+                    <div class="check-info">
+                      <strong>GitHub Account</strong>
+                      <span id="summaryGithubText">Not connected</span>
+                    </div>
+                    <button type="button" class="btn-link-action" onclick="switchInputTab('github')">Configure</button>
+                  </div>
+                  <div class="source-check-row" id="checkRowResume">
+                    <span class="check-icon">⚪</span>
+                    <div class="check-info">
+                      <strong>Resume / CV (PDF)</strong>
+                      <span id="summaryResumeText">No resume uploaded</span>
+                    </div>
+                    <button type="button" class="btn-link-action" onclick="switchInputTab('resume')">Upload</button>
+                  </div>
+                  <div class="source-check-row" id="checkRowImages">
+                    <span class="check-icon">⚪</span>
+                    <div class="check-info">
+                      <strong>Visual Material</strong>
+                      <span id="summaryImagesText">0 images attached</span>
+                    </div>
+                    <button type="button" class="btn-link-action" onclick="switchInputTab('images')">Add</button>
+                  </div>
+                  <div class="source-check-row" id="checkRowQuestions">
+                    <span class="check-icon">⚪</span>
+                    <div class="check-info">
+                      <strong>Guided Questions</strong>
+                      <span id="summaryQuestionsText">Optional answers</span>
+                    </div>
+                    <button type="button" class="btn-link-action" onclick="switchInputTab('questions')">Edit</button>
+                  </div>
+                </div>
+                <button type="button" class="btn-cta-main" style="margin-top: 18px;" onclick="generateFromCombinedSources()">
+                  <span>✨ Generate Portfolio from All Sources</span>
+                </button>
+              </div>
             </div>
           </div>
+        </div>
 
-          <!-- Tab B: Resume PDF Input -->
-          <div id="tabPanelResume" class="input-panel">
-            <div class="input-panel-card text-center">
-              <div class="panel-card-head">
-                <h3>Upload your CV / Resume</h3>
-                <p>Extract your career milestones, skills, and projects automatically. (PDF only, max 10 MB, up to 5 pages)</p>
+        <!-- Section 2: SPEAKERS / FEATURED CREATORS (Soft Ice-Blue Background) -->
+        <section id="sectionSpeakers" class="ref-speakers-section">
+          <div class="ref-section-container">
+            <h2 class="ref-section-title dark-text">SPEAKERS</h2>
+            <p class="ref-section-lead dark-muted">Bespoke portfolio architectures synthesized for distinctive engineering &amp; design leaders.</p>
+
+            <div class="ref-speakers-grid">
+              <!-- Speaker Card 1 -->
+              <article class="ref-speaker-card">
+                <div class="speaker-img-wrapper">
+                  <img src="/assets/portrait-zawadi.jpg" alt="Zawadi Thandiwe" class="speaker-portrait" />
+                </div>
+                <h3 class="speaker-name">ZAWADI THANDIWE</h3>
+                <p class="speaker-bio">Professional with 8+ years of experience helping brands reach their goals through avant-garde design systems.</p>
+              </article>
+
+              <!-- Speaker Card 2 -->
+              <article class="ref-speaker-card">
+                <div class="speaker-img-wrapper">
+                  <img src="/assets/portrait-ejiro.jpg" alt="Ejiro Rudo" class="speaker-portrait" />
+                </div>
+                <h3 class="speaker-name">EJIRO RUDO</h3>
+                <p class="speaker-bio">Skilled in problem-solving, LLM scaling verification, communication, and strategic systems thinking.</p>
+              </article>
+
+              <!-- Speaker Card 3 -->
+              <article class="ref-speaker-card">
+                <div class="speaker-img-wrapper">
+                  <img src="/assets/portrait-daniel.jpg" alt="Daniel Saoirse" class="speaker-portrait" />
+                </div>
+                <h3 class="speaker-name">DANIEL SAOIRSE</h3>
+                <p class="speaker-bio">Dedicated to crafting innovative distributed systems and storage architectures that drive positive change.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: SCHEDULE / GENERATION PIPELINE (Deep Royal Indigo Background) -->
+        <section id="sectionSchedule" class="ref-schedule-section">
+          <div class="ref-section-container">
+            <h2 class="ref-section-title light-text">SCHEDULE</h2>
+            <p class="ref-section-lead light-muted">3-stage autonomous design pipeline orchestrating complete evidence preservation.</p>
+
+            <div class="ref-schedule-grid">
+              <!-- Column 1 -->
+              <div class="schedule-column">
+                <div class="schedule-col-header">
+                  <span class="schedule-day-label">STAGE 01</span>
+                  <h3 class="schedule-date-title">Ingestion</h3>
+                </div>
+                <div class="schedule-timeline-list">
+                  <div class="schedule-item-row">
+                    <span class="item-time">12:00 pm</span>
+                    <strong class="item-title">Registration &amp; Welcome</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">2:00 pm</span>
+                    <strong class="item-title">GitHub Deep Ingestion</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">7:00 pm</span>
+                    <strong class="item-title">PDF Resume Parsing</strong>
+                  </div>
+                </div>
               </div>
-              <div id="resumeDropZone" class="file-drop-target" onclick="document.getElementById('pdfFileInput').click()">
-                <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
-                <div class="drop-icon">📥</div>
-                <div class="drop-title">Drop PDF resume here or click to browse</div>
-                <div id="pdfUploadStatus" class="drop-status">Max 10 MB • Standard PDF format</div>
+
+              <!-- Column 2 -->
+              <div class="schedule-column">
+                <div class="schedule-col-header">
+                  <span class="schedule-day-label">STAGE 02</span>
+                  <h3 class="schedule-date-title">Intelligence</h3>
+                </div>
+                <div class="schedule-timeline-list">
+                  <div class="schedule-item-row">
+                    <span class="item-time">7:00 am</span>
+                    <strong class="item-title">Design Gate Verification</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">11:00 am</span>
+                    <strong class="item-title">Semantic Content Graph</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">12:30 pm</span>
+                    <strong class="item-title">15 Autonomous Agents</strong>
+                  </div>
+                </div>
               </div>
-              <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
-                <span id="resumeFileName">resume.pdf</span>
-                <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
+
+              <!-- Column 3 -->
+              <div class="schedule-column">
+                <div class="schedule-col-header">
+                  <span class="schedule-day-label">STAGE 03</span>
+                  <h3 class="schedule-date-title">Deployment</h3>
+                </div>
+                <div class="schedule-timeline-list">
+                  <div class="schedule-item-row">
+                    <span class="item-time">7:00 am</span>
+                    <strong class="item-title">Composition Plan Compile</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">9:00 am</span>
+                    <strong class="item-title">WebGL Physics &amp; Motion</strong>
+                  </div>
+                  <div class="schedule-item-row">
+                    <span class="item-time">11:30 am</span>
+                    <strong class="item-title">Live Preview &amp; ZIP Export</strong>
+                  </div>
+                </div>
               </div>
-              <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
-                <span>⚡ Create Portfolio from Resume</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: TYPOGRAPHIC COLLAGE (Soft Blue with Inline Image Badges) -->
+        <section id="sectionCollage" class="ref-collage-section">
+          <div class="ref-collage-content">
+            <div class="collage-line">
+              <span class="collage-word">Design</span>
+              <span class="collage-inline-chip"><img src="/assets/portrait-zawadi.jpg" alt="Design Lead" /></span>
+              <span class="collage-word">Strategy</span>
+            </div>
+            <div class="collage-line">
+              <span class="collage-inline-chip"><img src="/assets/portrait-ejiro.jpg" alt="AI Scientist" /></span>
+              <span class="collage-inline-chip chip-square"><img src="/assets/hero-3d.jpg" alt="3D Sphere" /></span>
+              <span class="collage-word">Marketing</span>
+            </div>
+            <div class="collage-line">
+              <span class="collage-word">Culture</span>
+              <span class="collage-inline-chip"><img src="/assets/portrait-daniel.jpg" alt="Systems Architect" /></span>
+              <span class="collage-inline-chip chip-square"><img src="/assets/preview-3d.jpg" alt="Preview 3D" /></span>
+              <span class="collage-word">Craft</span>
+            </div>
+            <div class="collage-line">
+              <span class="collage-inline-chip chip-wide"><img src="/assets/hero-3d.jpg" alt="WebGL" /></span>
+              <span class="collage-word">Engagement</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 5: SAVE YOUR SPOT / CALL TO ACTION (Midnight Navy) -->
+        <section id="sectionCtaSpot" class="ref-spot-section">
+          <div class="ref-spot-container">
+            <!-- Left: 3D Interactive Media Card -->
+            <div class="spot-media-card">
+              <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" />
+              <button type="button" class="btn-spot-play" onclick="openSamplesModal()" aria-label="Play Demo Preview">
+                <span class="play-icon">▶</span>
+              </button>
+            </div>
+
+            <!-- Right: Save Your Spot Copy -->
+            <div class="spot-info-block">
+              <h2 class="spot-headline">
+                <span>SAVE</span>
+                <span>YOUR</span>
+                <span>SPOT</span>
+              </h2>
+              <p class="spot-description">A unique generative studio filled with bespoke art direction, zero-loss evidence preservation, and 15 autonomous design agents.</p>
+              <button type="button" class="btn-ref-pill-outline spot-btn" onclick="document.getElementById('multiInputSection').scrollIntoView({ behavior: 'smooth' })">
+                BOOK NOW
               </button>
             </div>
           </div>
+        </section>
 
-          <!-- Tab C: Visual Material (Images) -->
-          <div id="tabPanelImages" class="input-panel">
-            <div class="input-panel-card text-center">
-              <div class="panel-card-head">
-                <h3>Add Visual Material</h3>
-                <p>Upload profile portraits or project screenshot specimens. (JPEG, PNG, WebP — up to 3 images, max 5 MB each)</p>
-              </div>
-              <div id="imagesDropZone" class="file-drop-target" onclick="document.getElementById('multiImageInput').click()">
-                <input type="file" id="multiImageInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;" onchange="handleImagesSelected(event)">
-                <div class="drop-icon">🖼️</div>
-                <div class="drop-title">Drop up to 3 images here or click to browse</div>
-                <div id="imagesUploadStatus" class="drop-status">JPEG, PNG, WebP up to 5 MB each</div>
-              </div>
-              <!-- Image Previews Container -->
-              <div id="imageThumbnailsContainer" class="image-previews-grid" style="display: none; margin-top: 16px;"></div>
-            </div>
+        <!-- Trust & Privacy Transparency Footer -->
+        <footer class="ref-landing-footer">
+          <div class="ref-footer-brand">
+            <span class="nav-monogram">✦</span>
+            <span>AI Portfolio Studio</span>
           </div>
-
-          <!-- Tab D: Guided Questions -->
-          <div id="tabPanelQuestions" class="input-panel">
-            <div class="input-panel-card">
-              <div class="panel-card-head">
-                <h3>Answer a few quick questions</h3>
-                <p>Share your discipline, best project, and career objective in your own words.</p>
-              </div>
-              <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
-                <div class="form-group-field">
-                  <label>1. What is your full name? *</label>
-                  <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" required>
-                </div>
-                <div class="form-group-field">
-                  <label>2. What do you do &amp; what is your specialization? *</label>
-                  <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect &amp; Core Infrastructure" required>
-                </div>
-                <div class="form-group-field">
-                  <label>3. Which project or technical achievement are you most proud of? *</label>
-                  <textarea id="qInputProject" rows="2" placeholder="e.g. Built an ultra-low latency raft consensus engine with zero-copy networking." required></textarea>
-                </div>
-                <div class="form-group-field">
-                  <label>4. What core technologies and tools power your work? *</label>
-                  <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" required>
-                </div>
-                <div class="form-group-field">
-                  <label>5. In one sentence, what makes your approach different or what are you building next?</label>
-                  <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
-                </div>
-                <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
-                  <span>⚡ Create My Portfolio</span>
-                </button>
-              </form>
-            </div>
+          <div class="trust-footer-note">
+            <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata and uploaded documents.</span>
+            <span>•</span>
+            <span>⚡ <strong>100% Free Live Preview</strong></span>
+            <span>•</span>
+            <span>📦 <strong>Clean Static ZIP Export</strong></span>
           </div>
-
-          <!-- Tab E: Combined Multi-Source Summary -->
-          <div id="tabPanelCombined" class="input-panel">
-            <div class="input-panel-card">
-              <div class="panel-card-head">
-                <h3>Combine Multiple Sources</h3>
-                <p>Merge GitHub code facts, PDF career history, images, and answers into a single unified profile.</p>
-              </div>
-              <div class="sources-summary-checklist">
-                <div class="source-check-row" id="checkRowGithub">
-                  <span class="check-icon">⚪</span>
-                  <div class="check-info">
-                    <strong>GitHub Account</strong>
-                    <span id="summaryGithubText">Not connected</span>
-                  </div>
-                  <button type="button" class="btn-link-action" onclick="switchInputTab('github')">Configure</button>
-                </div>
-                <div class="source-check-row" id="checkRowResume">
-                  <span class="check-icon">⚪</span>
-                  <div class="check-info">
-                    <strong>Resume / CV (PDF)</strong>
-                    <span id="summaryResumeText">No resume uploaded</span>
-                  </div>
-                  <button type="button" class="btn-link-action" onclick="switchInputTab('resume')">Upload</button>
-                </div>
-                <div class="source-check-row" id="checkRowImages">
-                  <span class="check-icon">⚪</span>
-                  <div class="check-info">
-                    <strong>Visual Material</strong>
-                    <span id="summaryImagesText">0 images attached</span>
-                  </div>
-                  <button type="button" class="btn-link-action" onclick="switchInputTab('images')">Add</button>
-                </div>
-                <div class="source-check-row" id="checkRowQuestions">
-                  <span class="check-icon">⚪</span>
-                  <div class="check-info">
-                    <strong>Guided Questions</strong>
-                    <span id="summaryQuestionsText">Optional answers</span>
-                  </div>
-                  <button type="button" class="btn-link-action" onclick="switchInputTab('questions')">Edit</button>
-                </div>
-              </div>
-              <button type="button" class="btn-cta-main" style="margin-top: 18px;" onclick="generateFromCombinedSources()">
-                <span>✨ Generate Portfolio from All Sources</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sample Demos & Manual Builder Links -->
-        <div class="hero-secondary-links">
-          <button type="button" class="btn-subtle" onclick="openSamplesModal()">
-            <span>🎨 Explore Example Portfolios</span>
-          </button>
-          <button type="button" class="btn-subtle" onclick="openStudioView()">
-            <span>✏️ Manual Profile Studio</span>
-          </button>
-        </div>
-
-        <!-- Trust & Privacy Transparency -->
-        <div class="trust-footer-note">
-          <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata and uploaded documents.</span>
-          <span>•</span>
-          <span>⚡ <strong>100% Free Live Preview</strong></span>
-          <span>•</span>
-          <span>📦 <strong>Clean Static ZIP Export</strong></span>
-        </div>
+        </footer>
       </section>
 
       <!-- 2. Fullscreen Studio Preview Canvas -->

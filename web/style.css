@@ -88,64 +88,606 @@ html, body {
 }
 
 /* ==========================================================================
-   Hero Landing Section
+   Reference-Inspired Homepage Visual System
    ========================================================================== */
-.hero-landing {
-  max-width: 820px;
-  margin: 0 auto;
-  padding: 48px 24px 80px;
+.hero-landing-reference {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.hero-header-block {
+/* Top Navigation Bar */
+.reference-top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 40px;
+  background: rgba(59, 51, 209, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  color: #FFFFFF;
+}
+
+.nav-monogram {
+  font-size: 1.25rem;
+  color: #93C5FD;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-link-item {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transition: color 0.2s ease;
+}
+
+.nav-link-item:hover {
+  color: #FFFFFF;
+}
+
+.nav-btn-pill {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1.5px solid #FFFFFF;
+  color: #FFFFFF;
+  border-radius: 9999px;
+  padding: 8px 20px;
+  font-weight: 800;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-btn-pill:hover {
+  background: #FFFFFF;
+  color: #3B33D1;
+  transform: translateY(-1px);
+}
+
+/* 1. Hero Banner */
+.ref-hero-banner {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   text-align: center;
-  margin-bottom: 36px;
+  padding: 80px 24px 100px;
+  background: linear-gradient(145deg, #3B33D1 0%, #4F46E5 50%, #4338CA 100%);
+  color: #FFFFFF;
+  overflow: hidden;
 }
 
-.hero-badge-pill {
+.ref-hero-bg-media {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.78;
+}
+
+.ref-hero-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: screen;
+  filter: saturate(1.2) contrast(1.1);
+}
+
+.ref-hero-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(59, 51, 209, 0.15) 0%, rgba(59, 51, 209, 0.85) 85%);
+}
+
+.ref-hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ref-hero-badge {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--product-surface-alt);
-  border: 1px solid var(--product-border);
-  padding: 6px 14px;
-  border-radius: var(--product-radius-pill);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--product-text-muted);
-  margin-bottom: 16px;
-  letter-spacing: 0.02em;
-}
-
-.pulse-dot {
-  width: 8px;
-  height: 8px;
-  background-color: var(--product-accent);
-  border-radius: 50%;
-}
-
-.hero-headline {
-  font-family: var(--font-editorial);
-  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
   font-weight: 800;
-  line-height: 1.15;
-  color: var(--product-text);
-  margin-bottom: 14px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.08em;
+  color: #E0E7FF;
+  margin-bottom: 24px;
 }
 
-.hero-headline em {
-  font-style: italic;
-  color: var(--product-accent);
-  font-weight: 700;
+.ref-hero-title {
+  font-family: var(--font-ui);
+  font-size: clamp(3.2rem, 9vw, 6.8rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  margin-bottom: 24px;
+  text-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.hero-subtext {
-  font-size: 1.05rem;
-  color: var(--product-text-muted);
-  max-width: 640px;
+.ref-title-line {
+  display: block;
+}
+
+.ref-hero-subtitle {
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 680px;
+  margin: 0 auto 36px;
+  font-weight: 500;
+}
+
+.ref-hero-cta-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-ref-pill-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #FFFFFF;
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  padding: 14px 34px;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.btn-ref-pill-outline:hover {
+  background: #FFFFFF;
+  color: #3B33D1;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+}
+
+.btn-ref-pill-solid {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: #FFFFFF;
+  color: #3B33D1;
+  padding: 16px 36px;
+  border-radius: 9999px;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+}
+
+.btn-ref-pill-solid:hover {
+  background: #E0E7FF;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Multi-Input Dock Container (Placed directly after Hero) */
+.ref-input-dock-section {
+  max-width: 860px;
+  margin: -48px auto 64px;
+  padding: 0 24px;
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+/* 2. SPEAKERS / CREATORS SECTION (Soft Ice-Blue) */
+.ref-speakers-section {
+  background-color: #DBEAFE;
+  padding: 96px 24px 112px;
+  color: #1E293B;
+  width: 100%;
+}
+
+.ref-section-container {
+  max-width: 1100px;
   margin: 0 auto;
-  line-height: 1.65;
+  text-align: center;
+}
+
+.ref-section-title {
+  font-family: var(--font-ui);
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.ref-section-title.dark-text {
+  color: #0F172A;
+}
+
+.ref-section-title.light-text {
+  color: #FFFFFF;
+}
+
+.ref-section-lead {
+  font-size: 1.15rem;
+  margin-bottom: 56px;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ref-section-lead.dark-muted {
+  color: #475569;
+}
+
+.ref-section-lead.light-muted {
+  color: #C7D2FE;
+}
+
+.ref-speakers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 36px;
+  justify-content: center;
+}
+
+.ref-speaker-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.speaker-img-wrapper {
+  width: 100%;
+  max-width: 320px;
+  aspect-ratio: 1 / 1;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.12);
+  margin-bottom: 20px;
+  background: #FFFFFF;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.speaker-img-wrapper:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.18);
+}
+
+.speaker-portrait {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.speaker-name {
+  font-family: var(--font-ui);
+  font-size: 1.15rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  color: #0F172A;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.speaker-bio {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #475569;
+  max-width: 260px;
+}
+
+/* 3. SCHEDULE / PIPELINE SECTION (Deep Royal Indigo) */
+.ref-schedule-section {
+  background: #312E81;
+  color: #FFFFFF;
+  padding: 96px 24px 112px;
+  width: 100%;
+}
+
+.ref-schedule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 36px;
+  margin-top: 48px;
+  text-align: center;
+}
+
+.schedule-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.schedule-col-header {
+  margin-bottom: 28px;
+}
+
+.schedule-day-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: #A5B4FC;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.schedule-date-title {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+}
+
+.schedule-timeline-list {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.schedule-item-row {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.item-time {
+  font-size: 0.78rem;
+  color: #C7D2FE;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+}
+
+.item-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+/* 4. TYPOGRAPHIC COLLAGE (Soft Blue with Inline Chips) */
+.ref-collage-section {
+  background: #EFF6FF;
+  padding: 80px 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ref-collage-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1000px;
+  width: 100%;
+}
+
+.collage-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.collage-word {
+  font-family: var(--font-ui);
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: #3730A3;
+  line-height: 1;
+}
+
+.collage-inline-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(60px, 12vw, 110px);
+  height: clamp(48px, 9vw, 80px);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(55, 48, 163, 0.15);
+  background: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.collage-inline-chip.chip-square {
+  width: clamp(48px, 9vw, 80px);
+}
+
+.collage-inline-chip.chip-wide {
+  width: clamp(90px, 18vw, 150px);
+}
+
+.collage-inline-chip img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 5. SAVE YOUR SPOT / CALL TO ACTION (Midnight Navy) */
+.ref-spot-section {
+  background: #080B1E;
+  color: #FFFFFF;
+  padding: 96px 24px 112px;
+  width: 100%;
+}
+
+.ref-spot-container {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  flex-wrap: wrap;
+}
+
+.spot-media-card {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  aspect-ratio: 1 / 1;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #111827;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spot-3d-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.btn-spot-play {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.95);
+  color: #312E81;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease;
+}
+
+.btn-spot-play:hover {
+  transform: scale(1.1);
+  background: #FFFFFF;
+  box-shadow: 0 12px 32px rgba(255, 255, 255, 0.3);
+}
+
+.play-icon {
+  font-size: 1.25rem;
+  margin-left: 4px;
+}
+
+.spot-info-block {
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.spot-headline {
+  font-family: var(--font-ui);
+  font-size: clamp(2.4rem, 6vw, 4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: #FFFFFF;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.spot-description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #94A3B8;
+  margin-bottom: 28px;
+}
+
+.spot-btn {
+  border-color: #FFFFFF;
+}
+
+/* Footer */
+.ref-landing-footer {
+  background: #080B1E;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px 24px;
+  text-align: center;
+  color: #94A3B8;
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.ref-footer-brand {
+  font-weight: 800;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .reference-top-nav {
+    padding: 12px 18px;
+  }
+  .nav-links a {
+    display: none;
+  }
+  .ref-spot-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .spot-info-block {
+    align-items: center;
+  }
 }
 
 /* Resumed Session Banner */
