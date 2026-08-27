@@ -18,7 +18,10 @@ const LIFECYCLE_STATES = {
 const STORAGE_KEY_SESSION = 'ai_portfolio_session_v32';
 const STORAGE_KEY_DRAFT = 'ai_portfolio_draft_v32';
 
-// Global Client State
+// Global Client State & Auth State
+let currentUser = null;
+let pendingAuthAction = null;
+
 let clientState = {
   lifecycle: LIFECYCLE_STATES.DRAFT,
   siteId: null,
@@ -35,6 +38,267 @@ let clientState = {
   timerInterval: null,
   startTime: null
 };
+
+// ==========================================================================
+// 0. User Authentication Gate & Nav Bar Controller
+// ==========================================================================
+async function checkUserAuth() {
+  try {
+    const res = await fetch('/api/auth/me', { credentials: 'include' });
+    if (res.ok) {
+      const data = await res.json();
+      currentUser = data.user || data;
+      updateNavAuthDock();
+      return currentUser;
+    }
+  } catch (e) {}
+  currentUser = null;
+  updateNavAuthDock();
+  return null;
+}
+
+function updateNavAuthDock() {
+  const dock = document.getElementById('navAuthDock');
+  if (!dock) return;
+
+  if (currentUser) {
+    const name = currentUser.name || currentUser.username || 'Account';
+    dock.innerHTML = `
+      <a href="/dashboard.html" class="nav-link-item" style="color: #93C5FD;">👋 ${name}</a>
+      <a href="/dashboard.html" class="nav-btn-pill" style="text-decoration: none;">DASHBOARD</a>
+    `;
+  } else {
+    dock.innerHTML = `
+      <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
+      <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">SIGN UP FREE</button>
+    `;
+  }
+}
+
+function requireAuth(actionCallback) {
+  if (currentUser) {
+    if (typeof actionCallback === 'function') actionCallback();
+    return true;
+  }
+  pendingAuthAction = actionCallback;
+  openAuthModal('signup', 'Create a free account or sign in to build and save your portfolio.');
+  return false;
+}
+
+function handleStartGeneratingClick() {
+  if (!currentUser) {
+    requireAuth(() => {
+      document.getElementById('multiInputSection')?.scrollIntoView({ behavior: 'smooth' });
+    });
+    return;
+  }
+  document.getElementById('multiInputSection')?.scrollIntoView({ behavior: 'smooth' });
+}
+
+function openAuthModal(mode = 'signup', customSubtitle = null) {
+  const modal = document.getElementById('authModal');
+  const title = document.getElementById('authModalTitle');
+  const subtitle = document.getElementById('authModalSubtitle');
+  const alertBox = document.getElementById('authModalAlert');
+
+  if (alertBox) alertBox.style.display = 'none';
+
+  if (mode === 'signin') {
+    switchAuthModalTab('signin');
+    if (title) title.textContent = 'Sign in to AI Portfolio Studio';
+    if (subtitle) subtitle.textContent = customSubtitle || 'Welcome back! Sign in to access your portfolios.';
+  } else {
+    switchAuthModalTab('signup');
+    if (title) title.textContent = 'Sign up to AI Portfolio Studio';
+    if (subtitle) subtitle.textContent = customSubtitle || 'Create a free account to generate and save your bespoke portfolio.';
+  }
+
+  if (modal) modal.style.display = 'flex';
+}
+
+function closeAuthModal() {
+  const modal = document.getElementById('authModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function switchAuthModalTab(tab = 'signup') {
+  const tabSignup = document.getElementById('authTabSignup');
+  const tabSignin = document.getElementById('authTabSignin');
+  const formSignup = document.getElementById('modalSignupForm');
+  const formSignin = document.getElementById('modalSigninForm');
+  const title = document.getElementById('authModalTitle');
+  const alertBox = document.getElementById('authModalAlert');
+
+  if (alertBox) alertBox.style.display = 'none';
+
+  if (tab === 'signup') {
+    tabSignup?.classList.add('active');
+    tabSignin?.classList.remove('active');
+    if (formSignup) formSignup.style.display = 'block';
+    if (formSignin) formSignin.style.display = 'none';
+    if (title) title.textContent = 'Sign up to AI Portfolio Studio';
+  } else {
+    tabSignin?.classList.add('active');
+    tabSignup?.classList.remove('active');
+    if (formSignin) formSignin.style.display = 'block';
+    if (formSignup) formSignup.style.display = 'none';
+    if (title) title.textContent = 'Sign in to AI Portfolio Studio';
+  }
+}
+
+function showModalAlert(message, type = 'error') {
+  const alertBox = document.getElementById('authModalAlert');
+  if (!alertBox) return;
+  alertBox.className = `auth-modal-alert alert-${type}`;
+  alertBox.textContent = message;
+  alertBox.style.display = 'block';
+}
+
+async function handleModalSignup(event) {
+  if (event) event.preventDefault();
+  const name = document.getElementById('modalSignupName')?.value?.trim();
+  const email = document.getElementById('modalSignupEmail')?.value?.trim();
+  const username = document.getElementById('modalSignupUsername')?.value?.trim();
+  const password = document.getElementById('modalSignupPassword')?.value;
+  const termsAccepted = document.getElementById('modalTermsAccepted')?.checked;
+  const btn = document.getElementById('btnModalSignupSubmit');
+
+  if (!termsAccepted) {
+    return showModalAlert('You must agree to the Terms of Service.');
+  }
+  if (!name || !email || !password) {
+    return showModalAlert('Please fill in all required fields.');
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Creating account...</span>';
+  }
+
+  try {
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ name, email, username, password, confirmPassword: password, termsAccepted: true })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || data.error || 'Failed to create account');
+    }
+
+    currentUser = data.user || { name, email, username };
+    updateNavAuthDock();
+    showToast('Account Created', `Welcome to AI Portfolio Studio, ${name}!`, 'success');
+    closeAuthModal();
+
+    if (pendingAuthAction) {
+      const action = pendingAuthAction;
+      pendingAuthAction = null;
+      action();
+    }
+  } catch (err) {
+    showModalAlert(err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>⚡ Create Free Account & Continue</span>';
+    }
+  }
+}
+
+async function handleModalSignin(event) {
+  if (event) event.preventDefault();
+  const identifier = document.getElementById('modalSigninIdentifier')?.value?.trim();
+  const password = document.getElementById('modalSigninPassword')?.value;
+  const btn = document.getElementById('btnModalSigninSubmit');
+
+  if (!identifier || !password) {
+    return showModalAlert('Please enter your email/username and password.');
+  }
+
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>Signing in...</span>';
+  }
+
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ identifier, password, rememberMe: true })
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.message || data.error || 'Invalid credentials');
+    }
+
+    currentUser = data.user || { username: identifier };
+    updateNavAuthDock();
+    showToast('Signed In', `Welcome back, ${currentUser.name || identifier}!`, 'success');
+    closeAuthModal();
+
+    if (pendingAuthAction) {
+      const action = pendingAuthAction;
+      pendingAuthAction = null;
+      action();
+    }
+  } catch (err) {
+    showModalAlert(err.message);
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>Sign In & Continue ➔</span>';
+    }
+  }
+}
+
+// Open sample specimen directly in studio
+function openStudioWithSample(personaKey) {
+  const sampleMap = {
+    zawadi: {
+      name: 'Zawadi Thandiwe',
+      role: 'Creative Director & Visual Storyteller',
+      bio: 'Leading design systems and interactive 3D WebGL experiences for global high-growth brands.',
+      skills: ['Design Systems', 'WebGL', 'Three.js', 'Art Direction', 'Typography', 'Figma Tokens'],
+      theme: 'swiss-editorial'
+    },
+    ejiro: {
+      name: 'Ejiro Rudo',
+      role: 'Staff AI Research Scientist',
+      bio: 'Focusing on large language model scaling laws, formal verification, and distributed tensor networks.',
+      skills: ['PyTorch', 'Distributed Training', 'Formal Verification', 'LLM Architectures', 'CUDA', 'arXiv'],
+      theme: 'technical-lab'
+    },
+    daniel: {
+      name: 'Daniel Saoirse',
+      role: 'Principal Systems Architect',
+      bio: 'Architecting high-throughput distributed consensus protocols, zero-copy storage, and cloud runtimes.',
+      skills: ['Rust', 'eBPF', 'Tokio', 'Distributed Consensus', 'Raft', 'Zero-Copy I/O'],
+      theme: 'cinematic-obsidian'
+    }
+  };
+
+  const sample = sampleMap[personaKey] || sampleMap.zawadi;
+  loadSampleProfile({
+    name: sample.name,
+    role: sample.role,
+    bio: sample.bio,
+    skills: sample.skills,
+    theme: sample.theme,
+    projects: [
+      {
+        title: `${sample.name} Flagship Initiative`,
+        description: `High-impact technical architecture with verified telemetry and public documentation.`,
+        tags: sample.skills.slice(0, 3),
+        impact: 'Scaled to 25M+ requests/day with sub-millisecond p99 latency'
+      }
+    ]
+  });
+}
 
 // ==========================================================================
 // 1. Navigation & Tab Switching
@@ -104,6 +368,11 @@ function updateCombinedSummaryChecklist() {
 // A. GitHub Input Handler
 async function handleGithubGenerate(event) {
   if (event) event.preventDefault();
+  
+  if (!requireAuth(() => handleGithubGenerate(null))) {
+    return;
+  }
+
   const inputEl = document.getElementById('githubUsernameInput');
   const themeEl = document.getElementById('githubThemeSelect');
   const rawInput = inputEl?.value?.trim();
@@ -207,6 +476,8 @@ function removeUploadedResume(event) {
 }
 
 async function generateFromResume() {
+  if (!requireAuth(() => generateFromResume())) return;
+
   if (!clientState.sources.resume) {
     showToast('Resume Required', 'Please upload a PDF resume first.', 'error');
     return;
@@ -290,6 +561,9 @@ function removeImageByIndex(index) {
 // D. Guided Questions Handler
 async function handleQuestionnaireSubmit(event) {
   if (event) event.preventDefault();
+
+  if (!requireAuth(() => handleQuestionnaireSubmit(null))) return;
+
   const name = document.getElementById('qInputName')?.value?.trim();
   const role = document.getElementById('qInputRole')?.value?.trim();
   const project = document.getElementById('qInputProject')?.value?.trim();
@@ -324,6 +598,8 @@ async function handleQuestionnaireSubmit(event) {
 
 // E. Combined Multi-Source Generation
 async function generateFromCombinedSources() {
+  if (!requireAuth(() => generateFromCombinedSources())) return;
+
   const hasAny = clientState.sources.github || clientState.sources.resume || clientState.sources.questions || clientState.sources.images.length > 0;
   if (!hasAny) {
     showToast('Input Required', 'Please connect at least one source (GitHub, Resume, Questions, or Images).', 'info');
@@ -887,9 +1163,18 @@ window.handleErrorPrimaryAction = handleErrorPrimaryAction;
 window.handleErrorSecondaryAction = handleErrorSecondaryAction;
 window.reopenPersistedPortfolio = reopenPersistedPortfolio;
 window.clearPersistedPortfolio = clearPersistedPortfolio;
+window.openAuthModal = openAuthModal;
+window.closeAuthModal = closeAuthModal;
+window.switchAuthModalTab = switchAuthModalTab;
+window.handleModalSignup = handleModalSignup;
+window.handleModalSignin = handleModalSignin;
+window.handleStartGeneratingClick = handleStartGeneratingClick;
+window.openStudioWithSample = openStudioWithSample;
+window.checkUserAuth = checkUserAuth;
 
 // Hydrate on page load
 window.addEventListener('DOMContentLoaded', () => {
+  checkUserAuth();
   restorePersistedDraft();
   restorePersistedSession();
 });

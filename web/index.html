@@ -35,11 +35,14 @@
             <span class="nav-brand-text">AI PORTFOLIO STUDIO</span>
           </div>
           <div class="nav-links">
-            <a href="#sectionSpeakers" class="nav-link-item">SPEAKERS</a>
-            <a href="#sectionSchedule" class="nav-link-item">SCHEDULE</a>
+            <a href="#sectionShowcase" class="nav-link-item">PORTFOLIOS</a>
+            <a href="#sectionPipeline" class="nav-link-item">WORKFLOW</a>
             <a href="#sectionCollage" class="nav-link-item">SYNTHESIS</a>
-            <a href="#sectionCtaSpot" class="nav-link-item">GET IN TOUCH</a>
-            <button type="button" class="nav-btn-pill" onclick="document.getElementById('multiInputSection').scrollIntoView({ behavior: 'smooth' })">LAUNCH STUDIO</button>
+            <a href="#sectionCtaSpot" class="nav-link-item">GET STARTED</a>
+            <div id="navAuthDock" class="nav-auth-dock">
+              <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
+              <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">SIGN UP FREE</button>
+            </div>
           </div>
         </nav>
 
@@ -62,7 +65,7 @@
             <p class="ref-hero-subtitle">Turn your work into a portfolio worth remembering. Synthesize your GitHub repositories, PDF resume, visual specimens, or career answers into a bespoke, high-craft web portfolio in seconds.</p>
             
             <div class="ref-hero-cta-row">
-              <a href="#multiInputSection" class="btn-ref-pill-outline">START GENERATING</a>
+              <button type="button" class="btn-ref-pill-outline" onclick="handleStartGeneratingClick()">START GENERATING</button>
               <button type="button" class="btn-ref-pill-solid" onclick="openSamplesModal()">EXPLORE SAMPLES</button>
             </div>
           </div>
@@ -265,47 +268,53 @@
           </div>
         </div>
 
-        <!-- Section 2: SPEAKERS / FEATURED CREATORS (Soft Ice-Blue Background) -->
-        <section id="sectionSpeakers" class="ref-speakers-section">
+        <!-- Section 2: FEATURED PORTFOLIOS SHOWCASE (Soft Ice-Blue Background) -->
+        <section id="sectionShowcase" class="ref-speakers-section">
           <div class="ref-section-container">
-            <h2 class="ref-section-title dark-text">SPEAKERS</h2>
-            <p class="ref-section-lead dark-muted">Bespoke portfolio architectures synthesized for distinctive engineering &amp; design leaders.</p>
+            <h2 class="ref-section-title dark-text">FEATURED PORTFOLIOS</h2>
+            <p class="ref-section-lead dark-muted">Bespoke portfolio architectures synthesized for distinctive engineering, design, and research leaders.</p>
 
             <div class="ref-speakers-grid">
-              <!-- Speaker Card 1 -->
+              <!-- Portfolio Card 1 -->
               <article class="ref-speaker-card">
                 <div class="speaker-img-wrapper">
                   <img src="/assets/portrait-zawadi.jpg" alt="Zawadi Thandiwe" class="speaker-portrait" />
                 </div>
+                <div class="portfolio-theme-pill">🎨 Swiss Editorial Grid</div>
                 <h3 class="speaker-name">ZAWADI THANDIWE</h3>
-                <p class="speaker-bio">Professional with 8+ years of experience helping brands reach their goals through avant-garde design systems.</p>
+                <p class="speaker-bio">Creative Director Portfolio with interactive 3D WebGL motion, design token systems, and magazine case studies.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('zawadi')">View Live Specimen ↗</button>
               </article>
 
-              <!-- Speaker Card 2 -->
+              <!-- Portfolio Card 2 -->
               <article class="ref-speaker-card">
                 <div class="speaker-img-wrapper">
                   <img src="/assets/portrait-ejiro.jpg" alt="Ejiro Rudo" class="speaker-portrait" />
                 </div>
+                <div class="portfolio-theme-pill">⚡ Research Dossier</div>
                 <h3 class="speaker-name">EJIRO RUDO</h3>
-                <p class="speaker-bio">Skilled in problem-solving, LLM scaling verification, communication, and strategic systems thinking.</p>
+                <p class="speaker-bio">Staff AI Researcher Portfolio featuring peer-reviewed publications, DOI links, and empirical benchmark findings.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('ejiro')">View Live Specimen ↗</button>
               </article>
 
-              <!-- Speaker Card 3 -->
+              <!-- Portfolio Card 3 -->
               <article class="ref-speaker-card">
                 <div class="speaker-img-wrapper">
                   <img src="/assets/portrait-daniel.jpg" alt="Daniel Saoirse" class="speaker-portrait" />
                 </div>
+                <div class="portfolio-theme-pill">🌌 Cinematic Obsidian</div>
                 <h3 class="speaker-name">DANIEL SAOIRSE</h3>
-                <p class="speaker-bio">Dedicated to crafting innovative distributed systems and storage architectures that drive positive change.</p>
+                <p class="speaker-bio">Systems Architect Portfolio with deep code architecture dossiers, latency telemetry, and repository stars.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('daniel')">View Live Specimen ↗</button>
               </article>
             </div>
           </div>
         </section>
 
-        <!-- Section 3: SCHEDULE / GENERATION PIPELINE (Deep Royal Indigo Background) -->
-        <section id="sectionSchedule" class="ref-schedule-section">
+        <!-- Section 3: GENERATION WORKFLOW / PIPELINE (Deep Royal Indigo Background) -->
+        <section id="sectionPipeline" class="ref-schedule-section">
           <div class="ref-section-container">
-            <h2 class="ref-section-title light-text">SCHEDULE</h2>
+            <h2 class="ref-section-title light-text">GENERATION WORKFLOW</h2>
             <p class="ref-section-lead light-muted">3-stage autonomous design pipeline orchestrating complete evidence preservation.</p>
 
             <div class="ref-schedule-grid">
@@ -317,16 +326,16 @@
                 </div>
                 <div class="schedule-timeline-list">
                   <div class="schedule-item-row">
-                    <span class="item-time">12:00 pm</span>
-                    <strong class="item-title">Registration &amp; Welcome</strong>
+                    <span class="item-time">Step 01</span>
+                    <strong class="item-title">GitHub Deep Repository Ingestion</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">2:00 pm</span>
-                    <strong class="item-title">GitHub Deep Ingestion</strong>
+                    <span class="item-time">Step 02</span>
+                    <strong class="item-title">PDF Resume &amp; Milestone Extraction</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">7:00 pm</span>
-                    <strong class="item-title">PDF Resume Parsing</strong>
+                    <span class="item-time">Step 03</span>
+                    <strong class="item-title">Visual Specimen &amp; Media Intake</strong>
                   </div>
                 </div>
               </div>
@@ -339,16 +348,16 @@
                 </div>
                 <div class="schedule-timeline-list">
                   <div class="schedule-item-row">
-                    <span class="item-time">7:00 am</span>
-                    <strong class="item-title">Design Gate Verification</strong>
+                    <span class="item-time">Step 04</span>
+                    <strong class="item-title">15 Specialized Design Agents</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">11:00 am</span>
-                    <strong class="item-title">Semantic Content Graph</strong>
+                    <span class="item-time">Step 05</span>
+                    <strong class="item-title">Semantic Content Graph Binding</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">12:30 pm</span>
-                    <strong class="item-title">15 Autonomous Agents</strong>
+                    <span class="item-time">Step 06</span>
+                    <strong class="item-title">100% Zero-Loss Evidence Gate</strong>
                   </div>
                 </div>
               </div>
@@ -361,16 +370,16 @@
                 </div>
                 <div class="schedule-timeline-list">
                   <div class="schedule-item-row">
-                    <span class="item-time">7:00 am</span>
-                    <strong class="item-title">Composition Plan Compile</strong>
+                    <span class="item-time">Step 07</span>
+                    <strong class="item-title">Composition Plan Execution</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">9:00 am</span>
-                    <strong class="item-title">WebGL Physics &amp; Motion</strong>
+                    <span class="item-time">Step 08</span>
+                    <strong class="item-title">Interactive WebGL Motion Physics</strong>
                   </div>
                   <div class="schedule-item-row">
-                    <span class="item-time">11:30 am</span>
-                    <strong class="item-title">Live Preview &amp; ZIP Export</strong>
+                    <span class="item-time">Step 09</span>
+                    <strong class="item-title">Instant Live Preview &amp; ZIP Export</strong>
                   </div>
                 </div>
               </div>
@@ -382,24 +391,24 @@
         <section id="sectionCollage" class="ref-collage-section">
           <div class="ref-collage-content">
             <div class="collage-line">
-              <span class="collage-word">Design</span>
+              <span class="collage-word">Engineering</span>
               <span class="collage-inline-chip"><img src="/assets/portrait-zawadi.jpg" alt="Design Lead" /></span>
-              <span class="collage-word">Strategy</span>
+              <span class="collage-word">Architecture</span>
             </div>
             <div class="collage-line">
               <span class="collage-inline-chip"><img src="/assets/portrait-ejiro.jpg" alt="AI Scientist" /></span>
               <span class="collage-inline-chip chip-square"><img src="/assets/hero-3d.jpg" alt="3D Sphere" /></span>
-              <span class="collage-word">Marketing</span>
+              <span class="collage-word">Research</span>
             </div>
             <div class="collage-line">
-              <span class="collage-word">Culture</span>
+              <span class="collage-word">Distributed</span>
               <span class="collage-inline-chip"><img src="/assets/portrait-daniel.jpg" alt="Systems Architect" /></span>
               <span class="collage-inline-chip chip-square"><img src="/assets/preview-3d.jpg" alt="Preview 3D" /></span>
-              <span class="collage-word">Craft</span>
+              <span class="collage-word">Systems</span>
             </div>
             <div class="collage-line">
               <span class="collage-inline-chip chip-wide"><img src="/assets/hero-3d.jpg" alt="WebGL" /></span>
-              <span class="collage-word">Engagement</span>
+              <span class="collage-word">Zero-Loss Portfolios</span>
             </div>
           </div>
         </section>
@@ -418,13 +427,13 @@
             <!-- Right: Save Your Spot Copy -->
             <div class="spot-info-block">
               <h2 class="spot-headline">
-                <span>SAVE</span>
-                <span>YOUR</span>
-                <span>SPOT</span>
+                <span>BUILD YOUR</span>
+                <span>BESPOKE SPOT</span>
+                <span>TODAY</span>
               </h2>
-              <p class="spot-description">A unique generative studio filled with bespoke art direction, zero-loss evidence preservation, and 15 autonomous design agents.</p>
-              <button type="button" class="btn-ref-pill-outline spot-btn" onclick="document.getElementById('multiInputSection').scrollIntoView({ behavior: 'smooth' })">
-                BOOK NOW
+              <p class="spot-description">Join developers, researchers, and designers crafting distinctive, zero-loss portfolios with autonomous design intelligence.</p>
+              <button type="button" class="btn-ref-pill-outline spot-btn" onclick="openAuthModal('signup')">
+                SIGN UP FREE ➔
               </button>
             </div>
           </div>
@@ -688,6 +697,74 @@
         <p class="modal-subtext">See how different engineering and design specializations synthesize into unique visual worlds.</p>
       </div>
       <div id="samplesGalleryGrid" class="sample-gallery-grid"></div>
+    </div>
+  </div>
+
+  <!-- 7. Mandatory User Auth Modal (Sign Up & Sign In) -->
+  <div id="authModal" class="product-modal-backdrop" style="display: none;">
+    <div class="product-modal-card" style="max-width: 480px;">
+      <button type="button" class="btn-modal-close" onclick="closeAuthModal()">✕</button>
+      
+      <div class="modal-head-block" style="margin-bottom: 20px;">
+        <div class="auth-modal-badge">
+          <span>🔒 SECURE ACCOUNT REQUIRED</span>
+        </div>
+        <h2 id="authModalTitle">Sign up to AI Portfolio Studio</h2>
+        <p id="authModalSubtitle" class="modal-subtext">Create a free account or sign in to generate and save your bespoke portfolio.</p>
+      </div>
+
+      <!-- Auth Modal Tabs Switcher -->
+      <div class="auth-modal-tabs">
+        <button type="button" class="auth-tab-btn active" id="authTabSignup" onclick="switchAuthModalTab('signup')">Sign Up Free</button>
+        <button type="button" class="auth-tab-btn" id="authTabSignin" onclick="switchAuthModalTab('signin')">Sign In</button>
+      </div>
+
+      <!-- Alert Box inside Modal -->
+      <div id="authModalAlert" class="auth-modal-alert" style="display: none;"></div>
+
+      <!-- Sign Up Form -->
+      <form id="modalSignupForm" class="auth-modal-form" onsubmit="handleModalSignup(event)">
+        <div class="form-group-field">
+          <label>Full Name</label>
+          <input type="text" id="modalSignupName" placeholder="e.g. Elena Rostova" required autocomplete="name">
+        </div>
+        <div class="form-group-field">
+          <label>Email Address</label>
+          <input type="email" id="modalSignupEmail" placeholder="elena@example.com" required autocomplete="email">
+        </div>
+        <div class="form-group-field">
+          <label>Username</label>
+          <input type="text" id="modalSignupUsername" placeholder="e.g. elena_systems" required autocomplete="username">
+        </div>
+        <div class="form-group-field">
+          <label>Password (min 8 characters)</label>
+          <input type="password" id="modalSignupPassword" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+        </div>
+        <div class="form-checkbox-row" style="margin: 12px 0 18px;">
+          <input type="checkbox" id="modalTermsAccepted" required checked>
+          <label for="modalTermsAccepted" style="font-size: 0.84rem; color: var(--product-text-muted);">
+            I agree to the <a href="/terms" target="_blank" style="color: var(--primary);">Terms of Service</a> and <a href="/privacy" target="_blank" style="color: var(--primary);">Privacy Policy</a>.
+          </label>
+        </div>
+        <button type="submit" id="btnModalSignupSubmit" class="btn-cta-main" style="width: 100%;">
+          <span>⚡ Create Free Account &amp; Continue</span>
+        </button>
+      </form>
+
+      <!-- Sign In Form -->
+      <form id="modalSigninForm" class="auth-modal-form" style="display: none;" onsubmit="handleModalSignin(event)">
+        <div class="form-group-field">
+          <label>Email or Username</label>
+          <input type="text" id="modalSigninIdentifier" placeholder="elena@example.com or @username" required autocomplete="username">
+        </div>
+        <div class="form-group-field">
+          <label>Password</label>
+          <input type="password" id="modalSigninPassword" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <button type="submit" id="btnModalSigninSubmit" class="btn-cta-main" style="width: 100%; margin-top: 14px;">
+          <span>Sign In &amp; Continue ➔</span>
+        </button>
+      </form>
     </div>
   </div>
 
