@@ -74,6 +74,9 @@ class AdditionalEvidenceSection {
       if (pub.methodology) {
         items.push({ label: `${pub.title || 'Publication'} • Methodology`, value: pub.methodology, category: 'publication_methodology' });
       }
+      if (pub.findings) {
+        items.push({ label: `${pub.title || 'Publication'} • Empirical Findings`, value: pub.findings, category: 'publication_findings' });
+      }
       if (pub.customFields && typeof pub.customFields === 'object') {
         for (const [k, v] of Object.entries(pub.customFields)) {
           if (v !== undefined && v !== null && String(v).trim() !== '') {
@@ -89,6 +92,9 @@ class AdditionalEvidenceSection {
       if (e.achievements) {
         items.push({ label: `${e.company || 'Experience'} • Key Achievements`, value: e.achievements, category: 'experience_achievements' });
       }
+      if (e.outcomes) {
+        items.push({ label: `${e.company || 'Experience'} • Measurable Outcomes`, value: e.outcomes, category: 'experience_outcomes' });
+      }
       if (e.customFields && typeof e.customFields === 'object') {
         for (const [k, v] of Object.entries(e.customFields)) {
           if (v !== undefined && v !== null && String(v).trim() !== '') {
@@ -97,6 +103,15 @@ class AdditionalEvidenceSection {
         }
       }
     });
+
+    // 6. Questionnaire Claims
+    if (profile.questionnaire && typeof profile.questionnaire === 'object') {
+      for (const [k, v] of Object.entries(profile.questionnaire)) {
+        if (v !== undefined && v !== null && String(v).trim() !== '') {
+          items.push({ label: `User Claim • ${k}`, value: v, category: 'questionnaire_claim' });
+        }
+      }
+    }
 
     if (items.length === 0) return '';
 

@@ -168,6 +168,10 @@ class ComponentGrammar {
         const techStr = Array.isArray(exp.technologies) ? exp.technologies.join(' • ') : exp.technologies;
         html += `<div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;">[STACK: ${escape(techStr)}]</div>`;
       }
+      if (exp.outcomes) {
+        const outcomesStr = Array.isArray(exp.outcomes) ? exp.outcomes.join(' • ') : exp.outcomes;
+        html += `<div style="margin-top: 0.4rem; font-size: 0.86rem; color: var(--primary); line-height: 1.5;"><span style="font-weight: 700;">[OUTCOMES]</span> ${escape(outcomesStr)}</div>`;
+      }
       return html;
     };
 

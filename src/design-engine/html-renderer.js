@@ -182,6 +182,8 @@ class SectionRendererRegistry {
           const year = HtmlRenderer.escapeHtml(pub.year || pub.date || '');
           const doi = HtmlRenderer.escapeHtml(pub.doi || '');
           const abstract = HtmlRenderer.escapeHtml(pub.abstract || pub.summary || pub.desc || '');
+          const methodology = HtmlRenderer.escapeHtml(pub.methodology || '');
+          const findings = HtmlRenderer.escapeHtml(pub.findings || '');
           const url = pub.url || pub.link || pub.pdf || '';
           return `
             <article class="research-publication-item" style="padding: 1.75rem 0; border-bottom: 1px solid var(--border);">
@@ -189,6 +191,8 @@ class SectionRendererRegistry {
               <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem;">${title}</h3>
               <div style="font-size: 0.9rem; font-style: italic; color: var(--text-muted); margin-bottom: 0.75rem;">${authors} ${venue ? `— <strong>${venue}</strong>` : ''}</div>
               ${abstract ? `<p style="font-size: 0.92rem; line-height: 1.6; color: var(--text); margin-bottom: 0.75rem; background: var(--surface-alt); padding: 0.75rem 1rem; border-left: 3px solid var(--primary);">${abstract}</p>` : ''}
+              ${methodology ? `<div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;"><strong style="color: var(--primary);">[METHODOLOGY]:</strong> ${methodology}</div>` : ''}
+              ${findings ? `<div style="font-size: 0.85rem; color: var(--text); margin-bottom: 0.5rem;"><strong style="color: var(--primary);">[FINDINGS]:</strong> ${findings}</div>` : ''}
               ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-decoration: underline; font-weight: 700;">Access Publication ↗</a>` : ''}
             </article>
           `;
