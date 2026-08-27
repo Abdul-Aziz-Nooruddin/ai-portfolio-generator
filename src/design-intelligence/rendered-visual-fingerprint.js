@@ -1,9 +1,11 @@
 /**
- * 🏛️ Rendered Visual Fingerprint (Phase 34)
+ * 🏛️ Rendered Visual Fingerprint (Phase 35)
  * Extracts physical layout geometry, computed container dimensions, column distributions,
- * navigation coordinate models, hero geometry, project aspect ratios, and whitespace profiles
- * across 4 canonical viewports: 1440x900, 1024x768, 768x1024, 390x844.
+ * navigation coordinate models, hero geometry, project aspect ratios, section sequences,
+ * and whitespace profiles across 4 canonical viewports: 1440x900, 1024x768, 768x1024, 390x844.
  */
+
+const crypto = require('crypto');
 
 class RenderedVisualFingerprint {
   /**
@@ -17,7 +19,7 @@ class RenderedVisualFingerprint {
     const rawHtml = String(html || '');
     const rawCss = String(css || '');
 
-    // 1. Page Topology & Container Width Philosophy
+    // 1. Page Topology & Container Width Philosophy (Exact Class First)
     let pageTopology = 'centered-standard';
     let maxContentWidth = 1280;
     let isFullBleed = false;
@@ -25,26 +27,55 @@ class RenderedVisualFingerprint {
     let isNarrowMeasure = false;
     let isSplitCanvas = false;
 
-    if (rawHtml.includes('primitive-identity-rail') || rawCss.includes('grid-template-columns: 280px 1fr') || rawCss.includes('minmax(320px, 38%) 1fr')) {
-      pageTopology = 'split-sidebar-rail';
+    if (rawHtml.includes('layout-vertical-rail') || rawCss.includes('.layout-vertical-rail')) {
+      pageTopology = 'vertical-rail';
       isSplitCanvas = true;
-    } else if (rawCss.includes('width: 100%') && rawCss.includes('max-width: 100vw')) {
-      pageTopology = 'edge-to-edge-fluid';
+    } else if (rawHtml.includes('layout-asymmetric-split') || rawCss.includes('.layout-asymmetric-split')) {
+      pageTopology = 'asymmetric-split';
+      isSplitCanvas = true;
+    } else if (rawHtml.includes('layout-edge-to-edge-editorial') || rawCss.includes('.layout-edge-to-edge-editorial')) {
+      pageTopology = 'edge-to-edge-editorial';
       isFullBleed = true;
       maxContentWidth = 1440;
-    } else if (rawCss.includes('margin-left: auto') && rawCss.includes('margin-right: 0')) {
-      pageTopology = 'offset-asymmetric-canvas';
+    } else if (rawHtml.includes('layout-offset-poster') || rawCss.includes('.layout-offset-poster')) {
+      pageTopology = 'offset-poster';
       isOffsetAsymmetric = true;
       maxContentWidth = 1440;
-    } else if (rawCss.includes('max-width: 860px') || rawCss.includes('max-width: 880px') || rawHtml.includes('monograph-reading-column')) {
-      pageTopology = 'narrow-editorial-measure';
+    } else if (rawHtml.includes('layout-narrow-reading-column') || rawCss.includes('.layout-narrow-reading-column')) {
+      pageTopology = 'narrow-reading-column';
       isNarrowMeasure = true;
-      maxContentWidth = 880;
-    } else if (rawHtml.includes('terminal-window') || rawHtml.includes('primitive-command-surface')) {
-      pageTopology = 'command-console-matrix';
+      maxContentWidth = 860;
+    } else if (rawHtml.includes('layout-command-console') || rawCss.includes('.layout-command-console')) {
+      pageTopology = 'command-console';
       maxContentWidth = 1180;
-    } else if (rawCss.includes('spatial-viewport-stage') || rawHtml.includes('stage-orbit-wrapper')) {
+    } else if (rawHtml.includes('layout-full-viewport-stage') || rawCss.includes('.layout-full-viewport-stage')) {
       pageTopology = 'full-viewport-stage';
+      isFullBleed = true;
+      maxContentWidth = 1440;
+    } else if (rawHtml.includes('layout-archive-index') || rawCss.includes('.layout-archive-index')) {
+      pageTopology = 'archive-index';
+      maxContentWidth = 1360;
+    } else if (rawHtml.includes('layout-newspaper') || rawCss.includes('.layout-newspaper')) {
+      pageTopology = 'newspaper-grid';
+      maxContentWidth = 1380;
+    } else if (rawHtml.includes('layout-magazine') || rawCss.includes('.layout-magazine')) {
+      pageTopology = 'magazine-spread';
+      maxContentWidth = 1400;
+    } else if (rawHtml.includes('layout-data-observatory') || rawCss.includes('.layout-data-observatory')) {
+      pageTopology = 'data-observatory';
+      maxContentWidth = 1500;
+    } else if (rawHtml.includes('layout-architectural-plate') || rawCss.includes('.layout-architectural-plate')) {
+      pageTopology = 'architectural-plate';
+      maxContentWidth = 1240;
+    } else if (rawHtml.includes('layout-timeline') || rawCss.includes('.layout-timeline')) {
+      pageTopology = 'timeline-spine';
+      maxContentWidth = 980;
+    } else if (rawHtml.includes('layout-image-gallery') || rawCss.includes('.layout-image-gallery')) {
+      pageTopology = 'image-gallery';
+      isFullBleed = true;
+      maxContentWidth = 1440;
+    } else if (rawHtml.includes('layout-floating-spatial') || rawCss.includes('.layout-floating-spatial')) {
+      pageTopology = 'floating-spatial';
       isFullBleed = true;
       maxContentWidth = 1440;
     }
@@ -65,16 +96,19 @@ class RenderedVisualFingerprint {
       navigationGeometry = 'gallery-selector-track';
     } else if (rawHtml.includes('numbered-archive-index')) {
       navigationGeometry = 'numbered-archive-index';
+    } else if (rawHtml.includes('minimal-anchor-dock')) {
+      navigationGeometry = 'minimal-anchor-dock';
     }
 
     // 3. Hero / Opening Viewport Geometry
     let heroGeometry = 'standard-thesis';
-    if (pageTopology === 'split-sidebar-rail') heroGeometry = 'sticky-identity-rail';
-    else if (pageTopology === 'command-console-matrix') heroGeometry = 'terminal-cli-boot';
-    else if (pageTopology === 'full-viewport-stage') heroGeometry = 'immersive-stage-takeover';
-    else if (pageTopology === 'narrow-editorial-measure') heroGeometry = 'monograph-abstract-prologue';
-    else if (pageTopology === 'edge-to-edge-fluid') heroGeometry = 'full-bleed-runway-header';
-    else if (pageTopology === 'offset-asymmetric-canvas') heroGeometry = 'offset-poster-masthead';
+    if (pageTopology === 'vertical-rail' || pageTopology === 'asymmetric-split') heroGeometry = 'sticky-identity-rail';
+    else if (pageTopology === 'command-console' || rawHtml.includes('terminal-boot-header')) heroGeometry = 'terminal-cli-boot';
+    else if (pageTopology === 'full-viewport-stage' || pageTopology === 'floating-spatial' || rawHtml.includes('full-stage-header')) heroGeometry = 'immersive-stage-takeover';
+    else if (pageTopology === 'narrow-reading-column' || rawHtml.includes('monograph-header')) heroGeometry = 'monograph-abstract-prologue';
+    else if (pageTopology === 'edge-to-edge-editorial') heroGeometry = 'full-bleed-runway-header';
+    else if (pageTopology === 'offset-poster') heroGeometry = 'offset-poster-masthead';
+    else if (pageTopology === 'image-gallery') heroGeometry = 'visual-exhibition-masthead';
 
     // 4. Project Presentation Artifact Model
     const projectArtifacts = [];
@@ -94,21 +128,31 @@ class RenderedVisualFingerprint {
     const primaryProjectTopology = projectArtifacts[0] || 'code-architecture-dossier';
     const isMultiArtifactSuite = projectArtifacts.length >= 2 || rawHtml.includes('presentation-multi-artifact-suite');
 
-    // 5. Responsive Transformation Archetype
-    let mobileTransformation = 'reading-monograph-stack';
-    if (isSplitCanvas) mobileTransformation = 'collapsible-edge-drawer';
-    else if (pageTopology === 'command-console-matrix') mobileTransformation = 'scrollable-command-stream';
-    else if (pageTopology === 'full-viewport-stage') mobileTransformation = 'focal-node-navigator';
-    else if (pageTopology === 'narrow-editorial-measure') mobileTransformation = 'single-stream-flow';
-    else if (rawHtml.includes('presentation-horizontal-filmstrip')) mobileTransformation = 'touch-snapped-filmstrip';
+    // 5. Responsive Mobile Transformation Archetype
+    let mobileTransformation = 'mobile-editorial-column';
+    if (isSplitCanvas) mobileTransformation = 'mobile-sticky-rail';
+    else if (pageTopology === 'command-console') mobileTransformation = 'mobile-terminal-stream';
+    else if (pageTopology === 'full-viewport-stage') mobileTransformation = 'mobile-focal-node-navigator';
+    else if (pageTopology === 'offset-poster') mobileTransformation = 'mobile-tabbed-deck';
+    else if (pageTopology === 'narrow-reading-column') mobileTransformation = 'mobile-reading-stream';
+    else if (pageTopology === 'image-gallery' || rawHtml.includes('presentation-horizontal-filmstrip')) mobileTransformation = 'mobile-horizontal-snap';
+    else if (pageTopology === 'archive-index') mobileTransformation = 'mobile-numbered-archive';
+    else if (pageTopology === 'magazine-spread') mobileTransformation = 'mobile-magazine-chapter';
+    else if (pageTopology === 'data-observatory') mobileTransformation = 'mobile-metric-telemetry-feed';
+    else if (pageTopology === 'timeline-spine') mobileTransformation = 'mobile-linear-milestone-rail';
 
-    // 6. Section Ordering Sequence
-    const sectionTags = [];
-    const sectionRegex = /<(section|aside|main|header|article)\b[^>]*>/gi;
+    // 6. Section Ordering Sequence Extraction from real rendered DOM tags
+    const observedSectionSequence = [];
+    const sectionTagRegex = /class="(section-[a-z0-9_-]+|primitive-[a-z0-9_-]+|split-identity-col|rail-sidebar)"/gi;
     let match;
-    while ((match = sectionRegex.exec(rawHtml)) !== null && sectionTags.length < 8) {
-      sectionTags.push(match[1].toLowerCase());
+    while ((match = sectionTagRegex.exec(rawHtml)) !== null && observedSectionSequence.length < 10) {
+      const cls = match[1].toLowerCase().replace(/^section-/, '').replace(/^primitive-/, '');
+      if (!observedSectionSequence.includes(cls)) {
+        observedSectionSequence.push(cls);
+      }
     }
+    const sectionOrderString = observedSectionSequence.join(' -> ');
+    const sectionOrderHash = crypto.createHash('md5').update(sectionOrderString || 'default').digest('hex').slice(0, 8);
 
     return {
       viewportTested: ['1440x900', '1024x768', '768x1024', '390x844'],
@@ -124,7 +168,9 @@ class RenderedVisualFingerprint {
       projectArtifactCount: projectArtifacts.length,
       isMultiArtifactSuite,
       mobileTransformation,
-      sectionSequence: sectionTags.join(' -> '),
+      observedSectionSequence,
+      sectionOrderHash,
+      sectionSequence: sectionOrderString,
       browserGeometry: browserGeometry || {
         hasBoundingMetrics: true,
         bodyWidth: 1440,
@@ -145,10 +191,10 @@ class RenderedVisualFingerprint {
     const collisionPoints = [];
     let similarityScore = 0;
 
-    // 1. Page Topology & Container Width (Weight: 25%)
+    // 1. Page Topology & Container Width (Weight: 20%)
     if (fpA.pageTopology === fpB.pageTopology) {
       collisionPoints.push(`TOPOLOGY_COLLISION: Identical page topology (${fpA.pageTopology})`);
-      similarityScore += 25;
+      similarityScore += 20;
     }
 
     // 2. Navigation Geometry (Weight: 20%)
@@ -163,16 +209,22 @@ class RenderedVisualFingerprint {
       similarityScore += 20;
     }
 
-    // 4. Project Presentation Topology (Weight: 20%)
+    // 4. Project Presentation Topology (Weight: 15%)
     if (fpA.primaryProjectTopology === fpB.primaryProjectTopology) {
       collisionPoints.push(`PROJECT_COLLISION: Identical primary project topology (${fpA.primaryProjectTopology})`);
-      similarityScore += 20;
+      similarityScore += 15;
     }
 
-    // 5. Mobile Transformation Topology (Weight: 15%)
+    // 5. Mobile Transformation Model (Weight: 15%)
     if (fpA.mobileTransformation === fpB.mobileTransformation) {
       collisionPoints.push(`MOBILE_COLLISION: Identical mobile transformation model (${fpA.mobileTransformation})`);
       similarityScore += 15;
+    }
+
+    // 6. Section Ordering Hash (Weight: 10%)
+    if (fpA.sectionOrderHash === fpB.sectionOrderHash) {
+      collisionPoints.push(`SECTION_ORDER_COLLISION: Identical section ordering sequence (${fpA.sectionSequence})`);
+      similarityScore += 10;
     }
 
     const distanceScore = Math.max(0, 100 - similarityScore);

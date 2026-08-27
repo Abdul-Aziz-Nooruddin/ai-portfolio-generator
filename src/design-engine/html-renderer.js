@@ -1,47 +1,334 @@
 /**
- * HTML/CSS/JS Renderer with Dynamic Section Morphing, Hero Geometry Archetypes & Perceptual Independence
- * Compiles ContentProfile, IA Model, LayoutGrammar, ProjectStrategy, TypographySystem, and ColorPalette
- * into an authentic, accessible, responsive single-page web document.
+ * 🏛️ Authoritative Dynamic HTML/CSS/JS Renderer (Phase 35)
+ * Compiles ContentProfile and the Authoritative CompositionPlan into an authentic, accessible,
+ * responsive single-page web document without IA-model template branching.
+ * 
+ * Flow:
+ * IA Intent -> CompositionPlanner -> Immutable CompositionPlan -> Dynamic Section Registry & Primitives -> Rendered DOM
  */
 
 const { ProjectStoryteller } = require('./project-storyteller');
 const { ComponentGrammar } = require('./component-grammar');
 const { CompositionPrimitives } = require('./composition-primitives');
+const { AdditionalEvidenceSection } = require('./additional-evidence-section');
+
+class SectionRendererRegistry {
+  /**
+   * Normalizes section identifier to a canonical section kind
+   */
+  static normalizeSectionKey(key = '') {
+    const k = String(key).toLowerCase().replace(/[^a-z0-9_]/g, '_');
+    
+    // Check PROJECTS first so 'work_runway', 'featured_artifacts', etc. map to PROJECTS
+    if (k.includes('project') || k.includes('artifact') || k.includes('work') || k.includes('mosaic') || k.includes('track') || k.includes('portfolio') || k.includes('curated_work') || k.includes('specimen') || (k.includes('index') && !k.includes('archive') && !k.includes('nav'))) {
+      return 'PROJECTS';
+    }
+    if (k.includes('hero') || k.includes('opening') || k.includes('identity') || k.includes('cover') || k.includes('boot') || k.includes('masthead') || k.includes('opener') || k.includes('intro') || k.includes('title')) {
+      return 'HERO';
+    }
+    if (k.includes('experience') || k.includes('timeline') || k.includes('career') || k.includes('chronicle') || k.includes('trajectory') || k.includes('milestone') || k.includes('journey') || k.includes('dossier') || k.includes('history') || k.includes('profile') || k.includes('author')) {
+      return 'EXPERIENCE';
+    }
+    if (k.includes('skill') || k.includes('capability') || k.includes('stack') || k.includes('evidence') || k.includes('inventory') || k.includes('tool') || k.includes('diagnostic') || k.includes('spec') || k.includes('matrix')) {
+      return 'SKILLS';
+    }
+    if (k.includes('publication') || k.includes('research') || k.includes('paper') || k.includes('monograph_abstract')) {
+      return 'PUBLICATIONS';
+    }
+    if (k.includes('thesis') || k.includes('manifesto') || k.includes('telemetry') || k.includes('statement') || k.includes('metric') || k.includes('horizon')) {
+      return 'THESIS';
+    }
+    if (k.includes('education') || k.includes('academic') || k.includes('citation') || k.includes('credential')) {
+      return 'EDUCATION';
+    }
+    if (k.includes('cert') || k.includes('award') || k.includes('honor') || k.includes('badge')) {
+      return 'CERTIFICATIONS';
+    }
+    if (k.includes('contact') || k.includes('footer') || k.includes('colophon') || k.includes('status') || k.includes('inquiry') || k.includes('connect') || k.includes('credit') || k.includes('dock') || k.includes('reach') || k.includes('epilogue') || k.includes('exit') || k.includes('sign_off') || k.includes('beacon') || (k.includes('spread') && k.includes('contact'))) {
+      return 'CONTACT';
+    }
+    return 'GENERIC';
+  }
+
+  /**
+   * Renders a section based on its canonical category
+   */
+  static renderSection(sectionKey, context) {
+    const kind = this.normalizeSectionKey(sectionKey);
+    const {
+      contentProfile,
+      safeName,
+      safeRole,
+      safeTagline,
+      safeBio,
+      photoHtml,
+      projectsHtml,
+      skillsHtml,
+      experienceHtml,
+      educationHtml,
+      certificationsHtml,
+      footerHtml,
+      compositionPlan,
+      visualUniverse
+    } = context;
+
+    switch (kind) {
+      case 'HERO': {
+        const openingTopology = compositionPlan?.openingTopology || 'editorial-thesis';
+        const renderTaglineBio = () => {
+          if (safeTagline && safeBio && safeTagline !== safeBio) {
+            return `
+              <p style="font-size: 1.15rem; font-weight: 600; line-height: 1.5; color: var(--text); max-width: 780px; margin-bottom: 0.75rem;">${safeTagline}</p>
+              <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); max-width: 780px;">${safeBio}</p>
+            `;
+          }
+          return `<p style="font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); max-width: 780px;">${safeTagline || safeBio}</p>`;
+        };
+
+        const isSplitOrSidebar = compositionPlan?.pageTopology?.id === 'asymmetric-split-canvas' || compositionPlan?.pageTopology?.id === 'vertical-identity-rail';
+        const hTag = isSplitOrSidebar ? 'h2' : 'h1';
+
+        if (openingTopology === 'terminal-boot-sequence') {
+          return `
+            <header class="section-hero terminal-boot-header" style="margin-bottom: 3.5rem;">
+              <div style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--primary); margin-bottom: 1rem;">$ sysinfo --whoami</div>
+              <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${safeName}</${hTag}>
+              <div style="font-family: var(--font-mono); font-size: 1.15rem; color: var(--text-muted); margin-bottom: 1.5rem;">&gt; ${safeRole} ${safeTagline ? `— ${safeTagline}` : ''}</div>
+              ${safeBio ? `<div style="font-family: var(--font-mono); font-size: 0.92rem; color: var(--text); line-height: 1.6; max-width: 780px; margin-bottom: 1.5rem;">// BIO: ${safeBio}</div>` : ''}
+            </header>
+          `;
+        }
+        if (openingTopology === 'full-viewport-stage') {
+          return `
+            <header class="section-hero full-stage-header" style="margin-bottom: 4.5rem; min-height: 40vh; display: flex; flex-direction: column; justify-content: center;">
+              <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase;">[SPATIAL_STAGE // ROOT]</div>
+              ${photoHtml || ''}
+              <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.6rem, 6vw, 4.8rem); font-weight: 900; color: var(--text); line-height: 1.05; margin-bottom: 1.25rem;">${safeName}</${hTag}>
+              <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem; max-width: 800px;">${safeRole}</div>
+              ${renderTaglineBio()}
+            </header>
+          `;
+        }
+        if (openingTopology === 'research-abstract-monograph') {
+          return `
+            <header class="section-hero monograph-header" style="margin-bottom: 4rem; padding-bottom: 2.5rem; border-bottom: 2px solid var(--text);">
+              <div style="font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 1rem; text-transform: uppercase;">MONOGRAPH • RESEARCH THESIS</div>
+              ${photoHtml || ''}
+              <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.05; margin-bottom: 1.25rem; color: var(--text);">${safeName}</${hTag}>
+              <div style="font-size: 1.35rem; font-style: italic; font-weight: 500; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
+              ${renderTaglineBio()}
+            </header>
+          `;
+        }
+        // Default Editorial Opening
+        return `
+          <header class="section-hero standard-hero-header" style="margin-bottom: 4rem;">
+            ${photoHtml || ''}
+            <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</${hTag}>
+            <div style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
+            ${renderTaglineBio()}
+          </header>
+        `;
+      }
+
+      case 'PROJECTS': {
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const pTitle = vocab.projectsTitle || 'Featured Artifacts & Case Studies';
+        const pEyebrow = vocab.projectsEyebrow || 'VERIFIED ARTIFACTS';
+        const grammar = context.compositionPlan?.designGrammar || {};
+        const count = contentProfile.projects?.length || 0;
+        return `
+          <section class="section-projects" data-surface="${grammar.surfaceLanguage || 'flat'}" data-rhythm="${grammar.spacingRhythm || 'generous'}" data-border="${grammar.borderLanguage || 'hairline'}" style="margin-bottom: var(--section-gap, 4.5rem);">
+            <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <h2 style="font-family: var(--font-heading); font-size: var(--heading-scale, clamp(1.8rem, 4vw, 2.5rem)); font-weight: 800; color: var(--text); line-height: 1.15;">${pTitle}</h2>
+                <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-top: 4px;">${pEyebrow}</div>
+              </div>
+              <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">[${count} ${count === 1 ? 'Specimen' : 'Specimens'}]</span>
+            </div>
+            ${projectsHtml}
+          </section>
+        `;
+      }
+
+      case 'EXPERIENCE': {
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const expTitle = vocab.experienceTitle || 'Career Progression & Timeline';
+        const expEyebrow = vocab.experienceEyebrow || 'CHRONOLOGICAL RECORD';
+        const grammar = context.compositionPlan?.designGrammar || {};
+        return `
+          <section class="section-experience" data-surface="${grammar.surfaceLanguage || 'flat'}" data-rhythm="${grammar.spacingRhythm || 'generous'}" data-border="${grammar.borderLanguage || 'hairline'}" style="margin-bottom: var(--section-gap, 4.5rem);">
+            <div style="margin-bottom: 2rem;">
+              <h2 style="font-family: var(--font-heading); font-size: var(--heading-scale, clamp(1.8rem, 4vw, 2.5rem)); font-weight: 800; color: var(--text); margin-bottom: 0.5rem; line-height: 1.15;">${expTitle}</h2>
+              <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">${expEyebrow}</div>
+            </div>
+            ${experienceHtml}
+          </section>
+        `;
+      }
+
+      case 'PUBLICATIONS':
+      case 'RESEARCH': {
+        const publications = contentProfile.research || contentProfile.publications || [];
+        if (!Array.isArray(publications) || publications.length === 0) return '';
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const resTitle = vocab.publicationsTitle || 'Publications & Research Output';
+        const resEyebrow = vocab.publicationsEyebrow || 'PEER-REVIEWED & PREPRINTS';
+        const grammar = context.compositionPlan?.designGrammar || {};
+        const pubItems = publications.map((pub, idx) => {
+          const title = HtmlRenderer.escapeHtml(pub.title || pub.name || 'Untitled Paper');
+          const authors = HtmlRenderer.escapeHtml(pub.authors || pub.collaborators || safeName);
+          const venue = HtmlRenderer.escapeHtml(pub.venue || pub.journal || pub.conference || '');
+          const year = HtmlRenderer.escapeHtml(pub.year || pub.date || '');
+          const doi = HtmlRenderer.escapeHtml(pub.doi || '');
+          const abstract = HtmlRenderer.escapeHtml(pub.abstract || pub.summary || pub.desc || '');
+          const url = pub.url || pub.link || pub.pdf || '';
+          return `
+            <article class="research-publication-item" style="padding: 1.75rem 0; border-bottom: 1px solid var(--border);">
+              <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); margin-bottom: 0.25rem;">[PUB_${String(idx+1).padStart(2, '0')}] ${doi ? `DOI: ${doi}` : ''} ${year ? `• ${year}` : ''}</div>
+              <h3 style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; color: var(--text); margin-bottom: 0.4rem;">${title}</h3>
+              <div style="font-size: 0.9rem; font-style: italic; color: var(--text-muted); margin-bottom: 0.75rem;">${authors} ${venue ? `— <strong>${venue}</strong>` : ''}</div>
+              ${abstract ? `<p style="font-size: 0.92rem; line-height: 1.6; color: var(--text); margin-bottom: 0.75rem; background: var(--surface-alt); padding: 0.75rem 1rem; border-left: 3px solid var(--primary);">${abstract}</p>` : ''}
+              ${url ? `<a href="${url}" target="_blank" rel="noopener noreferrer" style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-decoration: underline; font-weight: 700;">Access Publication ↗</a>` : ''}
+            </article>
+          `;
+        }).join('');
+        return `
+          <section class="section-publications" data-surface="${grammar.surfaceLanguage || 'flat'}" data-rhythm="${grammar.spacingRhythm || 'generous'}" style="margin-bottom: var(--section-gap, 4.5rem);">
+            <div style="margin-bottom: 1.5rem;">
+              <h2 style="font-family: var(--font-heading); font-size: var(--heading-scale, clamp(1.8rem, 4vw, 2.5rem)); font-weight: 800; color: var(--text); margin-bottom: 0.5rem; line-height: 1.15;">${resTitle}</h2>
+              <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary);">${resEyebrow}</div>
+            </div>
+            <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 2rem;">
+              ${pubItems}
+            </div>
+          </section>
+        `;
+      }
+
+      case 'SKILLS': {
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const sTitle = vocab.skillsTitle || 'Technical Capabilities & Stack';
+        const sEyebrow = vocab.skillsEyebrow || 'VERIFIED MATRIX';
+        const topId = context.compositionPlan?.pageTopology?.id || '';
+        const grammar = context.compositionPlan?.designGrammar || {};
+        
+        let containerStyle = 'background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem;';
+        if (topId === 'narrow-reading-column' || topId === 'editorial-monograph' || grammar.surfaceLanguage === 'paper') {
+          containerStyle = 'background: transparent; border: none; border-top: 1px solid var(--border); padding: 1.5rem 0;';
+        } else if (topId === 'command-console-interface' || topId === 'computational-terminal' || grammar.surfaceLanguage === 'terminal') {
+          containerStyle = 'background: rgba(0,0,0,0.25); border: 1px dashed var(--border); border-left: 3px solid var(--primary); padding: 1.5rem; border-radius: 4px;';
+        } else if (topId === 'newspaper-column-grid' || topId === 'magazine-spread' || grammar.borderLanguage === 'rule-based-editorial') {
+          containerStyle = 'background: transparent; border: none; border-top: 2px solid var(--text); padding: 1.5rem 0;';
+        } else if (topId === 'data-observatory') {
+          containerStyle = 'background: var(--surface); border: 1px solid var(--border); border-top: 3px solid var(--primary); padding: 1.5rem;';
+        }
+
+        return `
+          <section class="section-skills topology-${topId}" data-surface="${grammar.surfaceLanguage || 'flat'}" data-rhythm="${grammar.spacingRhythm || 'generous'}" style="margin-bottom: var(--section-gap, 4.5rem);">
+            <div style="margin-bottom: 1.5rem;">
+              <h2 style="font-family: var(--font-heading); font-size: var(--heading-scale, clamp(1.8rem, 4vw, 2.5rem)); font-weight: 800; color: var(--text); margin-bottom: 0.5rem; line-height: 1.15;">${sTitle}</h2>
+              <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary);">${sEyebrow}</div>
+            </div>
+            <div style="${containerStyle}">
+              ${skillsHtml}
+            </div>
+          </section>
+        `;
+      }
+
+      case 'THESIS': {
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const thesisLabel = vocab.thesisTitle || 'ENGINEERING THESIS';
+        const statement = (safeTagline && safeBio && safeTagline !== safeBio)
+          ? `${safeTagline} — ${safeBio}`
+          : (safeTagline || safeBio || `${safeRole} dedicated to building high-performance, verifiable software systems.`);
+        return CompositionPrimitives.renderThesisStatement({
+          label: thesisLabel,
+          statement,
+          author: safeName
+        }, visualUniverse);
+      }
+
+      case 'EDUCATION': {
+        if (!educationHtml) return '';
+        const vocab = context.compositionPlan?.vocabularyPlan || context.compositionPlan?.informationArchitecture?.vocabularyProfile || {};
+        const eduTitle = vocab.educationTitle || 'Academic Background';
+        const eduEyebrow = vocab.educationEyebrow || 'ACADEMIC RECORD';
+        return `
+          <section class="section-education" style="margin-bottom: 3.5rem;">
+            <div style="margin-bottom: 1.5rem;">
+              <h2 style="font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 800; color: var(--text); margin-bottom: 0.25rem;">${eduTitle}</h2>
+              <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${eduEyebrow}</div>
+            </div>
+            ${educationHtml}
+          </section>
+        `;
+      }
+
+      case 'CERTIFICATIONS': {
+        if (!certificationsHtml) return '';
+        return `
+          <section class="section-certifications" style="margin-bottom: 3.5rem;">
+            ${certificationsHtml}
+          </section>
+        `;
+      }
+
+      case 'CONTACT': {
+        return footerHtml || CompositionPrimitives.renderContactDock({
+          name: safeName,
+          year: new Date().getFullYear(),
+          statusText: 'AVAILABLE FOR TECHNICAL ENGAGEMENTS',
+          actionText: 'Initiate Secure Contact ↗',
+          actionUrl: `mailto:${contentProfile.email || 'hello@example.com'}`
+        }, visualUniverse);
+      }
+
+      default:
+        return '';
+    }
+  }
+}
 
 class HtmlRenderer {
+  /**
+   * Authoritative Renderer: executes CompositionPlan without IA template branching
+   */
   static render(contentProfile, iaModel, layoutGrammar, visualUniverse, projectStrategy, motion, compositionPlan = null) {
     const { name, role, tagline, bio, projects, skills, experience, education, certifications } = contentProfile;
-    const colors = visualUniverse.colors || {};
+    const colors = visualUniverse?.colors || {};
 
     const safeName = this.escapeHtml(name);
     const safeRole = this.escapeHtml(role);
     const safeTagline = this.escapeHtml(tagline);
     const safeBio = this.escapeHtml(bio);
 
-    // Resolve Grammar Archetype for Visual World
+    // 1. Resolve Grammar Archetype for Visual World
     const grammar = ComponentGrammar.resolve(visualUniverse, iaModel);
 
-    // 1. Render Project Section (Multi-Artifact Suite or 18 Distinct Presentational Forms)
+    // 2. Render Project Section (Multi-Artifact Suite or 18 Distinct Presentational Forms)
     const effectiveStrategy = compositionPlan?.projectArtifactPlan || projectStrategy;
     const projectsHtml = ProjectStoryteller.render(projects, effectiveStrategy, visualUniverse);
 
-    // 2. Render Skills via Component Grammar (No generic pill tag monopoly)
+    // 3. Render Skills & Experience via Component Grammar
     const skillsHtml = grammar.skillsGrammar.render(skills, s => this.escapeHtml(s));
-
-    // 3. Render Experience via Component Grammar (No identical stacked rows)
     const experienceHtml = grammar.experienceGrammar.render(experience, s => this.escapeHtml(s));
 
-    // 4. Render Photo Specimen via Photo Grammar (No forced circular avatars)
+    // 4. Render Photo via Photo Grammar
     const photoUrl = contentProfile.photoUrl || contentProfile.avatar_url || contentProfile.avatarUrl;
     const photoHtml = grammar.photoGrammar.render(photoUrl, name, s => this.escapeHtml(s));
 
-    // 5. Section Morphing: Education & Certifications tailored across all 10 IA Models
-    const { morphedEducationHtml, morphedCertificationsHtml, morphedFooterHtml } = this.renderMorphedSections(
+    // 5. Render Education & Certifications with Morphing Classes
+    const topologyId = compositionPlan?.pageTopology?.id || layoutGrammar?.id || '';
+    const iaId = iaModel?.id || '';
+    const { educationHtml, certificationsHtml, footerHtml } = this.renderSupportSections(
       education || [],
       certifications || [],
-      iaModel.id,
       visualUniverse,
-      safeName
+      safeName,
+      topologyId,
+      iaId
     );
 
     // 6. Navigation Grammar Builder
@@ -62,19 +349,117 @@ class HtmlRenderer {
         navHtml = `<nav class="gallery-selector" style="${ng.css}"><span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">EXHIBITION //</span> <span style="font-size: 0.85rem; color: var(--text);">ROOM 01: ARTIFACTS</span> • <span style="font-size: 0.85rem; color: var(--text-muted);">ROOM 02: ARCHIVE</span></nav>`;
       } else if (ng.id === 'numbered-archive-index') {
         navHtml = `<nav class="numbered-archive-index" style="${ng.css}"><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">[01] VERIFIED ARTIFACTS</div><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">[02] PROGRESSION</div><div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">[03] CAPABILITIES</div></nav>`;
+      } else if (ng.id === 'minimal-anchor-dock') {
+        navHtml = `<nav class="minimal-anchor-dock" style="${ng.css}"><a href="#artifacts" style="color: var(--primary); text-decoration: none; font-size: 0.9rem;">Artifacts</a><a href="#contact" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem;">Contact</a></nav>`;
       }
     }
 
-    // 7. Dynamic Body Layout Builder based on 8 Distinct Hero Archetypes & 10 IA Models
+    // 7. Context object for dynamic section registry
+    const renderContext = {
+      contentProfile,
+      safeName,
+      safeRole,
+      safeTagline,
+      safeBio,
+      photoHtml,
+      projectsHtml,
+      skillsHtml,
+      experienceHtml,
+      educationHtml,
+      certificationsHtml,
+      footerHtml,
+      compositionPlan,
+      visualUniverse
+    };
+
+    // 8. Execute Section Sequence strictly from CompositionPlan
+    const sequence = compositionPlan?.sectionGrammar?.sequence || ['hero', 'projects', 'capabilities', 'timeline', 'contact'];
+    
+    // Check if hero / opening is already in sequence
+    const hasOpeningInSequence = sequence.some(s => {
+      const k = SectionRendererRegistry.normalizeSectionKey(s);
+      return k === 'HERO' || k === 'THESIS';
+    });
+
+    const topology = compositionPlan?.pageTopology || { rootClass: 'layout-standard', rootCss: '', mobileCss: '', containerType: 'standard' };
+    const isSplitOrSidebar = topology.containerType === 'split-canvas' || topology.containerType === 'sidebar-rail';
+
+    let renderedSections = sequence.map(secKey => SectionRendererRegistry.renderSection(secKey, renderContext)).filter(Boolean);
+
+    // Guarantee an opening primary identity / hero heading if sequence omitted hero and not split sidebar
+    if (!hasOpeningInSequence && !isSplitOrSidebar) {
+      renderedSections.unshift(SectionRendererRegistry.renderSection('hero', renderContext));
+    }
+
+    // If projects exist in profile and not in sequence, preserve verified project artifacts
+    const hasProjectsInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'PROJECTS');
+    if (!hasProjectsInSequence && projects && projects.length > 0) {
+      const projSection = SectionRendererRegistry.renderSection('projects', renderContext);
+      if (projSection) {
+        const contactIdx = renderedSections.findIndex(s => s.includes('colophon') || s.includes('dock') || s.includes('footer') || s.includes('status-dock'));
+        if (contactIdx >= 0) {
+          renderedSections.splice(contactIdx, 0, projSection);
+        } else {
+          renderedSections.push(projSection);
+        }
+      }
+    }
+
+    // Ensure essential evidence (skills/experience/education/publications/certifications) is preserved without breaking grammar
+    const extraSections = [];
+    const hasSkillsInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'SKILLS');
+    if (!hasSkillsInSequence && !isSplitOrSidebar && skills && (typeof skills === 'string' ? skills.length > 0 : skills.length > 0)) {
+      extraSections.push(SectionRendererRegistry.renderSection('skills', renderContext));
+    }
+    const hasExperienceInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'EXPERIENCE');
+    if (!hasExperienceInSequence && experience && experience.length > 0) {
+      extraSections.push(SectionRendererRegistry.renderSection('experience', renderContext));
+    }
+    const hasEducationInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'EDUCATION');
+    if (!hasEducationInSequence && !isSplitOrSidebar && educationHtml) {
+      extraSections.push(SectionRendererRegistry.renderSection('education', renderContext));
+    }
+    const hasPublications = (contentProfile.research && contentProfile.research.length > 0) || (contentProfile.publications && contentProfile.publications.length > 0);
+    const hasPublicationsInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'PUBLICATIONS' || SectionRendererRegistry.normalizeSectionKey(s) === 'RESEARCH');
+    if (!hasPublicationsInSequence && hasPublications) {
+      extraSections.push(SectionRendererRegistry.renderSection('publications', renderContext));
+    }
+    const hasCertificationsInSequence = sequence.some(s => SectionRendererRegistry.normalizeSectionKey(s) === 'CERTIFICATIONS');
+    if (!hasCertificationsInSequence && !isSplitOrSidebar && certificationsHtml) {
+      extraSections.push(SectionRendererRegistry.renderSection('certifications', renderContext));
+    }
+
+    if (extraSections.length > 0) {
+      const contactIdx = renderedSections.findIndex(s => s.includes('colophon') || s.includes('dock') || s.includes('footer') || s.includes('status-dock'));
+      if (contactIdx >= 0) {
+        renderedSections.splice(contactIdx, 0, ...extraSections.filter(Boolean));
+      } else {
+        renderedSections.push(...extraSections.filter(Boolean));
+      }
+    }
+
+    const additionalEvidenceHtml = AdditionalEvidenceSection.render(contentProfile, { compositionPlan, grammar: compositionPlan?.designGrammar });
+    if (additionalEvidenceHtml) {
+      const contactIdx = renderedSections.findIndex(s => s.includes('colophon') || s.includes('dock') || s.includes('footer') || s.includes('status-dock'));
+      if (contactIdx >= 0) {
+        renderedSections.splice(contactIdx, 0, additionalEvidenceHtml);
+      } else {
+        renderedSections.push(additionalEvidenceHtml);
+      }
+    }
+
+    const renderedSectionsHtml = renderedSections.join('\n');
+
+    // 9. Assemble page topology container
     let bodyContent = '';
 
-    if (iaModel.id === 'split-screen-dossier') {
+    if (isSplitOrSidebar) {
       bodyContent = `
-        <div class="layout-root">
-          <aside class="dossier-identity-panel">
+        <div class="layout-root ${topology.rootClass}">
+          <aside class="split-identity-col rail-sidebar">
             <div>
               <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 1rem;">[PROFILE_VERIFIED]</div>
-              ${photoHtml}
+              ${photoHtml || ''}
               <h1 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 0.75rem; color: var(--text);">${safeName}</h1>
               <div style="font-size: 1.15rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
               <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 2rem;">${safeTagline || safeBio}</p>
@@ -84,269 +469,29 @@ class HtmlRenderer {
                 <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">CORE CAPABILITIES</div>
                 <div>${skillsHtml}</div>
               </div>
-              ${morphedEducationHtml}
-              ${morphedCertificationsHtml}
-              ${morphedFooterHtml}
+              ${educationHtml}
+              ${certificationsHtml}
+              ${footerHtml}
             </div>
           </aside>
-          <main class="dossier-evidence-stream">
-            <section style="margin-bottom: 4rem;">
-              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem;">
-                <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text);">Verified Artifacts</h2>
-                <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary);">${projects.length} System Records</span>
-              </div>
-              ${projectsHtml}
-            </section>
-            <section>
-              <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Engineering Timeline</h2>
-              ${experienceHtml}
-            </section>
+          <main class="split-content-stream rail-main">
+            ${navHtml}
+            ${renderedSectionsHtml}
           </main>
-        </div>
-      `;
-    } else if (iaModel.id === 'work-first-runway') {
-      bodyContent = `
-        <div class="layout-root">
-          ${navHtml ? navHtml : `
-            <div class="runway-lead-bar" style="border-bottom: 1px solid var(--border); padding: 1.5rem 0; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-              <div>
-                <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">ACTIVE PORTFOLIO RUNWAY</span>
-                <h1 style="font-family: var(--font-heading); font-size: 1.7rem; font-weight: 800; color: var(--text);">${safeName}</h1>
-              </div>
-              <div style="font-size: 0.95rem; color: var(--text-muted); font-weight: 500;">${safeRole}</div>
-            </div>
-          `}
-          <section style="margin-bottom: 5rem;">
-            <div style="margin-bottom: 2rem;">
-              <h2 style="font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">Featured Systems & Case Studies</h2>
-              <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 700px;">${safeTagline || safeBio}</p>
-            </div>
-            ${projectsHtml}
-          </section>
-          <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; margin-bottom: 4rem;">
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Career Progression</h3>
-              ${experienceHtml}
-            </div>
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Core Stack</h3>
-              <div style="margin-bottom: 2rem;">${skillsHtml}</div>
-              ${morphedEducationHtml}
-              ${morphedCertificationsHtml}
-            </div>
-          </section>
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'computational-terminal') {
-      bodyContent = `
-        <div class="layout-root">
-          ${navHtml}
-          <div class="terminal-window" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow);">
-            <div style="background: var(--surface-alt); padding: 12px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
-              <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></span>
-              <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #f59e0b;"></span>
-              <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: #10b981;"></span>
-              <span style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); margin-left: 12px;">session://user/${safeName.toLowerCase().replace(/\s+/g, '-')}/system.sh</span>
-            </div>
-            <div style="padding: 2.5rem 2rem;">
-              <div style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--primary); margin-bottom: 1rem;">$ sysinfo --whoami</div>
-              <h1 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${safeName}</h1>
-              <div style="font-family: var(--font-mono); font-size: 1.1rem; color: var(--text-muted); margin-bottom: 2rem;">&gt; ${safeRole} — ${safeTagline}</div>
-              
-              <div style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--primary); margin-bottom: 1.5rem;">$ list --category=artifacts</div>
-              <div style="margin-bottom: 3.5rem;">${projectsHtml}</div>
-
-              <div style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--primary); margin-bottom: 1.5rem;">$ cat /var/log/career_timeline</div>
-              <div style="margin-bottom: 3.5rem;">${experienceHtml}</div>
-
-              ${morphedEducationHtml}
-              ${morphedCertificationsHtml}
-
-              ${morphedFooterHtml}
-            </div>
-          </div>
-        </div>
-      `;
-    } else if (iaModel.id === 'editorial-monograph') {
-      bodyContent = `
-        <div class="layout-root monograph-reading-column">
-          ${navHtml}
-          <header style="margin-bottom: 4rem; padding-bottom: 2.5rem; border-bottom: 2px solid var(--text);">
-            <div style="font-family: var(--font-mono); font-size: 0.82rem; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 1rem; text-transform: uppercase;">MONOGRAPH • ISSUE VOL. I</div>
-            ${photoHtml}
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.05; margin-bottom: 1.25rem; color: var(--text);">${safeName}</h1>
-            <div style="font-size: 1.35rem; font-style: italic; font-weight: 500; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
-            <p style="font-size: 1.15rem; line-height: 1.75; color: var(--text); max-width: 780px;">${safeTagline || safeBio}</p>
-          </header>
-          <main>
-            <section style="margin-bottom: 5rem;">
-              <h2 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--text); margin-bottom: 2rem;">Curated Works</h2>
-              ${projectsHtml}
-            </section>
-            <section style="margin-bottom: 4rem;">
-              <h2 style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 900; color: var(--text); margin-bottom: 2rem;">Professional Trajectory</h2>
-              ${experienceHtml}
-            </section>
-            ${morphedEducationHtml}
-            ${morphedCertificationsHtml}
-          </main>
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'horizontal-exhibition') {
-      bodyContent = `
-        <div class="layout-root horizontal-track">
-          ${navHtml}
-          <header style="margin-bottom: 3rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">GALLERY EXHIBITION</div>
-            ${photoHtml}
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; color: var(--text);">${safeName}</h1>
-            <div style="font-size: 1.2rem; color: var(--text-muted);">${safeRole} — ${safeTagline}</div>
-          </header>
-          <section style="margin-bottom: 4rem;">
-            ${projectsHtml}
-          </section>
-          <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2.5rem; margin-bottom: 3rem;">
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Trajectory</h3>
-              ${experienceHtml}
-            </div>
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Stack & Expertise</h3>
-              <div style="margin-bottom: 2rem;">${skillsHtml}</div>
-              ${morphedEducationHtml}
-              ${morphedCertificationsHtml}
-            </div>
-          </section>
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'asymmetric-bento-canvas') {
-      bodyContent = `
-        <div class="layout-root bento-grid-canvas">
-          ${navHtml}
-          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.5rem; margin-bottom: 2.5rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem;">BENTO CANOPY</div>
-            ${photoHtml}
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</h1>
-            <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
-            <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 750px; margin-bottom: 1.5rem;">${safeTagline || safeBio}</p>
-            <div>${skillsHtml}</div>
-          </div>
-          <section style="margin-bottom: 3.5rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Featured Artifacts</h2>
-            ${projectsHtml}
-          </section>
-          <section style="margin-bottom: 3.5rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Career Nodes</h2>
-            ${experienceHtml}
-          </section>
-          ${morphedEducationHtml}
-          ${morphedCertificationsHtml}
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'minimal-single-screen') {
-      bodyContent = `
-        <div class="layout-root single-screen-masthead">
-          ${navHtml}
-          <header style="margin-bottom: 3.5rem;">
-            ${photoHtml}
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.8rem, 6vw, 5rem); font-weight: 900; color: var(--text); line-height: 1.0; margin-bottom: 1rem;">${safeName}</h1>
-            <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem;">${safeRole}</div>
-            <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 700px;">${safeTagline || safeBio}</p>
-          </header>
-          <main style="margin-bottom: 4rem;">
-            ${projectsHtml}
-          </main>
-          <section style="margin-bottom: 3rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Experience Archive</h3>
-            ${experienceHtml}
-          </section>
-          ${morphedEducationHtml}
-          ${morphedCertificationsHtml}
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'narrative-timeline') {
-      bodyContent = `
-        <div class="layout-root timeline-spine">
-          ${navHtml}
-          <header style="margin-bottom: 4rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem;">CHRONOLOGICAL DOSSIER</div>
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</h1>
-            <div style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
-            <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); max-width: 750px; margin-bottom: 1.5rem;">${safeTagline || safeBio}</p>
-            <div>${skillsHtml}</div>
-          </header>
-          <section style="margin-bottom: 4.5rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 2rem;">Milestone Projects</h2>
-            ${projectsHtml}
-          </section>
-          <section style="margin-bottom: 3.5rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 2rem;">Timeline</h2>
-            ${experienceHtml}
-          </section>
-          ${morphedEducationHtml}
-          ${morphedCertificationsHtml}
-          ${morphedFooterHtml}
-        </div>
-      `;
-    } else if (iaModel.id === 'magazine-spread-columns') {
-      bodyContent = `
-        <div class="layout-root magazine-grid-columns">
-          ${navHtml}
-          <header style="margin-bottom: 3.5rem; border-bottom: 1px solid var(--border); padding-bottom: 2rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">SPECIAL FEATURE EDITION</div>
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.6rem, 5.5vw, 4.5rem); font-weight: 900; color: var(--text); line-height: 1.05; margin-bottom: 1rem;">${safeName}</h1>
-            <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted);">${safeRole} • ${safeTagline}</div>
-          </header>
-          <section style="margin-bottom: 4.5rem;">
-            ${projectsHtml}
-          </section>
-          <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 3rem; margin-bottom: 3.5rem;">
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Career Record</h3>
-              ${experienceHtml}
-            </div>
-            <div>
-              <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Skills & Credentials</h3>
-              <div style="margin-bottom: 2rem;">${skillsHtml}</div>
-              ${morphedEducationHtml}
-              ${morphedCertificationsHtml}
-            </div>
-          </section>
-          ${morphedFooterHtml}
         </div>
       `;
     } else {
-      // Spatial 3D Stage & General Structural Composition
       bodyContent = `
-        <div class="layout-root stage-orbit-wrapper">
+        <div class="layout-root ${topology.rootClass}">
           ${navHtml}
-          <header style="margin-bottom: 4.5rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em;">[SPATIAL_STAGE]</div>
-            <h1 style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.5rem); font-weight: 800; color: var(--text); line-height: 1.05; margin-bottom: 1.25rem;">${safeName}</h1>
-            <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.75rem; max-width: 800px;">${safeRole}</div>
-            <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); max-width: 750px; margin-bottom: 2rem;">${safeTagline || safeBio}</p>
-            <div style="margin-top: 1.5rem;">${skillsHtml}</div>
-          </header>
-          <section style="margin-bottom: 5rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 2rem;">Orbiting Artifacts</h2>
-            ${projectsHtml}
-          </section>
-          <section style="margin-bottom: 4rem;">
-            <h2 style="font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Experience</h2>
-            ${experienceHtml}
-          </section>
-          ${morphedEducationHtml}
-          ${morphedCertificationsHtml}
-          ${morphedFooterHtml}
+          <main class="main-content-flow">
+            ${renderedSectionsHtml}
+          </main>
         </div>
       `;
     }
 
+    // 10. Stylesheet Assembly with Live Page Topology Root CSS & Mobile Responsive Rules
     const styleContent = `
     :root {
       --bg: ${colors.bg || '#0F172A'};
@@ -360,12 +505,13 @@ class HtmlRenderer {
       --primary-on: ${colors.primaryOn || '#000000'};
       --accent: ${colors.accent || '#818CF8'};
       --glow: ${colors.glow || 'rgba(56,189,248,0.2)'};
-      --font-heading: '${visualUniverse.headingFont || 'Plus Jakarta Sans'}', sans-serif;
-      --font-body: '${visualUniverse.bodyFont || 'Inter'}', -apple-system, sans-serif;
-      --font-mono: '${visualUniverse.monoFont || 'JetBrains Mono'}', monospace;
-      --radius: ${visualUniverse.borderRadius || '8px'};
-      --shadow: ${visualUniverse.shadow || 'none'};
+      --font-heading: '${visualUniverse?.headingFont || 'Plus Jakarta Sans'}', sans-serif;
+      --font-body: '${visualUniverse?.bodyFont || 'Inter'}', -apple-system, sans-serif;
+      --font-mono: '${visualUniverse?.monoFont || 'JetBrains Mono'}', monospace;
+      --radius: ${visualUniverse?.borderRadius || '8px'};
+      --shadow: ${visualUniverse?.shadow || 'none'};
       --fluid-h1: clamp(2.2rem, 5vw, 4.2rem);
+      ${Object.entries(compositionPlan?.cssTokens || {}).map(([k, v]) => `${k}: ${v};`).join('\n      ')}
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -380,7 +526,11 @@ class HtmlRenderer {
       position: relative;
     }
 
-    ${layoutGrammar.cssGrid}
+    /* Live Authoritative Page Topology CSS */
+    ${topology.rootCss || ''}
+
+    /* Live Authoritative Mobile Responsive Transformation */
+    ${topology.mobileCss || ''}
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -394,7 +544,7 @@ class HtmlRenderer {
     `;
 
     const html = `<!DOCTYPE html>
-<html lang="en" data-theme="${visualUniverse.theme || 'dark'}">
+<html lang="en" data-theme="${visualUniverse?.theme || 'dark'}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -403,18 +553,18 @@ class HtmlRenderer {
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?${visualUniverse.fontUrls}&display=swap" rel="stylesheet">
-  ${motion.libraries}
+  <link href="https://fonts.googleapis.com/css2?${visualUniverse?.fontUrls || ''}&display=swap" rel="stylesheet">
+  ${motion?.libraries || ''}
 
   <style>
     ${styleContent}
   </style>
 </head>
-<body class="${layoutGrammar.bodyClass}">
-  ${motion.canvasHtml}
+<body class="${topology.rootClass}">
+  ${motion?.canvasHtml || ''}
   ${bodyContent}
   <script>
-    ${motion.js}
+    ${motion?.js || ''}
   </script>
 </body>
 </html>`;
@@ -422,309 +572,154 @@ class HtmlRenderer {
     return {
       html,
       css: styleContent.trim(),
-      js: motion.js
+      js: motion?.js || ''
     };
   }
 
   /**
-   * Section Morphing Engine across all 10 IA Models
+   * Helper for Education, Certifications and Footer sections with dynamic morphing classes
    */
-  static renderMorphedSections(education, certifications, iaModelId, visual, safeName = 'Author') {
+  static renderSupportSections(education = [], certifications = [], visual = {}, safeName = 'Author', topologyId = '', iaId = '') {
     const year = new Date().getFullYear();
-    let morphedEducationHtml = '';
-    let morphedCertificationsHtml = '';
-    let morphedFooterHtml = `<footer class="colophon-footer" style="padding: 3rem 0; border-top: 1px solid var(--border); margin-top: 4rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);"><span>&copy; ${year} ${safeName}</span><span>Live Generative Build</span></footer>`;
+    let educationHtml = '';
+    let certificationsHtml = '';
 
-    if (iaModelId === 'computational-terminal') {
-      if (education.length > 0) {
-        const eduLines = education.map(e => `
-          <div style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); margin-bottom: 0.5rem;">
-            [ACADEMIC_CREDENTIAL] ${this.escapeHtml(e.degree || e.study || 'Degree')} --institution="${this.escapeHtml(e.school || e.institution || e.university || 'University')}" --year="${this.escapeHtml(e.period || e.year || '')}"
+    const isTerminal = topologyId.includes('terminal') || topologyId.includes('console') || iaId.includes('terminal');
+    const isDossier = topologyId.includes('split') || topologyId.includes('rail') || iaId.includes('split');
+    const isTimeline = topologyId.includes('timeline') || iaId.includes('timeline');
+    const isSpatial = topologyId.includes('spatial') || iaId.includes('spatial') || topologyId.includes('stage');
+
+    if (education.length > 0) {
+      if (isTerminal) {
+        const eduLines = education.map(e => {
+          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          return `
+            <div style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); margin-bottom: 0.75rem;">
+              <span style="color: var(--primary);">[ACADEMIC_CREDENTIAL] ${this.escapeHtml(e.degree || e.study || 'Degree')}</span> — ${this.escapeHtml(e.school || e.institution || e.university || 'University')} <span style="color: var(--text-muted);">(${this.escapeHtml(e.period || e.year || '')})</span>
+              ${coursework ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">&gt; COURSEWORK: ${this.escapeHtml(coursework)}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+        educationHtml = `
+          <div class="morphed-education-block morphed-terminal-education" style="margin-bottom: 2.5rem; background: var(--surface); border: 1px dashed var(--border); padding: 1.5rem; border-radius: var(--radius);">
+            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 1rem;">$ query --schema=academic_history</div>
+            ${eduLines}
           </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-terminal-education" style="margin-bottom: 2.5rem; background: var(--surface-alt); padding: 1.25rem; border: 1px dashed var(--border); border-radius: var(--radius);">
-            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.5rem;">$ query --schema=academic_history</div>
+        `;
+      } else if (isDossier) {
+        const eduLines = education.map(e => {
+          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          return `
+            <div style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+              <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
+              <div style="font-size: 0.88rem; color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
+              ${coursework ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">Coursework: ${this.escapeHtml(coursework)}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+        educationHtml = `
+          <div class="morphed-education-block morphed-dossier-education" style="margin-bottom: 2rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase;">ACADEMIC BACKGROUND</div>
+            ${eduLines}
+          </div>
+        `;
+      } else if (isTimeline) {
+        const eduLines = education.map(e => {
+          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          return `
+            <div style="margin-bottom: 1.5rem; padding-left: 1.5rem; border-left: 2px solid var(--primary);">
+              <div style="font-weight: 800; font-size: 1.1rem; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
+              <div style="color: var(--text-muted); font-size: 0.9rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
+              ${coursework ? `<div style="font-size: 0.85rem; color: var(--text); margin-top: 4px;">Focus: ${this.escapeHtml(coursework)}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+        educationHtml = `
+          <div class="morphed-education-block morphed-timeline-education" style="margin-bottom: 3rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Academic Foundations</h3>
+            ${eduLines}
+          </div>
+        `;
+      } else {
+        const eduLines = education.map(e => {
+          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          return `
+            <div style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
+              <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
+              <div style="font-size: 0.88rem; color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
+              ${coursework ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">Coursework: ${this.escapeHtml(coursework)}</div>` : ''}
+            </div>
+          `;
+        }).join('');
+        educationHtml = `
+          <div class="morphed-education-block ${isSpatial ? 'morphed-spatial-education' : ''}" style="margin-bottom: 2rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase;">ACADEMIC_HISTORY</div>
             ${eduLines}
           </div>
         `;
       }
-      if (certifications.length > 0) {
+    }
+
+    if (certifications.length > 0) {
+      if (isTerminal) {
         const certLines = certifications.map(c => `
-          <div style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); margin-bottom: 0.5rem;">
-            [VERIFIED_KEY] ${this.escapeHtml(c.name || 'Certification')} (Issuer: ${this.escapeHtml(c.issuer || 'Authority')}, Year: ${this.escapeHtml(c.year || '')})
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); margin-bottom: 0.5rem;">
+            <span style="color: var(--primary);">[VERIFIED_KEY] ${this.escapeHtml(c.name || 'Certification')}</span> <span style="color: var(--text-muted);">(${this.escapeHtml(c.issuer || '')})</span>
           </div>
         `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-terminal-certifications" style="margin-bottom: 2.5rem; background: var(--surface-alt); padding: 1.25rem; border: 1px dashed var(--border); border-radius: var(--radius);">
-            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.5rem;">$ verify --credentials=all</div>
+        certificationsHtml = `
+          <div class="morphed-certifications-block morphed-terminal-certifications" style="margin-bottom: 2.5rem; background: var(--surface); border: 1px dashed var(--border); padding: 1.5rem; border-radius: var(--radius);">
+            <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 1rem;">$ verify --credentials=all</div>
+            ${certLines}
+          </div>
+        `;
+      } else if (isDossier) {
+        const certLines = certifications.map(c => `
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); margin-bottom: 0.5rem;">
+            <span style="color: var(--primary);">✓</span> ${this.escapeHtml(c.name || 'Certification')} <span style="color: var(--text-muted); font-size: 0.78rem;">(${this.escapeHtml(c.issuer || '')})</span>
+          </div>
+        `).join('');
+        certificationsHtml = `
+          <div class="morphed-certifications-block morphed-dossier-certifications" style="margin-bottom: 2rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase;">VERIFIED CERTIFICATIONS</div>
+            ${certLines}
+          </div>
+        `;
+      } else if (isTimeline) {
+        const certLines = certifications.map(c => `
+          <div style="margin-bottom: 1rem; padding-left: 1.5rem; border-left: 2px solid var(--accent);">
+            <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(c.name || 'Certification')}</div>
+            <div style="color: var(--text-muted); font-size: 0.85rem;">${this.escapeHtml(c.issuer || '')} • ${this.escapeHtml(c.year || '')}</div>
+          </div>
+        `).join('');
+        certificationsHtml = `
+          <div class="morphed-certifications-block morphed-timeline-certifications" style="margin-bottom: 3rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Accredited Milestones</h3>
+            ${certLines}
+          </div>
+        `;
+      } else {
+        const certLines = certifications.map(c => `
+          <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+            <span style="color: var(--primary);">✓</span> ${this.escapeHtml(c.name || 'Certification')} <span style="color: var(--text-muted); font-size: 0.78rem;">(${this.escapeHtml(c.issuer || '')})</span>
+          </div>
+        `).join('');
+        certificationsHtml = `
+          <div class="morphed-certifications-block ${isSpatial ? 'morphed-spatial-certifications' : ''}" style="margin-bottom: 2rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem; text-transform: uppercase;">VERIFIED_CREDENTIALS</div>
             ${certLines}
           </div>
         `;
       }
-      morphedFooterHtml = `<div class="morphed-terminal-footer" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); margin-top: 2rem; border-top: 1px dashed var(--border); padding-top: 1rem;">[STATUS: 200 OK] Shell session active &copy; ${year} ${safeName}.</div>`;
-    } else if (iaModelId === 'split-screen-dossier') {
-      if (education.length > 0) {
-        const eduItems = education.map(e => `
-          <div style="margin-bottom: 0.75rem; font-size: 0.88rem;">
-            <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || 'Degree')}</div>
-            <div style="color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || '')}</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-dossier-education" style="margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">ACADEMIC BACKGROUND</div>
-            ${eduItems}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certItems = certifications.map(c => `
-          <div style="margin-bottom: 0.5rem; font-size: 0.85rem; color: var(--text-muted);">
-            <span style="color: var(--primary); font-family: var(--font-mono);">✓</span> ${this.escapeHtml(c.name || 'Certification')} <span style="font-size: 0.78rem;">(${this.escapeHtml(c.issuer || '')})</span>
-          </div>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-dossier-certifications" style="margin-bottom: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem;">VERIFIED CERTIFICATIONS</div>
-            ${certItems}
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<div class="morphed-dossier-footer" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1rem;">&copy; ${year} ${safeName} • Live Dossier Record</div>`;
-    } else if (iaModelId === 'editorial-monograph') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <p style="margin-bottom: 0.85rem; font-size: 1.05rem; line-height: 1.6; color: var(--text);">
-            <span style="font-weight: 700;">${this.escapeHtml(e.degree || 'Degree')}</span>, ${this.escapeHtml(e.school || e.institution || e.university || 'University')} <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">(${this.escapeHtml(e.period || '')})</span>
-          </p>
-        `).join('');
-        morphedEducationHtml = `
-          <section class="morphed-monograph-education" style="margin-bottom: 3.5rem; border-left: 2px solid var(--text); padding-left: 1.5rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 900; color: var(--text); margin-bottom: 1rem; text-transform: uppercase;">Scholarly Background</h3>
-            ${eduHtml}
-          </section>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <span style="display: inline-block; margin-right: 1.5rem; font-size: 0.95rem; color: var(--text-muted); font-style: italic;">
-            — ${this.escapeHtml(c.name || 'Certification')} (${this.escapeHtml(c.issuer || 'Authority')})
-          </span>
-        `).join('');
-        morphedCertificationsHtml = `
-          <section class="morphed-monograph-certifications" style="margin-bottom: 4rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-            <h4 style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Accreditations & Honors</h4>
-            <div>${certHtml}</div>
-          </section>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-monograph-footer" style="margin-top: 5rem; padding-top: 2rem; border-top: 2px solid var(--text); display: flex; justify-content: space-between; font-family: var(--font-heading); font-size: 0.95rem; color: var(--text);"><span>MONOGRAPH ISSUE VOL. I</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'asymmetric-bento-canvas') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem;">
-            <div style="font-weight: 800; color: var(--text); font-size: 1rem;">${this.escapeHtml(e.degree || 'Degree')}</div>
-            <div style="color: var(--text-muted); font-size: 0.88rem;">${this.escapeHtml(e.school || e.institution || 'University')} • ${this.escapeHtml(e.period || '')}</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-bento-education" style="margin-bottom: 2.5rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem;">ACADEMIC NODE</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">${eduHtml}</div>
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <div style="background: var(--surface-alt); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.75rem 1rem; font-size: 0.85rem; color: var(--text);">
-            <span style="color: var(--accent); font-weight: 700;">●</span> ${this.escapeHtml(c.name || 'Cert')}
-          </div>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-bento-certifications" style="margin-bottom: 3rem;">
-            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">${certHtml}</div>
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-bento-footer" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); font-family: var(--font-mono);"><span>BENTO CANOPY DOCK</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'narrative-timeline') {
-      if (education.length > 0) {
-        const eduMilestones = education.map(e => `
-          <div style="padding-left: 1.5rem; border-left: 2px solid var(--primary); margin-bottom: 1.5rem; position: relative;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">${this.escapeHtml(e.period || 'Milestone')}</div>
-            <div style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text);">${this.escapeHtml(e.degree || 'Degree')}</div>
-            <div style="color: var(--text-muted); font-size: 0.9rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')}</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-timeline-education" style="margin-bottom: 3.5rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Academic Foundations</h3>
-            ${eduMilestones}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certNodes = certifications.map(c => `
-          <div style="padding-left: 1.5rem; border-left: 2px solid var(--accent); margin-bottom: 1rem; position: relative;">
-            <div style="font-weight: 700; color: var(--text); font-size: 0.95rem;">${this.escapeHtml(c.name || 'Certification')}</div>
-            <div style="color: var(--text-muted); font-size: 0.85rem;">Issued by ${this.escapeHtml(c.issuer || 'Authority')} • ${this.escapeHtml(c.year || '')}</div>
-          </div>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-timeline-certifications" style="margin-bottom: 3.5rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 1.5rem;">Accredited Milestones</h3>
-            ${certNodes}
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-timeline-footer" style="padding: 2.5rem 0; border-top: 2px solid var(--primary); margin-top: 4rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);"><span>TIMELINE HORIZON</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'work-first-runway') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="padding: 1rem 0; border-bottom: 1px solid var(--border);">
-            <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
-            <div style="color: var(--text-muted); font-size: 0.88rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-runway-education" style="margin-bottom: 2rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">ACADEMIC QUALIFICATIONS</div>
-            ${eduHtml}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <span style="display: inline-block; background: var(--surface-alt); border: 1px solid var(--border); padding: 4px 10px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); margin: 0 6px 6px 0;">
-            ✓ ${this.escapeHtml(c.name || 'Cert')}
-          </span>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-runway-certifications" style="margin-bottom: 2rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">VERIFIED BADGES</div>
-            <div>${certHtml}</div>
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-runway-footer" style="padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 4rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);"><span>RUNWAY TELEMETRY PIPELINE</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'horizontal-exhibition') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
-            <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
-            <div style="color: var(--text-muted); font-size: 0.85rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')} (${this.escapeHtml(e.period || e.year || '')})</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-gallery-education" style="margin-bottom: 2rem;">
-            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">Academic Records</h4>
-            ${eduHtml}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); padding: 4px 0;">
-            [EXHIBIT_KEY] ${this.escapeHtml(c.name || 'Cert')} (${this.escapeHtml(c.issuer || '')})
-          </div>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-gallery-certifications" style="margin-bottom: 2rem;">
-            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">Accredited Badges</h4>
-            ${certHtml}
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-gallery-footer" style="padding: 2.5rem 0; border-top: 1px solid var(--border); margin-top: 4rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);"><span>GALLERY ARCHIVE CATALOG</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'minimal-single-screen') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem;">
-            <span style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</span>
-            <span style="color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</span>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-minimal-education" style="margin-bottom: 2.5rem;">
-            <h4 style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 0.5rem;">Credentials</h4>
-            ${eduHtml}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <span style="display: inline-block; font-size: 0.85rem; color: var(--text-muted); margin-right: 1rem;">
-            ● ${this.escapeHtml(c.name || 'Cert')}
-          </span>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-minimal-certifications" style="margin-bottom: 2.5rem;">
-            <div>${certHtml}</div>
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-minimal-footer" style="padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 3rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);"><span>INDEX SYSTEM #001</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else if (iaModelId === 'magazine-spread-columns') {
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="margin-bottom: 0.75rem; font-size: 0.95rem;">
-            <span style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</span> — <span style="color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} (${this.escapeHtml(e.period || e.year || '')})</span>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-magazine-education" style="margin-bottom: 2rem; border-top: 1px solid var(--border); padding-top: 1rem;">
-            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.5rem;">Academic Formation</div>
-            ${eduHtml}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <span style="display: inline-block; margin-right: 1rem; font-size: 0.85rem; color: var(--text-muted);">
-            ★ ${this.escapeHtml(c.name || 'Cert')} (${this.escapeHtml(c.issuer || '')})
-          </span>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-magazine-certifications" style="margin-bottom: 2rem;">
-            <div>${certHtml}</div>
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-magazine-footer" style="padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 4rem; display: flex; justify-content: space-between; font-family: var(--font-heading); font-size: 0.85rem; color: var(--text);"><span>SPECIAL FEATURE PUBLICATION IMPRINT</span><span>&copy; ${year} ${safeName}</span></footer>`;
-    } else {
-      // Spatial 3D Stage & General Structured Layout
-      if (education.length > 0) {
-        const eduHtml = education.map(e => `
-          <div style="margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border);">
-            <div style="font-weight: 700; font-size: 1.05rem; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
-            <div style="color: var(--text-muted); font-size: 0.9rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
-          </div>
-        `).join('');
-        morphedEducationHtml = `
-          <div class="morphed-spatial-education" style="margin-bottom: 3rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem 2rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">Spatial Coordinates & Education</h3>
-            ${eduHtml}
-          </div>
-        `;
-      }
-      if (certifications.length > 0) {
-        const certHtml = certifications.map(c => `
-          <div style="display: inline-block; margin: 0 10px 10px 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 16px; font-size: 0.88rem; color: var(--text);">
-            <span style="color: var(--primary); font-weight: 700;">★</span> ${this.escapeHtml(c.name || 'Certification')} <span style="color: var(--text-muted); font-size: 0.8rem;">(${this.escapeHtml(c.issuer || '')})</span>
-          </div>
-        `).join('');
-        morphedCertificationsHtml = `
-          <div class="morphed-spatial-certifications" style="margin-bottom: 3rem;">
-            <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">Accredited Constellations</h3>
-            ${certHtml}
-          </div>
-        `;
-      }
-      morphedFooterHtml = `<footer class="morphed-spatial-footer" style="padding: 2.5rem 0; border-top: 1px solid var(--border); margin-top: 4rem; display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);"><span>SPATIAL STAGE TELEMETRY</span><span>&copy; ${year} ${safeName}</span></footer>`;
     }
 
-    return { morphedEducationHtml, morphedCertificationsHtml, morphedFooterHtml };
+    const footerHtml = CompositionPrimitives.renderContactDock({
+      name: safeName,
+      year,
+      status: 'SYSTEM_ONLINE // 200 OK'
+    }, visual);
+
+    return { educationHtml, certificationsHtml, footerHtml };
   }
 
   static escapeHtml(str) {
@@ -733,4 +728,4 @@ class HtmlRenderer {
   }
 }
 
-module.exports = { HtmlRenderer };
+module.exports = { HtmlRenderer, SectionRendererRegistry };

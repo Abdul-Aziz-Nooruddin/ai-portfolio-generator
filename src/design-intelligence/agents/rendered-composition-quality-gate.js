@@ -1,7 +1,8 @@
 /**
- * 🏛️ Rendered Composition Quality Gate (Phase 34)
+ * 🏛️ Rendered Composition Quality Gate (Phase 35)
  * Fail-closed production gate enforcing geometric diversity, physical page topology variety,
- * navigation grammar variety, within-portfolio multi-artifact plans, and mobile responsiveness.
+ * navigation grammar variety, dynamic section order diversity, within-portfolio multi-artifact plans,
+ * and responsive mobile transformations.
  */
 
 const { BrowserVisualAuditor } = require('../browser-visual-auditor');
@@ -9,7 +10,7 @@ const { RenderedVisualFingerprint } = require('../rendered-visual-fingerprint');
 
 class RenderedCompositionQualityGate {
   /**
-   * Evaluates a corpus of rendered portfolios against strict geometric diversity standards
+   * Evaluates a corpus of rendered portfolios against strict structural diversity standards
    * @param {Array<Object>} corpus - Array of { html, css, id, persona }
    * @param {Object} options 
    * @returns {{ pass: boolean, score: number, criticalViolations: Array<string>, stats: Object }}
@@ -33,10 +34,12 @@ class RenderedCompositionQualityGate {
       criticalViolations.push(`GEOMETRIC_DISTANCE_FAIL: Mean geometric distance too low (${report.meanDistance}/100 < 65 min)`);
     }
 
-    // 3. Page Topology & Hero Variety
+    // 3. Structural Diversity Metrics
     const observedTopologies = new Set();
     const observedHeroes = new Set();
     const observedNavs = new Set();
+    const observedMobileModes = new Set();
+    const observedSectionSequences = new Set();
     let multiArtifactSuites = 0;
 
     report.audits.forEach(audit => {
@@ -44,6 +47,8 @@ class RenderedCompositionQualityGate {
       observedTopologies.add(fp.pageTopology);
       observedHeroes.add(fp.heroGeometry);
       observedNavs.add(fp.navigationGeometry);
+      observedMobileModes.add(fp.mobileTransformation);
+      observedSectionSequences.add(fp.sectionOrderHash);
       if (fp.isMultiArtifactSuite) multiArtifactSuites++;
 
       if (audit.hasHorizontalOverflow) {
@@ -51,16 +56,24 @@ class RenderedCompositionQualityGate {
       }
     });
 
-    if (observedTopologies.size < 4) {
-      criticalViolations.push(`PAGE_TOPOLOGY_DEFICIT: Observed only ${observedTopologies.size} distinct page topologies (min 4 required)`);
+    if (observedTopologies.size < 6) {
+      criticalViolations.push(`PAGE_TOPOLOGY_DEFICIT: Observed only ${observedTopologies.size} distinct page topologies (min 6 required)`);
     }
 
     if (observedHeroes.size < 4) {
       criticalViolations.push(`HERO_GEOMETRY_DEFICIT: Observed only ${observedHeroes.size} distinct hero opening geometries (min 4 required)`);
     }
 
-    if (observedNavs.size < 3) {
-      criticalViolations.push(`NAV_GRAMMAR_DEFICIT: Observed only ${observedNavs.size} distinct navigation models (min 3 required)`);
+    if (observedNavs.size < 4) {
+      criticalViolations.push(`NAV_GRAMMAR_DEFICIT: Observed only ${observedNavs.size} distinct navigation models (min 4 required)`);
+    }
+
+    if (observedMobileModes.size < 5) {
+      criticalViolations.push(`MOBILE_TOPOLOGY_DEFICIT: Observed only ${observedMobileModes.size} distinct mobile transformation models (min 5 required)`);
+    }
+
+    if (observedSectionSequences.size < 5) {
+      criticalViolations.push(`SECTION_ORDER_DEFICIT: Observed only ${observedSectionSequences.size} distinct section sequences (min 5 required)`);
     }
 
     const pass = criticalViolations.length === 0;
@@ -79,6 +92,8 @@ class RenderedCompositionQualityGate {
         distinctTopologies: observedTopologies.size,
         distinctHeroes: observedHeroes.size,
         distinctNavs: observedNavs.size,
+        distinctMobileModes: observedMobileModes.size,
+        distinctSectionSequences: observedSectionSequences.size,
         multiArtifactSuites
       }
     };

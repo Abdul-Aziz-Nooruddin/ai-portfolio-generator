@@ -213,7 +213,10 @@ test('🏛️ Phase 34: Rendered Composition & Anti-Convergence Benchmark', asyn
     const specimens = benchmarkCorpus.filter((_, idx) => idx % 10 === 0);
 
     // Audit and optionally capture screenshots for specimens
-    const specimenAudits = specimens.map(s => BrowserVisualAuditor.auditSite(s, { captureScreenshots: true, benchmarkDir: galleryDir }));
+    // Screenshots are only captured when CAPTURE_SCREENSHOTS=1 is set
+    // to avoid Chrome spawning 20 times during every normal test run.
+    const captureScreenshots = process.env.CAPTURE_SCREENSHOTS === '1';
+    const specimenAudits = specimens.map(s => BrowserVisualAuditor.auditSite(s, { captureScreenshots, benchmarkDir: galleryDir }));
 
     const cardsHtml = specimenAudits.map((a, i) => {
       const site = specimens[i];

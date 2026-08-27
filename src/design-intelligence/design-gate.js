@@ -77,7 +77,7 @@ class DesignGate {
     // Multi-attempt candidate loop to ensure structural diversity & critique pass
     let candidateBrief = null;
     let critiqueReport = null;
-    const recentHistory = this.diversityAgent.getRecentHistory();
+    const recentHistory = (context.recentHistory && context.recentHistory.length > 0) ? context.recentHistory : this.diversityAgent.getRecentHistory();
 
     for (let attempt = 1; attempt <= config.maxRevisionAttempts; attempt++) {
       // 2. Design Research Agent (Parses active SKILL.md rules + CSV datasets)

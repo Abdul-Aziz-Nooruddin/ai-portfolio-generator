@@ -76,16 +76,18 @@ test('🏛️ Phase 29: Project Storytelling Truth Benchmark (200 Generations)',
 
       // Extract raw silhouette
       let silhouette = 'standard';
-      if (html.includes('dossier-identity-panel')) silhouette = 'split-dossier-rail';
-      else if (html.includes('terminal-window')) silhouette = 'windowed-cli-terminal';
-      else if (html.includes('monograph-reading-column')) silhouette = 'single-column-monograph';
-      else if (html.includes('horizontal-track')) silhouette = 'horizontal-filmstrip-track';
-      else if (html.includes('bento-grid-canvas')) silhouette = 'asymmetric-bento-mosaic';
-      else if (html.includes('single-screen-masthead')) silhouette = 'typographic-poster-index';
-      else if (html.includes('morphed-timeline-education')) silhouette = 'central-spine-timeline';
-      else if (html.includes('runway-lead-bar')) silhouette = 'work-first-runway-lead';
-      else if (html.includes('magazine-columns')) silhouette = 'three-column-magazine-spread';
-      else if (html.includes('spatial-3d-stage')) silhouette = 'orbital-3d-stage';
+      if (html.includes('dossier-identity-panel') || html.includes('layout-asymmetric-split') || html.includes('layout-vertical-rail')) silhouette = 'split-dossier-rail';
+      else if (html.includes('terminal-window') || html.includes('layout-command-console')) silhouette = 'windowed-cli-terminal';
+      else if (html.includes('monograph-reading-column') || html.includes('layout-narrow-reading-column')) silhouette = 'single-column-monograph';
+      else if (html.includes('horizontal-track') || html.includes('layout-image-gallery')) silhouette = 'horizontal-filmstrip-track';
+      else if (html.includes('bento-grid-canvas') || html.includes('layout-offset-poster')) silhouette = 'asymmetric-bento-mosaic';
+      else if (html.includes('single-screen-masthead') || html.includes('layout-full-viewport-stage')) silhouette = 'typographic-poster-index';
+      else if (html.includes('morphed-timeline-education') || html.includes('layout-timeline')) silhouette = 'central-spine-timeline';
+      else if (html.includes('runway-lead-bar') || html.includes('layout-edge-to-edge-editorial')) silhouette = 'work-first-runway-lead';
+      else if (html.includes('magazine-columns') || html.includes('layout-magazine') || html.includes('layout-newspaper')) silhouette = 'three-column-magazine-spread';
+      else if (html.includes('spatial-3d-stage') || html.includes('layout-floating-spatial')) silhouette = 'orbital-3d-stage';
+      else if (html.includes('layout-data-observatory')) silhouette = 'data-observatory-grid';
+      else if (html.includes('layout-architectural-plate')) silhouette = 'architectural-plate-blueprint';
 
       generatedSites.push({
         siteId,

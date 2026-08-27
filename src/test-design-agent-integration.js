@@ -137,7 +137,7 @@ describe('🏛️ Design Intelligence Agent Ecosystem Integration Test Suite', (
 
     assert.strictEqual(result.agent, 'spatial-composition-agent');
     assert.strictEqual(result.decision.layoutId, 'split-screen-dossier');
-    assert.strictEqual(result.decision.bodyClass, 'layout-split-dossier');
+    assert.strictEqual(result.decision.bodyClass, 'layout-asymmetric-split');
   });
 
   test('8. Typography Agent Execution', async () => {

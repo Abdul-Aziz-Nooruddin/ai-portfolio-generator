@@ -18,7 +18,8 @@ class SiteGenerator {
       mode: designBrief?.creative_mode || designBrief?.theme || null,
       layout: (designBrief?.layout && designBrief.layout !== 'auto-cycle') ? designBrief.layout : null,
       projectStrategy: designBrief?.projectStrategy || null,
-      figmaUrl: data.figma_url || data.figmaUrl || null
+      figmaUrl: data.figma_url || data.figmaUrl || null,
+      recentHistory: designBrief?.recentHistory || []
     });
 
     if (!gateResult || !gateResult.brief) {
@@ -54,6 +55,7 @@ class SiteGenerator {
         designDNA: engineResult.designBlueprint, // Backward compatibility
         contentProfile: engineResult.contentProfile,
         designBrief: gateResult.brief,
+        compositionPlan: gateResult.brief.compositionPlan || engineResult.compositionPlan,
         telemetry: {
           generationTimeMs: Date.now(),
           iaModel: engineResult.designBlueprint.iaModel,

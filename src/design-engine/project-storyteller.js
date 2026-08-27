@@ -14,11 +14,16 @@ class ProjectStoryteller {
       name: this.escapeHtml(p.name || 'Untitled Project'),
       desc: this.escapeHtml(p.desc || p.description || 'Architectural project case study and live deployment.'),
       tech: this.escapeHtml(p.tech || p.tags || 'TypeScript • Node.js • WebGL'),
-      live: p.live || p.demo || p.url || '',
-      github: p.github || p.repo || '',
+      live: p.live || p.liveUrl || p.demo || p.url || '',
+      github: p.github || p.repoUrl || p.repo || '',
       image: p.image || p.screenshot || '',
-      stars: p.stars ? `★ ${p.stars}` : '',
-      metrics: p.metrics || p.impact || ''
+      stars: p.stars ? (String(p.stars).startsWith('★') ? p.stars : `★ ${p.stars}`) : '',
+      metrics: this.escapeHtml(p.metrics || p.impact || ''),
+      architecture: this.escapeHtml(p.architecture || p.systemDesign || ''),
+      challenges: this.escapeHtml(p.challenges || ''),
+      decisions: this.escapeHtml(p.decisions || ''),
+      tradeoffs: this.escapeHtml(p.tradeoffs || ''),
+      workType: p.workType || 'PROJECT'
     }));
 
     // Multi-Artifact Within-Portfolio Strategy Plan
@@ -141,14 +146,16 @@ class ProjectStoryteller {
       <article class="viewport-project-slide" id="project-slide-${i+1}" style="min-height: 85vh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 5vw, 4.5rem); margin-bottom: 3rem; background: ${i % 2 === 0 ? 'var(--surface)' : 'var(--surface-alt)'}; border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden;">
         <div class="slide-watermark-number" style="position: absolute; top: -10px; right: 20px; font-size: clamp(6rem, 15vw, 12rem); font-weight: 900; opacity: 0.04; font-family: var(--font-heading); line-height: 1; user-select: none;">0${i+1}</div>
         <div class="slide-content-stage" style="position: relative; z-index: 2; max-width: 850px;">
-          <div class="slide-badge-row" style="display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem;">
+          <div class="slide-badge-row" style="display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap;">
             <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;">Case 0${i+1}</span>
             <span style="display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted);"></span>
             <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${p.tech}</span>
             ${p.stars ? `<span style="margin-left: auto; font-family: var(--font-mono); font-size: 0.8rem; color: #eab308; font-weight: 700;">${p.stars}</span>` : ''}
           </div>
           <h2 style="font-family: var(--font-heading); font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.25rem; color: var(--text);">${p.name}</h2>
-          <p style="font-size: clamp(1rem, 1.3vw, 1.25rem); color: var(--text-muted); line-height: 1.6; margin-bottom: 2rem; max-width: 720px;">${p.desc}</p>
+          <p style="font-size: clamp(1rem, 1.3vw, 1.25rem); color: var(--text-muted); line-height: 1.6; margin-bottom: 1.5rem; max-width: 720px;">${p.desc}</p>
+          ${p.architecture ? `<div class="slide-architecture" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 0.75rem;"><span style="font-weight: 700;">[ARCHITECTURE]</span> ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div class="slide-metrics" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); margin-bottom: 1.5rem;"><span style="font-weight: 700; color: var(--primary);">[METRICS]</span> ${p.metrics}</div>` : ''}
           <div class="slide-actions-row" style="display: flex; gap: 14px; flex-wrap: wrap;">
             ${p.live ? `<a href="${p.live}" target="_blank" rel="noopener noreferrer" class="btn-primary-action" style="padding: 12px 28px; background: var(--primary); color: var(--primary-on); font-weight: 700; text-decoration: none; border-radius: var(--radius); display: inline-flex; align-items: center; gap: 8px;"><span>Live Demo</span> ↗</a>` : ''}
             ${p.github ? `<a href="${p.github}" target="_blank" rel="noopener noreferrer" class="btn-secondary-action" style="padding: 12px 24px; background: transparent; color: var(--text); border: 1px solid var(--border); font-weight: 600; text-decoration: none; border-radius: var(--radius); display: inline-flex; align-items: center; gap: 8px;"><span>Source Code</span> ↗</a>` : ''}
@@ -167,7 +174,9 @@ class ProjectStoryteller {
         <div class="dossier-specs-column">
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">[MODULE_SPEC_${i+1}]</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">${p.desc}</p>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+          ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.5rem;">[ARCHITECTURE] ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 1.25rem;">[TELEMETRY] ${p.metrics}</div>` : ''}
           <div style="display: flex; gap: 12px;">
             ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-family: var(--font-mono); font-size: 0.88rem; font-weight: 700; text-decoration: underline;">deploy://live ↗</a>` : ''}
             ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.88rem; text-decoration: underline;">src://repo ↗</a>` : ''}
@@ -180,6 +189,8 @@ class ProjectStoryteller {
           </div>
           <div style="color: var(--text); margin-bottom: 1rem; line-height: 1.8;">
             <div>&gt; STACK: ${p.tech}</div>
+            ${p.architecture ? `<div>&gt; ARCH: ${p.architecture}</div>` : ''}
+            ${p.metrics ? `<div>&gt; METRICS: ${p.metrics}</div>` : ''}
             <div>&gt; PIPELINE: Production Verified</div>
             ${p.stars ? `<div>&gt; REPO_SIGNAL: ${p.stars}</div>` : ''}
           </div>
@@ -197,7 +208,9 @@ class ProjectStoryteller {
         <div>
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem;">RUNWAY // 0${i+1}</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>
-          <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">${p.desc}</p>
+          <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+          ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;"><span style="font-weight: 700;">ARCH:</span> ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); margin-bottom: 1rem;"><span style="font-weight: 700; color: var(--primary);">METRICS:</span> ${p.metrics}</div>` : ''}
         </div>
         <div style="border-top: 1px solid var(--border); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${p.tech}</span>
@@ -222,11 +235,19 @@ class ProjectStoryteller {
       <div class="typographic-index-item" style="border-bottom: 1px solid var(--border); padding: 2rem 0; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 1rem; transition: padding 0.2s ease;">
         <div style="display: flex; align-items: baseline; gap: 1.5rem;">
           <span style="font-family: var(--font-mono); font-size: 0.9rem; color: var(--primary); font-weight: 700;">0${i+1}</span>
-          <h3 style="font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2.5rem); font-weight: 700; color: var(--text); margin: 0;">${p.name}</h3>
+          <div>
+            <h3 style="font-family: var(--font-heading); font-size: clamp(1.6rem, 3vw, 2.5rem); font-weight: 700; color: var(--text); margin: 0;">${p.name}</h3>
+            ${p.desc ? `<p style="font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; margin: 6px 0 0 0; max-width: 600px;">${p.desc}</p>` : ''}
+            ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-top: 4px;">ARCH: ${p.architecture}</div>` : ''}
+            ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">METRICS: ${p.metrics}</div>` : ''}
+          </div>
         </div>
         <div style="display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
           <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">${p.tech}</span>
-          ${p.live ? `<a href="${p.live}" target="_blank" style="padding: 6px 16px; border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Explore Project ↗</a>` : ''}
+          <div style="display: flex; gap: 8px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="padding: 6px 16px; border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); text-decoration: none; font-size: 0.85rem; font-weight: 600;">Explore Project ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="padding: 6px 12px; border: 1px solid var(--border); color: var(--text-muted); border-radius: var(--radius); text-decoration: none; font-size: 0.85rem;">Repo ↗</a>` : ''}
+          </div>
         </div>
       </div>
     `).join('');
@@ -238,10 +259,12 @@ class ProjectStoryteller {
   static renderTerminalSessionLog(projects, visual) {
     const terminalRows = projects.map((p, i) => `
       <div class="terminal-log-entry" style="margin-bottom: 1.75rem; padding-bottom: 1.5rem; border-bottom: 1px dashed var(--border);">
-        <div style="color: var(--primary); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 0.4rem;">$ cat /projects/${p.name.toLowerCase().replace(/\\s+/g, '-')}.meta</div>
+        <div style="color: var(--primary); font-family: var(--font-mono); font-size: 0.85rem; margin-bottom: 0.4rem;">$ cat /projects/${p.name.toLowerCase().replace(/\s+/g, '-')}.meta</div>
         <div style="color: var(--text); font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;"># ${p.name}</div>
         <div style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 0.75rem;">${p.desc}</div>
-        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;">[STACK] &gt;&gt; ${p.tech}</div>
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.4rem;">[STACK] &gt;&gt; ${p.tech}</div>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: #38bdf8; margin-bottom: 0.4rem;">[SYS_ARCH] &gt;&gt; ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: #4ade80; margin-bottom: 0.75rem;">[TELEMETRY] &gt;&gt; ${p.metrics}</div>` : ''}
         <div style="display: flex; gap: 12px; font-family: var(--font-mono); font-size: 0.85rem;">
           ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); text-decoration: none;">[RUN DEMO] ↗</a>` : ''}
           ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); text-decoration: none;">[VIEW SRC] ↗</a>` : ''}
@@ -271,7 +294,9 @@ class ProjectStoryteller {
           <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 3.5vw, 2.6rem); font-weight: 800; line-height: 1.15; color: var(--text);">${p.name}</h3>
         </div>
         <div class="chapter-body">
-          <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1.5rem;">${p.desc}</p>
+          <p style="font-size: 1.05rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 1.25rem;">${p.desc}</p>
+          ${p.architecture ? `<div style="font-size: 0.92rem; font-style: italic; color: var(--text); border-left: 2px solid var(--primary); padding-left: 1rem; margin-bottom: 1rem;"><strong>System Architecture:</strong> ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); margin-bottom: 1.25rem;"><strong>Performance Telemetry:</strong> ${p.metrics}</div>` : ''}
           <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 0.05em;">${p.tech}</div>
           <div style="display: flex; gap: 14px;">
             ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--text); font-weight: 700; text-decoration: underline;">Visit Live Platform ↗</a>` : ''}
@@ -291,7 +316,9 @@ class ProjectStoryteller {
         <div style="position: absolute; left: -9px; top: 0; width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 3px solid var(--primary);"></div>
         <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.4rem;">MILESTONE 0${i+1}</div>
         <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem; max-width: 650px;">${p.desc}</p>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 0.75rem; max-width: 650px;">${p.desc}</p>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.4rem;">SPEC: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 0.75rem;">IMPACT: ${p.metrics}</div>` : ''}
         <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">${p.tech}</div>
         <div style="display: flex; gap: 12px;">
           ${p.live ? `<a href="${p.live}" target="_blank" style="font-size: 0.85rem; font-weight: 700; color: var(--primary); text-decoration: none;">View Deployment ↗</a>` : ''}
@@ -311,10 +338,15 @@ class ProjectStoryteller {
           <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--text);">${p.name}</h3>
           <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 8px; background: var(--surface-alt); border-radius: 4px; color: var(--primary);">NODE_${i+1}</span>
         </div>
-        <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+        <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem;">${p.desc}</p>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">TOPOLOGY: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); margin-bottom: 0.75rem;">METRICS: ${p.metrics}</div>` : ''}
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem;">
           <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">${p.tech}</span>
-          ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-decoration: none;">Connect ↗</a>` : ''}
+          <div style="display: flex; gap: 8px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-weight: 700; font-size: 0.85rem; text-decoration: none;">Connect ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); font-size: 0.85rem; text-decoration: none;">Repo ↗</a>` : ''}
+          </div>
         </div>
       </div>
     `).join('');
@@ -330,6 +362,8 @@ class ProjectStoryteller {
         <td style="padding: 1.25rem 1rem;">
           <div style="font-family: var(--font-heading); font-weight: 700; color: var(--text); font-size: 1.1rem;">${p.name}</div>
           <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">${p.desc}</div>
+          ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); margin-top: 0.25rem;">ARCH: ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text); margin-top: 0.25rem; font-weight: 600;">METRICS: ${p.metrics}</div>` : ''}
         </td>
         <td style="padding: 1.25rem 1rem; font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">${p.tech}</td>
         <td style="padding: 1.25rem 1rem; text-align: right; white-space: nowrap;">
@@ -365,10 +399,15 @@ class ProjectStoryteller {
           ${p.stars ? `<span style="font-family: var(--font-mono); font-size: 0.8rem; color: #f59e0b;">${p.stars}</span>` : ''}
         </div>
         <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
-        <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">${p.desc}</p>
+        <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1rem;">${p.desc}</p>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.4rem;">ORBIT_SPEC: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); margin-bottom: 1rem;">TELEMETRY: ${p.metrics}</div>` : ''}
         <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 1rem;">
           <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">${p.tech}</span>
-          ${p.live ? `<a href="${p.live}" target="_blank" style="padding: 8px 16px; background: var(--primary); color: var(--primary-on); border-radius: var(--radius); font-size: 0.82rem; font-weight: 700; text-decoration: none;">Launch ↗</a>` : ''}
+          <div style="display: flex; gap: 8px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="padding: 8px 16px; background: var(--primary); color: var(--primary-on); border-radius: var(--radius); font-size: 0.82rem; font-weight: 700; text-decoration: none;">Launch ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="padding: 8px 12px; border: 1px solid var(--border); color: var(--text); border-radius: var(--radius); font-size: 0.82rem; text-decoration: none;">Source</a>` : ''}
+          </div>
         </div>
       </div>
     `).join('');
@@ -383,7 +422,9 @@ class ProjectStoryteller {
         <div>
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">CASE // 0${i+1}</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">${p.name}</h3>
-          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem;">${p.desc}</p>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+          ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.4rem;">&gt; ARCHITECTURE: ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 0.8rem;">&gt; METRICS: ${p.metrics}</div>` : ''}
         </div>
         <div style="background: var(--surface-alt); border-radius: var(--radius); padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
@@ -413,7 +454,9 @@ class ProjectStoryteller {
               ${p.stars ? `<span style="font-family: var(--font-mono); font-size: 0.8rem; color: #f59e0b;">${p.stars}</span>` : ''}
             </div>
             <h3 style="font-family: var(--font-heading); font-size: ${isHeroProject ? 'clamp(1.8rem, 3.5vw, 2.5rem)' : '1.4rem'}; font-weight: 800; color: var(--text); margin-bottom: 1rem; line-height: 1.2;">${p.name}</h3>
-            <p style="color: var(--text-muted); font-size: ${isHeroProject ? '1.05rem' : '0.92rem'}; line-height: 1.6; margin-bottom: 1.5rem; max-width: ${isHeroProject ? '750px' : '100%'};">${p.desc}</p>
+            <p style="color: var(--text-muted); font-size: ${isHeroProject ? '1.05rem' : '0.92rem'}; line-height: 1.6; margin-bottom: 1.25rem; max-width: ${isHeroProject ? '750px' : '100%'};">${p.desc}</p>
+            ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.5rem;"><span style="font-weight: 700;">SPEC:</span> ${p.architecture}</div>` : ''}
+            ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 0.8rem;"><span style="font-weight: 700; color: var(--primary);">TELEMETRY:</span> ${p.metrics}</div>` : ''}
           </div>
           <div style="border-top: 1px solid var(--border); padding-top: 1.25rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
             <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">${p.tech}</span>
@@ -436,9 +479,11 @@ class ProjectStoryteller {
         <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">[PUB-DOI: 10.1145/${p.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.2026]</div>
         <h3 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${p.name}: A Methodological Framework</h3>
         <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">KEYWORDS: ${p.tech}</div>
-        <div style="background: var(--surface-alt); border-left: 3px solid var(--primary); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; font-size: 0.95rem; line-height: 1.7; color: var(--text);">
+        <div style="background: var(--surface-alt); border-left: 3px solid var(--primary); padding: 1.25rem 1.5rem; margin-bottom: 1.25rem; font-size: 0.95rem; line-height: 1.7; color: var(--text);">
           <strong style="color: var(--primary);">ABSTRACT:</strong> ${p.desc}
         </div>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); margin-bottom: 0.75rem;"><strong style="color: var(--primary);">METHODOLOGY & ARCHITECTURE:</strong> ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); margin-bottom: 1.25rem;"><strong style="color: var(--primary);">EMPIRICAL METRICS:</strong> ${p.metrics}</div>` : ''}
         <div style="display: flex; gap: 14px; align-items: center;">
           ${p.live ? `<a href="${p.live}" target="_blank" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--primary); font-weight: 700; text-decoration: underline;">[Download PDF Spec ↗]</a>` : ''}
           ${p.github ? `<a href="${p.github}" target="_blank" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted); text-decoration: underline;">[Replication Artifacts ↗]</a>` : ''}
@@ -458,6 +503,8 @@ class ProjectStoryteller {
         </div>
         <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem;">tree://${p.name}</h3>
         <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+        ${p.architecture ? `<div style="color: #38bdf8; margin-bottom: 0.5rem;">&gt; architecture: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="color: #4ade80; margin-bottom: 0.75rem;">&gt; metrics: ${p.metrics}</div>` : ''}
         <div style="background: var(--surface-alt); padding: 0.75rem 1rem; border-radius: var(--radius); font-size: 0.8rem; margin-bottom: 1rem; color: var(--text);">
           <div>$ git log -n 1 --oneline</div>
           <div style="color: var(--primary);">&gt; feat(core): implement ${p.tech} pipeline</div>
@@ -486,11 +533,14 @@ class ProjectStoryteller {
           </div>
           <div style="padding: 2rem; background: rgba(16, 185, 129, 0.03);">
             <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #10b981; font-weight: 700; margin-bottom: 0.5rem;">[DEPLOYED TRANSFORMATION]</div>
-            <p style="font-size: 0.9rem; color: var(--text); line-height: 1.6; margin: 0;">${p.desc}</p>
+            <p style="font-size: 0.9rem; color: var(--text); line-height: 1.6; margin-bottom: 0.75rem;">${p.desc}</p>
+            ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-top: 4px;">ARCH: ${p.architecture}</div>` : ''}
+            ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: #10b981; margin-top: 4px;">METRICS: ${p.metrics}</div>` : ''}
           </div>
         </div>
         <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px;">
           ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; text-decoration: none;">Verify Outcome ↗</a>` : ''}
+          ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.85rem; text-decoration: underline;">Source ↗</a>` : ''}
         </div>
       </div>
     `).join('');
@@ -506,10 +556,15 @@ class ProjectStoryteller {
           <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #10b981; background: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 4px;">RESOLVED</span>
         </div>
         <h3 style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
-        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1rem;">${p.desc}</p>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.5rem;">FIX_ARCHITECTURE: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 0.8rem;">SLO_METRICS: ${p.metrics}</div>` : ''}
         <div style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text); border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between;">
           <span>TOOLING: ${p.tech}</span>
-          ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); text-decoration: underline;">Postmortem Resolution ↗</a>` : ''}
+          <div style="display: flex; gap: 12px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="color: var(--primary); text-decoration: underline;">Postmortem Resolution ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); text-decoration: underline;">view://diff</a>` : ''}
+          </div>
         </div>
       </div>
     `).join('');
@@ -522,8 +577,16 @@ class ProjectStoryteller {
       <div class="build-journal-entry" style="padding: 2rem 0; border-bottom: 1px solid var(--border);">
         <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">DISPATCH_ENTRY • DAY 0${i+1}</div>
         <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${p.name}</h3>
-        <p style="font-size: 0.98rem; color: var(--text); line-height: 1.7; margin-bottom: 1rem;">${p.desc}</p>
-        <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">INSTRUMENTATION: ${p.tech}</div>
+        <p style="font-size: 0.98rem; color: var(--text); line-height: 1.7; margin-bottom: 0.75rem;">${p.desc}</p>
+        ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); margin-bottom: 0.4rem;">ARCHITECTURE: ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text); margin-bottom: 0.75rem;">METRICS: ${p.metrics}</div>` : ''}
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">INSTRUMENTATION: ${p.tech}</div>
+          <div style="display: flex; gap: 10px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-decoration: underline;">build://dispatch ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted); text-decoration: underline;">git://log</a>` : ''}
+          </div>
+        </div>
       </div>
     `).join('');
     return `<div class="story-presentation presentation-build-journal">${journalsHtml}</div>`;
@@ -536,8 +599,16 @@ class ProjectStoryteller {
         <div style="font-family: var(--font-mono); font-size: 1.2rem; font-weight: 800; color: var(--primary);">#${String(i+1).padStart(3, '0')}</div>
         <div>
           <h3 style="font-family: var(--font-heading); font-size: 1.3rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem;">${p.name}</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.75rem;">${p.desc}</p>
-          <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">SPEC: ${p.tech}</div>
+          <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.5rem;">${p.desc}</p>
+          ${p.architecture ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.25rem;">ARCH: ${p.architecture}</div>` : ''}
+          ${p.metrics ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text); margin-bottom: 0.5rem;">METRICS: ${p.metrics}</div>` : ''}
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 0.5rem;">
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted);">SPEC: ${p.tech}</div>
+            <div style="display: flex; gap: 10px;">
+              ${p.live ? `<a href="${p.live}" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); text-decoration: underline;">view://artifact ↗</a>` : ''}
+              ${p.github ? `<a href="${p.github}" target="_blank" style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-muted); text-decoration: underline;">src://repo</a>` : ''}
+            </div>
+          </div>
         </div>
       </div>
     `).join('');
@@ -550,10 +621,15 @@ class ProjectStoryteller {
       <section class="case-study-chapter" style="padding: 3rem 0; border-bottom: 1px solid var(--border); margin-bottom: 3rem;">
         <div style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); text-transform: uppercase; margin-bottom: 0.75rem;">CASE STUDY NO. 0${i+1}</div>
         <h3 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; color: var(--text); margin-bottom: 1.25rem;">${p.name}</h3>
-        <p style="font-size: 1.1rem; color: var(--text); line-height: 1.75; max-width: 800px; margin-bottom: 1.75rem;">${p.desc}</p>
+        <p style="font-size: 1.1rem; color: var(--text); line-height: 1.75; max-width: 800px; margin-bottom: 1.25rem;">${p.desc}</p>
+        ${p.architecture ? `<div class="case-study-architecture" style="background: var(--surface-alt); border-left: 3px solid var(--primary); padding: 1rem 1.5rem; margin-bottom: 1.25rem; font-family: var(--font-mono); font-size: 0.88rem; color: var(--text);"><strong style="color: var(--primary);">System Architecture:</strong> ${p.architecture}</div>` : ''}
+        ${p.metrics ? `<div class="case-study-metrics" style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); margin-bottom: 1.5rem;"><strong style="color: var(--primary);">Measured Impact:</strong> ${p.metrics}</div>` : ''}
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; border-top: 1px solid var(--border); padding-top: 1.25rem;">
           <span style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">Stack: ${p.tech}</span>
-          ${p.live ? `<a href="${p.live}" target="_blank" style="font-weight: 700; color: var(--primary); text-decoration: none;">Read Deep Dive ↗</a>` : ''}
+          <div style="display: flex; gap: 12px;">
+            ${p.live ? `<a href="${p.live}" target="_blank" style="font-weight: 700; color: var(--primary); text-decoration: none;">Read Deep Dive ↗</a>` : ''}
+            ${p.github ? `<a href="${p.github}" target="_blank" style="color: var(--text-muted); text-decoration: underline;">Source Repository</a>` : ''}
+          </div>
         </div>
       </section>
     `).join('');

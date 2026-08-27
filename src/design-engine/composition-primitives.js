@@ -1,15 +1,15 @@
 /**
- * 🏛️ Composition Primitives (Phase 34)
+ * 🏛️ Composition Primitives (Phase 35)
  * Modular spatial structures that control physical DOM topology, coordinate relationships,
  * content placement, whitespace, and responsive transformations.
- * Replaces monolithic template switching with dynamic composition.
+ * Completely replaces monolithic template switching with authoritative dynamic composition.
  */
 
 class CompositionPrimitives {
   /**
-   * 1. Identity Rail Primitive
+   * 1. Identity Rail Primitive (Permanent Sidebar / Anchor)
    */
-  static renderIdentityRail(content, visual) {
+  static renderIdentityRail(content, visual = {}) {
     const { name, role, tagline, photoHtml } = content;
     return `
       <aside class="primitive-identity-rail" style="padding: clamp(2rem, 4vw, 4rem) 0; display: flex; flex-direction: column; justify-content: space-between; border-right: 1px solid var(--border); min-height: 100vh; position: sticky; top: 0; background: var(--bg); box-sizing: border-box;">
@@ -18,7 +18,7 @@ class CompositionPrimitives {
           ${photoHtml || ''}
           <h1 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 4vw, 3.4rem); font-weight: 800; line-height: 1.1; margin-bottom: 0.75rem; color: var(--text);">${name}</h1>
           <div style="font-size: 1.15rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${role}</div>
-          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); max-width: 260px;">${tagline}</p>
+          <p style="font-size: 0.95rem; line-height: 1.6; color: var(--text-muted); max-width: 280px;">${tagline}</p>
         </div>
         <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 1.5rem;">
           <div>NODE_STATUS: ACTIVE</div>
@@ -31,7 +31,7 @@ class CompositionPrimitives {
   /**
    * 2. Full Bleed Field Primitive
    */
-  static renderFullBleedField(content, visual) {
+  static renderFullBleedField(content, visual = {}) {
     const { heading, subheading, bodyHtml } = content;
     return `
       <section class="primitive-full-bleed-field" style="width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 6rem); background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); box-sizing: border-box;">
@@ -45,14 +45,14 @@ class CompositionPrimitives {
   }
 
   /**
-   * 3. Reading Column Primitive
+   * 3. Reading Column Primitive (Narrow Measure)
    */
-  static renderReadingColumn(content, visual) {
+  static renderReadingColumn(content, visual = {}) {
     const { title, text, pullQuote, notes } = content;
     return `
       <article class="primitive-reading-column" style="max-width: 780px; margin: 0 auto; padding: clamp(3rem, 6vw, 6rem) 1.5rem; font-size: 1.15rem; line-height: 1.8; color: var(--text);">
         ${title ? `<h2 style="font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; margin-bottom: 2rem; letter-spacing: -0.02em;">${title}</h2>` : ''}
-        <div style="margin-bottom: 2.5rem;">${text}</div>
+        <div style="margin-bottom: 2.5rem;">${text || ''}</div>
         ${pullQuote ? `
           <blockquote style="border-left: 3px solid var(--primary); margin: 3rem 0; padding: 1rem 0 1rem 2rem; font-family: var(--font-heading); font-style: italic; font-size: 1.4rem; line-height: 1.4; color: var(--text);">
             "${pullQuote}"
@@ -76,9 +76,9 @@ class CompositionPrimitives {
   }
 
   /**
-   * 5. Command Surface Primitive
+   * 5. Command Surface Primitive (Terminal Window)
    */
-  static renderCommandSurface(content, visual) {
+  static renderCommandSurface(content, visual = {}) {
     const { sessionTitle, promptText, outputHtml } = content;
     return `
       <div class="primitive-command-surface" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); margin-bottom: 4rem; font-family: var(--font-mono);">
@@ -102,7 +102,7 @@ class CompositionPrimitives {
   /**
    * 6. Navigation Rail Primitive
    */
-  static renderNavigationRail(navGrammar, sections = []) {
+  static renderNavigationRail(navGrammar = {}, sections = []) {
     return `
       <nav class="primitive-nav-rail" style="${navGrammar.css || ''}">
         <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--primary); margin-bottom: 1rem; text-transform: uppercase;">INDEX_WAYPOINTS</div>
@@ -159,6 +159,85 @@ class CompositionPrimitives {
           </tbody>
         </table>
       </div>
+    `;
+  }
+
+  /**
+   * 9. Thesis Statement / Manifesto Primitive
+   */
+  static renderThesisStatement(content, visual = {}) {
+    const { label, statement, author, metrics } = content;
+    return `
+      <section class="primitive-thesis-statement" style="padding: clamp(3rem, 6vw, 6rem) 0; margin-bottom: 4rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.5rem;">[01 // ${label || 'DESIGN THESIS'}]</div>
+        <h2 style="font-family: var(--font-heading); font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; line-height: 1.2; color: var(--text); max-width: 960px; margin-bottom: 2rem;">${statement}</h2>
+        ${metrics ? `<div style="display: flex; gap: 2.5rem; flex-wrap: wrap; margin-top: 2rem;">${metrics}</div>` : ''}
+        ${author ? `<div style="font-size: 1rem; color: var(--text-muted); font-style: italic;">— ${author}</div>` : ''}
+      </section>
+    `;
+  }
+
+  /**
+   * 10. Offset Poster Block Primitive
+   */
+  static renderOffsetBlock(content, visual = {}) {
+    const { title, subtitle, bodyHtml, badge } = content;
+    return `
+      <section class="primitive-offset-block" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(2rem, 5vw, 4rem); margin-left: clamp(0px, 4vw, 6rem); margin-bottom: 4rem; box-shadow: var(--shadow);">
+        ${badge ? `<div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem;">${badge}</div>` : ''}
+        ${title ? `<h2 style="font-family: var(--font-heading); font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 900; line-height: 1.1; color: var(--text); margin-bottom: 1rem;">${title}</h2>` : ''}
+        ${subtitle ? `<div style="font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2rem;">${subtitle}</div>` : ''}
+        ${bodyHtml || ''}
+      </section>
+    `;
+  }
+
+  /**
+   * 11. Spatial Stage / Node Field Primitive
+   */
+  static renderSpatialNodeField(content, visual = {}) {
+    const { title, subtitle, itemsHtml } = content;
+    return `
+      <section class="primitive-spatial-field" style="position: relative; padding: clamp(3rem, 6vw, 6rem) 0; margin-bottom: 4rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); text-transform: uppercase; margin-bottom: 1rem;">[SPATIAL_STAGE // ORBIT_NODES]</div>
+        ${title ? `<h2 style="font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; color: var(--text); margin-bottom: 1rem;">${title}</h2>` : ''}
+        ${subtitle ? `<p style="font-size: 1.15rem; color: var(--text-muted); max-width: 760px; margin-bottom: 3rem;">${subtitle}</p>` : ''}
+        <div class="spatial-node-grid">${itemsHtml || ''}</div>
+      </section>
+    `;
+  }
+
+  /**
+   * 12. Bento Mosaic Canopy Primitive
+   */
+  static renderBentoCanopy(content, visual = {}) {
+    const { name, role, tagline, photoHtml, skillsHtml } = content;
+    return `
+      <section class="primitive-bento-canopy" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(2rem, 4vw, 3.5rem); margin-bottom: 3.5rem;">
+        <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.75rem;">BENTO CANOPY // EXECUTIVE ROOT</div>
+        ${photoHtml || ''}
+        <h1 style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 0.75rem;">${name}</h1>
+        <div style="font-size: 1.2rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${role}</div>
+        <p style="color: var(--text-muted); font-size: 1.05rem; line-height: 1.6; max-width: 750px; margin-bottom: 2rem;">${tagline}</p>
+        ${skillsHtml ? `<div>${skillsHtml}</div>` : ''}
+      </section>
+    `;
+  }
+
+  /**
+   * 13. Contact & Telemetry Dock Primitive
+   */
+  static renderContactDock(content, visual = {}) {
+    const { name, year, status } = content;
+    const email = content.email || 'contact@verified.dev';
+    return `
+      <footer class="primitive-contact-dock" style="padding: 3rem 0; border-top: 1px solid var(--border); margin-top: 5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; font-family: var(--font-mono); font-size: 0.85rem; color: var(--text-muted);">
+        <div>&copy; ${year || new Date().getFullYear()} ${name || 'Author'} • Live Generative Build</div>
+        <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+          <a href="mailto:${email}" style="color: var(--primary); text-decoration: underline; font-weight: 700;">Direct Inquiries ↗</a>
+          <span style="color: var(--primary);">${status || 'SYSTEM_ONLINE // STATUS: 200 OK'}</span>
+        </div>
+      </footer>
     `;
   }
 }

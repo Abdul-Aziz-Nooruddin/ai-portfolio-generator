@@ -15,8 +15,10 @@ class ComponentGrammar {
    * @returns {Object} Component Grammar rules
    */
   static resolve(visualUniverse = {}, iaModel = {}) {
-    const universeId = visualUniverse.id || visualUniverse.universeId || 'technical-lab';
-    const iaId = iaModel.id || 'split-screen-dossier';
+    const vu = visualUniverse || {};
+    const ia = iaModel || {};
+    const universeId = vu.id || vu.universeId || 'technical-lab';
+    const iaId = ia.id || 'split-screen-dossier';
 
     // 1. Determine Grammar Archetype
     let archetype = 'MINIMAL_LEDGER';
@@ -150,6 +152,25 @@ class ComponentGrammar {
   }
 
   static getExperienceGrammar(archetype) {
+    const renderExtraDetails = (exp, escape, styleType = 'standard') => {
+      let html = '';
+      if (exp.responsibilities && exp.responsibilities !== exp.desc) {
+        if (Array.isArray(exp.responsibilities) && exp.responsibilities.length > 0) {
+          html += `<ul style="margin: 0.5rem 0 0 1.2rem; padding: 0; font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">${exp.responsibilities.map(r => `<li>${escape(r)}</li>`).join('')}</ul>`;
+        } else if (typeof exp.responsibilities === 'string' && exp.responsibilities.trim() !== '') {
+          html += `<div style="margin-top: 0.4rem; font-size: 0.88rem; color: var(--text-muted); line-height: 1.5;">${escape(exp.responsibilities)}</div>`;
+        }
+      }
+      if (Array.isArray(exp.achievements) && exp.achievements.length > 0) {
+        html += `<div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 8px;">${exp.achievements.map(a => `<span style="font-family: var(--font-mono); font-size: 0.78rem; background: var(--surface-alt); border: 1px solid var(--border); padding: 2px 8px; border-radius: 4px; color: var(--primary);">✦ ${escape(a)}</span>`).join('')}</div>`;
+      }
+      if (exp.technologies) {
+        const techStr = Array.isArray(exp.technologies) ? exp.technologies.join(' • ') : exp.technologies;
+        html += `<div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-top: 0.4rem;">[STACK: ${escape(techStr)}]</div>`;
+      }
+      return html;
+    };
+
     switch (archetype) {
       case 'EDITORIAL_MONOGRAPH':
         return {
@@ -165,6 +186,7 @@ class ComponentGrammar {
               </header>
               <div style="padding-left: 164px; font-size: 0.98rem; line-height: 1.7; color: var(--text); max-width: 680px;">
                 <p style="margin: 0;">${escape(exp.desc || exp.summary || '')}</p>
+                ${renderExtraDetails(exp, escape, 'editorial')}
               </div>
             </article>
           `).join('')
@@ -182,6 +204,7 @@ class ComponentGrammar {
                 <span style="color: #38bdf8; text-decoration: underline;">${escape(exp.company || 'ORG')}</span>
               </div>
               <p style="color: var(--text-muted); font-size: 0.84rem; line-height: 1.5; margin: 8px 0 0 0;">${escape(exp.desc || '')}</p>
+              ${renderExtraDetails(exp, escape, 'terminal')}
             </div>
           `).join('')
         };
@@ -198,6 +221,7 @@ class ComponentGrammar {
               <div style="padding: 18px 20px;">
                 <h4 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; margin: 0 0 6px;">${escape(exp.role)} <span style="font-weight: 400; color: var(--text-muted);">— ${escape(exp.company)}</span></h4>
                 <p style="font-family: var(--font-body); font-size: 0.9rem; line-height: 1.6; color: var(--text-muted); margin: 0;">${escape(exp.desc)}</p>
+                ${renderExtraDetails(exp, escape, 'blueprint')}
               </div>
             </div>
           `).join('')
@@ -216,6 +240,7 @@ class ComponentGrammar {
                 <span style="font-family: var(--font-mono); font-size: 0.82rem; color: var(--text-muted);">${escape(exp.period || 'Present')}</span>
               </div>
               <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin: 0;">${escape(exp.desc)}</p>
+              ${renderExtraDetails(exp, escape, 'standard')}
             </div>
           `).join('')
         };

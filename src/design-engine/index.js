@@ -1,8 +1,7 @@
 /**
- * Generative Design Engine
+ * Generative Design Engine (Phase 36)
  * Consumes the formal DesignBrief produced by the Design Intelligence Ecosystem.
- * The DesignBrief is the SINGLE SOURCE OF TRUTH for information architecture,
- * layout grammar, project storytelling, visual universe, and motion profiles.
+ * The CompositionPlan inside DesignBrief is the SINGLE SOURCE OF TRUTH for runtime composition.
  * 
  * Strict Gate Policy: Direct invocation without a valid DesignBrief is blocked in production.
  */
@@ -14,6 +13,7 @@ const { VisualGrammar, VISUAL_UNIVERSES } = require('./visual-grammar');
 const { WebGLMotion } = require('./webgl-motion');
 const { StructuralMemory } = require('./structural-memory');
 const { HtmlRenderer } = require('./html-renderer');
+const { CompositionPlan } = require('./composition-plan');
 
 class DesignEngine {
   constructor() {
@@ -43,7 +43,6 @@ class DesignEngine {
       const strategyId = designBrief.projectStorytelling?.strategyId;
 
       iaModel = IA_MODELS[iaId] || IA_MODELS['split-screen-dossier'];
-      // If sectionOrder was customized by IA Agent, apply it
       if (Array.isArray(designBrief.sectionSequence)) {
         iaModel = { ...iaModel, sectionOrder: designBrief.sectionSequence };
       }
@@ -65,12 +64,12 @@ class DesignEngine {
         ? designBrief.motionSystem.motionCode
         : WebGLMotion.getMotionCode(visualUniverse, iaModel);
     } else {
-      // 2. Production Bypass Guard (Phase 9 requirement)
+      // 2. Production Bypass Guard
       if (!designBriefOrOptions.allowInternalTestMode) {
         throw new Error('[DESIGN ENGINE BLOCKED] Direct invocation without a valid DesignBrief is prohibited in production. Pass candidate through SiteGenerator / DesignGate first.');
       }
 
-      // Internal test fallback loop
+      // Internal test fallback loop with CompositionPlan compilation
       const recentHistory = this.memory.getRecentHistory();
       for (let attempt = 0; attempt < 5; attempt++) {
         const selectedIa = IAComposer.selectModel(contentProfile, designBriefOrOptions.layout, recentHistory);
@@ -97,8 +96,7 @@ class DesignEngine {
       motion = WebGLMotion.getMotionCode(visualUniverse, iaModel);
     }
 
-    // 3. Render HTML/CSS/JS Output with Section Morphing, Component Grammar & Motion Profiles
-    const { CompositionPlan } = require('./composition-plan');
+    // 3. Compile Authoritative CompositionPlan
     const compositionPlan = designBrief?.compositionPlan || CompositionPlan.buildPlan(contentProfile, {
       universeId: visualUniverse.id,
       pageTopology: layoutGrammar.id,
@@ -106,6 +104,7 @@ class DesignEngine {
       sectionSequence: iaModel.sectionOrder
     }, this.memory.getRecentHistory());
 
+    // 4. Render HTML/CSS/JS Output via Pure CompositionPlan Execution
     const rendered = HtmlRenderer.render(
       contentProfile,
       iaModel,
@@ -116,7 +115,7 @@ class DesignEngine {
       compositionPlan
     );
 
-    // 4. Record in Structural Memory
+    // 5. Record in Structural Memory
     this.memory.record({
       iaModel,
       layoutGrammar,
@@ -128,6 +127,7 @@ class DesignEngine {
       html: rendered.html,
       css: rendered.css,
       js: rendered.js,
+      compositionPlan,
       designBlueprint: {
         iaModel: iaModel.id,
         layoutGrammar: layoutGrammar.id,
@@ -135,17 +135,14 @@ class DesignEngine {
         projectStrategy,
         sectionOrder: iaModel.sectionOrder
       },
-      contentProfile: contentProfile.signals,
+      contentProfile: contentProfile,
       designBrief
     };
   }
 }
 
-const { DesignAgentOrchestrator } = require('./design-agent-orchestrator');
-
 module.exports = {
   DesignEngine,
-  DesignAgentOrchestrator,
   ContentAnalyzer,
   IAComposer,
   LayoutGrammar,
@@ -153,6 +150,7 @@ module.exports = {
   WebGLMotion,
   StructuralMemory,
   HtmlRenderer,
+  CompositionPlan,
   IA_MODELS,
   LAYOUT_GRAMMARS,
   VISUAL_UNIVERSES

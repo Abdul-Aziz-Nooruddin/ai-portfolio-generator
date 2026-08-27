@@ -78,6 +78,18 @@ class ContentAnalyzer {
       primaryAngle = 'work-portfolio';
     }
 
+    const research = Array.isArray(data.research) ? data.research : (Array.isArray(data.publications) ? data.publications : []);
+    const publications = research;
+    const customFields = { ...(data.customFields || {}) };
+
+    for (const [k, v] of Object.entries(data)) {
+      if (!['name', 'role', 'tagline', 'bio', 'projects', 'skills', 'experience', 'education', 'certifications', 'awards', 'signals', 'research', 'publications', 'customFields', '_provenance', '_multiSourceAlternates', 'id', 'status', 'token', 'slug'].includes(k)) {
+        if (v !== undefined && v !== null && String(v).trim() !== '') {
+          customFields[k] = v;
+        }
+      }
+    }
+
     return {
       name,
       role,
@@ -89,6 +101,9 @@ class ContentAnalyzer {
       education,
       certifications,
       awards,
+      research,
+      publications,
+      customFields,
       signals: {
         projectCount,
         deepProjectCount,

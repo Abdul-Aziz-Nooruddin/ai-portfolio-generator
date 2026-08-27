@@ -240,6 +240,29 @@ class UnifiedProfileNormalizer {
       { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio' }
     ];
 
+    const research = input.research || input.publications || questionnaireData?.research || questionnaireData?.publications || resumeData?.research || resumeData?.publications || manualData?.research || manualData?.publications || [];
+    if (research.length > 0) {
+      recordProvenance('research', 'user_provided_research', PROVENANCE_LEVELS.USER_PROVIDED);
+    }
+
+    // Capture custom / extension fields
+    const customFields = {};
+    const sources = [input, questionnaireData, manualData, resumeData, githubData];
+    sources.forEach(src => {
+      if (src && typeof src === 'object') {
+        if (src.customFields && typeof src.customFields === 'object') {
+          Object.assign(customFields, src.customFields);
+        }
+        for (const [k, v] of Object.entries(src)) {
+          if (!['githubData', 'resumeData', 'photoData', 'imagesData', 'questionnaireData', 'manualData', 'preferences', 'name', 'role', 'tagline', 'bio', 'photoUrl', 'images', 'contact', 'socialLinks', 'skills', 'projects', 'experience', 'education', 'certifications', 'research', 'publications', 'customFields', 'provenance', 'sourceConfidence', 'signals', 'extracted_data', 'id', 'status', 'token', 'slug'].includes(k)) {
+            if (v !== undefined && v !== null && String(v).trim() !== '') {
+              customFields[k] = v;
+            }
+          }
+        }
+      }
+    });
+
     return {
       identity: {
         name,
@@ -262,6 +285,9 @@ class UnifiedProfileNormalizer {
       experience,
       education,
       certifications,
+      research,
+      publications: research,
+      customFields,
       provenance,
       sourceConfidence: provenance, // Backward compatibility
       preferences,
