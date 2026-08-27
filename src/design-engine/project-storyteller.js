@@ -140,12 +140,75 @@ class ProjectStoryteller {
     }
   }
 
+  // 0. Visual Artifact & 3D Vector Mockup Plate
+  static renderProjectVisualMedia(p, index = 0, visual = {}) {
+    if (p.image) {
+      return `
+        <div class="project-visual-container" style="border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--surface-alt); margin-bottom: 1.25rem; aspect-ratio: 16/9; max-height: 280px; position: relative;">
+          <img src="${p.image}" alt="${p.name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
+          <div style="position: absolute; bottom: 0; inset-inline: 0; padding: 8px 12px; background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%); display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.75rem; color: #FFFFFF;">
+            <span>📸 Artifact Visual</span>
+            <span>LIVE VERIFIED</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic 3D Isometric / Architectural Vector Graphic Plate
+    const isDark = visual.theme !== 'light';
+    const primary = visual.colors?.primary || '#3B33D1';
+    const accent = visual.colors?.accent || '#818CF8';
+    const num = (index + 1).toString().padStart(2, '0');
+
+    return `
+      <div class="project-visual-container project-3d-mockup-plate" style="border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: ${isDark ? 'rgba(15, 23, 42, 0.6)' : 'rgba(241, 245, 249, 0.8)'}; margin-bottom: 1.25rem; position: relative; backdrop-filter: blur(8px);">
+        <!-- Top Browser / Terminal Header Bar -->
+        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.15); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
+            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+            <span style="margin-left: 8px; color: var(--text); font-weight: 600;">artifact://${p.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}.sys</span>
+          </div>
+          <span style="color: var(--primary); font-weight: 700;">SPECIMEN #${num}</span>
+        </div>
+
+        <!-- 3D Isometric Mesh Graphics Canvas Plate -->
+        <div style="padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 120px; position: relative; overflow: hidden;">
+          <div style="position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, ${primary}33 0%, transparent 70%); filter: blur(20px); pointer-events: none;"></div>
+          
+          <div style="flex: 1; z-index: 1;">
+            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--primary); margin-bottom: 4px; font-weight: 700;">&gt; ARCHITECTURE ARTIFACT</div>
+            <div style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 4px;">${p.name}</div>
+            <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">${p.tech}</div>
+          </div>
+
+          <!-- 3D Vector Isometric Topology -->
+          <div style="width: 90px; height: 75px; flex-shrink: 0; z-index: 1;">
+            <svg viewBox="0 0 100 85" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <g transform="translate(50, 42)">
+                <polygon points="0,-28 28,-14 0,0 -28,-14" fill="${primary}" opacity="0.85" />
+                <polygon points="28,-14 28,14 0,28 0,0" fill="${primary}" opacity="0.6" />
+                <polygon points="-28,-14 0,0 0,28 -28,14" fill="${accent}" opacity="0.75" />
+                <circle cx="-18" cy="-22" r="4" fill="${accent}" />
+                <circle cx="22" cy="18" r="3" fill="${primary}" />
+                <line x1="-18" y1="-22" x2="0" y2="-28" stroke="${accent}" stroke-width="1" stroke-dasharray="2 2" />
+                <line x1="28" y1="14" x2="22" y2="18" stroke="${primary}" stroke-width="1" stroke-dasharray="2 2" />
+              </g>
+            </svg>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
   // 1. Fullscreen Viewport Slide Takeover
   static renderFullscreenSlides(projects, visual) {
     const slidesHtml = projects.map((p, i) => `
       <article class="viewport-project-slide" id="project-slide-${i+1}" style="min-height: 85vh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem, 5vw, 4.5rem); margin-bottom: 3rem; background: ${i % 2 === 0 ? 'var(--surface)' : 'var(--surface-alt)'}; border: 1px solid var(--border); border-radius: var(--radius); position: relative; overflow: hidden;">
         <div class="slide-watermark-number" style="position: absolute; top: -10px; right: 20px; font-size: clamp(6rem, 15vw, 12rem); font-weight: 900; opacity: 0.04; font-family: var(--font-heading); line-height: 1; user-select: none;">0${i+1}</div>
         <div class="slide-content-stage" style="position: relative; z-index: 2; max-width: 850px;">
+          ${this.renderProjectVisualMedia(p, i, visual)}
           <div class="slide-badge-row" style="display: flex; gap: 10px; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap;">
             <span style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.1em;">Case 0${i+1}</span>
             <span style="display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted);"></span>
@@ -172,6 +235,7 @@ class ProjectStoryteller {
     const itemsHtml = projects.map((p, i) => `
       <div class="dossier-card architecture-dossier-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid var(--border);">
         <div class="dossier-specs-column">
+          ${this.renderProjectVisualMedia(p, i, visual)}
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">[MODULE_SPEC_${i+1}]</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>
           <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
@@ -206,6 +270,7 @@ class ProjectStoryteller {
     const cardsHtml = projects.map((p, i) => `
       <div class="filmstrip-slide filmstrip-card" style="flex: 0 0 clamp(320px, 45vw, 550px); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.2rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow);">
         <div>
+          ${this.renderProjectVisualMedia(p, i, visual)}
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 1rem;">RUNWAY // 0${i+1}</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; color: var(--text);">${p.name}</h3>
           <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
@@ -334,6 +399,7 @@ class ProjectStoryteller {
   static renderInteractiveCanvasNodes(projects, visual) {
     const nodesHtml = projects.map((p, i) => `
       <div class="canvas-project-module" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);">
+        ${this.renderProjectVisualMedia(p, i, visual)}
         <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem;">
           <h3 style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--text);">${p.name}</h3>
           <span style="font-family: var(--font-mono); font-size: 0.75rem; padding: 4px 8px; background: var(--surface-alt); border-radius: 4px; color: var(--primary);">NODE_${i+1}</span>
@@ -394,6 +460,7 @@ class ProjectStoryteller {
   static renderSpatialOrbitDock(projects, visual) {
     const docksHtml = projects.map((p, i) => `
       <div class="spatial-orbit-pod" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 2.2rem; position: relative; overflow: hidden; backdrop-filter: blur(16px); box-shadow: var(--shadow);">
+        ${this.renderProjectVisualMedia(p, i, visual)}
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
           <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); letter-spacing: 0.1em;">ORBIT_SECTOR_${i+1}</span>
           ${p.stars ? `<span style="font-family: var(--font-mono); font-size: 0.8rem; color: #f59e0b;">${p.stars}</span>` : ''}
@@ -420,6 +487,7 @@ class ProjectStoryteller {
     const blocksHtml = projects.map((p, i) => `
       <div class="split-comparison-unit" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem; padding: 2.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);">
         <div>
+          ${this.renderProjectVisualMedia(p, i, visual)}
           <div style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); margin-bottom: 0.5rem;">CASE // 0${i+1}</div>
           <h3 style="font-family: var(--font-heading); font-size: 1.6rem; font-weight: 800; color: var(--text); margin-bottom: 1rem;">${p.name}</h3>
           <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.25rem;">${p.desc}</p>
@@ -449,6 +517,7 @@ class ProjectStoryteller {
       return `
         <div class="mosaic-project-item ${isHeroProject ? 'hero-mosaic' : 'sub-mosaic'}" style="${isHeroProject ? 'grid-column: 1 / -1;' : ''} background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: ${isHeroProject ? '3rem' : '2rem'}; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow);">
           <div>
+            ${this.renderProjectVisualMedia(p, i, visual)}
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
               <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary); font-weight: 700;">${isHeroProject ? '★ FEATURED ARTIFACT' : `0${i+1}`}</span>
               ${p.stars ? `<span style="font-family: var(--font-mono); font-size: 0.8rem; color: #f59e0b;">${p.stars}</span>` : ''}

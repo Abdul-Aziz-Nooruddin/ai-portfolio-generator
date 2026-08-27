@@ -75,6 +75,22 @@ class SectionRendererRegistry {
     switch (kind) {
       case 'HERO': {
         const openingTopology = compositionPlan?.openingTopology || 'editorial-thesis';
+        const nano3D = compositionPlan?.nanoBanana3D;
+        const hero3DVisual = nano3D ? `
+          <div class="hero-3d-visual-card" style="margin: 2rem 0; border: 1px solid var(--border); border-radius: var(--radius); background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%); padding: 1.5rem; position: relative; overflow: hidden; backdrop-filter: blur(12px); box-shadow: 0 20px 45px -15px rgba(0,0,0,0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981;"></span>
+                <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); font-weight: 700;">${nano3D.badgeLabel || '✨ Nano Banana 3D Engine • Spatial Mesh Active'}</span>
+              </div>
+              <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">INTERACTIVE WEBGL PHYSICS • 60FPS</span>
+            </div>
+            <div id="nano-banana-3d-stage" style="width: 100%; height: 300px; min-height: 260px; position: relative; display: flex; align-items: center; justify-content: center;">
+              ${nano3D.svgFallback || ''}
+            </div>
+          </div>
+        ` : '';
+
         const renderTaglineBio = () => {
           if (safeTagline && safeBio && safeTagline !== safeBio) {
             return `
@@ -95,6 +111,7 @@ class SectionRendererRegistry {
               <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.2rem, 5vw, 4rem); font-weight: 800; color: var(--text); margin-bottom: 0.75rem;">${safeName}</${hTag}>
               <div style="font-family: var(--font-mono); font-size: 1.15rem; color: var(--text-muted); margin-bottom: 1.5rem;">&gt; ${safeRole} ${safeTagline ? `— ${safeTagline}` : ''}</div>
               ${safeBio ? `<div style="font-family: var(--font-mono); font-size: 0.92rem; color: var(--text); line-height: 1.6; max-width: 780px; margin-bottom: 1.5rem;">// BIO: ${safeBio}</div>` : ''}
+              ${hero3DVisual}
             </header>
           `;
         }
@@ -106,6 +123,7 @@ class SectionRendererRegistry {
               <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.6rem, 6vw, 4.8rem); font-weight: 900; color: var(--text); line-height: 1.05; margin-bottom: 1.25rem;">${safeName}</${hTag}>
               <div style="font-size: 1.3rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem; max-width: 800px;">${safeRole}</div>
               ${renderTaglineBio()}
+              ${hero3DVisual}
             </header>
           `;
         }
@@ -117,6 +135,7 @@ class SectionRendererRegistry {
               <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.05; margin-bottom: 1.25rem; color: var(--text);">${safeName}</${hTag}>
               <div style="font-size: 1.35rem; font-style: italic; font-weight: 500; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
               ${renderTaglineBio()}
+              ${hero3DVisual}
             </header>
           `;
         }
@@ -127,6 +146,7 @@ class SectionRendererRegistry {
             <${hTag} style="font-family: var(--font-heading); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; color: var(--text); line-height: 1.1; margin-bottom: 1rem;">${safeName}</${hTag}>
             <div style="font-size: 1.25rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1.5rem;">${safeRole}</div>
             ${renderTaglineBio()}
+            ${hero3DVisual}
           </header>
         `;
       }
