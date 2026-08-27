@@ -35,7 +35,18 @@ class HostingProvider {
    * Netlify is restricted strictly to PAID / ACTIVE subscribers.
    */
   async deploy(siteId, siteFiles, userData = {}, isPaid = false) {
-    const { html = '', css = '', js = '' } = siteFiles || {};
+    let html = '';
+    let css = '';
+    let js = '';
+
+    if (typeof siteFiles === 'string') {
+      html = siteFiles;
+    } else if (siteFiles && typeof siteFiles === 'object') {
+      html = siteFiles.html || '';
+      css = siteFiles.css || '';
+      js = siteFiles.js || '';
+    }
+
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
 
     // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 2 hours)

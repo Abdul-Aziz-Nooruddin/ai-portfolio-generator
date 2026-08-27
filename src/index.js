@@ -782,7 +782,7 @@ app.post('/api/generate/unified', async (req, res) => {
     });
 
     const siteId = `web-${crypto.randomUUID()}`;
-    await hostingProvider.deploy(siteId, siteResult.html);
+    await hostingProvider.deploy(siteId, siteResult, normalized);
 
     // Audit with Legacy Vibe Detector
     const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
