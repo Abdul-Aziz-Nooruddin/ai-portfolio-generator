@@ -547,6 +547,14 @@ class HtmlRenderer {
     }
     `;
 
+    const threeJsLib = (motion?.libraries?.includes('three') || !compositionPlan?.nanoBanana3D?.webglCode)
+      ? ''
+      : '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>';
+
+    const nanoBananaScript = (compositionPlan?.nanoBanana3D?.webglCode && (motion?.canvasHtml || topology.id?.includes('spatial') || topology.id?.includes('stage')))
+      ? compositionPlan.nanoBanana3D.webglCode
+      : '';
+
     const html = `<!DOCTYPE html>
 <html lang="en" data-theme="${visualUniverse?.theme || 'dark'}">
 <head>
@@ -558,6 +566,7 @@ class HtmlRenderer {
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?${visualUniverse?.fontUrls || ''}&display=swap" rel="stylesheet">
+  ${threeJsLib}
   ${motion?.libraries || ''}
 
   <style>
@@ -569,6 +578,7 @@ class HtmlRenderer {
   ${bodyContent}
   <script>
     ${motion?.js || ''}
+    ${nanoBananaScript}
   </script>
 </body>
 </html>`;
@@ -576,7 +586,7 @@ class HtmlRenderer {
     return {
       html,
       css: styleContent.trim(),
-      js: motion?.js || ''
+      js: `${motion?.js || ''}\n${nanoBananaScript}`.trim()
     };
   }
 

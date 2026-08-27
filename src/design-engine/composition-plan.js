@@ -5,6 +5,8 @@
  * The renderer strictly executes this contract without IA-based template branching.
  */
 
+const { NanoBanana3DGenerator } = require('../services/nano-banana-generator');
+
 const PAGE_TOPOLOGIES = {
   'edge-to-edge-editorial': {
     id: 'edge-to-edge-editorial',
@@ -751,6 +753,7 @@ class CompositionPlan {
         transformationType: pageTopology.mobileTransformation,
         touchTargetMinPx: 44
       },
+      nanoBanana3D: NanoBanana3DGenerator.generateSpatialAssets(contentProfile, options),
       designDecisionTrace: {
         artDirection: {
           selected: options.artDirection || 'PRODUCT_STUDIO',
