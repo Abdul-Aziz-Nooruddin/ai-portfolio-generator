@@ -81,9 +81,10 @@ class ContentAnalyzer {
     const research = Array.isArray(data.research) ? data.research : (Array.isArray(data.publications) ? data.publications : []);
     const publications = research;
     const customFields = { ...(data.customFields || {}) };
+    const questionnaire = data.questionnaire || {};
 
     for (const [k, v] of Object.entries(data)) {
-      if (!['name', 'role', 'tagline', 'bio', 'projects', 'skills', 'experience', 'education', 'certifications', 'awards', 'signals', 'research', 'publications', 'customFields', '_provenance', '_multiSourceAlternates', 'id', 'status', 'token', 'slug'].includes(k)) {
+      if (!['name', 'role', 'tagline', 'bio', 'projects', 'skills', 'experience', 'education', 'certifications', 'awards', 'signals', 'research', 'publications', 'customFields', 'questionnaire', '_provenance', '_multiSourceAlternates', 'id', 'status', 'token', 'slug'].includes(k)) {
         if (v !== undefined && v !== null && String(v).trim() !== '') {
           customFields[k] = v;
         }
@@ -104,6 +105,7 @@ class ContentAnalyzer {
       research,
       publications,
       customFields,
+      questionnaire,
       signals: {
         projectCount,
         deepProjectCount,

@@ -113,6 +113,32 @@ class AdditionalEvidenceSection {
       }
     }
 
+    // 7. Honors & Awards
+    const awards = Array.isArray(profile.awards) ? profile.awards : [];
+    awards.forEach(aw => {
+      const title = aw.title || aw.name || 'Honors';
+      const issuer = aw.issuer || aw.organization || '';
+      const year = aw.year || aw.date || '';
+      items.push({
+        label: `Honors & Awards • ${title}`,
+        value: `${title} ${issuer ? `— ${issuer}` : ''} ${year ? `(${year})` : ''}`.trim(),
+        category: 'honors_awards'
+      });
+    });
+
+    // 8. Certifications & Credentials
+    const certs = Array.isArray(profile.certifications) ? profile.certifications : [];
+    certs.forEach(cert => {
+      const name = cert.name || cert.title || 'Credential';
+      const issuer = cert.issuer || cert.authority || '';
+      const year = cert.year || cert.date || '';
+      items.push({
+        label: `Verified Credential • ${name}`,
+        value: `${name} ${issuer ? `— ${issuer}` : ''} ${year ? `(${year})` : ''}`.trim(),
+        category: 'verified_certification'
+      });
+    });
+
     if (items.length === 0) return '';
 
     const itemsHtml = items.map(item => EvidenceFallbackRenderer.renderFallbackItem(item, grammar)).join('');
