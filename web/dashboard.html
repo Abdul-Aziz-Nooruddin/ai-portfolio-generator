@@ -40,17 +40,16 @@
       overflow-x: hidden;
     }
 
-    /* Ambient Cobalt Background Atmosphere */
+    /* Ambient Cobalt Background Atmosphere with Bespoke Visual Backdrop */
     .dashboard-aurora {
       position: fixed;
       inset: 0;
       z-index: 0;
       pointer-events: none;
       background: 
-        radial-gradient(circle 600px at 15% 15%, rgba(59, 51, 209, 0.08) 0%, transparent 60%),
-        radial-gradient(circle 500px at 85% 20%, rgba(79, 70, 229, 0.06) 0%, transparent 60%),
-        radial-gradient(circle 700px at 50% 90%, rgba(2, 132, 199, 0.05) 0%, transparent 70%);
-      filter: blur(50px);
+        linear-gradient(180deg, rgba(248, 250, 252, 0.88) 0%, rgba(248, 250, 252, 0.94) 100%),
+        url('/assets/bg-dashboard.jpg') center/cover no-repeat fixed;
+      opacity: 0.95;
     }
 
     .dashboard-grid-mesh {
@@ -58,9 +57,9 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background-image: linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(59, 51, 209, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 51, 209, 0.03) 1px, transparent 1px);
       background-size: 44px 44px;
-      opacity: 0.8;
+      opacity: 0.6;
     }
 
     .dashboard-content-wrap {
