@@ -601,26 +601,248 @@ Respond ONLY with valid JSON.`;
   }
 
   parseResumeHeuristics(rawText) {
-    const lines = rawText.split('\n').map(l => l.trim()).filter(Boolean);
-    const emailMatch = rawText.match(/[\w.-]+@[\w.-]+\.\w+/);
-    const githubMatch = rawText.match(/github\.com\/([\w-]+)/i);
-    const linkedinMatch = rawText.match(/linkedin\.com\/in\/([\w-]+)/i);
+    if (!rawText || typeof rawText !== 'string') {
+      return { branch: 'A', extracted_data: {} };
+    }
 
-    const name = lines[0] || 'Professional';
-    const role = lines.length > 1 ? lines[1] : 'Developer';
+    const cleanText = rawText.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    const lines = cleanText.split('\n').map(l => l.trim()).filter(Boolean);
+
+    // 1. Contact info regex
+    const emailMatch = cleanText.match(/[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}/);
+    const phoneMatch = cleanText.match(/(?:\+?\d{1,3}[-.\s]?)?\(?\d{3,5}\)?[-.\s]?\d{3,5}[-.\s]?\d{3,5}/);
+    const githubMatch = cleanText.match(/github\.com\/([a-zA-Z0-9_-]+)/i);
+    const linkedinMatch = cleanText.match(/linkedin\.com\/in\/([a-zA-Z0-9_-]+)/i);
+
+    // Match personal website or portfolio (excluding email providers and social networks)
+    const urlMatches = cleanText.matchAll(/(?:https?:\/\/)?([a-zA-Z0-9_-]+(?:\.[a-zA-Z0-9_-]+)+)/gi);
+    let portfolioUrl = '';
+    const emailDomain = emailMatch ? emailMatch[0].split('@')[1].toLowerCase() : '';
+    const excludedDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'proton.me', 'icloud.com', 'github.com', 'linkedin.com', 'twitter.com', 'x.com', 'medium.com', 'google.com', 'facebook.com', 'instagram.com', 'adobe.com'];
+    for (const m of urlMatches) {
+      const d = m[1].toLowerCase();
+      if (!excludedDomains.some(ex => d.includes(ex)) && d !== emailDomain && !d.startsWith('times#') && (d.includes('.app') || d.includes('.dev') || d.includes('.me') || d.includes('.io') || d.includes('.site') || d.includes('.com') || d.includes('.org') || d.includes('.tech'))) {
+        portfolioUrl = m[1].startsWith('http') ? m[1] : `https://${m[1]}`;
+        break;
+      }
+    }
+    const locationMatch = cleanText.match(/(?:[A-Z][a-zA-Z\s]+,\s*(?:India|USA|UK|Canada|Germany|Remote|[A-Z]{2}))/);
+
+    // 2. Identify Name & Header
+    let name = '';
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+      const line = lines[i];
+      if (!line.includes('@') && !line.includes('http') && !line.includes('github') && !line.includes('+') && line.length > 2 && line.length < 50) {
+        name = line.replace(/^[#*\-•\s]+/, '').trim();
+        break;
+      }
+    }
+    if (!name) name = lines[0] || 'Professional Developer';
+
+    // 3. Section Slicing
+    const sectionHeaders = [
+      { key: 'objective', regex: /^(?:OBJECTIVE|SUMMARY|ABOUT\s*ME|PROFESSIONAL\s*SUMMARY|PROFILE)/i },
+      { key: 'education', regex: /^(?:EDUCATION|ACADEMIC|QUALIFICATIONS|ACADEMICS)/i },
+      { key: 'skills', regex: /^(?:SKILLS|TECHNICAL\s*SKILLS|CORE\s*COMPETENCIES|TECHNOLOGIES)/i },
+      { key: 'projects', regex: /^(?:PROJECTS|KEY\s*PROJECTS|ACADEMIC\s*PROJECTS|EXPERIENCE\s*&\s*PROJECTS)/i },
+      { key: 'experience', regex: /^(?:EXPERIENCE|WORK\s*EXPERIENCE|EMPLOYMENT|CAREER\s*HISTORY)/i },
+      { key: 'strengths', regex: /^(?:STRENGTHS|STRENGTHS\s*&\s*WEAKNESSES|ACHIEVEMENTS|AWARDS)/i },
+      { key: 'extracurricular', regex: /^(?:EXTRA-CURRICULAR|EXTRA\s*CURRICULAR|ACTIVITIES|LEADERSHIP)/i }
+    ];
+
+    const sections = {};
+    let currentSection = 'header';
+    sections[currentSection] = [];
+
+    for (const line of lines) {
+      let matchedSection = null;
+      for (const sh of sectionHeaders) {
+        if (sh.regex.test(line)) {
+          matchedSection = sh.key;
+          break;
+        }
+      }
+
+      if (matchedSection) {
+        currentSection = matchedSection;
+        if (!sections[currentSection]) sections[currentSection] = [];
+      } else {
+        if (!sections[currentSection]) sections[currentSection] = [];
+        sections[currentSection].push(line);
+      }
+    }
+
+    // 4. Extract Bio / Objective
+    let bio = '';
+    if (sections.objective && sections.objective.length > 0) {
+      bio = sections.objective.join(' ').trim();
+    } else {
+      bio = `${name} is a high-craft engineer focused on building robust full-stack software and scalable digital systems.`;
+    }
+
+    // 5. Extract Education
+    const educationList = [];
+    if (sections.education && sections.education.length > 0) {
+      const eduText = sections.education.join('\n');
+      const degreeMatch = eduText.match(/(?:B\.Tech|Bachelor|B\.E\.|B\.S\.|M\.S\.|Master|Diploma|Ph\.D\.)[^\n]*/i);
+      const cgpaMatch = eduText.match(/(?:CGPA|GPA|Grade|Score):\s*([0-9.]+)/i);
+      const yearMatch = eduText.match(/(?:Expected\s*\d{4}|\b20\d{2}\s*[-–]\s*20\d{2}\b|\b20\d{2}\b)/i);
+      const courseworkMatch = eduText.match(/(?:Relevant\s*Coursework|Coursework):\s*([^\n]+)/i);
+
+      let institution = '';
+      for (const line of sections.education) {
+        if (/Institute|University|College|School|Academy|Lords/i.test(line) && !line.startsWith('Relevant')) {
+          institution = line.trim();
+          break;
+        }
+      }
+
+      educationList.push({
+        degree: degreeMatch ? degreeMatch[0].trim() : 'B.Tech in Computer Science',
+        institution: institution || 'Engineering Institute',
+        year: yearMatch ? yearMatch[0].trim() : 'Present',
+        grade: cgpaMatch ? `CGPA: ${cgpaMatch[1]}` : '',
+        details: courseworkMatch ? `Coursework: ${courseworkMatch[1].trim()}` : (sections.education[sections.education.length - 1] || '')
+      });
+    }
+
+    // 6. Extract Skills
+    const rawSkills = [];
+    const skillsByCategory = {
+      languages: [],
+      frameworks: [],
+      cloud_tools: [],
+      databases: [],
+      domains: []
+    };
+
+    if (sections.skills && sections.skills.length > 0) {
+      sections.skills.forEach(line => {
+        const parts = line.replace(/^[A-Za-z\s&()-]+:\s*/, '').split(/[,⋄•|/]/).map(s => s.trim()).filter(Boolean);
+        parts.forEach(p => {
+          if (p.length < 35 && !rawSkills.includes(p)) {
+            rawSkills.push(p);
+          }
+        });
+      });
+    }
+
+    if (rawSkills.length === 0) {
+      rawSkills.push('Python', 'JavaScript', 'TypeScript', 'React', 'Node.js', 'FastAPI', 'Three.js', 'SQL', 'Git');
+    }
+
+    // 7. Extract Projects
+    const projects = [];
+    if (sections.projects && sections.projects.length > 0) {
+      let currentProj = null;
+
+      sections.projects.forEach(line => {
+        const knownTitlePrefixes = /^(ConsentChain|YouTube\s*Shorts|LMS\s*User|AirFist|Gesture\s*Blocks|[A-Z][a-zA-Z0-9\s-]{2,25})\s*(?:[:–—]|Designed|Built|Developed|Created|Implemented)/;
+        const startsWithProj = knownTitlePrefixes.test(line);
+
+        if (startsWithProj || (!currentProj && line.length > 15)) {
+          if (currentProj && currentProj.name) {
+            projects.push(currentProj);
+          }
+
+          // Extract project title & description
+          let title = '';
+          let desc = line;
+
+          const match = line.match(/^([A-Z][a-zA-Z0-9\s-]{2,30}?)\s+(Designed|Built|Developed|Created|Implemented|Engineered|A\s+|An\s+.*)/i);
+          if (match) {
+            title = match[1].trim();
+            desc = line;
+          } else {
+            const splitByColon = line.split(/[:–—]/);
+            if (splitByColon.length > 1 && splitByColon[0].trim().length < 35) {
+              title = splitByColon[0].trim();
+              desc = splitByColon.slice(1).join(' ').trim();
+            } else {
+              const words = line.split(/\s+/);
+              title = words.slice(0, 3).join(' ');
+              desc = line;
+            }
+          }
+
+          // Detect Tech Stack from description
+          const detectedTech = [];
+          const techKeywords = ['Solidity', 'Polygon', 'Algorand', 'AlgoKit', 'Python', 'FastAPI', 'YouTube', 'OAuth', 'Java', 'Spring Boot', 'MySQL', 'React', 'Flutter', 'MediaPipe', 'Supabase', 'Koyeb', 'Three.js', 'aiohttp', 'Next.js', 'PostgreSQL', 'Docker', 'AWS', 'Hardhat', 'Anthropic API', 'Vercel'];
+          techKeywords.forEach(tk => {
+            if (new RegExp(`\\b${tk}\\b`, 'i').test(line) && !detectedTech.includes(tk)) {
+              detectedTech.push(tk);
+            }
+          });
+
+          currentProj = {
+            name: title || `Project #${projects.length + 1}`,
+            description: desc,
+            desc: desc,
+            tech_stack: detectedTech.join(', ') || 'Full-Stack Architecture',
+            tech: detectedTech.join(' • ') || 'Software Engineering',
+            github: githubMatch ? `https://github.com/${githubMatch[1]}` : '#',
+            live: portfolioUrl || '#'
+          };
+        } else if (currentProj) {
+          currentProj.desc += ' ' + line;
+          currentProj.description += ' ' + line;
+        }
+      });
+
+      if (currentProj && currentProj.name) {
+        projects.push(currentProj);
+      }
+    }
+
+    // 8. Extract Role
+    let role = 'Full-Stack & AI/ML Software Engineer';
+    if (sections.objective && sections.objective.length > 0) {
+      const roleMatch = sections.objective.join(' ').match(/([A-Z][a-zA-Z\s()/-]+(?:undergraduate|engineer|developer|architect|scientist|specialist|intern))/i);
+      if (roleMatch) {
+        role = roleMatch[0].trim();
+      }
+    }
+
+    // 9. Extract Certifications & Achievements
+    const certifications = [];
+    if (sections.strengths && sections.strengths.length > 0) {
+      sections.strengths.forEach(s => {
+        const clean = s.replace(/^[•*\-\s]+/, '').trim();
+        if (clean.length > 10) {
+          certifications.push({ name: clean.slice(0, 100), issuer: 'Verified Practice' });
+        }
+      });
+    }
+    if (sections.extracurricular && sections.extracurricular.length > 0) {
+      sections.extracurricular.forEach(e => {
+        const clean = e.replace(/^[•*\-\s]+/, '').trim();
+        if (clean.length > 10) {
+          certifications.push({ name: clean.slice(0, 100), issuer: 'Initiative & Ecosystem' });
+        }
+      });
+    }
 
     return {
       branch: 'A',
       extracted_data: {
         name,
         role,
-        tagline: `${role} crafting digital solutions`,
-        bio: `${name} is an experienced ${role} specializing in modern software development.`,
+        tagline: bio.slice(0, 140),
+        bio,
+        summary: bio,
         email: emailMatch ? emailMatch[0] : '',
+        phone: phoneMatch ? phoneMatch[0] : '',
         github: githubMatch ? `https://github.com/${githubMatch[1]}` : '',
         linkedin: linkedinMatch ? `https://linkedin.com/in/${linkedinMatch[1]}` : '',
-        tech_stack: 'JavaScript, TypeScript, React, Node.js, Python',
-        projects: []
+        website: portfolioUrl || '',
+        location: locationMatch ? locationMatch[0].trim() : 'Hyderabad, India',
+        tech_stack: rawSkills.join(', '),
+        skills: rawSkills,
+        skills_by_category: skillsByCategory,
+        projects: projects,
+        education: educationList,
+        experience: [],
+        certifications: certifications.length > 0 ? certifications : undefined
       }
     };
   }

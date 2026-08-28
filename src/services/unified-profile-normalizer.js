@@ -20,13 +20,18 @@ class UnifiedProfileNormalizer {
   static normalize(input = {}) {
     const {
       githubData = null,
-      resumeData = null,
+      resumeData: rawResumeData = null,
       photoData = null,
       imagesData = [],
       questionnaireData = null,
       manualData = null,
       preferences = {}
     } = input;
+
+    // Flatten extracted_data if present in resumeData
+    const resumeData = rawResumeData?.extracted_data
+      ? { ...rawResumeData, ...rawResumeData.extracted_data }
+      : rawResumeData;
 
     const provenance = {};
     const recordProvenance = (field, source, level, confidence = 0.95) => {
@@ -80,14 +85,17 @@ class UnifiedProfileNormalizer {
     if (questionnaireData?.tagline) {
       tagline = questionnaireData.tagline.trim();
       recordProvenance('tagline', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (resumeData?.tagline) {
+      tagline = resumeData.tagline.trim().slice(0, 140);
+      recordProvenance('tagline', 'resume', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (manualData?.tagline) {
       tagline = manualData.tagline.trim();
       recordProvenance('tagline', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (githubData?.bio) {
       tagline = githubData.bio.trim();
       recordProvenance('tagline', 'github', PROVENANCE_LEVELS.VERIFIED);
-    } else if (resumeData?.summary) {
-      tagline = resumeData.summary.trim().slice(0, 140);
+    } else if (resumeData?.summary || resumeData?.bio) {
+      tagline = (resumeData.summary || resumeData.bio).trim().slice(0, 140);
       recordProvenance('tagline', 'resume', PROVENANCE_LEVELS.USER_PROVIDED);
     } else {
       tagline = `Building scalable digital systems and high-craft software experiences.`;
@@ -98,8 +106,8 @@ class UnifiedProfileNormalizer {
     if (questionnaireData?.bio) {
       bio = questionnaireData.bio.trim();
       recordProvenance('bio', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (resumeData?.summary) {
-      bio = resumeData.summary.trim();
+    } else if (resumeData?.bio || resumeData?.summary) {
+      bio = (resumeData.bio || resumeData.summary).trim();
       recordProvenance('bio', 'resume', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (manualData?.bio) {
       bio = manualData.bio.trim();
@@ -136,19 +144,34 @@ class UnifiedProfileNormalizer {
     const contact = {
       email: questionnaireData?.email || resumeData?.email || manualData?.email || (githubData?.username ? `${githubData.username}@users.noreply.github.com` : 'hello@example.com'),
       location: questionnaireData?.location || resumeData?.location || manualData?.location || githubData?.location || 'Remote / Worldwide',
-      website: questionnaireData?.website || manualData?.website || githubData?.blog || githubData?.website || ''
+      website: questionnaireData?.website || resumeData?.website || manualData?.website || githubData?.blog || githubData?.website || ''
     };
 
     const socialLinks = {
-      github: githubData?.profileUrl || githubData?.html_url || (githubData?.username ? `https://github.com/${githubData.username}` : (manualData?.github || '')),
+      github: githubData?.profileUrl || githubData?.html_url || (githubData?.username ? `https://github.com/${githubData.username}` : (resumeData?.github || manualData?.github || '')),
       linkedin: questionnaireData?.linkedin || resumeData?.linkedin || manualData?.linkedin || '',
       twitter: questionnaireData?.twitter || manualData?.twitter || (githubData?.twitter_username ? `https://twitter.com/${githubData.twitter_username}` : '')
     };
 
     // 6. Skills Aggregation
+    const resumeSkills = [];
+    if (Array.isArray(resumeData?.skills)) {
+      resumeSkills.push(...resumeData.skills);
+    } else if (typeof resumeData?.skills === 'string') {
+      resumeSkills.push(...resumeData.skills.split(/[,⋄•|/]/));
+    }
+    if (resumeData?.tech_stack && typeof resumeData.tech_stack === 'string') {
+      resumeSkills.push(...resumeData.tech_stack.split(/[,⋄•|/]/));
+    }
+    if (resumeData?.skills_by_category && typeof resumeData.skills_by_category === 'object') {
+      Object.values(resumeData.skills_by_category).forEach(cat => {
+        if (Array.isArray(cat)) resumeSkills.push(...cat);
+      });
+    }
+
     const rawSkills = [
       ...(Array.isArray(questionnaireData?.skills) ? questionnaireData.skills : (questionnaireData?.skills ? questionnaireData.skills.split(',') : [])),
-      ...(Array.isArray(resumeData?.skills) ? resumeData.skills : (resumeData?.skills ? resumeData.skills.split(',') : [])),
+      ...resumeSkills,
       ...(Array.isArray(githubData?.skills) ? githubData.skills : (githubData?.skills ? Object.keys(githubData.skills) : [])),
       ...(Array.isArray(manualData?.skills) ? manualData.skills : (manualData?.skills ? manualData.skills.split(',') : []))
     ].map(s => String(s).trim()).filter(Boolean);
@@ -177,7 +200,16 @@ class UnifiedProfileNormalizer {
       recordProvenance('projects', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
     }
 
-    projects = projects.slice(0, 10);
+    // Clean & standardize projects while preserving all deep evidence fields
+    projects = projects.map(p => ({
+      ...p,
+      name: p.name || p.title || 'Featured Project',
+      desc: p.desc || p.description || 'High-performance software system engineered with modern practices.',
+      tech: p.tech || p.tech_stack || (Array.isArray(p.technologies) ? p.technologies.join(' • ') : skills.slice(0, 3).join(' • ')),
+      github: p.github || p.repo || socialLinks.github || '#',
+      live: p.live || p.link || socialLinks.github || '#'
+    })).slice(0, 10);
+
     if (projects.length === 0) {
       projects = [
         {
@@ -223,39 +255,89 @@ class UnifiedProfileNormalizer {
       experience = [
         {
           role: role,
-          company: githubData?.company || 'Open Source Ecosystem',
+          company: githubData?.company || 'Open Source & Independent Development',
           period: '2023 - Present',
           desc: 'Directing application architecture, feature delivery, and software quality.'
         }
       ];
       recordProvenance('experience', 'inferred_role_entry', PROVENANCE_LEVELS.INFERRED);
+    } else {
+      experience = experience.map(e => ({
+        ...e,
+        role: e.role || e.title || role,
+        company: e.company || e.organization || 'Independent Development',
+        period: e.period || e.duration || e.year || '2023 - Present',
+        desc: e.desc || e.description || 'Directing application architecture, feature delivery, and software quality.'
+      }));
     }
 
     // 9. Education & Certifications
-    const education = questionnaireData?.education || resumeData?.education || manualData?.education || [
-      { degree: 'Computer Science & Software Engineering', institution: 'Academic & Professional Practice', year: 'Continuous' }
-    ];
+    let education = [];
+    if (Array.isArray(questionnaireData?.education) && questionnaireData.education.length > 0) {
+      education = questionnaireData.education;
+    } else if (Array.isArray(resumeData?.education) && resumeData.education.length > 0) {
+      education = resumeData.education;
+    } else if (Array.isArray(manualData?.education) && manualData.education.length > 0) {
+      education = manualData.education;
+    } else if (resumeData?.education && typeof resumeData.education === 'object') {
+      education = [resumeData.education];
+    } else {
+      education = [
+        { degree: 'Computer Science & Software Engineering', institution: 'Academic & Professional Practice', year: 'Continuous' }
+      ];
+    }
 
-    const certifications = questionnaireData?.certifications || resumeData?.certifications || manualData?.certifications || [
-      { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio' }
-    ];
+    education = education.map(edu => ({
+      ...edu,
+      degree: edu.degree || edu.study || edu.major || 'Computer Science & Software Engineering',
+      institution: edu.institution || edu.school || edu.university || 'Academic & Professional Practice',
+      school: edu.school || edu.institution || edu.university || 'Academic & Professional Practice',
+      period: edu.period || edu.year || 'Continuous'
+    }));
+
+    let certifications = [];
+    if (Array.isArray(questionnaireData?.certifications) && questionnaireData.certifications.length > 0) {
+      certifications = questionnaireData.certifications;
+    } else if (Array.isArray(resumeData?.certifications) && resumeData.certifications.length > 0) {
+      certifications = resumeData.certifications;
+    } else if (Array.isArray(manualData?.certifications) && manualData.certifications.length > 0) {
+      certifications = manualData.certifications;
+    } else {
+      certifications = [
+        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio' }
+      ];
+    }
 
     const research = input.research || input.publications || questionnaireData?.research || questionnaireData?.publications || resumeData?.research || resumeData?.publications || manualData?.research || manualData?.publications || [];
     if (research.length > 0) {
       recordProvenance('research', 'user_provided_research', PROVENANCE_LEVELS.USER_PROVIDED);
     }
 
-    // Capture custom / extension fields
+    // Capture custom / extension fields (excluding contact, projects, and binary/internal payload keys)
+    const ignoredKeys = [
+      'githubData', 'resumeData', 'photoData', 'imagesData', 'questionnaireData', 'manualData',
+      'preferences', 'name', 'role', 'tagline', 'bio', 'summary', 'photoUrl', 'images', 'contact',
+      'socialLinks', 'skills', 'projects', 'experience', 'education', 'certifications', 'research',
+      'publications', 'customFields', 'provenance', 'sourceConfidence', 'signals', 'extracted_data',
+      'branch', 'id', 'status', 'token', 'slug', 'rawBase64', 'extractedTextSnippet', 'base64Data',
+      'filename', 'mimeType', 'fileType', 'pages', 'rawText', 'identity', 'skills_by_category', 'tech_stack',
+      'email', 'phone', 'github', 'github_url', 'linkedin', 'twitter', 'website', 'location', 'avatar_url', 'avatarUrl', 'profileUrl', 'html_url'
+    ];
+
     const customFields = {};
     const sources = [input, questionnaireData, manualData, resumeData, githubData];
     sources.forEach(src => {
       if (src && typeof src === 'object') {
         if (src.customFields && typeof src.customFields === 'object') {
-          Object.assign(customFields, src.customFields);
+          for (const [k, v] of Object.entries(src.customFields)) {
+            if (!ignoredKeys.includes(k) && !k.startsWith('project_') && v !== undefined && v !== null && String(v).trim() !== '' && String(v).length < 300) {
+              customFields[k] = v;
+            }
+          }
         }
         for (const [k, v] of Object.entries(src)) {
-          if (!['githubData', 'resumeData', 'photoData', 'imagesData', 'questionnaireData', 'manualData', 'preferences', 'name', 'role', 'tagline', 'bio', 'photoUrl', 'images', 'contact', 'socialLinks', 'skills', 'projects', 'experience', 'education', 'certifications', 'research', 'publications', 'customFields', 'provenance', 'sourceConfidence', 'signals', 'extracted_data', 'id', 'status', 'token', 'slug'].includes(k)) {
-            if (v !== undefined && v !== null && String(v).trim() !== '') {
+          if (!ignoredKeys.includes(k) && !k.startsWith('project_')) {
+            if (v !== undefined && v !== null && String(v).trim() !== '' && typeof v !== 'object' && String(v).length < 300) {
               customFields[k] = v;
             }
           }

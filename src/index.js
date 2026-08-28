@@ -665,15 +665,30 @@ app.post('/api/upload/resume', async (req, res) => {
       return res.status(400).json({ error: validation.error });
     }
 
-    // Extract basic text hints from buffer safely if text exists
-    const textContent = buffer.toString('latin1');
-    const emailMatch = textContent.match(/[\w.-]+@[\w.-]+\.\w+/);
-    const resumeText = textContent.replace(/[^\x20-\x7E\n]/g, ' ').slice(0, 4000);
+    // Extract clean digital text from PDF or text buffer
+    let resumeText = '';
+    if (validation.mimeType === 'application/pdf' || (filename && filename.toLowerCase().endsWith('.pdf'))) {
+      try {
+        const pdfParse = require('pdf-parse');
+        const pdfData = await pdfParse(buffer);
+        resumeText = (pdfData && pdfData.text) ? pdfData.text.trim() : '';
+      } catch (pdfErr) {
+        console.warn('[API] PDF parse error in upload route:', pdfErr.message);
+      }
+    }
+    if (!resumeText) {
+      resumeText = buffer.toString('utf8').replace(/[^\x20-\x7E\n]/g, ' ').slice(0, 4000);
+    }
 
     let deepParsed = {};
     if (aiService) {
       try {
-        deepParsed = await aiService.parseResumeDocument(buffer, validation.mimeType || 'application/pdf');
+        const rawParsed = await aiService.parseResumeDocument(buffer, validation.mimeType || 'application/pdf');
+        if (rawParsed && rawParsed.extracted_data) {
+          deepParsed = rawParsed.extracted_data;
+        } else if (rawParsed) {
+          deepParsed = rawParsed;
+        }
       } catch (parseErr) {
         console.warn('[API] Deep resume parser fallback:', parseErr.message);
       }
@@ -687,8 +702,6 @@ app.post('/api/upload/resume', async (req, res) => {
       pages: validation.pages || 1,
       resumeData: {
         ...deepParsed,
-        extractedTextSnippet: resumeText.slice(0, 500),
-        email: deepParsed.email || (emailMatch ? emailMatch[0] : null),
         rawBase64: cleanBase64,
         mimeType: validation.mimeType
       }
@@ -809,12 +822,14 @@ app.post('/api/generate/unified', async (req, res) => {
     }
 
     // 2. If resume was provided with rawBase64 or extractedTextSnippet, run deep parser if not yet done
-    if (input.resumeData?.rawBase64 && (!input.resumeData.skills || input.resumeData.skills.length === 0) && aiService) {
+    if (input.resumeData?.rawBase64 && (!input.resumeData.skills || input.resumeData.skills.length === 0 || !input.resumeData.projects || input.resumeData.projects.length === 0) && aiService) {
       try {
         const buffer = Buffer.from(input.resumeData.rawBase64, 'base64');
-        const deepParsedResume = await aiService.parseResumeDocument(buffer, input.resumeData.mimeType || 'application/pdf');
-        if (deepParsedResume) {
-          input.resumeData = { ...input.resumeData, ...deepParsedResume };
+        const rawParsed = await aiService.parseResumeDocument(buffer, input.resumeData.mimeType || 'application/pdf');
+        if (rawParsed && rawParsed.extracted_data) {
+          input.resumeData = { ...input.resumeData, ...rawParsed.extracted_data };
+        } else if (rawParsed) {
+          input.resumeData = { ...input.resumeData, ...rawParsed };
         }
       } catch (resErr) {
         console.warn('[API] Deep resume parse fallback:', resErr.message);

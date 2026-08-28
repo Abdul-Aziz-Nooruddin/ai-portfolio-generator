@@ -651,13 +651,21 @@ class HtmlRenderer {
     const isSpatial = topologyId.includes('spatial') || iaId.includes('spatial') || topologyId.includes('stage');
 
     if (education.length > 0) {
+      const formatEduItem = (e) => {
+        const extraParts = [];
+        if (e.grade) extraParts.push(e.grade);
+        if (e.coursework) extraParts.push(Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework);
+        if (e.details && !extraParts.includes(e.details)) extraParts.push(e.details);
+        return extraParts.join(' • ');
+      };
+
       if (isTerminal) {
         const eduLines = education.map(e => {
-          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          const detail = formatEduItem(e);
           return `
             <div style="font-family: var(--font-mono); font-size: 0.88rem; color: var(--text); margin-bottom: 0.75rem;">
               <span style="color: var(--primary);">[ACADEMIC_CREDENTIAL] ${this.escapeHtml(e.degree || e.study || 'Degree')}</span> — ${this.escapeHtml(e.school || e.institution || e.university || 'University')} <span style="color: var(--text-muted);">(${this.escapeHtml(e.period || e.year || '')})</span>
-              ${coursework ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">&gt; COURSEWORK: ${this.escapeHtml(coursework)}</div>` : ''}
+              ${detail ? `<div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">&gt; ${this.escapeHtml(detail)}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -669,12 +677,12 @@ class HtmlRenderer {
         `;
       } else if (isDossier) {
         const eduLines = education.map(e => {
-          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          const detail = formatEduItem(e);
           return `
             <div style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
               <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
               <div style="font-size: 0.88rem; color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
-              ${coursework ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">Coursework: ${this.escapeHtml(coursework)}</div>` : ''}
+              ${detail ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">${this.escapeHtml(detail)}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -686,12 +694,12 @@ class HtmlRenderer {
         `;
       } else if (isTimeline) {
         const eduLines = education.map(e => {
-          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          const detail = formatEduItem(e);
           return `
             <div style="margin-bottom: 1.5rem; padding-left: 1.5rem; border-left: 2px solid var(--primary);">
               <div style="font-weight: 800; font-size: 1.1rem; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
               <div style="color: var(--text-muted); font-size: 0.9rem;">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
-              ${coursework ? `<div style="font-size: 0.85rem; color: var(--text); margin-top: 4px;">Focus: ${this.escapeHtml(coursework)}</div>` : ''}
+              ${detail ? `<div style="font-size: 0.85rem; color: var(--text); margin-top: 4px;">${this.escapeHtml(detail)}</div>` : ''}
             </div>
           `;
         }).join('');
@@ -703,12 +711,12 @@ class HtmlRenderer {
         `;
       } else {
         const eduLines = education.map(e => {
-          const coursework = e.coursework ? (Array.isArray(e.coursework) ? e.coursework.join(', ') : e.coursework) : '';
+          const detail = formatEduItem(e);
           return `
             <div style="margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border);">
               <div style="font-weight: 700; color: var(--text);">${this.escapeHtml(e.degree || e.study || 'Degree')}</div>
               <div style="font-size: 0.88rem; color: var(--text-muted);">${this.escapeHtml(e.school || e.institution || e.university || 'University')} • ${this.escapeHtml(e.period || e.year || '')}</div>
-              ${coursework ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">Coursework: ${this.escapeHtml(coursework)}</div>` : ''}
+              ${detail ? `<div style="font-size: 0.82rem; color: var(--text); margin-top: 4px;">${this.escapeHtml(detail)}</div>` : ''}
             </div>
           `;
         }).join('');
