@@ -657,14 +657,15 @@ app.post('/api/upload/resume', (req, res) => {
       return res.status(400).json({ error: 'No resume data provided.' });
     }
 
-    const buffer = Buffer.from(base64Data.replace(/^data:application\/pdf;base64,/, ''), 'base64');
-    const validation = UploadValidator.validatePdf(buffer, { originalName: filename });
+    const cleanBase64 = base64Data.replace(/^data:[a-zA-Z0-9/.-]+;base64,/, '');
+    const buffer = Buffer.from(cleanBase64, 'base64');
+    const validation = UploadValidator.validateResumeFile(buffer, { originalName: filename });
 
     if (!validation.valid) {
       return res.status(400).json({ error: validation.error });
     }
 
-    // Extract basic text hints from buffer safely
+    // Extract basic text hints from buffer safely if text exists
     const textContent = buffer.toString('latin1');
     const emailMatch = textContent.match(/[\w.-]+@[\w.-]+\.\w+/);
     const resumeText = textContent.replace(/[^\x20-\x7E\n]/g, ' ').slice(0, 4000);
@@ -672,10 +673,14 @@ app.post('/api/upload/resume', (req, res) => {
     res.json({
       success: true,
       message: 'Resume validated successfully',
-      pages: validation.pages,
+      fileType: validation.fileType,
+      mimeType: validation.mimeType,
+      pages: validation.pages || 1,
       resumeData: {
         extractedTextSnippet: resumeText.slice(0, 500),
-        email: emailMatch ? emailMatch[0] : null
+        email: emailMatch ? emailMatch[0] : null,
+        rawBase64: validation.fileType === 'image' ? cleanBase64 : null,
+        mimeType: validation.mimeType
       }
     });
   } catch (err) {

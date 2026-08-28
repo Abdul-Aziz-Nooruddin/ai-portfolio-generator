@@ -86,47 +86,42 @@
           </div>
         </div>
 
-        <!-- Interactive Generation Studio Dock -->
+        <!-- Interactive Generation Studio Dock (3 Clear Input Options) -->
         <div id="multiInputSection" class="ref-input-dock-section">
           <div class="multi-input-container">
             <div class="input-selector-bar">
               <button type="button" class="input-nav-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
-                <span class="tab-icon">⚡</span>
-                <span>GitHub</span>
+                <span class="tab-icon">🐙</span>
+                <span>1. GitHub Profile</span>
               </button>
               <button type="button" class="input-nav-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
                 <span class="tab-icon">📄</span>
-                <span>Resume (PDF)</span>
-              </button>
-              <button type="button" class="input-nav-btn" id="tabBtnImages" onclick="switchInputTab('images')">
-                <span class="tab-icon">🖼️</span>
-                <span>Images</span>
+                <span>2. Resume (PDF / Image)</span>
               </button>
               <button type="button" class="input-nav-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
                 <span class="tab-icon">💬</span>
-                <span>Questions</span>
+                <span>3. Answer Questions</span>
               </button>
-              <button type="button" class="input-nav-btn" id="tabBtnCombined" onclick="switchInputTab('combined')">
-                <span class="tab-icon">✨</span>
-                <span>Combined</span>
-              </button>
+              <!-- Hidden legacy tab handles for contract isolation -->
+              <button type="button" class="input-nav-btn" id="tabBtnImages" style="display: none;" aria-hidden="true"></button>
+              <button type="button" class="input-nav-btn" id="tabBtnCombined" style="display: none;" aria-hidden="true"></button>
             </div>
 
-            <!-- Tab A: GitHub Input -->
+            <!-- Option 1: GitHub Input -->
             <div id="tabPanelGithub" class="input-panel active">
               <div class="input-panel-card">
                 <div class="panel-card-head">
                   <h3>Generate with GitHub</h3>
-                  <p>Turn your GitHub into a portfolio. We analyze your public repositories, languages, documentation, and technical depth.</p>
+                  <p>Turn your GitHub into a portfolio. Paste your GitHub username or profile link (e.g. <code>github.com/torvalds</code> or <code>torvalds</code>). We automatically analyze your repositories, code, architecture, and tech stack.</p>
                 </div>
                 <form id="githubGenerateForm" class="github-flow-form" onsubmit="handleGithubGenerate(event)">
                   <div class="input-prefix-box">
                     <span class="prefix-label">github.com/</span>
-                    <input type="text" id="githubUsernameInput" placeholder="username or profile URL" autocomplete="off" required>
+                    <input type="text" id="githubUsernameInput" placeholder="username or https://github.com/username" autocomplete="off" required>
                   </div>
                   <div class="theme-select-box" style="margin-top: 10px;">
                     <select id="githubThemeSelect" class="form-select-control">
-                      <option value="auto">✨ Automatic Art Direction (Recommended)</option>
+                      <option value="auto">✨ Automatic Art Direction &amp; 3D Engine (Recommended)</option>
                       <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
                       <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
                       <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
@@ -143,53 +138,35 @@
               </div>
             </div>
 
-            <!-- Tab B: Resume PDF Input -->
+            <!-- Option 2: Resume PDF / Image Upload -->
             <div id="tabPanelResume" class="input-panel">
               <div class="input-panel-card text-center">
                 <div class="panel-card-head">
                   <h3>Upload your CV / Resume</h3>
-                  <p>Extract your career milestones, skills, and projects automatically. (PDF only, max 10 MB, up to 5 pages)</p>
+                  <p>Upload your resume file or photo scan (PDF, PNG, JPEG, WebP — max 10 MB). We extract your complete career timeline, technical skills, projects, and achievements.</p>
                 </div>
                 <div id="resumeDropZone" class="file-drop-target" onclick="document.getElementById('pdfFileInput').click()">
-                  <input type="file" id="pdfFileInput" accept="application/pdf" style="display: none;" onchange="handleResumeFileSelected(event)">
+                  <input type="file" id="pdfFileInput" accept="application/pdf,image/png,image/jpeg,image/webp" style="display: none;" onchange="handleResumeFileSelected(event)">
                   <div class="drop-icon">📥</div>
-                  <div class="drop-title">Drop PDF resume here or click to browse</div>
-                  <div id="pdfUploadStatus" class="drop-status">Max 10 MB • Standard PDF format</div>
+                  <div class="drop-title">Drop PDF resume or Image scan here, or click to browse</div>
+                  <div id="pdfUploadStatus" class="drop-status">Supports PDF, PNG, JPG, WebP • Max 10 MB</div>
                 </div>
                 <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
                   <span id="resumeFileName">resume.pdf</span>
                   <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
                 </div>
                 <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
-                  <span>⚡ Create Portfolio from Resume</span>
+                  <span>⚡ Generate 3D Portfolio from Resume</span>
                 </button>
               </div>
             </div>
 
-            <!-- Tab C: Visual Material (Images) -->
-            <div id="tabPanelImages" class="input-panel">
-              <div class="input-panel-card text-center">
-                <div class="panel-card-head">
-                  <h3>Add Visual Material</h3>
-                  <p>Upload profile portraits or project screenshot specimens. (JPEG, PNG, WebP — up to 3 images, max 5 MB each)</p>
-                </div>
-                <div id="imagesDropZone" class="file-drop-target" onclick="document.getElementById('multiImageInput').click()">
-                  <input type="file" id="multiImageInput" accept="image/jpeg,image/png,image/webp" multiple style="display: none;" onchange="handleImagesSelected(event)">
-                  <div class="drop-icon">🖼️</div>
-                  <div class="drop-title">Drop up to 3 images here or click to browse</div>
-                  <div id="imagesUploadStatus" class="drop-status">JPEG, PNG, WebP up to 5 MB each</div>
-                </div>
-                <!-- Image Previews Container -->
-                <div id="imageThumbnailsContainer" class="image-previews-grid" style="display: none; margin-top: 16px;"></div>
-              </div>
-            </div>
-
-            <!-- Tab D: Guided Questions -->
+            <!-- Option 3: Guided Questionnaire -->
             <div id="tabPanelQuestions" class="input-panel">
               <div class="input-panel-card">
                 <div class="panel-card-head">
-                  <h3>Answer a few quick questions</h3>
-                  <p>Share your discipline, best project, and career objective in your own words.</p>
+                  <h3>3. Answer Predefined Questions</h3>
+                  <p>Share your discipline, flagship projects, skills, and background in a few structured answers.</p>
                 </div>
                 <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
                   <div class="form-group-field">
@@ -213,41 +190,11 @@
                     <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
                   </div>
                   <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
-                    <span>⚡ Create My Portfolio</span>
+                    <span>⚡ Generate 3D Portfolio from Answers</span>
                   </button>
                 </form>
               </div>
             </div>
-
-            <!-- Tab E: Combined Multi-Source Summary -->
-            <div id="tabPanelCombined" class="input-panel">
-              <div class="input-panel-card">
-                <div class="panel-card-head">
-                  <h3>Combine Multiple Sources</h3>
-                  <p>Merge GitHub code facts, PDF career history, images, and answers into a single unified profile.</p>
-                </div>
-                <div class="sources-summary-checklist">
-                  <div class="source-check-row" id="checkRowGithub">
-                    <span class="check-icon">⚪</span>
-                    <div class="check-info">
-                      <strong>GitHub Account</strong>
-                      <span id="summaryGithubText">Not connected</span>
-                    </div>
-                    <button type="button" class="btn-link-action" onclick="switchInputTab('github')">Configure</button>
-                  </div>
-                  <div class="source-check-row" id="checkRowResume">
-                    <span class="check-icon">⚪</span>
-                    <div class="check-info">
-                      <strong>Resume / CV (PDF)</strong>
-                      <span id="summaryResumeText">No resume uploaded</span>
-                    </div>
-                    <button type="button" class="btn-link-action" onclick="switchInputTab('resume')">Upload</button>
-                  </div>
-                  <div class="source-check-row" id="checkRowImages">
-                    <span class="check-icon">⚪</span>
-                    <div class="check-info">
-                      <strong>Visual Material</strong>
-                      <span id="summaryImagesText">0 images attached</span>
                     </div>
                     <button type="button" class="btn-link-action" onclick="switchInputTab('images')">Add</button>
                   </div>

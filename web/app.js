@@ -300,11 +300,11 @@ function openStudioWithSample(personaKey) {
 }
 
 // ==========================================================================
-// 1. Navigation & Tab Switching
+// 1. Navigation & Tab Switching (3 Core Upload Options)
 // ==========================================================================
 function switchInputTab(tabName) {
   clientState.activeTab = tabName;
-  const tabs = ['github', 'resume', 'images', 'questions', 'combined'];
+  const tabs = ['github', 'resume', 'questions'];
   
   tabs.forEach(t => {
     const btn = document.getElementById(`tabBtn${t.charAt(0).toUpperCase() + t.slice(1)}`);
@@ -312,59 +312,13 @@ function switchInputTab(tabName) {
     if (btn) btn.classList.toggle('active', t === tabName);
     if (panel) panel.classList.toggle('active', t === tabName);
   });
-
-  if (tabName === 'combined') {
-    updateCombinedSummaryChecklist();
-  }
-}
-
-function updateCombinedSummaryChecklist() {
-  const ghRow = document.getElementById('checkRowGithub');
-  const ghText = document.getElementById('summaryGithubText');
-  if (clientState.sources.github) {
-    ghRow?.classList.add('connected');
-    if (ghText) ghText.textContent = `Connected: @${clientState.sources.github.username}`;
-  } else {
-    ghRow?.classList.remove('connected');
-    if (ghText) ghText.textContent = 'Not connected';
-  }
-
-  const resumeRow = document.getElementById('checkRowResume');
-  const resumeText = document.getElementById('summaryResumeText');
-  if (clientState.sources.resume) {
-    resumeRow?.classList.add('connected');
-    if (resumeText) resumeText.textContent = `Attached: ${clientState.sources.resume.filename}`;
-  } else {
-    resumeRow?.classList.remove('connected');
-    if (resumeText) resumeText.textContent = 'No resume uploaded';
-  }
-
-  const imagesRow = document.getElementById('checkRowImages');
-  const imagesText = document.getElementById('summaryImagesText');
-  if (clientState.sources.images.length > 0) {
-    imagesRow?.classList.add('connected');
-    if (imagesText) imagesText.textContent = `${clientState.sources.images.length} image(s) ready`;
-  } else {
-    imagesRow?.classList.remove('connected');
-    if (imagesText) imagesText.textContent = '0 images attached';
-  }
-
-  const qRow = document.getElementById('checkRowQuestions');
-  const qText = document.getElementById('summaryQuestionsText');
-  if (clientState.sources.questions) {
-    qRow?.classList.add('connected');
-    if (qText) qText.textContent = `Completed for ${clientState.sources.questions.name}`;
-  } else {
-    qRow?.classList.remove('connected');
-    if (qText) qText.textContent = 'Optional answers';
-  }
 }
 
 // ==========================================================================
-// 2. Input Handlers: GitHub, Resume, Images, Questions
+// 2. Input Handlers: GitHub, Resume (PDF/Image), Questions
 // ==========================================================================
 
-// A. GitHub Input Handler
+// Option 1. GitHub Input Handler
 async function handleGithubGenerate(event) {
   if (event) event.preventDefault();
   
@@ -377,12 +331,25 @@ async function handleGithubGenerate(event) {
   const rawInput = inputEl?.value?.trim();
 
   if (!rawInput) {
-    showToast('Username Required', 'Please enter a valid GitHub username or profile URL.', 'error');
+    showToast('Username Required', 'Please enter a valid GitHub username or profile link.', 'error');
+    return;
+  }
+
+  // Clean username from full URL or shorthand
+  const cleanUsername = rawInput
+    .replace(/^https?:\/\/(www\.)?github\.com\//i, '')
+    .replace(/^github\.com\//i, '')
+    .replace(/^@/, '')
+    .replace(/\/.*$/, '')
+    .trim();
+
+  if (!cleanUsername) {
+    showToast('Invalid Username', 'Could not parse a valid GitHub username from input.', 'error');
     return;
   }
 
   clientState.sources.github = {
-    username: rawInput.replace(/^https?:\/\/github\.com\//, '').replace(/^@/, '').replace(/\/$/, '')
+    username: cleanUsername
   };
   saveDraftToStorage();
 
@@ -393,16 +360,19 @@ async function handleGithubGenerate(event) {
   });
 }
 
-// B. Resume PDF Upload Handler
+// Option 2. Resume PDF / Image Upload Handler
 function handleResumeFileSelected(event) {
   const file = event.target.files?.[0];
   if (!file) return;
 
-  if (file.type !== 'application/pdf') {
+  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+  const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|webp)$/i.test(file.name);
+
+  if (!isPdf && !isImage) {
     showStructuredError({
-      whatHappened: "Invalid file format.",
-      why: "Resumes must be genuine PDF documents.",
-      whatYouCanDo: "Please export your resume as a PDF and upload again."
+      whatHappened: "Unsupported file format.",
+      why: "Resumes must be PDF documents or Image scans (PNG, JPG, WebP).",
+      whatYouCanDo: "Please upload your resume in PDF or image format."
     });
     return;
   }
@@ -410,8 +380,8 @@ function handleResumeFileSelected(event) {
   if (file.size > 10 * 1024 * 1024) {
     showStructuredError({
       whatHappened: "Resume exceeds 10 MB limit.",
-      why: "Large PDF files take too long to process.",
-      whatYouCanDo: "Please compress your PDF or upload a version under 10 MB."
+      why: "Large files take too long to process.",
+      whatYouCanDo: "Please upload a compressed resume file under 10 MB."
     });
     return;
   }
@@ -430,18 +400,19 @@ function handleResumeFileSelected(event) {
       });
       const data = await res.json();
       if (!res.ok || !data.success) {
-        throw new Error(data.error || 'Failed to validate PDF');
+        throw new Error(data.error || 'Failed to validate resume');
       }
 
       clientState.sources.resume = {
         filename: file.name,
         sizeBytes: file.size,
+        fileType: data.fileType || (isPdf ? 'pdf' : 'image'),
         pages: data.pages || 1,
         resumeData: data.resumeData
       };
       saveDraftToStorage();
 
-      if (statusEl) statusEl.textContent = `✅ Ready (${file.name}, ${data.pages || 1} pages)`;
+      if (statusEl) statusEl.textContent = `✅ Ready (${file.name})`;
       const fileTag = document.getElementById('resumeFileSummary');
       const nameTag = document.getElementById('resumeFileName');
       const btnGen = document.getElementById('btnGenerateResume');
@@ -450,7 +421,7 @@ function handleResumeFileSelected(event) {
       if (nameTag) nameTag.textContent = `${file.name} (${(file.size / (1024 * 1024)).toFixed(1)} MB)`;
       if (btnGen) btnGen.style.display = 'inline-flex';
 
-      showToast('Resume Verified', `${file.name} loaded successfully.`, 'success');
+      showToast('Resume Verified', `${file.name} loaded and verified.`, 'success');
     } catch (err) {
       showStructuredError(err);
     }
@@ -471,19 +442,18 @@ function removeUploadedResume(event) {
   if (fileInput) fileInput.value = '';
   if (fileTag) fileTag.style.display = 'none';
   if (btnGen) btnGen.style.display = 'none';
-  if (statusEl) statusEl.textContent = 'Max 10 MB • Standard PDF format';
+  if (statusEl) statusEl.textContent = 'Supports PDF, PNG, JPG, WebP • Max 10 MB';
 }
 
 async function generateFromResume() {
   if (!requireAuth(() => generateFromResume())) return;
 
   if (!clientState.sources.resume) {
-    showToast('Resume Required', 'Please upload a PDF resume first.', 'error');
+    showToast('Resume Required', 'Please upload a PDF or Image resume first.', 'error');
     return;
   }
   await startGenerationPipeline({
-    resumeData: clientState.sources.resume.resumeData,
-    imagesData: clientState.sources.images
+    resumeData: clientState.sources.resume.resumeData
   });
 }
 

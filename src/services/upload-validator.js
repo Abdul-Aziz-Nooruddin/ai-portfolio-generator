@@ -9,7 +9,7 @@ class UploadValidator {
    * Validates a PDF resume upload
    * @param {Buffer|Uint8Array} buffer 
    * @param {Object} metadata - { sizeBytes, originalName, mimeType }
-   * @returns {{ valid: boolean, error?: string }}
+   * @returns {{ valid: boolean, error?: string, pages?: number }}
    */
   static validatePdf(buffer, metadata = {}) {
     const MAX_PDF_SIZE = 10 * 1024 * 1024; // 10 MB
@@ -38,7 +38,42 @@ class UploadValidator {
       return { valid: false, error: `Resume has too many pages (${estimatedPages} detected). Maximum 5 pages allowed.` };
     }
 
-    return { valid: true, pages: estimatedPages };
+    return { valid: true, pages: estimatedPages, mimeType: 'application/pdf', fileType: 'pdf' };
+  }
+
+  /**
+   * Validates a Resume file (PDF or Image scan)
+   * @param {Buffer|Uint8Array} buffer 
+   * @param {Object} metadata - { sizeBytes, originalName, mimeType }
+   * @returns {{ valid: boolean, error?: string, fileType?: string, pages?: number }}
+   */
+  static validateResumeFile(buffer, metadata = {}) {
+    const MAX_RESUME_SIZE = 10 * 1024 * 1024; // 10 MB
+
+    if (!buffer || buffer.length === 0) {
+      return { valid: false, error: 'Empty file payload received.' };
+    }
+
+    if (buffer.length > MAX_RESUME_SIZE) {
+      return { valid: false, error: 'Resume file exceeds maximum allowed limit of 10 MB.' };
+    }
+
+    // Check PDF first
+    const isPdf = buffer.length >= 5 &&
+      buffer[0] === 0x25 && buffer[1] === 0x50 &&
+      buffer[2] === 0x44 && buffer[3] === 0x46 && buffer[4] === 0x2D;
+
+    if (isPdf) {
+      return this.validatePdf(buffer, metadata);
+    }
+
+    // Check Image formats: JPEG, PNG, WebP
+    const imgValidation = this.validateImage(buffer, metadata);
+    if (imgValidation.valid) {
+      return { valid: true, fileType: 'image', pages: 1, mimeType: `image/${imgValidation.format}`, format: imgValidation.format };
+    }
+
+    return { valid: false, error: 'Invalid file format. File does not have valid PDF magic headers or supported image formats (JPEG, PNG, WebP).' };
   }
 
   /**
