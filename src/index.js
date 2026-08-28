@@ -650,7 +650,7 @@ app.get('/api/admin/health', (req, res) => {
 });
 
 // 11. Multi-Input Upload & Adaptive Questionnaire Endpoints (Phase 31)
-app.post('/api/upload/resume', (req, res) => {
+app.post('/api/upload/resume', async (req, res) => {
   try {
     const { base64Data, filename } = req.body || {};
     if (!base64Data) {
@@ -670,16 +670,26 @@ app.post('/api/upload/resume', (req, res) => {
     const emailMatch = textContent.match(/[\w.-]+@[\w.-]+\.\w+/);
     const resumeText = textContent.replace(/[^\x20-\x7E\n]/g, ' ').slice(0, 4000);
 
+    let deepParsed = {};
+    if (aiService) {
+      try {
+        deepParsed = await aiService.parseResumeDocument(buffer, validation.mimeType || 'application/pdf');
+      } catch (parseErr) {
+        console.warn('[API] Deep resume parser fallback:', parseErr.message);
+      }
+    }
+
     res.json({
       success: true,
-      message: 'Resume validated successfully',
+      message: 'Resume validated and analyzed successfully',
       fileType: validation.fileType,
       mimeType: validation.mimeType,
       pages: validation.pages || 1,
       resumeData: {
+        ...deepParsed,
         extractedTextSnippet: resumeText.slice(0, 500),
-        email: emailMatch ? emailMatch[0] : null,
-        rawBase64: validation.fileType === 'image' ? cleanBase64 : null,
+        email: deepParsed.email || (emailMatch ? emailMatch[0] : null),
+        rawBase64: cleanBase64,
         mimeType: validation.mimeType
       }
     });
@@ -712,8 +722,7 @@ app.post('/api/upload/photo', (req, res) => {
     });
   } catch (err) {
     console.error('[API] /api/upload/photo error:', err);
-    const recovery = ErrorRecoveryService.mapError(err, 'image');
-    res.status(500).json({ error: recovery.whatHappened, recovery });
+    res.status(500).json({ error: 'Failed to process photo upload.' });
   }
 });
 
@@ -775,6 +784,43 @@ app.post('/api/questionnaire/adaptive', (req, res) => {
 app.post('/api/generate/unified', async (req, res) => {
   try {
     const input = req.body || {};
+
+    // 1. If GitHub username is provided, fetch complete GitHub profile & synthesize real case studies
+    if (input.githubData?.username) {
+      try {
+        const { GitHubParser } = require('./services/github/github-parser');
+        const { GitHubClient } = require('./services/github/github-client');
+        const { GitHubNormalizer } = require('./services/github/github-normalizer');
+        const { GitHubProfileSynthesizer } = require('./services/github-profile-synthesizer');
+
+        const parsed = GitHubParser.parse(input.githubData.username);
+        if (parsed.valid) {
+          const ghClient = new GitHubClient();
+          const rawGithub = await ghClient.fetchCompleteProfile(parsed.username);
+          const normGithub = GitHubNormalizer.normalize(rawGithub);
+          const synth = new GitHubProfileSynthesizer(aiService);
+          const synthesizedGithub = await synth.synthesize(normGithub);
+
+          input.githubData = { ...input.githubData, ...synthesizedGithub };
+        }
+      } catch (ghErr) {
+        console.warn('[API] GitHub deep fetch fallback:', ghErr.message);
+      }
+    }
+
+    // 2. If resume was provided with rawBase64 or extractedTextSnippet, run deep parser if not yet done
+    if (input.resumeData?.rawBase64 && (!input.resumeData.skills || input.resumeData.skills.length === 0) && aiService) {
+      try {
+        const buffer = Buffer.from(input.resumeData.rawBase64, 'base64');
+        const deepParsedResume = await aiService.parseResumeDocument(buffer, input.resumeData.mimeType || 'application/pdf');
+        if (deepParsedResume) {
+          input.resumeData = { ...input.resumeData, ...deepParsedResume };
+        }
+      } catch (resErr) {
+        console.warn('[API] Deep resume parse fallback:', resErr.message);
+      }
+    }
+
     const normalized = UnifiedProfileNormalizer.normalize(input);
     const siteGen = new SiteGenerator();
 
@@ -788,6 +834,11 @@ app.post('/api/generate/unified', async (req, res) => {
 
     const siteId = `web-${crypto.randomUUID()}`;
     await hostingProvider.deploy(siteId, siteResult, normalized);
+
+    // Also write to filesystem for local preview serving if needed
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    fs.mkdirSync(siteDir, { recursive: true });
+    fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
 
     // Audit with Legacy Vibe Detector
     const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
