@@ -131,7 +131,17 @@
                       <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
                     </select>
                   </div>
-                  <button type="submit" id="btnGithubSubmit" class="btn-cta-main">
+                  <!-- Optional Portrait Photo Upload for 3D Hologram Avatar -->
+                  <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
+                    <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload a photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the procedural 3D developer model with cursor/scroll physics).</p>
+                    <input type="file" id="optionalPhotoInputGithub" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
+                    <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputGithub').click()" style="padding: 5px 12px; font-size: 0.78rem;">
+                      <span>📷 Select Photo Scan (Optional)</span>
+                    </button>
+                    <span id="optionalPhotoStatusGithub" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
+                  </div>
+                  <button type="submit" id="btnGithubSubmit" class="btn-cta-main" style="margin-top: 14px;">
                     <span>⚡ Generate My Portfolio</span>
                   </button>
                 </form>
@@ -154,6 +164,16 @@
                 <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
                   <span id="resumeFileName">resume.pdf</span>
                   <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
+                </div>
+                <!-- Optional Portrait Photo Upload for Resume Flow -->
+                <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
+                  <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
+                  <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload your photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the default 3D developer model).</p>
+                  <input type="file" id="optionalPhotoInputResume" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
+                  <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputResume').click()" style="padding: 5px 12px; font-size: 0.78rem;">
+                    <span>📷 Select Photo Scan (Optional)</span>
+                  </button>
+                  <span id="optionalPhotoStatusResume" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
                 </div>
                 <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
                   <span>⚡ Generate 3D Portfolio from Resume</span>
@@ -189,27 +209,20 @@
                     <label>5. In one sentence, what makes your approach different or what are you building next?</label>
                     <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
                   </div>
+                  <!-- Optional Portrait Photo Upload for Questionnaire Flow -->
+                  <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
+                    <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
+                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload your photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the default 3D developer model).</p>
+                    <input type="file" id="optionalPhotoInputQuestions" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
+                    <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputQuestions').click()" style="padding: 5px 12px; font-size: 0.78rem;">
+                      <span>📷 Select Photo Scan (Optional)</span>
+                    </button>
+                    <span id="optionalPhotoStatusQuestions" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
+                  </div>
                   <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
                     <span>⚡ Generate 3D Portfolio from Answers</span>
                   </button>
                 </form>
-              </div>
-            </div>
-                    </div>
-                    <button type="button" class="btn-link-action" onclick="switchInputTab('images')">Add</button>
-                  </div>
-                  <div class="source-check-row" id="checkRowQuestions">
-                    <span class="check-icon">⚪</span>
-                    <div class="check-info">
-                      <strong>Guided Questions</strong>
-                      <span id="summaryQuestionsText">Optional answers</span>
-                    </div>
-                    <button type="button" class="btn-link-action" onclick="switchInputTab('questions')">Edit</button>
-                  </div>
-                </div>
-                <button type="button" class="btn-cta-main" style="margin-top: 18px;" onclick="generateFromCombinedSources()">
-                  <span>✨ Generate Portfolio from All Sources</span>
-                </button>
               </div>
             </div>
           </div>

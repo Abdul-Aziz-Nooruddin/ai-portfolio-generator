@@ -356,6 +356,7 @@ async function handleGithubGenerate(event) {
   const theme = themeEl?.value || 'auto';
   await startGenerationPipeline({
     githubData: { username: clientState.sources.github.username },
+    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null,
     preferences: { theme }
   });
 }
@@ -445,6 +446,44 @@ function removeUploadedResume(event) {
   if (statusEl) statusEl.textContent = 'Supports PDF, PNG, JPG, WebP • Max 10 MB';
 }
 
+// Optional Portrait Photo Upload for 3D Avatar Hologram
+function handleOptionalPhotoSelected(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+
+  if (file.size > 5 * 1024 * 1024) {
+    showToast('Image Too Large', `${file.name} exceeds 5 MB.`, 'error');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const base64Data = e.target.result;
+    try {
+      const res = await fetch('/api/upload/photo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ base64Data, filename: file.name })
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Failed to upload photo');
+
+      clientState.sources.photo = data.dataUrl;
+      saveDraftToStorage();
+
+      ['optionalPhotoStatusGithub', 'optionalPhotoStatusResume', 'optionalPhotoStatusQuestions'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'inline-block';
+      });
+
+      showToast('Photo Attached', `${file.name} will be projected into your 3D custom avatar hologram!`, 'success');
+    } catch (err) {
+      showStructuredError(err);
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
 async function generateFromResume() {
   if (!requireAuth(() => generateFromResume())) return;
 
@@ -453,7 +492,46 @@ async function generateFromResume() {
     return;
   }
   await startGenerationPipeline({
-    resumeData: clientState.sources.resume.resumeData
+    resumeData: clientState.sources.resume.resumeData,
+    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null
+  });
+}
+
+// Option 3. Guided Questions Handler
+async function handleQuestionnaireSubmit(event) {
+  if (event) event.preventDefault();
+
+  if (!requireAuth(() => handleQuestionnaireSubmit(null))) return;
+
+  const name = document.getElementById('qInputName')?.value?.trim();
+  const role = document.getElementById('qInputRole')?.value?.trim();
+  const project = document.getElementById('qInputProject')?.value?.trim();
+  const skills = document.getElementById('qInputSkills')?.value?.trim();
+  const tagline = document.getElementById('qInputTagline')?.value?.trim();
+
+  if (!name || !role || !project || !skills) {
+    showToast('Missing Fields', 'Please fill out all required questions.', 'error');
+    return;
+  }
+
+  clientState.sources.questions = {
+    name,
+    role,
+    tagline,
+    skills: skills.split(',').map(s => s.trim()).filter(Boolean),
+    projects: [
+      {
+        name: 'Flagship Project',
+        desc: project,
+        tech: skills.split(',').slice(0, 3).join(' • ')
+      }
+    ]
+  };
+  saveDraftToStorage();
+
+  await startGenerationPipeline({
+    questionnaireData: clientState.sources.questions,
+    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null
   });
 }
 

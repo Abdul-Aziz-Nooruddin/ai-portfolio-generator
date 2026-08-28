@@ -113,9 +113,13 @@ class NanoBanana3DGenerator {
   static generateWebGLSceneCode(config, profile) {
     const primaryHex = config.primaryColor.replace('#', '0x');
     const accentHex = config.accentColor.replace('#', '0x');
+    const safeSkills = Array.isArray(profile.skills) ? profile.skills.slice(0, 6) : ['React', 'Python', 'TypeScript', 'Node.js', 'Next.js', 'AI / ML'];
+    const skillsJson = JSON.stringify(safeSkills);
+    const photoUrl = profile.photoUrl || profile.photo || '';
+    const hasPhoto = Boolean(photoUrl && photoUrl.trim().length > 0);
 
     return `
-    // 🍌 Nano Banana 3D Spatial Engine (${config.geometryType})
+    // 🍌 Nano Banana 3D Spatial Engine (${config.geometryType} • Character & Spatial Physics)
     (function initNanoBanana3D() {
       if (typeof THREE === 'undefined') return;
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -124,115 +128,290 @@ class NanoBanana3DGenerator {
       if (!container) return;
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, (container.clientWidth || window.innerWidth) / (container.clientHeight || 480), 0.1, 1000);
-      camera.position.set(0, 0, 18);
+      const camera = new THREE.PerspectiveCamera(42, (container.clientWidth || window.innerWidth) / (container.clientHeight || 320), 0.1, 1000);
+      camera.position.set(0, 1.2, 16);
 
-      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-      renderer.setSize(container.clientWidth || window.innerWidth, container.clientHeight || 480);
+      const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(container.clientWidth || window.innerWidth, container.clientHeight || 320);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
       container.appendChild(renderer.domElement);
 
-      // Lighting
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
+      // Lighting & Volumetric Studio Setup
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
       scene.add(ambientLight);
 
-      const pointLight1 = new THREE.PointLight(${primaryHex}, 2.5, 50);
-      pointLight1.position.set(10, 10, 10);
+      const keyLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      keyLight.position.set(6, 12, 10);
+      scene.add(keyLight);
+
+      const pointLight1 = new THREE.PointLight(${primaryHex}, 3.0, 40);
+      pointLight1.position.set(8, 6, 8);
       scene.add(pointLight1);
 
-      const pointLight2 = new THREE.PointLight(${accentHex}, 2.0, 50);
-      pointLight2.position.set(-10, -10, 10);
+      const pointLight2 = new THREE.PointLight(${accentHex}, 2.5, 40);
+      pointLight2.position.set(-8, -4, 8);
       scene.add(pointLight2);
 
-      // Group Object for 3D Geometry
-      const group = new THREE.Group();
-      scene.add(group);
+      // Master Character & Spatial Container Group
+      const masterGroup = new THREE.Group();
+      scene.add(masterGroup);
 
-      // Main Core Geometry based on Nano Banana Archetype
-      let coreGeo;
-      if ('${config.geometryType}' === 'NeuralLattice') {
-        coreGeo = new THREE.IcosahedronGeometry(4.5, 1);
-      } else if ('${config.geometryType}' === 'ConsensusNodes') {
-        coreGeo = new THREE.BoxGeometry(4, 4, 4);
-      } else if ('${config.geometryType}' === 'CryptoShield') {
-        coreGeo = new THREE.OctahedronGeometry(4.5, 0);
-      } else {
-        coreGeo = new THREE.TorusKnotGeometry(3.5, 1.1, 100, 16);
-      }
-
-      const coreMat = new THREE.MeshPhysicalMaterial({
-        color: ${primaryHex},
-        emissive: ${primaryHex},
-        emissiveIntensity: 0.15,
-        roughness: 0.15,
-        metalness: 0.2,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.1,
+      // Holographic Stage Platform / Floor Grid
+      const platformGeo = new THREE.CylinderGeometry(5.5, 6.0, 0.3, 32);
+      const platformMat = new THREE.MeshStandardMaterial({
+        color: 0x0f172a,
+        roughness: 0.2,
+        metalness: 0.85,
         wireframe: false
       });
+      const platform = new THREE.Mesh(platformGeo, platformMat);
+      platform.position.y = -3.8;
+      masterGroup.add(platform);
 
-      const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-      group.add(coreMesh);
+      // Glowing Holographic Floor Ring
+      const ringGeo = new THREE.TorusGeometry(5.8, 0.08, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: ${primaryHex}, transparent: true, opacity: 0.85 });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = Math.PI / 2;
+      ringMesh.position.y = -3.7;
+      masterGroup.add(ringMesh);
 
-      // Outer Wireframe Accent
-      const wireMat = new THREE.MeshBasicMaterial({
-        color: ${accentHex},
-        wireframe: true,
-        transparent: true,
-        opacity: 0.4
-      });
-      const wireMesh = new THREE.Mesh(coreGeo, wireMat);
-      wireMesh.scale.set(1.08, 1.08, 1.08);
-      group.add(wireMesh);
+      // Main Character Anchor
+      const characterAnchor = new THREE.Group();
+      masterGroup.add(characterAnchor);
 
-      // Floating Satellite Nodes
-      const nodeGeo = new THREE.SphereGeometry(0.5, 16, 16);
-      const nodeMat = new THREE.MeshStandardMaterial({ color: ${accentHex}, roughness: 0.2, metalness: 0.8 });
-      const satellites = [];
+      const hasCustomPhoto = ${hasPhoto};
+      const customPhotoSrc = "${photoUrl ? photoUrl.replace(/"/g, '\\"') : ''}";
 
-      for (let i = 0; i < 6; i++) {
-        const sat = new THREE.Mesh(nodeGeo, nodeMat);
-        const angle = (i / 6) * Math.PI * 2;
-        const radius = 6.5;
-        sat.position.set(Math.cos(angle) * radius, Math.sin(angle) * radius, (Math.random() - 0.5) * 3);
-        group.add(sat);
-        satellites.push({ mesh: sat, angle, radius, speed: 0.01 + i * 0.003 });
+      if (hasCustomPhoto && customPhotoSrc) {
+        // --- MODE A: 3D HOLOGRAPHIC PERSONA SCULPTURE ---
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load(customPhotoSrc, (tex) => {
+          tex.generateMipmaps = true;
+          const photoGeo = new THREE.PlaneGeometry(4.2, 5.2, 16, 16);
+          const photoMat = new THREE.MeshStandardMaterial({
+            map: tex,
+            roughness: 0.3,
+            metalness: 0.1,
+            side: THREE.DoubleSide
+          });
+          const photoMesh = new THREE.Mesh(photoGeo, photoMat);
+          photoMesh.position.set(0, 0.4, 0);
+          characterAnchor.add(photoMesh);
+
+          // Glass Hologram Backing Plate
+          const backGeo = new THREE.BoxGeometry(4.4, 5.4, 0.2);
+          const backMat = new THREE.MeshPhysicalMaterial({
+            color: ${primaryHex},
+            transparent: true,
+            opacity: 0.35,
+            roughness: 0.1,
+            transmission: 0.9,
+            thickness: 0.5
+          });
+          const backMesh = new THREE.Mesh(backGeo, backMat);
+          backMesh.position.set(0, 0.4, -0.15);
+          characterAnchor.add(backMesh);
+
+          // Neon Border Frame
+          const borderGeo = new THREE.BoxGeometry(4.5, 5.5, 0.25);
+          const borderMat = new THREE.MeshBasicMaterial({ color: ${accentHex}, wireframe: true, transparent: true, opacity: 0.75 });
+          const borderMesh = new THREE.Mesh(borderGeo, borderMat);
+          borderMesh.position.set(0, 0.4, 0);
+          characterAnchor.add(borderMesh);
+        });
+      } else {
+        // --- MODE B: INTERACTIVE 3D HUMAN DEVELOPER CHARACTER MODEL ---
+        // 1. Torso / Developer Hoodie
+        const torsoGeo = new THREE.CylinderGeometry(1.6, 2.0, 3.4, 20);
+        const torsoMat = new THREE.MeshStandardMaterial({ color: 0x0f172a, roughness: 0.35, metalness: 0.4 });
+        const torso = new THREE.Mesh(torsoGeo, torsoMat);
+        torso.position.set(0, -0.6, 0);
+        characterAnchor.add(torso);
+
+        // Hoodie Zipper / Cybernetic Trim
+        const trimGeo = new THREE.BoxGeometry(0.12, 3.3, 0.2);
+        const trimMat = new THREE.MeshBasicMaterial({ color: ${primaryHex} });
+        const trim = new THREE.Mesh(trimGeo, trimMat);
+        trim.position.set(0, -0.6, 1.05);
+        characterAnchor.add(trim);
+
+        // 2. Chest Cyber Reactor Core
+        const coreGeo = new THREE.OctahedronGeometry(0.45, 0);
+        const coreMat = new THREE.MeshBasicMaterial({ color: ${accentHex} });
+        const core = new THREE.Mesh(coreGeo, coreMat);
+        core.position.set(0, 0.2, 1.0);
+        characterAnchor.add(core);
+
+        // 3. Shoulders and Stylized Arms
+        const shoulderGeo = new THREE.SphereGeometry(0.65, 16, 16);
+        const shoulderL = new THREE.Mesh(shoulderGeo, torsoMat);
+        shoulderL.position.set(-2.0, 0.6, 0);
+        characterAnchor.add(shoulderL);
+
+        const shoulderR = new THREE.Mesh(shoulderGeo, torsoMat);
+        shoulderR.position.set(2.0, 0.6, 0);
+        characterAnchor.add(shoulderR);
+
+        const armGeo = new THREE.CylinderGeometry(0.5, 0.45, 2.2, 16);
+        const armL = new THREE.Mesh(armGeo, torsoMat);
+        armL.position.set(-2.1, -0.6, 0.4);
+        armL.rotation.z = Math.PI / 10;
+        armL.rotation.x = Math.PI / 8;
+        characterAnchor.add(armL);
+
+        const armR = new THREE.Mesh(armGeo, torsoMat);
+        armR.position.set(2.1, -0.6, 0.4);
+        armR.rotation.z = -Math.PI / 10;
+        armR.rotation.x = Math.PI / 8;
+        characterAnchor.add(armR);
+
+        // 4. Head Group (Tracks Cursor with Look-At)
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 2.2, 0);
+        characterAnchor.add(headGroup);
+
+        const headGeo = new THREE.SphereGeometry(1.2, 32, 32);
+        const headMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.3, metalness: 0.3 });
+        const head = new THREE.Mesh(headGeo, headMat);
+        headGroup.add(head);
+
+        // Cybernetic Visor / Glasses
+        const visorGeo = new THREE.BoxGeometry(1.6, 0.45, 0.7);
+        const visorMat = new THREE.MeshStandardMaterial({
+          color: ${accentHex},
+          emissive: ${accentHex},
+          emissiveIntensity: 0.9,
+          roughness: 0.1,
+          metalness: 0.9
+        });
+        const visor = new THREE.Mesh(visorGeo, visorMat);
+        visor.position.set(0, 0.15, 0.95);
+        headGroup.add(visor);
+
+        // Developer Tech Headset
+        const bandGeo = new THREE.TorusGeometry(1.3, 0.1, 12, 32, Math.PI);
+        const bandMat = new THREE.MeshStandardMaterial({ color: 0x334155, metalness: 0.8, roughness: 0.2 });
+        const band = new THREE.Mesh(bandGeo, bandMat);
+        band.rotation.x = -Math.PI / 2;
+        band.position.set(0, 0.5, 0);
+        headGroup.add(band);
+
+        const cupGeo = new THREE.CylinderGeometry(0.35, 0.35, 0.3, 16);
+        const cupL = new THREE.Mesh(cupGeo, trimMat);
+        cupL.rotation.z = Math.PI / 2;
+        cupL.position.set(-1.3, 0.1, 0);
+        headGroup.add(cupL);
+
+        const cupR = new THREE.Mesh(cupGeo, trimMat);
+        cupR.rotation.z = Math.PI / 2;
+        cupR.position.set(1.3, 0.1, 0);
+        headGroup.add(cupR);
       }
 
-      // Mouse Interaction Tilt
-      let mouseX = 0, mouseY = 0;
-      window.addEventListener('mousemove', (e) => {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      // --- FLOATING 3D SKILL BADGE BILLBOARDS ---
+      const skills = ${skillsJson};
+      const skillMeshes = [];
+
+      function createSkillBadgeTexture(text) {
+        const c = document.createElement('canvas');
+        c.width = 256;
+        c.height = 80;
+        const ctx = c.getContext('2d');
+        
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.roundRect ? ctx.roundRect(8, 8, 240, 64, 16) : ctx.rect(8, 8, 240, 64);
+        ctx.fill();
+
+        ctx.strokeStyle = "${config.accentColor}";
+        ctx.lineWidth = 4;
+        ctx.roundRect ? ctx.roundRect(8, 8, 240, 64, 16) : ctx.strokeRect(8, 8, 240, 64);
+        ctx.stroke();
+
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 26px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 128, 40);
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.minFilter = THREE.LinearFilter;
+        return tex;
+      }
+
+      skills.forEach((skillName, idx) => {
+        const badgeTex = createSkillBadgeTexture(skillName);
+        const badgeMat = new THREE.SpriteMaterial({ map: badgeTex, transparent: true, opacity: 0.95 });
+        const sprite = new THREE.Sprite(badgeMat);
+        sprite.scale.set(3.2, 1.0, 1.0);
+
+        const angle = (idx / skills.length) * Math.PI * 2;
+        const radius = 4.8;
+        const height = (idx % 2 === 0 ? 1.5 : -0.5) + (Math.sin(idx) * 0.8);
+        sprite.position.set(Math.cos(angle) * radius, height, Math.sin(angle) * radius);
+        masterGroup.add(sprite);
+
+        skillMeshes.push({ sprite, angle, radius, height, speed: 0.008 + idx * 0.002 });
       });
 
-      // Render Loop
-      let clock = new THREE.Clock();
+      // --- MOUSE CURSOR TRACKING (LOOK-AT PHYSICS) ---
+      let mouseX = 0, mouseY = 0;
+      let targetRotX = 0, targetRotY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        mouseX = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
+        mouseY = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
+        targetRotY = mouseX * 0.45;
+        targetRotX = -mouseY * 0.35;
+      });
+
+      // --- SCROLL DYNAMICS ---
+      let scrollProgress = 0;
+      window.addEventListener('scroll', () => {
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        scrollProgress = window.scrollY / maxScroll;
+      });
+
+      // --- RENDER LOOP ---
+      const clock = new THREE.Clock();
+
       function animate() {
         requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
 
-        group.rotation.x += 0.004;
-        group.rotation.y += 0.006;
+        // Cursor Look-At Interpolation with Spring Damping
+        characterAnchor.rotation.y += (targetRotY - characterAnchor.rotation.y) * 0.06;
+        characterAnchor.rotation.x += (targetRotX - characterAnchor.rotation.x) * 0.06;
 
-        group.rotation.x += (mouseY * 0.4 - group.rotation.x) * 0.05;
-        group.rotation.y += (mouseX * 0.4 - group.rotation.y) * 0.05;
+        // Subtle Idle Breathing
+        characterAnchor.position.y = Math.sin(elapsed * 1.8) * 0.08;
 
-        satellites.forEach(s => {
+        // Scroll-Driven Multi-Axis Rotation and Scale
+        masterGroup.rotation.y = scrollProgress * Math.PI * 1.2;
+        masterGroup.position.z = Math.sin(scrollProgress * Math.PI) * 1.5;
+
+        // Orbital Skill Billboards Animation
+        skillMeshes.forEach(s => {
           s.angle += s.speed;
-          s.mesh.position.x = Math.cos(s.angle) * s.radius;
-          s.mesh.position.y = Math.sin(s.angle) * s.radius;
+          s.sprite.position.x = Math.cos(s.angle) * s.radius;
+          s.sprite.position.z = Math.sin(s.angle) * s.radius;
+          s.sprite.position.y = s.height + Math.sin(elapsed * 2.0 + s.angle) * 0.25;
         });
+
+        // Floor Ring Pulse
+        ringMesh.rotation.z += 0.005;
 
         renderer.render(scene, camera);
       }
       animate();
 
-      // Resize Handler
+      // Responsive Resize
       window.addEventListener('resize', () => {
         if (!container) return;
         const w = container.clientWidth || window.innerWidth;
-        const h = container.clientHeight || 480;
+        const h = container.clientHeight || 320;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);

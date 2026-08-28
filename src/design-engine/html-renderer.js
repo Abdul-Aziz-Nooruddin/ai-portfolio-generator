@@ -565,15 +565,41 @@ class HtmlRenderer {
       }
       #webgl-canvas-container { display: none !important; }
     }
+
+    /* Interactive Component 3D Cursor Spotlight & Physics */
+    .hero-3d-visual-card, .project-visual-container, .mosaic-project-item, .dossier-card, .filmstrip-card, .spatial-orbit-pod {
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      will-change: transform;
+    }
+    .hero-3d-visual-card:hover, .project-visual-container:hover, .mosaic-project-item:hover, .dossier-card:hover, .filmstrip-card:hover, .spatial-orbit-pod:hover {
+      box-shadow: 0 16px 36px -10px var(--glow, rgba(56,189,248,0.25));
+    }
     `;
 
     const threeJsLib = (motion?.libraries?.includes('three') || !compositionPlan?.nanoBanana3D?.webglCode)
-      ? ''
+      ? (motion?.libraries?.includes('three') ? '' : '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>')
       : '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>';
 
-    const nanoBananaScript = (compositionPlan?.nanoBanana3D?.webglCode && (motion?.canvasHtml || topology.id?.includes('spatial') || topology.id?.includes('stage')))
-      ? compositionPlan.nanoBanana3D.webglCode
-      : '';
+    const nanoBananaScript = compositionPlan?.nanoBanana3D?.webglCode || '';
+
+    // Cursor Reactivity & 3D Component Tilt Script
+    const cursorInteractionScript = `
+    (function initCursorCardTilt() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const interactiveCards = document.querySelectorAll('.hero-3d-visual-card, .project-visual-container, .mosaic-project-item, .dossier-card, .filmstrip-card, .spatial-orbit-pod');
+      interactiveCards.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+          const rect = card.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width - 0.5;
+          const y = (e.clientY - rect.top) / rect.height - 0.5;
+          card.style.transform = \`perspective(1000px) rotateX(\${-y * 6}deg) rotateY(\${x * 6}deg) translateY(-2px)\`;
+        });
+        card.addEventListener('mouseleave', () => {
+          card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+        });
+      });
+    })();
+    `;
 
     const html = `<!DOCTYPE html>
 <html lang="en" data-theme="${visualUniverse?.theme || 'dark'}">
@@ -599,6 +625,7 @@ class HtmlRenderer {
   <script>
     ${motion?.js || ''}
     ${nanoBananaScript}
+    ${cursorInteractionScript}
   </script>
 </body>
 </html>`;
@@ -606,7 +633,7 @@ class HtmlRenderer {
     return {
       html,
       css: styleContent.trim(),
-      js: `${motion?.js || ''}\n${nanoBananaScript}`.trim()
+      js: `${motion?.js || ''}\n${nanoBananaScript}\n${cursorInteractionScript}`.trim()
     };
   }
 
