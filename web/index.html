@@ -3,13 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Portfolio Studio — Turn Your Work Into a Portfolio Worth Remembering</title>
-  <meta name="description" content="Turn your GitHub repositories, resume, images, or guided answers into a bespoke, award-winning portfolio in seconds.">
+  <title>myfolio.tech — Bespoke 3D WebGL Portfolios in Seconds</title>
+  <meta name="description" content="Turn your GitHub repositories, resume, images, or guided answers into a bespoke, award-winning 3D WebGL portfolio with live interactive project visual cards in seconds.">
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
+  <!-- Three.js for Live Interactive Hero 3D World & GSAP for Motion -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   <!-- Canvas Confetti -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
@@ -17,7 +22,7 @@
   <script src="/sidebar.js"></script>
 </head>
 <body>
-  <!-- Ambient Warm Texture Layer -->
+  <!-- Ambient Texture Layer -->
   <div class="product-mesh-layer" aria-hidden="true"></div>
 
   <div class="app-shell-layout">
@@ -26,358 +31,714 @@
 
     <!-- Main Content Canvas -->
     <div class="app-main-content">
-      <!-- 1. Reference-Inspired Main Homepage -->
+      <!-- 1. Main Homepage Landing -->
       <section id="heroLanding" class="hero-landing-reference">
         <!-- Top Nav Header -->
         <nav class="reference-top-nav">
-          <div class="nav-brand">
-            <span class="nav-monogram">✦</span>
-            <span class="nav-brand-text">AI PORTFOLIO STUDIO</span>
+          <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
+            <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);">
+            <span class="nav-brand-text">MYFOLIO STUDIO</span>
           </div>
           <div class="nav-links">
-            <a href="#sectionShowcase" class="nav-link-item">PORTFOLIOS</a>
-            <a href="#sectionPipeline" class="nav-link-item">WORKFLOW</a>
-            <a href="#sectionCollage" class="nav-link-item">SYNTHESIS</a>
-            <a href="#sectionCtaSpot" class="nav-link-item">GET STARTED</a>
+            <a href="#sectionOverview" class="nav-link-item">OVERVIEW</a>
+            <a href="#sectionWorkflow" class="nav-link-item">WORKFLOW</a>
+            <a href="#sectionSteps" class="nav-link-item">HOW IT WORKS</a>
+            <a href="#sectionShowcase" class="nav-link-item">3D UNIVERSES</a>
+            <a href="#sectionPricing" class="nav-link-item">PRICING</a>
+            <a href="#sectionFaq" class="nav-link-item">FAQ</a>
+            <button type="button" class="theme-3d-switch-btn" onclick="togglePlatformTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme" style="margin-left: 8px;">
+              <div class="switch-3d-track">
+                <div class="track-celestial-day"><span class="cloud-puff"></span></div>
+                <div class="track-celestial-night"><span>✦</span><span>★</span></div>
+                <div class="switch-3d-thumb">
+                  <div class="thumb-face-sun">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="5" fill="#F59E0B" stroke="#D97706" stroke-width="1.5"/>
+                      <path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41m14.14-14.14l-1.41 1.41" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="thumb-face-moon">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="1.5"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </button>
             <div id="navAuthDock" class="nav-auth-dock">
               <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
-              <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">SIGN UP FREE</button>
+              <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">GET STARTED FREE</button>
             </div>
           </div>
         </nav>
 
-        <!-- Main Hero Section (Vibrant Electric Cobalt / Purple with 3D Assets) -->
-        <header class="ref-hero-banner">
+        <!-- Main Hero Section (Interactive Live 3D Canvas Background reacting to cursor movements) -->
+        <header class="ref-hero-banner" id="heroBannerStage">
           <div class="ref-hero-bg-media">
-            <img src="/assets/hero-3d.jpg" alt="3D Geometric Spheres and Capsules" class="ref-hero-3d-img" />
+            <!-- Cinematic Background Video Loop -->
+            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg">
+              <source src="/assets/hero-3d-loop.webm" type="video/webm">
+              <source src="/assets/hero-3d-loop.mp4" type="video/mp4">
+            </video>
+            <!-- Three.js Interactive Live 3D Canvas Overlay -->
+            <canvas id="heroLive3dCanvas" class="hero-live-3d-canvas"></canvas>
             <div class="ref-hero-gradient-overlay"></div>
           </div>
 
-          <div class="ref-hero-content">
-            <div class="ref-hero-badge">
-              <span class="pulse-dot"></span>
-              <span>15 AUTONOMOUS DESIGN AGENTS • 100% ZERO-LOSS</span>
-            </div>
+          <div class="ref-hero-content reveal-on-scroll">
             <h1 class="ref-hero-title">
               <span class="ref-title-line">AI Portfolio</span>
               <span class="ref-title-line">Studio</span>
             </h1>
-            <p class="ref-hero-subtitle">Turn your work into a portfolio worth remembering. Synthesize your GitHub repositories, PDF resume, visual specimens, or career answers into a bespoke, high-craft web portfolio in seconds.</p>
+            <p class="ref-hero-subtitle">Turn your work into a portfolio worth remembering. Connect your GitHub repositories, PDF resume, or career background into a bespoke 3D developer portfolio in seconds.</p>
             
             <div class="ref-hero-cta-row">
-              <button type="button" class="btn-ref-pill-outline" onclick="handleStartGeneratingClick()">START GENERATING</button>
-              <button type="button" class="btn-ref-pill-solid" onclick="openSamplesModal()">EXPLORE SAMPLES</button>
+              <button type="button" class="btn-ref-pill-outline" onclick="openAuthModal('signup')" style="cursor: pointer;">
+                🚀 START BUILDING FREE
+              </button>
+              <button type="button" class="btn-ref-pill-solid" onclick="openSamplesModal()">
+                🌌 EXPLORE 3D SAMPLES
+              </button>
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-ref-pill-solid" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.18); border: 1px solid #38bdf8; color: #38bdf8;">
+                📱 TELEGRAM BOT
+              </a>
+            </div>
+
+            <!-- Real-Time Interactive Cursor Hint -->
+            <div style="margin-top: 28px; font-family: var(--font-mono); font-size: 0.78rem; color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #38BDF8; box-shadow: 0 0 6px #38BDF8;"></span>
+              <span>Move your mouse across the screen to interact with the live 3D floating universe</span>
             </div>
           </div>
         </header>
 
-        <!-- Resumed Session Notice -->
-        <div id="resumedSessionBanner" style="display: none;" class="resumed-session-card">
-          <div class="resumed-text">
-            <span>✨ <strong>Active Portfolio Saved</strong>: <span id="resumedUsername">@developer</span></span>
-          </div>
-          <div class="resumed-actions">
-            <button type="button" class="btn-primary-mini" onclick="reopenPersistedPortfolio()">
-              <span>👁️ View Portfolio</span>
-            </button>
-            <button type="button" class="btn-ghost-mini" title="Start New Session" onclick="clearPersistedPortfolio()">
-              <span>✕</span>
-            </button>
-          </div>
-        </div>
+        <!-- Section 1: PRODUCT DETAILS & PLATFORM OVERVIEW -->
+        <section id="sectionOverview" class="landing-section" style="background: #FFFFFF;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll">PLATFORM OVERVIEW</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1">Why Traditional Portfolios Fail &amp; How We Fix It</h2>
+            <p class="section-lead-text reveal-on-scroll delay-2">Generic static templates blur into the noise. AI Portfolio Studio crafts dynamic 3D web portfolios tailored specifically for developers, engineers, and researchers.</p>
 
-        <!-- Interactive Generation Studio Dock (3 Clear Input Options) -->
-        <div id="multiInputSection" class="ref-input-dock-section">
-          <div class="multi-input-container">
-            <div class="input-selector-bar">
-              <button type="button" class="input-nav-btn active" id="tabBtnGithub" onclick="switchInputTab('github')">
-                <span class="tab-icon">🐙</span>
-                <span>1. GitHub Profile</span>
-              </button>
-              <button type="button" class="input-nav-btn" id="tabBtnResume" onclick="switchInputTab('resume')">
-                <span class="tab-icon">📄</span>
-                <span>2. Resume (PDF / Image)</span>
-              </button>
-              <button type="button" class="input-nav-btn" id="tabBtnQuestions" onclick="switchInputTab('questions')">
-                <span class="tab-icon">💬</span>
-                <span>3. Answer Questions</span>
-              </button>
-              <!-- Hidden legacy tab handles for contract isolation -->
-              <button type="button" class="input-nav-btn" id="tabBtnImages" style="display: none;" aria-hidden="true"></button>
-              <button type="button" class="input-nav-btn" id="tabBtnCombined" style="display: none;" aria-hidden="true"></button>
-            </div>
-
-            <!-- Option 1: GitHub Input -->
-            <div id="tabPanelGithub" class="input-panel active">
-              <div class="input-panel-card">
-                <div class="panel-card-head">
-                  <h3>Generate with GitHub</h3>
-                  <p>Turn your GitHub into a portfolio. Paste your GitHub username or profile link (e.g. <code>github.com/torvalds</code> or <code>torvalds</code>). We automatically analyze your repositories, code, architecture, and tech stack.</p>
-                </div>
-                <form id="githubGenerateForm" class="github-flow-form" onsubmit="handleGithubGenerate(event)">
-                  <div class="input-prefix-box">
-                    <span class="prefix-label">github.com/</span>
-                    <input type="text" id="githubUsernameInput" placeholder="username or https://github.com/username" autocomplete="off" required>
-                  </div>
-                  <div class="theme-select-box" style="margin-top: 10px;">
-                    <select id="githubThemeSelect" class="form-select-control">
-                      <option value="auto">✨ Automatic Art Direction &amp; 3D Engine (Recommended)</option>
-                      <option value="cinematic-obsidian">🌌 Obsidian &amp; Neon Tech</option>
-                      <option value="luxury-minimal">🏛️ Luxury Editorial Serif</option>
-                      <option value="futuristic-spatial">🍏 Spatial Glassmorphism</option>
-                      <option value="technical-lab">⚡ Technical Lab &amp; Monospace</option>
-                      <option value="contemporary-magazine">📰 Contemporary Editorial Magazine</option>
-                      <option value="brutalist-pop">🎨 Bold High-Contrast Accent</option>
-                      <option value="swiss-editorial">🧱 Swiss Bauhaus Grid</option>
-                    </select>
-                  </div>
-                  <!-- Optional Portrait Photo Upload for 3D Hologram Avatar -->
-                  <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
-                    <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload a photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the procedural 3D developer model with cursor/scroll physics).</p>
-                    <input type="file" id="optionalPhotoInputGithub" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
-                    <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputGithub').click()" style="padding: 5px 12px; font-size: 0.78rem;">
-                      <span>📷 Select Photo Scan (Optional)</span>
-                    </button>
-                    <span id="optionalPhotoStatusGithub" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
-                  </div>
-                  <button type="submit" id="btnGithubSubmit" class="btn-cta-main" style="margin-top: 14px;">
-                    <span>⚡ Generate My Portfolio</span>
-                  </button>
-                </form>
+            <div class="features-cards-grid">
+              <div class="feature-rich-card reveal-on-scroll delay-1">
+                <div class="feature-card-icon">💎</div>
+                <h3 class="feature-card-title">Interactive 3D Visual Engine</h3>
+                <p class="feature-card-desc">No more generic placeholder images. Every project card generates a bespoke, interactive 3D visual scene matching its exact title, description, and domain with real-time mouse look-at tilt.</p>
               </div>
-            </div>
 
-            <!-- Option 2: Resume PDF / Image Upload -->
-            <div id="tabPanelResume" class="input-panel">
-              <div class="input-panel-card text-center">
-                <div class="panel-card-head">
-                  <h3>Upload your CV / Resume</h3>
-                  <p>Upload your resume file or photo scan (PDF, PNG, JPEG, WebP — max 10 MB). We extract your complete career timeline, technical skills, projects, and achievements.</p>
-                </div>
-                <div id="resumeDropZone" class="file-drop-target" onclick="document.getElementById('pdfFileInput').click()">
-                  <input type="file" id="pdfFileInput" accept="application/pdf,image/png,image/jpeg,image/webp" style="display: none;" onchange="handleResumeFileSelected(event)">
-                  <div class="drop-icon">📥</div>
-                  <div class="drop-title">Drop PDF resume or Image scan here, or click to browse</div>
-                  <div id="pdfUploadStatus" class="drop-status">Supports PDF, PNG, JPG, WebP • Max 10 MB</div>
-                </div>
-                <div id="resumeFileSummary" style="display: none; margin-top: 12px; font-size: 0.88rem;" class="file-tag-badge">
-                  <span id="resumeFileName">resume.pdf</span>
-                  <button type="button" class="btn-remove-link" onclick="removeUploadedResume(event)">Remove</button>
-                </div>
-                <!-- Optional Portrait Photo Upload for Resume Flow -->
-                <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
-                  <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
-                  <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload your photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the default 3D developer model).</p>
-                  <input type="file" id="optionalPhotoInputResume" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
-                  <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputResume').click()" style="padding: 5px 12px; font-size: 0.78rem;">
-                    <span>📷 Select Photo Scan (Optional)</span>
-                  </button>
-                  <span id="optionalPhotoStatusResume" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
-                </div>
-                <button type="button" id="btnGenerateResume" class="btn-cta-main" style="margin-top: 16px; display: none;" onclick="generateFromResume()">
-                  <span>⚡ Generate 3D Portfolio from Resume</span>
-                </button>
+              <div class="feature-rich-card reveal-on-scroll delay-2">
+                <div class="feature-card-icon">🎨</div>
+                <h3 class="feature-card-title">Curated Design Systems</h3>
+                <p class="feature-card-desc">Intelligent design algorithms balance typography hierarchy, color harmony, layout geometry, contrast ratios, and motion choreography—ensuring every portfolio looks handcrafted.</p>
               </div>
-            </div>
 
-            <!-- Option 3: Guided Questionnaire -->
-            <div id="tabPanelQuestions" class="input-panel">
-              <div class="input-panel-card">
-                <div class="panel-card-head">
-                  <h3>3. Answer Predefined Questions</h3>
-                  <p>Share your discipline, flagship projects, skills, and background in a few structured answers.</p>
-                </div>
-                <form id="adaptiveQuestionsForm" onsubmit="handleQuestionnaireSubmit(event)">
-                  <div class="form-group-field">
-                    <label>1. What is your full name? *</label>
-                    <input type="text" id="qInputName" placeholder="e.g. Elena Rostova" required>
-                  </div>
-                  <div class="form-group-field">
-                    <label>2. What do you do &amp; what is your specialization? *</label>
-                    <input type="text" id="qInputRole" placeholder="e.g. Staff Systems Architect &amp; Core Infrastructure" required>
-                  </div>
-                  <div class="form-group-field">
-                    <label>3. Which project or technical achievement are you most proud of? *</label>
-                    <textarea id="qInputProject" rows="2" placeholder="e.g. Built an ultra-low latency raft consensus engine with zero-copy networking." required></textarea>
-                  </div>
-                  <div class="form-group-field">
-                    <label>4. What core technologies and tools power your work? *</label>
-                    <input type="text" id="qInputSkills" placeholder="e.g. Rust, Go, eBPF, Kubernetes, Tokio" required>
-                  </div>
-                  <div class="form-group-field">
-                    <label>5. In one sentence, what makes your approach different or what are you building next?</label>
-                    <input type="text" id="qInputTagline" placeholder="e.g. Designing resilient distributed data systems with formal verification.">
-                  </div>
-                  <!-- Optional Portrait Photo Upload for Questionnaire Flow -->
-                  <div class="optional-photo-box" style="margin-top: 14px; padding: 12px; border: 1px dashed var(--border, rgba(255,255,255,0.15)); border-radius: 8px; background: rgba(0,0,0,0.15); text-align: left;">
-                    <div style="font-size: 0.82rem; color: #a5b4fc; font-weight: 600; margin-bottom: 4px;">📸 Optional: Add your portrait photo</div>
-                    <p style="font-size: 0.75rem; color: #94a3b8; margin-bottom: 8px;">Upload your photo to project your 3D custom avatar hologram into the 3D scene (or leave blank to use the default 3D developer model).</p>
-                    <input type="file" id="optionalPhotoInputQuestions" accept="image/*" style="display: none;" onchange="handleOptionalPhotoSelected(event)">
-                    <button type="button" class="btn-ghost-mini" onclick="document.getElementById('optionalPhotoInputQuestions').click()" style="padding: 5px 12px; font-size: 0.78rem;">
-                      <span>📷 Select Photo Scan (Optional)</span>
-                    </button>
-                    <span id="optionalPhotoStatusQuestions" style="margin-left: 8px; font-size: 0.78rem; color: #10b981; display: none;">✅ Photo Attached</span>
-                  </div>
-                  <button type="submit" class="btn-cta-main" style="margin-top: 14px;">
-                    <span>⚡ Generate 3D Portfolio from Answers</span>
-                  </button>
-                </form>
+              <div class="feature-rich-card reveal-on-scroll delay-3">
+                <div class="feature-card-icon">🛡️</div>
+                <h3 class="feature-card-title">Accurate Project Data</h3>
+                <p class="feature-card-desc">Your real engineering achievements, verified GitHub repositories, programming languages, architectures, and career milestones are strictly preserved with zero filler text.</p>
+              </div>
+
+              <div class="feature-rich-card reveal-on-scroll delay-1">
+                <div class="feature-card-icon">📡</div>
+                <h3 class="feature-card-title">Real-Time Recruiter Telemetry</h3>
+                <p class="feature-card-desc">Interactive satellite transmission and contact forms deliver client inquiries and recruiter messages instantly to your Telegram bot and email with visitor analytics.</p>
+              </div>
+
+              <div class="feature-rich-card reveal-on-scroll delay-2">
+                <div class="feature-card-icon">📄</div>
+                <h3 class="feature-card-title">Automated PDF Resume Codex</h3>
+                <p class="feature-card-desc">Every generated portfolio includes a synchronized, high-resolution PDF resume dynamically compiled from your profile data for one-click recruiter downloads.</p>
+              </div>
+
+              <div class="feature-rich-card reveal-on-scroll delay-3">
+                <div class="feature-card-icon">🌐</div>
+                <h3 class="feature-card-title">Origin-Isolated Edge CDN</h3>
+                <p class="feature-card-desc">Instant zero-latency hosting with custom domain integration (<code>yourname.dev</code>), origin isolation, and clean static HTML/CSS ZIP export.</p>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- Section 2: FEATURED PORTFOLIOS SHOWCASE (Soft Ice-Blue Background) -->
+        <!-- Section 2: GENERATION WORKFLOW & ARCHITECTURE -->
+        <section id="sectionWorkflow" class="landing-section" style="background: #060814; color: #FFFFFF;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">SYSTEM ARCHITECTURE</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1" style="color: #FFFFFF;">The 4-Stage Autonomous Generation Pipeline</h2>
+            <p class="section-lead-text reveal-on-scroll delay-2" style="color: #94A3B8;">From raw code to high-performance 3D WebGL deployment in under 6 seconds.</p>
+
+            <div class="workflow-pipeline-wrapper reveal-on-scroll delay-3">
+              <div class="workflow-pipeline-grid">
+                <!-- Column 1 -->
+                <div class="workflow-stage-col">
+                  <span class="workflow-col-tag">STAGE 01</span>
+                  <h3 class="workflow-col-title">Multi-Modal Ingestion</h3>
+                  <div class="workflow-nodes-list">
+                    <div class="workflow-node-item">
+                      <strong>🐙 GitHub Deep Ingestion</strong>
+                      <p>Extracts public repositories, star counts, descriptions, primary languages, and commit history.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>📄 Resume OCR &amp; Document Parser</strong>
+                      <p>Extracts career timelines, education, certifications, and technical skills from PDF or image scans.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>💬 5-Question Adaptive Survey</strong>
+                      <p>Captures your engineering philosophy, flagship project, and contact information.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="workflow-stage-col">
+                  <span class="workflow-col-tag">STAGE 02</span>
+                  <h3 class="workflow-col-title">3D Archetype Synthesis</h3>
+                  <div class="workflow-nodes-list">
+                    <div class="workflow-node-item">
+                      <strong>🍌 Nano Banana 3D Engine</strong>
+                      <p>Maps each project into tailored 3D geometric archetypes (Arcade/Games, AI Neural Matrices, UI Prisms, DSA Trees, IAM Shields).</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>📐 Dynamic Perspective Physics</strong>
+                      <p>Binds real-time 3D mouse look-at tilt (<code>perspective: 800px</code>, <code>rotateY</code>, <code>rotateX</code>) and neon glows.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>✨ Procedural Visual Synthesis</strong>
+                      <p>Eliminates static placeholder images and creates 100% unique visual cards.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="workflow-stage-col">
+                  <span class="workflow-col-tag">STAGE 03</span>
+                  <h3 class="workflow-col-title">Design Intelligence</h3>
+                  <div class="workflow-nodes-list">
+                    <div class="workflow-node-item">
+                      <strong>🎨 Non-Repeating Color Palettes</strong>
+                      <p>Harmonizes curated HSL color tokens and typographic pairings (Plus Jakarta Sans, Fraunces, JetBrains Mono).</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>🌌 WebGL Motion Choreography</strong>
+                      <p>Builds interactive Three.js golden spores, astronaut orbits, quartz crystals, or botanical roots.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>🧪 Quality &amp; Accessibility Gate</strong>
+                      <p>Performs contrast audits, semantic HTML validation, and anti-AI-slop verification.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Column 4 -->
+                <div class="workflow-stage-col">
+                  <span class="workflow-col-tag">STAGE 04</span>
+                  <h3 class="workflow-col-title">Instant Edge Deployment</h3>
+                  <div class="workflow-nodes-list">
+                    <div class="workflow-node-item">
+                      <strong>⚡ Direct Live Previews</strong>
+                      <p>Serves immediate 2-hour free preview links at <code>/p/:siteId</code> with zero build step delay.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>📑 Synchronized PDF Exporter</strong>
+                      <p>Automatically builds a matching PDF resume codex for recruiters.</p>
+                    </div>
+                    <div class="workflow-node-item">
+                      <strong>📦 Offline-Ready ZIP Export</strong>
+                      <p>Export clean static HTML, CSS, JavaScript, and asset bundles.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 3: STEPS TO GENERATE -->
+        <section id="sectionSteps" class="landing-section" style="background: #FAF8F5;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll">GETTING STARTED</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1">4 Simple Ways to Generate Your 3D Portfolio</h2>
+            <p class="section-lead-text reveal-on-scroll delay-2">Create your free account to access the Creator Studio, or generate on-the-go via Telegram.</p>
+
+            <div class="steps-cards-grid">
+              <div class="step-guide-card reveal-on-scroll delay-1">
+                <div class="step-num-pill">01</div>
+                <h3 class="step-guide-title">Paste GitHub Profile</h3>
+                <p class="step-guide-desc">Enter your GitHub username or profile URL (e.g. <code>github.com/torvalds</code>). We automatically extract all repositories, tech stacks, and commit history.</p>
+                <div class="step-guide-badge">⚡ Fastest • 100% Automated</div>
+              </div>
+
+              <div class="step-guide-card reveal-on-scroll delay-2">
+                <div class="step-num-pill">02</div>
+                <h3 class="step-guide-title">Upload PDF / Image CV</h3>
+                <p class="step-guide-desc">Drag and drop your existing resume in PDF, PNG, JPG, or WebP format (up to 10 MB). Our OCR pipeline parses your career milestones and project impact.</p>
+                <div class="step-guide-badge">📄 OCR Document Extraction</div>
+              </div>
+
+              <div class="step-guide-card reveal-on-scroll delay-3">
+                <div class="step-num-pill">03</div>
+                <h3 class="step-guide-title">Answer Guided Questions</h3>
+                <p class="step-guide-desc">Answer 5 quick questions about your discipline, flagship project, and core technologies to generate a tailored narrative and custom visual style.</p>
+                <div class="step-guide-badge">💬 Bespoke Career Narrative</div>
+              </div>
+
+              <div class="step-guide-card reveal-on-scroll delay-4">
+                <div class="step-num-pill">04</div>
+                <h3 class="step-guide-title">Generate via Telegram Bot</h3>
+                <p class="step-guide-desc">Chat directly with <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" style="color:#38bdf8;font-weight:700;">@ai_portfolio_generator_bot</a> on mobile. Send your resume file or GitHub handle to receive an instant live portfolio link.</p>
+                <div class="step-guide-badge">📱 Mobile Bot Access</div>
+              </div>
+            </div>
+
+            <!-- Central Call To Action -->
+            <div style="text-align: center; margin-top: 32px;" class="reveal-on-scroll">
+              <button type="button" class="btn-ref-pill-outline" onclick="openAuthModal('signup')" style="display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; font-size: 1rem; cursor: pointer;">
+                ✨ Create Free Account &amp; Launch Studio ➔
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 4: FEATURED 3D UNIVERSES SHOWCASE (Genuine 3D Visual Assets) -->
         <section id="sectionShowcase" class="ref-speakers-section">
           <div class="ref-section-container">
-            <h2 class="ref-section-title dark-text">FEATURED PORTFOLIOS</h2>
-            <p class="ref-section-lead dark-muted">Bespoke portfolio architectures synthesized for distinctive engineering, design, and research leaders.</p>
+            <div class="section-tag-badge reveal-on-scroll" style="background: rgba(28, 25, 23, 0.08); border-color: rgba(28, 25, 23, 0.2); color: #1c1917;">3D DESIGN UNIVERSES</div>
+            <h2 class="ref-section-title dark-text reveal-on-scroll delay-1">12 Bespoke Visual Universes</h2>
+            <p class="ref-section-lead dark-muted reveal-on-scroll delay-2">Award-winning WebGL architectures synthesized dynamically with interactive 3D geometry, neon illumination, and custom shaders.</p>
 
-            <div class="ref-speakers-grid">
-              <!-- Portfolio Card 1 -->
-              <article class="ref-speaker-card">
+            <div class="ref-speakers-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+              <!-- Template Card 0: Eco-Tech Steampunk -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
                 <div class="speaker-img-wrapper">
-                  <img src="/assets/portrait-zawadi.jpg" alt="Zawadi Thandiwe" class="speaker-portrait" />
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>ECO-TECH STEAMPUNK 3D</span>
+                  </div>
+                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" onerror="this.src='/assets/3d/emerald_cyber_sanctuary_3d.png'" />
                 </div>
-                <div class="portfolio-theme-pill">🎨 Swiss Editorial Grid</div>
-                <h3 class="speaker-name">ZAWADI THANDIWE</h3>
-                <p class="speaker-bio">Creative Director Portfolio with interactive 3D WebGL motion, design token systems, and magazine case studies.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('zawadi')">View Live Specimen ↗</button>
+                <div class="portfolio-theme-pill">🌱 Eco-Tech Steampunk Sanctuary</div>
+                <h3 class="speaker-name">ECO-TECH STEAMPUNK</h3>
+                <p class="speaker-bio">9-panel organic nature &amp; vintage steampunk fusion: glowing crystal leaf hologram, tree-trunk rings, and clockwork satellite relay.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('eco-tech-steampunk')">Preview Universe ↗</button>
               </article>
 
-              <!-- Portfolio Card 2 -->
-              <article class="ref-speaker-card">
+              <!-- Template Card 1: Cosmic Astronaut -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
                 <div class="speaker-img-wrapper">
-                  <img src="/assets/portrait-ejiro.jpg" alt="Ejiro Rudo" class="speaker-portrait" />
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>COSMIC ASTRONAUT 3D</span>
+                  </div>
+                  <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" />
                 </div>
-                <div class="portfolio-theme-pill">⚡ Research Dossier</div>
-                <h3 class="speaker-name">EJIRO RUDO</h3>
-                <p class="speaker-bio">Staff AI Researcher Portfolio featuring peer-reviewed publications, DOI links, and empirical benchmark findings.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('ejiro')">View Live Specimen ↗</button>
+                <div class="portfolio-theme-pill">🌌 Cosmic Space Studio</div>
+                <h3 class="speaker-name">COSMIC ASTRONAUT</h3>
+                <p class="speaker-bio">3D Astronaut with floating planetary orbit constellation, deep space dark mode, and satellite telemetry.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cosmic-astronaut')">Preview Universe ↗</button>
               </article>
 
-              <!-- Portfolio Card 3 -->
-              <article class="ref-speaker-card">
+              <!-- Template Card 2: Cyber Crystal -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
                 <div class="speaker-img-wrapper">
-                  <img src="/assets/portrait-daniel.jpg" alt="Daniel Saoirse" class="speaker-portrait" />
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>CYBER CRYSTAL 3D</span>
+                  </div>
+                  <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" />
                 </div>
-                <div class="portfolio-theme-pill">🌌 Cinematic Obsidian</div>
-                <h3 class="speaker-name">DANIEL SAOIRSE</h3>
-                <p class="speaker-bio">Systems Architect Portfolio with deep code architecture dossiers, latency telemetry, and repository stars.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithSample('daniel')">View Live Specimen ↗</button>
+                <div class="portfolio-theme-pill">💎 Cyberpunk Crystal Holographic</div>
+                <h3 class="speaker-name">CYBER CRYSTAL</h3>
+                <p class="speaker-bio">Obsidian amethyst theme with floating 3D quartz octahedra, glowing lilac matrix, and cybernetic project cards.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cyber-crystal')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 3: Bioluminescent -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>BIOLUMINESCENT 3D</span>
+                  </div>
+                  <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🌿 Bioluminescent Cyber-Botanical</div>
+                <h3 class="speaker-name">BIOLUMINESCENT</h3>
+                <p class="speaker-bio">Midnight teal with glowing wireframe sprout, concentric radar rings, and bio-tech circuit tree of skills.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('bioluminescent-wireframe')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 4: Botanical Woodcraft -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>NATURALIST CODEX 3D</span>
+                  </div>
+                  <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🪵 Botanical Woodcraft Naturalist</div>
+                <h3 class="speaker-name">BOTANICAL WOODCRAFT</h3>
+                <p class="speaker-bio">Warm antique parchment, hand-illustrated oak tree of skills, timber walnut cards, and naturalist field guide scroll.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('botanical-woodcraft')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 5: Bio-Digital Fusion -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>CIRCUIT FUSION 3D</span>
+                  </div>
+                  <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚡ Bio-Digital Circuit Fusion</div>
+                <h3 class="speaker-name">BIO-DIGITAL FUSION</h3>
+                <p class="speaker-bio">Hybrid dark circuit matrix blending neon cyan cyber traces with illuminated botanical flora and telemetry.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('bio-digital-fusion')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 6: Emerald Cyber Sanctuary -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>EMERALD BIODOME 3D</span>
+                  </div>
+                  <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🍃 Emerald Cyber Sanctuary</div>
+                <h3 class="speaker-name">EMERALD SANCTUARY</h3>
+                <p class="speaker-bio">Deep obsidian &amp; neon mint cyber jungle with biodome laboratory telemetry, cryo cylinder, and hexagonal cards.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('emerald-cyber-sanctuary')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 7: Pristine White Crystal -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>CLAYMORPHIC GLASS 3D</span>
+                  </div>
+                  <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">❄️ Pristine White Crystal</div>
+                <h3 class="speaker-name">WHITE CRYSTAL</h3>
+                <p class="speaker-bio">Ultra-clean pearl white claymorphic glass with sky cyan accents, isometric crystal geode, and soft ambient shadows.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('pristine-white-crystal')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 8: Abyssal Quantum Jellyfish -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>QUANTUM BIOLUMINESCENCE 3D</span>
+                  </div>
+                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🪼 Abyssal Quantum Jellyfish</div>
+                <h3 class="speaker-name">QUANTUM JELLYFISH</h3>
+                <p class="speaker-bio">Deep sea neural bioluminescence with glowing robotic hand, floating quantum discs, and neon circuit branches.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('abyssal-quantum-jellyfish')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 9: Mahogany Brass Steampunk -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>CURIO CABINET 3D</span>
+                  </div>
+                  <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🕰️ Mahogany Brass Steampunk</div>
+                <h3 class="speaker-name">MAHOGANY STEAMPUNK</h3>
+                <p class="speaker-bio">Rich dark walnut woodcraft with brass toggle switches, sliding glass curio display cabinets, and leather dossier.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('mahogany-brass-steampunk')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 10: Lavender Cyber Bridge -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>COMMAND BRIDGE 3D</span>
+                  </div>
+                  <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🔮 Lavender Cyber Bridge</div>
+                <h3 class="speaker-name">LAVENDER BRIDGE</h3>
+                <p class="speaker-bio">Cybernetic command bridge terminal with glowing 3D lavender cyber avatar, crystal icosahedron, and cryo capsule.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('lavender-cyber-bridge')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 11: Sand Parchment Botanical -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>SAND BOTANICAL 3D</span>
+                  </div>
+                  <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">📜 Sand Parchment Botanical</div>
+                <h3 class="speaker-name">SAND BOTANICAL</h3>
+                <p class="speaker-bio">Warm sand parchment, pine timber woodcraft, carved botanical tree rings, and terracotta accents.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('sand-parchment-botanical')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 12: System Awakening (Shadow Monarch Hunter Interface) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>HUNTER SYSTEM 3D</span>
+                  </div>
+                  <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚔️ System Awakening</div>
+                <h3 class="speaker-name">SYSTEM AWAKENING</h3>
+                <p class="speaker-bio">Translucent glowing blue holographic Status Windows, angular chamfered panels, Mana Gauges, Quest Logs, and Shadow Monarch purple aura.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('system-awakening')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 13: Engineering Archive (Swiss Blueprint / Industrial Editorial) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>SWISS BLUEPRINT 3D</span>
+                  </div>
+                  <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">📐 Engineering Archive</div>
+                <h3 class="speaker-name">ENGINEERING ARCHIVE</h3>
+                <p class="speaker-bio">Industrial engineering archive and Swiss blueprint editorial with 12-col architectural grid, near-black graphite typography, and blueprint blue accents.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('engineering-archive')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 14: Cosmic Cyber Geometry (Futuristic Minimal / Neon Purple & Crimson) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>COSMIC GEOMETRY 3D</span>
+                  </div>
+                  <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🔮 Cosmic Cyber Geometry</div>
+                <h3 class="speaker-name">COSMIC CYBER GEOMETRY</h3>
+                <p class="speaker-bio">Futuristic minimal cyber editorial with cosmic particle fields, neon crimson &amp; purple accents, isometric project schematics, radar charts, and frosted glass dossiers.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cosmic-cyber-geometry')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 15: Stellar Architect (Cosmic Blueprint & Solar Gold) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>STELLAR BLUEPRINT 3D</span>
+                  </div>
+                  <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">✦ Stellar Architect</div>
+                <h3 class="speaker-name">STELLAR ARCHITECT</h3>
+                <p class="speaker-bio">Cosmic structural architecture where space meets blueprints. Celestial orbital trails, star-map constellations, and ghost buttons with solar gold glow.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('stellar-architect')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 16: Abyssal Ascent (Dark Fantasy Progression RPG) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>RPG PROGRESSION 3D</span>
+                  </div>
+                  <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚔️ Abyssal Ascent</div>
+                <h3 class="speaker-name">ABYSSAL ASCENT</h3>
+                <p class="speaker-bio">Gamified RPG progression aesthetic with monolithic dimensional gates, branching skill trees, quest log floor timelines, and ethereal purple aura.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('abyssal-ascent')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 17: Stealth Node (Web3 Cypherpunk & Cryptographic Terminal) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>CYPHERPUNK NODE 3D</span>
+                  </div>
+                  <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚡ Stealth Node</div>
+                <h3 class="speaker-name">STEALTH NODE</h3>
+                <p class="speaker-bio">Cypherpunk Web3 decentralized terminal with frosted glassmorphism, cryptographic green data pulses, and immutable blockchain ledger timelines.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('stealth-node')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 18: Kinetic Brutalism (High-Contrast Poster Zine) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-1">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>NEOBRUTALISM 3D</span>
+                  </div>
+                  <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚡ Kinetic Brutalism</div>
+                <h3 class="speaker-name">KINETIC BRUTALISM</h3>
+                <p class="speaker-bio">Loud, high-contrast Neobrutalist zine aesthetic with thick black borders, hard drop shadows, scrolling marquee typography, and vibrant pop colors.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('kinetic-brutalism')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 19: Circuit Core (Industrial Cyber-Minimal & Brass) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-2">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>MECHANICAL COG 3D</span>
+                  </div>
+                  <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">⚙️ Circuit Core</div>
+                <h3 class="speaker-name">CIRCUIT CORE</h3>
+                <p class="speaker-bio">Industrial cyber-minimal aesthetic with mechanical cogwheels, exposed pistons, luminous circuit traces, and polished brass plates.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('circuit-core')">Preview Universe ↗</button>
+              </article>
+
+              <!-- Template Card 20: Neon Aurora Cyber (Cyber-Minimalist Aurora Glass) -->
+              <article class="ref-speaker-card reveal-on-scroll delay-3">
+                <div class="speaker-img-wrapper">
+                  <div class="universe-badge-overlay">
+                    <span class="universe-telemetry-dot"></span>
+                    <span>NEON AURORA 3D</span>
+                  </div>
+                  <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" />
+                </div>
+                <div class="portfolio-theme-pill">🌌 Neon Aurora Cyber</div>
+                <h3 class="speaker-name">NEON AURORA</h3>
+                <p class="speaker-bio">Cyber-minimalist aurora glassmorphism with Syne display typography, neon purple-pink-orange gradients, and GitHub activity heatmaps.</p>
+                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('neon-aurora-cyber')">Preview Universe ↗</button>
               </article>
             </div>
           </div>
         </section>
 
-        <!-- Section 3: GENERATION WORKFLOW / PIPELINE (Deep Royal Indigo Background) -->
-        <section id="sectionPipeline" class="ref-schedule-section">
-          <div class="ref-section-container">
-            <h2 class="ref-section-title light-text">GENERATION WORKFLOW</h2>
-            <p class="ref-section-lead light-muted">3-stage autonomous design pipeline orchestrating complete evidence preservation.</p>
+        <!-- Section 5: PRICING & SUBSCRIPTION PLANS -->
+        <section id="sectionPricing" class="landing-section" style="background: #F8FAFC;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll">TRANSPARENT PLANS</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1">Simple, Creator-Friendly Pricing</h2>
+            <p class="section-lead-text reveal-on-scroll delay-2">Generate your complete 3D portfolio for free. Upgrade whenever you're ready to unlock permanent edge hosting and custom domains.</p>
 
-            <div class="ref-schedule-grid">
-              <!-- Column 1 -->
-              <div class="schedule-column">
-                <div class="schedule-col-header">
-                  <span class="schedule-day-label">STAGE 01</span>
-                  <h3 class="schedule-date-title">Ingestion</h3>
+            <div class="pricing-cards-grid">
+              <!-- Plan 1: Free 2-Hour Preview -->
+              <div class="pricing-plan-card reveal-on-scroll delay-1">
+                <h3 class="pricing-card-title">Free 2-Hour Trial</h3>
+                <p class="pricing-card-desc">Test your portfolio, explore all 6 3D universes, and verify your synthesized project cards.</p>
+                <div class="pricing-price-box">
+                  <span class="pricing-price-num">₹0</span>
+                  <span class="pricing-price-period">/ 2-hr preview</span>
                 </div>
-                <div class="schedule-timeline-list">
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 01</span>
-                    <strong class="item-title">GitHub Deep Repository Ingestion</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 02</span>
-                    <strong class="item-title">PDF Resume &amp; Milestone Extraction</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 03</span>
-                    <strong class="item-title">Visual Specimen &amp; Media Intake</strong>
-                  </div>
-                </div>
+                <ul class="pricing-features-list">
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <span>Full 3D WebGL Universe Generation</span></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <span>Nano Banana Live 3D Project Cards</span></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <span>2-Hour Live Edge CDN Preview Link</span></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <span>Synchronized PDF Resume Download</span></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <span>Device Viewport Preview (Desktop &amp; Mobile)</span></li>
+                </ul>
+                <button type="button" class="btn-pricing-cta secondary" onclick="openAuthModal('signup')">Sign Up Free</button>
               </div>
 
-              <!-- Column 2 -->
-              <div class="schedule-column">
-                <div class="schedule-col-header">
-                  <span class="schedule-day-label">STAGE 02</span>
-                  <h3 class="schedule-date-title">Intelligence</h3>
+              <!-- Plan 2: Starter Lifetime (₹149 One-Time) -->
+              <div class="pricing-plan-card reveal-on-scroll delay-2">
+                <div class="pricing-popular-tag" style="background: #0D9488;">LIFETIME STARTER</div>
+                <h3 class="pricing-card-title">Lifetime Starter</h3>
+                <p class="pricing-card-desc">Pay once, own forever. Perfect for students and job seekers wanting a clean permanent link.</p>
+                <div class="pricing-price-box">
+                  <span class="pricing-price-num">₹149</span>
+                  <span class="pricing-price-period">/ one-time payment</span>
                 </div>
-                <div class="schedule-timeline-list">
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 04</span>
-                    <strong class="item-title">15 Specialized Design Agents</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 05</span>
-                    <strong class="item-title">Semantic Content Graph Binding</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 06</span>
-                    <strong class="item-title">100% Zero-Loss Evidence Gate</strong>
-                  </div>
-                </div>
+                <ul class="pricing-features-list">
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Deployed &amp; Hosted on Netlify Edge CDN</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Permanent Global Netlify Live Link</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>100% Watermark Free (All badges removed)</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Static Offline-Ready ZIP Export</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Synchronized PDF Resume Codex</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>1 Free Content Re-generation / Update</strong></li>
+                </ul>
+                <button type="button" class="btn-pricing-cta secondary" onclick="openAuthModal('signup')">Get Lifetime Link ➔</button>
               </div>
 
-              <!-- Column 3 -->
-              <div class="schedule-column">
-                <div class="schedule-col-header">
-                  <span class="schedule-day-label">STAGE 03</span>
-                  <h3 class="schedule-date-title">Deployment</h3>
+              <!-- Plan 3: Pro Creator Plan (Featured - ₹149/mo) -->
+              <div class="pricing-plan-card featured reveal-on-scroll delay-3">
+                <div class="pricing-popular-tag">MOST POPULAR</div>
+                <h3 class="pricing-card-title">Pro Creator</h3>
+                <p class="pricing-card-desc">Personalized domain, real-time recruiter alerts, continuous GitHub sync, and cloud maintenance.</p>
+                <div class="pricing-price-box">
+                  <span class="pricing-price-num">₹149</span>
+                  <span class="pricing-price-period">/ month (or ₹999/yr)</span>
                 </div>
-                <div class="schedule-timeline-list">
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 07</span>
-                    <strong class="item-title">Composition Plan Execution</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 08</span>
-                    <strong class="item-title">Interactive WebGL Motion Physics</strong>
-                  </div>
-                  <div class="schedule-item-row">
-                    <span class="item-time">Step 09</span>
-                    <strong class="item-title">Instant Live Preview &amp; ZIP Export</strong>
-                  </div>
-                </div>
+                <ul class="pricing-features-list">
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Personal Subdomain: <code>&lt;name&gt;.myfolio.tech</code></strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Custom Domain Linking (e.g. <code>yourname.dev</code>)</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Unlimited Edits &amp; Auto GitHub Sync</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Real-Time Telegram &amp; WhatsApp Visitor Alerts</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>Recruiter Telemetry &amp; Analytics Dashboard</strong></li>
+                  <li class="pricing-feature-item"><span class="pricing-check-icon">✓</span> <strong>24/7 Priority Cloud Maintenance &amp; Uptime</strong></li>
+                </ul>
+                <button type="button" class="btn-pricing-cta primary" onclick="openAuthModal('signup')">Unlock Pro &amp; Personal Domain ➔</button>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Section 4: TYPOGRAPHIC COLLAGE (Soft Blue with Inline Image Badges) -->
-        <section id="sectionCollage" class="ref-collage-section">
-          <div class="ref-collage-content">
-            <div class="collage-line">
-              <span class="collage-word">Engineering</span>
-              <span class="collage-inline-chip"><img src="/assets/portrait-zawadi.jpg" alt="Design Lead" /></span>
-              <span class="collage-word">Architecture</span>
-            </div>
-            <div class="collage-line">
-              <span class="collage-inline-chip"><img src="/assets/portrait-ejiro.jpg" alt="AI Scientist" /></span>
-              <span class="collage-inline-chip chip-square"><img src="/assets/hero-3d.jpg" alt="3D Sphere" /></span>
-              <span class="collage-word">Research</span>
-            </div>
-            <div class="collage-line">
-              <span class="collage-word">Distributed</span>
-              <span class="collage-inline-chip"><img src="/assets/portrait-daniel.jpg" alt="Systems Architect" /></span>
-              <span class="collage-inline-chip chip-square"><img src="/assets/preview-3d.jpg" alt="Preview 3D" /></span>
-              <span class="collage-word">Systems</span>
-            </div>
-            <div class="collage-line">
-              <span class="collage-inline-chip chip-wide"><img src="/assets/hero-3d.jpg" alt="WebGL" /></span>
-              <span class="collage-word">Zero-Loss Portfolios</span>
+        <!-- Section 6: FREQUENTLY ASKED QUESTIONS (FAQ) -->
+        <section id="sectionFaq" class="landing-section" style="background: #FFFFFF;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll">QUESTIONS &amp; ANSWERS</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1">Frequently Asked Questions</h2>
+            <p class="section-lead-text reveal-on-scroll delay-2">Everything you need to know about how AI Portfolio Studio generates and hosts your 3D portfolio.</p>
+
+            <div class="faq-accordion-grid">
+              <div class="faq-item-card reveal-on-scroll delay-1">
+                <h4 class="faq-question-text"><span>❓</span> How does the Nano Banana 3D Engine create project images?</h4>
+                <p class="faq-answer-text">Instead of serving static placeholder JPGs, the Nano Banana engine synthesizes real-time 3D vector geometry tailored to each project's domain (e.g. Games, Neural Networks, UI Canvases, LeetCode Trees, Security Shields) with dynamic mouse look-at tilt physics.</p>
+              </div>
+
+              <div class="faq-item-card reveal-on-scroll delay-2">
+                <h4 class="faq-question-text"><span>🔒</span> Is my private GitHub code or personal data safe?</h4>
+                <p class="faq-answer-text">Yes, 100%. We only analyze public repository metadata (repo names, descriptions, languages, star counts) and documents you explicitly upload. We never access private repos or share personal data.</p>
+              </div>
+
+              <div class="faq-item-card reveal-on-scroll delay-3">
+                <h4 class="faq-question-text"><span>⏳</span> What happens when the 2-Hour free preview expires?</h4>
+                <p class="faq-answer-text">Newly generated unpaid previews remain live on our Edge CDN for 2 hours so you can inspect and customize them. You can unlock a permanent watermark-free link for ₹149 One-Time, or upgrade to Pro (₹149/mo) for your personal subdomain (<code>&lt;name&gt;.myfolio.tech</code>), GitHub auto-sync, and Telegram alerts.</p>
+              </div>
+
+              <div class="faq-item-card reveal-on-scroll delay-1">
+                <h4 class="faq-question-text"><span>🌐</span> Can I link my own custom domain?</h4>
+                <p class="faq-answer-text">Yes! Pro subscribers can connect any custom domain (e.g. <code>alexchen.dev</code> or <code>portfolio.yourbrand.com</code>) directly through the User Dashboard with automated SSL certificate provisioning.</p>
+              </div>
+
+              <div class="faq-item-card reveal-on-scroll delay-2">
+                <h4 class="faq-question-text"><span>📦</span> Can I download the source code to host myself?</h4>
+                <p class="faq-answer-text">Yes. The Studio workspace provides a one-click Static ZIP Export containing clean HTML, CSS, JavaScript, and Three.js assets ready to deploy on Vercel, Netlify, or GitHub Pages.</p>
+              </div>
+
+              <div class="faq-item-card reveal-on-scroll delay-3">
+                <h4 class="faq-question-text"><span>📱</span> How does the Telegram Bot work?</h4>
+                <p class="faq-answer-text">Our official bot (<a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">@ai_portfolio_generator_bot</a>) allows you to generate portfolios on mobile by sending a resume file or GitHub link, and forwards client leads directly to your Telegram chat.</p>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Section 5: SAVE YOUR SPOT / CALL TO ACTION (Midnight Navy) -->
+        <!-- Section 7: FINAL CALL TO ACTION -->
         <section id="sectionCtaSpot" class="ref-spot-section">
           <div class="ref-spot-container">
             <!-- Left: 3D Interactive Media Card -->
-            <div class="spot-media-card">
+            <div class="spot-media-card reveal-on-scroll delay-1">
               <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" />
               <button type="button" class="btn-spot-play" onclick="openSamplesModal()" aria-label="Play Demo Preview">
                 <span class="play-icon">▶</span>
@@ -385,21 +746,26 @@
             </div>
 
             <!-- Right: Save Your Spot Copy -->
-            <div class="spot-info-block">
+            <div class="spot-info-block reveal-on-scroll delay-2">
               <h2 class="spot-headline">
                 <span>BUILD YOUR</span>
                 <span>BESPOKE SPOT</span>
                 <span>TODAY</span>
               </h2>
-              <p class="spot-description">Join developers, researchers, and designers crafting distinctive, zero-loss portfolios with autonomous design intelligence.</p>
-              <button type="button" class="btn-ref-pill-outline spot-btn" onclick="openAuthModal('signup')">
-                SIGN UP FREE ➔
-              </button>
+              <p class="spot-description">Join developers, researchers, and designers crafting distinctive, zero-loss 3D portfolios with autonomous design intelligence.</p>
+              <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                <button type="button" class="btn-ref-pill-outline spot-btn" onclick="openAuthModal('signup')">
+                  SIGN UP FREE ➔
+                </button>
+                <button type="button" class="btn-ref-pill-solid" onclick="openAuthModal('signin')">
+                  SIGN IN ➔
+                </button>
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Trust & Privacy Transparency Footer -->
+        <!-- Trust & Transparency Footer -->
         <footer class="ref-landing-footer">
           <div class="ref-footer-brand">
             <span class="nav-monogram">✦</span>
@@ -411,17 +777,24 @@
             <span>⚡ <strong>100% Free Live Preview</strong></span>
             <span>•</span>
             <span>📦 <strong>Clean Static ZIP Export</strong></span>
+            <span>•</span>
+            <span><a href="/login" style="color: #a5b4fc; text-decoration: none;">Login</a></span>
+            <span>•</span>
+            <span><a href="/signup" style="color: #a5b4fc; text-decoration: none;">Sign Up</a></span>
+            <span>•</span>
+            <span><a href="/terms" target="_blank" style="color: #a5b4fc; text-decoration: none;">Terms of Service</a></span>
+            <span>•</span>
+            <span><a href="/privacy" target="_blank" style="color: #a5b4fc; text-decoration: none;">Privacy Policy</a></span>
           </div>
         </footer>
       </section>
 
-      <!-- 2. Fullscreen Studio Preview Canvas -->
+      <!-- 2. Fullscreen Studio Preview Canvas (Preserved for Live Previews) -->
       <section id="studioWorkspace" class="studio-fullscreen-view" style="display: none;">
-        <!-- Clean Studio Top Navigation Bar -->
         <header class="studio-topbar">
           <div class="topbar-left">
-            <button type="button" class="btn-topbar-nav" onclick="closeStudioView()" title="Back to Builder">
-              <span>← Builder</span>
+            <button type="button" class="btn-topbar-nav" onclick="closeStudioView()" title="Back to Home">
+              <span>← Back</span>
             </button>
             <div class="topbar-title-block">
               <span id="studioPortfolioName" class="portfolio-name-label">Portfolio Studio</span>
@@ -441,9 +814,6 @@
             <button type="button" class="btn-topbar-action" onclick="openCustomizerModal()">
               <span>🛠️ Customize</span>
             </button>
-            <button type="button" class="btn-topbar-action" onclick="regenerateStudioDesign()">
-              <span>🔄 Regenerate</span>
-            </button>
             <button type="button" class="btn-topbar-action primary" onclick="openExportModal()">
               <span>📦 Export ZIP</span>
             </button>
@@ -453,12 +823,11 @@
           </div>
         </header>
 
-        <!-- Viewport Stage -->
         <main class="studio-canvas-stage">
           <div id="previewFrameWrapper" class="preview-frame-wrapper desktop-mode">
             <div id="previewLoader" class="preview-loader-overlay">
               <div class="spinner-ring"></div>
-              <p id="previewLoaderText">Generating your portfolio...</p>
+              <p id="previewLoaderText">Loading 3D Portfolio...</p>
             </div>
             <iframe id="portfolioIframe" src="about:blank" title="Portfolio Preview"></iframe>
           </div>
@@ -467,262 +836,130 @@
     </div>
   </div>
 
-  <!-- 3. Truthful Generation Progress Modal -->
-  <div id="githubProgressModal" class="product-modal-backdrop" style="display: none;">
-    <div class="product-modal-card">
-      <button type="button" class="btn-modal-close" onclick="closeGithubModal()" aria-label="Close Modal">✕</button>
-      
-      <div class="modal-head-block">
-        <h2 id="githubProgressTitle">Synthesizing Your Portfolio</h2>
-        <p id="githubProgressSubtitle" class="modal-subtext">Executing design intelligence and storytelling architecture...</p>
-        <div class="elapsed-timer-badge" id="generationTimerBadge">Elapsed: 0.0s</div>
-      </div>
-
-      <!-- 7 Truthful Stages -->
-      <div class="truthful-stages-list" id="githubProgressBox">
-        <div class="stage-item active" id="stage-1">
-          <span class="stage-num">01</span>
-          <div class="stage-text">
-            <strong>Understanding your work</strong>
-            <span>Extracting verified achievements, repositories, and career trajectory</span>
-          </div>
-          <span class="stage-icon">⏳</span>
-        </div>
-        <div class="stage-item" id="stage-2">
-          <span class="stage-num">02</span>
-          <div class="stage-text">
-            <strong>Organizing your story</strong>
-            <span>Establishing macro information architecture and section hierarchies</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-        <div class="stage-item" id="stage-3">
-          <span class="stage-num">03</span>
-          <div class="stage-text">
-            <strong>Choosing a visual direction</strong>
-            <span>Harmonizing editorial typography, color scales, and spatial geometry</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-        <div class="stage-item" id="stage-4">
-          <span class="stage-num">04</span>
-          <div class="stage-text">
-            <strong>Designing the page</strong>
-            <span>Assembling composition-driven headers, navigation, and identity plates</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-        <div class="stage-item" id="stage-5">
-          <span class="stage-num">05</span>
-          <div class="stage-text">
-            <strong>Shaping your projects</strong>
-            <span>Structuring technical case studies, key metrics, and artifact cards</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-        <div class="stage-item" id="stage-6">
-          <span class="stage-num">06</span>
-          <div class="stage-text">
-            <strong>Checking the result</strong>
-            <span>Running accessibility, contrast, and legacy vibe quality gates</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-        <div class="stage-item" id="stage-7">
-          <span class="stage-num">07</span>
-          <div class="stage-text">
-            <strong>Preparing your portfolio</strong>
-            <span>Packaging responsive single-page web document</span>
-          </div>
-          <span class="stage-icon"></span>
-        </div>
-      </div>
-
-      <!-- Structured Error Card (Shown on failure) -->
-      <div id="githubErrorCard" style="display: none;" class="structured-error-card">
-        <div class="error-status-badge">⚠️ Action Required</div>
-        <h3 id="errorWhatHappenedTitle" class="error-title">We encountered an issue</h3>
-        <p id="errorWhyText" class="error-reason"></p>
-        <div id="errorWhatYouCanDoBox" class="error-advice-box"></div>
-        <div class="error-action-buttons">
-          <button type="button" id="btnErrorPrimaryAction" class="btn-cta-main" onclick="handleErrorPrimaryAction()">Try Again</button>
-          <button type="button" id="btnErrorSecondaryAction" class="btn-subtle" onclick="handleErrorSecondaryAction()">Continue with Resume</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 4. Humanized Customizer Sheet / Drawer -->
-  <div id="customizerDrawer" class="customizer-drawer-backdrop" style="display: none;">
-    <div class="customizer-drawer-panel">
-      <div class="drawer-header">
-        <div>
-          <h3>Customize Portfolio</h3>
-          <p>Fine-tune content, appearance, and layout</p>
-        </div>
-        <button type="button" class="btn-modal-close" onclick="closeCustomizerModal()">✕</button>
-      </div>
-
-      <div class="customizer-sections-scroll">
-        <!-- Group 1: Appearance & Style -->
-        <div class="customizer-group">
-          <h4 class="group-title">Style &amp; Appearance</h4>
-          
-          <div class="control-row">
-            <label>Section Spacing</label>
-            <div class="pill-options-group">
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('spacing', 'compact', this)">Compact</button>
-              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('spacing', 'balanced', this)">Balanced</button>
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('spacing', 'spacious', this)">Spacious</button>
-            </div>
-          </div>
-
-          <div class="control-row">
-            <label>Corner Radius</label>
-            <div class="pill-options-group">
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('corners', 'sharp', this)">Sharp</button>
-              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('corners', 'soft', this)">Soft</button>
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('corners', 'rounded', this)">Rounded</button>
-            </div>
-          </div>
-
-          <div class="control-row">
-            <label>Typography Scale</label>
-            <div class="pill-options-group">
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('typography', 'quiet', this)">Quiet</button>
-              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('typography', 'editorial', this)">Editorial</button>
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('typography', 'bold', this)">Bold</button>
-            </div>
-          </div>
-
-          <div class="control-row">
-            <label>Motion Treatment</label>
-            <div class="pill-options-group">
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('motion', 'still', this)">Still</button>
-              <button type="button" class="pill-opt-btn active" onclick="applyHumanToken('motion', 'subtle', this)">Subtle</button>
-              <button type="button" class="pill-opt-btn" onclick="applyHumanToken('motion', 'expressive', this)">Expressive</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Group 2: Content & Sections -->
-        <div class="customizer-group">
-          <h4 class="group-title">Section Ordering &amp; Visibility</h4>
-          <div id="customizerSectionsList" class="customizer-sections-stack"></div>
-        </div>
-      </div>
-
-      <!-- Drawer Footer Actions -->
-      <div class="drawer-footer">
-        <div class="drawer-undo-redo">
-          <button type="button" class="btn-drawer-tool" id="btnUndo" onclick="handleCustomizerAction('undo')" title="Undo change">↶ Undo</button>
-          <button type="button" class="btn-drawer-tool" id="btnRedo" onclick="handleCustomizerAction('redo')" title="Redo change">↷ Redo</button>
-          <button type="button" class="btn-drawer-tool" onclick="handleCustomizerAction('reset')" title="Reset to original">🔄 Reset</button>
-        </div>
-        <button type="button" class="btn-cta-main" style="margin-top: 8px; width: 100%;" onclick="closeCustomizerModal()">
-          <span>✓ Done Customizing</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- 5. Static ZIP Export Modal -->
-  <div id="exportModal" class="product-modal-backdrop" style="display: none;">
-    <div class="product-modal-card">
-      <button type="button" class="btn-modal-close" onclick="closeExportModal()">✕</button>
-      <div class="modal-head-block">
-        <h2>Export Standalone Website</h2>
-        <p class="modal-subtext">Download your complete, offline-ready portfolio ZIP with zero watermarks or dependencies.</p>
-      </div>
-
-      <div class="export-options-list">
-        <div class="export-option-card">
-          <div class="export-icon">📦</div>
-          <div class="export-details">
-            <strong>Static Production ZIP</strong>
-            <p>Includes HTML, CSS, JavaScript, assets, and 1-click deployment guides for Vercel, Netlify, &amp; GitHub Pages.</p>
-          </div>
-          <button type="button" class="btn-primary-mini" onclick="downloadStaticZip()">Download ZIP</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. Samples & Demo Explorer Modal -->
+  <!-- 3. Samples & Demo Explorer Modal -->
   <div id="samplesModal" class="product-modal-backdrop" style="display: none;">
     <div class="product-modal-card" style="max-width: 780px;">
       <button type="button" class="btn-modal-close" onclick="closeSamplesModal()">✕</button>
       <div class="modal-head-block">
-        <h2>Explore Example Portfolios</h2>
-        <p class="modal-subtext">See how different engineering and design specializations synthesize into unique visual worlds.</p>
+        <h2>Explore Example 3D Portfolios</h2>
+        <p class="modal-subtext">See how different engineering and design specializations synthesize into unique 3D visual worlds.</p>
       </div>
       <div id="samplesGalleryGrid" class="sample-gallery-grid"></div>
     </div>
   </div>
 
-  <!-- 7. Mandatory User Auth Modal (Sign Up & Sign In) -->
+  <!-- 4. Mandatory User Auth Modal (Sign Up & Sign In) -->
   <div id="authModal" class="product-modal-backdrop" style="display: none;">
-    <div class="product-modal-card" style="max-width: 480px;">
-      <button type="button" class="btn-modal-close" onclick="closeAuthModal()">✕</button>
+    <div class="product-modal-card cosmic-auth-card" style="max-width: 490px;">
+      <button type="button" class="btn-modal-close" onclick="closeAuthModal()" aria-label="Close modal">✕</button>
       
       <div class="modal-head-block" style="margin-bottom: 20px;">
         <div class="auth-modal-badge">
-          <span>🔒 SECURE ACCOUNT REQUIRED</span>
+          <span class="pulse-dot"></span>
+          <span id="authModalBadgeText">🔒 SECURE DEVELOPER ACCESS</span>
         </div>
-        <h2 id="authModalTitle">Sign up to AI Portfolio Studio</h2>
-        <p id="authModalSubtitle" class="modal-subtext">Create a free account or sign in to generate and save your bespoke portfolio.</p>
+        <h2 id="authModalTitle" class="cosmic-modal-title">Create Free Account</h2>
+        <p id="authModalSubtitle" class="modal-subtext">Join AI Portfolio Studio to generate, save and publish bespoke 3D portfolios.</p>
       </div>
 
       <!-- Auth Modal Tabs Switcher -->
       <div class="auth-modal-tabs">
-        <button type="button" class="auth-tab-btn active" id="authTabSignup" onclick="switchAuthModalTab('signup')">Sign Up Free</button>
-        <button type="button" class="auth-tab-btn" id="authTabSignin" onclick="switchAuthModalTab('signin')">Sign In</button>
+        <button type="button" class="auth-tab-btn active" id="authTabSignup" onclick="switchAuthModalTab('signup')">
+          <span>✨ Create Free Account</span>
+        </button>
+        <button type="button" class="auth-tab-btn" id="authTabSignin" onclick="switchAuthModalTab('signin')">
+          <span>Sign In</span>
+        </button>
       </div>
 
-      <!-- Alert Box inside Modal -->
+      <!-- 1-Click Social Sign-In Buttons -->
+      <div class="auth-social-dock">
+        <button type="button" class="btn-social-auth btn-social-github" onclick="handleSocialAuth('github')">
+          <svg class="social-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>Continue with GitHub</span>
+        </button>
+        <button type="button" class="btn-social-auth btn-social-google" onclick="handleSocialAuth('google')">
+          <svg class="social-icon" width="18" height="18" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+      </div>
+
+      <div class="auth-divider">
+        <span>or with credentials</span>
+      </div>
+
       <div id="authModalAlert" class="auth-modal-alert" style="display: none;"></div>
 
       <!-- Sign Up Form -->
       <form id="modalSignupForm" class="auth-modal-form" onsubmit="handleModalSignup(event)">
         <div class="form-group-field">
-          <label>Full Name</label>
-          <input type="text" id="modalSignupName" placeholder="e.g. Elena Rostova" required autocomplete="name">
+          <label for="modalSignupName">Full Name</label>
+          <input type="text" id="modalSignupName" placeholder="e.g. Abdul Aziz Nooruddin" required autocomplete="name">
         </div>
         <div class="form-group-field">
-          <label>Email Address</label>
-          <input type="email" id="modalSignupEmail" placeholder="elena@example.com" required autocomplete="email">
+          <label for="modalSignupEmail">Email Address</label>
+          <input type="email" id="modalSignupEmail" placeholder="developer@example.com" required autocomplete="email">
         </div>
         <div class="form-group-field">
-          <label>Username</label>
-          <input type="text" id="modalSignupUsername" placeholder="e.g. elena_systems" required autocomplete="username">
+          <label for="modalSignupUsername">Username (for custom URL)</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">@</span>
+            <input type="text" id="modalSignupUsername" placeholder="abdulaziz" required autocomplete="username">
+          </div>
         </div>
         <div class="form-group-field">
-          <label>Password (min 8 characters)</label>
-          <input type="password" id="modalSignupPassword" placeholder="••••••••" required minlength="8" autocomplete="new-password">
+          <div class="field-label-row">
+            <label for="modalSignupPassword">Password</label>
+            <span id="passwordStrengthLabel" class="strength-tag strength-empty">8+ chars required</span>
+          </div>
+          <div class="input-password-wrapper">
+            <input type="password" id="modalSignupPassword" placeholder="••••••••" required minlength="8" autocomplete="new-password" oninput="updatePasswordStrength(this.value)">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('modalSignupPassword', this)" title="Show/Hide password">👁️</button>
+          </div>
+          
+          <div class="password-meter-track" id="passwordMeterTrack">
+            <div class="meter-bar" id="meterBar1"></div>
+            <div class="meter-bar" id="meterBar2"></div>
+            <div class="meter-bar" id="meterBar3"></div>
+            <div class="meter-bar" id="meterBar4"></div>
+          </div>
         </div>
-        <div class="form-checkbox-row" style="margin: 12px 0 18px;">
+        <div class="form-checkbox-row" style="margin: 14px 0 20px;">
           <input type="checkbox" id="modalTermsAccepted" required checked>
-          <label for="modalTermsAccepted" style="font-size: 0.84rem; color: var(--product-text-muted);">
-            I agree to the <a href="/terms" target="_blank" style="color: var(--primary);">Terms of Service</a> and <a href="/privacy" target="_blank" style="color: var(--primary);">Privacy Policy</a>.
+          <label for="modalTermsAccepted" style="font-size: 0.82rem; color: var(--product-text-muted);">
+            I agree to the <a href="/terms" target="_blank" style="color: #8b5cf6;">Terms of Service</a> &amp; <a href="/privacy" target="_blank" style="color: #8b5cf6;">Privacy Policy</a>.
           </label>
         </div>
-        <button type="submit" id="btnModalSignupSubmit" class="btn-cta-main" style="width: 100%;">
-          <span>⚡ Create Free Account &amp; Continue</span>
+        <button type="submit" id="btnModalSignupSubmit" class="btn-cta-main cosmic-auth-btn" style="width: 100%;">
+          <span>⚡ Create Free Account &amp; Launch Studio</span>
         </button>
       </form>
 
       <!-- Sign In Form -->
       <form id="modalSigninForm" class="auth-modal-form" style="display: none;" onsubmit="handleModalSignin(event)">
         <div class="form-group-field">
-          <label>Email or Username</label>
-          <input type="text" id="modalSigninIdentifier" placeholder="elena@example.com or @username" required autocomplete="username">
+          <label for="modalSigninIdentifier">Email or Username</label>
+          <input type="text" id="modalSigninIdentifier" placeholder="developer@example.com or @username" required autocomplete="username">
         </div>
         <div class="form-group-field">
-          <label>Password</label>
-          <input type="password" id="modalSigninPassword" placeholder="••••••••" required autocomplete="current-password">
+          <div class="field-label-row">
+            <label for="modalSigninPassword">Password</label>
+            <a href="javascript:void(0)" onclick="openForgotPasswordFlow()" class="link-forgot-pass">Forgot?</a>
+          </div>
+          <div class="input-password-wrapper">
+            <input type="password" id="modalSigninPassword" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('modalSigninPassword', this)" title="Show/Hide password">👁️</button>
+          </div>
         </div>
-        <button type="submit" id="btnModalSigninSubmit" class="btn-cta-main" style="width: 100%; margin-top: 14px;">
-          <span>Sign In &amp; Continue ➔</span>
+        <button type="submit" id="btnModalSigninSubmit" class="btn-cta-main cosmic-auth-btn" style="width: 100%; margin-top: 18px;">
+          <span>Sign In to Developer Studio ➔</span>
         </button>
       </form>
     </div>
@@ -731,6 +968,191 @@
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="toast-container"></div>
 
+  <!-- Scripts -->
   <script src="/app.js"></script>
+
+  <!-- Interactive Three.js Live 3D Floating Universe & Cursor Movement Script -->
+  <script>
+    (function initHeroInteractive3D() {
+      const canvas = document.getElementById('heroLive3dCanvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 24;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // 1. Lighting Setup
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+      scene.add(ambientLight);
+
+      const mainLight = new THREE.DirectionalLight(0x38bdf8, 2.5);
+      mainLight.position.set(20, 20, 20);
+      scene.add(mainLight);
+
+      const purpleLight = new THREE.PointLight(0xa855f7, 3, 50);
+      purpleLight.position.set(-15, -10, 15);
+      scene.add(purpleLight);
+
+      const pinkLight = new THREE.PointLight(0xec4899, 2.5, 40);
+      pinkLight.position.set(10, -15, 10);
+      scene.add(pinkLight);
+
+      // 2. Floating 3D Geometries Group
+      const objectsGroup = new THREE.Group();
+      scene.add(objectsGroup);
+
+      const objects = [];
+
+      // A. Centerpiece Smooth Glass / Chrome Sphere
+      const sphereGeo = new THREE.SphereGeometry(4.2, 48, 48);
+      const sphereMat = new THREE.MeshPhysicalMaterial({
+        color: 0x8b5cf6,
+        roughness: 0.1,
+        metalness: 0.2,
+        transmission: 0.7,
+        ior: 1.5,
+        reflectivity: 0.9,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.1
+      });
+      const centerSphere = new THREE.Mesh(sphereGeo, sphereMat);
+      centerSphere.position.set(0, 0.5, 0);
+      objectsGroup.add(centerSphere);
+      objects.push({ mesh: centerSphere, rotX: 0.003, rotY: 0.005, floatSpeed: 0.02, floatAmp: 0.3, initialY: 0.5 });
+
+      // B. Floating Metallic Capsules / Pills
+      const capsuleGeo = new THREE.CylinderGeometry(1.2, 1.2, 3.8, 32);
+      const metalMat1 = new THREE.MeshStandardMaterial({
+        color: 0x4f46e5,
+        metalness: 0.85,
+        roughness: 0.15
+      });
+      const metalMat2 = new THREE.MeshStandardMaterial({
+        color: 0x9333ea,
+        metalness: 0.9,
+        roughness: 0.1
+      });
+      const cyanMat = new THREE.MeshStandardMaterial({
+        color: 0x06b6d4,
+        metalness: 0.8,
+        roughness: 0.2
+      });
+
+      // Capsule 1 (Top Left)
+      const cap1 = new THREE.Mesh(capsuleGeo, metalMat1);
+      cap1.position.set(-11, 5, -4);
+      cap1.rotation.z = Math.PI / 4;
+      objectsGroup.add(cap1);
+      objects.push({ mesh: cap1, rotX: 0.008, rotY: 0.006, floatSpeed: 0.018, floatAmp: 0.6, initialY: 5 });
+
+      // Capsule 2 (Bottom Right)
+      const cap2 = new THREE.Mesh(capsuleGeo, metalMat2);
+      cap2.position.set(12, -4, -2);
+      cap2.rotation.z = -Math.PI / 3;
+      objectsGroup.add(cap2);
+      objects.push({ mesh: cap2, rotX: 0.007, rotY: 0.009, floatSpeed: 0.022, floatAmp: 0.7, initialY: -4 });
+
+      // C. Floating Chrome Octahedra & Torus Rings
+      const octGeo = new THREE.OctahedronGeometry(2.2, 0);
+      const octMesh = new THREE.Mesh(octGeo, cyanMat);
+      octMesh.position.set(-9, -6, 2);
+      objectsGroup.add(octMesh);
+      objects.push({ mesh: octMesh, rotX: 0.012, rotY: 0.015, floatSpeed: 0.025, floatAmp: 0.5, initialY: -6 });
+
+      const torusGeo = new THREE.TorusGeometry(2.4, 0.45, 16, 40);
+      const torusMesh = new THREE.Mesh(torusGeo, metalMat1);
+      torusMesh.position.set(10, 6, -1);
+      objectsGroup.add(torusMesh);
+      objects.push({ mesh: torusMesh, rotX: 0.01, rotY: 0.012, floatSpeed: 0.015, floatAmp: 0.4, initialY: 6 });
+
+      // D. Background Particle Stars Nebula
+      const partGeo = new THREE.BufferGeometry();
+      const partCount = 400;
+      const posArray = new Float32Array(partCount * 3);
+      for (let i = 0; i < partCount * 3; i += 3) {
+        posArray[i] = (Math.random() - 0.5) * 60;
+        posArray[i + 1] = (Math.random() - 0.5) * 40;
+        posArray[i + 2] = (Math.random() - 0.5) * 40;
+      }
+      partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      const partMat = new THREE.PointsMaterial({
+        size: 0.16,
+        color: 0x93c5fd,
+        transparent: true,
+        opacity: 0.8
+      });
+      const particlesMesh = new THREE.Points(partGeo, partMat);
+      scene.add(particlesMesh);
+
+      // 3. Real-Time Mouse Cursor Tracking & Parallax
+      let mouseX = 0;
+      let mouseY = 0;
+      let targetX = 0;
+      let targetY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      // Resize handling
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // 4. Animation Loop with Inertia Lerp
+      let clock = new THREE.Clock();
+
+      function animate3D() {
+        requestAnimationFrame(animate3D);
+        const time = clock.getElapsedTime();
+
+        // Smooth Cursor Following (Lerp)
+        targetX += (mouseX - targetX) * 0.05;
+        targetY += (mouseY - targetY) * 0.05;
+
+        objectsGroup.rotation.y = targetX * 0.45;
+        objectsGroup.rotation.x = -targetY * 0.35;
+
+        camera.position.x = targetX * 2.5;
+        camera.position.y = -targetY * 2.0;
+        camera.lookAt(scene.position);
+
+        // Gentle Floating & Rotation Physics on every object
+        objects.forEach((obj, idx) => {
+          obj.mesh.rotation.x += obj.rotX;
+          obj.mesh.rotation.y += obj.rotY;
+          obj.mesh.position.y = obj.initialY + Math.sin(time * 2 + idx * 1.5) * obj.floatAmp;
+        });
+
+        particlesMesh.rotation.y = time * 0.03;
+        renderer.render(scene, camera);
+      }
+
+      animate3D();
+    })();
+
+    // 5. Scroll Reveal Animation Trigger
+    (function initScrollReveal() {
+      const revealEls = document.querySelectorAll('.reveal-on-scroll');
+      if (!revealEls.length) return;
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-revealed');
+          }
+        });
+      }, { threshold: 0.12 });
+
+      revealEls.forEach(el => observer.observe(el));
+    })();
+  </script>
 </body>
 </html>

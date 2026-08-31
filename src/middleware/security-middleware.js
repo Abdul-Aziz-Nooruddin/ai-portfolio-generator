@@ -13,8 +13,8 @@ class SecurityMiddleware {
       const isProduction = process.env.NODE_ENV === 'production';
       const csp = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.jsdelivr.net",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
         "font-src 'self' https://fonts.gstatic.com data:",
         "img-src 'self' data: https: blob:",
         "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com",
@@ -81,12 +81,17 @@ class SecurityMiddleware {
   static corsConfig() {
     return (req, res, next) => {
       const origin = req.headers.origin;
-      const hostUrl = process.env.HOST_URL || 'http://localhost:3000';
+      const port = process.env.PORT || 5050;
+      const hostUrl = process.env.HOST_URL || `http://localhost:${port}`;
       const envAllowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
       const allowedOrigins = new Set([
         hostUrl,
+        `http://localhost:${port}`,
+        `http://127.0.0.1:${port}`,
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'http://localhost:5050',
+        'http://127.0.0.1:5050',
         ...envAllowed
       ]);
 

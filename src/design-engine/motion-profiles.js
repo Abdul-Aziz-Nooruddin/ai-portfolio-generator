@@ -129,12 +129,25 @@ const MOTION_LANGUAGES = {
     webglAllowed: true,
     webglGeometry: 'Icosahedron',
     hoverScale: 1.02
+  },
+  'cosmic-astronaut-drift': {
+    id: 'cosmic-astronaut-drift',
+    name: 'Cosmic Zero-G Astronaut Floating & Planet Orbit',
+    duration: 1.1,
+    stagger: 0.12,
+    yOffset: 24,
+    xOffset: 0,
+    ease: 'power2.out',
+    tiltSensitivity: 0.04,
+    webglAllowed: true,
+    webglGeometry: 'AstronautPlanet',
+    hoverScale: 1.025
   }
 };
 
 class MotionEngine {
   static getLanguage(id) {
-    return MOTION_LANGUAGES[id] || MOTION_LANGUAGES['technical-stagger'];
+    return MOTION_LANGUAGES[id] || MOTION_LANGUAGES['cosmic-astronaut-drift'];
   }
 
   static getAllLanguages() {
@@ -143,24 +156,25 @@ class MotionEngine {
 
   static selectLanguage(visualUniverseId, iaModelId, recentHistory = []) {
     const map = {
+      'cosmic-astronaut-holographic': ['cosmic-astronaut-drift', 'spatial-orbit', 'cinematic-drift'],
       'swiss-editorial': ['editorial-reveal', 'typographic-reveal'],
       'contemporary-magazine': ['editorial-reveal', 'horizontal-parallax'],
       'brutalist-pop': ['brutalist-snap', 'data-pulse'],
       'cinematic-obsidian': ['cinematic-drift', 'slow-luxury'],
       'technical-lab': ['technical-stagger', 'data-pulse', 'terminal-boot'],
       'monochrome-gallery': ['typographic-reveal', 'horizontal-parallax'],
-      'futuristic-spatial': ['spatial-orbit', 'cinematic-drift'],
+      'futuristic-spatial': ['spatial-orbit', 'cosmic-astronaut-drift'],
       'luxury-minimal': ['slow-luxury', 'editorial-reveal'],
       'expressive-typographic': ['brutalist-snap', 'typographic-reveal'],
       'warm-editorial': ['editorial-reveal', 'slow-luxury']
     };
 
-    const preferred = map[visualUniverseId] || ['technical-stagger', 'editorial-reveal'];
+    const preferred = map[visualUniverseId] || ['cosmic-astronaut-drift', 'technical-stagger'];
     const recentMotionIds = recentHistory.map(h => h.motionProfileId).filter(Boolean);
     const nonRecent = preferred.filter(id => !recentMotionIds.slice(-3).includes(id));
     const chosenId = nonRecent.length > 0 ? nonRecent[0] : preferred[Math.floor(Math.random() * preferred.length)];
 
-    return MOTION_LANGUAGES[chosenId] || MOTION_LANGUAGES['technical-stagger'];
+    return MOTION_LANGUAGES[chosenId] || MOTION_LANGUAGES['cosmic-astronaut-drift'];
   }
 }
 

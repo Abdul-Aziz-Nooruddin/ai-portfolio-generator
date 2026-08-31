@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Design Resources Studio — Integrated with Brad Traversy's Directory & /design Engine</title>
+  <title>Design Resources &amp; Themes Studio</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -481,7 +481,7 @@
           <span id="stat-res-count">1,074</span> Resources Integrated
         </div>
         <a href="/design-demo.html" class="btn btn-secondary" style="font-size:0.82rem;padding:8px 14px;">
-          <i data-lucide="sparkles" style="width:14px;height:14px;"></i> /design Live Demo
+          <i data-lucide="sparkles" style="width:14px;height:14px;"></i> Interactive Design Gallery
         </a>
       </div>
     </div>
@@ -632,6 +632,9 @@
             </button>
             <button class="viewport-btn" onclick="setViewport('375px', this)">
               <i data-lucide="smartphone" style="width:13px;height:13px;"></i> Mobile
+            </button>
+            <button class="viewport-btn" onclick="openLiveInNewTab()" style="color:var(--primary);" title="Open in New Tab">
+              <i data-lucide="external-link" style="width:13px;height:13px;"></i> New Tab ↗
             </button>
           </div>
         </div>
@@ -785,10 +788,23 @@
               spread: 60,
               origin: { y: 0.6 }
             });
+            openLiveInNewTab();
           }
         }
       } catch (err) {
         console.error('Generation error:', err);
+      }
+    }
+
+    function openLiveInNewTab() {
+      if (currentHtmlCode) {
+        const blob = new Blob([currentHtmlCode], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        try {
+          window.open(url, '_blank');
+        } catch (e) {
+          console.warn('Popup blocked:', e);
+        }
       }
     }
 

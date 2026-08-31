@@ -43,6 +43,7 @@ const { AdaptiveQuestionnaire } = require('./services/adaptive-questionnaire');
 const { UnifiedProfileNormalizer } = require('./services/unified-profile-normalizer');
 const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
 const { ErrorRecoveryService } = require('./services/error-recovery-service');
+const { TemplateRegistry } = require('./templates/template-registry');
 
 const app = express();
 const securityService = new SecurityService();
@@ -58,12 +59,14 @@ app.use(SecurityMiddleware.corsConfig());
 app.use(express.json({ limit: '50mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Smart Public Domain Detection (Converts localhost to real public URL automatically)
+// Smart Public Domain Detection (Converts localhost to real public URL automatically, ignoring private LAN IPs)
 app.use((req, res, next) => {
-  if (!process.env.HOST_URL || process.env.HOST_URL.includes('localhost')) {
+  if (!process.env.HOST_URL || process.env.HOST_URL.includes('localhost') || process.env.HOST_URL.includes('127.0.0.1')) {
     const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
     const host = req.headers['x-forwarded-host'] || req.get('host');
-    if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+    const hostNoPort = (host || '').split(':')[0];
+    const isPrivateIp = !hostNoPort || /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|127\.|0\.0\.0\.0|localhost)/i.test(hostNoPort);
+    if (host && !isPrivateIp) {
       process.env.HOST_URL = `${proto}://${host}`;
       if (hostingProvider) hostingProvider.hostUrl = process.env.HOST_URL;
     }
@@ -249,6 +252,15 @@ app.post(
   }
 );
 
+// Template Catalog Endpoint: Exposes all 5 visual portfolio templates
+app.get('/api/web/templates', (req, res) => {
+  const { TemplateRegistry } = require('./templates/template-registry');
+  res.json({
+    success: true,
+    templates: TemplateRegistry.getAllTemplates()
+  });
+});
+
 // 2. Web Instant Portfolio Generation (Protected with 10MB payload limit, per-user quota & AI Sanitization)
 app.post(
   '/api/web/generate',
@@ -256,7 +268,7 @@ app.post(
   AuthMiddleware.quotaLimiter(dbService, 'ai_generation', 10),
   async (req, res) => {
     try {
-      const { data = {}, branch = 'A', styleHint = '', layout = 'auto-cycle', siteId: requestedSiteId, previousSiteId, regenerate = false } = req.body;
+      const { data = {}, branch = 'A', styleHint = '', layout = 'auto-cycle', siteId: requestedSiteId, previousSiteId, regenerate = false, templateId } = req.body;
       
       // Takedown & Purge: If regenerating or replacing a previous preview, take down the old site immediately
       const oldSiteToPurge = previousSiteId || (regenerate && requestedSiteId ? requestedSiteId : null);
@@ -277,7 +289,8 @@ app.post(
         siteId = `web-${crypto.randomUUID()}`;
       }
 
-      const enrichedData = { ...data, style_hint: styleHint, layout };
+      const chosenTemplate = templateId || data.templateId || data.template || (styleHint && TemplateRegistry.templates[styleHint] ? styleHint : (styleHint === 'light-swiss' ? 'engineering-archive' : null));
+      const enrichedData = { ...data, style_hint: styleHint, layout, templateId: chosenTemplate };
 
       // Automated Content Safety & TOS Policy Sentinel
       const tosScan = securityService.evaluateContentSafetyAndTOS(enrichedData);
@@ -306,7 +319,7 @@ app.post(
         }
       }
 
-      const designBrief = { creative_mode: 'auto-cycle', layout: 'auto-cycle' };
+      const designBrief = { creative_mode: styleHint || 'auto-cycle', layout: layout || 'auto-cycle', templateId: chosenTemplate };
       const rawSite = await siteGenerator.generateSite(
         { extracted_data: enrichedData, branch, id: siteId },
         enrichedData,
@@ -578,44 +591,16 @@ app.post('/api/portfolio/:siteId/export', async (req, res) => {
 
 // 9. Demo & Sample Portfolios Endpoint
 app.get('/api/demo/samples', (req, res) => {
-  const samples = [
-    {
-      id: 'demo-systems-architect',
-      name: 'Elena Rostova',
-      role: 'Staff Systems Architect & Core Infra',
-      badge: 'Systems & Terminal',
-      description: 'Distributed consensus engines, low-latency network protocols, and Linux eBPF telemetry.',
-      techStack: ['Rust', 'Go', 'eBPF', 'Tokio', 'Docker', 'Kubernetes'],
-      previewUrl: '/p/demo-systems-architect'
-    },
-    {
-      id: 'demo-ai-researcher',
-      name: 'Dr. Aris Thorne',
-      role: 'Principal AI / ML Researcher',
-      badge: 'Research & Academics',
-      description: 'Sparse mixture-of-experts architectures, attention latency reduction, and diffusion model alignment.',
-      techStack: ['PyTorch', 'JAX', 'CUDA', 'Python', 'Transformers'],
-      previewUrl: '/p/demo-ai-researcher'
-    },
-    {
-      id: 'demo-3d-creative',
-      name: 'Kai Takahashi',
-      role: 'Creative Technologist & 3D Artist',
-      badge: '3D & Spatial',
-      description: 'Procedural GLSL shader simulations, WebGL compute graphs, and interactive spatial stages.',
-      techStack: ['Three.js', 'WebGL2', 'GLSL', 'TypeScript', 'Blender', 'WebGPU'],
-      previewUrl: '/p/demo-3d-creative'
-    },
-    {
-      id: 'demo-editorial-monograph',
-      name: 'Siddharth Roy',
-      role: 'Design Director & Brand Architect',
-      badge: 'Editorial & Monograph',
-      description: 'Typography systems, award-winning editorial spreads, and bespoke design engineering.',
-      techStack: ['Design Systems', 'Figma', 'Typography', 'Next.js', 'CSS Architecture'],
-      previewUrl: '/p/demo-editorial-monograph'
-    }
-  ];
+  const templates = TemplateRegistry.getAllTemplates();
+  const samples = templates.map(t => ({
+    id: t.id,
+    name: t.name,
+    role: t.category,
+    badge: t.category,
+    description: t.description,
+    techStack: t.recommendedFor,
+    previewUrl: `/p/${t.id}`
+  }));
   res.json({ success: true, samples });
 });
 
@@ -837,14 +822,18 @@ app.post('/api/generate/unified', async (req, res) => {
     }
 
     const normalized = UnifiedProfileNormalizer.normalize(input);
-    const siteGen = new SiteGenerator();
+    const { TemplateRegistry } = require('./templates/template-registry');
+    const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
+    const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
 
+    const siteGen = new SiteGenerator();
     const siteResult = await siteGen.generateSite({
       id: `unified-${Date.now()}`,
       status: 'active'
-    }, normalized, {
-      theme: input.preferences?.theme || 'auto',
-      creative_mode: input.preferences?.theme !== 'auto' ? input.preferences?.theme : null
+    }, { ...normalized, templateId: selectedTemplate.id }, {
+      theme: selectedTemplate.id,
+      templateId: selectedTemplate.id,
+      creative_mode: selectedTemplate.id
     });
 
     const siteId = `web-${crypto.randomUUID()}`;
@@ -854,6 +843,7 @@ app.post('/api/generate/unified', async (req, res) => {
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
     fs.mkdirSync(siteDir, { recursive: true });
     fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
+    fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
 
     // Audit with Legacy Vibe Detector
     const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
@@ -896,48 +886,20 @@ app.get('/api/design-resources', (req, res) => {
 app.post('/api/design-resources/generate', async (req, res) => {
   try {
     const config = req.body || {};
-
-    const userProfile = {
-      name: config.name || 'Creative Developer',
-      role: config.role || 'Full Stack & 3D WebGL Architect',
-      tagline: config.tagline || 'Building resilient distributed systems, interactive 3D graphics, and intelligent agent workflows.',
-      skills: Array.isArray(config.skills) ? config.skills.join(', ') : (config.skills || 'TypeScript, React, Python, Three.js, Node.js, WebGL'),
-      email: config.email || 'hello@example.com',
-      github: config.github || 'https://github.com',
-      linkedin: config.linkedin || 'https://linkedin.com',
-      location: config.location || 'San Francisco, CA',
-      projects: config.projects || [
-        {
-          name: 'Hyperion Spatial Renderer',
-          desc: 'High-performance WebGL compute shader engine with procedural terrain and real-time raytraced caustics.',
-          tech: 'TypeScript • WebGL2 • Three.js • GLSL',
-          live: 'https://hyperion.graphics',
-          github: 'https://github.com/example/hyperion'
-        },
-        {
-          name: 'Vortex Distributed Graph',
-          desc: 'Distributed transactional graph database processing 25M node traversals/sec with sub-millisecond latency.',
-          tech: 'Rust • Raft • RocksDB',
-          live: 'https://vortex.quantum.io',
-          github: 'https://github.com/example/vortex'
-        }
-      ]
-    };
-
-    const options = {
-      layout: config.layout,
-      mode: config.mode
-    };
-
-    const result = await designEngine.generatePortfolio(userProfile, options);
+    const templateId = config.templateId || config.theme || 'cosmic-astronaut';
+    const result = TemplateRegistry.render(templateId, config);
 
     res.json({
       success: true,
       html: result.html,
-      css: result.css,
-      js: result.js,
-      designBlueprint: result.designBlueprint,
-      contentProfile: result.contentProfile
+      css: result.css || '',
+      js: result.js || '',
+      designBlueprint: {
+        templateId,
+        templateName: TemplateRegistry.getTemplate(templateId)?.name || 'Custom Template',
+        palette: TemplateRegistry.getTemplate(templateId)?.palette || {}
+      },
+      contentProfile: config
     });
   } catch (err) {
     console.error('[DESIGN STUDIO API] generate error:', err);
@@ -1148,6 +1110,10 @@ app.post('/api/web/verify-payment', async (req, res) => {
     await dbService.recordPayment(razorpay_payment_id, userId, verification.amount, 'razorpay').catch(() => {});
     await dbService.updatePaymentStatus(razorpay_payment_id, 'captured').catch(() => {});
 
+    if (req.user?.id) {
+      await dbService.updateUser(req.user.id, { role: 'pro', subscription_status: 'active' }).catch(() => {});
+    }
+
     // 2. Mark site / conversation as active & paid
     if (siteId) {
       await dbService.updateConversation(siteId, {
@@ -1236,9 +1202,9 @@ app.use(SecurityMiddleware.csrfProtection());
 
 const authHandler = new AuthHandler(dbService, securityService, emailService);
 
-// Strict rate limiter for brute-force sensitive auth routes (5 requests per 15 min with progressive delays)
+// Strict rate limiter for brute-force sensitive auth routes
 const authLimiter = SecurityMiddleware.rateLimiter({
-  max: 5,
+  max: 30,
   windowMs: 15 * 60 * 1000,
   actionName: 'auth_strict'
 });
@@ -1264,6 +1230,18 @@ app.get(['/login', '/signup', '/forgot-password', '/reset-password', '/verify-em
   res.redirect(`/auth.html?view=${view}${queryStr}`);
 });
 
+app.get(['/dashboard', '/dash'], (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'web/dashboard.html'));
+});
+
+app.get(['/studio', '/studio.html', '/builder', '/generator'], (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'web/studio.html'));
+});
+
+app.get(['/profile', '/account', '/settings'], (req, res) => {
+  res.sendFile(path.join(process.cwd(), 'web/profile.html'));
+});
+
 // ==========================================
 // Authentication REST API Endpoints
 // ==========================================
@@ -1282,6 +1260,49 @@ app.post(
   SecurityMiddleware.limitBodySize(50 * 1024),
   authLimiter,
   (req, res) => authHandler.login(req, res)
+);
+
+// 2b. Social Sign In & Sign Up (Google & GitHub)
+app.post(
+  '/api/auth/social',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  authLimiter,
+  (req, res) => authHandler.social(req, res)
+);
+
+// 2c. Google OAuth 2.0 Account Chooser Redirect & Callback Flow
+app.get(
+  '/api/auth/google',
+  (req, res) => authHandler.googleRedirect(req, res)
+);
+
+app.get(
+  '/api/auth/google/callback',
+  (req, res) => authHandler.googleCallback(req, res)
+);
+
+// 2d. GitHub OAuth 2.0 Redirect & Callback Flow
+app.get(
+  '/api/auth/github',
+  (req, res) => authHandler.githubRedirect(req, res)
+);
+
+app.get(
+  '/api/auth/github/callback',
+  (req, res) => authHandler.githubCallback(req, res)
+);
+
+// 2d. Google OAuth 2.0 Identity Services Config & Token Verification
+app.get(
+  '/api/auth/google/config',
+  (req, res) => authHandler.getGoogleConfig(req, res)
+);
+
+app.post(
+  '/api/auth/google/verify',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  authLimiter,
+  (req, res) => authHandler.googleVerify(req, res)
 );
 
 // 3. Sign Out (Destroys DB session & Clears HttpOnly Cookie)
@@ -1444,13 +1465,14 @@ app.get('/api/web/dashboard', AuthMiddleware.requireAuth, async (req, res) => {
 app.post('/api/sites/:siteId/contact', async (req, res) => {
   try {
     const { siteId } = req.params;
-    const { name, email, message } = req.body;
+    const { name, email, message, subject } = req.body;
 
     // Record lead in analytics events
-    await dbService.recordAnalyticsEvent(siteId, 'contact_submit', null, null, { name, email, message });
+    await dbService.recordAnalyticsEvent(siteId, 'contact_submit', null, null, { name, email, message, subject });
 
-    // Send instant alert to site owner on Telegram if available
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+
+    // 1. Send instant alert to site owner on Telegram if available
     if (telegramHandler) {
       const user = await dbService.getUser(siteId) || await dbService.getUserById(siteId);
       if (user?.phone_number) {
@@ -1459,7 +1481,58 @@ app.post('/api/sites/:siteId/contact', async (req, res) => {
       }
     }
 
-    res.json({ success: true, message: 'Message sent directly to the site owner!' });
+    // 2. Send direct email notification to the portfolio owner
+    let ownerEmail = null;
+    let ownerName = 'Portfolio Creator';
+
+    // A. Lookup from database
+    try {
+      const { data: siteRecord } = await dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
+      if (siteRecord?.users?.email) {
+        ownerEmail = siteRecord.users.email;
+        ownerName = siteRecord.users.name || siteRecord.users.username || ownerName;
+      }
+    } catch (e) {}
+
+    // B. Lookup from siteDir profile.json fallback
+    if (!ownerEmail && fs.existsSync(path.join(siteDir, 'profile.json'))) {
+      try {
+        const profile = JSON.parse(fs.readFileSync(path.join(siteDir, 'profile.json'), 'utf8'));
+        ownerEmail = profile.email || profile.identity?.email || profile.contact?.email;
+        ownerName = profile.name || profile.identity?.name || ownerName;
+      } catch (e) {}
+    }
+
+    if (ownerEmail && emailService) {
+      await emailService.sendMail({
+        to: ownerEmail,
+        subject: `📬 New Inquiry from your Portfolio: ${name || 'Recruiter / Client'}`,
+        html: `
+          <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; background: #0B0F19; color: #FFFFFF; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+            <div style="font-size: 0.85rem; color: #38BDF8; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Portfolio Lead Alert</div>
+            <h2 style="color: #FFFFFF; margin: 0 0 16px 0; font-size: 1.5rem;">📬 New Message from your Portfolio</h2>
+            <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.5;">Hi <strong>${ownerName}</strong>, someone just reached out to you through your online portfolio!</p>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #38BDF8;">
+              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>From / Recruiter:</strong> ${name || 'Prospective Client'}</p>
+              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #38BDF8; text-decoration: none;">${email}</a></p>
+              ${subject ? `<p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Subject:</strong> ${subject}</p>` : ''}
+              <p style="margin: 0 0 6px 0; font-size: 0.95rem;"><strong>Message:</strong></p>
+              <p style="margin: 0; color: #E2E8F0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px;">${message}</p>
+            </div>
+            
+            <div style="text-align: center; margin-top: 24px;">
+              <a href="mailto:${email}?subject=Re: Portfolio Inquiry" style="display: inline-block; background: #22C55E; color: #000000; font-weight: 800; font-size: 0.95rem; padding: 12px 28px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                Reply Directly to ${name || 'Sender'} ➔
+              </a>
+            </div>
+          </div>
+        `,
+        meta: { sequence_type: 'portfolio_contact_lead' }
+      });
+    }
+
+    res.json({ success: true, message: 'Message delivered directly to creator!' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -1483,6 +1556,52 @@ app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
 app.use(express.static(path.join(process.cwd(), 'web')));
 
 // ==========================================
+// Portfolio Owner Resume PDF Download Route
+// ==========================================
+app.get(['/p/:siteId/resume.pdf', '/api/sites/:siteId/resume.pdf'], async (req, res) => {
+  const siteId = req.params.siteId;
+  const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+
+  if (!siteId || !/^[a-zA-Z0-9_-]+$/.test(siteId) || !securityService.isPathSafe(sitesBaseDir, siteId)) {
+    return res.status(400).send('Invalid portfolio identifier.');
+  }
+
+  const siteDir = path.join(sitesBaseDir, siteId);
+  const pdfPath = path.join(siteDir, 'resume.pdf');
+  const profilePath = path.join(siteDir, 'profile.json');
+
+  let profile = {};
+  if (fs.existsSync(profilePath)) {
+    try {
+      profile = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+    } catch (e) {}
+  }
+
+  const candidateName = profile.name || 'Candidate';
+  const sanitizedFileName = `${candidateName.replace(/[^a-zA-Z0-9_-]/g, '_')}_Resume.pdf`;
+
+  if (fs.existsSync(pdfPath)) {
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFileName}"`);
+    return fs.createReadStream(pdfPath).pipe(res);
+  }
+
+  try {
+    const { ResumePdfGenerator } = require('./services/resume-pdf-generator');
+    const pdfBuf = await ResumePdfGenerator.generateResumePdfBuffer(profile);
+    fs.mkdirSync(siteDir, { recursive: true });
+    fs.writeFileSync(pdfPath, pdfBuf);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${sanitizedFileName}"`);
+    return res.send(pdfBuf);
+  } catch (err) {
+    console.error('[PDF] Generation error:', err);
+    return res.status(500).send('Failed to generate resume PDF.');
+  }
+});
+
+// ==========================================
 // Portfolio Live & Preview Route (/p/:siteId)
 // Injects Diagonal Watermark & Floating Bar for Unpaid Previews
 // Serves Clean, Pristine Website for Subscribed/Paid Users
@@ -1498,22 +1617,243 @@ app.get('/p/:siteId', async (req, res) => {
 
   const filePath = path.join(sitesBaseDir, siteId, 'index.html');
   if (!fs.existsSync(filePath)) {
-    return res.status(404).send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Portfolio Not Found</title></head>
-      <body style="font-family:sans-serif; text-align:center; padding:50px; background:#090d16; color:#fff;">
-        <h2>Portfolio in progress or not found</h2>
-        <p style="color:#94a3b8;">Your portfolio is currently building or does not exist yet. Please check your bot chat!</p>
-      </body>
-      </html>
-    `);
+    // If siteId is a registered template ID, render a rich live demo showcase on the fly
+    const template = TemplateRegistry.templates[siteId];
+    if (template) {
+      const demoData = {
+        name: 'Alex Vance',
+        title: `${template.name} Live Showcase`,
+        headline: template.description || 'Full-Stack & Distributed Systems Architect',
+        role: template.category || 'Lead Engineer',
+        bio: `Explore the immersive 3D spatial interface crafted in the ${template.name} theme. Integrating real-time WebGL physics, glassmorphic HUD telemetry, and interactive project showcases.`,
+        about: `Senior Systems & Frontend Architect with over 7 years of engineering experience across WebGL, cloud infrastructure, and modern design systems.`,
+        skills: ['TypeScript', 'Three.js', 'React', 'Node.js', 'Rust', 'WebGL', 'Docker', 'GraphQL', 'TailwindCSS'],
+        projects: [
+          {
+            title: 'Neural Matrix Visualization',
+            name: 'Neural Matrix Visualization',
+            description: 'Real-time multi-dimensional neural network topological map with 60 FPS GPU-accelerated node shaders.',
+            desc: 'Real-time multi-dimensional neural network topological map with 60 FPS GPU-accelerated node shaders.',
+            tags: ['WebGL', 'Three.js', 'TypeScript', 'GLSL'],
+            tech: ['WebGL', 'Three.js', 'TypeScript', 'GLSL'],
+            link: 'https://github.com/Abdul-Aziz-Nooruddin',
+            url: 'https://github.com/Abdul-Aziz-Nooruddin'
+          },
+          {
+            title: 'Algorand Escrow Protocol',
+            name: 'Algorand Escrow Protocol',
+            description: 'Decentralized multi-signature smart contract settlement architecture with sub-second execution guarantees.',
+            desc: 'Decentralized multi-signature smart contract settlement architecture with sub-second execution guarantees.',
+            tags: ['Rust', 'Algorand', 'Solidity', 'Web3'],
+            tech: ['Rust', 'Algorand', 'Solidity', 'Web3'],
+            link: 'https://github.com/Abdul-Aziz-Nooruddin',
+            url: 'https://github.com/Abdul-Aziz-Nooruddin'
+          },
+          {
+            title: 'Autonomous Edge Telemetry',
+            name: 'Autonomous Edge Telemetry',
+            description: 'Distributed IoT sensory streaming platform handling 250k events/second with automated anomaly detection.',
+            desc: 'Distributed IoT sensory streaming platform handling 250k events/second with automated anomaly detection.',
+            tags: ['Go', 'Kafka', 'Docker', 'Kubernetes'],
+            tech: ['Go', 'Kafka', 'Docker', 'Kubernetes'],
+            link: 'https://github.com/Abdul-Aziz-Nooruddin',
+            url: 'https://github.com/Abdul-Aziz-Nooruddin'
+          }
+        ],
+        experience: [
+          {
+            company: 'Nexus Cybernetics',
+            role: 'Lead Systems Engineer',
+            period: '2023 — Present',
+            description: 'Architecting next-generation 3D spatial interfaces and microservices for high-frequency telemetry.'
+          },
+          {
+            company: 'Apex Horizon Labs',
+            role: 'Senior Full-Stack Developer',
+            period: '2021 — 2023',
+            description: 'Built real-time collaborative workspace platforms and WebGL data visualization dashboards.'
+          }
+        ],
+        contact: {
+          email: 'alex.vance@myfolio.tech',
+          github: 'https://github.com/Abdul-Aziz-Nooruddin',
+          linkedin: 'https://linkedin.com',
+          telegram: 'https://t.me/ai_portfolio_generator_bot'
+        },
+        social: {
+          github: 'https://github.com/Abdul-Aziz-Nooruddin',
+          linkedin: 'https://linkedin.com'
+        }
+      };
+
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      const rendered = template.render(demoData);
+      const htmlOutput = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+      return res.send(htmlOutput);
+    }
+
+    // If it is a web preview site ID that was auto-purged after the 24-hour window, render friendly expired page
+    if (siteId.startsWith('web-') || siteId.includes('-')) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.status(200).send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>24-Hour Free Preview Expired — myfolio.tech</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 20%, #0F172A 0%, #020617 100%);
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .expired-card {
+      max-width: 580px;
+      width: 100%;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 28px;
+      padding: clamp(28px, 5vw, 44px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(2, 132, 199, 0.15);
+      backdrop-filter: blur(20px);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .badge-expired {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: #FBBF24;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .expired-title {
+      font-size: clamp(1.6rem, 3.5vw, 2.1rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      color: #FFFFFF;
+    }
+    .expired-desc {
+      color: #94A3B8;
+      font-size: 0.96rem;
+      line-height: 1.6;
+    }
+    .features-list {
+      width: 100%;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 0.88rem;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .feature-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #CBD5E1;
+    }
+    .feature-row span { color: #38BDF8; font-weight: bold; }
+    .btn-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 14px 24px;
+      border-radius: 14px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(2, 132, 199, 0.5);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #E2E8F0;
+      font-weight: 700;
+      font-size: 0.92rem;
+      padding: 12px 20px;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="expired-card">
+    <div class="badge-expired">⏳ 24-Hour Preview Expired</div>
+    <h1 class="expired-title">Free Preview Window Has Concluded</h1>
+    <p class="expired-desc">
+      Free preview websites stay live for 24 hours (with a 5-day grace period before permanent deletion). Your profile data and preferences are safely saved in Studio!
+    </p>
+
+    <div class="features-list">
+      <div class="feature-row"><span>✓</span> <b>Instant Re-activation:</b> Re-launch fresh 3D preview in 1 click in Web Studio.</div>
+      <div class="feature-row"><span>✓</span> <b>Lifetime Starter (₹149):</b> 24/7 Permanent Netlify CDN hosting + ZIP export.</div>
+      <div class="feature-row"><span>✓</span> <b>Zero Watermarks:</b> Clean production domain for recruiters and clients.</div>
+    </div>
+
+    <div class="btn-actions">
+      <a href="/studio.html" class="btn-primary">⚡ Re-activate Fresh 3D Studio Preview</a>
+      <a href="/subscribe" class="btn-secondary">💎 Unlock Permanent Netlify Hosting (₹149 one-time)</a>
+    </div>
+  </div>
+</body>
+</html>`);
+    }
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(404).send(TemplateRegistry.render404Page(siteId));
   }
 
-  // Set restrictive origin isolation CSP for previewed websites
-  // connect-src 'none' strictly prevents untrusted portfolio scripts from fetching authenticated backend APIs
-  res.setHeader('Content-Security-Policy', "default-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdn.jsdelivr.net https://unpkg.com data: blob:; connect-src 'none'; frame-ancestors 'self';");
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+  // Set permissive CSP allowing API beacons, Three.js CDNs, fonts, and iframe/tab embedding
+  res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
   let html = fs.readFileSync(filePath, 'utf8');
@@ -1624,6 +1964,23 @@ app.get('/p/:siteId', async (req, res) => {
   res.send(html);
 });
 
+// Non-existent page or subroute inside a portfolio (/p/:siteId/*)
+app.get('/p/:siteId/*', (req, res) => {
+  const siteId = req.params.siteId;
+  const subPath = req.params[0];
+  const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+
+  if (siteId && securityService.isPathSafe(sitesBaseDir, siteId) && subPath) {
+    const candidateFile = path.join(sitesBaseDir, siteId, subPath);
+    if (securityService.isPathSafe(sitesBaseDir, path.join(siteId, subPath)) && fs.existsSync(candidateFile) && fs.statSync(candidateFile).isFile()) {
+      return res.sendFile(candidateFile);
+    }
+  }
+
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.status(404).send(TemplateRegistry.render404Page(siteId));
+});
+
 // ==========================================
 // Subscription & Payment Landing Page (/subscribe)
 // ==========================================
@@ -1635,7 +1992,9 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unlock Your Portfolio — Subscription Checkout</title>
+  <title>Unlock Your Portfolio — myfolio.tech</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1643,7 +2002,7 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
   <script src="/sidebar.js"></script>
   <style>
     :root {
-      --bg: #f8fafc;
+      --bg: #060814;
       --card: #ffffff;
       --primary: #2563eb;
       --accent: #059669;
@@ -1653,93 +2012,231 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: var(--bg);
+      background: #F8FAFC;
       color: var(--text);
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       display: flex;
+      position: relative;
+    }
+    /* 🌊 High-Speed Moving 3D Fluid Silk Background Container */
+    .fluid-silk-bg-container {
+      position: fixed;
+      top: -6%;
+      left: -6%;
+      width: 112vw;
+      height: 112vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, rgba(240, 246, 255, 0.25) 50%, rgba(220, 235, 255, 0.55) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+      animation: fluidSilkFastUndulate 6.5s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+    @keyframes fluidSilkFastUndulate {
+      0% { transform: scale(1) translate(0px, 0px) rotate(0deg); }
+      25% { transform: scale(1.05) translate(-22px, -14px) rotate(1.2deg); }
+      50% { transform: scale(1.09) translate(16px, 20px) rotate(-1.5deg); }
+      75% { transform: scale(1.05) translate(-14px, 16px) rotate(0.9deg); }
+      100% { transform: scale(1.07) translate(22px, -14px) rotate(-0.9deg); }
+    }
+    .app-shell-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      z-index: 1;
     }
     .checkout-wrap {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 40px 20px;
+      padding: 48px 24px;
       min-height: 100vh;
+      position: relative;
+      z-index: 2;
     }
-    .checkout-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      max-width: 620px;
+    .checkout-container {
+      max-width: 960px;
       width: 100%;
-      padding: 40px 32px;
-      box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08);
+      margin: 0 auto;
       text-align: center;
     }
-    .title-tag { font-size: 0.8rem; color: var(--primary); font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; }
-    .main-title { font-size: clamp(1.6rem, 3.5vw, 2.2rem); font-weight: 800; line-height: 1.2; margin-bottom: 12px; color: #0f172a; }
-    .subtitle { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; line-height: 1.5; }
+    .title-tag { font-size: 0.85rem; color: #2563EB; font-weight: 800; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; }
+    .main-title { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.2; margin-bottom: 12px; color: #0F172A; }
+    .subtitle { color: #64748B; font-size: 1.05rem; margin-bottom: 36px; line-height: 1.6; max-width: 720px; margin-left: auto; margin-right: auto; }
 
-    .plan-box {
-      border: 2px solid rgba(37, 99, 235, 0.4);
-      border-radius: 18px;
-      padding: 28px 24px;
-      background: #f8fafc;
+    .pricing-grid-side-by-side {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 28px;
+      margin-bottom: 32px;
+      align-items: stretch;
+    }
+
+    .plan-box-card {
+      background: #ffffff;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 24px;
+      padding: 36px 32px;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
       text-align: left;
       position: relative;
-      margin-bottom: 24px;
-      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.08);
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.08);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
     }
+    .plan-box-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 28px 56px rgba(37, 99, 235, 0.14);
+    }
+    .plan-box-starter {
+      border: 2px solid #0d9488;
+    }
+    .plan-box-pro {
+      border: 2.5px solid #2563eb;
+      box-shadow: 0 20px 50px rgba(37, 99, 235, 0.12);
+    }
+
     .badge {
-      position: absolute; top: -12px; right: 20px; background: #2563eb; color: #ffffff;
-      font-size: 0.72rem; font-weight: 800; padding: 3px 12px; border-radius: 9999px; text-transform: uppercase;
+      position: absolute; top: -14px; right: 24px;
+      font-size: 0.72rem; font-weight: 800; padding: 4px 14px; border-radius: 9999px; text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    .plan-name { font-size: 1.25rem; font-weight: 800; margin-bottom: 4px; color: #0f172a; }
-    .plan-price { font-size: 2rem; font-weight: 900; color: #0f172a; margin-bottom: 16px; }
-    .plan-price span { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
-    .plan-features { list-style: none; margin-bottom: 24px; display: flex; flex-direction: column; gap: 10px; font-size: 0.9rem; color: #334155; }
-    .plan-features li { display: flex; align-items: center; gap: 8px; }
-    .plan-features li::before { content: '✔'; color: #059669; font-weight: 800; }
+    .badge-starter {
+      background: #0d9488; color: #ffffff;
+    }
+    .badge-pro {
+      background: #2563eb; color: #ffffff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+
+    .plan-name { font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; color: #0f172a; }
+    .plan-price { font-size: 2.4rem; font-weight: 900; color: #0f172a; margin-bottom: 20px; }
+    .plan-price span { font-size: 0.95rem; color: var(--muted); font-weight: 600; }
+    .plan-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 12px; font-size: 0.92rem; color: #334155; }
+    .plan-features li { display: flex; align-items: flex-start; gap: 10px; line-height: 1.4; }
+    .plan-features li::before { content: '✔'; color: #059669; font-weight: 800; font-size: 1rem; flex-shrink: 0; }
     
     .pay-btn {
-      display: block; width: 100%; text-align: center; background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff;
-      font-weight: 800; font-size: 1rem; padding: 14px 20px; border-radius: 12px; text-decoration: none;
+      display: block; width: 100%; text-align: center; color: #ffffff;
+      font-weight: 800; font-size: 1rem; padding: 15px 20px; border-radius: 14px; text-decoration: none;
       transition: transform 0.15s, box-shadow 0.15s; border: none; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
     }
-    .pay-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35); }
+    .pay-btn-starter {
+      background: #0d9488;
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.3);
+    }
+    .pay-btn-starter:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(13, 148, 136, 0.4); }
+
+    .pay-btn-pro {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+    }
+    .pay-btn-pro:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45); }
+
+    /* 🌙 DARK THEME SUBSCRIBE OVERRIDES */
+    [data-theme="dark"] body {
+      background: #07090E;
+      color: #F8FAFC;
+    }
+    [data-theme="dark"] .fluid-silk-bg-container {
+      background: radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.4) 0%, rgba(10, 14, 28, 0.85) 50%, rgba(3, 5, 12, 0.98) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+    }
+    [data-theme="dark"] .main-title {
+      color: #FFFFFF;
+    }
+    [data-theme="dark"] .subtitle {
+      color: #94A3B8;
+    }
+    [data-theme="dark"] .plan-box-card {
+      background: rgba(15, 23, 42, 0.92);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    }
+    [data-theme="dark"] .plan-box-starter {
+      border: 2px solid #0d9488;
+    }
+    [data-theme="dark"] .plan-box-pro {
+      border: 2.5px solid #38BDF8;
+      box-shadow: 0 20px 50px rgba(56, 189, 248, 0.2);
+    }
+    [data-theme="dark"] .plan-name {
+      color: #FFFFFF;
+    }
+    [data-theme="dark"] .plan-price {
+      color: #FFFFFF;
+    }
+    [data-theme="dark"] .plan-price span {
+      color: #94A3B8;
+    }
+    [data-theme="dark"] .plan-features {
+      color: #CBD5E1;
+    }
+    [data-theme="dark"] .plan-features li code {
+      background: rgba(255, 255, 255, 0.1);
+      color: #38BDF8;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
   </style>
 </head>
 <body>
+  <!-- Moving 3D Fluid Silk Background Container -->
+  <div class="fluid-silk-bg-container"></div>
+
   <div class="app-shell-layout">
     <div id="sidebarMount"></div>
     <div class="checkout-wrap">
-      <div class="checkout-card">
-        <div class="title-tag">PORTFOLIO STUDIO • SUBSCRIPTION CHECKOUT</div>
-        <h1 class="main-title">Unlock Your Live Portfolio Forever</h1>
-        <p class="subtitle">Remove the 2-hour preview watermark, keep your portfolio online 24/7, get live recruiter analytics, and custom domain mapping.</p>
+      <div class="checkout-container">
+        <div class="title-tag">PORTFOLIO STUDIO • SELECT YOUR PLAN</div>
+        <h1 class="main-title">Unlock Your 3D Portfolio</h1>
+        <p class="subtitle">Remove the 2-hour preview watermark, keep your portfolio online, and choose the plan that best fits your workflow.</p>
 
-        <div class="plan-box">
-          <span class="badge">Complete All-Access</span>
-          <h3 class="plan-name">Portfolio All-Access</h3>
-          <div class="plan-price">₹149 <span>/ month</span></div>
-          <ul class="plan-features">
-            <li>100% Watermark-Free &amp; Ad-Free Clean Website</li>
-            <li>Permanent 24/7 High-Speed Edge CDN Hosting</li>
-            <li>Real-Time Recruiter &amp; Visitor Analytics Tracker</li>
-            <li>Interactive Contact Form with Instant Alerts</li>
-            <li>Automated SEO, OpenGraph &amp; Social Sharing Cards</li>
-            <li>Unlimited Live Edits, Rebuilds &amp; 3D Archetypes</li>
-          </ul>
-          <button class="pay-btn" onclick="startPayment('lite', 14900)">Subscribe All-Access (₹149/mo)</button>
+        <div class="pricing-grid-side-by-side">
+          <!-- Box 1: Lifetime Starter -->
+          <div class="plan-box-card plan-box-starter">
+            <div>
+              <span class="badge badge-starter">LIFETIME STARTER</span>
+              <h3 class="plan-name">Lifetime Starter</h3>
+              <div class="plan-price">₹149 <span>/ one-time</span></div>
+              <ul class="plan-features">
+                <li>Deployed &amp; Hosted on Netlify Edge CDN</li>
+                <li>Permanent Global Netlify Live Link</li>
+                <li>100% Watermark-Free Clean Website</li>
+                <li>Static Offline-Ready ZIP Export</li>
+                <li>Synchronized PDF Resume Codex</li>
+                <li>1 Free Content Re-generation</li>
+              </ul>
+            </div>
+            <button class="pay-btn pay-btn-starter" onclick="startPayment('starter', 14900)">Unlock Lifetime Link (₹149)</button>
+          </div>
+
+          <!-- Box 2: Pro Creator -->
+          <div class="plan-box-card plan-box-pro">
+            <div>
+              <span class="badge badge-pro">MOST POPULAR</span>
+              <h3 class="plan-name">Pro Creator</h3>
+              <div class="plan-price">₹149 <span>/ month</span></div>
+              <ul class="plan-features">
+                <li>Personal Domain: <code>&lt;name&gt;.myfolio.tech</code></li>
+                <li>Custom Domain Linking (<code>yourname.dev</code>)</li>
+                <li>Unlimited Edits &amp; GitHub Auto-Sync</li>
+                <li>Real-Time Telegram &amp; WhatsApp Visitor Alerts</li>
+                <li>Recruiter Telemetry &amp; Analytics Dashboard</li>
+                <li>24/7 Priority Cloud Maintenance</li>
+              </ul>
+            </div>
+            <button class="pay-btn pay-btn-pro" onclick="startPayment('pro', 14900)">Unlock Pro Domain (₹149/mo)</button>
+          </div>
         </div>
 
-        <div style="color: var(--muted); font-size: 0.82rem;">
-          🔒 100% Secure Checkout via Razorpay &amp; UPI • Instant Automated Activation
+        <div style="color: #94a3b8; font-size: 0.85rem; text-align: center;">
+          🔒 100% Secure Checkout via Razorpay, UPI &amp; Cards • Instant Automated Activation
         </div>
       </div>
     </div>
@@ -1754,19 +2251,84 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
     });
 
     async function startPayment(plan, amount) {
+      const btn = event?.target;
+      const originalText = btn ? btn.textContent : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Connecting Razorpay...';
+      }
+
       try {
         const res = await fetch('/api/web/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({ siteId: '${siteId}', plan })
         });
         const data = await res.json();
-        if (data.paymentUrl) {
+
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+
+        if (data.orderId && typeof Razorpay !== 'undefined') {
+          const options = {
+            key: data.keyId || '${process.env.RAZORPAY_KEY_ID || "rzp_test_TS49yFRP3b8uZl"}',
+            amount: data.amount,
+            currency: data.currency || 'INR',
+            name: 'myfolio.tech',
+            description: plan === 'pro' ? 'Pro Creator Domain & Unlimited Sync' : 'Lifetime Starter Portfolio Unlock',
+            image: '/assets/logo-3d.jpg',
+            order_id: data.orderId,
+            handler: async function (response) {
+              if (btn) {
+                btn.disabled = true;
+                btn.textContent = 'Verifying Payment...';
+              }
+              const verifyRes = await fetch('/api/web/verify-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                  siteId: '${siteId}',
+                  plan: plan,
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature
+                })
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                window.location.href = '/dashboard.html?payment=success';
+              } else {
+                alert('Payment verification error: ' + (verifyData.error || 'Please contact support'));
+                if (btn) {
+                  btn.disabled = false;
+                  btn.textContent = originalText;
+                }
+              }
+            },
+            theme: {
+              color: '#2563eb'
+            }
+          };
+
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (response) {
+            alert('Payment failed: ' + (response.error.description || 'Transaction cancelled.'));
+          });
+          rzp.open();
+        } else if (data.paymentUrl) {
           window.location.href = data.paymentUrl;
         } else {
-          alert('Initializing checkout...');
+          alert('Could not initialize checkout. Please verify your payment settings.');
         }
       } catch (e) {
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
         alert('Could not start checkout: ' + e.message);
       }
     }
@@ -1802,15 +2364,33 @@ app.use(SecurityMiddleware.safeErrorHandler());
 
 // Start server if run directly
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Portfolio Bot Server running on port ${PORT}`);
-    console.log(`🌐 Web Studio Landing: http://localhost:${PORT}`);
-    console.log(`📱 Direct Web Previews: http://localhost:${PORT}/p/:siteId`);
-    if (process.env.TELEGRAM_BOT_TOKEN) {
-      console.log(`🤖 Telegram Bot: Active & Listening`);
-    }
-  });
+  let PORT = parseInt(process.env.PORT, 10) || 5050;
+  const HOST = '0.0.0.0';
+
+  function startServer(portToUse) {
+    const server = app.listen(portToUse, HOST, () => {
+      console.log(`🚀 Portfolio Bot Server running on dedicated port ${portToUse}`);
+      console.log(`🌐 Local Studio:     http://localhost:${portToUse}`);
+      console.log(`📱 Same Wi-Fi Phone: http://192.168.0.146:${portToUse}`);
+      console.log(`📱 Direct Previews:  http://localhost:${portToUse}/p/:siteId`);
+      if (process.env.TELEGRAM_BOT_TOKEN) {
+        console.log(`🤖 Telegram Bot: Active & Listening`);
+      }
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.warn(`⚠️ [PORT CONFLICT] Port ${portToUse} is already in use by another project or process.`);
+        const nextPort = portToUse + 1;
+        console.log(`🔄 Automatically shifting Portfolio Studio to next available port: ${nextPort}...`);
+        startServer(nextPort);
+      } else {
+        console.error('[SERVER ERROR]', err);
+      }
+    });
+  }
+
+  startServer(PORT);
 }
 
 module.exports = app;

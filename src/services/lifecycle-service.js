@@ -15,8 +15,8 @@ const LIFECYCLE_STATES = {
   DELETED: 'deleted'
 };
 
-const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
-const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000; // 24 hours free preview window
+const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000; // 5 days total retention before permanent deletion
 
 class LifecycleService {
   constructor(dbService, emailService = null, notifier = null, hostingProvider = null) {
@@ -31,17 +31,62 @@ class LifecycleService {
     this.notifier = notifierFn;
   }
 
-  startScheduler(cronExpression = '0 * * * *') {
-    // Run deterministic check hourly by default
+  startScheduler(cronExpression = '*/15 * * * *') {
+    // Run initial sweep on startup to keep disk clean of sites older than 24 hours
+    this.purgeOrphanAndExpiredDiskSites(TWENTY_FOUR_HOURS_MS);
+
+    // Run deterministic check every 15 minutes
     this.cronTask = cron.schedule(cronExpression, async () => {
-      console.log('[LIFECYCLE CRON] Running deterministic lifecycle check...');
+      console.log('[LIFECYCLE CRON] Running deterministic lifecycle check & disk auto-purge...');
       try {
         await this.runLifecycleCycle();
+        this.purgeOrphanAndExpiredDiskSites(TWENTY_FOUR_HOURS_MS);
       } catch (err) {
         console.error('[LIFECYCLE CRON ERROR]:', err);
       }
     });
-    console.log(`[LIFECYCLE] Scheduler started with cron: ${cronExpression}`);
+    console.log(`[LIFECYCLE] Scheduler & Auto-Purge Sweeper started (Cron: ${cronExpression})`);
+  }
+
+  /**
+   * Ephemeral Auto-Purge Sweeper
+   * Automatically deletes expired preview sites from public/sites/ older than maxAgeMs (default 24 hours)
+   */
+  purgeOrphanAndExpiredDiskSites(maxAgeMs = TWENTY_FOUR_HOURS_MS) {
+    const sitesRoot = path.join(process.cwd(), 'public', 'sites');
+    if (!fs.existsSync(sitesRoot)) return { purgedCount: 0 };
+
+    let purgedCount = 0;
+    const now = Date.now();
+
+    try {
+      const entries = fs.readdirSync(sitesRoot, { withFileTypes: true });
+      for (const entry of entries) {
+        if (!entry.isDirectory()) continue;
+        const dirPath = path.join(sitesRoot, entry.name);
+
+        try {
+          const stats = fs.statSync(dirPath);
+          const ageMs = now - stats.mtimeMs;
+
+          // If directory is older than maxAgeMs (24 hours), purge it completely
+          if (ageMs >= maxAgeMs) {
+            fs.rmSync(dirPath, { recursive: true, force: true });
+            purgedCount++;
+          }
+        } catch (dirErr) {
+          // Non-blocking
+        }
+      }
+
+      if (purgedCount > 0) {
+        console.log(`🧹 [AUTO-PURGE] Cleaned up ${purgedCount} expired preview portfolio(s) older than 24 hours from disk.`);
+      }
+    } catch (err) {
+      console.warn('[AUTO-PURGE] Disk sweep notice:', err.message);
+    }
+
+    return { purgedCount };
   }
 
   stopScheduler() {
@@ -64,15 +109,20 @@ class LifecycleService {
 
     const now = Date.now();
 
-    // 1. Process Unpaid Previews (2-hour takedown timer)
+    // 1. Process Unpaid Previews (24-hour preview window & 5-day permanent deletion)
     const activePreviews = await this.db.getUnpaidPreviews();
     for (const item of activePreviews) {
       const enteredAt = item.state_entered_at ? new Date(item.state_entered_at).getTime() : new Date(item.created_at).getTime();
       const elapsed = now - enteredAt;
 
-      if (elapsed >= TWO_HOURS_MS) {
-        console.log(`[LIFECYCLE] Preview ${item.id} exceeded 2-hour window. Purging & marking deleted.`);
-        await this.transitionToDeleted(item, 'unpaid_preview_2hr_timeout');
+      // If older than 5 days, permanently purge entirely
+      if (elapsed >= FIVE_DAYS_MS) {
+        console.log(`[LIFECYCLE] Preview ${item.id} exceeded 5-day maximum retention. Permanently deleting.`);
+        await this.transitionToDeleted(item, 'unpaid_preview_5day_timeout');
+        results.lapsedPurged++;
+      } else if (elapsed >= TWENTY_FOUR_HOURS_MS) {
+        console.log(`[LIFECYCLE] Preview ${item.id} exceeded 24-hour active window. Marking lapsed.`);
+        await this.transitionToLapsed(item, 'unpaid_preview_24hr_timeout');
         results.previewsExpired++;
       }
     }

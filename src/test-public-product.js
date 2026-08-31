@@ -78,8 +78,8 @@ test('🏛️ Phase 30: Public Product UX & End-to-End Journey Suite', async (t)
     assert.ok(body.success);
     assert.ok(Array.isArray(body.samples));
     assert.ok(body.samples.length >= 4);
-    assert.ok(body.samples.some(s => s.badge.includes('Systems')));
-    assert.ok(body.samples.some(s => s.badge.includes('Research')));
+    assert.ok(body.samples.some(s => s.name.includes('Cosmic') || s.badge.includes('Spatial') || s.badge.includes('Sci-Fi')));
+    assert.ok(body.samples.some(s => s.name.includes('Cyber') || s.name.includes('Bioluminescent') || s.badge.includes('Eco-Tech')));
   });
 
   // 5. Portfolio Generation

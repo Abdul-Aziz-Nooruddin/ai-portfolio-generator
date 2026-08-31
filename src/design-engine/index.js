@@ -52,7 +52,8 @@ class DesignEngine {
       const baseUniverse = VISUAL_UNIVERSES[universeId] || VISUAL_UNIVERSES['technical-lab'];
       visualUniverse = {
         ...baseUniverse,
-        theme: designBrief.visualUniverse.theme || baseUniverse.theme,
+        id: baseUniverse.id || universeId,
+        theme: designBrief.visualUniverse?.theme || baseUniverse.theme,
         colors: designBrief.colorSystem ? { ...baseUniverse.colors, ...designBrief.colorSystem } : baseUniverse.colors,
         headingFont: designBrief.typography?.headingFont || baseUniverse.headingFont,
         bodyFont: designBrief.typography?.bodyFont || baseUniverse.bodyFont,
@@ -124,9 +125,9 @@ class DesignEngine {
     });
 
     return {
-      html: rendered.html,
-      css: rendered.css,
-      js: rendered.js,
+      html: typeof rendered === 'string' ? rendered : (rendered?.html || ''),
+      css: typeof rendered === 'string' ? '' : (rendered?.css || ''),
+      js: typeof rendered === 'string' ? (motion?.js || '') : (rendered?.js || ''),
       compositionPlan,
       designBlueprint: {
         iaModel: iaModel.id,

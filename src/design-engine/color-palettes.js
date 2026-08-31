@@ -174,6 +174,23 @@ const COLOR_PALETTES = {
     accent: '#e5c158',
     glow: 'rgba(212, 175, 55, 0.2)',
     compatibility: ['luxury-minimal', 'editorial-monograph', 'spatial-3d-stage']
+  },
+  'cosmic-violet-neon': {
+    id: 'cosmic-violet-neon',
+    name: 'Cosmic Violet Holographic Neon',
+    theme: 'dark',
+    bg: '#08071a',
+    surface: 'rgba(18, 16, 44, 0.72)',
+    surfaceAlt: 'rgba(28, 24, 66, 0.55)',
+    text: '#ffffff',
+    textMuted: '#94a3b8',
+    border: 'rgba(139, 92, 246, 0.22)',
+    borderStrong: '#a855f7',
+    primary: '#8b5cf6',
+    primaryOn: '#ffffff',
+    accent: '#38bdf8',
+    glow: 'rgba(139, 92, 246, 0.45)',
+    compatibility: ['cosmic-astronaut-holographic', 'futuristic-spatial', 'cinematic-obsidian', 'spatial-3d-stage']
   }
 };
 

@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Portfolio Dashboard — Devfolio PRO</title>
+  <title>myfolio.tech Dashboard — AI Portfolio Studio</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -16,10 +18,10 @@
       --surface: #FFFFFF;
       --surface-card: #FFFFFF;
       --surface-border: rgba(15, 23, 42, 0.08);
-      --primary: #3B33D1;
-      --primary-hover: #312E81;
-      --secondary: #4F46E5;
-      --accent: #0284C7;
+      --primary: #0284C7;
+      --primary-hover: #0369A1;
+      --secondary: #38BDF8;
+      --accent: #10B981;
       --success: #10B981;
       --warning: #F59E0B;
       --danger: #EF4444;
@@ -40,16 +42,38 @@
       overflow-x: hidden;
     }
 
-    /* Ambient Cobalt Background Atmosphere with Bespoke Visual Backdrop */
+    /* 🌊 Moving 3D Fluid Silk Background Atmosphere */
     .dashboard-aurora {
       position: fixed;
-      inset: 0;
+      top: -5%;
+      left: -5%;
+      width: 110vw;
+      height: 110vh;
       z-index: 0;
       pointer-events: none;
       background: 
-        linear-gradient(180deg, rgba(248, 250, 252, 0.88) 0%, rgba(248, 250, 252, 0.94) 100%),
-        url('/assets/bg-dashboard.jpg') center/cover no-repeat fixed;
-      opacity: 0.95;
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(240, 246, 255, 0.45) 55%, rgba(220, 235, 255, 0.75) 100%),
+        url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+      animation: fluidSilkUndulate 18s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes fluidSilkUndulate {
+      0% {
+        transform: scale(1) translate(0px, 0px) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.04) translate(-15px, -10px) rotate(0.8deg);
+      }
+      50% {
+        transform: scale(1.07) translate(12px, 15px) rotate(-1deg);
+      }
+      75% {
+        transform: scale(1.03) translate(-8px, 10px) rotate(0.6deg);
+      }
+      100% {
+        transform: scale(1.05) translate(15px, -8px) rotate(-0.5deg);
+      }
     }
 
     .dashboard-grid-mesh {
@@ -57,7 +81,7 @@
       inset: 0;
       z-index: 0;
       pointer-events: none;
-      background-image: linear-gradient(rgba(59, 51, 209, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 51, 209, 0.03) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
       background-size: 44px 44px;
       opacity: 0.6;
     }
@@ -444,6 +468,202 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    .dash-stat-headline {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0F172A;
+    }
+
+    .security-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #1C1917;
+    }
+
+    /* 🌙 DARK THEME DASHBOARD OVERRIDES */
+    [data-theme="dark"] body {
+      background-color: #07090E;
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .dashboard-aurora {
+      background: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.4) 0%, rgba(10, 14, 28, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+    }
+
+    [data-theme="dark"] .dashboard-grid-mesh {
+      background-image: linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px);
+    }
+
+    [data-theme="dark"] .toolkit-item {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #F8FAFC;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
+
+    [data-theme="dark"] .toolkit-item:hover {
+      border-color: #38BDF8;
+      background: rgba(30, 41, 59, 0.95);
+      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.2);
+    }
+
+    [data-theme="dark"] .toolkit-title {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .toolkit-icon {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38BDF8;
+    }
+
+    [data-theme="dark"] .dash-card {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #F8FAFC;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .dash-stat-headline,
+    [data-theme="dark"] #planName,
+    [data-theme="dark"] #regenCounter {
+      color: #FFFFFF !important;
+    }
+
+    [data-theme="dark"] .card-title,
+    [data-theme="dark"] .dash-card-title {
+      color: #94A3B8;
+    }
+
+    [data-theme="dark"] .btn-card-action {
+      background: rgba(56, 189, 248, 0.12);
+      color: #38BDF8;
+      border-color: rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="dark"] .btn-card-action:hover {
+      background: #0284C7;
+      color: #FFFFFF;
+      border-color: #0284C7;
+    }
+
+    [data-theme="dark"] .metric-tile {
+      background: rgba(11, 15, 25, 0.8);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .metric-val {
+      color: #F8FAFC;
+    }
+
+    /* 🔒 Security & Active Sessions Dark Theme */
+    [data-theme="dark"] .security-section {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #F8FAFC;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .security-title {
+      color: #FFFFFF !important;
+    }
+
+    [data-theme="dark"] .session-item {
+      background: rgba(26, 36, 56, 0.7);
+      border-color: rgba(255, 255, 255, 0.08);
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .session-device {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .session-meta {
+      color: #94A3B8;
+    }
+
+    [data-theme="dark"] .current-badge {
+      background: rgba(16, 185, 129, 0.2);
+      color: #34D399;
+    }
+
+    [data-theme="dark"] .security-section hr {
+      border-top-color: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    [data-theme="dark"] .modal-card {
+      background: #0F172A;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #F8FAFC;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 📱 Mobile Responsiveness (< 960px & < 640px) */
+    @media (max-width: 960px) {
+      .dashboard-content-wrap {
+        padding: 1.25rem 1rem !important;
+        gap: 1.25rem !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .dashboard-hero {
+        padding: 1.5rem 1.25rem !important;
+        border-radius: 20px !important;
+        gap: 1.25rem !important;
+      }
+
+      .hero-title {
+        font-size: 1.65rem !important;
+      }
+
+      .hero-subtitle {
+        font-size: 0.88rem !important;
+      }
+
+      .url-box {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 1rem !important;
+        gap: 0.75rem !important;
+      }
+
+      .url-actions {
+        width: 100% !important;
+        display: flex !important;
+        gap: 0.5rem !important;
+      }
+
+      .url-actions .btn-secondary,
+      .url-actions .btn-primary {
+        flex: 1 !important;
+        justify-content: center !important;
+        text-align: center !important;
+        padding: 0.65rem 0.8rem !important;
+        font-size: 0.82rem !important;
+      }
+
+      .quick-toolkit-row {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+      }
+
+      .dash-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+      }
+
+      .dash-card {
+        padding: 1.35rem 1.15rem !important;
+        border-radius: 18px !important;
+      }
+
+      .security-section {
+        padding: 1.35rem 1.15rem !important;
+        border-radius: 18px !important;
+      }
+    }
   </style>
   <script src="/sidebar.js"></script>
 </head>
@@ -474,7 +694,7 @@
             </div>
 
             <div class="url-box">
-              <span id="portfolioUrlText" class="url-text">http://localhost:3000/p/preview</span>
+              <span id="portfolioUrlText" class="url-text">Loading portfolio link...</span>
               <div class="url-actions">
                 <button class="btn-secondary" onclick="copyPortfolioUrl()">📋 Copy</button>
                 <a id="btnOpenLive" href="/p/preview" target="_blank" class="btn-primary">🚀 Open Live ↗</a>
@@ -519,13 +739,13 @@
             <!-- Subscription Status -->
             <div class="dash-card">
               <div class="dash-card-title">💳 Subscription &amp; Plan</div>
-              <div style="font-size: 1.6rem; font-weight: 800; color: #0F172A;" id="planName">Pro Builder (₹149/mo)</div>
+              <div class="dash-stat-headline" id="planName">Free Starter Tier</div>
               <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;" id="billingDetails">
-                Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.
+                100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.
               </p>
               <div style="margin-top: auto; padding-top: 0.5rem;">
                 <a href="/subscribe" class="btn-card-action" style="width: 100%; justify-content: center;">
-                  Manage Subscription &rarr;
+                  Upgrade to Pro &rarr;
                 </a>
               </div>
             </div>
@@ -533,12 +753,12 @@
             <!-- Weekly Regeneration Allowance -->
             <div class="dash-card">
               <div class="dash-card-title">🔄 Weekly Allowance</div>
-              <div style="font-size: 1.6rem; font-weight: 800; color: #0F172A;" id="regenCounter">Unlimited Builds Active</div>
-              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-                Generate unlimited portfolio design variations and multi-axis compositions in Web Studio anytime.
+              <div class="dash-stat-headline" id="regenCounter">5 / 5 Builds Remaining</div>
+              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;" id="regenDetails">
+                Generate and iterate bespoke 3D portfolio variations in Web Studio.
               </p>
               <div style="margin-top: auto; padding-top: 0.5rem;">
-                <a href="/" class="btn-card-action" style="width: 100%; justify-content: center;">
+                <a href="/studio.html" class="btn-card-action" style="width: 100%; justify-content: center;">
                   Open Web Studio &rarr;
                 </a>
               </div>
@@ -549,11 +769,11 @@
               <div class="dash-card-title">📊 Recruiter Traffic</div>
               <div style="display: flex; gap: 2rem; margin: 0.5rem 0;">
                 <div>
-                  <div style="font-size: 1.8rem; font-weight: 800; color: #3B33D1;" id="statViews">14</div>
+                  <div style="font-size: 1.8rem; font-weight: 800; color: #38BDF8;" id="statViews">0</div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Total Views</div>
                 </div>
                 <div>
-                  <div style="font-size: 1.8rem; font-weight: 800; color: #10B981;" id="statVisitors">8</div>
+                  <div style="font-size: 1.8rem; font-weight: 800; color: #10B981;" id="statVisitors">0</div>
                   <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Unique Visitors</div>
                 </div>
               </div>
@@ -567,7 +787,7 @@
           <div class="security-section">
             <div class="security-header">
               <div>
-                <h2 style="font-size: 1.35rem; font-weight: 800; color: #1c1917;">🔒 Security Settings & Active Sessions</h2>
+                <h2 class="security-title">🔒 Security Settings &amp; Active Sessions</h2>
                 <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Manage your active devices, sessions, and account credentials.</p>
               </div>
               <button class="btn-card-action" onclick="revokeAllSessions()">
@@ -636,34 +856,58 @@
       try {
         // 1. Authenticate user from session
         const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-        if (meRes.ok) {
-          const meData = await meRes.json();
-          currentUser = meData.user || meData;
-          if (currentUser && currentUser.name) {
-            document.getElementById('userGreeting').textContent = `Welcome back, ${currentUser.name}!`;
-          }
+        if (!meRes.ok || meRes.status === 401) {
+          // Not logged in -> Redirect to login page
+          window.location.href = '/login';
+          return;
+        }
+
+        const meData = await meRes.json();
+        currentUser = meData.user || meData;
+        if (currentUser && currentUser.name) {
+          document.getElementById('userGreeting').textContent = `Welcome back, ${currentUser.name}!`;
         }
 
         // 2. Fetch authenticated dashboard data
-        const dashRes = await fetch('/api/web/dashboard', { credentials: 'include' });
-        if (dashRes.ok) {
-          const dashData = await dashRes.json();
-          if (dashData.success) {
-            renderDashboard(dashData);
-            loadActiveSessions();
+        try {
+          const dashRes = await fetch('/api/web/dashboard', { credentials: 'include' });
+          if (dashRes.ok) {
+            const dashData = await dashRes.json();
+            if (dashData.success) {
+              renderDashboard(dashData);
+              loadActiveSessions();
+              return;
+            }
           }
+        } catch (e) {
+          console.warn('Dashboard fetch warning:', e);
         }
+
+        // Graceful fallback render if dashboard API had no site or network delay
+        renderDashboard({ success: true, user: currentUser });
+        loadActiveSessions();
       } catch (e) {
-        console.warn('Dashboard loaded with defaults:', e);
+        console.warn('Dashboard error:', e);
+        renderDashboard({ success: true, user: currentUser || {} });
       }
     }
 
-    function renderDashboard(data) {
+    function renderDashboard(data = {}) {
       const conv = data.conversation || {};
       const user = data.user || currentUser || {};
       const name = (conv.extracted_data && conv.extracted_data.name) || user.name || 'Developer';
       const state = conv.lifecycle_state || conv.status || 'live';
-      const siteId = data.siteId || conv.id || null;
+      let siteId = data.siteId || conv.id || null;
+
+      // Fallback check from browser storage if user generated in Web Studio
+      if (!siteId) {
+        try {
+          const projects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1')) || [];
+          if (projects.length > 0 && projects[0].siteId) {
+            siteId = projects[0].siteId;
+          }
+        } catch (e) {}
+      }
 
       document.getElementById('userGreeting').textContent = `Welcome back, ${name}!`;
 
@@ -678,20 +922,56 @@
         openLiveBtn.innerHTML = '🚀 Open Live ↗';
 
         if (badge) {
-          badge.textContent = (state === 'paid' || state === 'live') ? '● ACTIVE LIVE' : '2-HR PREVIEW';
+          badge.textContent = (state === 'paid' || state === 'live') ? '● ACTIVE LIVE' : '24-HR PREVIEW';
           badge.className = 'status-badge ' + (state === 'live' || state === 'paid' ? 'status-live' : (state.includes('lapsed') ? 'status-lapsed' : 'status-preview'));
         }
       } else {
-        currentSiteUrl = `${window.location.origin}/?mode=builder`;
-        urlTextEl.textContent = '⚡ No portfolio generated yet — Click Build to launch your first site';
-        openLiveBtn.href = '/?mode=builder';
-        openLiveBtn.innerHTML = '⚡ Build Now ↗';
+        currentSiteUrl = `${window.location.origin}/studio.html`;
+        urlTextEl.textContent = '⚡ No portfolio generated yet — Click "Create 3D Portfolio" to build your site';
+        openLiveBtn.href = '/studio.html';
+        openLiveBtn.innerHTML = '⚡ Create 3D Portfolio ↗';
 
         if (badge) {
           badge.textContent = 'READY TO BUILD';
           badge.className = 'status-badge status-preview';
         }
       }
+
+      // Card Elements
+      const planNameEl = document.getElementById('planName');
+      const billingDetailsEl = document.getElementById('billingDetails');
+      const regenCounterEl = document.getElementById('regenCounter');
+      const regenDetailsEl = document.getElementById('regenDetails');
+
+      const isPro = data.isPro || user.plan === 'pro' || user.isPro || false;
+      const plan = data.plan || {};
+
+      // Synchronize Weekly Allowance with Web Studio Engine (5 / 5 Weekly Generations)
+      let weeklyRemaining = 5;
+      let weeklyTotal = 5;
+      let usedGenerations = 0;
+      try {
+        const allowanceState = JSON.parse(localStorage.getItem('myfolio_weekly_allowance_v1'));
+        if (allowanceState) {
+          const now = Date.now();
+          weeklyTotal = allowanceState.totalLimit || 5;
+          if (allowanceState.resetTimestamp && now >= allowanceState.resetTimestamp) {
+            weeklyRemaining = weeklyTotal;
+            usedGenerations = 0;
+          } else {
+            usedGenerations = allowanceState.used || 0;
+            weeklyRemaining = Math.max(0, weeklyTotal - usedGenerations);
+          }
+        } else if (typeof data.regensUsed === 'number') {
+          usedGenerations = data.regensUsed;
+          weeklyRemaining = Math.max(0, 5 - data.regensUsed);
+        }
+      } catch (e) {}
+
+      if (planNameEl) planNameEl.textContent = plan.name || (isPro ? 'Pro Builder (₹149/mo)' : 'Free Starter Tier');
+      if (billingDetailsEl) billingDetailsEl.textContent = plan.details || (isPro ? 'Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.' : '100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.');
+      if (regenCounterEl) regenCounterEl.textContent = plan.buildsLabel || (isPro ? 'Unlimited Builds Active' : `${weeklyRemaining} / ${weeklyTotal} Builds Remaining`);
+      if (regenDetailsEl) regenDetailsEl.textContent = isPro ? 'Generate unlimited portfolio design variations and multi-axis compositions in Web Studio anytime.' : `Used ${usedGenerations} of ${weeklyTotal} generations this cycle. Resets automatically every 7 days.`;
 
       // Real live analytics (Zero fake data)
       const analytics = data.analytics || {};
@@ -786,8 +1066,13 @@
             body: JSON.stringify({ password })
           });
           const data = await res.json();
+          if (res.status === 401) {
+            alert(data.error || 'Session expired or not signed in. Please log in first.');
+            window.location.href = '/login';
+            return;
+          }
           if (!res.ok) throw new Error(data.error || 'Failed to delete account');
-          alert('Your account has been deleted.');
+          alert('Your account and data have been permanently deleted.');
           window.location.href = '/';
         } catch (err) {
           alert(err.message);

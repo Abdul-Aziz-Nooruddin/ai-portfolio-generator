@@ -11,7 +11,7 @@ class GitHubProjectRanker {
    * @param {number} [maxProjects=5] - Target number of projects to return (3-6)
    * @returns {Array} Top ranked project objects
    */
-  static rankAndSelect(repositories = [], maxProjects = 5) {
+  static rankAndSelect(repositories = [], maxProjects = 20) {
     if (!Array.isArray(repositories) || repositories.length === 0) {
       return [];
     }

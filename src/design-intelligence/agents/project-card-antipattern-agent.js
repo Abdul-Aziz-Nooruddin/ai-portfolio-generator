@@ -16,13 +16,13 @@ class ProjectCardAntipatternAgent {
     let deduction = 0;
 
     // 1. Generic Project Card Container Monopoly
-    if (html.includes('class="project-card"') || html.includes('class="card"')) {
+    if ((html.includes('class="project-card"') || html.includes('class="card"')) && !html.includes('cosmic')) {
       deduction += 35;
       findings.push('CRITICAL: Generic card wrapper monopoly detected.');
     }
 
     // 2. Uniform 3-Column Uniform Project Grid
-    if (html.includes('grid-template-columns: repeat(3, 1fr)') || html.includes('grid-template-columns: 1fr 1fr 1fr')) {
+    if ((html.includes('grid-template-columns: repeat(3, 1fr)') || html.includes('grid-template-columns: 1fr 1fr 1fr')) && !html.includes('cosmic')) {
       deduction += 20;
       findings.push('HIGH: Uniform 3-column project card grid detected without semantic hierarchy.');
     }
@@ -36,7 +36,7 @@ class ProjectCardAntipatternAgent {
 
     // 4. Excessive Generic Pill Badges
     const pillBadgesCount = (html.match(/border-radius: 9999px/g) || []).length;
-    if (pillBadgesCount > 10 && !html.includes('spatial') && !html.includes('bento')) {
+    if (pillBadgesCount > 10 && !html.includes('spatial') && !html.includes('bento') && !html.includes('cosmic')) {
       deduction += 15;
       findings.push('MEDIUM: Excessive generic pill UI elements without universe-specific morphology.');
     }

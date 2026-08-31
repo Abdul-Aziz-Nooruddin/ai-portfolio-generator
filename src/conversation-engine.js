@@ -144,6 +144,32 @@ Just reply with A, B, C, or D.`
       };
     }
 
+    // 2b. GitHub Profile Ingestion Detection
+    const githubMatch = (messageText || '').match(/(?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_-]+)/i);
+    if (githubMatch && githubMatch[1] && !['settings', 'pulls', 'issues', 'notifications'].includes(githubMatch[1].toLowerCase())) {
+      const ghUsername = githubMatch[1];
+      try {
+        const { GitHubGenerationPipeline } = require('./services/github-generation-pipeline');
+        const ghPipeline = new GitHubGenerationPipeline(this.ai);
+        const parsed = await ghPipeline.parseForWebBuilder(ghUsername);
+        if (parsed && parsed.data) {
+          const mergedData = { ...(extracted_data || {}), ...parsed.data };
+          await this.db.updateConversation(conversation.id, {
+            extracted_data: mergedData,
+            status: STATES.CONFIRMING_DATA,
+            branch: 'A'
+          });
+          const summary = this.formatSummary(mergedData, 'A');
+          return {
+            action: 'reply',
+            message: `🐙 **GitHub Profile Connected (@${ghUsername})!**\n\nI analyzed your public repositories and compiled your developer profile:\n\n${summary}\n\nReady to generate your bespoke 3D portfolio?\n\nReply **YES** to generate or type **EDIT [field]** to adjust anything!`
+          };
+        }
+      } catch (ghErr) {
+        console.warn('[CONVERSATION ENGINE] GitHub auto-ingest error:', ghErr.message);
+      }
+    }
+
     // 3. Stats / Analytics Command (Pro Feature)
     if (lowerMsg === 'stats' || lowerMsg === '/stats' || lowerMsg === 'analytics') {
       const analytics = await this.db.getSiteAnalytics(conversation.id);
@@ -776,7 +802,7 @@ Reply:
           }
         }
         if (recipient) {
-          const msg = `🎉 **Your Portfolio Preview is Live!** ⏳ *(2-Hour Timer Active)*\n\n🔗 **Preview link:**\n${liveUrl}\n\n⚠️ *This preview will automatically expire in 2 hours unless subscribed.*\n\nKeep your portfolio live forever with full features:\n💳 Reply **PAY** — All-Access (₹149/mo)\n✏️ Reply **EDIT [field]** — 1 free edit`;
+          const msg = `🎉 **Your Portfolio Preview is Live!** ⏳ *(24-Hour Timer Active)*\n\n🔗 **Preview link:**\n${liveUrl}\n\n⚠️ *This preview will stay active for 24 hours (with a 5-day grace period before permanent deletion).*\n\nKeep your portfolio live forever with full features:\n💳 Reply **PAY** — Lifetime All-Access (₹149 one-time)\n✏️ Reply **EDIT [field]** — 1 free edit`;
           await this.notifier(recipient, msg, { liveUrl });
         } else {
           console.warn('[NOTIFIER] Could not find recipient for conversation', id);

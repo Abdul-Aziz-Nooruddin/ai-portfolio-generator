@@ -127,14 +127,24 @@ class NanoBanana3DGenerator {
       const container = document.getElementById('nano-banana-3d-stage') || document.getElementById('webgl-canvas-container');
       if (!container) return;
 
+      // Hide SVG fallback upon Three.js initialization
+      const svgFallback = container.querySelector('.nano-banana-svg-3d');
+      if (svgFallback) svgFallback.style.display = 'none';
+
+      const stageWidth = container.clientWidth || 600;
+      const stageHeight = container.clientHeight || 320;
+
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(42, (container.clientWidth || window.innerWidth) / (container.clientHeight || 320), 0.1, 1000);
+      const camera = new THREE.PerspectiveCamera(42, stageWidth / stageHeight, 0.1, 1000);
       camera.position.set(0, 1.2, 16);
 
       const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, powerPreference: 'high-performance' });
-      renderer.setSize(container.clientWidth || window.innerWidth, container.clientHeight || 320);
+      renderer.setSize(stageWidth, stageHeight);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.shadowMap.enabled = true;
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
+      renderer.domElement.style.display = 'block';
       container.appendChild(renderer.domElement);
 
       // Lighting & Volumetric Studio Setup
@@ -421,47 +431,324 @@ class NanoBanana3DGenerator {
   }
 
   /**
-   * Generates vector isometric 3D SVG as high-fidelity fallback
+   * 🍌 Synthesizes a live, interactive 3D visual card tailored to any project's exact title & description
+   * @param {Object} project { name, desc, tech, category }
+   * @param {string} theme Template visual universe theme
+   * @returns {string} Interactive 3D HTML/SVG markup with dynamic hover triggers and 3D depth physics
    */
-  static generateSvgIsometricFallback(config) {
+  static synthesizeProjectVisual(project = {}, theme = 'cosmic-astronaut') {
+    const nameText = (project.name || '').toLowerCase();
+    const descText = (project.desc || project.description || '').toLowerCase();
+    const techText = (project.tech || '').toLowerCase();
+    const coreText = `${nameText} ${descText} ${techText}`.toLowerCase();
+    const fullText = `${coreText} ${project.category || ''}`.toLowerCase();
+    
+    const hasCore = (regex) => new RegExp(regex, 'i').test(coreText);
+    const hasFull = (regex) => new RegExp(regex, 'i').test(fullText);
+
+    // Dynamic Archetype Classification from Title & Description
+    let domain = 'developer-core';
+    let label = '3D ARCHITECTURAL SYSTEM PRISM';
+    let icon = '⚡';
+    let primary = '#818cf8';
+    let secondary = '#38bdf8';
+    // 1. Blockchain, Web3, Smart Contracts & Consent Management
+    if (hasCore('\\b(consent|algorand|blockchain|solidity|contract|polygon|web3|crypto|ledger|dpdp|token|dapp|nft|dao)\\b')) {
+      domain = 'crypto-ledger';
+      label = '3D DECENTRALIZED PROTOCOL & CONSENT VAULT';
+      icon = '⛓️';
+      primary = '#00f2fe';
+      secondary = '#4facfe';
+      accent = '#10b981';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- Interlocking 3D Cryptographic Polyhedrons -->
+          <polygon points="-30,-30 0,-45 30,-30 0,-15" fill="${primary}" opacity="0.85" />
+          <polygon points="30,-30 30,10 0,25 0,-15" fill="${secondary}" opacity="0.75" />
+          <polygon points="-30,-30 0,-15 0,25 -30,10" fill="#0284c7" opacity="0.7" />
+          <!-- Encrypted Proof Links -->
+          <line x1="0" y1="-15" x2="0" y2="45" stroke="${accent}" stroke-width="3" stroke-dasharray="4 2" />
+          <circle cx="0" cy="45" r="8" fill="${accent}" />
+          <ellipse cx="0" cy="-5" rx="60" ry="24" fill="none" stroke="${primary}" stroke-width="1" opacity="0.6" transform="rotate(-20)" />
+        </g>
+      `;
+    } else if (hasCore('\\b(youtube|video|shorts|reel|stream|film|movie|media|ffmpeg|audiovisual)\\b')) {
+      domain = 'media-engine';
+      label = '3D AUTOMATED MEDIA PIPELINE';
+      icon = '🎬';
+      primary = '#ef4444';
+      secondary = '#f59e0b';
+      accent = '#8b5cf6';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Floating Video Camera & Film Prism -->
+          <polygon points="-40,-30 10,-30 30,-10 -20,-10" fill="${primary}" opacity="0.85" />
+          <polygon points="10,-30 40,-15 40,25 10,10" fill="${secondary}" opacity="0.75" />
+          <polygon points="-40,-30 10,10 10,50 -40,10" fill="#991b1b" opacity="0.8" />
+          <!-- Camera Lens Iris -->
+          <circle cx="-15" cy="-10" r="18" fill="#0f172a" stroke="${secondary}" stroke-width="2" />
+          <circle cx="-15" cy="-10" r="8" fill="${accent}" />
+          <!-- Play Vector -->
+          <polygon points="-18,-15 -10,-10 -18,-5" fill="#ffffff" />
+          <!-- Orbiting Film Frame Track -->
+          <ellipse cx="0" cy="0" rx="65" ry="25" fill="none" stroke="${accent}" stroke-width="1.5" stroke-dasharray="6 4" opacity="0.6" transform="rotate(15)" />
+        </g>
+      `;
+    } else if (hasCore('\\b(ai|ml|neural|deep learning|scikit|machine learning|model|classifier|predict|tensor|vision|nlp|intelligence|pandas|jupyter|llm|gpt)\\b')) {
+      domain = 'ai-neural-core';
+      label = '3D NEURAL COGNITIVE MATRIX';
+      icon = '🧠';
+      primary = '#818cf8';
+      secondary = '#c084fc';
+      accent = '#38bdf8';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Neural Tensor Octahedron -->
+          <polygon points="0,-42 35,-18 0,6 -35,-18" fill="${primary}" opacity="0.9" />
+          <polygon points="35,-18 35,22 0,46 0,6" fill="${secondary}" opacity="0.75" />
+          <polygon points="-35,-18 0,6 0,46 -35,22" fill="#4338ca" opacity="0.7" />
+          <!-- Neural Synaptic Lattice -->
+          <circle cx="-45" cy="-20" r="5" fill="${accent}" />
+          <circle cx="45" cy="-20" r="5" fill="${accent}" />
+          <circle cx="-25" cy="35" r="4" fill="${primary}" />
+          <circle cx="25" cy="35" r="4" fill="${primary}" />
+          <line x1="0" y1="-42" x2="-45" y2="-20" stroke="${accent}" stroke-width="1.5" stroke-dasharray="3 2" />
+          <line x1="0" y1="-42" x2="45" y2="-20" stroke="${accent}" stroke-width="1.5" stroke-dasharray="3 2" />
+          <ellipse cx="0" cy="0" rx="65" ry="24" fill="none" stroke="${accent}" stroke-width="1.5" opacity="0.5" transform="rotate(25)" />
+        </g>
+      `;
+    } else if (hasCore('\\b(student|database|management|sql|postgres|mongodb|mysql|sqlite|crud|backend|server|admin|spring boot|django|fastapi)\\b')) {
+      domain = 'database-codex';
+      label = '3D SECURE DATA CODEX & ENGINE';
+      icon = '🗄️';
+      primary = '#3b82f6';
+      secondary = '#10b981';
+      accent = '#f59e0b';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Database Cylinder Stack -->
+          <ellipse cx="0" cy="-30" rx="45" ry="14" fill="${primary}" opacity="0.85" />
+          <ellipse cx="0" cy="-10" rx="45" ry="14" fill="${secondary}" opacity="0.8" />
+          <ellipse cx="0" cy="10" rx="45" ry="14" fill="${accent}" opacity="0.75" />
+          <ellipse cx="0" cy="30" rx="45" ry="14" fill="${primary}" opacity="0.9" />
+          <ellipse cx="0" cy="0" rx="65" ry="22" fill="none" stroke="${secondary}" stroke-width="1.5" opacity="0.6" transform="rotate(-15)" />
+        </g>
+      `;
+    } else if (hasCore('\\b(finance|loan|credit|bank|trading|stock|investment|fintech|payment|risk|fraud)\\b')) {
+      domain = 'finance-analytics';
+      label = '3D FINANCIAL ANALYTICS MATRIX';
+      icon = '📈';
+      primary = '#10b981';
+      secondary = '#38bdf8';
+      accent = '#f59e0b';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Financial Bar Graph & Trend Axis -->
+          <polygon points="-40,30 -25,10 -25,30 -40,40" fill="${primary}" opacity="0.85" />
+          <polygon points="-15,30 0,-15 0,30 -15,40" fill="${secondary}" opacity="0.85" />
+          <polygon points="10,30 25,-35 25,30 10,40" fill="${accent}" opacity="0.9" />
+          <line x1="-45" y1="20" x2="35" y2="-40" stroke="#ffffff" stroke-width="2.5" />
+          <circle cx="35" cy="-40" r="5" fill="${accent}" />
+        </g>
+      `;
+    } else if (hasCore('\\b(climate|forest|fire|wildfire|nature|weather|earth|green|solar|sustainability|geospatial)\\b')) {
+      domain = 'geospatial-climate';
+      label = '3D GEOSPATIAL CLIMATE MATRIX';
+      icon = '🌍';
+      primary = '#f59e0b';
+      secondary = '#10b981';
+      accent = '#ef4444';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Globe with Orbital Climate Ring -->
+          <circle cx="0" cy="0" r="38" fill="rgba(16, 185, 129, 0.25)" stroke="${secondary}" stroke-width="2" />
+          <ellipse cx="0" cy="0" rx="58" ry="18" fill="none" stroke="${primary}" stroke-width="1.8" transform="rotate(-25)" />
+          <circle cx="45" cy="-18" r="5" fill="${accent}" />
+        </g>
+      `;
+    } else if (hasCore('\\b(profile|portfolio|central|repository|workspace|dotfiles|config|developer|source|showcase|cv|resume)\\b')) {
+      domain = 'developer-core';
+      label = '3D HOLOGRAPHIC CAREER CODEX';
+      icon = '💎';
+      primary = '#a855f7';
+      secondary = '#38bdf8';
+      accent = '#f43f5e';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <!-- 3D Polyhedral Core Workspace -->
+          <polygon points="0,-40 38,-18 0,4 -38,-18" fill="${primary}" opacity="0.85" />
+          <polygon points="38,-18 38,24 0,46 0,4" fill="${secondary}" opacity="0.75" />
+          <polygon points="-38,-18 0,4 0,46 -38,24" fill="#581c87" opacity="0.7" />
+          <!-- Orbiting Satellite Modules -->
+          <ellipse cx="0" cy="4" rx="66" ry="24" fill="none" stroke="${accent}" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.6" transform="rotate(-20)" />
+          <circle cx="-50" cy="18" r="4.5" fill="${primary}" />
+          <circle cx="48" cy="-18" r="4.5" fill="${secondary}" />
+        </g>
+      `;
+    } else if (hasCore('\\b(user management|auth|authentication|jwt|rbac|login|signup|identity|security|iam|cipher)\\b')) {
+      domain = 'user-auth-security';
+      label = '3D IDENTITY & ACCESS SECURITY SHIELD';
+      icon = '🛡️';
+      primary = '#10b981';
+      secondary = '#38bdf8';
+      accent = '#f59e0b';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <path d="M0,-45 C25,-40 40,-35 40,-15 C40,25 20,45 0,55 C-20,45 -40,25 -40,-15 C-40,-35 -25,-40 0,-45 Z" fill="rgba(16, 185, 129, 0.25)" stroke="${primary}" stroke-width="2.5" />
+          <circle cx="0" cy="-10" r="11" fill="${secondary}" />
+          <path d="M-18,18 C-18,6 18,6 18,18 Z" fill="${secondary}" opacity="0.85" />
+          <circle cx="0" cy="-10" r="18" fill="none" stroke="${accent}" stroke-width="1.5" stroke-dasharray="4 3" />
+        </g>
+      `;
+    } else if (hasCore('\\b(game|games|arcade|gaming|unity|unreal|play|canvas game|physics engine|sprite|retro)\\b')) {
+      domain = 'game-arcade';
+      label = '3D KINETIC GAME PHYSICS ENGINE';
+      icon = '🎮';
+      primary = '#ec4899';
+      secondary = '#a855f7';
+      accent = '#22d3ee';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <polygon points="-45,-25 0,-45 45,-25 0,-5" fill="${primary}" opacity="0.85" />
+          <polygon points="45,-25 45,15 0,35 0,-5" fill="${secondary}" opacity="0.75" />
+          <polygon points="-45,-25 0,-5 0,35 -45,15" fill="#831843" opacity="0.8" />
+          <circle cx="-20" cy="-12" r="5" fill="#ffffff" />
+          <circle cx="20" cy="-12" r="4" fill="${accent}" />
+        </g>
+      `;
+    } else if (hasCore('\\b(leetcode|algorithm|algorithms|data structure|interview|dsa|hashing|graph|tree|sorting|leet|leethub)\\b')) {
+      domain = 'algorithm-tree';
+      label = '3D ALGORITHM & BINARY GRAPH MATRIX';
+      icon = '🧩';
+      primary = '#38bdf8';
+      secondary = '#818cf8';
+      accent = '#10b981';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <circle cx="0" cy="-35" r="12" fill="${accent}" />
+          <text x="0" y="-31" font-size="10" font-family="monospace" fill="#0f172a" text-anchor="middle" font-weight="900">1</text>
+          <line x1="0" y1="-35" x2="-35" y2="5" stroke="${secondary}" stroke-width="2.5" />
+          <circle cx="-35" cy="5" r="10" fill="${primary}" />
+          <line x1="0" y1="-35" x2="35" y2="5" stroke="${secondary}" stroke-width="2.5" />
+          <circle cx="35" cy="5" r="10" fill="${primary}" />
+        </g>
+      `;
+    } else {
+      domain = 'frontend-ui';
+      label = '3D INTERACTIVE UI CANVAS & PRISM';
+      icon = '🎨';
+      primary = '#38bdf8';
+      secondary = '#a855f7';
+      accent = '#f43f5e';
+      geometrySvg = `
+        <g transform="translate(180, 90)">
+          <g transform="translate(10, 10) skewY(-8)">
+            <rect x="-45" y="-32" width="90" height="64" rx="8" fill="rgba(15, 23, 42, 0.9)" stroke="${primary}" stroke-width="2" />
+            <circle cx="-32" cy="-20" r="3" fill="#ef4444" />
+            <circle cx="-22" cy="-20" r="3" fill="#f59e0b" />
+            <circle cx="-12" cy="-20" r="3" fill="#10b981" />
+            <rect x="-35" y="-8" width="40" height="24" rx="4" fill="${primary}" opacity="0.3" />
+          </g>
+        </g>
+      `;
+    }
+
+    const cardId = 'nb_p3d_' + Math.abs(Math.floor(Math.random() * 1000000));
+
     return `
-    <svg viewBox="0 0 400 400" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg" class="nano-banana-svg-3d">
-      <defs>
-        <linearGradient id="nb-grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${config.primaryColor}" />
-          <stop offset="100%" stop-color="${config.accentColor}" />
-        </linearGradient>
-        <linearGradient id="nb-grad2" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="${config.accentColor}" stop-opacity="0.8" />
-          <stop offset="100%" stop-color="${config.primaryColor}" stop-opacity="0.2" />
-        </linearGradient>
-        <filter id="nb-glow" x="-20%" y="-20%" width="140%" height="140%">
-          <feGaussianBlur stdDeviation="12" result="blur" />
-          <feComposite in="SourceGraphic" in2="blur" operator="over" />
-        </filter>
-      </defs>
-      <!-- Background Ambient Glow -->
-      <circle cx="200" cy="200" r="140" fill="url(#nb-grad1)" opacity="0.15" filter="url(#nb-glow)" />
-      <!-- Outer Orbit Ring -->
-      <ellipse cx="200" cy="200" rx="160" ry="70" stroke="${config.accentColor}" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" transform="rotate(-25 200 200)" />
-      <!-- Isometric Core Polyhedron -->
-      <g transform="translate(200, 200)" filter="url(#nb-glow)">
-        <!-- Top Face -->
-        <polygon points="0,-70 60,-35 0,0 -60,-35" fill="url(#nb-grad1)" opacity="0.9" />
-        <!-- Right Face -->
-        <polygon points="60,-35 60,35 0,70 0,0" fill="${config.primaryColor}" opacity="0.75" />
-        <!-- Left Face -->
-        <polygon points="-60,-35 0,0 0,70 -60,35" fill="${config.accentColor}" opacity="0.6" />
-        <!-- Inner Lattice Edges -->
-        <line x1="0" y1="-70" x2="0" y2="70" stroke="#FFFFFF" stroke-width="1.5" opacity="0.6" />
-        <line x1="-60" y1="-35" x2="60" y2="35" stroke="#FFFFFF" stroke-width="1" opacity="0.4" />
-        <line x1="60" y1="-35" x2="-60" y2="35" stroke="#FFFFFF" stroke-width="1" opacity="0.4" />
-      </g>
-      <!-- Orbiting Satellite Spheres -->
-      <circle cx="90" cy="140" r="12" fill="url(#nb-grad1)" filter="url(#nb-glow)" />
-      <circle cx="310" cy="260" r="10" fill="${config.accentColor}" filter="url(#nb-glow)" />
-      <circle cx="280" cy="110" r="8" fill="${config.primaryColor}" />
-    </svg>
+    <div class="nano-banana-live-3d-card" id="${cardId}" style="
+      width: 100%;
+      height: 190px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      background: radial-gradient(circle at 50% 40%, rgba(30, 41, 59, 0.95), #090d16);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6), inset 0 0 25px rgba(0,0,0,0.4);
+      perspective: 800px;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    "
+    onmousemove="
+      const r = this.getBoundingClientRect();
+      const x = (event.clientX - r.left) / r.width - 0.5;
+      const y = (event.clientY - r.top) / r.height - 0.5;
+      const inner = this.querySelector('.nb-3d-inner');
+      if (inner) inner.style.transform = 'rotateY(' + (x * 24) + 'deg) rotateX(' + (-y * 24) + 'deg) translateZ(15px)';
+      this.style.borderColor = '${primary}';
+      this.style.boxShadow = '0 15px 35px rgba(0,0,0,0.8), 0 0 25px ${primary}44';
+    "
+    onmouseleave="
+      const inner = this.querySelector('.nb-3d-inner');
+      if (inner) inner.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0px)';
+      this.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+      this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.6), inset 0 0 25px rgba(0,0,0,0.4)';
+    ">
+      <!-- 3D Perspective Layer -->
+      <div class="nb-3d-inner" style="
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.2s ease-out;
+      ">
+        <!-- SVG Vector 3D Geometric Scene -->
+        <svg viewBox="0 0 360 180" width="100%" height="100%" fill="none" style="display: block; width: 100%; height: 100%;">
+          <defs>
+            <radialGradient id="${cardId}_glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="${primary}" stop-opacity="0.35" />
+              <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+            </radialGradient>
+          </defs>
+          <!-- Background Ambient Glow -->
+          <circle cx="180" cy="90" r="85" fill="url(#${cardId}_glow)" />
+          ${geometrySvg}
+        </svg>
+
+        <!-- Top Telemetry Badge -->
+        <div style="
+          position: absolute;
+          top: 10px;
+          left: 12px;
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          background: rgba(15, 23, 42, 0.75);
+          backdrop-filter: blur(8px);
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          padding: 3px 8px;
+          border-radius: 9999px;
+          font-size: 0.68rem;
+          font-weight: 700;
+          color: #ffffff;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        ">
+          <span style="font-size: 0.8rem;">${icon}</span>
+          <span style="color: ${primary}; font-family: monospace;">${label}</span>
+        </div>
+
+        <!-- Live Trigger Indicator -->
+        <div style="
+          position: absolute;
+          bottom: 10px;
+          right: 12px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          background: rgba(0, 0, 0, 0.6);
+          padding: 2px 7px;
+          border-radius: 6px;
+          font-size: 0.62rem;
+          font-family: monospace;
+          color: ${accent};
+          border: 1px solid ${accent}44;
+        ">
+          <span style="display: inline-block; width: 6px; height: 6px; background: ${accent}; border-radius: 50%; box-shadow: 0 0 6px ${accent};"></span>
+          <span>LIVE 3D TRIGGER</span>
+        </div>
+      </div>
+    </div>
     `;
   }
 }

@@ -144,10 +144,10 @@ const VISUAL_UNIVERSES = {
     id: 'monochrome-gallery',
     name: 'Pure Monochrome Art Gallery',
     theme: 'dark',
-    headingFont: 'Cinzel',
+    headingFont: 'Fraunces',
     bodyFont: 'Plus Jakarta Sans',
-    monoFont: 'Space Mono',
-    fontUrls: 'family=Cinzel:wght@500;700;900&family=Plus+Jakarta+Sans:wght@300;400;500',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Fraunces:opsz,wght@9..144,600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500',
     colors: {
       bg: '#050505',
       surface: '#0d0d0d',
@@ -274,6 +274,286 @@ const VISUAL_UNIVERSES = {
     borderWidth: '1px',
     shadow: '0 10px 40px rgba(0, 0, 0, 0.8)',
     texture: 'subtle-vignette'
+  },
+  'cosmic-astronaut-holographic': {
+    id: 'cosmic-astronaut-holographic',
+    name: 'Cosmic Astronaut Holographic AI Developer Studio',
+    theme: 'dark',
+    headingFont: 'Plus Jakarta Sans',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#08071a',
+      surface: 'rgba(18, 16, 44, 0.72)',
+      surfaceAlt: 'rgba(28, 24, 66, 0.55)',
+      text: '#ffffff',
+      textMuted: '#94a3b8',
+      border: 'rgba(139, 92, 246, 0.22)',
+      borderStrong: '#a855f7',
+      primary: '#8b5cf6',
+      primaryOn: '#ffffff',
+      accent: '#38bdf8',
+      glow: 'rgba(139, 92, 246, 0.45)',
+      cardGlow: '0 10px 30px -10px rgba(139, 92, 246, 0.35)'
+    },
+    spacingScale: '1.65rem',
+    borderRadius: '20px',
+    borderWidth: '1.25px',
+    shadow: '0 20px 50px rgba(139, 92, 246, 0.25)',
+    texture: 'cosmic-starfield-mesh'
+  },
+  'system-awakening': {
+    id: 'system-awakening',
+    name: 'System Awakening (Shadow Monarch Hunter Interface)',
+    theme: 'dark',
+    headingFont: 'Rajdhani',
+    bodyFont: 'Plus Jakarta Sans',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Rajdhani:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800',
+    colors: {
+      bg: '#08080C',
+      surface: 'rgba(14, 16, 24, 0.88)',
+      surfaceAlt: 'rgba(20, 24, 36, 0.65)',
+      text: '#F8FAFC',
+      textMuted: '#94A3B8',
+      border: 'rgba(0, 229, 255, 0.35)',
+      borderStrong: '#00E5FF',
+      primary: '#00E5FF',
+      primaryOn: '#08080C',
+      accent: '#8A2BE2',
+      glow: 'rgba(0, 229, 255, 0.4)',
+      cardGlow: '0 10px 30px -10px rgba(0, 229, 255, 0.35)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '8px',
+    borderWidth: '1.5px',
+    shadow: '0 0 35px rgba(0, 229, 255, 0.35), inset 0 0 25px rgba(0, 229, 255, 0.15)',
+    texture: 'system-portal-mesh'
+  },
+  'engineering-archive': {
+    id: 'engineering-archive',
+    name: 'Engineering Archive (Swiss Architectural Blueprint)',
+    theme: 'light',
+    headingFont: 'Space Grotesk',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#FAF9F5',
+      surface: '#FFFFFF',
+      surfaceAlt: '#F2EFE9',
+      text: '#121316',
+      textMuted: '#57534E',
+      border: 'rgba(18, 19, 22, 0.15)',
+      borderStrong: '#121316',
+      primary: '#0A5CFF',
+      primaryOn: '#FFFFFF',
+      accent: '#FF5500',
+      glow: 'rgba(10, 92, 255, 0.15)',
+      cardGlow: '4px 4px 0px #121316'
+    },
+    spacingScale: '1.5rem',
+    borderRadius: '0px',
+    borderWidth: '1px',
+    shadow: '4px 4px 0px #121316',
+    texture: 'architectural-blueprint-grid'
+  },
+  'cosmic-cyber-geometry': {
+    id: 'cosmic-cyber-geometry',
+    name: 'Cosmic Cyber Geometry (Futuristic Minimal Neon)',
+    theme: 'dark',
+    headingFont: 'Space Grotesk',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#080D10',
+      surface: 'rgba(26, 29, 38, 0.72)',
+      surfaceAlt: 'rgba(17, 19, 24, 0.88)',
+      text: '#E5E7EB',
+      textMuted: '#94A3B8',
+      border: 'rgba(224, 132, 252, 0.18)',
+      borderStrong: '#E084FC',
+      primary: '#E21C5F',
+      primaryOn: '#FFFFFF',
+      accent: '#E084FC',
+      glow: 'rgba(226, 28, 95, 0.3)',
+      cardGlow: '0 16px 40px rgba(224, 132, 252, 0.2)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '12px',
+    borderWidth: '1.5px',
+    shadow: '0 16px 40px rgba(224, 132, 252, 0.2)',
+    texture: 'cyber-orbit-mesh'
+  },
+  'stellar-architect': {
+    id: 'stellar-architect',
+    name: 'Stellar Architect (Cosmic Blueprint & Solar Gold)',
+    theme: 'dark',
+    headingFont: 'Space Grotesk',
+    bodyFont: 'Cormorant Garamond',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Space+Grotesk:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#05080A',
+      surface: '#10141A',
+      surfaceAlt: 'rgba(16, 20, 26, 0.78)',
+      text: '#F0F4F8',
+      textMuted: '#AABBCF',
+      border: 'rgba(0, 168, 255, 0.22)',
+      borderStrong: '#00A8FF',
+      primary: '#00A8FF',
+      primaryOn: '#05080A',
+      accent: '#FFC300',
+      glow: 'rgba(0, 168, 255, 0.35)',
+      cardGlow: '0 16px 40px rgba(0, 168, 255, 0.2)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '0px',
+    borderWidth: '0.5px',
+    shadow: '0 16px 40px rgba(0, 168, 255, 0.2)',
+    texture: 'celestial-blueprint-grid'
+  },
+  'abyssal-ascent': {
+    id: 'abyssal-ascent',
+    name: 'Abyssal Ascent (Dark Fantasy Progression RPG)',
+    theme: 'dark',
+    headingFont: 'Cinzel',
+    bodyFont: 'Inter',
+    monoFont: 'Rajdhani',
+    fontUrls: 'family=Cinzel:wght@600;700;800;900&family=Rajdhani:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#030407',
+      surface: '#0D1117',
+      surfaceAlt: 'rgba(13, 17, 23, 0.85)',
+      text: '#E2E8F0',
+      textMuted: '#94A3B8',
+      border: 'rgba(6, 182, 212, 0.22)',
+      borderStrong: '#06B6D4',
+      primary: '#8B5CF6',
+      primaryOn: '#FFFFFF',
+      accent: '#06B6D4',
+      glow: 'rgba(139, 92, 246, 0.35)',
+      cardGlow: '0 16px 40px rgba(139, 92, 246, 0.3)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '0px',
+    borderWidth: '1px',
+    shadow: '0 16px 40px rgba(139, 92, 246, 0.3)',
+    texture: 'abyssal-fissure-mesh'
+  },
+  'stealth-node': {
+    id: 'stealth-node',
+    name: 'Stealth Node (Web3 Cypherpunk & Cryptographic Terminal)',
+    theme: 'dark',
+    headingFont: 'Fira Code',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Fira+Code:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#000000',
+      surface: 'rgba(15, 23, 20, 0.65)',
+      surfaceAlt: 'rgba(10, 16, 14, 0.85)',
+      text: '#F8F9FA',
+      textMuted: '#6C757D',
+      border: 'rgba(0, 255, 65, 0.25)',
+      borderStrong: '#00FF41',
+      primary: '#00FF41',
+      primaryOn: '#000000',
+      accent: '#FF5722',
+      glow: 'rgba(0, 255, 65, 0.35)',
+      cardGlow: '0 16px 40px rgba(0, 255, 65, 0.3)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '0px',
+    borderWidth: '1px',
+    shadow: '0 16px 40px rgba(0, 255, 65, 0.3)',
+    texture: 'stealth-hex-mesh'
+  },
+  'kinetic-brutalism': {
+    id: 'kinetic-brutalism',
+    name: 'Kinetic Brutalism (High-Contrast Poster Zine)',
+    theme: 'light',
+    headingFont: 'Archivo Black',
+    bodyFont: 'DM Sans',
+    monoFont: 'Space Mono',
+    fontUrls: 'family=Archivo+Black&family=DM+Sans:ital,opsz,wght@0,9..40,700;0,9..40,800;0,9..40,900;1,9..40,700&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;700;800',
+    colors: {
+      bg: '#FDFBF7',
+      surface: '#FFFFFF',
+      surfaceAlt: '#DFFF00',
+      text: '#000000',
+      textMuted: '#4B5563',
+      border: '#000000',
+      borderStrong: '#000000',
+      primary: '#DFFF00',
+      primaryOn: '#000000',
+      accent: '#FF007F',
+      glow: 'rgba(223, 255, 0, 0.4)',
+      cardGlow: '5px 5px 0px #000000'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '0px',
+    borderWidth: '3.5px',
+    shadow: '5px 5px 0px #000000',
+    texture: 'brutalist-grid-lines'
+  },
+  'circuit-core': {
+    id: 'circuit-core',
+    name: 'Circuit Core (Industrial Cyber-Minimal & Brass)',
+    theme: 'dark',
+    headingFont: 'Space Grotesk',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Space+Grotesk:wght@500;600;700;800&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    colors: {
+      bg: '#0D1117',
+      surface: '#1A1F29',
+      surfaceAlt: 'rgba(26, 31, 41, 0.85)',
+      text: '#F0F4F8',
+      textMuted: '#8B949E',
+      border: 'rgba(0, 255, 65, 0.25)',
+      borderStrong: '#00FF41',
+      primary: '#00FF41',
+      primaryOn: '#0D1117',
+      accent: '#D4AF37',
+      glow: 'rgba(0, 255, 65, 0.35)',
+      cardGlow: '0 16px 40px rgba(0, 255, 65, 0.2)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '0px',
+    borderWidth: '1px',
+    shadow: '0 16px 40px rgba(0, 255, 65, 0.2)',
+    texture: 'circuit-mesh-seams'
+  },
+  'neon-aurora-cyber': {
+    id: 'neon-aurora-cyber',
+    name: 'Neon Aurora Cyber (Cyber-Minimalist Aurora Glass)',
+    theme: 'dark',
+    headingFont: 'Syne',
+    bodyFont: 'Plus Jakarta Sans',
+    monoFont: 'Fira Code',
+    fontUrls: 'family=Syne:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;500;600;700',
+    colors: {
+      bg: '#07070F',
+      surface: 'rgba(255, 255, 255, 0.04)',
+      surfaceAlt: '#0C0C1A',
+      text: '#F4F4FF',
+      textMuted: '#9A9ABF',
+      border: 'rgba(255, 255, 255, 0.1)',
+      borderStrong: '#EC4899',
+      primary: '#A855F7',
+      primaryOn: '#FFFFFF',
+      accent: '#EC4899',
+      glow: 'rgba(236, 72, 153, 0.4)',
+      cardGlow: '0 20px 60px -20px rgba(0, 0, 0, 0.7)'
+    },
+    spacingScale: '1.6rem',
+    borderRadius: '20px',
+    borderWidth: '1px',
+    shadow: '0 20px 60px -20px rgba(0, 0, 0, 0.7)',
+    texture: 'aurora-grid-mesh'
   }
 };
 
@@ -297,15 +577,15 @@ class VisualGrammar {
     // Filter compatible universes by content characteristics
     let candidates = ids;
     if (signals.visualDensity === 'high') {
-      candidates = ['contemporary-magazine', 'futuristic-spatial', 'monochrome-gallery', 'expressive-typographic'];
+      candidates = ['cosmic-astronaut-holographic', 'futuristic-spatial', 'contemporary-magazine', 'monochrome-gallery', 'expressive-typographic'];
     } else if (signals.technicalDepth === 'high') {
-      candidates = ['technical-lab', 'swiss-editorial', 'cinematic-obsidian', 'brutalist-pop'];
+      candidates = ['cosmic-astronaut-holographic', 'technical-lab', 'cinematic-obsidian', 'swiss-editorial', 'brutalist-pop'];
     } else if (signals.narrativeDepth === 'high') {
-      candidates = ['warm-editorial', 'contemporary-magazine', 'luxury-minimal', 'swiss-editorial'];
+      candidates = ['cosmic-astronaut-holographic', 'warm-editorial', 'contemporary-magazine', 'luxury-minimal', 'swiss-editorial'];
     }
 
     const chosenId = candidates[Math.floor(Math.random() * candidates.length)];
-    return VISUAL_UNIVERSES[chosenId] || VISUAL_UNIVERSES['swiss-editorial'];
+    return VISUAL_UNIVERSES[chosenId] || VISUAL_UNIVERSES['cosmic-astronaut-holographic'];
   }
 }
 

@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myfolio.tech Web Studio — AI Portfolio Generator</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;600;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js"></script>
+
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --surface: rgba(255, 255, 255, 0.9);
+      --surface-card: rgba(255, 255, 255, 0.98);
+      --surface-glow: rgba(37, 99, 235, 0.12);
+      --primary: #2563EB;
+      --primary-on: #FFFFFF;
+      --secondary: #0284C7;
+      --accent: #38BDF8;
+      --text: #0F172A;
+      --text-muted: #64748B;
+      --border: rgba(226, 232, 240, 0.95);
+      --border-focus: #2563EB;
+      --card-radius: 20px;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: #F8FAFC;
+      color: var(--text);
+      font-family: var(--font-body);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* 🌊 High-Speed Moving 3D Fluid Silk Background Container */
+    .fluid-silk-bg-container {
+      position: fixed;
+      top: -6%;
+      left: -6%;
+      width: 112vw;
+      height: 112vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, rgba(240, 246, 255, 0.25) 50%, rgba(220, 235, 255, 0.55) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+      animation: fluidSilkFastUndulate 6.5s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes fluidSilkFastUndulate {
+      0% {
+        transform: scale(1) translate(0px, 0px) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.05) translate(-22px, -14px) rotate(1.2deg);
+      }
+      50% {
+        transform: scale(1.09) translate(16px, 20px) rotate(-1.5deg);
+      }
+      75% {
+        transform: scale(1.05) translate(-14px, 16px) rotate(0.9deg);
+      }
+      100% {
+        transform: scale(1.07) translate(22px, -14px) rotate(-0.9deg);
+      }
+    }
+
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.9;
+    }
+
+    .app-shell-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .studio-stage {
+      flex: 1;
+      min-width: 0;
+      padding: 40px clamp(16px, 3vw, 40px) 80px;
+      max-width: 1240px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* HEADER BANNER WITH 3D LIVE HOVER */
+    .studio-header-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 246, 255, 0.92) 100%);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 24px;
+      padding: 32px;
+      margin-bottom: 32px;
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.08);
+      backdrop-filter: blur(24px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+      animation: cardFloat3D 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes cardFloat3D {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-4px) rotate(0.2deg); }
+      100% { transform: translateY(2px) rotate(-0.2deg); }
+    }
+
+    .studio-header-card:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 28px 56px rgba(37, 99, 235, 0.14);
+    }
+
+    .studio-header-title h1 {
+      font-family: var(--font-display);
+      font-size: 1.85rem;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+    }
+
+    .studio-header-title p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin: 0;
+    }
+
+    .badge-universe-count {
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      color: #2563EB;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 9999px;
+    }
+
+    /* INGESTION TABS */
+    .ingest-tabs-nav {
+      display: flex;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      padding: 6px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+      backdrop-filter: blur(20px);
+    }
+
+    .ingest-tab-btn {
+      flex: 1;
+      min-width: 140px;
+      background: transparent;
+      border: none;
+      color: #64748B;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ingest-tab-btn:hover {
+      color: #0F172A;
+      background: rgba(241, 245, 249, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .ingest-tab-btn.active {
+      background: linear-gradient(135deg, #2563EB, #1D4ED8);
+      color: #FFFFFF;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
+      transform: scale(1.02);
+    }
+
+    /* INGESTION PANELS WITH LIGHT FROSTED GLASS */
+    .ingest-panel-box {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 22px;
+      padding: 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.06);
+      backdrop-filter: blur(24px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .ingest-panel-box:hover {
+      box-shadow: 0 22px 50px rgba(37, 99, 235, 0.1);
+    }
+
+    .form-section-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 24px 0 14px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    .form-row-2col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #0F172A;
+    }
+
+    .form-control-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: #F8FAFC;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: #0F172A;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .form-control-input:focus {
+      outline: none;
+      border-color: #2563EB;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      background: #FFFFFF;
+      transform: translateY(-2px);
+    }
+
+    .dropzone-box {
+      border: 2px dashed rgba(37, 99, 235, 0.35);
+      border-radius: 16px;
+      padding: 36px 20px;
+      text-align: center;
+      background: rgba(37, 99, 235, 0.03);
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .dropzone-box:hover {
+      background: rgba(37, 99, 235, 0.08);
+      border-color: #2563EB;
+      transform: scale(1.01);
+    }
+
+    .dropzone-box.drag-over {
+      background: rgba(37, 99, 235, 0.16) !important;
+      border-color: #2563EB !important;
+      border-style: solid !important;
+      box-shadow: 0 0 28px rgba(37, 99, 235, 0.35) !important;
+      transform: scale(1.02) !important;
+    }
+
+    [data-theme="dark"] .dropzone-box.drag-over {
+      background: rgba(56, 189, 248, 0.22) !important;
+      border-color: #38BDF8 !important;
+      border-style: solid !important;
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.4) !important;
+      transform: scale(1.02) !important;
+    }
+
+    .project-card-fieldset {
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+
+    .project-card-fieldset legend {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 0 8px;
+      text-transform: uppercase;
+    }
+
+    /* 6 UNIVERSE SELECTOR CARDS WITH 3D TILT PHYSICS */
+    .universe-choice-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .universe-choice-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 16px;
+      padding: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+      position: relative;
+    }
+
+    .universe-choice-card:hover {
+      border-color: #2563EB;
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+    }
+
+    .universe-choice-card.selected {
+      border-color: #2563EB;
+      background: rgba(37, 99, 235, 0.05);
+      box-shadow: 0 0 0 2px #2563EB, 0 8px 24px rgba(37, 99, 235, 0.15);
+      transform: scale(1.02);
+    }
+
+    .universe-choice-card .universe-thumb {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .universe-choice-card:hover .universe-thumb {
+      transform: scale(1.08) rotate(1.5deg);
+    }
+
+    .universe-info h4 {
+      margin: 0 0 2px 0;
+      font-family: var(--font-display);
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: #0F172A;
+    }
+
+    .universe-info p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* GENERATE BUTTON WITH 3D GLOW */
+    .btn-generate-hero {
+      width: 100%;
+      background: linear-gradient(135deg, #2563EB 0%, #0284C7 50%, #059669 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
+      transition: transform 0.25s, box-shadow 0.25s;
+      animation: btnGlowPulse 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes btnGlowPulse {
+      0% { box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3); }
+      100% { box-shadow: 0 14px 42px rgba(5, 150, 105, 0.45); }
+    }
+
+    .btn-generate-hero:hover {
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.5);
+    }
+
+    /* RESULT PREVIEW CARD */
+    .result-preview-card {
+      display: none;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 22px;
+      padding: 28px;
+      margin-top: 32px;
+      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.08);
+      backdrop-filter: blur(24px);
+    }
+
+    .preview-url-banner {
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    /* 🌙 DARK THEME STUDIO OVERRIDES */
+    [data-theme="dark"] body {
+      background: #07090E;
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .fluid-silk-bg-container {
+      background: radial-gradient(circle at 50% 40%, rgba(10, 15, 30, 0.4) 0%, rgba(7, 10, 20, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+    }
+
+    [data-theme="dark"] .studio-header-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(11, 15, 25, 0.95) 100%);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .studio-header-title h1 {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .badge-universe-count {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+
+    [data-theme="dark"] .ingest-tabs-nav {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .ingest-tab-btn {
+      color: #94A3B8;
+    }
+
+    [data-theme="dark"] .ingest-tab-btn:hover {
+      color: #FFFFFF;
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    [data-theme="dark"] .ingest-tab-btn.active {
+      background: linear-gradient(135deg, #0284C7, #0369A1);
+      color: #FFFFFF;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+    }
+
+    [data-theme="dark"] .ingest-panel-box {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .form-group label {
+      color: #F1F5F9;
+    }
+
+    [data-theme="dark"] .form-control-input {
+      background: #0B1120;
+      border-color: rgba(255, 255, 255, 0.14);
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .form-control-input:focus {
+      background: #0F172A;
+      border-color: #38BDF8;
+      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
+    }
+
+    [data-theme="dark"] .dropzone-box {
+      background: rgba(56, 189, 248, 0.05);
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    [data-theme="dark"] .dropzone-box:hover {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: #38BDF8;
+    }
+
+    [data-theme="dark"] .dropzone-box h3 {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .project-card-fieldset {
+      background: rgba(11, 17, 32, 0.85);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    [data-theme="dark"] .project-card-fieldset legend {
+      color: #38BDF8;
+    }
+
+    [data-theme="dark"] .universe-choice-card {
+      background: rgba(15, 23, 42, 0.85);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: #F8FAFC;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="dark"] .universe-choice-card:hover {
+      border-color: #38BDF8;
+      background: rgba(30, 41, 59, 0.95);
+      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.2);
+    }
+
+    [data-theme="dark"] .universe-choice-card.selected {
+      border-color: #38BDF8;
+      background: rgba(56, 189, 248, 0.15);
+      box-shadow: 0 0 0 2px #38BDF8, 0 8px 24px rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="dark"] .universe-info h4 {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .result-preview-card {
+      background: rgba(15, 23, 42, 0.95);
+      border-color: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    [data-theme="dark"] .preview-url-banner {
+      background: #0B1120;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #F8FAFC;
+    }
+
+    /* =========================================================================
+       RESPONSIVE DESIGN (TABLET & SMARTPHONE OPTIMIZATIONS)
+       ========================================================================= */
+    @media (max-width: 1024px) {
+      .app-shell-layout {
+        flex-direction: column;
+      }
+      .studio-stage {
+        padding: 24px 20px 60px;
+        max-width: 100%;
+      }
+      .universe-choice-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+    }
+
+    @media (max-width: 768px) {
+      .studio-header-card {
+        padding: 20px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        animation: none !important;
+        transform: none !important;
+        margin-bottom: 20px !important;
+      }
+      .studio-header-title h1 {
+        font-size: 1.6rem;
+      }
+      .ingest-tabs-nav {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px;
+        width: 100%;
+        margin-bottom: 20px !important;
+      }
+      .ingest-tab-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 14px;
+        font-size: 0.92rem;
+      }
+      .ingest-panel-box {
+        transform: none !important;
+        padding: 20px 16px !important;
+        margin-bottom: 24px !important;
+      }
+      .form-row-2col {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+      .universe-choice-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .btn-generate-hero {
+        font-size: 1rem;
+        padding: 16px 20px;
+        width: 100%;
+      }
+      .form-control-input {
+        font-size: 16px; /* Prevents auto-zoom on iOS */
+      }
+      .project-card-fieldset {
+        padding: 16px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .studio-stage {
+        padding: 16px 12px 48px;
+      }
+      .dropzone-box {
+        padding: 24px 14px;
+      }
+    }
+
+    /* =========================================================================
+       WEEKLY ALLOWANCE METER & CYCLE RESET
+       ========================================================================= */
+    .allowance-meter-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.92) 100%);
+      border: 1.5px solid rgba(226, 232, 240, 0.95);
+      border-radius: 16px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.06);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] .allowance-meter-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(11, 15, 25, 0.96) 100%);
+      border-color: rgba(56, 189, 248, 0.22);
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    }
+
+    .allowance-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .allowance-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1E293B;
+    }
+
+    [data-theme="dark"] .allowance-title-wrap {
+      color: #F8FAFC;
+    }
+
+    .allowance-icon {
+      font-size: 1.15rem;
+      animation: iconFloat 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes iconFloat {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-2px); }
+    }
+
+    .allowance-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+
+    .allowance-count {
+      font-family: var(--font-mono);
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: #0284C7;
+      background: rgba(2, 132, 199, 0.1);
+      padding: 3px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(2, 132, 199, 0.25);
+    }
+
+    [data-theme="dark"] .allowance-count {
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .allowance-count.low {
+      color: #E11D48;
+      background: rgba(225, 29, 72, 0.1);
+      border-color: rgba(225, 29, 72, 0.3);
+    }
+
+    [data-theme="dark"] .allowance-count.low {
+      color: #FB7185;
+      background: rgba(251, 113, 133, 0.15);
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+
+    .allowance-reset-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748B;
+      background: rgba(241, 245, 249, 0.9);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      border: 1px solid #E2E8F0;
+    }
+
+    [data-theme="dark"] .allowance-reset-pill {
+      color: #94A3B8;
+      background: rgba(30, 41, 59, 0.7);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .allowance-reset-pill.active-countdown {
+      color: #0284C7;
+      background: rgba(2, 132, 199, 0.08);
+      border-color: rgba(2, 132, 199, 0.25);
+    }
+
+    [data-theme="dark"] .allowance-reset-pill.active-countdown {
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.1);
+      border-color: rgba(56, 189, 248, 0.3);
+    }
+
+    .allowance-progress-track {
+      width: 100%;
+      height: 8px;
+      background: rgba(226, 232, 240, 0.9);
+      border-radius: 9999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    [data-theme="dark"] .allowance-progress-track {
+      background: rgba(30, 41, 59, 0.9);
+    }
+
+    .allowance-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0284C7 0%, #38BDF8 50%, #10B981 100%);
+      border-radius: 9999px;
+      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    }
+
+    .allowance-progress-bar.low {
+      background: linear-gradient(90deg, #F59E0B 0%, #EF4444 100%);
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    }
+
+    .allowance-footer-note {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .allowance-tier-tag {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    /* =========================================================================
+       GENERATED PROJECTS & PORTFOLIOS LIST BELOW BUTTON
+       ========================================================================= */
+    .generated-history-section {
+      width: 100%;
+      margin-top: 36px;
+    }
+
+    .section-headline-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+    }
+
+    [data-theme="dark"] .section-headline-row {
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .headline-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #0284C7;
+      background: rgba(2, 132, 199, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.08em;
+    }
+
+    [data-theme="dark"] .headline-badge {
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    .headline-title {
+      font-family: var(--font-display);
+      font-size: 1.28rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 4px 0 0;
+    }
+
+    [data-theme="dark"] .headline-title {
+      color: #F8FAFC;
+    }
+
+    .history-count-badge {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 4px 12px;
+      border-radius: 9999px;
+    }
+
+    .generated-cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .generated-portfolio-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1.5px solid rgba(226, 232, 240, 0.95);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
+      backdrop-filter: blur(20px);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    [data-theme="dark"] .generated-portfolio-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(11, 15, 25, 0.96) 100%);
+      border-color: rgba(255, 255, 255, 0.1);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .generated-portfolio-card:hover {
+      transform: translateY(-3px);
+      border-color: #0284C7;
+      box-shadow: 0 24px 55px rgba(2, 132, 199, 0.18);
+    }
+
+    [data-theme="dark"] .generated-portfolio-card:hover {
+      border-color: #38BDF8;
+      box-shadow: 0 24px 55px rgba(56, 189, 248, 0.2);
+    }
+
+    .generated-portfolio-card.active-pulse {
+      border-color: #10B981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), 0 20px 45px rgba(16, 185, 129, 0.15);
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-top-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .universe-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(2, 132, 199, 0.08);
+      border: 1px solid rgba(2, 132, 199, 0.25);
+      color: #0284C7;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    [data-theme="dark"] .universe-pill {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+
+    .status-live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #10B981;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    .timestamp-pill {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .card-main-grid {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .card-main-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-thumb-container {
+      position: relative;
+      width: 100%;
+      height: 160px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      background: #0B1120;
+    }
+
+    [data-theme="dark"] .card-thumb-container {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .card-universe-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .card-portfolio-card:hover .card-universe-img {
+      transform: scale(1.05);
+    }
+
+    .thumb-glass-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.75) 100%);
+      display: flex;
+      align-items: flex-end;
+      padding: 10px;
+    }
+
+    .overlay-btn-preview {
+      color: #FFFFFF;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.78rem;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 4px 10px;
+      border-radius: 6px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-developer-name {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0F172A;
+      margin: 0 0 4px;
+    }
+
+    [data-theme="dark"] .card-developer-name {
+      color: #F8FAFC;
+    }
+
+    .card-developer-role {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin: 0 0 12px;
+    }
+
+    .card-metrics-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .metric-tag {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #475569;
+      background: #F1F5F9;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    [data-theme="dark"] .metric-tag {
+      color: #CBD5E1;
+      background: rgba(30, 41, 59, 0.8);
+    }
+
+    .card-url-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+
+    [data-theme="dark"] .card-url-box {
+      background: #0B1120;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .url-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .url-text {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: #0284C7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1;
+    }
+
+    [data-theme="dark"] .url-text {
+      color: #38BDF8;
+    }
+
+    .btn-copy-mini {
+      background: rgba(2, 132, 199, 0.1);
+      border: 1px solid rgba(2, 132, 199, 0.25);
+      color: #0284C7;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: var(--font-display);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    [data-theme="dark"] .btn-copy-mini {
+      background: rgba(56, 189, 248, 0.12);
+      border-color: rgba(56, 189, 248, 0.3);
+      color: #38BDF8;
+    }
+
+    .btn-copy-mini:hover {
+      background: #0284C7;
+      color: #FFFFFF;
+    }
+
+    .card-actions-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-launch-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.9rem;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-launch-live:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
+    }
+
+    .btn-universe-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--text-muted);
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-universe-switch:hover {
+      border-color: #0284C7;
+      color: #0284C7;
+      background: rgba(2, 132, 199, 0.05);
+    }
+
+    [data-theme="dark"] .btn-universe-switch:hover {
+      border-color: #38BDF8;
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.08);
+    }
+  </style>
+</head>
+<body>
+  <!-- Moving 3D Fluid Silk Background Container -->
+  <div class="fluid-silk-bg-container"></div>
+
+  <!-- Dynamic 3D WebGL Background Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <div class="app-shell-layout">
+    <!-- Universal Sidebar Mount -->
+    <div id="sidebarMount"></div>
+
+    <main class="studio-stage">
+      <!-- 1. Top Header -->
+      <div class="studio-header-card">
+        <div class="studio-header-title">
+          <h1>Portfolio Studio</h1>
+          <p>Create, customize, and publish your interactive 3D developer portfolio.</p>
+        </div>
+      </div>
+
+      <!-- 2. Source Ingestion Navigation Tabs -->
+      <div class="ingest-tabs-nav">
+        <button class="ingest-tab-btn active" onclick="switchIngestTab('github', this)">
+          <span>🐙 GitHub 1-Click Sync</span>
+        </button>
+        <button class="ingest-tab-btn" onclick="switchIngestTab('resume', this)">
+          <span>📄 PDF Resume Parse</span>
+        </button>
+        <button class="ingest-tab-btn" onclick="switchIngestTab('manual', this)">
+          <span>✏️ Guided Profile Questions</span>
+        </button>
+      </div>
+
+      <!-- 3. Ingestion Form Panels -->
+      <form id="portfolioGenerationForm" onsubmit="handleStudioGenerate(event)">
+        <!-- Panel A: GitHub 1-Click Sync -->
+        <div class="ingest-panel-box" id="panelGithub">
+          <div class="form-group">
+            <label for="ghUsername">GitHub Username or Profile URL</label>
+            <input type="text" id="ghUsername" class="form-control-input" placeholder="e.g. torvalds or https://github.com/username" value="">
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">
+              Our AI automatically ingests top starred repositories, primary languages, commit telemetry, and synthesized case studies.
+            </p>
+          </div>
+        </div>
+
+        <!-- Panel B: PDF / Image Resume Parse (Hidden by default) -->
+        <div class="ingest-panel-box" id="panelResume" style="display: none;">
+          <div class="dropzone-box" id="studioResumeDropZone" onclick="document.getElementById('resumeFileInput').click()">
+            <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp,.avif" style="display: none;" onchange="handleResumeFileSelected(this)">
+            <i data-lucide="upload-cloud" style="width:42px;height:42px;color:var(--primary);margin-bottom:10px;"></i>
+            <h3 style="margin:0 0 6px 0;font-size:1.1rem;" id="resumeUploadLabel">Click or Drag &amp; Drop Resume PDF / Image</h3>
+            <p style="margin:0;font-size:0.82rem;color:var(--text-muted);" id="resumeUploadHelp">PDF, Image (PNG/JPG/WebP), DOCX, or TXT (Max 15MB). Automated extraction of projects, experience &amp; skills.</p>
+          </div>
+          <div class="form-group" style="margin-top: 16px;">
+            <label for="resumeRawText">Or Paste Resume Text</label>
+            <textarea id="resumeRawText" class="form-control-input" rows="4" placeholder="Paste your resume bio, experience, and project bullet points here..."></textarea>
+          </div>
+        </div>
+
+        <!-- Panel C: Guided Profile Questions (Same as Telegram Bot Flow) -->
+        <div class="ingest-panel-box" id="panelManual" style="display: none;">
+          <!-- Section 1: Basic Info & Bio -->
+          <div class="form-section-title">
+            <i data-lucide="user" style="width:18px;height:18px;"></i>
+            <span>1. Identity &amp; Bio</span>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="manualFullName">Full Name *</label>
+              <input type="text" id="manualFullName" class="form-control-input" placeholder="e.g. Abdul Aziz Nooruddin">
+            </div>
+            <div class="form-group">
+              <label for="manualRole">Professional Role / Title *</label>
+              <input type="text" id="manualRole" class="form-control-input" placeholder="e.g. Full Stack Developer, 3D WebGL Engineer">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="manualTagline">Tagline</label>
+            <input type="text" id="manualTagline" class="form-control-input" placeholder="One catchy line describing you (e.g. 'Building scalable cloud architectures &amp; WebGL experiences')">
+          </div>
+
+          <div class="form-group">
+            <label for="manualBio">Bio (2-3 Sentences)</label>
+            <textarea id="manualBio" class="form-control-input" rows="2" placeholder="Write a short summary about yourself, what you build, and what drives your engineering."></textarea>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="manualEmail">Email Address</label>
+              <input type="email" id="manualEmail" class="form-control-input" placeholder="e.g. alex@example.com">
+            </div>
+            <div class="form-group">
+              <label for="manualLocation">Location</label>
+              <input type="text" id="manualLocation" class="form-control-input" placeholder="e.g. San Francisco, CA or Remote">
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="manualGithub">GitHub Profile URL</label>
+              <input type="url" id="manualGithub" class="form-control-input" placeholder="https://github.com/yourname">
+            </div>
+            <div class="form-group">
+              <label for="manualLinkedin">LinkedIn Profile URL</label>
+              <input type="url" id="manualLinkedin" class="form-control-input" placeholder="https://linkedin.com/in/yourname">
+            </div>
+          </div>
+
+          <!-- Section 2: Tech Stack & Skills -->
+          <div class="form-section-title">
+            <i data-lucide="cpu" style="width:18px;height:18px;"></i>
+            <span>2. Tech Stack &amp; Skills</span>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="manualSkills">Core Tech Stack (comma-separated) *</label>
+              <input type="text" id="manualSkills" class="form-control-input" placeholder="React, Node.js, TypeScript, Three.js, Docker, Python">
+            </div>
+            <div class="form-group">
+              <label for="manualLanguages">Programming Languages</label>
+              <input type="text" id="manualLanguages" class="form-control-input" placeholder="JavaScript, TypeScript, Python, Go, Rust, C++">
+            </div>
+          </div>
+
+          <!-- Section 3: Featured Projects -->
+          <div class="form-section-title">
+            <i data-lucide="rocket" style="width:18px;height:18px;"></i>
+            <span>3. Featured Projects</span>
+          </div>
+
+          <!-- Project 1 -->
+          <fieldset class="project-card-fieldset">
+            <legend>🚀 Project 1</legend>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj1Name">Project Name</label>
+                <input type="text" id="proj1Name" class="form-control-input" placeholder="e.g. Aether DB Streaming">
+              </div>
+              <div class="form-group">
+                <label for="proj1Tech">Tech Stack</label>
+                <input type="text" id="proj1Tech" class="form-control-input" placeholder="e.g. Rust, WebGL, Fastify, Docker">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="proj1Desc">Description (1-2 sentences: what problem does it solve?)</label>
+              <input type="text" id="proj1Desc" class="form-control-input" placeholder="Ultra-low latency columnar storage engine processing 1.2M events/sec.">
+            </div>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj1Github">GitHub Repo Link</label>
+                <input type="url" id="proj1Github" class="form-control-input" placeholder="https://github.com/user/aether-db">
+              </div>
+              <div class="form-group">
+                <label for="proj1Live">Live Demo Link</label>
+                <input type="url" id="proj1Live" class="form-control-input" placeholder="https://aether-db.live">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Project 2 -->
+          <fieldset class="project-card-fieldset">
+            <legend>🚀 Project 2</legend>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj2Name">Project Name</label>
+                <input type="text" id="proj2Name" class="form-control-input" placeholder="e.g. NeuralGraph Engine">
+              </div>
+              <div class="form-group">
+                <label for="proj2Tech">Tech Stack</label>
+                <input type="text" id="proj2Tech" class="form-control-input" placeholder="e.g. Python, FastAPI, Pinecone, LangChain">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="proj2Desc">Description</label>
+              <input type="text" id="proj2Desc" class="form-control-input" placeholder="Autonomous multi-agent orchestration pipeline with vector RAG caching.">
+            </div>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj2Github">GitHub Repo Link</label>
+                <input type="url" id="proj2Github" class="form-control-input" placeholder="https://github.com/user/neural-graph">
+              </div>
+              <div class="form-group">
+                <label for="proj2Live">Live Demo Link</label>
+                <input type="url" id="proj2Live" class="form-control-input" placeholder="https://neuralgraph.ai">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Project 3 -->
+          <fieldset class="project-card-fieldset">
+            <legend>🚀 Project 3</legend>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj3Name">Project Name</label>
+                <input type="text" id="proj3Name" class="form-control-input" placeholder="e.g. Cosmic Spatial Explorer">
+              </div>
+              <div class="form-group">
+                <label for="proj3Tech">Tech Stack</label>
+                <input type="text" id="proj3Tech" class="form-control-input" placeholder="e.g. Three.js, WebGL, GLSL Shaders, GSAP">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="proj3Desc">Description</label>
+              <input type="text" id="proj3Desc" class="form-control-input" placeholder="Interactive 3D planetary physics simulation rendered using custom GLSL shaders.">
+            </div>
+            <div class="form-row-2col">
+              <div class="form-group">
+                <label for="proj3Github">GitHub Repo Link</label>
+                <input type="url" id="proj3Github" class="form-control-input" placeholder="https://github.com/user/cosmic-explorer">
+              </div>
+              <div class="form-group">
+                <label for="proj3Live">Live Demo Link</label>
+                <input type="url" id="proj3Live" class="form-control-input" placeholder="https://cosmic.dev">
+              </div>
+            </div>
+          </fieldset>
+
+          <!-- Section 4: Experience & Background -->
+          <div class="form-section-title">
+            <i data-lucide="briefcase" style="width:18px;height:18px;"></i>
+            <span>4. Experience &amp; Education</span>
+          </div>
+
+          <div class="form-group">
+            <label for="manualExperience">Work Experience</label>
+            <textarea id="manualExperience" class="form-control-input" rows="2" placeholder="e.g. 2 years at TechCorp as Full-Stack Engineer, 1 year at StartupX as Backend Lead"></textarea>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="manualEducation">Education Background</label>
+              <input type="text" id="manualEducation" class="form-control-input" placeholder="e.g. B.Tech Computer Science, 2024">
+            </div>
+            <div class="form-group">
+              <label for="manualCertifications">Certifications &amp; Awards</label>
+              <input type="text" id="manualCertifications" class="form-control-input" placeholder="e.g. AWS Certified Solutions Architect, Google Cloud Professional">
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 3D Visual Universe Selection -->
+        <div class="ingest-panel-box">
+          <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;margin:0 0 4px 0;">
+            Choose Your 3D WebGL Visual Universe
+          </h3>
+          <p style="font-size:0.85rem;color:var(--text-muted);margin:0 0 16px 0;">
+            Select which bespoke design architecture to render your portfolio with.
+          </p>
+
+          <div class="universe-choice-grid">
+            <!-- 1. Cosmic -->
+            <div class="universe-choice-card selected" onclick="selectStudioUniverse('cosmic-astronaut', this)">
+              <img src="/assets/3d/cosmic_astronaut_3d.jpg" class="universe-thumb" alt="Cosmic Astronaut">
+              <div class="universe-info">
+                <h4>🌌 Cosmic Astronaut</h4>
+                <p>Space Grotesk • Space Navy</p>
+              </div>
+            </div>
+
+            <!-- 2. Steampunk -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('eco-tech-steampunk', this)">
+              <img src="/assets/3d/crystal_leaf_hand_3d.jpg" class="universe-thumb" alt="Steampunk">
+              <div class="universe-info">
+                <h4>🌱 Steampunk Sanctuary</h4>
+                <p>Fraunces • Deep Emerald</p>
+              </div>
+            </div>
+
+            <!-- 3. Cyber Crystal -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-crystal', this)">
+              <img src="/assets/3d/cyber_crystal_3d.jpg" class="universe-thumb" alt="Cyber Crystal">
+              <div class="universe-info">
+                <h4>💎 Cyber Crystal</h4>
+                <p>Syne • Amethyst Matrix</p>
+              </div>
+            </div>
+
+            <!-- 4. Bioluminescent -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('bioluminescent-wireframe', this)">
+              <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" class="universe-thumb" alt="Bioluminescent">
+              <div class="universe-info">
+                <h4>🌿 Bioluminescent</h4>
+                <p>Plus Jakarta • Cyan Teal</p>
+              </div>
+            </div>
+
+            <!-- 5. Woodcraft -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('botanical-woodcraft', this)">
+              <img src="/assets/3d/botanical_woodcraft_3d.jpg" class="universe-thumb" alt="Woodcraft">
+              <div class="universe-info">
+                <h4>🪵 Woodcraft Codex</h4>
+                <p>Fraunces • Amber Timber</p>
+              </div>
+            </div>
+
+            <!-- 6. Circuit Fusion -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('bio-digital-fusion', this)">
+              <img src="/assets/3d/bio_digital_fusion_3d.jpg" class="universe-thumb" alt="Circuit Fusion">
+              <div class="universe-info">
+                <h4>⚡ Circuit Fusion</h4>
+                <p>Archivo • Neon Yellow Traces</p>
+              </div>
+            </div>
+
+            <!-- 7. Emerald Cyber Sanctuary -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('emerald-cyber-sanctuary', this)">
+              <img src="/assets/3d/emerald_biodome_laboratory_3d.jpg" class="universe-thumb" alt="Emerald Cyber Sanctuary">
+              <div class="universe-info">
+                <h4>🍃 Emerald Cyber Sanctuary</h4>
+                <p>Space Grotesk • Neon Mint</p>
+              </div>
+            </div>
+
+            <!-- 8. Pristine White Crystal -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('pristine-white-crystal', this)">
+              <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" class="universe-thumb" alt="Pristine White Crystal">
+              <div class="universe-info">
+                <h4>❄️ Pristine White Crystal</h4>
+                <p>Plus Jakarta • Pearl Glass</p>
+              </div>
+            </div>
+
+            <!-- 9. Abyssal Quantum Jellyfish -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-quantum-jellyfish', this)">
+              <img src="/assets/3d/crystal_leaf_hand_3d.jpg" class="universe-thumb" alt="Abyssal Quantum Jellyfish">
+              <div class="universe-info">
+                <h4>🪼 Abyssal Quantum Jellyfish</h4>
+                <p>Syne • Abyssal Cyan &amp; Pink</p>
+              </div>
+            </div>
+
+            <!-- 10. Mahogany Brass Steampunk -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('mahogany-brass-steampunk', this)">
+              <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" class="universe-thumb" alt="Mahogany Brass Steampunk">
+              <div class="universe-info">
+                <h4>🕰️ Mahogany Brass Steampunk</h4>
+                <p>Fraunces • Walnut &amp; Amber</p>
+              </div>
+            </div>
+
+            <!-- 11. Lavender Cyber Bridge -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('lavender-cyber-bridge', this)">
+              <img src="/assets/3d/space_command_deck_about_3d.jpg" class="universe-thumb" alt="Lavender Cyber Bridge">
+              <div class="universe-info">
+                <h4>🔮 Lavender Cyber Bridge</h4>
+                <p>Space Grotesk • Violet Neon</p>
+              </div>
+            </div>
+
+            <!-- 12. Sand Parchment Botanical -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('sand-parchment-botanical', this)">
+              <img src="/assets/3d/golden_lotus_experience_3d.jpg" class="universe-thumb" alt="Sand Parchment Botanical">
+              <div class="universe-info">
+                <h4>📜 Sand Parchment Botanical</h4>
+                <p>Fraunces • Warm Sand &amp; Pine</p>
+              </div>
+            </div>
+
+            <!-- 13. System Awakening (Shadow Monarch Hunter Interface) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('system-awakening', this)">
+              <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" class="universe-thumb" alt="System Awakening">
+              <div class="universe-info">
+                <h4>⚔️ System Awakening</h4>
+                <p>Rajdhani • Electric Blue &amp; Shadow Monarch Purple</p>
+              </div>
+            </div>
+
+            <!-- 14. Engineering Archive (Swiss Blueprint / Industrial Editorial) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('engineering-archive', this)">
+              <img src="/assets/3d/engineering_archive_3d.jpg" class="universe-thumb" alt="Engineering Archive">
+              <div class="universe-info">
+                <h4>📐 Engineering Archive</h4>
+                <p>Space Grotesk • Architectural Ivory &amp; Blueprint Blue</p>
+              </div>
+            </div>
+
+            <!-- 15. Cosmic Cyber Geometry (Neon Purple & Crimson) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-cyber-geometry', this)">
+              <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" class="universe-thumb" alt="Cosmic Cyber Geometry">
+              <div class="universe-info">
+                <h4>🔮 Cosmic Cyber Geometry</h4>
+                <p>Space Grotesk • Neon Crimson &amp; Purple Quartz</p>
+              </div>
+            </div>
+
+            <!-- 16. Stellar Architect (Cosmic Blueprint & Solar Gold) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('stellar-architect', this)">
+              <img src="/assets/3d/stellar_architect_3d.jpg" class="universe-thumb" alt="Stellar Architect">
+              <div class="universe-info">
+                <h4>✦ Stellar Architect</h4>
+                <p>Space Grotesk • Electric Blue &amp; Solar Gold</p>
+              </div>
+            </div>
+
+            <!-- 17. Abyssal Ascent (Dark Fantasy Progression RPG) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-ascent', this)">
+              <img src="/assets/3d/abyssal_ascent_3d.jpg" class="universe-thumb" alt="Abyssal Ascent">
+              <div class="universe-info">
+                <h4>⚔️ Abyssal Ascent</h4>
+                <p>Cinzel • Ethereal Purple &amp; Icy Cyan</p>
+              </div>
+            </div>
+
+            <!-- 18. Stealth Node (Web3 Cypherpunk & Cryptographic Terminal) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
+              <img src="/assets/3d/stealth_node_3d.jpg" class="universe-thumb" alt="Stealth Node">
+              <div class="universe-info">
+                <h4>⚡ Stealth Node</h4>
+                <p>Fira Code • Terminal Green &amp; Vantablack</p>
+              </div>
+            </div>
+
+            <!-- 19. Kinetic Brutalism (High-Contrast Poster Zine) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('kinetic-brutalism', this)">
+              <img src="/assets/3d/kinetic_brutalism_3d.jpg" class="universe-thumb" alt="Kinetic Brutalism">
+              <div class="universe-info">
+                <h4>⚡ Kinetic Brutalism</h4>
+                <p>Archivo Black • Acid Yellow &amp; Hot Magenta</p>
+              </div>
+            </div>
+
+            <!-- 20. Circuit Core (Industrial Cyber-Minimal & Brass) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('circuit-core', this)">
+              <img src="/assets/3d/circuit_core_3d.jpg" class="universe-thumb" alt="Circuit Core">
+              <div class="universe-info">
+                <h4>⚙️ Circuit Core</h4>
+                <p>Space Grotesk • Circuit Green &amp; Polished Brass</p>
+              </div>
+            </div>
+
+            <!-- 21. Neon Aurora Cyber (Cyber-Minimalist Aurora Glass) -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('neon-aurora-cyber', this)">
+              <img src="/assets/3d/neon_aurora_cyber_3d.jpg" class="universe-thumb" alt="Neon Aurora Cyber">
+              <div class="universe-info">
+                <h4>🌌 Neon Aurora Cyber</h4>
+                <p>Syne • Neon Purple &amp; Magenta Aurora</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4.5 Weekly Generation Allowance Meter & Cycle Reset -->
+        <div class="allowance-meter-card" id="allowanceMeterCard">
+          <div class="allowance-header-row">
+            <div class="allowance-title-wrap">
+              <span class="allowance-icon">⚡</span>
+              <span class="allowance-label">Weekly Allowance:</span>
+              <span class="allowance-count" id="allowanceRemainingText">5 / 5 Generations</span>
+            </div>
+            <div class="allowance-reset-pill" id="allowanceResetBadge">
+              <span class="allowance-clock-icon">🔄</span>
+              <span id="allowanceResetCountdown">7-Day Cycle Ready</span>
+            </div>
+          </div>
+          <div class="allowance-progress-track">
+            <div class="allowance-progress-bar" id="allowanceProgressBar" style="width: 100%;"></div>
+          </div>
+          <div class="allowance-footer-note">
+            <span id="allowanceCycleDetails">Weekly allowance resets automatically 1 week after your first portfolio generation.</span>
+            <span class="allowance-tier-tag">Free Tier Active</span>
+          </div>
+        </div>
+
+        <!-- 5. Action Generate Button -->
+        <button type="submit" id="btnSubmitGenerate" class="btn-generate-hero">
+          <i data-lucide="sparkles" style="width:22px;height:22px;"></i>
+          <span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>
+        </button>
+      </form>
+
+      <!-- 6. Generated Portfolios & Projects History List (Directly Below Generate Button) -->
+      <section id="generatedPortfoliosSection" class="generated-history-section">
+        <div class="section-headline-row" id="generatedSectionHeader" style="display: none;">
+          <div class="headline-left">
+            <span class="headline-badge">⚡ CREATED PORTFOLIOS</span>
+            <h3 class="headline-title">Generated 3D Portfolios</h3>
+          </div>
+          <span class="history-count-badge" id="generatedCountBadge">0 Sites</span>
+        </div>
+
+        <div id="generatedProjectsList" class="generated-cards-grid">
+          <!-- Dynamic generated portfolio cards are rendered here -->
+        </div>
+      </section>
+
+      <!-- 7. Legacy Result Preview Box (Fallback) -->
+      <div id="resultPreviewCard" class="result-preview-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h2 style="font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:#10B981;display:flex;align-items:center;gap:8px;">
+            <span>🎉</span> Portfolio Ready!
+          </h2>
+        </div>
+
+        <div class="preview-url-banner">
+          <div style="font-family:var(--font-mono);font-size:0.92rem;color:var(--primary);" id="generatedUrlText">
+            http://localhost:5050/p/preview
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn-action btn-glass" onclick="copyGeneratedUrl()" style="padding:8px 14px;font-size:0.85rem;">
+              📋 Copy Link
+            </button>
+            <a id="btnOpenGeneratedLive" href="/p/preview" target="_blank" class="btn-action btn-primary-glow" style="padding:8px 16px;font-size:0.85rem;">
+              🚀 Open Live ↗
+            </a>
+          </div>
+        </div>
+
+        <div style="text-align:right;">
+          <a href="/dashboard.html" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">
+            View All Sites in Dashboard ➔
+          </a>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    let selectedUniverseKey = 'cosmic-astronaut';
+    let uploadedResumeBase64 = null;
+    let uploadedResumeMime = null;
+
+    function switchIngestTab(tabKey, btn) {
+      document.querySelectorAll('.ingest-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.getElementById('panelGithub').style.display = tabKey === 'github' ? 'block' : 'none';
+      document.getElementById('panelResume').style.display = tabKey === 'resume' ? 'block' : 'none';
+      document.getElementById('panelManual').style.display = tabKey === 'manual' ? 'block' : 'none';
+    }
+
+    function selectStudioUniverse(key, card) {
+      selectedUniverseKey = key;
+      document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
+      if (card) card.classList.add('selected');
+    }
+
+    function processStudioResumeFile(file) {
+      if (!file) return;
+
+      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+      const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
+      const isDoc = /\.(docx?|txt|md)$/i.test(file.name);
+
+      const label = document.getElementById('resumeUploadLabel');
+      const help = document.getElementById('resumeUploadHelp');
+      if (label) {
+        label.innerHTML = `✅ <b>Selected:</b> ${file.name} <span style="font-size:0.85rem;color:var(--primary);">(${Math.round(file.size / 1024)} KB)</span>`;
+      }
+      if (help) {
+        help.innerHTML = `<span style="color:#10B981;font-weight:600;">✓ Ready for AI Extraction. Click Generate below when ready.</span>`;
+      }
+
+      uploadedResumeMime = file.type || (isPdf ? 'application/pdf' : (isImage ? 'image/png' : 'text/plain'));
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fullDataUrl = e.target.result;
+        uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
+
+        if (file.type.startsWith('text/') || /\.(txt|md)$/i.test(file.name)) {
+          const textReader = new FileReader();
+          textReader.onload = (te) => {
+            const txtArea = document.getElementById('resumeRawText');
+            if (txtArea) txtArea.value = te.target.result;
+          };
+          textReader.readAsText(file);
+        }
+      };
+      reader.readAsDataURL(file);
+
+      // If user was on another tab, switch to Resume tab
+      const panelResume = document.getElementById('panelResume');
+      if (panelResume && panelResume.style.display === 'none') {
+        const resumeTabBtn = document.querySelectorAll('.ingest-tab-btn')[1];
+        switchIngestTab('resume', resumeTabBtn);
+      }
+    }
+
+    function handleResumeFileSelected(input) {
+      const file = input.files?.[0];
+      processStudioResumeFile(file);
+    }
+
+    function setupStudioDropZone() {
+      // 1. Prevent default window drop behavior across the whole page
+      window.addEventListener('dragover', (e) => e.preventDefault(), false);
+      window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const files = e.dataTransfer?.files;
+        if (files && files.length > 0) {
+          processStudioResumeFile(files[0]);
+        }
+      }, false);
+
+      // 2. Drop Zone specific visual feedback & events
+      const dropZone = document.getElementById('studioResumeDropZone') || document.querySelector('.dropzone-box');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.add('drag-over');
+          }, false);
+        });
+
+        ['dragleave', 'dragend'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.classList.remove('drag-over');
+          }, false);
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          dropZone.classList.remove('drag-over');
+          const files = e.dataTransfer?.files;
+          if (files && files.length > 0) {
+            processStudioResumeFile(files[0]);
+          }
+        }, false);
+      }
+
+      // 3. Clipboard paste support (Cmd+V / Ctrl+V with files or text)
+      window.addEventListener('paste', (e) => {
+        const items = e.clipboardData?.items;
+        if (!items) return;
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].kind === 'file') {
+            const file = items[i].getAsFile();
+            if (file) {
+              processStudioResumeFile(file);
+              break;
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // WEEKLY ALLOWANCE & GENERATED PORTFOLIO HISTORY ENGINE
+    // =========================================================================
+    const ALLOWANCE_CONFIG = {
+      WEEKLY_TOTAL: 5,
+      CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000, // 7 days (1 full week)
+      STORAGE_KEY: 'myfolio_weekly_allowance_v1',
+      HISTORY_KEY: 'myfolio_generated_projects_v1'
+    };
+
+    const UNIVERSE_META = {
+      'cosmic-astronaut': { name: 'Cosmic Astronaut Studio', icon: '🌌', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
+      'cyber-crystal': { name: 'Cyber Crystal Studio', icon: '💎', thumb: '/assets/3d/cyber_crystal_3d.jpg' },
+      'bioluminescent-wireframe': { name: 'Bioluminescent Eco-Tech', icon: '🌿', thumb: '/assets/3d/bioluminescent_wireframe_3d.jpg' },
+      'botanical-woodcraft': { name: 'Botanical Woodcraft Codex', icon: '🪵', thumb: '/assets/3d/botanical_woodcraft_3d.jpg' },
+      'bio-digital-fusion': { name: 'Bio-Digital Circuit Fusion', icon: '🧬', thumb: '/assets/3d/bio_digital_fusion_3d.jpg' },
+      'eco-tech-steampunk': { name: 'Eco-Tech Steampunk', icon: '⚙️', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
+      'emerald-cyber-sanctuary': { name: 'Emerald Cyber Sanctuary', icon: '🍃', thumb: '/assets/3d/emerald_cyber_sanctuary_3d.png' },
+      'pristine-white-crystal': { name: 'Pristine White Crystal', icon: '❄️', thumb: '/assets/3d/pristine_white_crystal_3d.jpg' },
+      'abyssal-quantum-jellyfish': { name: 'Abyssal Quantum Jellyfish', icon: '🪼', thumb: '/assets/3d/algorand_escrow_protocol_3d.jpg' },
+      'mahogany-brass-steampunk': { name: 'Mahogany & Brass Steampunk', icon: '🕰️', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
+      'lavender-cyber-bridge': { name: 'Lavender Cyber Bridge', icon: '🌉', thumb: '/assets/3d/cyber_crystal_3d.jpg' },
+      'sand-parchment-botanical': { name: 'Sand Parchment Botanical', icon: '📜', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
+      'system-awakening': { name: 'System Awakening (Hunter)', icon: '⚔️', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
+      'engineering-archive': { name: 'Engineering Archive', icon: '📐', thumb: '/assets/3d/pristine_glass_cube_workstation_3d.jpg' },
+      'cosmic-cyber-geometry': { name: 'Cosmic Cyber Geometry', icon: '🪐', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
+      'stellar-architect': { name: 'Stellar Architect', icon: '✨', thumb: '/assets/3d/pristine_crystal_ribbon_hero_3d.jpg' },
+      'abyssal-ascent': { name: 'Abyssal Ascent (RPG)', icon: '🗡️', thumb: '/assets/3d/abyssal_ascent_3d.jpg' },
+      'stealth-node': { name: 'Stealth Node (Web3)', icon: '⚡', thumb: '/assets/3d/stealth_node_3d.jpg' },
+      'kinetic-brutalism': { name: 'Kinetic Brutalism', icon: '💥', thumb: '/assets/3d/kinetic_brutalism_3d.jpg' },
+      'circuit-core': { name: 'Circuit Core', icon: '🔌', thumb: '/assets/3d/circuit_core_3d.jpg' },
+      'neon-aurora-cyber': { name: 'Neon Aurora Cyber', icon: '🌌', thumb: '/assets/3d/neon_aurora_cyber_3d.jpg' }
+    };
+
+    function getAllowanceState() {
+      let state = null;
+      try {
+        state = JSON.parse(localStorage.getItem(ALLOWANCE_CONFIG.STORAGE_KEY));
+      } catch (e) {}
+
+      const now = Date.now();
+      if (!state || typeof state.used !== 'number') {
+        state = {
+          totalLimit: ALLOWANCE_CONFIG.WEEKLY_TOTAL,
+          used: 0,
+          firstGenTimestamp: null,
+          resetTimestamp: null
+        };
+        localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+      }
+
+      // Check if 7 full days have elapsed since the first generation in this cycle
+      if (state.resetTimestamp && now >= state.resetTimestamp) {
+        // Automatically reset cycle!
+        state.used = 0;
+        state.firstGenTimestamp = null;
+        state.resetTimestamp = null;
+        localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+      }
+
+      return state;
+    }
+
+    function consumeWeeklyAllowance() {
+      const state = getAllowanceState();
+      const now = Date.now();
+
+      // If this is the first generation in the current cycle, initialize the 1-week reset timer
+      if (!state.firstGenTimestamp) {
+        state.firstGenTimestamp = now;
+        state.resetTimestamp = now + ALLOWANCE_CONFIG.CYCLE_DURATION_MS;
+      }
+
+      state.used = (state.used || 0) + 1;
+      localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+      updateAllowanceUI();
+      return state;
+    }
+
+    let countdownIntervalId = null;
+
+    function formatCountdown(resetTimestamp) {
+      if (!resetTimestamp) return '7-Day Cycle Ready';
+      const diff = resetTimestamp - Date.now();
+      if (diff <= 0) return 'Resets Now';
+
+      const days = Math.floor(diff / (24 * 60 * 60 * 1000));
+      const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+      const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+      const secs = Math.floor((diff % (60 * 1000)) / 1000);
+
+      if (days > 0) {
+        return `Resets in ${days}d ${hours}h ${mins}m`;
+      }
+      if (hours > 0) {
+        return `Resets in ${hours}h ${mins}m ${secs}s`;
+      }
+      return `Resets in ${mins}m ${secs}s`;
+    }
+
+    function updateAllowanceUI() {
+      const state = getAllowanceState();
+      const remaining = Math.max(0, state.totalLimit - state.used);
+      const pct = Math.min(100, Math.max(0, (remaining / state.totalLimit) * 100));
+
+      const countEl = document.getElementById('allowanceRemainingText');
+      const barEl = document.getElementById('allowanceProgressBar');
+      const countdownEl = document.getElementById('allowanceResetCountdown');
+      const resetBadge = document.getElementById('allowanceResetBadge');
+      const detailsEl = document.getElementById('allowanceCycleDetails');
+      const generateBtn = document.getElementById('btnSubmitGenerate');
+
+      if (countEl) {
+        countEl.textContent = `${remaining} / ${state.totalLimit} Generations`;
+        if (remaining <= 1) {
+          countEl.classList.add('low');
+        } else {
+          countEl.classList.remove('low');
+        }
+      }
+
+      if (barEl) {
+        barEl.style.width = `${pct}%`;
+        if (remaining <= 1) {
+          barEl.classList.add('low');
+        } else {
+          barEl.classList.remove('low');
+        }
+      }
+
+      if (countdownEl) {
+        countdownEl.textContent = formatCountdown(state.resetTimestamp);
+      }
+
+      if (resetBadge) {
+        if (state.resetTimestamp) {
+          resetBadge.classList.add('active-countdown');
+        } else {
+          resetBadge.classList.remove('active-countdown');
+        }
+      }
+
+      if (detailsEl) {
+        if (state.firstGenTimestamp && state.resetTimestamp) {
+          const resetDate = new Date(state.resetTimestamp).toLocaleDateString(undefined, {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          detailsEl.textContent = `Cycle active. Full allowance of ${state.totalLimit} resets on ${resetDate} (7 days after 1st generation).`;
+        } else {
+          detailsEl.textContent = `Weekly allowance resets automatically 1 week after your first portfolio generation.`;
+        }
+      }
+
+      // If allowance is exhausted, guard generate button
+      if (generateBtn) {
+        if (remaining <= 0) {
+          generateBtn.disabled = true;
+          generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${state.totalLimit}/${state.totalLimit}) — ${formatCountdown(state.resetTimestamp)}</span>`;
+        } else if (!generateBtn.dataset.busy) {
+          generateBtn.disabled = false;
+          generateBtn.innerHTML = `<i data-lucide="sparkles" style="width:22px;height:22px;"></i><span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>`;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+      }
+
+      if (!countdownIntervalId) {
+        countdownIntervalId = setInterval(() => {
+          const freshState = getAllowanceState();
+          if (countdownEl) {
+            countdownEl.textContent = formatCountdown(freshState.resetTimestamp);
+          }
+        }, 1000);
+      }
+    }
+
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+    const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
+
+    // =========================================================================
+    // GENERATED PROJECTS HISTORY LIST
+    // =========================================================================
+    function getGeneratedHistory() {
+      try {
+        const list = JSON.parse(localStorage.getItem(ALLOWANCE_CONFIG.HISTORY_KEY)) || [];
+        const now = Date.now();
+        // Automatically purge unpurchased items older than 5 days entirely
+        const filtered = list.filter(item => (now - (item.timestamp || now)) < FIVE_DAYS_MS);
+        if (filtered.length !== list.length) {
+          saveGeneratedHistory(filtered);
+        }
+        return filtered;
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveGeneratedHistory(list) {
+      try {
+        localStorage.setItem(ALLOWANCE_CONFIG.HISTORY_KEY, JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function addGeneratedPortfolioToHistory(item) {
+      const history = getGeneratedHistory();
+      // Prepend to top of list so newest appears first right below button
+      const updated = [item, ...history.filter(h => h.siteId !== item.siteId)].slice(0, 15);
+      saveGeneratedHistory(updated);
+      renderGeneratedHistoryUI(item.siteId);
+    }
+
+    function formatTimeAgo(timestamp) {
+      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+      if (diffSec < 60) return 'Just now';
+      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+      return new Date(timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function copyPortfolioUrl(url, btnEl) {
+      navigator.clipboard.writeText(url).then(() => {
+        const origText = btnEl.innerHTML;
+        btnEl.innerHTML = '✅ Copied!';
+        btnEl.style.background = '#10B981';
+        btnEl.style.color = '#FFFFFF';
+        setTimeout(() => {
+          btnEl.innerHTML = origText;
+          btnEl.style.background = '';
+          btnEl.style.color = '';
+        }, 2000);
+      }).catch(() => {
+        alert('Portfolio URL: ' + url);
+      });
+    }
+
+    function regenerateWithUniverse(universeKey) {
+      if (universeKey && UNIVERSE_META[universeKey]) {
+        const cards = document.querySelectorAll('.universe-choice-card');
+        cards.forEach(c => {
+          if (c.onclick && c.onclick.toString().includes(universeKey)) {
+            selectStudioUniverse(universeKey, c);
+          }
+        });
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function reactivateHistoryItem(universeKey) {
+      regenerateWithUniverse(universeKey);
+      showToast('Re-activating 3D Studio', 'Regenerating fresh live preview with selected theme...', 'info');
+      setTimeout(() => {
+        const form = document.getElementById('portfolioGenerationForm');
+        if (form) {
+          form.requestSubmit();
+        }
+      }, 400);
+    }
+
+    function renderGeneratedHistoryUI(activeSiteId = null) {
+      const history = getGeneratedHistory();
+      const container = document.getElementById('generatedProjectsList');
+      const header = document.getElementById('generatedSectionHeader');
+      const countBadge = document.getElementById('generatedCountBadge');
+
+      if (!container) return;
+
+      if (!history || history.length === 0) {
+        if (header) header.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+
+      if (header) header.style.display = 'flex';
+      if (countBadge) countBadge.textContent = `${history.length} Site${history.length > 1 ? 's' : ''} Ready`;
+
+      const now = Date.now();
+
+      container.innerHTML = history.map((item, idx) => {
+        const uni = UNIVERSE_META[item.universeKey] || {
+          name: item.universeKey || '3D WebGL Universe',
+          icon: '✨',
+          thumb: '/assets/3d/cosmic_astronaut_3d.jpg'
+        };
+        const isActive = activeSiteId ? item.siteId === activeSiteId : idx === 0;
+        const timeAgo = formatTimeAgo(item.timestamp || now);
+        const isExpired = (now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS;
+
+        const liveBadgeHtml = isExpired
+          ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
+          : `<span class="status-live-dot">🟢 Live WebGL</span>`;
+
+        const primaryActionBtnHtml = isExpired
+          ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
+              ⚡ Re-activate &amp; Open Live ↗
+            </button>`
+          : `<a href="${item.previewUrl}" target="_blank" class="btn-launch-live">
+              🚀 Open Live Portfolio ↗
+            </a>`;
+
+        const thumbOverlayAction = isExpired
+          ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}')">⚡ Re-activate ↗</span>`
+          : `<span class="overlay-btn-preview" onclick="window.open('${item.previewUrl}', '_blank')">Live Preview ↗</span>`;
+
+        return `
+          <div class="generated-portfolio-card ${isActive ? 'active-pulse' : ''}" id="gen-card-${item.siteId}">
+            <div class="card-top-banner">
+              <div class="universe-pill">
+                <span class="uni-icon">${uni.icon}</span>
+                <span class="uni-name">${uni.name}</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                ${liveBadgeHtml}
+                <span class="timestamp-pill">${timeAgo}</span>
+              </div>
+            </div>
+
+            <div class="card-main-grid">
+              <div class="card-thumb-container">
+                <img src="${uni.thumb}" alt="${uni.name}" class="card-universe-img" />
+                <div class="thumb-glass-overlay">
+                  ${thumbOverlayAction}
+                </div>
+              </div>
+
+              <div class="card-details-container">
+                <h3 class="card-developer-name">${item.developerName || 'Developer Portfolio'}</h3>
+                <p class="card-developer-role">${item.developerRole || 'Software Engineer & Systems Architect'}</p>
+
+                <div class="card-metrics-row">
+                  <span class="metric-tag">📦 ${item.projectsCount || 3} Projects Synthesized</span>
+                  <span class="metric-tag">🎨 3D WebGL Visuals</span>
+                  <span class="metric-tag">⚡ Ultra-Fast Load</span>
+                </div>
+
+                <div class="card-url-box">
+                  <span class="url-label">LIVE URL:</span>
+                  <span class="url-text">${item.previewUrl}</span>
+                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${item.previewUrl}', this)" title="Copy Link">📋 Copy</button>
+                </div>
+
+                <div class="card-actions-bar">
+                  ${primaryActionBtnHtml}
+                  <button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
+                    ↻ Switch / Regenerate
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+
+    async function handleStudioGenerate(e) {
+      e.preventDefault();
+
+      // Check allowance before proceeding
+      const allowanceState = getAllowanceState();
+      const remainingAllowance = Math.max(0, allowanceState.totalLimit - allowanceState.used);
+      if (remainingAllowance <= 0) {
+        alert(`You have reached your weekly limit of ${allowanceState.totalLimit} portfolio generations.\n\nYour allowance will reset ${formatCountdown(allowanceState.resetTimestamp)}.`);
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitGenerate');
+      btn.dataset.busy = 'true';
+      btn.disabled = true;
+      btn.innerHTML = `<span>⏳ Synthesizing 3D WebGL Portfolio...</span>`;
+
+      try {
+        const ghUser = document.getElementById('ghUsername').value.trim();
+        const rawText = document.getElementById('resumeRawText')?.value?.trim();
+        
+        // Guided Manual Profile Questions Extraction (Aligned with Telegram Bot)
+        const fullName = document.getElementById('manualFullName')?.value?.trim();
+        const manualRole = document.getElementById('manualRole')?.value?.trim();
+        const manualTagline = document.getElementById('manualTagline')?.value?.trim();
+        const manualBio = document.getElementById('manualBio')?.value?.trim();
+        const manualEmail = document.getElementById('manualEmail')?.value?.trim();
+        const manualLocation = document.getElementById('manualLocation')?.value?.trim();
+        const manualGithub = document.getElementById('manualGithub')?.value?.trim();
+        const manualLinkedin = document.getElementById('manualLinkedin')?.value?.trim();
+
+        const manualSkills = document.getElementById('manualSkills')?.value?.trim();
+        const manualLanguages = document.getElementById('manualLanguages')?.value?.trim();
+
+        // Projects
+        const projects = [];
+        const p1Name = document.getElementById('proj1Name')?.value?.trim();
+        if (p1Name) {
+          projects.push({
+            name: p1Name,
+            title: p1Name,
+            description: document.getElementById('proj1Desc')?.value?.trim() || '',
+            tech: document.getElementById('proj1Tech')?.value?.trim() || '',
+            technologies: (document.getElementById('proj1Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
+            github: document.getElementById('proj1Github')?.value?.trim() || '',
+            live: document.getElementById('proj1Live')?.value?.trim() || ''
+          });
+        }
+
+        const p2Name = document.getElementById('proj2Name')?.value?.trim();
+        if (p2Name) {
+          projects.push({
+            name: p2Name,
+            title: p2Name,
+            description: document.getElementById('proj2Desc')?.value?.trim() || '',
+            tech: document.getElementById('proj2Tech')?.value?.trim() || '',
+            technologies: (document.getElementById('proj2Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
+            github: document.getElementById('proj2Github')?.value?.trim() || '',
+            live: document.getElementById('proj2Live')?.value?.trim() || ''
+          });
+        }
+
+        const p3Name = document.getElementById('proj3Name')?.value?.trim();
+        if (p3Name) {
+          projects.push({
+            name: p3Name,
+            title: p3Name,
+            description: document.getElementById('proj3Desc')?.value?.trim() || '',
+            tech: document.getElementById('proj3Tech')?.value?.trim() || '',
+            technologies: (document.getElementById('proj3Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
+            github: document.getElementById('proj3Github')?.value?.trim() || '',
+            live: document.getElementById('proj3Live')?.value?.trim() || ''
+          });
+        }
+
+        const manualExperience = document.getElementById('manualExperience')?.value?.trim();
+        const manualEducation = document.getElementById('manualEducation')?.value?.trim();
+        const manualCertifications = document.getElementById('manualCertifications')?.value?.trim();
+
+        const candidateResolvedName = fullName || ghUser || (projects[0]?.name ? `${projects[0].name} Creator` : 'Developer');
+        const candidateResolvedRole = manualRole || (ghUser ? 'Full-Stack & Systems Developer' : 'Software Engineer');
+
+        const payload = {
+          githubData: ghUser ? { username: ghUser } : (manualGithub ? { username: manualGithub } : {}),
+          resumeData: {
+            rawBase64: uploadedResumeBase64 || undefined,
+            mimeType: uploadedResumeMime || undefined,
+            extractedTextSnippet: rawText || undefined,
+            fullName: fullName || undefined,
+            title: manualRole || undefined,
+            tagline: manualTagline || undefined,
+            bio: manualBio || undefined,
+            email: manualEmail || undefined,
+            location: manualLocation || undefined,
+            skills: manualSkills ? manualSkills.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+            languages: manualLanguages ? manualLanguages.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+            projects: projects.length > 0 ? projects : undefined,
+            experience: manualExperience ? [{ role: manualRole || 'Engineer', description: manualExperience }] : undefined,
+            education: manualEducation ? [{ degree: manualEducation }] : undefined,
+            certifications: manualCertifications ? manualCertifications.split(',').map(s => s.trim()).filter(Boolean) : undefined,
+            social_links: {
+              github: manualGithub || undefined,
+              linkedin: manualLinkedin || undefined
+            }
+          },
+          preferences: {
+            theme: selectedUniverseKey
+          }
+        };
+
+        const res = await fetch('/api/generate/unified', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to synthesize portfolio.');
+
+        const previewUrl = data.siteUrl || (data.previewUrl ? window.location.origin + data.previewUrl : `${window.location.origin}/p/preview`);
+        
+        // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle
+        consumeWeeklyAllowance();
+
+        // 2. Add Newly Generated Project Card below Generate Button
+        addGeneratedPortfolioToHistory({
+          siteId: data.siteId || `gen-${Date.now()}`,
+          previewUrl: previewUrl,
+          universeKey: selectedUniverseKey,
+          developerName: candidateResolvedName,
+          developerRole: candidateResolvedRole,
+          projectsCount: projects.length || (data.profileData?.projects?.length) || 3,
+          timestamp: Date.now()
+        });
+
+        // 3. Update legacy preview card (if visible)
+        document.getElementById('generatedUrlText').textContent = previewUrl;
+        document.getElementById('btnOpenGeneratedLive').href = previewUrl;
+
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+        }
+
+        // Scroll to the newly added card directly below the generate button
+        const newCard = document.getElementById(`gen-card-${data.siteId}`);
+        if (newCard) {
+          newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+          document.getElementById('generatedPortfoliosSection').scrollIntoView({ behavior: 'smooth' });
+        }
+      } catch (err) {
+        alert('Generation note: ' + err.message);
+      } finally {
+        delete btn.dataset.busy;
+        updateAllowanceUI();
+      }
+    }
+
+    function copyGeneratedUrl() {
+      const url = document.getElementById('generatedUrlText').textContent;
+      navigator.clipboard.writeText(url);
+      alert('Portfolio URL copied to clipboard!');
+    }
+
+    window.switchIngestTab = switchIngestTab;
+    window.selectStudioUniverse = selectStudioUniverse;
+    window.handleResumeFileSelected = handleResumeFileSelected;
+    window.handleStudioGenerate = handleStudioGenerate;
+    window.copyGeneratedUrl = copyGeneratedUrl;
+    window.copyPortfolioUrl = copyPortfolioUrl;
+    window.regenerateWithUniverse = regenerateWithUniverse;
+
+    // Three.js 3D Fluid Silk Flow Engine
+    let scene, camera, renderer, silkMesh, silkGeometry, particles;
+    let mouseX = 0, mouseY = 0;
+    let targetMouseX = 0, targetMouseY = 0;
+
+    function initThree() {
+      const canvas = document.getElementById('webgl-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 1200);
+      camera.position.z = 480;
+
+      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // 1. Ambient & Directional Lighting for Fluid Silk Highlights
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
+      scene.add(ambLight);
+      const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
+      dirLight.position.set(150, 250, 350);
+      scene.add(dirLight);
+
+      // 2. 3D Rotating & Undulating Parametric Fluid Silk Mesh
+      silkGeometry = new THREE.PlaneGeometry(1000, 750, 36, 28);
+      const silkMaterial = new THREE.MeshPhongMaterial({
+        color: 0x38bdf8,
+        emissive: 0x0284c7,
+        specular: 0xffffff,
+        shininess: 90,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.35,
+        side: THREE.DoubleSide
+      });
+
+      silkMesh = new THREE.Mesh(silkGeometry, silkMaterial);
+      silkMesh.position.set(0, 20, -100);
+      silkMesh.rotation.x = -Math.PI / 3.5;
+      scene.add(silkMesh);
+
+      // 3. Subtle Luminous Caustic Floating Particles
+      const particleCount = 180;
+      const partGeom = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+
+      for (let i = 0; i < particleCount * 3; i += 3) {
+        positions[i] = (Math.random() - 0.5) * 1100;
+        positions[i + 1] = (Math.random() - 0.5) * 850;
+        positions[i + 2] = (Math.random() - 0.5) * 600;
+      }
+
+      partGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const partMat = new THREE.PointsMaterial({ color: 0x0284c7, size: 3.2, transparent: true, opacity: 0.65 });
+      particles = new THREE.Points(partGeom, partMat);
+      scene.add(particles);
+
+      window.addEventListener('mousemove', (e) => {
+        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      const posAttr = silkGeometry.attributes.position;
+      const count = posAttr.count;
+      const clock = new THREE.Clock();
+
+      function anim() {
+        requestAnimationFrame(anim);
+        const t = clock.getElapsedTime() * 2.5;
+
+        // Smooth mouse look-at tracking
+        mouseX += (targetMouseX - mouseX) * 0.08;
+        mouseY += (targetMouseY - mouseY) * 0.08;
+
+        // 🌊 Undulate 3D Fluid Silk Surface Waves (High Speed & Amplitude)
+        for (let i = 0; i < count; i++) {
+          const u = posAttr.getX(i);
+          const v = posAttr.getY(i);
+          const z = Math.sin(u * 0.009 + t) * Math.cos(v * 0.009 + t * 0.85) * 48 +
+                    Math.sin((u + v) * 0.006 + t * 0.7) * 22;
+          posAttr.setZ(i, z);
+        }
+        posAttr.needsUpdate = true;
+
+        // 🌊 Active 3D Spatial Rotation & Fluid Tilt
+        silkMesh.rotation.z = Math.sin(t * 0.45) * 0.25 + mouseX * 0.25;
+        silkMesh.rotation.y += 0.0035;
+        silkMesh.rotation.x = -Math.PI / 3.5 + Math.sin(t * 0.5) * 0.12 - mouseY * 0.22;
+        silkMesh.position.y = 20 + Math.sin(t * 0.6) * 20;
+
+        if (particles) {
+          particles.rotation.y += 0.002;
+          particles.rotation.x += 0.001;
+        }
+
+        renderer.render(scene, camera);
+      }
+      anim();
+    }
+
+    // 🌊 3D Live Tilt Motion for Cards on Mouse Move (Desktop Only)
+    if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      document.addEventListener('mousemove', (e) => {
+        const cards = document.querySelectorAll('.universe-choice-card, .studio-header-card, .ingest-panel-box');
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const tiltX = (e.clientY - centerY) / 45;
+        const tiltY = (centerX - e.clientX) / 45;
+
+        cards.forEach(card => {
+          if (!card.matches(':hover')) {
+            card.style.transform = `perspective(1000px) rotateX(${tiltX * 0.15}deg) rotateY(${tiltY * 0.15}deg)`;
+          }
+        });
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof initUniversalSidebar === 'function') {
+        initUniversalSidebar('studio');
+      }
+      setupStudioDropZone();
+      initThree();
+      updateAllowanceUI();
+      renderGeneratedHistoryUI();
+
+      const savedGh = localStorage.getItem('portfolio_bot_github_user');
+      if (savedGh) {
+        const ghInput = document.getElementById('ghUsername');
+        if (ghInput && !ghInput.value) ghInput.value = savedGh;
+      }
+    });
+  </script>
+</body>
+</html>

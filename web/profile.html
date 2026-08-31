@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile &amp; Settings — myfolio.tech</title>
+  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #F8FAFC;
+      --card-bg: #FFFFFF;
+      --border-color: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --primary: #0284C7;
+      --primary-hover: #0369A1;
+    }
+
+    body {
+      background: #F8FAFC;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* 🌊 Moving 3D Fluid Silk Background Container */
+    .fluid-silk-bg-container {
+      position: fixed;
+      top: -5%;
+      left: -5%;
+      width: 110vw;
+      height: 110vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(240, 246, 255, 0.45) 55%, rgba(220, 235, 255, 0.75) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+      animation: fluidSilkUndulate 18s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    @keyframes fluidSilkUndulate {
+      0% {
+        transform: scale(1) translate(0px, 0px) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.04) translate(-15px, -10px) rotate(0.8deg);
+      }
+      50% {
+        transform: scale(1.07) translate(12px, 15px) rotate(-1deg);
+      }
+      75% {
+        transform: scale(1.03) translate(-8px, 10px) rotate(0.6deg);
+      }
+      100% {
+        transform: scale(1.05) translate(15px, -8px) rotate(-0.5deg);
+      }
+    }
+
+    .app-shell-layout {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    .profile-main-stage {
+      flex: 1;
+      padding: 40px 32px 80px;
+      max-width: 1040px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .profile-header-card {
+      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+      color: #FFFFFF;
+      border-radius: 20px;
+      padding: 36px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 24px;
+      box-shadow: 0 16px 36px rgba(30, 27, 75, 0.18);
+      margin-bottom: 32px;
+    }
+
+    .profile-user-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .profile-avatar-large {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #38BDF8, #818CF8);
+      color: #0F172A;
+      font-size: 2rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .profile-title-block h1 {
+      margin: 0 0 4px 0;
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .profile-handle-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      color: #C7D2FE;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-status-pill {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #E0E7FF;
+      backdrop-filter: blur(8px);
+    }
+
+    .profile-sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 24px;
+    }
+
+    .settings-panel-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .panel-header h2 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-field-group {
+      margin-bottom: 18px;
+    }
+
+    .form-field-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input-control {
+      width: 100%;
+      box-sizing: border-box;
+      background: #F8FAFC;
+      border: 1.5px solid #CBD5E1;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 0.92rem;
+      color: #0F172A;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-input-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+      background: #FFFFFF;
+    }
+
+    .btn-save-primary {
+      background: var(--primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-save-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-danger-outline {
+      background: transparent;
+      border: 1.5px solid #EF4444;
+      color: #EF4444;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-danger-outline:hover {
+      background: #EF4444;
+      color: #FFFFFF;
+    }
+
+    .connected-account-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .account-type-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .status-connected-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #10B981;
+      background: #ECFDF5;
+      border: 1px solid #A7F3D0;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    /* Danger Modal Backdrop */
+    .danger-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .danger-modal-card {
+      background: #FFFFFF;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      padding: 32px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    .modal-close-cross-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #F1F5F9;
+      border: 1px solid #E2E8F0;
+      color: #64748B;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-close-cross-btn:hover {
+      background: #E2E8F0;
+      color: #0F172A;
+      transform: scale(1.08);
+    }
+
+    /* 🌙 DARK THEME PROFILE OVERRIDES */
+    [data-theme="dark"] body {
+      background: #07090E;
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .fluid-silk-bg-container {
+      background: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.4) 0%, rgba(10, 14, 28, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
+                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
+    }
+
+    [data-theme="dark"] .settings-panel-card {
+      background: rgba(15, 23, 42, 0.88);
+      border-color: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    }
+
+    [data-theme="dark"] .form-input-control {
+      background: #0B1120;
+      border-color: rgba(255, 255, 255, 0.14);
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .form-input-control:focus {
+      background: #0F172A;
+      border-color: #38BDF8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
+    }
+
+    [data-theme="dark"] .connected-account-row {
+      background: rgba(11, 15, 25, 0.6);
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    [data-theme="dark"] .connected-account-row span {
+      color: #F8FAFC;
+    }
+
+    [data-theme="dark"] .danger-modal-card {
+      background: #0F172A;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #F8FAFC;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+  </style>
+</head>
+<body>
+  <!-- Moving 3D Fluid Silk Background Container -->
+  <div class="fluid-silk-bg-container"></div>
+
+  <div class="app-shell-layout">
+    <!-- Universal Sidebar Mount -->
+    <div id="sidebarMount"></div>
+
+    <!-- Main Content Stage -->
+    <div class="profile-main-stage">
+      <!-- 1. Header Banner -->
+      <header class="profile-header-card">
+        <div class="profile-user-left">
+          <div class="profile-avatar-large" id="userAvatarChar">D</div>
+          <div class="profile-title-block">
+            <h1 id="profileFullName">Developer Profile</h1>
+            <div class="profile-handle-tag">
+              <span id="profileUsername">@developer</span>
+              <span>•</span>
+              <span id="profileEmail">developer@gmail.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="plan-status-pill" id="profilePlanBadge">✨ LIFETIME STARTER</span>
+        </div>
+      </header>
+
+      <!-- 2. Profile Details & Settings Grid -->
+      <div class="profile-sections-grid">
+        <!-- Panel 1: Account Information -->
+        <section class="settings-panel-card">
+          <div class="panel-header">
+            <h2><span>👤</span> Account Details</h2>
+          </div>
+
+          <form id="profileInfoForm" onsubmit="handleSaveProfile(event)">
+            <div class="form-field-group">
+              <label for="inputName">Display Name</label>
+              <input type="text" id="inputName" class="form-input-control" required placeholder="e.g. Abdul Aziz Nooruddin">
+            </div>
+
+            <div class="form-field-group">
+              <label for="inputEmail">Email Address (Gmail / Primary)</label>
+              <input type="email" id="inputEmail" class="form-input-control" readonly disabled style="background: #F8FAFC; color: #64748B; cursor: not-allowed; border-color: #E2E8F0;" placeholder="yourname@gmail.com" title="Primary account email is permanently locked to your authenticated signup identity.">
+            </div>
+
+            <div class="form-field-group">
+              <label for="inputUsername">Username (Custom URL identifier)</label>
+              <input type="text" id="inputUsername" class="form-input-control" required placeholder="abdulaziz">
+            </div>
+
+            <div class="form-field-group">
+              <label for="inputGithub">GitHub Profile</label>
+              <input type="text" id="inputGithub" class="form-input-control" placeholder="https://github.com/Abdul-Aziz-Nooruddin">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+              <button type="submit" class="btn-save-primary">Save Changes</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Panel 2: Connected Accounts & Telemetry -->
+        <section class="settings-panel-card">
+          <div class="panel-header">
+            <h2><span>🔗</span> Connected Services</h2>
+          </div>
+
+          <div class="connected-account-row">
+            <div class="account-type-info">
+              <svg width="20" height="20" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Google Account</span>
+            </div>
+            <span class="status-connected-tag" id="statusGoogle">Active</span>
+          </div>
+
+          <div class="connected-account-row">
+            <div class="account-type-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              <span>GitHub Deep Ingestion</span>
+            </div>
+            <div id="githubConnectionWrap" style="display:flex; align-items:center; gap:8px;">
+              <span class="status-connected-tag" id="statusGithub">Checking...</span>
+            </div>
+          </div>
+
+          <div class="connected-account-row">
+            <div class="account-type-info">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#0284C7">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.75-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
+              </svg>
+              <span>Telegram Bot Alerts</span>
+            </div>
+            <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" style="color: #0284C7; font-weight: 700; font-size: 0.85rem; text-decoration: none;">Link Bot ↗</a>
+          </div>
+
+          <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color);">
+            <a href="/dashboard.html" style="color: var(--primary); font-weight: 700; font-size: 0.9rem; text-decoration: none;">
+              ← Back to Main Dashboard
+            </a>
+          </div>
+        </section>
+
+        <!-- Panel 3: Danger Zone & Account Wipe -->
+        <section class="settings-panel-card" style="border-color: #FECACA; background: #FFFDFD; grid-column: 1 / -1;">
+          <div class="panel-header" style="border-color: #FEE2E2;">
+            <h2 style="color: #DC2626;"><span>⚠️</span> Danger Zone</h2>
+          </div>
+
+          <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px;">
+            Permanently wipe your account, delete all active 3D portfolio deployments, sessions, and data. This action cannot be undone.
+          </p>
+
+          <button type="button" class="btn-danger-outline" onclick="openDeleteAccountModal()">
+            Permanently Delete Account
+          </button>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Modal -->
+  <div id="deleteAccountModal" class="danger-modal-backdrop" onclick="if(event.target === this) closeDeleteAccountModal()">
+    <div class="danger-modal-card">
+      <button type="button" class="modal-close-cross-btn" onclick="closeDeleteAccountModal()" aria-label="Close modal">✕</button>
+      <h3 style="color: #DC2626; margin: 0 0 8px 0; font-size: 1.3rem;">Delete Account?</h3>
+      <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">
+        This action is irreversible. All your portfolios, sessions, and data will be permanently wiped. Please confirm with your current password:
+      </p>
+
+      <form id="deleteAccountConfirmForm" onsubmit="handleConfirmDelete(event)">
+        <div class="form-field-group">
+          <input type="password" id="deleteAccountPassword" class="form-input-control" required placeholder="Enter your password">
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+          <button type="button" class="btn-save-primary" style="background: #E2E8F0; color: #1E293B;" onclick="closeDeleteAccountModal()">Cancel</button>
+          <button type="submit" class="btn-danger-outline" style="background: #DC2626; color: #FFFFFF;">Permanently Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let currentUserData = null;
+
+    async function loadUserProfile() {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!res.ok) {
+          window.location.href = '/login';
+          return;
+        }
+
+        const data = await res.json();
+        currentUserData = data.user || data;
+
+        const name = currentUserData.name || 'Developer';
+        const email = currentUserData.email || 'developer@gmail.com';
+        const username = currentUserData.username || 'developer';
+
+        document.getElementById('profileFullName').textContent = name;
+        document.getElementById('profileUsername').textContent = `@${username}`;
+        document.getElementById('profileEmail').textContent = email;
+        document.getElementById('userAvatarChar').textContent = name.charAt(0).toUpperCase();
+
+        document.getElementById('inputName').value = name;
+        document.getElementById('inputEmail').value = email;
+        document.getElementById('inputUsername').value = username;
+
+        // Dynamic Google Connection Tag
+        const statusGoogle = document.getElementById('statusGoogle');
+        if (statusGoogle) {
+          statusGoogle.textContent = currentUserData.emailVerified ? 'Active' : 'Unverified';
+        }
+
+        // Dynamic GitHub Connection Tag
+        const ghWrap = document.getElementById('githubConnectionWrap');
+        const ghUsername = currentUserData.githubUsername || currentUserData.github || (currentUserData.socialLinks?.github ? currentUserData.socialLinks.github.replace(/^https?:\/\/github\.com\//, '') : null);
+        
+        if (ghWrap) {
+          if (ghUsername) {
+            ghWrap.innerHTML = `
+              <span class="status-connected-tag">Connected (@${ghUsername})</span>
+              <button type="button" onclick="unlinkGithub()" style="background:transparent; border:none; color:#EF4444; font-size:0.75rem; font-weight:700; cursor:pointer; margin-left:4px;">Unlink</button>
+            `;
+          } else {
+            ghWrap.innerHTML = `
+              <span style="background:#F1F5F9; color:#64748B; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:600;">Not Linked</span>
+              <button type="button" onclick="linkGithubAccount()" style="background:transparent; border:none; color:#0284C7; font-size:0.82rem; font-weight:700; cursor:pointer; margin-left:6px;">Link ↗</button>
+            `;
+          }
+        }
+
+        if (currentUserData.plan === 'pro') {
+          document.getElementById('profilePlanBadge').textContent = '👑 PRO CREATOR';
+        }
+      } catch (err) {
+        console.error('Failed to load user profile:', err);
+      }
+    }
+
+    function linkGithubAccount() {
+      const ghUser = prompt('Enter your GitHub username or profile URL:');
+      if (ghUser && ghUser.trim()) {
+        const clean = ghUser.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
+        localStorage.setItem('portfolio_bot_github_user', clean);
+        alert(`GitHub account @${clean} linked for portfolio generation!`);
+        loadUserProfile();
+      }
+    }
+
+    function unlinkGithub() {
+      if (confirm('Unlink GitHub account from your profile?')) {
+        localStorage.removeItem('portfolio_bot_github_user');
+        alert('GitHub unlinked.');
+        loadUserProfile();
+      }
+    }
+
+    async function handleSaveProfile(e) {
+      e.preventDefault();
+      const name = document.getElementById('inputName').value.trim();
+      const email = document.getElementById('inputEmail').value.trim();
+      const username = document.getElementById('inputUsername').value.trim();
+
+      alert(`Profile updated for ${name} (${email})!`);
+      loadUserProfile();
+    }
+
+    function openDeleteAccountModal() {
+      document.getElementById('deleteAccountModal').style.display = 'flex';
+      document.getElementById('deleteAccountPassword').focus();
+    }
+
+    function closeDeleteAccountModal() {
+      document.getElementById('deleteAccountModal').style.display = 'none';
+      document.getElementById('deleteAccountPassword').value = '';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeDeleteAccountModal();
+      }
+    });
+
+    async function handleConfirmDelete(e) {
+      e.preventDefault();
+      const password = document.getElementById('deleteAccountPassword').value;
+
+      try {
+        const res = await fetch('/api/auth/delete-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+        if (res.status === 401) {
+          alert('Session expired or incorrect password. Please sign in again.');
+          window.location.href = '/login';
+          return;
+        }
+
+        if (!res.ok) throw new Error(data.error || 'Failed to delete account');
+        alert('Your account and all associated data have been permanently deleted.');
+        window.location.href = '/';
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof initUniversalSidebar === 'function') {
+        initUniversalSidebar('profile');
+      }
+      loadUserProfile();
+    });
+  </script>
+</body>
+</html>

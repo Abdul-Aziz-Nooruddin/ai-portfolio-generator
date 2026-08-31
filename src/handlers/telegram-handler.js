@@ -1,11 +1,13 @@
 /**
  * Telegram Bot Handler
  * Manages Telegram bot interactions with debounced callback queries, inline keyboards,
- * media uploads, step-by-step back navigation, and /stop commands.
+ * media uploads, 3D template selection, GitHub ingestion, and step-by-step back navigation.
  */
 
 const TelegramBot = require('node-telegram-bot-api');
 const axios = require('axios');
+const { GitHubGenerationPipeline } = require('../services/github-generation-pipeline');
+const { TemplateRegistry } = require('../templates/template-registry');
 
 class TelegramHandler {
   constructor(conversationEngine, aiService, botToken) {
@@ -13,7 +15,9 @@ class TelegramHandler {
     this.ai = aiService;
     this.token = botToken;
     this.bot = null;
+    this.githubPipeline = new GitHubGenerationPipeline(aiService);
     this.processingLocks = new Set(); // Prevents duplicate rapid button clicks
+    this.awaitingGithubInput = new Set(); // Tracks users currently prompted for GitHub handle
 
     if (this.token && this.token.trim() !== '') {
       this.initBot();
@@ -45,7 +49,13 @@ class TelegramHandler {
 
   initBot() {
     try {
-      this.bot = new TelegramBot(this.token, { polling: true });
+      this.bot = new TelegramBot(this.token, {
+        polling: {
+          interval: 300,
+          autoStart: true,
+          params: { timeout: 10 }
+        }
+      });
       console.log('🤖 [TELEGRAM] Bot initialized with polling mode.');
 
       // Register notifier callback so engine can push site URLs
@@ -53,8 +63,8 @@ class TelegramHandler {
         try {
           const liveUrl = options.liveUrl || '';
           const buttons = [];
-          if (liveUrl && liveUrl.startsWith('https://') && !liveUrl.includes('localhost') && !liveUrl.includes('127.0.0.1')) {
-            buttons.push([{ text: '🌐 Open Preview Website', url: liveUrl }]);
+          if (liveUrl && !liveUrl.includes('localhost') && !liveUrl.includes('127.0.0.1')) {
+            buttons.push([{ text: '🌐 Open 3D Live Portfolio', url: liveUrl }]);
           }
           buttons.push([
             { text: '💳 Subscribe & Unlock (₹149/mo)', callback_data: 'pay' }
@@ -79,21 +89,57 @@ class TelegramHandler {
   }
 
   setupListeners() {
-    // 1. Handle /start, /restart, /reset commands
+    // 1. Handle /start, /restart, /menu
     this.bot.onText(/\/start|\/restart|\/menu/, async (msg) => {
       const chatId = String(msg.chat.id);
+      this.awaitingGithubInput.delete(chatId);
       const username = msg.from?.username || '';
       await this.sendWelcomeMenu(chatId, username);
     });
 
-    // 2. Handle /stop, /cancel commands
+    // 2. Handle /templates
+    this.bot.onText(/\/templates/, async (msg) => {
+      const chatId = String(msg.chat.id);
+      await this.sendTemplatesMenu(chatId);
+    });
+
+    // 3. Handle /github <username>
+    this.bot.onText(/\/github(?:\s+(.+))?/, async (msg, match) => {
+      const chatId = String(msg.chat.id);
+      this.awaitingGithubInput.delete(chatId);
+      const input = match[1]?.trim();
+      if (!input) {
+        this.awaitingGithubInput.add(chatId);
+        await this.sendSafe(chatId, "🐙 **Instant GitHub Portfolio Generation**\n\nPlease provide your GitHub username or URL:\nExample: `Abdul-Aziz-Nooruddin` or `https://github.com/Abdul-Aziz-Nooruddin`");
+        return;
+      }
+      await this.handleGitHubGeneration(chatId, input);
+    });
+
+    // 4. Handle /help
+    this.bot.onText(/\/help/, async (msg) => {
+      const chatId = String(msg.chat.id);
+      const helpText = `🤖 **AI Portfolio Bot — Supported Commands**
+      
+• /start — Open the main welcome menu
+• /github \`<username>\` — Instant 3D portfolio from GitHub
+• /templates — Explore all 6 visual 3D design templates
+• /stats — View your portfolio generation stats
+• /stop — Reset and cancel current session
+
+💡 *You can also send a PDF resume or photo scan directly into this chat!*`;
+      await this.sendSafe(chatId, helpText);
+    });
+
+    // 5. Handle /stop, /cancel commands
     this.bot.onText(/\/stop|\/cancel|\/reset/, async (msg) => {
       const chatId = String(msg.chat.id);
+      this.awaitingGithubInput.delete(chatId);
       try {
         await this.engine.processMessage(chatId, 'start', `stop_${Date.now()}`);
-        await this.sendSafe(chatId, "🛑 **Session stopped & reset.**\n\nWhenever you're ready to create a new portfolio, simply type /start !");
+        await this.sendSafe(chatId, "🛑 **Session reset.** Type /start whenever you want to begin!");
       } catch (e) {
-        await this.sendSafe(chatId, "🛑 Session stopped. Type /start to begin.");
+        await this.sendSafe(chatId, "🛑 Session reset. Type /start to begin.");
       }
     });
 
@@ -103,7 +149,7 @@ class TelegramHandler {
       await this.processIncoming(chatId, 'stats', `cmd_${Date.now()}`, null, username);
     });
 
-    // 3. Handle Callback Query (Debounced button clicks)
+    // 6. Handle Callback Queries (Inline button clicks)
     this.bot.on('callback_query', async (callbackQuery) => {
       const chatId = String(callbackQuery.message.chat.id);
       const data = callbackQuery.data;
@@ -115,14 +161,25 @@ class TelegramHandler {
       } catch (e) {}
 
       // Debounce lock check
-      if (this.processingLocks.has(chatId)) {
-        return; // Ignore duplicate concurrent clicks
+      if (this.processingLocks.has(chatId)) return;
+
+      // Handle direct GitHub callback
+      if (data === 'intake_github') {
+        this.awaitingGithubInput.add(chatId);
+        await this.sendSafe(chatId, "🐙 **Send your GitHub username or profile link:**\n\nExample: `Abdul-Aziz-Nooruddin` or `https://github.com/Abdul-Aziz-Nooruddin`");
+        return;
+      }
+
+      // Handle direct templates callback
+      if (data === 'view_templates') {
+        await this.sendTemplatesMenu(chatId);
+        return;
       }
 
       await this.processIncoming(chatId, data, messageId, null, username);
     });
 
-    // 4. Handle Regular Messages
+    // 7. Handle Regular Messages
     this.bot.on('message', async (msg) => {
       if (msg.text && msg.text.startsWith('/')) return; // Handled by command listeners
 
@@ -132,22 +189,40 @@ class TelegramHandler {
 
       // Handle PDF or document upload
       if (msg.document) {
+        this.awaitingGithubInput.delete(chatId);
         await this.handleDocumentMessage(msg);
         return;
       }
 
       // Handle Photo upload
       if (msg.photo && msg.photo.length > 0) {
+        this.awaitingGithubInput.delete(chatId);
         await this.handlePhotoMessage(msg);
         return;
       }
 
       if (msg.text) {
-        await this.processIncoming(chatId, msg.text, messageId, null, username);
+        const trimmed = msg.text.trim();
+
+        // Check if user is in GitHub intake state or sent a GitHub handle/link
+        if (
+          this.awaitingGithubInput.has(chatId) ||
+          /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_-]+\/?$/i.test(trimmed) ||
+          trimmed.startsWith('github.com/') ||
+          (trimmed.startsWith('@') && trimmed.length > 2 && !trimmed.includes(' '))
+        ) {
+          this.awaitingGithubInput.delete(chatId);
+          await this.handleGitHubGeneration(chatId, trimmed);
+          return;
+        }
+
+        await this.processIncoming(chatId, trimmed, messageId, null, username);
       }
     });
 
     this.bot.on('polling_error', (error) => {
+      // Gracefully suppress 409 duplicate polling conflict warnings during hot reloads
+      if (error.message && error.message.includes('409 Conflict')) return;
       console.warn('[TELEGRAM] Polling warning:', error.message);
     });
 
@@ -157,23 +232,21 @@ class TelegramHandler {
   }
 
   async sendWelcomeMenu(chatId, username = '') {
-    const welcomeText = `👋 **Welcome to AI Portfolio Designer!**
+    const welcomeText = `👋 **Welcome to AI Portfolio Studio!**
 
-I build bespoke, responsive portfolio websites by chatting with you here — no coding, no laptop needed.
+I build bespoke, responsive 3D developer portfolios by chatting with you here — no coding required.
 
-💡 *Tip: You can also send me your PDF resume, and I'll auto-extract your information!*
-
-**What is this portfolio for? Choose below:**`;
+🌟 **How would you like to build your portfolio?**`;
 
     const inlineKeyboard = {
       inline_keyboard: [
         [
-          { text: '💻 Developer / Designer', callback_data: 'A' },
-          { text: '🛠️ Freelancer / Gig Worker', callback_data: 'B' }
+          { text: '🐙 Connect GitHub (Instant)', callback_data: 'intake_github' },
+          { text: '📄 Upload PDF Resume', callback_data: 'intake_resume' }
         ],
         [
-          { text: '🎓 Student / Fresher', callback_data: 'C' },
-          { text: '💼 General Professional', callback_data: 'D' }
+          { text: '📝 Guided Chat Questions', callback_data: 'intake_manual' },
+          { text: '🎨 Browse 3D Templates', callback_data: 'view_templates' }
         ]
       ]
     };
@@ -184,6 +257,70 @@ I build bespoke, responsive portfolio websites by chatting with you here — no 
     await this.sendSafe(chatId, welcomeText, {
       reply_markup: inlineKeyboard
     });
+  }
+
+  async sendTemplatesMenu(chatId) {
+    const templates = TemplateRegistry.listTemplates();
+    const templateList = templates.map((t, idx) => `• **${idx + 1}. ${t.name}**\n  _${t.description}_`).join('\n\n');
+
+    const message = `🎨 **Available 3D Visual Portfolio Templates**\n\n${templateList}\n\nChoose an onboarding method above or type /start to generate!`;
+    const keyboard = {
+      inline_keyboard: [
+        [
+          { text: '🐙 Build from GitHub', callback_data: 'intake_github' },
+          { text: '📄 Upload PDF Resume', callback_data: 'intake_resume' }
+        ]
+      ]
+    };
+
+    await this.sendSafe(chatId, message, { reply_markup: keyboard });
+  }
+
+  async handleGitHubGeneration(chatId, input) {
+    await this.sendSafe(chatId, `🐙 Fetching public repositories & synthesizing 3D developer portfolio for **${input}**...`);
+    try { await this.bot.sendChatAction(chatId, 'typing'); } catch (e) {}
+
+    try {
+      const result = await this.githubPipeline.generateFromGitHub(input, { mode: 'auto-cycle' });
+      const hostUrl = process.env.HOST_URL || `http://localhost:${process.env.PORT || 5050}`;
+      const liveUrl = `${hostUrl}/p/${result.siteId}`;
+
+      const pData = result.profileData || result.profile || {};
+
+      // Persist profile to DB conversation so regeneration & edits retain all GitHub evidence
+      try {
+        let user = await this.engine.db.getUser(chatId);
+        if (!user) user = await this.engine.db.createUser(chatId);
+        let conversation = await this.engine.db.getConversation(user.id);
+        if (!conversation) conversation = await this.engine.db.createConversation(user.id);
+        await this.engine.db.updateConversation(conversation.id, {
+          extracted_data: pData,
+          status: 'preview_live'
+        });
+      } catch (dbErr) {}
+
+      const reply = `✨ **Your 3D Portfolio is Ready!**
+
+👤 **Developer:** ${pData.name || input}
+💼 **Role:** ${pData.role || 'Full-Stack Developer'}
+🚀 **Projects Analyzed:** ${pData.projects?.length || 0} repositories
+
+🔗 **Live Preview Link:**
+${liveUrl}`;
+
+      const buttons = [
+        [{ text: '🌐 Open 3D Live Portfolio', url: liveUrl }],
+        [{ text: '💳 Unlock Permanent Domain (₹149/mo)', callback_data: 'pay' }],
+        [{ text: '🔄 Regenerate Design', callback_data: 'YES' }]
+      ];
+
+      await this.sendSafe(chatId, reply, {
+        reply_markup: { inline_keyboard: buttons }
+      });
+    } catch (err) {
+      console.error('[TELEGRAM] GitHub gen error:', err.message);
+      await this.sendSafe(chatId, `⚠️ Could not generate portfolio from GitHub: ${err.message}\n\nPlease check the username and try again, or type /start!`);
+    }
   }
 
   async handleDocumentMessage(msg) {
@@ -225,7 +362,7 @@ I build bespoke, responsive portfolio websites by chatting with you here — no 
 
         const keyboard = {
           inline_keyboard: [
-            [{ text: '🚀 Build My Portfolio Now', callback_data: 'YES' }],
+            [{ text: '🚀 Build My 3D Portfolio Now', callback_data: 'YES' }],
             [
               { text: '✏️ Edit a Field', callback_data: 'edit' },
               { text: '❌ Start Fresh', callback_data: 'NO' }
@@ -297,14 +434,15 @@ I build bespoke, responsive portfolio websites by chatting with you here — no 
         } else if (text.includes('How would you like to provide your information?')) {
           keyboard = {
             inline_keyboard: [
-              [{ text: '📝 Answer Step-by-Step', callback_data: 'intake_manual' }],
-              [{ text: '📄 Upload PDF Resume (Auto)', callback_data: 'intake_resume' }]
+              [{ text: '🐙 Connect GitHub (Instant)', callback_data: 'intake_github' }],
+              [{ text: '📄 Upload PDF Resume (Auto)', callback_data: 'intake_resume' }],
+              [{ text: '📝 Answer Step-by-Step', callback_data: 'intake_manual' }]
             ]
           };
         } else if (text.includes('Here\'s what I collected') || text.includes('Does everything look correct?') || text.includes('Ready to generate')) {
           keyboard = {
             inline_keyboard: [
-              [{ text: '🚀 Yes, Build My Portfolio!', callback_data: 'YES' }],
+              [{ text: '🚀 Yes, Build My 3D Portfolio!', callback_data: 'YES' }],
               [
                 { text: '✏️ Edit a Field', callback_data: 'edit' },
                 { text: '❌ Start Over', callback_data: 'NO' }
@@ -312,7 +450,6 @@ I build bespoke, responsive portfolio websites by chatting with you here — no 
             ]
           };
         } else if (text.includes('Let\'s start!') || text.includes('Got it!') || text.includes('What is your') || text.includes('What\'s your') || text.includes('Tell me about') || text.includes('Moved back to previous')) {
-          // Active step-by-step question prompt: show Back and Skip buttons
           keyboard = {
             inline_keyboard: [
               [

@@ -69,11 +69,11 @@ class CandidateDesignPool {
     const allUniverses = Object.keys(VISUAL_UNIVERSES);
 
     if (signals.visualDensity === 'high') {
-      return ['contemporary-magazine', 'futuristic-spatial', 'monochrome-gallery', 'expressive-typographic', 'brutalist-pop', 'luxury-minimal'];
+      return ['cosmic-astronaut-holographic', 'contemporary-magazine', 'futuristic-spatial', 'monochrome-gallery', 'expressive-typographic', 'brutalist-pop', 'luxury-minimal'];
     } else if (signals.technicalDepth === 'high' || signals.technicalDepth === 'deep') {
-      return ['technical-lab', 'swiss-editorial', 'cinematic-obsidian', 'brutalist-pop', 'futuristic-spatial', 'monochrome-gallery', 'expressive-typographic'];
+      return ['cosmic-astronaut-holographic', 'technical-lab', 'swiss-editorial', 'cinematic-obsidian', 'brutalist-pop', 'futuristic-spatial', 'monochrome-gallery', 'expressive-typographic'];
     } else if (signals.narrativeDepth === 'high') {
-      return ['warm-editorial', 'contemporary-magazine', 'luxury-minimal', 'swiss-editorial', 'editorial-monograph', 'monochrome-gallery'];
+      return ['cosmic-astronaut-holographic', 'warm-editorial', 'contemporary-magazine', 'luxury-minimal', 'swiss-editorial', 'editorial-monograph', 'monochrome-gallery'];
     }
 
     return allUniverses;

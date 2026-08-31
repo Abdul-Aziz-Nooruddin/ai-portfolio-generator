@@ -154,6 +154,21 @@ const TYPOGRAPHY_SYSTEMS = {
     weights: { heading: 800, subheading: 600, body: 400, code: 500 },
     displayTreatment: 'dossier-annotated-header',
     compatibility: ['split-screen-dossier', 'narrative-timeline', 'technical-lab']
+  },
+  'cosmic-jakarta-mono': {
+    id: 'cosmic-jakarta-mono',
+    name: 'Cosmic Plus Jakarta Sans & JetBrains Mono',
+    headingFont: 'Plus Jakarta Sans',
+    bodyFont: 'Inter',
+    monoFont: 'JetBrains Mono',
+    fontUrls: 'family=Plus+Jakarta+Sans:wght@500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700',
+    scaleRatio: 1.382,
+    baseSize: '16px',
+    tracking: '-0.025em',
+    lineHeight: 1.6,
+    weights: { heading: 900, subheading: 700, body: 400, code: 600 },
+    displayTreatment: 'cosmic-gradient-heading',
+    compatibility: ['cosmic-astronaut-holographic', 'futuristic-spatial', 'cinematic-obsidian', 'spatial-3d-stage']
   }
 };
 

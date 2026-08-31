@@ -28,13 +28,29 @@ class GitHubNormalizer {
   static normalize(rawGitHubData = {}) {
     const profile = rawGitHubData.profile || {};
     const repos = rawGitHubData.repositories || [];
-    const languageStats = rawGitHubData.languageStats || {};
-    const sanitizedReadme = this.sanitizeReadme(rawGitHubData.readmeContent || '');
+    // Total language bytes across repositories
+    const totalBytes = Object.values(languageStats).reduce((a, b) => a + b, 0);
 
-    // Extract verified languages sorted by bytes
-    const sortedLanguages = Object.entries(languageStats)
+    // List of scripting / config / build languages to categorize as tools rather than primary languages
+    const toolLanguages = new Set(['powershell', 'shell', 'makefile', 'batchfile', 'dockerfile', 'cmake', 'qmake', 'vim script', 'autohotkey']);
+
+    // Extract verified primary programming languages sorted by bytes and filtering noise (< 1.5% if totalBytes > 10000)
+    let filteredLanguages = Object.entries(languageStats)
+      .filter(([lang, bytes]) => {
+        if (toolLanguages.has(lang.toLowerCase())) return false;
+        if (totalBytes > 10000 && (bytes / totalBytes) < 0.015) return false;
+        return true;
+      })
       .sort((a, b) => b[1] - a[1])
       .map(([lang]) => lang);
+
+    if (filteredLanguages.length === 0) {
+      filteredLanguages = Object.entries(languageStats)
+        .sort((a, b) => b[1] - a[1])
+        .map(([lang]) => lang);
+    }
+
+    const sortedLanguages = filteredLanguages;
 
     // Extract all unique topics across repos
     const allTopics = new Set();
@@ -44,8 +60,8 @@ class GitHubNormalizer {
       }
     });
 
-    // Rank top projects
-    const topProjects = GitHubProjectRanker.rankAndSelect(repos, 5);
+    // Rank top projects (preserve all repositories up to 20)
+    const topProjects = GitHubProjectRanker.rankAndSelect(repos, 20);
 
     // Categorize skills based on verified languages and topics
     const skills = {

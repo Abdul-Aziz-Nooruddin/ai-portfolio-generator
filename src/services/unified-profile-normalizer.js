@@ -24,23 +24,28 @@ class UnifiedProfileNormalizer {
       photoData = null,
       imagesData = [],
       questionnaireData = null,
-      manualData = null,
+      manualData: rawManualData = null,
       preferences = {}
     } = input;
 
-    // Flatten extracted_data if present in resumeData
+    // Flatten extracted_data if present in resumeData or input
     const resumeData = rawResumeData?.extracted_data
       ? { ...rawResumeData, ...rawResumeData.extracted_data }
-      : rawResumeData;
+      : (input?.extracted_data ? { ...input, ...input.extracted_data } : rawResumeData);
+
+    const manualData = rawManualData || input?.data || input;
 
     const provenance = {};
     const recordProvenance = (field, source, level, confidence = 0.95) => {
       provenance[field] = { source, level, confidence, timestamp: Date.now() };
     };
 
-    // 1. Identity & Name Resolution (Questionnaire > Resume > GitHub > Default)
+    // 1. Identity & Name Resolution (Direct Input > Questionnaire > Resume > GitHub > Default)
     let name = 'Creative Developer';
-    if (questionnaireData?.name) {
+    if (input?.name && typeof input.name === 'string' && input.name.trim() && input.name !== 'Software Developer') {
+      name = input.name.trim();
+      recordProvenance('name', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED, 0.99);
+    } else if (questionnaireData?.name) {
       name = questionnaireData.name.trim();
       recordProvenance('name', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED, 0.98);
     } else if (resumeData?.name) {
@@ -61,7 +66,10 @@ class UnifiedProfileNormalizer {
 
     // 2. Role & Specialization
     let role = 'Software Engineer & Technical Architect';
-    if (questionnaireData?.role) {
+    if (input?.role && typeof input.role === 'string' && input.role.trim()) {
+      role = input.role.trim();
+      recordProvenance('role', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (questionnaireData?.role) {
       role = questionnaireData.role.trim();
       recordProvenance('role', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (resumeData?.role) {
@@ -71,7 +79,7 @@ class UnifiedProfileNormalizer {
       role = manualData.role.trim();
       recordProvenance('role', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
     } else {
-      const inferredRole = this.inferRoleFromSkills(githubData?.skills || resumeData?.skills || manualData?.skills);
+      const inferredRole = this.inferRoleFromSkills(githubData?.skills || resumeData?.skills || manualData?.skills || input?.skills);
       if (inferredRole) {
         role = inferredRole;
         recordProvenance('role', 'skill_inference', PROVENANCE_LEVELS.INFERRED);
@@ -141,8 +149,12 @@ class UnifiedProfileNormalizer {
       .filter(img => Boolean(img.url));
 
     // 5. Contact & Social Channels
+    const extractedName = questionnaireData?.name || resumeData?.name || manualData?.name || (githubData?.name ? githubData.name : (githubData?.username || 'Developer'));
+    const safeFallbackEmail = extractedName ? `${extractedName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@devfolio.me` : 'contact@devfolio.me';
+
     const contact = {
-      email: questionnaireData?.email || resumeData?.email || manualData?.email || (githubData?.username ? `${githubData.username}@users.noreply.github.com` : 'hello@example.com'),
+      email: questionnaireData?.email || resumeData?.email || manualData?.email || (githubData?.username ? `${githubData.username}@users.noreply.github.com` : safeFallbackEmail),
+      phone: questionnaireData?.phone || resumeData?.phone || manualData?.phone || null,
       location: questionnaireData?.location || resumeData?.location || manualData?.location || githubData?.location || 'Remote / Worldwide',
       website: questionnaireData?.website || resumeData?.website || manualData?.website || githubData?.blog || githubData?.website || ''
     };
@@ -185,10 +197,41 @@ class UnifiedProfileNormalizer {
     }
 
     // 7. Projects Normalization (Capped at 10, Guaranteed >= 2)
+    const extractProjectsFromFlat = (obj) => {
+      if (!obj || typeof obj !== 'object') return [];
+      const list = [];
+      for (let i = 1; i <= 5; i++) {
+        if (obj[`project_${i}_name`] || obj[`project_${i}_title`]) {
+          list.push({
+            name: obj[`project_${i}_name`] || obj[`project_${i}_title`],
+            desc: obj[`project_${i}_desc`] || obj[`project_${i}_description`] || '',
+            tech: obj[`project_${i}_tech`] || obj[`project_${i}_tech_stack`] || ''
+          });
+        }
+      }
+      return list;
+    };
+
     let projects = [];
-    if (Array.isArray(questionnaireData?.projects) && questionnaireData.projects.length > 0) {
+    const flatProjects = [
+      ...extractProjectsFromFlat(input),
+      ...extractProjectsFromFlat(input?.data),
+      ...extractProjectsFromFlat(questionnaireData),
+      ...extractProjectsFromFlat(manualData)
+    ];
+
+    if (Array.isArray(input?.projects) && input.projects.length > 0) {
+      projects = input.projects;
+      recordProvenance('projects', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (Array.isArray(input?.data?.projects) && input.data.projects.length > 0) {
+      projects = input.data.projects;
+      recordProvenance('projects', 'direct_input_data', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (Array.isArray(questionnaireData?.projects) && questionnaireData.projects.length > 0) {
       projects = questionnaireData.projects;
       recordProvenance('projects', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (flatProjects.length > 0) {
+      projects = flatProjects;
+      recordProvenance('projects', 'manual_flat_fields', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (Array.isArray(resumeData?.projects) && resumeData.projects.length > 0) {
       projects = resumeData.projects;
       recordProvenance('projects', 'resume', PROVENANCE_LEVELS.USER_PROVIDED);
@@ -205,10 +248,10 @@ class UnifiedProfileNormalizer {
       ...p,
       name: p.name || p.title || 'Featured Project',
       desc: p.desc || p.description || 'High-performance software system engineered with modern practices.',
-      tech: p.tech || p.tech_stack || (Array.isArray(p.technologies) ? p.technologies.join(' • ') : skills.slice(0, 3).join(' • ')),
+      tech: p.tech || p.tech_stack || (Array.isArray(p.technologies) ? p.technologies.join(' • ') : (Array.isArray(p.techList) ? p.techList.join(' • ') : skills.slice(0, 3).join(' • '))),
       github: p.github || p.repo || socialLinks.github || '#',
       live: p.live || p.link || socialLinks.github || '#'
-    })).slice(0, 10);
+    }));
 
     if (projects.length === 0) {
       projects = [
@@ -240,7 +283,13 @@ class UnifiedProfileNormalizer {
 
     // 8. Experience Normalization
     let experience = [];
-    if (Array.isArray(questionnaireData?.experience) && questionnaireData.experience.length > 0) {
+    if (Array.isArray(input?.experience) && input.experience.length > 0) {
+      experience = input.experience;
+      recordProvenance('experience', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (Array.isArray(input?.data?.experience) && input.data.experience.length > 0) {
+      experience = input.data.experience;
+      recordProvenance('experience', 'direct_input_data', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (Array.isArray(questionnaireData?.experience) && questionnaireData.experience.length > 0) {
       experience = questionnaireData.experience;
       recordProvenance('experience', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
     } else if (Array.isArray(resumeData?.experience) && resumeData.experience.length > 0) {
@@ -251,12 +300,13 @@ class UnifiedProfileNormalizer {
       recordProvenance('experience', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
     }
 
+    const currentYear = new Date().getFullYear();
     if (experience.length === 0) {
       experience = [
         {
           role: role,
           company: githubData?.company || 'Open Source & Independent Development',
-          period: '2023 - Present',
+          period: `${currentYear - 2} - Present`,
           desc: 'Directing application architecture, feature delivery, and software quality.'
         }
       ];
@@ -266,14 +316,18 @@ class UnifiedProfileNormalizer {
         ...e,
         role: e.role || e.title || role,
         company: e.company || e.organization || 'Independent Development',
-        period: e.period || e.duration || e.year || '2023 - Present',
+        period: e.period || e.duration || e.year || `${currentYear - 2} - Present`,
         desc: e.desc || e.description || 'Directing application architecture, feature delivery, and software quality.'
       }));
     }
 
     // 9. Education & Certifications
     let education = [];
-    if (Array.isArray(questionnaireData?.education) && questionnaireData.education.length > 0) {
+    if (Array.isArray(input?.education) && input.education.length > 0) {
+      education = input.education;
+    } else if (Array.isArray(input?.data?.education) && input.data.education.length > 0) {
+      education = input.data.education;
+    } else if (Array.isArray(questionnaireData?.education) && questionnaireData.education.length > 0) {
       education = questionnaireData.education;
     } else if (Array.isArray(resumeData?.education) && resumeData.education.length > 0) {
       education = resumeData.education;
@@ -352,12 +406,18 @@ class UnifiedProfileNormalizer {
         tagline,
         biography: bio,
         photoUrl,
-        images: visualImages
+        images: visualImages,
+        email: contact.email,
+        phone: contact.phone,
+        location: contact.location
       },
       name,
       role,
       tagline,
       bio,
+      email: contact.email,
+      phone: contact.phone,
+      location: contact.location,
       photoUrl,
       images: visualImages,
       contact,

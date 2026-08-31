@@ -56,6 +56,15 @@ class HostingProvider {
     fs.writeFileSync(path.join(siteDir, 'index.html'), html);
     if (css) fs.writeFileSync(path.join(siteDir, 'style.css'), css);
     if (js) fs.writeFileSync(path.join(siteDir, 'script.js'), js);
+    fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8');
+
+    // Generate genuine ATS-friendly PDF resume for the portfolio owner
+    try {
+      const { ResumePdfGenerator } = require('./resume-pdf-generator');
+      await ResumePdfGenerator.saveSiteResumePdf(siteDir, userData);
+    } catch (pdfErr) {
+      console.warn('[PDF] Automatic resume generation notice:', pdfErr.message);
+    }
 
     let deployUrl = `${this.hostUrl}/p/${siteId}`;
     let provider = 'self_hosted';

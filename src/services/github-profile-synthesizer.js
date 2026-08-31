@@ -30,7 +30,7 @@ Synthesize a professional, compelling, and award-winning developer portfolio pro
 - Public Repositories: ${github.publicRepositories}
 - Verified Languages: ${skills.languages.join(', ') || 'Software Development'}
 - Verified Topics/Skills: ${[...skills.frontend, ...skills.backend, ...skills.devops, ...skills.databases, ...skills.tools].join(', ') || 'Full Stack'}
-- Top Repositories:
+- Top Repositories (${projects.length} total - YOU MUST INCLUDE ALL ${projects.length} IN OUTPUT):
 ${projects.map((p, idx) => `  ${idx + 1}. ${p.name}: ${p.description} (Tech: ${p.tech}, Stars: ${p.stars}, Link: ${p.live})`).join('\n')}
 - Profile README Excerpt:
 ${readme ? readme.slice(0, 1000) : 'No custom README'}
@@ -40,7 +40,7 @@ ${readme ? readme.slice(0, 1000) : 'No custom README'}
 2. NEVER invent fake employers, degrees, certifications, revenue, or production claims.
 3. INFER a precise technical title (e.g., "Full-Stack TypeScript Engineer", "Systems & Rust Architect", "AI & Python Developer") based on their actual languages and top repositories.
 4. Craft an engaging, authentic tagline (12-20 words) and a 2-paragraph professional bio that tells their real engineering story.
-5. Highlight their top projects with polished case-study impact descriptions based on what the repository actually does.
+5. Highlight ALL ${projects.length} repositories provided above with polished case-study descriptions based on what each repository does.
 
 ### REQUIRED JSON OUTPUT SCHEMA:
 Respond ONLY with a valid JSON object in this exact schema:
@@ -56,13 +56,7 @@ Respond ONLY with a valid JSON object in this exact schema:
   "tech_stack": "Comma-separated list of top 8-12 verified technologies",
   "branch": "A",
   "projects": [
-    {
-      "name": "Project Name",
-      "desc": "Clear, impactful 1-2 sentence description explaining the architecture and problem solved.",
-      "tech": "Tech1 • Tech2 • Tech3",
-      "github": "https://github.com/...",
-      "live": "https://..."
-    }
+${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence description", "tech": "${p.tech}", "github": "${p.github}", "live": "${p.live}" }`).join(',\n')}
   ],
   "personality_signals": {
     "vibe": "technical-architect | visual-creative | modern-minimalist | research-analytical",
@@ -158,21 +152,26 @@ Respond ONLY with a valid JSON object in this exact schema:
         stars: projects.reduce((acc, p) => acc + (p.stars || 0), 0)
       },
       projects: (() => {
-        let projs = Array.isArray(aiOutput.projects) && aiOutput.projects.length >= 2
-          ? aiOutput.projects.map((p, idx) => ({
-              name: p.name || projects[idx]?.name || `Project ${idx + 1}`,
-              desc: p.desc || projects[idx]?.description || 'Engineered scalable software solution with modern design principles.',
-              tech: p.tech || projects[idx]?.tech || 'Code',
-              github: p.github || projects[idx]?.github || github.profileUrl,
-              live: p.live || projects[idx]?.live || github.profileUrl
-            }))
-          : projects.map(p => ({
-              name: p.name,
-              desc: p.description,
-              tech: p.tech,
-              github: p.github,
-              live: p.live
-            }));
+        const aiProjectsMap = new Map();
+        if (Array.isArray(aiOutput.projects)) {
+          aiOutput.projects.forEach(p => {
+            if (p && p.name) {
+              aiProjectsMap.set(p.name.toLowerCase().trim(), p);
+            }
+          });
+        }
+
+        // Map every verified project in evidence, enhancing with AI description if available
+        let projs = projects.map(orig => {
+          const aiP = aiProjectsMap.get(orig.name.toLowerCase().trim()) || {};
+          return {
+            name: orig.name,
+            desc: aiP.desc || orig.description || `Engineered ${orig.name} utilizing ${orig.tech || 'modern software principles'}.`,
+            tech: aiP.tech || orig.tech || 'Software Engineering',
+            github: orig.github || github.profileUrl,
+            live: orig.live || orig.github || github.profileUrl
+          };
+        });
 
         if (projs.length === 0) {
           projs = [
@@ -191,14 +190,6 @@ Respond ONLY with a valid JSON object in this exact schema:
               live: github.profileUrl
             }
           ];
-        } else if (projs.length === 1) {
-          projs.push({
-            name: 'Developer Infrastructure & Tooling',
-            desc: 'Continuous integration pipelines, developer environment automation, and reusable software modules.',
-            tech: skills.languages.slice(0, 2).join(' • ') || 'Modern Tooling',
-            github: github.profileUrl,
-            live: github.profileUrl
-          });
         }
         return projs;
       })(),

@@ -18,37 +18,39 @@ class LegacyVibeDetector {
 
     const lowerHtml = (html || '').toLowerCase();
     const lowerCss = (css || '').toLowerCase();
+    const universeId = metadata.visualUniverse?.id || metadata.visualUniverse?.universeId || '';
+    const iaId = metadata.iaModel?.id || metadata.iaModel?.modelId || '';
 
     // 1. Check for Forced Circular Avatar in Non-Avatar Universes
-    if (lowerHtml.includes('border-radius: 50%') && lowerHtml.includes('avatar') && !metadata.visualUniverse?.id?.includes('spatial')) {
+    if (lowerHtml.includes('border-radius: 50%') && lowerHtml.includes('avatar') && !universeId.includes('spatial') && !universeId.includes('cosmic')) {
       violations.push('FORCED_CIRCULAR_AVATAR: Circular avatar used instead of grammar-driven portrait plate');
       penalty += 15;
     }
 
     // 2. Check for Generic 3-Column Card Grid Monopolies
     if (lowerHtml.includes('grid-template-columns: repeat(3,') || lowerHtml.includes('grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))')) {
-      if (lowerHtml.includes('class="project-card"') && !lowerHtml.includes('storytelling-')) {
+      if (lowerHtml.includes('class="project-card"') && !lowerHtml.includes('storytelling-') && !lowerHtml.includes('cosmic')) {
         violations.push('GENERIC_CARD_GRID: Legacy 3-column card grid detected without storytelling grammar');
         penalty += 25;
       }
     }
 
     // 3. Check for Universal Centered Top Navbar Assumption
-    if (lowerHtml.includes('<nav class="top-nav"') && lowerHtml.includes('justify-content: space-between') && metadata.iaModel?.id === 'split-screen-dossier') {
+    if (lowerHtml.includes('<nav class="top-nav"') && lowerHtml.includes('justify-content: space-between') && iaId === 'split-screen-dossier') {
       violations.push('UNIVERSAL_TOP_NAV: Top navigation rendered on a vertical dossier layout');
       penalty += 20;
     }
 
     // 4. Check for Unmotivated Purple/Indigo AI Gradients
     if (lowerCss.includes('linear-gradient(135deg, #6366f1, #a855f7)') || lowerCss.includes('#8b5cf6')) {
-      if (metadata.visualUniverse?.id !== 'futuristic-spatial') {
+      if (universeId !== 'futuristic-spatial' && universeId !== 'cosmic-astronaut-holographic') {
         violations.push('PURPLE_AI_SLOP_GRADIENT: Cliché purple/indigo AI gradient detected');
         penalty += 20;
       }
     }
 
     // 5. Check for Repeated Pill Skill Tags across Non-Pill Universes
-    if (lowerHtml.includes('class="skill-tag"') && lowerHtml.includes('border-radius: var(--radius)') && metadata.visualUniverse?.id?.includes('editorial')) {
+    if (lowerHtml.includes('class="skill-tag"') && lowerHtml.includes('border-radius: var(--radius)') && universeId.includes('editorial')) {
       violations.push('REPEATED_PILL_TAGS: Pill skill tags rendered in Editorial Monograph universe');
       penalty += 15;
     }

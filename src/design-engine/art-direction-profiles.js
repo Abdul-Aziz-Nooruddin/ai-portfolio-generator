@@ -483,6 +483,30 @@ const ART_DIRECTION_PROFILES = {
     contentDensity: 'BALANCED',
     visualFocalPoint: 'generative-interactive-centerpiece',
     interactionPhilosophy: 'parameter-manipulation'
+  },
+
+  'cosmic-astronaut-holographic': {
+    id: 'cosmic-astronaut-holographic',
+    name: 'Cosmic Astronaut Holographic AI Developer Studio',
+    artifactGenre: 'Sci-Fi Spatial Developer Station',
+    pageGeometry: 'cosmic-spatial-grid',
+    alignmentPhilosophy: 'floating-focal-center-and-dual-columns',
+    typographyBehavior: 'monumental-gradient-sans-and-hud-mono',
+    whitespacePhilosophy: 'deep-space-voids-and-glowing-auroras',
+    sectionRhythm: 'multi-planetary-discovery-sections',
+    navigationBehavior: 'floating-glassmorphic-monogram-bar',
+    projectStorytelling: 'futuristic-glass-media-grid',
+    imageMediaTreatment: 'cosmic-holographic-3d-cards',
+    borderLanguage: 'electric-violet-hairline-glow',
+    backgroundStrategy: 'deep-space-obsidian-and-starfield-mesh',
+    decorativeLanguage: 'constellation-lines-orbital-rings-and-status-beacons',
+    ctaTreatment: 'electric-purple-gradient-pill',
+    footerBehavior: 'deep-space-satellite-relay-colophon',
+    motionPhilosophy: 'zero-g-floating-hover-and-orbital-rotation',
+    mobileTransformation: 'single-column-cosmic-flow',
+    contentDensity: 'BALANCED',
+    visualFocalPoint: '3d-chibi-astronaut-and-orbital-constellations',
+    interactionPhilosophy: 'cursor-physics-and-tactile-holograms'
   }
 };
 

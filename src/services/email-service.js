@@ -335,6 +335,39 @@ Subscribe here: ${subscribeUrl}
     });
   }
 
+  async sendGoogleAuthVerifiedEmail(toEmail, { userId, name = 'there', avatarUrl = '' }) {
+    const subject = "✅ Google Account Verified & Connected — myfolio.tech";
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; color: #f8fafc; background: #0B1026; border-radius: 16px; border: 1px solid rgba(59, 130, 246, 0.3);">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <h2 style="color: #38bdf8; margin: 0;">Google Authentication Verified</h2>
+          <p style="color: #94a3b8; font-size: 14px; margin-top: 4px;">Your Google identity has been securely verified and linked to myfolio.tech.</p>
+        </div>
+        <p>Hey ${name},</p>
+        <p>Your Google account (<code>${toEmail}</code>) was successfully verified via Google OAuth 2.0. Your account is fully active and ready to create and deploy 3D portfolios.</p>
+        <div style="background: rgba(37, 99, 235, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); border-radius: 12px; padding: 16px; margin: 24px 0; display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 20px;">🛡️</span>
+          <div>
+            <strong style="color: #60a5fa; display: block;">Instant Security Verification: Active</strong>
+            <span style="color: #cbd5e1; font-size: 13px;">Zero password hassle, protected by Google Identity Security.</span>
+          </div>
+        </div>
+        <div style="margin: 28px 0; text-align: center;">
+          <a href="${process.env.HOST_URL || 'http://localhost:5050'}/dashboard.html" style="background: linear-gradient(135deg, #2563eb, #1d4ed8); color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 10px; font-weight: 700; display: inline-block;">Open My Dashboard &rarr;</a>
+        </div>
+        <hr style="border: 0; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 24px 0;" />
+        <p style="color: #64748b; font-size: 12px; text-align: center;">myfolio.tech Security Team • AI Portfolio Studio</p>
+      </div>
+    `;
+
+    return this.sendMail({
+      to: toEmail,
+      subject,
+      html,
+      meta: { user_id: userId, sequence_type: 'transactional', trigger_name: 'auth_google_verified' }
+    });
+  }
+
   async sendPasswordResetEmail(toEmail, { userId, name = 'there', resetUrl = '' }) {
     const subject = "Password Reset Request — Portfolio Bot";
     const html = `

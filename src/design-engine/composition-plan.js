@@ -396,10 +396,40 @@ const PAGE_TOPOLOGIES = {
     `,
     columnModel: 'spatial-node-constellation',
     mobileTransformation: 'mobile-spatial-card-deck'
+  },
+  'cosmic-spatial-grid': {
+    id: 'cosmic-spatial-grid',
+    name: 'Cosmic Spatial Deep Space Multi-Planetary Grid',
+    containerType: 'cosmic-spatial-grid',
+    rootClass: 'layout-cosmic-spatial',
+    rootCss: `
+      .layout-cosmic-spatial {
+        width: 100%;
+        min-height: 100vh;
+        position: relative;
+        padding: 0;
+        box-sizing: border-box;
+      }
+    `,
+    mobileCss: `
+      @media (max-width: 860px) {
+        .layout-cosmic-spatial {
+          padding: 0;
+        }
+      }
+    `,
+    columnModel: 'cosmic-multi-section-flow',
+    mobileTransformation: 'mobile-single-column-cosmic'
   }
 };
 
 const NAVIGATION_GRAMMARS = {
+  'cosmic-glassmorphic-bar': {
+    id: 'cosmic-glassmorphic-bar',
+    name: 'Cosmic Floating Glassmorphic Monogram Bar',
+    domType: 'header-glassmorphic',
+    css: 'position: fixed; top: 18px; left: 0; right: 0; z-index: 1000; display: flex; justify-content: center;'
+  },
   'top-editorial-masthead': {
     id: 'top-editorial-masthead',
     name: 'Top Editorial Masthead Bar',

@@ -21,6 +21,7 @@ const STORAGE_KEY_DRAFT = 'ai_portfolio_draft_v32';
 // Global Client State & Auth State
 let currentUser = null;
 let pendingAuthAction = null;
+let persistedPortfolio = null; // Declared globally to avoid ReferenceError in openAuthModal
 
 let clientState = {
   lifecycle: LIFECYCLE_STATES.DRAFT,
@@ -62,15 +63,14 @@ function updateNavAuthDock() {
   if (!dock) return;
 
   if (currentUser) {
-    const name = currentUser.name || currentUser.username || 'Account';
     dock.innerHTML = `
-      <a href="/dashboard.html" class="nav-link-item" style="color: #93C5FD;">👋 ${name}</a>
+      <a href="/studio.html" class="nav-link-item">WEB STUDIO</a>
       <a href="/dashboard.html" class="nav-btn-pill" style="text-decoration: none;">DASHBOARD</a>
     `;
   } else {
     dock.innerHTML = `
       <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
-      <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">SIGN UP FREE</button>
+      <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">GET STARTED FREE</button>
     `;
   }
 }
@@ -85,34 +85,15 @@ function requireAuth(actionCallback) {
 }
 
 function handleStartGeneratingClick() {
-  if (!currentUser) {
-    requireAuth(() => {
-      document.getElementById('multiInputSection')?.scrollIntoView({ behavior: 'smooth' });
-    });
-    return;
-  }
   document.getElementById('multiInputSection')?.scrollIntoView({ behavior: 'smooth' });
 }
 
-function openAuthModal(mode = 'signup', customSubtitle = null) {
-  const modal = document.getElementById('authModal');
-  const title = document.getElementById('authModalTitle');
-  const subtitle = document.getElementById('authModalSubtitle');
-  const alertBox = document.getElementById('authModalAlert');
-
-  if (alertBox) alertBox.style.display = 'none';
-
-  if (mode === 'signin') {
-    switchAuthModalTab('signin');
-    if (title) title.textContent = 'Sign in to AI Portfolio Studio';
-    if (subtitle) subtitle.textContent = customSubtitle || 'Welcome back! Sign in to access your portfolios.';
-  } else {
-    switchAuthModalTab('signup');
-    if (title) title.textContent = 'Sign up to AI Portfolio Studio';
-    if (subtitle) subtitle.textContent = customSubtitle || 'Create a free account to generate and save your bespoke portfolio.';
+function openAuthModal(mode = 'signup') {
+  if (mode === 'signin' || mode === 'login') {
+    window.location.href = '/login';
+    return;
   }
-
-  if (modal) modal.style.display = 'flex';
+  window.location.href = '/signup';
 }
 
 function closeAuthModal() {
@@ -135,7 +116,7 @@ function switchAuthModalTab(tab = 'signup') {
     tabSignin?.classList.remove('active');
     if (formSignup) formSignup.style.display = 'block';
     if (formSignin) formSignin.style.display = 'none';
-    if (title) title.textContent = 'Sign up to AI Portfolio Studio';
+    if (title) title.textContent = 'Create Free Account';
   } else {
     tabSignin?.classList.add('active');
     tabSignup?.classList.remove('active');
@@ -153,6 +134,75 @@ function showModalAlert(message, type = 'error') {
   alertBox.style.display = 'block';
 }
 
+function togglePasswordVisibility(inputId, button) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (button) button.textContent = '🙈';
+  } else {
+    input.type = 'password';
+    if (button) button.textContent = '👁️';
+  }
+}
+
+function updatePasswordStrength(password) {
+  const label = document.getElementById('passwordStrengthLabel');
+  const bars = [
+    document.getElementById('meterBar1'),
+    document.getElementById('meterBar2'),
+    document.getElementById('meterBar3'),
+    document.getElementById('meterBar4')
+  ];
+
+  if (!password || password.length === 0) {
+    if (label) {
+      label.className = 'strength-tag strength-empty';
+      label.textContent = '8+ chars required';
+    }
+    bars.forEach(b => { if (b) b.style.background = 'rgba(255, 255, 255, 0.1)'; });
+    return;
+  }
+
+  let score = 0;
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password) || password.length >= 12) score++;
+
+  const configs = [
+    { text: 'Too Weak', class: 'strength-weak', color: '#EF4444' },
+    { text: 'Weak', class: 'strength-weak', color: '#EF4444' },
+    { text: 'Fair', class: 'strength-fair', color: '#F59E0B' },
+    { text: 'Strong', class: 'strength-strong', color: '#38BDF8' },
+    { text: 'Quantum Safe 🛡️', class: 'strength-safe', color: '#22C55E' }
+  ];
+
+  const current = configs[score] || configs[0];
+  if (label) {
+    label.className = `strength-tag ${current.class}`;
+    label.textContent = current.text;
+  }
+
+  bars.forEach((bar, index) => {
+    if (bar) {
+      bar.style.background = index < score ? current.color : 'rgba(255, 255, 255, 0.1)';
+    }
+  });
+}
+
+async function handleSocialAuth(provider = 'google') {
+  if (provider === 'google') {
+    window.location.href = '/api/auth/google';
+    return;
+  }
+  window.location.href = `/api/auth/${provider}`;
+}
+
+async function openForgotPasswordFlow() {
+  window.location.href = '/auth.html?view=forgot';
+}
+
 async function handleModalSignup(event) {
   if (event) event.preventDefault();
   const name = document.getElementById('modalSignupName')?.value?.trim();
@@ -163,10 +213,13 @@ async function handleModalSignup(event) {
   const btn = document.getElementById('btnModalSignupSubmit');
 
   if (!termsAccepted) {
-    return showModalAlert('You must agree to the Terms of Service.');
+    return showModalAlert('You must agree to the Terms of Service & Privacy Policy.');
   }
   if (!name || !email || !password) {
     return showModalAlert('Please fill in all required fields.');
+  }
+  if (password.length < 8) {
+    return showModalAlert('Password must be at least 8 characters long.');
   }
 
   if (btn) {
@@ -202,7 +255,7 @@ async function handleModalSignup(event) {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<span>⚡ Create Free Account & Continue</span>';
+      btn.innerHTML = '<span>⚡ Create Free Account &amp; Continue</span>';
     }
   }
 }
@@ -250,53 +303,78 @@ async function handleModalSignin(event) {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<span>Sign In & Continue ➔</span>';
+      btn.innerHTML = '<span>Sign In to Developer Studio ➔</span>';
     }
   }
 }
 
-// Open sample specimen directly in studio
-function openStudioWithSample(personaKey) {
-  const sampleMap = {
-    zawadi: {
-      name: 'Zawadi Thandiwe',
-      role: 'Creative Director & Visual Storyteller',
-      bio: 'Leading design systems and interactive 3D WebGL experiences for global high-growth brands.',
-      skills: ['Design Systems', 'WebGL', 'Three.js', 'Art Direction', 'Typography', 'Figma Tokens'],
-      theme: 'swiss-editorial'
+// Open a template specimen directly in studio
+function openStudioWithTemplate(templateId) {
+  const templateMap = {
+    'eco-tech-steampunk': {
+      name: 'Sarah Jenkins',
+      role: 'Eco-Tech Developer & Systems Architect',
+      bio: 'Fusing organic nature with steampunk technology, sustainable software engineering, and resilient decentralized architectures.',
+      skills: ['TypeScript', 'Node.js', 'Python', 'Three.js', 'Clean Tech APIs', 'WebGL'],
+      theme: 'eco-tech-steampunk'
     },
-    ejiro: {
-      name: 'Ejiro Rudo',
-      role: 'Staff AI Research Scientist',
-      bio: 'Focusing on large language model scaling laws, formal verification, and distributed tensor networks.',
-      skills: ['PyTorch', 'Distributed Training', 'Formal Verification', 'LLM Architectures', 'CUDA', 'arXiv'],
-      theme: 'technical-lab'
+    'cosmic-astronaut': {
+      name: 'Alex Vance',
+      role: 'Full Stack & 3D Spatial Engineer',
+      bio: 'Architecting distributed platforms, spatial WebGL interfaces, and intelligent software systems.',
+      skills: ['TypeScript', 'Three.js', 'React', 'Node.js', 'WebGL', 'Cloud Architecture'],
+      theme: 'cosmic-astronaut'
     },
-    daniel: {
-      name: 'Daniel Saoirse',
-      role: 'Principal Systems Architect',
-      bio: 'Architecting high-throughput distributed consensus protocols, zero-copy storage, and cloud runtimes.',
-      skills: ['Rust', 'eBPF', 'Tokio', 'Distributed Consensus', 'Raft', 'Zero-Copy I/O'],
-      theme: 'cinematic-obsidian'
+    'cyber-crystal': {
+      name: 'Elena Rostova',
+      role: 'Staff Systems & AI Architect',
+      bio: 'Engineering high-throughput systems, crystalline UI architectures, and resilient compute runtimes.',
+      skills: ['Rust', 'Python', 'CUDA', 'FastAPI', 'Three.js', 'WebGPU'],
+      theme: 'cyber-crystal'
+    },
+    'bioluminescent-wireframe': {
+      name: 'Kiran Patel',
+      role: 'Eco-Tech & AI Systems Engineer',
+      bio: 'Developing sustainable compute infrastructure, telemetry pipelines, and reactive client experiences.',
+      skills: ['Python', 'PyTorch', 'TypeScript', 'React', 'Docker', 'GraphQL'],
+      theme: 'bioluminescent-wireframe'
+    },
+    'botanical-woodcraft': {
+      name: 'Siddharth Roy',
+      role: 'Lead UI/UX Engineer & Craft Specialist',
+      bio: 'Crafting thoughtful typography systems, organic user experiences, and high-performance digital products.',
+      skills: ['Design Systems', 'React', 'CSS Architecture', 'Figma', 'TypeScript', 'Next.js'],
+      theme: 'botanical-woodcraft'
+    },
+    'bio-digital-fusion': {
+      name: 'Marcus Chen',
+      role: 'Bio-Digital Solutions Architect',
+      bio: 'Synthesizing low-latency distributed networks, modern interfaces, and modular software pipelines.',
+      skills: ['Go', 'TypeScript', 'React', 'Kubernetes', 'WebSockets', 'Tailwind'],
+      theme: 'bio-digital-fusion'
     }
   };
 
-  const sample = sampleMap[personaKey] || sampleMap.zawadi;
+  const selected = templateMap[templateId] || templateMap['eco-tech-steampunk'];
   loadSampleProfile({
-    name: sample.name,
-    role: sample.role,
-    bio: sample.bio,
-    skills: sample.skills,
-    theme: sample.theme,
+    name: selected.name,
+    role: selected.role,
+    bio: selected.bio,
+    skills: selected.skills,
+    theme: selected.theme,
     projects: [
       {
-        title: `${sample.name} Flagship Initiative`,
-        description: `High-impact technical architecture with verified telemetry and public documentation.`,
-        tags: sample.skills.slice(0, 3),
-        impact: 'Scaled to 25M+ requests/day with sub-millisecond p99 latency'
+        title: `${selected.name} Core Systems`,
+        description: `Production-ready software architecture with verified telemetry and modular components.`,
+        tags: selected.skills.slice(0, 3),
+        impact: 'High-throughput system with sub-millisecond p99 latency'
       }
     ]
   });
+}
+
+function openStudioWithSample(personaKey) {
+  openStudioWithTemplate(personaKey);
 }
 
 // ==========================================================================
@@ -321,10 +399,6 @@ function switchInputTab(tabName) {
 // Option 1. GitHub Input Handler
 async function handleGithubGenerate(event) {
   if (event) event.preventDefault();
-  
-  if (!requireAuth(() => handleGithubGenerate(null))) {
-    return;
-  }
 
   const inputEl = document.getElementById('githubUsernameInput');
   const themeEl = document.getElementById('githubThemeSelect');
@@ -361,9 +435,8 @@ async function handleGithubGenerate(event) {
   });
 }
 
-// Option 2. Resume PDF / Image Upload Handler
-function handleResumeFileSelected(event) {
-  const file = event.target.files?.[0];
+// Option 2. Resume PDF / Image Upload Handler & Drag-and-Drop
+function processResumeFile(file) {
   if (!file) return;
 
   const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -373,7 +446,7 @@ function handleResumeFileSelected(event) {
     showStructuredError({
       whatHappened: "Unsupported file format.",
       why: "Resumes must be PDF documents or Image scans (PNG, JPG, WebP).",
-      whatYouCanDo: "Please upload your resume in PDF or image format."
+      whatYouCanDo: "Please drag and drop or upload your resume in PDF or image format."
     });
     return;
   }
@@ -430,6 +503,11 @@ function handleResumeFileSelected(event) {
   reader.readAsDataURL(file);
 }
 
+function handleResumeFileSelected(event) {
+  const file = event.target.files?.[0];
+  processResumeFile(file);
+}
+
 function removeUploadedResume(event) {
   if (event) event.stopPropagation();
   clientState.sources.resume = null;
@@ -447,8 +525,7 @@ function removeUploadedResume(event) {
 }
 
 // Optional Portrait Photo Upload for 3D Avatar Hologram
-function handleOptionalPhotoSelected(event) {
-  const file = event.target.files?.[0];
+function processOptionalPhoto(file) {
   if (!file) return;
 
   if (file.size > 5 * 1024 * 1024) {
@@ -484,16 +561,90 @@ function handleOptionalPhotoSelected(event) {
   reader.readAsDataURL(file);
 }
 
-async function generateFromResume() {
-  if (!requireAuth(() => generateFromResume())) return;
+function handleOptionalPhotoSelected(event) {
+  const file = event.target.files?.[0];
+  processOptionalPhoto(file);
+}
 
+// Initialize Drag and Drop Listeners
+function setupDragAndDropZones() {
+  // Prevent default window drop behavior (e.g. browser opening dropped file)
+  window.addEventListener('dragover', (e) => e.preventDefault(), false);
+  window.addEventListener('drop', (e) => e.preventDefault(), false);
+
+  // 1. Resume Drop Zone
+  const resumeZone = document.getElementById('resumeDropZone');
+  if (resumeZone) {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      resumeZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeZone.classList.add('drag-over');
+      }, false);
+    });
+
+    ['dragleave', 'dragend'].forEach(eventName => {
+      resumeZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        resumeZone.classList.remove('drag-over');
+      }, false);
+    });
+
+    resumeZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      resumeZone.classList.remove('drag-over');
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        processResumeFile(files[0]);
+      }
+    }, false);
+  }
+
+  // 2. Optional Photo Boxes Drag & Drop
+  document.querySelectorAll('.optional-photo-box').forEach(box => {
+    ['dragenter', 'dragover'].forEach(eventName => {
+      box.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        box.style.borderColor = '#38bdf8';
+        box.style.background = 'rgba(56, 189, 248, 0.1)';
+      }, false);
+    });
+
+    ['dragleave', 'dragend'].forEach(eventName => {
+      box.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        box.style.borderColor = '';
+        box.style.background = '';
+      }, false);
+    });
+
+    box.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      box.style.borderColor = '';
+      box.style.background = '';
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        processOptionalPhoto(files[0]);
+      }
+    }, false);
+  });
+}
+
+async function generateFromResume() {
   if (!clientState.sources.resume) {
     showToast('Resume Required', 'Please upload a PDF or Image resume first.', 'error');
     return;
   }
+  const theme = document.getElementById('resumeThemeSelect')?.value || 'auto';
   await startGenerationPipeline({
     resumeData: clientState.sources.resume.resumeData,
-    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null
+    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null,
+    preferences: { theme }
   });
 }
 
@@ -501,13 +652,18 @@ async function generateFromResume() {
 async function handleQuestionnaireSubmit(event) {
   if (event) event.preventDefault();
 
-  if (!requireAuth(() => handleQuestionnaireSubmit(null))) return;
-
   const name = document.getElementById('qInputName')?.value?.trim();
   const role = document.getElementById('qInputRole')?.value?.trim();
   const project = document.getElementById('qInputProject')?.value?.trim();
   const skills = document.getElementById('qInputSkills')?.value?.trim();
   const tagline = document.getElementById('qInputTagline')?.value?.trim();
+
+  const email = document.getElementById('qInputEmail')?.value?.trim();
+  const phone = document.getElementById('qInputPhone')?.value?.trim();
+  const location = document.getElementById('qInputLocation')?.value?.trim();
+  const github = document.getElementById('qInputGithub')?.value?.trim();
+  const linkedin = document.getElementById('qInputLinkedin')?.value?.trim();
+  const twitter = document.getElementById('qInputTwitter')?.value?.trim();
 
   if (!name || !role || !project || !skills) {
     showToast('Missing Fields', 'Please fill out all required questions.', 'error');
@@ -518,10 +674,21 @@ async function handleQuestionnaireSubmit(event) {
     name,
     role,
     tagline,
+    email: email || (currentUser?.email ? currentUser.email : null),
+    phone: phone || null,
+    location: location || null,
+    github: github || null,
+    linkedin: linkedin || null,
+    twitter: twitter || null,
+    socialLinks: {
+      github: github || null,
+      linkedin: linkedin || null,
+      twitter: twitter || null
+    },
     skills: skills.split(',').map(s => s.trim()).filter(Boolean),
     projects: [
       {
-        name: 'Flagship Project',
+        name: project.substring(0, 60) || 'Flagship Project',
         desc: project,
         tech: skills.split(',').slice(0, 3).join(' • ')
       }
@@ -529,9 +696,12 @@ async function handleQuestionnaireSubmit(event) {
   };
   saveDraftToStorage();
 
+  const theme = document.getElementById('questionsThemeSelect')?.value || 'auto';
   await startGenerationPipeline({
     questionnaireData: clientState.sources.questions,
-    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null
+    imagesData: clientState.sources.images,
+    photoData: clientState.sources.photo ? { url: clientState.sources.photo } : null,
+    preferences: { theme }
   });
 }
 
@@ -605,48 +775,10 @@ function removeImageByIndex(index) {
   renderImageThumbnails();
 }
 
-// D. Guided Questions Handler
-async function handleQuestionnaireSubmit(event) {
-  if (event) event.preventDefault();
-
-  if (!requireAuth(() => handleQuestionnaireSubmit(null))) return;
-
-  const name = document.getElementById('qInputName')?.value?.trim();
-  const role = document.getElementById('qInputRole')?.value?.trim();
-  const project = document.getElementById('qInputProject')?.value?.trim();
-  const skills = document.getElementById('qInputSkills')?.value?.trim();
-  const tagline = document.getElementById('qInputTagline')?.value?.trim();
-
-  if (!name || !role || !project || !skills) {
-    showToast('Missing Fields', 'Please fill out all required questions.', 'error');
-    return;
-  }
-
-  clientState.sources.questions = {
-    name,
-    role,
-    tagline,
-    skills: skills.split(',').map(s => s.trim()).filter(Boolean),
-    projects: [
-      {
-        name: 'Flagship Project',
-        desc: project,
-        tech: skills.split(',').slice(0, 3).join(' • ')
-      }
-    ]
-  };
-  saveDraftToStorage();
-
-  await startGenerationPipeline({
-    questionnaireData: clientState.sources.questions,
-    imagesData: clientState.sources.images
-  });
-}
+// D. Combined Multi-Source wrapper (kept for compatibility)
 
 // E. Combined Multi-Source Generation
 async function generateFromCombinedSources() {
-  if (!requireAuth(() => generateFromCombinedSources())) return;
-
   const hasAny = clientState.sources.github || clientState.sources.resume || clientState.sources.questions || clientState.sources.images.length > 0;
   if (!hasAny) {
     showToast('Input Required', 'Please connect at least one source (GitHub, Resume, Questions, or Images).', 'info');
@@ -763,7 +895,14 @@ async function startGenerationPipeline(payload) {
     setTimeout(() => {
       closeGithubModal();
       openStudioView(data);
-      showToast('Portfolio Live!', 'Your bespoke portfolio has been synthesized.', 'success');
+      if (data?.previewUrl) {
+        try {
+          window.open(data.previewUrl, '_blank');
+        } catch (e) {
+          console.warn('Popup blocked or not allowed:', e);
+        }
+      }
+      showToast('Portfolio Live!', 'Your bespoke portfolio has been synthesized and opened in a new tab.', 'success');
     }, 400);
   } catch (err) {
     if (clientState.timerInterval) clearInterval(clientState.timerInterval);
@@ -781,14 +920,17 @@ function openStudioView(data = null) {
   const iframe = document.getElementById('portfolioIframe');
   const nameLabel = document.getElementById('studioPortfolioName');
   const openLink = document.getElementById('btnOpenNewTab');
+  const loader = document.getElementById('previewLoader');
 
   if (landing) landing.style.display = 'none';
   if (studio) studio.style.display = 'flex';
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   const previewUrl = data?.previewUrl || clientState.previewUrl;
-  const name = data?.profileData?.name || clientState.profileData?.name || 'Your Portfolio';
+  const name = data?.profileData?.identity?.name || data?.profileData?.name || clientState.profileData?.identity?.name || clientState.profileData?.name || 'Your Portfolio';
 
   if (nameLabel) nameLabel.textContent = `${name}'s Portfolio`;
+  if (loader) loader.style.display = 'none';
   if (iframe && previewUrl) {
     iframe.src = previewUrl;
   }
@@ -1008,8 +1150,8 @@ async function loadSamplesList() {
             <p style="font-size:0.84rem; line-height:1.5; color:var(--product-text);">${s.description}</p>
           </div>
           <div style="margin-top:14px; display:flex; gap:8px;">
-            <a href="${s.previewUrl}" target="_blank" class="btn-subtle" style="flex:1; text-align:center; text-decoration:none; padding:6px 10px; font-size:0.8rem;">Preview ↗</a>
-            <button type="button" class="btn-primary-mini" style="flex:1;" onclick="loadSampleProfile('${s.id}')">Use Profile</button>
+            <a href="${s.previewUrl}" target="_blank" class="btn-subtle" style="flex:1; text-align:center; text-decoration:none; padding:8px 12px; font-size:0.85rem; font-weight:700; border-radius:8px;">Live Preview ↗</a>
+            <button type="button" class="btn-primary-mini" style="flex:1; padding:8px 12px; font-size:0.85rem; font-weight:700; border-radius:8px;" onclick="useTemplateInStudio('${s.id}')">Use in Studio &rarr;</button>
           </div>
         </div>
       `).join('');
@@ -1019,14 +1161,13 @@ async function loadSamplesList() {
   }
 }
 
-function loadSampleProfile(sampleId) {
+function useTemplateInStudio(templateId) {
   closeSamplesModal();
-  switchInputTab('questions');
-  document.getElementById('qInputName').value = 'Elena Rostova';
-  document.getElementById('qInputRole').value = 'Staff Systems Architect';
-  document.getElementById('qInputProject').value = 'Ultra-low latency replicated consensus engine with eBPF telemetry.';
-  document.getElementById('qInputSkills').value = 'Rust, Go, eBPF, Linux, Kubernetes';
-  showToast('Profile Loaded', 'Sample profile data loaded into guided questions.', 'info');
+  window.location.href = `/studio.html?template=${encodeURIComponent(templateId || '')}`;
+}
+
+function loadSampleProfile(sampleId) {
+  useTemplateInStudio(sampleId);
 }
 
 // ==========================================================================
@@ -1219,13 +1360,21 @@ window.closeAuthModal = closeAuthModal;
 window.switchAuthModalTab = switchAuthModalTab;
 window.handleModalSignup = handleModalSignup;
 window.handleModalSignin = handleModalSignin;
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.updatePasswordStrength = updatePasswordStrength;
+window.handleSocialAuth = handleSocialAuth;
+window.openForgotPasswordFlow = openForgotPasswordFlow;
 window.handleStartGeneratingClick = handleStartGeneratingClick;
 window.openStudioWithSample = openStudioWithSample;
 window.checkUserAuth = checkUserAuth;
+window.setupDragAndDropZones = setupDragAndDropZones;
+window.processResumeFile = processResumeFile;
+window.processOptionalPhoto = processOptionalPhoto;
 
 // Hydrate on page load
 window.addEventListener('DOMContentLoaded', () => {
   checkUserAuth();
   restorePersistedDraft();
   restorePersistedSession();
+  setupDragAndDropZones();
 });

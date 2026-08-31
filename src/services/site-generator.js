@@ -1,72 +1,64 @@
 const fs = require('fs');
 const path = require('path');
-const { DesignEngine } = require('../design-engine');
-const { DesignGate } = require('../design-intelligence');
+const { TemplateRegistry } = require('../templates/template-registry');
+const { UnifiedProfileNormalizer } = require('./unified-profile-normalizer');
 
 class SiteGenerator {
-  constructor() {
-    this.gate = new DesignGate();
-    this.engine = new DesignEngine();
-  }
+  constructor() {}
 
   async generateSite(conversation, userData = {}, designBrief = {}) {
     const { extracted_data = {}, branch = 'A' } = conversation || {};
-    const data = { ...extracted_data, ...userData };
+    const rawData = { ...extracted_data, ...userData };
 
-    // 1. Mandatory Design Intelligence Gate
-    const gateResult = await this.gate.generateDesignBrief(data, {
-      mode: designBrief?.creative_mode || designBrief?.theme || null,
-      layout: (designBrief?.layout && designBrief.layout !== 'auto-cycle') ? designBrief.layout : null,
-      projectStrategy: designBrief?.projectStrategy || null,
-      figmaUrl: data.figma_url || data.figmaUrl || null,
-      recentHistory: designBrief?.recentHistory || []
-    });
+    // 1. Normalize profile data model
+    const data = UnifiedProfileNormalizer.normalize(rawData);
 
-    if (!gateResult || !gateResult.brief) {
-      throw new Error('[DESIGN GATE FAILURE] Design intelligence failed to produce a valid DesignBrief.');
+    // 2. Determine template from user request, design brief, or role/cycle
+    const requestedTemplate = designBrief?.templateId || data.templateId || data.template || (TemplateRegistry.templates[designBrief?.theme] ? designBrief.theme : null) || (TemplateRegistry.templates[designBrief?.creative_mode] ? designBrief.creative_mode : null);
+
+    let templateId = requestedTemplate;
+    if (!templateId || !TemplateRegistry.templates[templateId]) {
+      const userId = (conversation && conversation.user && conversation.user.id) ? conversation.user.id : (conversation && conversation.id) ? conversation.id : 'anonymous';
+      const autoTemplate = TemplateRegistry.selectTemplate(null, data, userId);
+      templateId = autoTemplate.id || autoTemplate.name || 'cosmic-astronaut';
     }
 
-    // 2. Compositional Design Engine renders the validated DesignBrief
-    const engineResult = await this.engine.generatePortfolio(data, gateResult.brief);
+    // 3. Authoritative 3D Template Render
+    const templateOutput = TemplateRegistry.render(templateId, data);
+    const isPaid = conversation?.status === 'active' || conversation?.status === 'paid';
+    let finalHtml = this.injectSiteTelemetry(templateOutput.html, conversation?.id || '');
+    finalHtml = this.injectPreviewWatermark(finalHtml, isPaid);
 
-    if (engineResult?.html) {
-      const isPaid = conversation?.status === 'active' || conversation?.status === 'paid';
-      let finalHtml = this.injectSiteTelemetry(engineResult.html, conversation?.id || '');
-      finalHtml = this.injectPreviewWatermark(finalHtml, isPaid);
-
-      let css = engineResult.css || '';
-      let js = engineResult.js || '';
-
-      if (!css) {
-        const styleMatch = engineResult.html.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
-        if (styleMatch) css = styleMatch[1].trim();
+    return {
+      html: finalHtml,
+      cleanHtml: this.injectSiteTelemetry(templateOutput.html, conversation?.id || ''),
+      css: templateOutput.css || '',
+      js: templateOutput.js || '',
+      designBlueprint: {
+        iaModel: templateId,
+        layoutGrammar: templateId,
+        visualUniverse: { id: templateId, name: templateId },
+        projectStrategy: 'template'
+      },
+      designDNA: {
+        iaModel: templateId,
+        layoutGrammar: templateId,
+        visualUniverse: { id: templateId, name: templateId },
+        projectStrategy: 'template'
+      },
+      contentProfile: data,
+      designBrief: {
+        templateId: templateId,
+        visualUniverse: { id: templateId }
+      },
+      telemetry: {
+        generationTimeMs: Date.now(),
+        iaModel: templateId,
+        layoutGrammar: templateId,
+        visualUniverse: templateId,
+        projectStrategy: 'template'
       }
-      if (!js) {
-        const scriptMatch = engineResult.html.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-        if (scriptMatch) js = scriptMatch[1].trim();
-      }
-
-      return {
-        html: finalHtml,
-        cleanHtml: this.injectSiteTelemetry(engineResult.html, conversation?.id || ''),
-        css,
-        js,
-        designBlueprint: engineResult.designBlueprint,
-        designDNA: engineResult.designBlueprint, // Backward compatibility
-        contentProfile: engineResult.contentProfile,
-        designBrief: gateResult.brief,
-        compositionPlan: gateResult.brief.compositionPlan || engineResult.compositionPlan,
-        telemetry: {
-          generationTimeMs: Date.now(),
-          iaModel: engineResult.designBlueprint.iaModel,
-          layoutGrammar: engineResult.designBlueprint.layoutGrammar,
-          visualUniverse: engineResult.designBlueprint.visualUniverse,
-          projectStrategy: engineResult.designBlueprint.projectStrategy
-        }
-      };
-    }
-
-    return engineResult;
+    };
   }
 
   injectPreviewWatermark(html, isPaid = false) {
@@ -74,77 +66,16 @@ class SiteGenerator {
     const botUsername = process.env.TELEGRAM_BOT_USERNAME || 'ai_portfolio_generator_bot';
 
     const watermarkHtml = `
-    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
-    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
-      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
-      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
-        ✦ CREATED WITH @${botUsername} • UNLOCK FULL PORTFOLIO • @${botUsername} ✦
-      </div>
-
-      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
-      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
-        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
-          OFFICIAL PREVIEW TRIAL • @${botUsername}
-        </div>
-        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
-          PREVIEW ONLY
-        </div>
-        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
-          2-HOUR TRIAL DEMO • UNLOCK AT @${botUsername}
-        </div>
-      </div>
-
-      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
-      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
-        ✦ CREATED WITH @${botUsername} • UNLOCK FULL PORTFOLIO • @${botUsername} ✦
-      </div>
-    </div>
-
     <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
-    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
-      <div style="font-size: 0.92rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
-        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer) • Created with @${botUsername}</span>
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 10px 24px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%; box-shadow: 0 0 8px #38bdf8;"></span>
+        <span>🔒 <strong>Official 3D Preview</strong> • Created with @${botUsername}</span>
       </div>
-      <a href="/subscribe" target="_blank" style="background: #22c55e; color: #000000; font-weight: 900; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.5);">
-        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      <a href="/subscribe" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 800; font-size: 0.84rem; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(16,185,129,0.4); transition: transform 0.2s ease;">
+        💳 Unlock Full Portfolio (₹149/mo) ➔
       </a>
     </div>
-
-    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
-    <script>
-      (function() {
-        function updateWatermarkLuminance() {
-          try {
-            var bg = window.getComputedStyle(document.body).backgroundColor;
-            var overlay = document.getElementById('preview-watermark-overlay');
-            if (!overlay) return;
-            var rgb = bg.match(/\\d+/g);
-            var isLight = false;
-            if (rgb && rgb.length >= 3) {
-              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
-              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-              isLight = luminance > 128;
-            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
-              isLight = true;
-            }
-            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
-            var box = overlay.querySelector('.watermark-stamp-box');
-            if (box) {
-              box.style.color = targetColor;
-              box.style.borderColor = targetColor;
-            }
-            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
-            tickers.forEach(function(el) { el.style.color = targetColor; });
-          } catch (e) {}
-        }
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
-        } else {
-          updateWatermarkLuminance();
-        }
-      })();
-    </script>
     `;
 
     if (html.includes('</body>')) {

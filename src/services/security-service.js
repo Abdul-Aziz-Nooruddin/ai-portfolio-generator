@@ -209,7 +209,7 @@ class SecurityService {
 
     // Neutralize dangerous inline event handlers and malicious iframe/object injection
     cleanHtml = cleanHtml
-      .replace(/<script\b[^>]*>[\s\S]*?alert\([\s\S]*?<\/script>/gi, '')
+      .replace(/<script\b[^>]*>(?:(?!<\/script>)[\s\S])*?alert\((?:(?!<\/script>)[\s\S])*?<\/script>/gi, '')
       .replace(/\s+on[a-z0-9_-]+\s*=\s*(?:'[^']*'|"[^"]*"|[^\s>]+)/gi, '')
       .replace(/javascript\s*:/gi, 'blocked:')
       .replace(/vbscript\s*:/gi, 'blocked:')

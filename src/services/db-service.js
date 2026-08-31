@@ -65,7 +65,7 @@ class DatabaseService {
     return data;
   }
 
-  async createUserWithPassword({ name, email, username, passwordHash, role = 'user', phone = null }) {
+  async createUserWithPassword({ name, email, username, passwordHash, role = 'user', phone = null, emailVerified = false }) {
     const normalizedEmail = DatabaseService.normalizeEmail(email);
     const cleanUsername = username ? username.trim().toLowerCase() : null;
 
@@ -77,7 +77,7 @@ class DatabaseService {
       password_hash: passwordHash,
       role: role || 'user',
       phone_number: phone || `web_${normalizedEmail.replace(/[^a-z0-9]/g, '')}`,
-      email_verified: false,
+      email_verified: Boolean(emailVerified),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -628,19 +628,23 @@ class DatabaseService {
   }
 
   async recordEmailLog(logData) {
+    const payload = {
+      user_id: logData.user_id,
+      email: logData.email,
+      sequence_type: logData.sequence_type,
+      trigger_name: logData.trigger_name,
+      status: logData.status || 'sent',
+      sent_at: new Date().toISOString()
+    };
+    if (logData.email_index !== undefined) {
+      payload.email_index = logData.email_index;
+    }
+
     const { error } = await this.client
       .from('email_logs')
-      .insert({
-        user_id: logData.user_id,
-        email: logData.email,
-        sequence_type: logData.sequence_type,
-        email_index: logData.email_index || 0,
-        trigger_name: logData.trigger_name,
-        status: logData.status || 'sent',
-        sent_at: new Date().toISOString()
-      });
+      .insert(payload);
 
-    if (error && error.code !== '42P01') {
+    if (error && error.code !== '42P01' && !error.message?.includes('column')) {
       console.warn('[DB] recordEmailLog warning:', error.message);
     }
   }
@@ -964,12 +968,31 @@ class DatabaseService {
         analytics = await this.getSiteAnalytics(siteId);
       }
 
+      const isPro = user?.role === 'pro' || user?.role === 'admin' || user?.subscription_status === 'active' || conversation?.status === 'paid';
+      const planName = isPro ? 'Pro Builder (₹149/mo)' : 'Free Starter Tier';
+      const planDetails = isPro
+        ? 'Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.'
+        : 'Includes 100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.';
+      const buildsLimit = isPro ? 'Unlimited' : 3;
+      const buildsUsed = conversation?.extracted_data?._regens_used || 0;
+      const buildsRemaining = isPro ? 'Unlimited' : Math.max(0, 3 - buildsUsed);
+      const buildsLabel = isPro ? 'Unlimited Builds Active' : `${buildsRemaining} / 3 Builds Remaining`;
+
       return {
         user,
         conversation,
         siteId: hasSite ? siteId : null,
         analytics: analytics || { totalViews: 0, uniqueVisitors: 0 },
-        regensUsed: conversation?.extracted_data?._regens_used || 0
+        regensUsed: buildsUsed,
+        plan: {
+          name: planName,
+          isPro,
+          details: planDetails,
+          buildsUsed,
+          buildsLimit,
+          buildsRemaining,
+          buildsLabel
+        }
       };
     } catch (e) {
       return null;

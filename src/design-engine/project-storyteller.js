@@ -142,62 +142,10 @@ class ProjectStoryteller {
 
   // 0. Visual Artifact & 3D Vector Mockup Plate
   static renderProjectVisualMedia(p, index = 0, visual = {}) {
-    if (p.image) {
-      return `
-        <div class="project-visual-container" style="border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: var(--surface-alt); margin-bottom: 1.25rem; aspect-ratio: 16/9; max-height: 280px; position: relative;">
-          <img src="${p.image}" alt="${p.name}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover; display: block;" />
-          <div style="position: absolute; bottom: 0; inset-inline: 0; padding: 8px 12px; background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%); display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.75rem; color: #FFFFFF;">
-            <span>📸 Artifact Visual</span>
-            <span>LIVE VERIFIED</span>
-          </div>
-        </div>
-      `;
-    }
-
-    // Dynamic 3D Isometric / Architectural Vector Graphic Plate
-    const isDark = visual.theme !== 'light';
-    const primary = visual.colors?.primary || '#3B33D1';
-    const accent = visual.colors?.accent || '#818CF8';
-    const num = (index + 1).toString().padStart(2, '0');
-
+    const { ProjectArtworkSynthesizer } = require('../templates/project-artwork-synthesizer');
     return `
-      <div class="project-visual-container project-3d-mockup-plate" style="border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); background: ${isDark ? 'rgba(15, 23, 42, 0.6)' : 'rgba(241, 245, 249, 0.8)'}; margin-bottom: 1.25rem; position: relative; backdrop-filter: blur(8px);">
-        <!-- Top Browser / Terminal Header Bar -->
-        <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.15); font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted);">
-          <div style="display: flex; gap: 6px; align-items: center;">
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #EF4444; display: inline-block;"></span>
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; display: inline-block;"></span>
-            <span style="width: 8px; height: 8px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
-            <span style="margin-left: 8px; color: var(--text); font-weight: 600;">artifact://${p.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}.sys</span>
-          </div>
-          <span style="color: var(--primary); font-weight: 700;">SPECIMEN #${num}</span>
-        </div>
-
-        <!-- 3D Isometric Mesh Graphics Canvas Plate -->
-        <div style="padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 120px; position: relative; overflow: hidden;">
-          <div style="position: absolute; right: -20px; top: -20px; width: 120px; height: 120px; background: radial-gradient(circle, ${primary}33 0%, transparent 70%); filter: blur(20px); pointer-events: none;"></div>
-          
-          <div style="flex: 1; z-index: 1;">
-            <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--primary); margin-bottom: 4px; font-weight: 700;">&gt; ARCHITECTURE ARTIFACT</div>
-            <div style="font-family: var(--font-heading); font-size: 1.1rem; font-weight: 800; color: var(--text); margin-bottom: 4px;">${p.name}</div>
-            <div style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted);">${p.tech}</div>
-          </div>
-
-          <!-- 3D Vector Isometric Topology -->
-          <div style="width: 90px; height: 75px; flex-shrink: 0; z-index: 1;">
-            <svg viewBox="0 0 100 85" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <g transform="translate(50, 42)">
-                <polygon points="0,-28 28,-14 0,0 -28,-14" fill="${primary}" opacity="0.85" />
-                <polygon points="28,-14 28,14 0,28 0,0" fill="${primary}" opacity="0.6" />
-                <polygon points="-28,-14 0,0 0,28 -28,14" fill="${accent}" opacity="0.75" />
-                <circle cx="-18" cy="-22" r="4" fill="${accent}" />
-                <circle cx="22" cy="18" r="3" fill="${primary}" />
-                <line x1="-18" y1="-22" x2="0" y2="-28" stroke="${accent}" stroke-width="1" stroke-dasharray="2 2" />
-                <line x1="28" y1="14" x2="22" y2="18" stroke="${primary}" stroke-width="1" stroke-dasharray="2 2" />
-              </g>
-            </svg>
-          </div>
-        </div>
+      <div class="project-visual-container" style="border-radius: var(--radius, 12px); overflow: hidden; margin-bottom: 1.25rem;">
+        ${ProjectArtworkSynthesizer.generate3DProjectThumbnail(p, visual.id || 'cosmic-astronaut')}
       </div>
     `;
   }
