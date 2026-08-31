@@ -91,7 +91,7 @@ async function testProductionChecklist() {
 
   // 19. Real Contact Address
   const privacyHtml = fs.readFileSync(path.join(__dirname, '../web/privacy.html'), 'utf8');
-  assert(privacyHtml.includes('support@myfolio.site'), 'Must provide real contact email');
+  assert(privacyHtml.includes('support@myfolio.tech'), 'Must provide real contact email');
   console.log('✔ 19. Real contact address & support email verified');
 
   // 20. Compressed Images

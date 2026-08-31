@@ -7,4 +7,4 @@ Allow: /sites/
 Disallow: /api/
 Disallow: /admin.html
 
-Sitemap: https://myfolio.site/sitemap.xml
+Sitemap: https://myfolio.tech/sitemap.xml
