@@ -8,7 +8,7 @@
 
 [![Build & Deploy](https://img.shields.io/badge/Deployment-Render%20Cloud-000000.svg?logo=render&logoColor=white)](https://myfolio.tech)
 [![SSL](https://img.shields.io/badge/Security-TLS%201.3%20%7C%20HTTPS-success.svg?logo=letsencrypt&logoColor=white)](https://myfolio.tech)
-[![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
+[![License](https://img.shields.io/badge/License-Proprietary%20%7C%20All%20Rights%20Reserved-red.svg)](LICENSE)
 [![Node.js](https://img.shields.io/badge/Node.js-20%2B-green.svg)](https://nodejs.org)
 
 <br/>
@@ -117,6 +117,7 @@ node src/test-gallery-artwork-uniqueness.js
 
 ---
 
-## 📄 License
+## 📄 License & Commercial Rights
 
-MIT License © 2026 **Abdul Aziz Nooruddin**. Built with Three.js, GSAP, and Google Gemini AI.
+**Proprietary & Commercial Software License** © 2026 **Abdul Aziz Nooruddin**. All Rights Reserved.  
+Commercial deployment, SaaS reproduction, resale, and unauthorized distribution of this codebase, design engines, or 3D WebGL universes are strictly prohibited. See [LICENSE](LICENSE) for terms.
