@@ -2337,9 +2337,10 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
 </html>`);
 });
 
-// Health check
-app.get('/health', async (req, res) => {
+// Health check (Supports both /health and Render /healthz)
+app.get(['/health', '/healthz'], async (req, res) => {
   const checks = {
+    status: 'ok',
     database: await dbHealthCheck(dbService),
     gemini: await aiService.healthCheck(),
     telegram: !!process.env.TELEGRAM_BOT_TOKEN,
