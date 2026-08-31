@@ -87,14 +87,18 @@ class ConversationEngine {
     return await this.handleState(conversation, messageText, mediaUrl);
   }
 
-  isAdmin(phoneNumber, username) {
+  isAdmin(phoneNumber, username, email) {
     const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro').toLowerCase().split(',').map(s => s.trim().replace(/^@/, ''));
     const adminIds = (process.env.ADMIN_IDS || '7535327243').split(',').map(s => s.trim());
+    const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com').toLowerCase().split(',').map(s => s.trim());
     
     if (username && adminUsernames.includes(username.toLowerCase().replace(/^@/, ''))) {
       return true;
     }
     if (phoneNumber && adminIds.includes(String(phoneNumber).trim())) {
+      return true;
+    }
+    if (email && adminEmails.includes(email.toLowerCase().trim())) {
       return true;
     }
     return false;

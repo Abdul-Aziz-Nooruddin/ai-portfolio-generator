@@ -1950,10 +1950,41 @@
       return `Resets in ${mins}m ${secs}s`;
     }
 
+    let currentVipAdmin = false;
+
+    async function checkUserVipStatus() {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        if (res.ok) {
+          const data = await res.json();
+          const u = data.user || {};
+          const email = (u.email || u.normalized_email || '').toLowerCase();
+          const username = (u.username || '').toLowerCase();
+          if (
+            u.role === 'admin' ||
+            u.is_admin === true ||
+            email === 'abdulaziznoor9876@gmail.com' ||
+            username === 'abdulazizpro1' ||
+            username === 'abdulazizpro'
+          ) {
+            currentVipAdmin = true;
+            try { localStorage.setItem('myfolio_vip_admin', 'true'); } catch (e) {}
+            updateAllowanceUI();
+          }
+        }
+      } catch (e) {}
+    }
+
     function updateAllowanceUI() {
+      const isVip = currentVipAdmin || (function() {
+        try {
+          return localStorage.getItem('myfolio_vip_admin') === 'true';
+        } catch (e) { return false; }
+      })();
+
       const state = getAllowanceState();
-      const remaining = Math.max(0, state.totalLimit - state.used);
-      const pct = Math.min(100, Math.max(0, (remaining / state.totalLimit) * 100));
+      const remaining = isVip ? 999999 : Math.max(0, state.totalLimit - state.used);
+      const pct = isVip ? 100 : Math.min(100, Math.max(0, (remaining / state.totalLimit) * 100));
 
       const countEl = document.getElementById('allowanceRemainingText');
       const barEl = document.getElementById('allowanceProgressBar');
@@ -1963,8 +1994,8 @@
       const generateBtn = document.getElementById('btnSubmitGenerate');
 
       if (countEl) {
-        countEl.textContent = `${remaining} / ${state.totalLimit} Generations`;
-        if (remaining <= 1) {
+        countEl.textContent = isVip ? `⚡ Unlimited Generations (VIP Master Access)` : `${remaining} / ${state.totalLimit} Generations`;
+        if (!isVip && remaining <= 1) {
           countEl.classList.add('low');
         } else {
           countEl.classList.remove('low');
@@ -1973,21 +2004,29 @@
 
       if (barEl) {
         barEl.style.width = `${pct}%`;
-        if (remaining <= 1) {
+        if (isVip) {
+          barEl.style.background = 'linear-gradient(90deg, #10B981, #38BDF8, #A855F7)';
+          barEl.classList.remove('low');
+        } else if (remaining <= 1) {
           barEl.classList.add('low');
         } else {
           barEl.classList.remove('low');
         }
       }
 
-      const formattedCountdown = formatCountdown(state.resetTimestamp);
+      const formattedCountdown = isVip ? '∞ No Restrictions' : formatCountdown(state.resetTimestamp);
 
       if (countdownEl) {
         countdownEl.textContent = formattedCountdown;
       }
 
       if (resetBadge) {
-        if (state.resetTimestamp) {
+        if (isVip) {
+          resetBadge.classList.add('active-countdown');
+          resetBadge.style.background = 'rgba(16, 185, 129, 0.15)';
+          resetBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
+          resetBadge.style.color = '#34D399';
+        } else if (state.resetTimestamp) {
           resetBadge.classList.add('active-countdown');
         } else {
           resetBadge.classList.remove('active-countdown');
@@ -1995,7 +2034,9 @@
       }
 
       if (detailsEl) {
-        if (state.firstGenTimestamp && state.resetTimestamp) {
+        if (isVip) {
+          detailsEl.textContent = `VIP Founder Account Active: All weekly limits, generation caps, and rate limiting restrictions are 100% removed for abdulaziznoor9876@gmail.com.`;
+        } else if (state.firstGenTimestamp && state.resetTimestamp) {
           const resetDate = new Date(state.resetTimestamp).toLocaleDateString(undefined, {
             month: 'short',
             day: 'numeric',
@@ -2010,7 +2051,7 @@
 
       // If allowance is exhausted, guard generate button
       if (generateBtn) {
-        if (remaining <= 0) {
+        if (!isVip && remaining <= 0) {
           generateBtn.disabled = true;
           generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${state.totalLimit}/${state.totalLimit}) — ${formattedCountdown}</span>`;
         } else if (!generateBtn.dataset.busy) {
@@ -2020,7 +2061,7 @@
         }
       }
 
-      if (!countdownIntervalId) {
+      if (!countdownIntervalId && !isVip) {
         countdownIntervalId = setInterval(() => {
           const freshState = getAllowanceState();
           const freshRemaining = Math.max(0, freshState.totalLimit - freshState.used);
@@ -2527,6 +2568,7 @@
       setupStudioDropZone();
       initThree();
       updateAllowanceUI();
+      checkUserVipStatus();
       renderGeneratedHistoryUI();
 
       const savedGh = localStorage.getItem('myfolio_saved_gh_username') || localStorage.getItem('portfolio_bot_github_user');

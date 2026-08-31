@@ -106,13 +106,22 @@ class AuthMiddleware {
       return res.status(401).json({ error: 'Unauthorized', message: 'Authentication required.' });
     }
 
-    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1')
+    const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
+
+    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro')
       .split(',')
       .map(u => u.trim().toLowerCase());
 
+    const userEmail = req.user.email || req.user.normalized_email || '';
+    const userUsername = req.user.username || '';
+
     const isAdmin =
       req.user.role === 'admin' ||
-      (req.user.username && adminUsernames.includes(req.user.username.toLowerCase()));
+      req.user.is_admin === true ||
+      (userEmail && adminEmails.includes(userEmail.toLowerCase())) ||
+      (userUsername && adminUsernames.includes(userUsername.toLowerCase()));
 
     if (!isAdmin) {
       return res.status(403).json({
@@ -140,9 +149,16 @@ class AuthMiddleware {
           return res.status(404).json({ error: 'Resource not found' });
         }
 
-        // Allow owner or Admin
-        const isAdmin = req.user.role === 'admin';
-        if (ownerId !== req.user.id && !isAdmin) {
+        const userEmail = (req.user.email || req.user.normalized_email || '').toLowerCase();
+        const userUsername = (req.user.username || '').toLowerCase();
+        const isSuperAdmin =
+          req.user.role === 'admin' ||
+          req.user.is_admin === true ||
+          userEmail === 'abdulaziznoor9876@gmail.com' ||
+          userUsername === 'abdulazizpro1' ||
+          userUsername === 'abdulazizpro';
+
+        if (ownerId !== req.user.id && !isSuperAdmin) {
           return res.status(403).json({
             error: 'Forbidden',
             message: 'You do not have permission to access or modify this resource.'
@@ -164,6 +180,21 @@ class AuthMiddleware {
       if (process.env.NODE_ENV === 'test') {
         return next();
       }
+
+      const userEmail = (req.user?.email || req.user?.normalized_email || '').toLowerCase();
+      const userUsername = (req.user?.username || '').toLowerCase();
+
+      // Check if user is super admin or abdulaziznoor9876@gmail.com
+      if (
+        req.user?.role === 'admin' ||
+        req.user?.is_admin === true ||
+        userEmail === 'abdulaziznoor9876@gmail.com' ||
+        userUsername === 'abdulazizpro1' ||
+        userUsername === 'abdulazizpro'
+      ) {
+        return next(); // Complete exemption from any rate limit or quota
+      }
+
       const identifier = req.user?.id || req.ip || 'anonymous';
       const windowHours = 1;
 

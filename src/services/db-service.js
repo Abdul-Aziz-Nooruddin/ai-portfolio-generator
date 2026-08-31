@@ -32,16 +32,53 @@ class DatabaseService {
     return {
       from: (table) => ({
         select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
-        insert: () => ({ select: () => ({ single: async () => ({ data: {}, error: null }) }) }),
+        insert: (payload) => ({ select: () => ({ single: async () => ({ data: { id: 'usr_' + Date.now(), ...(Array.isArray(payload) ? payload[0] : payload) }, error: null }) }) }),
         update: () => ({ eq: async () => ({ data: null, error: null }) }),
         delete: () => ({ eq: async () => ({ data: null, error: null }) })
       })
     };
   }
 
+  static normalizeEmail(email) {
+    if (!email) return '';
+    return email.trim().toLowerCase();
+  }
+
   // ==========================================
   // Core User Operations
   // ==========================================
+
+  static isSuperAdminEmailOrUsername(email, username) {
+    const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
+    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro')
+      .split(',')
+      .map(u => u.trim().toLowerCase());
+
+    const cleanEmail = DatabaseService.normalizeEmail(email);
+    const cleanUser = username ? username.trim().toLowerCase() : '';
+
+    return (
+      (cleanEmail && adminEmails.includes(cleanEmail)) ||
+      (cleanUser && adminUsernames.includes(cleanUser))
+    );
+  }
+
+  _decorateUser(user) {
+    if (!user) return null;
+    if (DatabaseService.isSuperAdminEmailOrUsername(user.email || user.normalized_email, user.username)) {
+      user.role = 'admin';
+      user.is_admin = true;
+      user.plan = 'unlimited';
+      user.unlimited_generations = true;
+      user.email_verified = true;
+      user.rate_limit_exempt = true;
+      user.allowance = 999999;
+      user.tier = 'vip_founder';
+    }
+    return user;
+  }
 
   async getUser(phoneNumber) {
     const { data, error } = await this.client
@@ -51,7 +88,7 @@ class DatabaseService {
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
-    return data;
+    return this._decorateUser(data);
   }
 
   async createUser(phoneNumber) {
@@ -62,22 +99,26 @@ class DatabaseService {
       .single();
 
     if (error) throw error;
-    return data;
+    return this._decorateUser(data);
   }
 
   async createUserWithPassword({ name, email, username, passwordHash, role = 'user', phone = null, emailVerified = false }) {
     const normalizedEmail = DatabaseService.normalizeEmail(email);
     const cleanUsername = username ? username.trim().toLowerCase() : null;
+    const isSuperAdmin = DatabaseService.isSuperAdminEmailOrUsername(normalizedEmail, cleanUsername);
 
     const payload = {
-      name: name || '',
+      name: name || (isSuperAdmin ? 'Abdul Aziz' : ''),
       email: email.trim(),
       normalized_email: normalizedEmail,
       username: cleanUsername,
       password_hash: passwordHash,
-      role: role || 'user',
+      role: isSuperAdmin ? 'admin' : (role || 'user'),
+      is_admin: isSuperAdmin,
+      plan: isSuperAdmin ? 'unlimited' : 'free',
+      unlimited_generations: isSuperAdmin,
       phone_number: phone || `web_${normalizedEmail.replace(/[^a-z0-9]/g, '')}`,
-      email_verified: Boolean(emailVerified),
+      email_verified: isSuperAdmin ? true : Boolean(emailVerified),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
     };
@@ -89,7 +130,7 @@ class DatabaseService {
       .single();
 
     if (error) throw error;
-    return data;
+    return this._decorateUser(data);
   }
 
   async getUserById(userId) {
@@ -100,7 +141,7 @@ class DatabaseService {
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
-    return data;
+    return this._decorateUser(data);
   }
 
   async getUserByNormalizedEmail(email) {
@@ -119,11 +160,11 @@ class DatabaseService {
             .select('*')
             .eq('phone_number', `web_${normalized.replace(/[^a-z0-9]/g, '')}`)
             .single();
-          return fallbackData || null;
+          return this._decorateUser(fallbackData);
         }
         throw error;
       }
-      return data;
+      return this._decorateUser(data);
     } catch (e) {
       return null;
     }
@@ -140,7 +181,7 @@ class DatabaseService {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return this._decorateUser(data);
     } catch (e) {
       return null;
     }
@@ -148,13 +189,11 @@ class DatabaseService {
 
   async getUserByEmailOrUsername(identifier) {
     if (!identifier || typeof identifier !== 'string') return null;
-    const clean = identifier.trim().toLowerCase();
-    if (clean.includes('@')) {
-      return await this.getUserByNormalizedEmail(clean);
+    const isEmail = identifier.includes('@');
+    if (isEmail) {
+      return await this.getUserByNormalizedEmail(identifier);
     }
-    const userByUsername = await this.getUserByUsername(clean);
-    if (userByUsername) return userByUsername;
-    return await this.getUser(clean); // In case it's a phone number
+    return await this.getUserByUsername(identifier);
   }
 
   async updateUser(userId, updates) {
@@ -582,6 +621,17 @@ class DatabaseService {
   }
 
   async checkRateLimit(identifier, action, maxCount = 10, windowMinutes = 1) {
+    if (
+      identifier === 'abdulaziznoor9876@gmail.com' ||
+      identifier === 'web_abdulaziznoor9876gmailcom' ||
+      (typeof identifier === 'string' && (
+        identifier.toLowerCase().includes('abdulaziznoor9876') ||
+        identifier.toLowerCase().includes('abdulazizpro')
+      ))
+    ) {
+      return true; // Zero restrictions, 100% exempt
+    }
+
     const windowStart = new Date(Date.now() - windowMinutes * 60 * 1000).toISOString();
 
     const { data, error } = await this.client
