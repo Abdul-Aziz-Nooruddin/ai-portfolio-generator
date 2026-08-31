@@ -990,7 +990,7 @@
           <!-- Universe 9: Abyssal Quantum Jellyfish -->
           <div class="universe-hub-card" id="card-abyssal-quantum-jellyfish" onclick="activateUniverse('abyssal-quantum-jellyfish')">
             <div class="universe-media-viewport">
-              <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" />
+              <img src="/assets/3d/bg_abyssal_jellyfish.jpg" alt="Abyssal Quantum Jellyfish" />
             </div>
             <div class="universe-card-body">
               <div>
@@ -1034,7 +1034,7 @@
           <!-- Universe 11: Lavender Cyber Bridge -->
           <div class="universe-hub-card" id="card-lavender-cyber-bridge" onclick="activateUniverse('lavender-cyber-bridge')">
             <div class="universe-media-viewport">
-              <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" />
+              <img src="/assets/3d/bg_lavender_bridge.jpg" alt="Lavender Cyber Bridge" />
             </div>
             <div class="universe-card-body">
               <div>
@@ -1056,7 +1056,7 @@
           <!-- Universe 12: Sand Parchment Botanical -->
           <div class="universe-hub-card" id="card-sand-parchment-botanical" onclick="activateUniverse('sand-parchment-botanical')">
             <div class="universe-media-viewport">
-              <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" />
+              <img src="/assets/3d/bg_sand_botanical.jpg" alt="Sand Parchment Botanical" />
             </div>
             <div class="universe-card-body">
               <div>
@@ -1078,7 +1078,7 @@
           <!-- Universe 13: System Awakening (Shadow Monarch Hunter Interface) -->
           <div class="universe-hub-card" id="card-system-awakening" onclick="activateUniverse('system-awakening')">
             <div class="universe-media-viewport">
-              <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" />
+              <img src="/assets/3d/bg_system_awakening.jpg" alt="System Awakening" />
             </div>
             <div class="universe-card-body">
               <div>
@@ -1272,6 +1272,28 @@
               </button>
             </div>
           </div>
+
+          <!-- Universe 22: Chrono-Obsidian Sanctuary -->
+          <div class="universe-hub-card" id="card-chrono-obsidian-sanctuary" onclick="activateUniverse('chrono-obsidian-sanctuary')">
+            <div class="universe-media-viewport">
+              <img src="/assets/3d/chrono_obsidian_sanctuary_3d.jpg" alt="Chrono-Obsidian Sanctuary" />
+            </div>
+            <div class="universe-card-body">
+              <div>
+                <h3 class="universe-name">Chrono-Obsidian Sanctuary</h3>
+                <p class="universe-desc">Timeless obsidian monolith with celestial gold rings, astronomical charts, and classical serif editorial authority.</p>
+                <div class="universe-swatch-row">
+                  <span class="swatch-circle" style="background:#F59E0B;"></span>
+                  <span class="swatch-circle" style="background:#D97706;"></span>
+                  <span class="swatch-circle" style="background:#0F172A;"></span>
+                  <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-left:4px;">#F59E0B • #D97706</span>
+                </div>
+              </div>
+              <button class="universe-footer-btn">
+                <span>Switch to Chrono-Obsidian</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1326,7 +1348,7 @@
   <script>
     lucide.createIcons();
 
-    // 13 Universe 3D Background Renders Mapping (100% Unique, Non-Reused Environmental 3D)
+    // 22 Universe 3D Background Renders Mapping (100% Unique, Non-Reused Environmental 3D)
     const themeBackgrounds = {
       'eco-tech-steampunk': '/assets/3d/bg-universe-ecotech-steampunk.jpg',
       'cosmic-astronaut': '/assets/hero-3d-bg.jpg',
@@ -1348,11 +1370,20 @@
       'stealth-node': '/assets/3d/bg_stealth_node.jpg',
       'kinetic-brutalism': '/assets/3d/bg_kinetic_brutalism.jpg',
       'circuit-core': '/assets/3d/bg_circuit_core.jpg',
-      'neon-aurora-cyber': '/assets/3d/bg_neon_aurora_cyber.jpg'
+      'neon-aurora-cyber': '/assets/3d/bg_neon_aurora_cyber.jpg',
+      'chrono-obsidian-sanctuary': '/assets/3d/chrono_obsidian_sanctuary_3d.jpg'
     };
 
-    // 21 Universe Tokens Mapping
+    // 22 Universe Tokens Mapping
     const themeTokenData = {
+      'chrono-obsidian-sanctuary': {
+        primary: '#F59E0B',
+        secondary: '#D97706',
+        heading: 'Fraunces (Classical Serif)',
+        body: 'Plus Jakarta Sans',
+        colorInt: 0xf59e0b,
+        secondaryColorInt: 0xd97706
+      },
       'eco-tech-steampunk': {
         primary: '#10B981',
         secondary: '#F59E0B',
@@ -1684,7 +1715,7 @@
           const crystal = new THREE.Mesh(new THREE.IcosahedronGeometry(75, 1), wireMat);
           const innerCore = new THREE.Mesh(new THREE.OctahedronGeometry(45, 0), glowMat);
           group.add(crystal, innerCore);
-        } else if (themeKey === 'bioluminescent') {
+        } else if (themeKey === 'bioluminescent' || themeKey === 'bioluminescent-wireframe') {
           const neuralKnot = new THREE.Mesh(new THREE.TorusKnotGeometry(55, 12, 100, 16), wireMat);
           group.add(neuralKnot);
         } else if (themeKey === 'botanical-woodcraft') {
@@ -1695,6 +1726,75 @@
           const box = new THREE.Mesh(new THREE.BoxGeometry(90, 90, 90), wireMat);
           const innerBox = new THREE.Mesh(new THREE.BoxGeometry(50, 50, 50), glowMat);
           group.add(box, innerBox);
+        } else if (themeKey === 'chrono-obsidian-sanctuary') {
+          const obelisk = new THREE.Mesh(new THREE.ConeGeometry(50, 120, 4), wireMat);
+          const orbit = new THREE.Mesh(new THREE.TorusGeometry(80, 2, 16, 50), glowMat);
+          orbit.rotation.x = Math.PI / 4;
+          group.add(obelisk, orbit);
+        } else if (themeKey === 'system-awakening') {
+          const prism = new THREE.Mesh(new THREE.OctahedronGeometry(70, 0), wireMat);
+          const statusRing = new THREE.Mesh(new THREE.TorusGeometry(100, 2, 8, 32), glowMat);
+          group.add(prism, statusRing);
+        } else if (themeKey === 'engineering-archive') {
+          const gridBox = new THREE.Mesh(new THREE.BoxGeometry(80, 80, 80), wireMat);
+          const sphere = new THREE.Mesh(new THREE.SphereGeometry(35, 16, 16), glowMat);
+          group.add(gridBox, sphere);
+        } else if (themeKey === 'cosmic-cyber-geometry') {
+          const poly = new THREE.Mesh(new THREE.IcosahedronGeometry(65, 0), wireMat);
+          const ring = new THREE.Mesh(new THREE.TorusGeometry(90, 3, 16, 64), glowMat);
+          ring.rotation.y = Math.PI / 3;
+          group.add(poly, ring);
+        } else if (themeKey === 'stellar-architect') {
+          const sun = new THREE.Mesh(new THREE.SphereGeometry(50, 20, 20), glowMat);
+          const orbit1 = new THREE.Mesh(new THREE.TorusGeometry(85, 2, 16, 64), wireMat);
+          const orbit2 = new THREE.Mesh(new THREE.TorusGeometry(110, 2, 16, 64), wireMat);
+          orbit1.rotation.x = Math.PI / 3;
+          orbit2.rotation.z = Math.PI / 6;
+          group.add(sun, orbit1, orbit2);
+        } else if (themeKey === 'abyssal-ascent') {
+          const gate = new THREE.Mesh(new THREE.CylinderGeometry(40, 60, 100, 6), wireMat);
+          const spiral = new THREE.Mesh(new THREE.TorusKnotGeometry(45, 8, 64, 8, 2, 3), glowMat);
+          group.add(gate, spiral);
+        } else if (themeKey === 'stealth-node') {
+          const cube1 = new THREE.Mesh(new THREE.BoxGeometry(60, 60, 60), wireMat);
+          const cube2 = new THREE.Mesh(new THREE.BoxGeometry(40, 40, 40), glowMat);
+          cube2.rotation.x = Math.PI / 4;
+          group.add(cube1, cube2);
+        } else if (themeKey === 'kinetic-brutalism') {
+          const block1 = new THREE.Mesh(new THREE.BoxGeometry(90, 40, 40), wireMat);
+          const block2 = new THREE.Mesh(new THREE.BoxGeometry(40, 90, 40), glowMat);
+          group.add(block1, block2);
+        } else if (themeKey === 'circuit-core') {
+          const cog = new THREE.Mesh(new THREE.TorusGeometry(75, 12, 16, 12), wireMat);
+          const core = new THREE.Mesh(new THREE.CylinderGeometry(30, 30, 60, 16), glowMat);
+          group.add(cog, core);
+        } else if (themeKey === 'neon-aurora-cyber') {
+          const auroraKnot = new THREE.Mesh(new THREE.TorusKnotGeometry(60, 15, 120, 16, 3, 4), wireMat);
+          group.add(auroraKnot);
+        } else if (themeKey === 'abyssal-quantum-jellyfish') {
+          const bell = new THREE.Mesh(new THREE.SphereGeometry(60, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), wireMat);
+          const core = new THREE.Mesh(new THREE.IcosahedronGeometry(35, 0), glowMat);
+          group.add(bell, core);
+        } else if (themeKey === 'mahogany-brass-steampunk') {
+          const astrolabe = new THREE.Mesh(new THREE.TorusGeometry(70, 4, 16, 48), wireMat);
+          const gear = new THREE.Mesh(new THREE.CylinderGeometry(45, 45, 15, 8), glowMat);
+          group.add(astrolabe, gear);
+        } else if (themeKey === 'lavender-cyber-bridge') {
+          const bridge = new THREE.Mesh(new THREE.TorusGeometry(80, 5, 8, 32), wireMat);
+          const crystal = new THREE.Mesh(new THREE.OctahedronGeometry(40, 0), glowMat);
+          group.add(bridge, crystal);
+        } else if (themeKey === 'sand-parchment-botanical') {
+          const disc = new THREE.Mesh(new THREE.CylinderGeometry(70, 70, 8, 24), wireMat);
+          const bud = new THREE.Mesh(new THREE.DodecahedronGeometry(35, 0), glowMat);
+          group.add(disc, bud);
+        } else if (themeKey === 'pristine-white-crystal') {
+          const prism = new THREE.Mesh(new THREE.OctahedronGeometry(65, 1), wireMat);
+          const ribbon = new THREE.Mesh(new THREE.TorusGeometry(95, 2, 16, 64), glowMat);
+          group.add(prism, ribbon);
+        } else if (themeKey === 'emerald-cyber-sanctuary') {
+          const biodome = new THREE.Mesh(new THREE.SphereGeometry(65, 12, 12), wireMat);
+          const innerGem = new THREE.Mesh(new THREE.IcosahedronGeometry(40, 0), glowMat);
+          group.add(biodome, innerGem);
         } else {
           // cosmic-astronaut
           const orb = new THREE.Mesh(new THREE.SphereGeometry(65, 24, 24), glowMat);

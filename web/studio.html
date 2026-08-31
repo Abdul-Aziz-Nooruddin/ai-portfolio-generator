@@ -1854,7 +1854,7 @@
     // =========================================================================
     const ALLOWANCE_CONFIG = {
       WEEKLY_TOTAL: 5,
-      CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000, // 7 days (1 full week)
+      CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000,
       STORAGE_KEY: 'myfolio_weekly_allowance_v1',
       HISTORY_KEY: 'myfolio_generated_projects_v1'
     };
@@ -1866,21 +1866,22 @@
       'botanical-woodcraft': { name: 'Botanical Woodcraft Codex', icon: '🪵', thumb: '/assets/3d/botanical_woodcraft_3d.jpg' },
       'bio-digital-fusion': { name: 'Bio-Digital Circuit Fusion', icon: '🧬', thumb: '/assets/3d/bio_digital_fusion_3d.jpg' },
       'eco-tech-steampunk': { name: 'Eco-Tech Steampunk', icon: '⚙️', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
-      'emerald-cyber-sanctuary': { name: 'Emerald Cyber Sanctuary', icon: '🍃', thumb: '/assets/3d/emerald_cyber_sanctuary_3d.png' },
+      'emerald-cyber-sanctuary': { name: 'Emerald Cyber Sanctuary', icon: '🍃', thumb: '/assets/3d/emerald_biodome_laboratory_3d.jpg' },
       'pristine-white-crystal': { name: 'Pristine White Crystal', icon: '❄️', thumb: '/assets/3d/pristine_white_crystal_3d.jpg' },
-      'abyssal-quantum-jellyfish': { name: 'Abyssal Quantum Jellyfish', icon: '🪼', thumb: '/assets/3d/algorand_escrow_protocol_3d.jpg' },
-      'mahogany-brass-steampunk': { name: 'Mahogany & Brass Steampunk', icon: '🕰️', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
-      'lavender-cyber-bridge': { name: 'Lavender Cyber Bridge', icon: '🌉', thumb: '/assets/3d/cyber_crystal_3d.jpg' },
-      'sand-parchment-botanical': { name: 'Sand Parchment Botanical', icon: '📜', thumb: '/assets/3d/crystal_leaf_hand_3d.jpg' },
-      'system-awakening': { name: 'System Awakening (Hunter)', icon: '⚔️', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
-      'engineering-archive': { name: 'Engineering Archive', icon: '📐', thumb: '/assets/3d/pristine_glass_cube_workstation_3d.jpg' },
-      'cosmic-cyber-geometry': { name: 'Cosmic Cyber Geometry', icon: '🪐', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
-      'stellar-architect': { name: 'Stellar Architect', icon: '✨', thumb: '/assets/3d/pristine_crystal_ribbon_hero_3d.jpg' },
+      'abyssal-quantum-jellyfish': { name: 'Abyssal Quantum Jellyfish', icon: '🪼', thumb: '/assets/3d/bg_abyssal_jellyfish.jpg' },
+      'mahogany-brass-steampunk': { name: 'Mahogany & Brass Steampunk', icon: '🕰️', thumb: '/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg' },
+      'lavender-cyber-bridge': { name: 'Lavender Cyber Bridge', icon: '🌉', thumb: '/assets/3d/bg_lavender_bridge.jpg' },
+      'sand-parchment-botanical': { name: 'Sand Parchment Botanical', icon: '📜', thumb: '/assets/3d/bg_sand_botanical.jpg' },
+      'system-awakening': { name: 'System Awakening (Hunter)', icon: '⚔️', thumb: '/assets/3d/bg_system_awakening.jpg' },
+      'engineering-archive': { name: 'Engineering Archive', icon: '📐', thumb: '/assets/3d/engineering_archive_3d.jpg' },
+      'cosmic-cyber-geometry': { name: 'Cosmic Cyber Geometry', icon: '🪐', thumb: '/assets/3d/cosmic_cyber_geometry_3d.jpg' },
+      'stellar-architect': { name: 'Stellar Architect', icon: '✨', thumb: '/assets/3d/stellar_architect_3d.jpg' },
       'abyssal-ascent': { name: 'Abyssal Ascent (RPG)', icon: '🗡️', thumb: '/assets/3d/abyssal_ascent_3d.jpg' },
       'stealth-node': { name: 'Stealth Node (Web3)', icon: '⚡', thumb: '/assets/3d/stealth_node_3d.jpg' },
       'kinetic-brutalism': { name: 'Kinetic Brutalism', icon: '💥', thumb: '/assets/3d/kinetic_brutalism_3d.jpg' },
       'circuit-core': { name: 'Circuit Core', icon: '🔌', thumb: '/assets/3d/circuit_core_3d.jpg' },
-      'neon-aurora-cyber': { name: 'Neon Aurora Cyber', icon: '🌌', thumb: '/assets/3d/neon_aurora_cyber_3d.jpg' }
+      'neon-aurora-cyber': { name: 'Neon Aurora Cyber', icon: '🌌', thumb: '/assets/3d/neon_aurora_cyber_3d.jpg' },
+      'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' }
     };
 
     function getAllowanceState() {
@@ -1979,8 +1980,10 @@
         }
       }
 
+      const formattedCountdown = formatCountdown(state.resetTimestamp);
+
       if (countdownEl) {
-        countdownEl.textContent = formatCountdown(state.resetTimestamp);
+        countdownEl.textContent = formattedCountdown;
       }
 
       if (resetBadge) {
@@ -2009,7 +2012,7 @@
       if (generateBtn) {
         if (remaining <= 0) {
           generateBtn.disabled = true;
-          generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${state.totalLimit}/${state.totalLimit}) — ${formatCountdown(state.resetTimestamp)}</span>`;
+          generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${state.totalLimit}/${state.totalLimit}) — ${formattedCountdown}</span>`;
         } else if (!generateBtn.dataset.busy) {
           generateBtn.disabled = false;
           generateBtn.innerHTML = `<i data-lucide="sparkles" style="width:22px;height:22px;"></i><span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>`;
@@ -2020,8 +2023,13 @@
       if (!countdownIntervalId) {
         countdownIntervalId = setInterval(() => {
           const freshState = getAllowanceState();
+          const freshRemaining = Math.max(0, freshState.totalLimit - freshState.used);
+          const freshCountdown = formatCountdown(freshState.resetTimestamp);
           if (countdownEl) {
-            countdownEl.textContent = formatCountdown(freshState.resetTimestamp);
+            countdownEl.textContent = freshCountdown;
+          }
+          if (generateBtn && freshRemaining <= 0) {
+            generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${freshState.totalLimit}/${freshState.totalLimit}) — ${freshCountdown}</span>`;
           }
         }, 1000);
       }
