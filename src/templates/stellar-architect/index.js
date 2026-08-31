@@ -1125,7 +1125,7 @@ const StellarArchitectTemplate = {
           </div>
 
           <div class="opensource-repos-stack">
-            ${data.projects.slice(0, 3).map(p => `
+            ${data.projects.map(p => `
               <div class="repo-surface-card">
                 <div>
                   <h4 style="font-family: var(--font-display); font-size: 1.2rem; color: var(--text-core); margin-bottom: 4px;">${TemplateHelper.escapeHtml(p.name)}</h4>

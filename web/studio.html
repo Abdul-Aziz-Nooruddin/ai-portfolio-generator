@@ -2098,7 +2098,11 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function reactivateHistoryItem(universeKey) {
+    function reactivateHistoryItem(universeKey, savedUsername = '') {
+      const ghInput = document.getElementById('ghUsername');
+      if (ghInput && savedUsername) {
+        ghInput.value = savedUsername;
+      }
       regenerateWithUniverse(universeKey);
       showToast('Re-activating 3D Studio', 'Regenerating fresh live preview with selected theme...', 'info');
       setTimeout(() => {
@@ -2137,13 +2141,14 @@
         const isActive = activeSiteId ? item.siteId === activeSiteId : idx === 0;
         const timeAgo = formatTimeAgo(item.timestamp || now);
         const isExpired = (now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS;
+        const ghUserArg = item.githubUsername || '';
 
         const liveBadgeHtml = isExpired
           ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
           : `<span class="status-live-dot">🟢 Live WebGL</span>`;
 
         const primaryActionBtnHtml = isExpired
-          ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
+          ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
               ⚡ Re-activate &amp; Open Live ↗
             </button>`
           : `<a href="${item.previewUrl}" target="_blank" class="btn-launch-live">
@@ -2151,7 +2156,7 @@
             </a>`;
 
         const thumbOverlayAction = isExpired
-          ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}')">⚡ Re-activate ↗</span>`
+          ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')">⚡ Re-activate ↗</span>`
           : `<span class="overlay-btn-preview" onclick="window.open('${item.previewUrl}', '_blank')">Live Preview ↗</span>`;
 
         return `
@@ -2327,6 +2332,10 @@
 
         const previewUrl = data.siteUrl || (data.previewUrl ? window.location.origin + data.previewUrl : `${window.location.origin}/p/preview`);
         
+        if (ghUser) {
+          try { localStorage.setItem('myfolio_saved_gh_username', ghUser); } catch(e) {}
+        }
+
         // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle
         consumeWeeklyAllowance();
 
@@ -2335,9 +2344,10 @@
           siteId: data.siteId || `gen-${Date.now()}`,
           previewUrl: previewUrl,
           universeKey: selectedUniverseKey,
-          developerName: candidateResolvedName,
-          developerRole: candidateResolvedRole,
-          projectsCount: projects.length || (data.profileData?.projects?.length) || 3,
+          githubUsername: ghUser || manualGithub || undefined,
+          developerName: data.profileData?.name || candidateResolvedName,
+          developerRole: data.profileData?.role || candidateResolvedRole,
+          projectsCount: (data.profileData?.projects?.length) || projects.length || 6,
           timestamp: Date.now()
         });
 
@@ -2511,7 +2521,7 @@
       updateAllowanceUI();
       renderGeneratedHistoryUI();
 
-      const savedGh = localStorage.getItem('portfolio_bot_github_user');
+      const savedGh = localStorage.getItem('myfolio_saved_gh_username') || localStorage.getItem('portfolio_bot_github_user');
       if (savedGh) {
         const ghInput = document.getElementById('ghUsername');
         if (ghInput && !ghInput.value) ghInput.value = savedGh;

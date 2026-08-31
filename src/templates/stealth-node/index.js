@@ -1248,7 +1248,7 @@ contract ${p.name.replace(/[^a-zA-Z0-9]/g, '')} {
           </div>
 
           <div class="terminal-panels-stack">
-            ${data.projects.slice(0, 3).map(p => `
+            ${data.projects.map(p => `
               <div class="terminal-panel-card">
                 <div>
                   <h4 style="font-family: var(--font-mono); font-size: 1.15rem; color: var(--ghost-white); margin-bottom: 4px;">${TemplateHelper.escapeHtml(p.name)}</h4>

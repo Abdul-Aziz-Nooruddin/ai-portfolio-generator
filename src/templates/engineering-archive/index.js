@@ -1470,7 +1470,7 @@ const EngineeringArchiveTemplate = {
         <h2 class="section-main-heading">CODEBASE REPOSITORIES &amp; RESEARCH</h2>
 
         <div class="opensource-dossier-grid">
-          ${data.projects.slice(0, 3).map((p, idx) => `
+          ${data.projects.map((p, idx) => `
             <div class="repo-archive-card">
               <div>
                 <div class="repo-card-top">

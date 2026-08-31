@@ -1182,7 +1182,7 @@ const CosmicCyberGeometryTemplate = {
           </div>
 
           <div class="github-cards-stack">
-            ${data.projects.slice(0, 3).map((p, idx) => `
+            ${data.projects.map((p, idx) => `
               <div class="github-repo-card">
                 <div>
                   <h4 style="font-family: var(--font-display); font-size: 1.15rem; color: #FFFFFF; margin-bottom: 4px;">${TemplateHelper.escapeHtml(p.name)}</h4>

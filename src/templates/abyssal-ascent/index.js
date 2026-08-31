@@ -1226,7 +1226,7 @@ const AbyssalAscentTemplate = {
           </div>
 
           <div class="guild-cards-stack">
-            ${data.projects.slice(0, 3).map(p => `
+            ${data.projects.map(p => `
               <div class="guild-repo-card">
                 <div>
                   <h4 style="font-family: var(--font-heading); font-size: 1.2rem; color: var(--ash-white); margin-bottom: 4px;">${TemplateHelper.escapeHtml(p.name)}</h4>

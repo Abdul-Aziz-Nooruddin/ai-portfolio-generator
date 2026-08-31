@@ -1194,7 +1194,7 @@ const CircuitCoreTemplate = {
           </div>
 
           <div class="circuit-repos-stream">
-            ${data.projects.slice(0, 3).map(p => `
+            ${data.projects.map(p => `
               <div class="circuit-repo-plate">
                 <div>
                   <h4 style="font-family: var(--font-heading); font-size: 1.15rem; color: var(--ghost-white); margin-bottom: 4px;">${TemplateHelper.escapeHtml(p.name)}</h4>
