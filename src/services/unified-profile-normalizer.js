@@ -40,6 +40,17 @@ class UnifiedProfileNormalizer {
       provenance[field] = { source, level, confidence, timestamp: Date.now() };
     };
 
+    // Extract GitHub identity attributes cleanly from both flat and nested schemas
+    const ghIdentity = githubData?.identity || {};
+    const ghName = ghIdentity.name || githubData?.name;
+    const ghUsername = ghIdentity.username || githubData?.username;
+    const ghBio = ghIdentity.bio || githubData?.bio;
+    const ghLocation = ghIdentity.location || githubData?.location;
+    const ghCompany = ghIdentity.company || githubData?.company;
+    const ghWebsite = ghIdentity.website || githubData?.blog || githubData?.website;
+    const ghTwitter = ghIdentity.twitter || githubData?.twitter_username;
+    const ghAvatar = ghIdentity.avatar || githubData?.avatar_url || githubData?.avatarUrl;
+
     // 1. Identity & Name Resolution (Direct Input > Questionnaire > Resume > GitHub > Default)
     let name = 'Creative Developer';
     if (input?.name && typeof input.name === 'string' && input.name.trim() && input.name !== 'Software Developer') {
@@ -51,11 +62,11 @@ class UnifiedProfileNormalizer {
     } else if (resumeData?.name) {
       name = resumeData.name.trim();
       recordProvenance('name', 'resume', PROVENANCE_LEVELS.USER_PROVIDED, 0.95);
-    } else if (githubData?.name) {
-      name = githubData.name.trim();
+    } else if (ghName) {
+      name = ghName.trim();
       recordProvenance('name', 'github', PROVENANCE_LEVELS.VERIFIED, 0.90);
-    } else if (githubData?.username) {
-      name = githubData.username.trim();
+    } else if (ghUsername) {
+      name = ghUsername.trim();
       recordProvenance('name', 'github_username', PROVENANCE_LEVELS.VERIFIED, 0.85);
     } else if (manualData?.name) {
       name = manualData.name.trim();
@@ -99,8 +110,8 @@ class UnifiedProfileNormalizer {
     } else if (manualData?.tagline) {
       tagline = manualData.tagline.trim();
       recordProvenance('tagline', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (githubData?.bio) {
-      tagline = githubData.bio.trim();
+    } else if (ghBio) {
+      tagline = ghBio.trim();
       recordProvenance('tagline', 'github', PROVENANCE_LEVELS.VERIFIED);
     } else if (resumeData?.summary || resumeData?.bio) {
       tagline = (resumeData.summary || resumeData.bio).trim().slice(0, 140);
@@ -120,8 +131,8 @@ class UnifiedProfileNormalizer {
     } else if (manualData?.bio) {
       bio = manualData.bio.trim();
       recordProvenance('bio', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (githubData?.bio) {
-      bio = githubData.bio.trim();
+    } else if (ghBio) {
+      bio = ghBio.trim();
       recordProvenance('bio', 'github', PROVENANCE_LEVELS.VERIFIED);
     } else {
       bio = `Dedicated professional committed to technical excellence, resilient architecture, and user-centered design.`;
@@ -132,11 +143,10 @@ class UnifiedProfileNormalizer {
     const photoUrl = photoData?.url ||
       photoData?.dataUrl ||
       manualData?.photoUrl ||
-      githubData?.avatar_url ||
-      githubData?.avatarUrl ||
+      ghAvatar ||
       null;
     if (photoUrl) {
-      recordProvenance('photoUrl', photoData?.url ? 'upload' : (githubData?.avatar_url ? 'github' : 'manual'), PROVENANCE_LEVELS.USER_PROVIDED);
+      recordProvenance('photoUrl', photoData?.url ? 'upload' : (ghAvatar ? 'github' : 'manual'), PROVENANCE_LEVELS.USER_PROVIDED);
     }
 
     const visualImages = (Array.isArray(imagesData) ? imagesData : [])
@@ -149,20 +159,20 @@ class UnifiedProfileNormalizer {
       .filter(img => Boolean(img.url));
 
     // 5. Contact & Social Channels
-    const extractedName = questionnaireData?.name || resumeData?.name || manualData?.name || (githubData?.name ? githubData.name : (githubData?.username || 'Developer'));
+    const extractedName = questionnaireData?.name || resumeData?.name || manualData?.name || (ghName ? ghName : (ghUsername || 'Developer'));
     const safeFallbackEmail = extractedName ? `${extractedName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@devfolio.me` : 'contact@devfolio.me';
 
     const contact = {
-      email: questionnaireData?.email || resumeData?.email || manualData?.email || (githubData?.username ? `${githubData.username}@users.noreply.github.com` : safeFallbackEmail),
+      email: questionnaireData?.email || resumeData?.email || manualData?.email || (ghUsername ? `${ghUsername}@users.noreply.github.com` : safeFallbackEmail),
       phone: questionnaireData?.phone || resumeData?.phone || manualData?.phone || null,
-      location: questionnaireData?.location || resumeData?.location || manualData?.location || githubData?.location || 'Remote / Worldwide',
-      website: questionnaireData?.website || resumeData?.website || manualData?.website || githubData?.blog || githubData?.website || ''
+      location: questionnaireData?.location || resumeData?.location || manualData?.location || ghLocation || 'Remote / Worldwide',
+      website: questionnaireData?.website || resumeData?.website || manualData?.website || ghWebsite || ''
     };
 
     const socialLinks = {
-      github: githubData?.profileUrl || githubData?.html_url || (githubData?.username ? `https://github.com/${githubData.username}` : (resumeData?.github || manualData?.github || '')),
+      github: githubData?.profileUrl || githubData?.html_url || (ghUsername ? `https://github.com/${ghUsername}` : (resumeData?.github || manualData?.github || '')),
       linkedin: questionnaireData?.linkedin || resumeData?.linkedin || manualData?.linkedin || '',
-      twitter: questionnaireData?.twitter || manualData?.twitter || (githubData?.twitter_username ? `https://twitter.com/${githubData.twitter_username}` : '')
+      twitter: questionnaireData?.twitter || manualData?.twitter || (ghTwitter ? (ghTwitter.startsWith('http') ? ghTwitter : `https://twitter.com/${ghTwitter}`) : '')
     };
 
     // 6. Skills Aggregation
@@ -220,27 +230,35 @@ class UnifiedProfileNormalizer {
       ...extractProjectsFromFlat(manualData)
     ];
 
-    if (Array.isArray(input?.projects) && input.projects.length > 0) {
-      projects = input.projects;
-      recordProvenance('projects', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (Array.isArray(input?.data?.projects) && input.data.projects.length > 0) {
-      projects = input.data.projects;
-      recordProvenance('projects', 'direct_input_data', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (Array.isArray(questionnaireData?.projects) && questionnaireData.projects.length > 0) {
-      projects = questionnaireData.projects;
-      recordProvenance('projects', 'questionnaire', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (flatProjects.length > 0) {
-      projects = flatProjects;
-      recordProvenance('projects', 'manual_flat_fields', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (Array.isArray(resumeData?.projects) && resumeData.projects.length > 0) {
-      projects = resumeData.projects;
-      recordProvenance('projects', 'resume', PROVENANCE_LEVELS.USER_PROVIDED);
-    } else if (Array.isArray(githubData?.projects) && githubData.projects.length > 0) {
-      projects = githubData.projects;
-      recordProvenance('projects', 'github', PROVENANCE_LEVELS.VERIFIED);
-    } else if (Array.isArray(manualData?.projects) && manualData.projects.length > 0) {
-      projects = manualData.projects;
-      recordProvenance('projects', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
+    // Multi-source project merging (Preserves ALL GitHub repositories and resume projects without loss)
+    const allCandidateProjects = [];
+    const seenProjectNames = new Set();
+
+    const addProjectsList = (list = [], sourceTag = 'user') => {
+      if (!Array.isArray(list)) return;
+      list.forEach(p => {
+        if (!p || (!p.name && !p.title)) return;
+        const rawName = String(p.name || p.title || '').trim();
+        const normName = rawName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (normName && !seenProjectNames.has(normName)) {
+          seenProjectNames.add(normName);
+          allCandidateProjects.push(p);
+        }
+      });
+    };
+
+    // Add projects from all sources in order: direct input > resume > manual > GitHub
+    addProjectsList(input?.projects, 'direct_input');
+    addProjectsList(input?.data?.projects, 'direct_input_data');
+    addProjectsList(resumeData?.projects, 'resume');
+    addProjectsList(questionnaireData?.projects, 'questionnaire');
+    addProjectsList(flatProjects, 'flat_projects');
+    addProjectsList(githubData?.projects, 'github');
+    addProjectsList(manualData?.projects, 'manual');
+
+    projects = allCandidateProjects;
+    if (projects.length > 0) {
+      recordProvenance('projects', githubData?.projects?.length ? 'multi_source_github_merge' : 'user_input', PROVENANCE_LEVELS.VERIFIED);
     }
 
     // Clean & standardize projects while preserving all deep evidence fields

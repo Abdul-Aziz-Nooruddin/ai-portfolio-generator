@@ -28,6 +28,9 @@ class GitHubNormalizer {
   static normalize(rawGitHubData = {}) {
     const profile = rawGitHubData.profile || {};
     const repos = rawGitHubData.repositories || [];
+    const languageStats = rawGitHubData.languageStats || {};
+    const sanitizedReadme = this.sanitizeReadme(rawGitHubData.readmeContent || '');
+
     // Total language bytes across repositories
     const totalBytes = Object.values(languageStats).reduce((a, b) => a + b, 0);
 
