@@ -1547,13 +1547,56 @@ app.post('/api/sites/:siteId/analytics', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+// ==========================================
+// Clean Semantic Routes (Extensionless URLs)
+// ==========================================
+const webDir = path.join(process.cwd(), 'web');
+
+app.get(['/login', '/signin'], (req, res) => {
+  res.sendFile(path.join(webDir, 'auth.html'));
+});
+
+app.get(['/signup', '/register'], (req, res) => {
+  res.sendFile(path.join(webDir, 'auth.html'));
+});
+
+app.get(['/auth'], (req, res) => {
+  res.sendFile(path.join(webDir, 'auth.html'));
+});
+
+app.get(['/studio', '/webstudio', '/generator'], (req, res) => {
+  res.sendFile(path.join(webDir, 'studio.html'));
+});
+
+app.get(['/dashboard', '/app'], (req, res) => {
+  res.sendFile(path.join(webDir, 'dashboard.html'));
+});
+
+app.get(['/design-demo', '/universes', '/themes', '/gallery'], (req, res) => {
+  res.sendFile(path.join(webDir, 'design-demo.html'));
+});
+
+app.get(['/profile', '/settings', '/account'], (req, res) => {
+  res.sendFile(path.join(webDir, 'profile.html'));
+});
+
+app.get(['/terms', '/tos', '/terms-of-service'], (req, res) => {
+  res.sendFile(path.join(webDir, 'terms.html'));
+});
+
+app.get(['/privacy', '/privacy-policy'], (req, res) => {
+  res.sendFile(path.join(webDir, 'privacy.html'));
+});
+
+app.get(['/thank-you', '/success'], (req, res) => {
+  res.sendFile(path.join(webDir, 'thank-you.html'));
 });
 
 // Direct Portfolio Web Hosting Route
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
 
-// Serve Web Studio
-app.use(express.static(path.join(process.cwd(), 'web')));
+// Serve Static Web Assets with extensionless HTML support
+app.use(express.static(webDir, { extensions: ['html'] }));
 
 // ==========================================
 // Portfolio Owner Resume PDF Download Route

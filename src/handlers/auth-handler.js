@@ -367,10 +367,10 @@ class AuthHandler {
       }
 
       // If Google Client ID is not configured yet in .env, redirect with informative notice
-      res.redirect('/auth.html?view=login&error=missing_google_cloud_credentials');
+      res.redirect('/login?error=missing_google_cloud_credentials');
     } catch (err) {
       console.error('[GOOGLE REDIRECT ERROR]', err);
-      res.redirect('/auth.html?view=login&error=google_failed');
+      res.redirect('/login?error=google_failed');
     }
   }
 
@@ -385,11 +385,11 @@ class AuthHandler {
       const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
 
       if (error) {
-        return res.redirect(`/auth.html?view=login&error=${encodeURIComponent(error)}`);
+        return res.redirect(`/login?error=${encodeURIComponent(error)}`);
       }
 
       if (!code) {
-        return res.redirect('/auth.html?view=login&error=missing_code');
+        return res.redirect('/login?error=missing_code');
       }
 
       const tokens = await this.googleOAuth.exchangeCodeForTokens(code, redirectUri);
@@ -441,10 +441,10 @@ class AuthHandler {
       });
 
       this._setSessionCookie(res, rawSessionToken, maxAgeMs);
-      res.redirect('/dashboard.html');
+      res.redirect('/dashboard');
     } catch (err) {
       console.error('[GOOGLE CALLBACK ERROR]', err);
-      res.redirect(`/auth.html?view=login&error=${encodeURIComponent(err.message)}`);
+      res.redirect(`/login?error=${encodeURIComponent(err.message)}`);
     }
   }
 
@@ -489,10 +489,10 @@ class AuthHandler {
       }
 
       // If GitHub Client ID is not configured in .env, redirect to auth screen with clear notice
-      res.redirect('/auth.html?view=login&error=missing_github_oauth_credentials');
+      res.redirect('/login?error=missing_github_oauth_credentials');
     } catch (err) {
       console.error('[GITHUB REDIRECT ERROR]', err);
-      res.redirect('/auth.html?view=login&error=github_failed');
+      res.redirect('/login?error=github_failed');
     }
   }
 
@@ -507,33 +507,29 @@ class AuthHandler {
       const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
 
       if (error) {
-        return res.redirect(`/auth.html?view=login&error=${encodeURIComponent(error)}`);
+        return res.redirect(`/login?error=${encodeURIComponent(error)}`);
       }
       if (!code) {
-        return res.redirect('/auth.html?view=login&error=missing_code');
+        return res.redirect('/login?error=missing_code');
       }
 
-      const clientId = process.env.GITHUB_CLIENT_ID;
-      const clientSecret = process.env.GITHUB_CLIENT_SECRET;
-
-      // Exchange code for token
       const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          client_id: clientId,
-          client_secret: clientSecret,
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET,
           code,
           redirect_uri: redirectUri
         })
       });
 
       const tokenData = await tokenRes.json();
-      if (!tokenData.access_token) {
-        throw new Error(tokenData.error_description || 'Failed to obtain GitHub access token');
+      if (tokenData.error || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || tokenData.error || 'Failed to exchange GitHub authorization code.');
       }
 
       // Fetch user profile from GitHub
@@ -599,10 +595,10 @@ class AuthHandler {
       });
 
       this._setSessionCookie(res, rawSessionToken, maxAgeMs);
-      res.redirect('/dashboard.html');
+      res.redirect('/dashboard');
     } catch (err) {
       console.error('[GITHUB CALLBACK ERROR]', err);
-      res.redirect(`/auth.html?view=login&error=${encodeURIComponent(err.message)}`);
+      res.redirect(`/login?error=${encodeURIComponent(err.message)}`);
     }
   }
 

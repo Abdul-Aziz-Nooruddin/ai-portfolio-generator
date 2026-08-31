@@ -141,8 +141,8 @@ if (loginForm) {
       showAlert('Signed in successfully! Redirecting...', 'success');
       setTimeout(() => {
         const params = new URLSearchParams(window.location.search);
-        const redirect = params.get('redirect') || '/dashboard.html';
-        window.location.href = redirect.startsWith('/') ? redirect : '/dashboard.html';
+        const redirect = params.get('redirect') || '/dashboard';
+        window.location.href = redirect.startsWith('/') ? redirect : '/dashboard';
       }, 600);
     } catch (err) {
       showAlert(err.message);
@@ -205,7 +205,7 @@ if (signupForm) {
 
       showAlert('Account created successfully! Redirecting...', 'success');
       setTimeout(() => {
-        window.location.href = '/dashboard.html';
+        window.location.href = '/dashboard';
       }, 800);
     } catch (err) {
       showAlert(err.message);
@@ -397,7 +397,7 @@ async function handleGoogleCredentialResponse(response) {
 
     showAlert(`✅ Google Verified! Welcome, ${data.user.name || data.user.email}. Redirecting...`, 'success');
     setTimeout(() => {
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     }, 600);
   } catch (err) {
     showAlert(err.message, 'error');
@@ -473,7 +473,7 @@ async function selectDeviceAccount(email, name, username = null) {
     closeSocialAuthModal();
     showAlert(`✅ ${providerLabel} Connected! Welcome, ${data.user?.name || name}. Redirecting...`, 'success');
     setTimeout(() => {
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     }, 400);
   } catch (err) {
     showAlert(err.message, 'error');
@@ -521,7 +521,7 @@ async function submitCustomGoogleAccount(e) {
     closeSocialAuthModal();
     showAlert(`✅ Verified! Welcome, ${data.user?.name || name}. Redirecting...`, 'success');
     setTimeout(() => {
-      window.location.href = '/dashboard.html';
+      window.location.href = '/dashboard';
     }, 400);
   } catch (err) {
     alert(err.message);
