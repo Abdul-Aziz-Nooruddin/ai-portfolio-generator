@@ -11,8 +11,7 @@
   <meta name="theme-color" content="#05080A">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Archivo:wght@400;600;800&family=Fraunces:opsz,wght@9..144,400;600;800&family=Syne:wght@600;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Archivo:wght@400;600;800&family=Archivo+Black&family=Fraunces:opsz,wght@9..144,400;600;800&family=Syne:wght@600;800&family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700&family=Rajdhani:wght@500;600;700&family=Cinzel:wght@600;700;800&family=Fira+Code:wght@500;700&family=DM+Sans:wght@500;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -255,6 +254,176 @@
       --card-border: 1px solid rgba(214, 204, 187, 0.8);
       --font-display: 'Fraunces', serif;
       --font-body: 'Outfit', sans-serif;
+    }
+
+    [data-theme="system-awakening"] {
+      --bg: #030712;
+      --surface: rgba(10, 15, 30, 0.94);
+      --surface-card: rgba(15, 23, 42, 0.85);
+      --surface-glow: rgba(0, 229, 255, 0.35);
+      --primary: #00E5FF;
+      --primary-on: #030712;
+      --secondary: #8A2BE2;
+      --accent: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(0, 229, 255, 0.3);
+      --card-border: 1px solid rgba(0, 229, 255, 0.4);
+      --font-display: 'Rajdhani', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    [data-theme="engineering-archive"] {
+      --bg: #0B0E14;
+      --surface: rgba(15, 20, 31, 0.94);
+      --surface-card: rgba(22, 30, 46, 0.85);
+      --surface-glow: rgba(10, 92, 255, 0.3);
+      --primary: #0A5CFF;
+      --primary-on: #FFFFFF;
+      --secondary: #FF5500;
+      --accent: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(10, 92, 255, 0.3);
+      --card-border: 1px solid rgba(10, 92, 255, 0.35);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="cosmic-cyber-geometry"] {
+      --bg: #0D0414;
+      --surface: rgba(26, 8, 38, 0.92);
+      --surface-card: rgba(38, 14, 56, 0.85);
+      --surface-glow: rgba(226, 28, 95, 0.35);
+      --primary: #E21C5F;
+      --primary-on: #FFFFFF;
+      --secondary: #E084FC;
+      --accent: #F43F5E;
+      --text: #FFF1F2;
+      --text-muted: #FECDD3;
+      --border: rgba(226, 28, 95, 0.3);
+      --card-border: 1px solid rgba(226, 28, 95, 0.4);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="stellar-architect"] {
+      --bg: #070B18;
+      --surface: rgba(12, 19, 41, 0.94);
+      --surface-card: rgba(18, 29, 61, 0.85);
+      --surface-glow: rgba(255, 195, 0, 0.3);
+      --primary: #00A8FF;
+      --primary-on: #070B18;
+      --secondary: #FFC300;
+      --accent: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(0, 168, 255, 0.3);
+      --card-border: 1px solid rgba(0, 168, 255, 0.35);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Cormorant Garamond', serif;
+    }
+
+    [data-theme="abyssal-ascent"] {
+      --bg: #060411;
+      --surface: rgba(18, 12, 38, 0.92);
+      --surface-card: rgba(28, 19, 58, 0.85);
+      --surface-glow: rgba(139, 92, 246, 0.35);
+      --primary: #8B5CF6;
+      --primary-on: #FFFFFF;
+      --secondary: #06B6D4;
+      --accent: #A78BFA;
+      --text: #F5F3FF;
+      --text-muted: #DDD6FE;
+      --border: rgba(139, 92, 246, 0.3);
+      --card-border: 1px solid rgba(139, 92, 246, 0.4);
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Rajdhani', sans-serif;
+    }
+
+    [data-theme="stealth-node"] {
+      --bg: #020A05;
+      --surface: rgba(4, 20, 10, 0.94);
+      --surface-card: rgba(7, 31, 16, 0.85);
+      --surface-glow: rgba(0, 255, 65, 0.35);
+      --primary: #00FF41;
+      --primary-on: #020A05;
+      --secondary: #FF5722;
+      --accent: #10B981;
+      --text: #F0FDF4;
+      --text-muted: #86EFAC;
+      --border: rgba(0, 255, 65, 0.3);
+      --card-border: 1px solid rgba(0, 255, 65, 0.4);
+      --font-display: 'Fira Code', monospace;
+      --font-body: 'Space Grotesk', sans-serif;
+    }
+
+    [data-theme="kinetic-brutalism"] {
+      --bg: #0A0A0A;
+      --surface: rgba(20, 20, 20, 0.95);
+      --surface-card: rgba(30, 30, 30, 0.9);
+      --surface-glow: rgba(223, 255, 0, 0.3);
+      --primary: #DFFF00;
+      --primary-on: #0A0A0A;
+      --secondary: #FF007F;
+      --accent: #00E5FF;
+      --text: #FFFFFF;
+      --text-muted: #E2E8F0;
+      --border: rgba(223, 255, 0, 0.4);
+      --card-border: 2px solid rgba(223, 255, 0, 0.6);
+      --font-display: 'Archivo Black', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    [data-theme="circuit-core"] {
+      --bg: #050E0A;
+      --surface: rgba(10, 24, 18, 0.94);
+      --surface-card: rgba(16, 36, 28, 0.85);
+      --surface-glow: rgba(0, 255, 65, 0.3);
+      --primary: #00FF41;
+      --primary-on: #050E0A;
+      --secondary: #D4AF37;
+      --accent: #34D399;
+      --text: #ECFDF5;
+      --text-muted: #A7F3D0;
+      --border: rgba(0, 255, 65, 0.3);
+      --card-border: 1px solid rgba(0, 255, 65, 0.35);
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="neon-aurora-cyber"] {
+      --bg: #0A0414;
+      --surface: rgba(24, 10, 42, 0.92);
+      --surface-card: rgba(36, 16, 62, 0.85);
+      --surface-glow: rgba(168, 85, 247, 0.35);
+      --primary: #A855F7;
+      --primary-on: #FFFFFF;
+      --secondary: #EC4899;
+      --accent: #38BDF8;
+      --text: #FDF4FF;
+      --text-muted: #E9D5FF;
+      --border: rgba(168, 85, 247, 0.3);
+      --card-border: 1px solid rgba(168, 85, 247, 0.4);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    [data-theme="chrono-obsidian-sanctuary"] {
+      --bg: #120C06;
+      --surface: rgba(28, 18, 10, 0.94);
+      --surface-card: rgba(42, 28, 16, 0.85);
+      --surface-glow: rgba(245, 158, 11, 0.35);
+      --primary: #F59E0B;
+      --primary-on: #120C06;
+      --secondary: #D97706;
+      --accent: #FBBF24;
+      --text: #FFFBEB;
+      --text-muted: #FDE68A;
+      --border: rgba(245, 158, 11, 0.3);
+      --card-border: 1px solid rgba(245, 158, 11, 0.4);
+      --font-display: 'Fraunces', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
     *, *::before, *::after {
@@ -1605,7 +1774,7 @@
         if (btn) btn.textContent = '⚡ Active Universe';
       }
 
-      // 3. Update Token Values in Matrix
+      // 3. Update Token Values in Matrix and Dynamic CSS Root
       const data = themeTokenData[themeKey];
       if (data) {
         document.getElementById('token-primary-val').innerText = data.primary;
@@ -1614,6 +1783,13 @@
         document.getElementById('token-secondary-swatch').style.background = data.secondary;
         document.getElementById('token-heading-val').innerText = data.heading;
         document.getElementById('token-body-val').innerText = data.body;
+
+        // Apply dynamic tokens directly to CSS root variables
+        const root = document.documentElement;
+        root.style.setProperty('--primary', data.primary);
+        root.style.setProperty('--secondary', data.secondary);
+        root.style.setProperty('--surface-glow', `${data.primary}44`);
+        root.style.setProperty('--border', `${data.primary}40`);
       }
       
       // 4. Update Three.js 3D WebGL Particle & Mesh Physics
