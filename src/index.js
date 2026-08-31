@@ -1560,6 +1560,8 @@ app.post('/api/sites/:siteId/analytics', async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
 // ==========================================
 // Clean Semantic Routes (Extensionless URLs)
 // ==========================================
@@ -2422,6 +2424,8 @@ async function dbHealthCheck(db) {
   } catch (error) {
     return false;
   }
+}
+
 // ==========================================
 // 404 Not Found Handler (Custom 3D Universe Page & API JSON)
 // ==========================================
