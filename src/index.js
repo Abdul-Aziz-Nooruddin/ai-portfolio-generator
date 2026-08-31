@@ -59,6 +59,22 @@ app.use(SecurityMiddleware.corsConfig());
 app.use(express.json({ limit: '50mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Clean URL Normalizer: 301 Permanent Redirect for any .html requests (e.g. /studio.html -> /studio)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.endsWith('.html')) {
+    const cleanPath = req.path.replace(/\.html$/, '');
+    const aliasMap = {
+      '/auth': '/login',
+      '/design-demo': '/universes',
+      '/index': '/'
+    };
+    const target = aliasMap[cleanPath] || (cleanPath === '' ? '/' : cleanPath);
+    const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+    return res.redirect(301, `${target}${query}`);
+  }
+  next();
+});
+
 // Smart Public Domain Detection (Converts localhost to real public URL automatically, ignoring private LAN IPs)
 app.use((req, res, next) => {
   if (!process.env.HOST_URL || process.env.HOST_URL.includes('localhost') || process.env.HOST_URL.includes('127.0.0.1')) {
