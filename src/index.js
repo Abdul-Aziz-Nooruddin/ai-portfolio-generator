@@ -1216,6 +1216,21 @@ const standardApiLimiter = SecurityMiddleware.rateLimiter({
   actionName: 'standard_api'
 });
 
+// Automatically redirect any request ending in .html to clean extensionless URL (301 Permanent Redirect)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path.endsWith('.html')) {
+    const cleanPath = req.path.replace(/\.html$/, '');
+    const aliasMap = {
+      '/auth': '/login',
+      '/design-demo': '/universes'
+    };
+    const target = aliasMap[cleanPath] || cleanPath;
+    const query = req.url.includes('?') ? '?' + req.url.split('?')[1] : '';
+    return res.redirect(301, `${target}${query}`);
+  }
+  next();
+});
+
 // Clean Semantic Direct Page Routes (No .html shown in address bar)
 const webPagesDir = path.join(process.cwd(), 'web');
 

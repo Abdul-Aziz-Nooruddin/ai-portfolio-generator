@@ -3,8 +3,8 @@
 <div align="center">
 
 [![Live Production](https://img.shields.io/badge/Live%20Platform-myfolio.tech-38BDF8.svg?style=for-the-badge&logo=google-chrome&logoColor=white)](https://myfolio.tech)
-[![3D Web Studio](https://img.shields.io/badge/3D%20Studio-Launch%20Generator-6366F1.svg?style=for-the-badge&logo=three.js&logoColor=white)](https://myfolio.tech/studio.html)
-[![22 3D Universes](https://img.shields.io/badge/Design%20Intelligence-22%20Universes-10B981.svg?style=for-the-badge&logo=webgl&logoColor=white)](https://myfolio.tech/design-demo.html)
+[![3D Web Studio](https://img.shields.io/badge/3D%20Studio-Launch%20Generator-6366F1.svg?style=for-the-badge&logo=three.js&logoColor=white)](https://myfolio.tech/studio)
+[![22 3D Universes](https://img.shields.io/badge/Design%20Intelligence-22%20Universes-10B981.svg?style=for-the-badge&logo=webgl&logoColor=white)](https://myfolio.tech/universes)
 
 [![Build & Deploy](https://img.shields.io/badge/Deployment-Render%20Cloud-000000.svg?logo=render&logoColor=white)](https://myfolio.tech)
 [![SSL](https://img.shields.io/badge/Security-TLS%201.3%20%7C%20HTTPS-success.svg?logo=letsencrypt&logoColor=white)](https://myfolio.tech)
@@ -16,7 +16,7 @@
 **Transform your GitHub repositories and resume into an award-winning, interactive 3D WebGL developer portfolio in seconds.**  
 *Powered by Google Gemini AI, Three.js spatial physics, 22 cohesive design universes, custom domain SSL routing, and clean static ZIP exports.*
 
-[Explore Live Platform](https://myfolio.tech) • [Launch 3D Studio](https://myfolio.tech/studio.html) • [22 Design Universes](https://myfolio.tech/design-demo.html) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [API Reference](#-api-reference)
+[Explore Live Platform](https://myfolio.tech) • [Launch 3D Studio](https://myfolio.tech/studio) • [22 Design Universes](https://myfolio.tech/universes) • [Quick Start](#-quick-start) • [Architecture](#-architecture) • [API Reference](#-api-reference)
 
 </div>
 
@@ -27,12 +27,12 @@
 | Service | Live URL | Description |
 | :--- | :--- | :--- |
 | **🌐 Official Website** | [https://myfolio.tech](https://myfolio.tech) | Landing page, 3D interactive hero, workflow timeline, and pricing |
-| **⚡ 3D Web Studio** | [https://myfolio.tech/studio.html](https://myfolio.tech/studio.html) | AI portfolio generator from GitHub, resume PDF, and images |
-| **🎨 22 Universes Gallery** | [https://myfolio.tech/design-demo.html](https://myfolio.tech/design-demo.html) | Interactive 3D WebGL showcase with real-time background switches |
-| **📊 User Dashboard** | [https://myfolio.tech/dashboard.html](https://myfolio.tech/dashboard.html) | Portfolio management, custom domain mapping, visitor telemetry |
-| **🔐 Authentication** | [https://myfolio.tech/auth.html](https://myfolio.tech/auth.html) | Secure Scrypt credentials + Google & GitHub OAuth 2.0 |
-| **📜 Terms of Service** | [https://myfolio.tech/terms.html](https://myfolio.tech/terms.html) | Software licensing and acceptable use policy |
-| **🔒 Privacy Policy** | [https://myfolio.tech/privacy.html](https://myfolio.tech/privacy.html) | GDPR & CCPA compliant data protection disclosure |
+| **⚡ 3D Web Studio** | [https://myfolio.tech/studio](https://myfolio.tech/studio) | AI portfolio generator from GitHub, resume PDF, and images |
+| **🎨 22 Universes Gallery** | [https://myfolio.tech/universes](https://myfolio.tech/universes) | Interactive 3D WebGL showcase with real-time background switches |
+| **📊 User Dashboard** | [https://myfolio.tech/dashboard](https://myfolio.tech/dashboard) | Portfolio management, custom domain mapping, visitor telemetry |
+| **🔐 Authentication** | [https://myfolio.tech/login](https://myfolio.tech/login) | Secure Scrypt credentials + Google & GitHub OAuth 2.0 |
+| **📜 Terms of Service** | [https://myfolio.tech/terms](https://myfolio.tech/terms) | Software licensing and acceptable use policy |
+| **🔒 Privacy Policy** | [https://myfolio.tech/privacy](https://myfolio.tech/privacy) | GDPR & CCPA compliant data protection disclosure |
 
 ---
 
