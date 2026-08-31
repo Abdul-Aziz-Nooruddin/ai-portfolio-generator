@@ -856,6 +856,22 @@ function initUniversalSidebar(activePage) {
   hydrateSidebarUser();
   initSidebar3DCanvas();
   setPlatformTheme(getStoredTheme());
+
+  // Instant hover prefetching for zero-latency page transitions
+  try {
+    document.querySelectorAll('.sidebar-nav-item:not(.ext-link)').forEach(link => {
+      link.addEventListener('mouseenter', () => {
+        const href = link.getAttribute('href');
+        if (href && href.startsWith('/') && !document.querySelector(`link[rel="prefetch"][href="${href}"]`)) {
+          const prefetch = document.createElement('link');
+          prefetch.rel = 'prefetch';
+          prefetch.href = href;
+          prefetch.as = 'document';
+          document.head.appendChild(prefetch);
+        }
+      }, { once: true });
+    });
+  } catch (e) {}
 }
 
 function getStoredTheme() {

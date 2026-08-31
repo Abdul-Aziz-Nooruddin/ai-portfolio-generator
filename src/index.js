@@ -44,8 +44,20 @@ const { UnifiedProfileNormalizer } = require('./services/unified-profile-normali
 const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
 const { ErrorRecoveryService } = require('./services/error-recovery-service');
 const { TemplateRegistry } = require('./templates/template-registry');
+const compression = require('compression');
 
 const app = express();
+
+// High-Speed HTTP GZIP/Brotli Compression Middleware (Shrinks payloads by 70-80%)
+app.use(compression({
+  level: 6,
+  threshold: 512,
+  filter: (req, res) => {
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  }
+}));
+
 const securityService = new SecurityService();
 const figmaService = new FigmaService();
 const designEngine = new DesignEngine();
@@ -1641,8 +1653,18 @@ app.get(['/thank-you', '/success'], (req, res) => {
 // Direct Portfolio Web Hosting Route
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
 
-// Serve Static Web Assets with extensionless HTML support
-app.use(express.static(webDir, { extensions: ['html'] }));
+// Serve Static Web Assets with HTTP Cache-Control (7 days for JS/CSS/images/fonts, 0s for dynamic HTML)
+app.use(express.static(webDir, {
+  extensions: ['html'],
+  maxAge: '7d',
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
+    } else if (/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot|webp)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
+    }
+  }
+}));
 
 // ==========================================
 // Portfolio Owner Resume PDF Download Route
