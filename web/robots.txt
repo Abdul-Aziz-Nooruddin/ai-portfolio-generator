@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Allow: /studio.html
+Allow: /design-demo.html
+Allow: /p/
+Allow: /sites/
+Disallow: /api/
+Disallow: /admin.html
+
+Sitemap: https://myfolio.site/sitemap.xml

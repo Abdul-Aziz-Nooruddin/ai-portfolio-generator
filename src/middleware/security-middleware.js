@@ -206,6 +206,19 @@ class SecurityMiddleware {
   }
 
   /**
+   * Honeypot & Bot Trap Protection
+   * Rejects automated bots filling invisible honeypot fields
+   */
+  static botTrap(honeypotField = '_hp_security_check') {
+    return (req, res, next) => {
+      if (req.body && req.body[honeypotField]) {
+        return res.status(400).json({ error: 'Automated request rejected.' });
+      }
+      next();
+    };
+  }
+
+  /**
    * Safe Global Error Handler (Never leaks SQL queries, stack traces, paths, or secrets)
    */
   static safeErrorHandler() {

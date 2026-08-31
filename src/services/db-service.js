@@ -29,13 +29,23 @@ class DatabaseService {
   }
 
   _createMockClient() {
-    return {
-      from: (table) => ({
-        select: () => ({ eq: () => ({ single: async () => ({ data: null, error: null }) }) }),
+    const createChain = () => {
+      const chain = {
+        eq: () => chain,
+        gte: () => chain,
+        lte: () => chain,
+        select: () => chain,
+        single: async () => ({ data: null, error: null }),
+        upsert: async () => ({ data: null, error: null }),
+        update: () => chain,
         insert: (payload) => ({ select: () => ({ single: async () => ({ data: { id: 'usr_' + Date.now(), ...(Array.isArray(payload) ? payload[0] : payload) }, error: null }) }) }),
-        update: () => ({ eq: async () => ({ data: null, error: null }) }),
-        delete: () => ({ eq: async () => ({ data: null, error: null }) })
-      })
+        delete: () => chain
+      };
+      return chain;
+    };
+
+    return {
+      from: () => createChain()
     };
   }
 

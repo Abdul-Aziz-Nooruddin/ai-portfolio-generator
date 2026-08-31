@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy | MyFolio AI Portfolio Generator</title>
+  <meta name="description" content="Learn how MyFolio protects your data, GitHub tokens, resume metadata, and privacy in compliance with GDPR and CCPA." />
+  
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #05080A;
+      --card-bg: rgba(13, 19, 28, 0.8);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.7;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    .last-updated {
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: #FFFFFF;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    p, ul {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    ul { padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .back-btn:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-btn"><i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to MyFolio</a>
+    <h1>Privacy Policy</h1>
+    <div class="last-updated">Last Updated: August 31, 2026</div>
+
+    <p>At <strong>MyFolio</strong> ("we", "our", or "us"), accessible from https://myfolio.site, we prioritize the confidentiality and security of our users' personal information. This Privacy Policy details the types of data we collect, how it is processed, and your rights under global privacy regulations including GDPR and CCPA.</p>
+
+    <h2>1. Information We Collect</h2>
+    <p>To generate and host 3D developer portfolios, we process the following information:</p>
+    <ul>
+      <li><strong>Account Information:</strong> Full name, email address, username, and encrypted password credentials.</li>
+      <li><strong>GitHub Public Metadata:</strong> Public repository names, descriptions, primary languages, commit heatmaps, and profile bios retrieved via public GitHub API endpoints.</li>
+      <li><strong>Resume & Profile Documents:</strong> Work history, skills, education, and contact links submitted for portfolio generation.</li>
+      <li><strong>Telemetry & Analytics:</strong> Anonymized visitor counts, portfolio pageviews, browser user agents, and IP addresses hashed for fraud defense.</li>
+    </ul>
+
+    <h2>2. How We Use Your Data</h2>
+    <ul>
+      <li>To synthesize bespoke 3D WebGL developer portfolios and interactive live themes.</li>
+      <li>To host and serve your custom domain and subdomains on global edge CDNs.</li>
+      <li>To prevent brute-force attacks, abusive traffic, and malicious API exploitation.</li>
+      <li>To notify you about critical portfolio status updates, custom domain SSL verification, and account notices.</li>
+    </ul>
+
+    <h2>3. Data Retention and Deletion Rights</h2>
+    <p>You have full ownership of your data. You may request permanent deletion of your account, published portfolios, and uploaded resume assets at any time via your <a href="/dashboard.html">Account Dashboard</a> or by contacting us directly.</p>
+
+    <h2>4. Cookies & Local Storage</h2>
+    <p>We use essential HTTP-only cookies exclusively for maintaining your secure authentication session. We also use browser local storage to preserve your theme previews and weekly generation allowance meters.</p>
+
+    <h2>5. Contact & Support</h2>
+    <p>If you have any questions or data requests regarding this Privacy Policy, please reach out to our privacy compliance desk:</p>
+    <p><strong>Email:</strong> <a href="mailto:support@myfolio.site">support@myfolio.site</a><br>
+       <strong>Physical Address:</strong> MyFolio Technologies, Innovation Way, San Francisco, CA 94105</p>
+  </div>
+
+  <script>
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  </script>
+</body>
+</html>

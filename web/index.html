@@ -3,10 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>myfolio.tech — Bespoke 3D WebGL Portfolios in Seconds</title>
+  <title>MyFolio — Bespoke 3D WebGL Portfolios in Seconds</title>
   <meta name="description" content="Turn your GitHub repositories, resume, images, or guided answers into a bespoke, award-winning 3D WebGL portfolio with live interactive project visual cards in seconds.">
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
-  <link rel="apple-touch-icon" href="/assets/favicon.png">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#05080A">
+
+  <!-- Open Graph & Social Cards -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MyFolio — Bespoke 3D WebGL Portfolios in Seconds">
+  <meta property="og:description" content="Synthesize award-winning 3D WebGL developer portfolios with real-time physics, custom domains, and AI-powered resume intelligence.">
+  <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta property="og:url" content="https://myfolio.site/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="MyFolio — Bespoke 3D WebGL Portfolios">
+  <meta name="twitter:description" content="Instant 3D developer portfolios from your GitHub & resume.">
+  <meta name="twitter:image" content="/assets/3d/cosmic_astronaut_3d.jpg">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +33,8 @@
 
   <link rel="stylesheet" href="/style.css">
   <script src="/sidebar.js"></script>
+  <script src="/cookie-banner.js" defer></script>
+  <script src="/analytics.js" defer></script>
 </head>
 <body>
   <!-- Ambient Texture Layer -->
@@ -1154,5 +1169,18 @@
       revealEls.forEach(el => observer.observe(el));
     })();
   </script>
+
+  <!-- 6. Sticky Mobile CTA Floating Bar -->
+  <div class="sticky-mobile-cta-bar">
+    <div class="sticky-cta-inner">
+      <div class="sticky-cta-text">
+        <span class="sticky-cta-title">Build Your 3D Portfolio</span>
+        <span class="sticky-cta-sub">Free • 30-Second AI Setup</span>
+      </div>
+      <a href="/studio.html" class="sticky-cta-btn" data-analytics="sticky_mobile_launch_studio">
+        <span>⚡ Launch Studio</span>
+      </a>
+    </div>
+  </div>
 </body>
 </html>

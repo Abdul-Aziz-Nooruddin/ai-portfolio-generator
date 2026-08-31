@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service | MyFolio AI Portfolio Generator</title>
+  <meta name="description" content="Read the terms of service, acceptable use guidelines, and software licensing agreement for MyFolio." />
+  
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg: #05080A;
+      --card-bg: rgba(13, 19, 28, 0.8);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: 1.7;
+      padding: 40px 20px;
+    }
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      margin-bottom: 8px;
+    }
+    .last-updated {
+      color: var(--primary);
+      font-size: 0.88rem;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+    h2 {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: #FFFFFF;
+      margin-top: 32px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    p, ul {
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    ul { padding-left: 24px; }
+    li { margin-bottom: 8px; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .back-btn:hover { color: var(--primary); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back-btn"><i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to MyFolio</a>
+    <h1>Terms of Service</h1>
+    <div class="last-updated">Last Updated: August 31, 2026</div>
+
+    <p>Welcome to <strong>MyFolio</strong>. By accessing or utilizing our website, studio tools, API endpoints, or automated portfolio generation services, you agree to be bound by the following Terms of Service.</p>
+
+    <h2>1. Service Description & Intellectual Property</h2>
+    <p>MyFolio provides an automated AI-driven engine for synthesizing 3D WebGL developer websites from GitHub metadata and developer resumes. You retain 100% ownership and copyright of all your personal projects, code repositories, portfolio copy, and uploaded assets.</p>
+
+    <h2>2. Acceptable Use Policy</h2>
+    <p>Users agree not to utilize the platform for:</p>
+    <ul>
+      <li>Hosting fraudulent, deceptive, phishing, or malware distribution sites.</li>
+      <li>Impersonating other software engineers, public figures, or organizations.</li>
+      <li>Distributing hateful, defamatory, or unlawful content.</li>
+      <li>Conducting automated denial-of-service, scraping, or load-exhaustion attacks against the service infrastructure.</li>
+    </ul>
+
+    <h2>3. Weekly Allowance & Quota Policy</h2>
+    <p>To preserve computing resources and prevent abuse, standard free accounts receive a weekly allowance of 3 full-stack portfolio generations, resetting automatically every 7 days from initial use. Premium and VIP accounts enjoy unrestricted generation capacity.</p>
+
+    <h2>4. Custom Domain & Hosting Availability</h2>
+    <p>Portfolios are deployed across global content delivery networks with 99.9% uptime targets. Custom domains and subdomains are routed through our automated SSL certificate provisioning pipeline.</p>
+
+    <h2>5. Termination & Liability</h2>
+    <p>We reserve the right to suspend or terminate accounts that breach our Acceptable Use Policy. The service is provided on an "as is" and "as available" basis.</p>
+
+    <h2>6. Contact Us</h2>
+    <p>For legal inquiries, copyright claims, or support requests:</p>
+    <p><strong>Email:</strong> <a href="mailto:support@myfolio.site">support@myfolio.site</a><br>
+       <strong>Physical Address:</strong> MyFolio Technologies, Innovation Way, San Francisco, CA 94105</p>
+  </div>
+
+  <script>
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  </script>
+</body>
+</html>

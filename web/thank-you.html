@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You! Your 3D Portfolio Is Live | MyFolio</title>
+  <meta name="description" content="Congratulations! Your 3D WebGL developer portfolio has been compiled and deployed to the global edge network." />
+  
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Your 3D Portfolio is Ready | MyFolio" />
+  <meta property="og:description" content="View your live portfolio or download your resume." />
+  <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #05080A;
+      --card-bg: rgba(13, 19, 28, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --primary: #10B981;
+      --accent: #38BDF8;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --font-display: 'Space Grotesk', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+
+    .ambient-glow {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(56, 189, 248, 0.1) 50%, transparent 70%);
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      width: 100%;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 48px 36px;
+      text-align: center;
+      backdrop-filter: blur(24px);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(16, 185, 129, 0.15);
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      color: #10B981;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.3);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: #FFFFFF;
+    }
+
+    p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .url-box {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 28px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent);
+      word-break: break-all;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: #FFFFFF;
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 600px) {
+      .card { padding: 32px 20px; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="card">
+    <div class="success-icon">
+      <i data-lucide="check" style="width:36px;height:36px;"></i>
+    </div>
+
+    <h1>Portfolio Successfully Created!</h1>
+    <p>Your interactive 3D WebGL developer portfolio is live and ready to impress recruiters and clients.</p>
+
+    <div class="url-box">
+      <span id="siteUrlText">https://myfolio.site/p/preview</span>
+      <button onclick="copySiteUrl()" style="background:none;border:none;color:var(--text);cursor:pointer;display:flex;align-items:center;">
+        <i data-lucide="copy" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <div class="btn-group">
+      <a id="btnLivePreview" href="/p/preview" target="_blank" class="btn btn-primary">
+        <i data-lucide="external-link" style="width:18px;height:18px;"></i>
+        <span>View Live Portfolio</span>
+      </a>
+      <a href="/dashboard.html" class="btn btn-secondary">
+        <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
+        <span>Go to Dashboard</span>
+      </a>
+      <a href="/studio.html" class="btn btn-secondary">
+        <i data-lucide="sparkles" style="width:18px;height:18px;"></i>
+        <span>Generate Another</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    // Trigger celebratory confetti on load
+    if (typeof confetti === 'function') {
+      confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+    }
+
+    // Resolve URL params
+    const params = new URLSearchParams(window.location.search);
+    const siteId = params.get('siteId');
+    if (siteId) {
+      const fullUrl = `${window.location.origin}/p/${siteId}`;
+      document.getElementById('siteUrlText').textContent = fullUrl;
+      document.getElementById('btnLivePreview').href = fullUrl;
+    }
+
+    function copySiteUrl() {
+      const text = document.getElementById('siteUrlText').textContent;
+      navigator.clipboard.writeText(text);
+      alert('Portfolio link copied to clipboard!');
+    }
+  </script>
+</body>
+</html>
