@@ -2422,7 +2422,20 @@ async function dbHealthCheck(db) {
   } catch (error) {
     return false;
   }
-}
+// ==========================================
+// 404 Not Found Handler (Custom 3D Universe Page & API JSON)
+// ==========================================
+app.use((req, res) => {
+  if (req.path.startsWith('/api/')) {
+    return res.status(404).json({ error: 'Endpoint not found', path: req.path });
+  }
+
+  const notFoundPage = path.join(process.cwd(), 'web', '404.html');
+  if (fs.existsSync(notFoundPage)) {
+    return res.status(404).sendFile(notFoundPage);
+  }
+  res.status(404).send('404 Page Not Found');
+});
 
 // Global Safe Error Handler (Never leaks SQL or stack traces)
 app.use(SecurityMiddleware.safeErrorHandler());
