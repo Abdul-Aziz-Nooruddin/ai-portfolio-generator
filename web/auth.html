@@ -656,60 +656,6 @@
       if (e.target.id === 'legalModal') closeLegalModal();
     });
   </script>
-
-  <!-- Social & GitHub / Google 1-Click Connect Modal -->
-  <div id="socialAuthModal" class="danger-modal-backdrop" style="display: none; align-items: center; justify-content: center; z-index: 10000; position: fixed; inset: 0; background: rgba(8, 12, 28, 0.88); backdrop-filter: blur(16px);" onclick="if(event.target === this) closeSocialAuthModal()">
-    <div class="danger-modal-card" style="background: rgba(13, 18, 42, 0.98); border: 1px solid rgba(59, 130, 246, 0.35); box-shadow: 0 30px 80px rgba(0, 0, 0, 0.9), 0 0 35px rgba(37, 99, 235, 0.25); border-radius: 28px; max-width: 450px; width: 100%; padding: 36px 32px; position: relative; color: #F8FAFC; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-      <button type="button" class="modal-close-cross-btn" onclick="closeSocialAuthModal()" aria-label="Close modal" style="position: absolute; top: 18px; right: 18px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); color: #94A3B8; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1rem;">✕</button>
-      
-      <!-- Social Header -->
-      <div style="text-align: center; margin-bottom: 24px;">
-        <div id="socialModalIconWrap" style="width: 48px; height: 48px; border-radius: 50%; background: #1E293B; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2); margin-bottom: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
-          <svg width="26" height="26" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg>
-        </div>
-        <h2 id="socialModalTitle" style="color: #FFFFFF; font-size: 1.35rem; font-weight: 700; margin: 0 0 6px 0;">Choose an account</h2>
-        <p id="socialModalDesc" style="color: #94A3B8; font-size: 0.88rem; margin: 0;">to continue to <strong style="color: #60a5fa;">myfolio.tech</strong></p>
-      </div>
-
-      <!-- Account Chooser List -->
-      <div id="deviceAccountList" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
-        <!-- Option 1: Primary Account -->
-        <button type="button" onclick="selectDeviceAccount('abdulaziznoor9876@gmail.com', 'Abdul Aziz Nooruddin', 'abdulaziznoor9876')" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: rgba(37, 99, 235, 0.12); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 14px; cursor: pointer; text-align: left; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(37, 99, 235, 0.25)'" onmouseout="this.style.background='rgba(37, 99, 235, 0.12)'">
-          <div style="width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #38bdf8); display: flex; align-items: center; justify-content: center; font-weight: 800; color: #FFFFFF; font-size: 1.1rem; flex-shrink: 0;">A</div>
-          <div style="flex: 1; min-width: 0;">
-            <div style="font-weight: 700; color: #FFFFFF; font-size: 0.95rem;">Abdul Aziz Nooruddin</div>
-            <div style="color: #94A3B8; font-size: 0.82rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">abdulaziznoor9876</div>
-          </div>
-          <span style="font-size: 0.72rem; font-weight: 800; background: rgba(16, 185, 129, 0.2); color: #34d399; padding: 3px 8px; border-radius: 999px; border: 1px solid rgba(16, 185, 129, 0.3);">ACTIVE</span>
-        </button>
-
-        <!-- Option 2: Use custom username / profile toggle -->
-        <button type="button" onclick="toggleCustomAccountForm()" style="display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: transparent; border: 1px dashed rgba(255, 255, 255, 0.2); border-radius: 14px; cursor: pointer; text-align: left; color: #CBD5E1; font-weight: 600; font-size: 0.88rem; transition: all 0.2s ease;" onmouseover="this.style.borderColor='#38bdf8'; this.style.color='#38bdf8';" onmouseout="this.style.borderColor='rgba(255, 255, 255, 0.2)'; this.style.color='#CBD5E1';">
-          <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;">➕</div>
-          <span>Enter username or email</span>
-        </button>
-      </div>
-
-      <!-- Custom Account Input -->
-      <form id="socialAuthCustomForm" style="display: none; margin-top: 14px;" onsubmit="submitCustomGoogleAccount(event)">
-        <div class="form-group" style="margin-bottom: 12px;">
-          <label style="font-size: 0.82rem; color: #E2E8F0; font-weight: 600; margin-bottom: 4px;">GitHub Username or Email</label>
-          <input type="text" id="customGoogleEmail" required placeholder="e.g. torvalds or alex@example.com" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; color: #FFFFFF; padding: 10px 14px; width: 100%;">
-        </div>
-        <div class="form-group" style="margin-bottom: 16px;">
-          <label style="font-size: 0.82rem; color: #E2E8F0; font-weight: 600; margin-bottom: 4px;">Display Name (Optional)</label>
-          <input type="text" id="customGoogleName" placeholder="Your Name" style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 10px; color: #FFFFFF; padding: 10px 14px; width: 100%;">
-        </div>
-        <button type="submit" id="btnCustomGoogleSubmit" class="btn-submit" style="width: 100%; background: linear-gradient(135deg, #2563eb, #1d4ed8); padding: 12px; font-weight: 800; border-radius: 10px; cursor: pointer; color: #FFFFFF; border: none;">
-          <span>Sign In &amp; Continue</span> &rarr;
-        </button>
-      </form>
-
-      <div style="margin-top: 20px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 16px;">
-        <span style="font-size: 0.76rem; color: #64748B;">Secure Authentication • myfolio.tech</span>
-      </div>
-    </div>
-  </div>
     </div>
   </main>
 </body>
