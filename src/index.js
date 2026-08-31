@@ -2337,8 +2337,18 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
 </html>`);
 });
 
-// Health check (Supports both /health and Render /healthz)
-app.get(['/health', '/healthz'], async (req, res) => {
+// Health check (Instant 200 OK for Render /healthz and monitoring probes)
+app.get(['/health', '/healthz'], (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    ok: true,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Deep diagnostic check (Optional)
+app.get('/health/deep', async (req, res) => {
   const checks = {
     status: 'ok',
     database: await dbHealthCheck(dbService),
@@ -2346,9 +2356,7 @@ app.get(['/health', '/healthz'], async (req, res) => {
     telegram: !!process.env.TELEGRAM_BOT_TOKEN,
     timestamp: new Date().toISOString()
   };
-
-  const allHealthy = Object.values(checks).every(v => v === true || typeof v === 'string');
-  res.status(allHealthy ? 200 : 503).json(checks);
+  res.json(checks);
 });
 
 async function dbHealthCheck(db) {
@@ -2365,14 +2373,13 @@ app.use(SecurityMiddleware.safeErrorHandler());
 
 // Start server if run directly
 if (require.main === module) {
-  let PORT = parseInt(process.env.PORT, 10) || 5050;
+  let PORT = parseInt(process.env.PORT, 10) || 10000;
   const HOST = '0.0.0.0';
 
   function startServer(portToUse) {
     const server = app.listen(portToUse, HOST, () => {
-      console.log(`🚀 Portfolio Bot Server running on dedicated port ${portToUse}`);
+      console.log(`🚀 Portfolio Bot Server running on port ${portToUse}`);
       console.log(`🌐 Local Studio:     http://localhost:${portToUse}`);
-      console.log(`📱 Same Wi-Fi Phone: http://192.168.0.146:${portToUse}`);
       console.log(`📱 Direct Previews:  http://localhost:${portToUse}/p/:siteId`);
       if (process.env.TELEGRAM_BOT_TOKEN) {
         console.log(`🤖 Telegram Bot: Active & Listening`);
