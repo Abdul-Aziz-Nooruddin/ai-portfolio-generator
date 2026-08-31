@@ -530,23 +530,54 @@ async function submitCustomGoogleAccount(e) {
   }
 }
 
-function handleSocialAuth(provider = 'google') {
+async function handleSocialAuth(provider = 'google') {
   hideAlert();
 
   if (provider === 'google') {
-    // Navigate directly to official Google OAuth 2.0 account selection screen
-    window.location.href = '/api/auth/google';
+    try {
+      const res = await fetch('/api/auth/google/config');
+      const cfg = await res.json();
+      if (cfg && cfg.configured && cfg.clientId) {
+        window.location.href = '/api/auth/google';
+        return;
+      }
+    } catch (e) {}
+
+    // Graceful fallback account chooser
+    openSocialAuthModal('google');
     return;
   }
 
   if (provider === 'github') {
-    // Open Quick GitHub Account Chooser / Sync
     openSocialAuthModal('github');
     return;
   }
 
   window.location.href = `/api/auth/${provider}`;
 }
+
+// Check URL query params on page load
+document.addEventListener('DOMContentLoaded', () => {
+  try {
+    const url = new URL(window.location);
+    const view = url.searchParams.get('view');
+    const error = url.searchParams.get('error');
+
+    if (view) {
+      switchView(view);
+    }
+
+    if (error) {
+      const errorMap = {
+        missing_google_cloud_credentials: '⚠️ Google OAuth is not configured yet. Please add GOOGLE_CLIENT_ID to your environment variables or use the 1-Click option.',
+        google_failed: '❌ Google Sign-In could not be completed. Please try again.',
+        google_auth_failed: '❌ Google authentication failed.',
+        missing_code: '❌ Authorization code was not returned by Google.'
+      };
+      showAlert(errorMap[error] || `Authentication notice: ${error.replace(/_/g, ' ')}`, 'error');
+    }
+  } catch (e) {}
+});
 
 // Global Window Function Exports
 window.switchView = switchView;
