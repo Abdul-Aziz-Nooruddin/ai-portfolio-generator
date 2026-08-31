@@ -1216,26 +1216,39 @@ const standardApiLimiter = SecurityMiddleware.rateLimiter({
   actionName: 'standard_api'
 });
 
-// Direct Page Routing for Authentication UI
-app.get(['/login', '/signup', '/forgot-password', '/reset-password', '/verify-email'], (req, res) => {
-  const viewMap = {
-    '/login': 'login',
-    '/signup': 'signup',
-    '/forgot-password': 'forgot',
-    '/reset-password': 'reset',
-    '/verify-email': 'verify'
-  };
-  const view = viewMap[req.path] || 'login';
-  const queryStr = req.url.includes('?') ? '&' + req.url.split('?')[1] : '';
-  res.redirect(`/auth.html?view=${view}${queryStr}`);
+// Clean Semantic Direct Page Routes (No .html shown in address bar)
+const webPagesDir = path.join(process.cwd(), 'web');
+
+app.get(['/login', '/signin', '/signup', '/register', '/auth', '/forgot-password', '/reset-password', '/verify-email'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'auth.html'));
 });
 
-app.get(['/dashboard', '/dash'], (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'web/dashboard.html'));
+app.get(['/dashboard', '/app', '/dash'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'dashboard.html'));
 });
 
-app.get(['/studio', '/studio.html', '/builder', '/generator'], (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'web/studio.html'));
+app.get(['/studio', '/webstudio', '/builder', '/generator'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'studio.html'));
+});
+
+app.get(['/design-demo', '/universes', '/themes', '/gallery'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'design-demo.html'));
+});
+
+app.get(['/profile', '/settings', '/account'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'profile.html'));
+});
+
+app.get(['/terms', '/tos', '/terms-of-service'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'terms.html'));
+});
+
+app.get(['/privacy', '/privacy-policy'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'privacy.html'));
+});
+
+app.get(['/thank-you', '/success'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'thank-you.html'));
 });
 
 app.get(['/profile', '/account', '/settings'], (req, res) => {

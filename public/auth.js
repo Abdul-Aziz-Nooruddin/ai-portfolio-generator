@@ -11,9 +11,6 @@ function switchView(viewName) {
   const target = document.getElementById(`view${viewName.charAt(0).toUpperCase() + viewName.slice(1)}`);
   if (target) {
     target.classList.add('active');
-    const url = new URL(window.location);
-    url.searchParams.set('view', viewName);
-    window.history.replaceState({}, '', url);
   }
 }
 
@@ -556,15 +553,26 @@ async function handleSocialAuth(provider = 'google') {
   window.location.href = `/api/auth/${provider}`;
 }
 
-// Check URL query params on page load
+// Check URL pathname and query params on page load
 document.addEventListener('DOMContentLoaded', () => {
   try {
     const url = new URL(window.location);
     const view = url.searchParams.get('view');
+    const path = window.location.pathname.toLowerCase();
     const error = url.searchParams.get('error');
 
     if (view) {
       switchView(view);
+    } else if (path.includes('signup') || path.includes('register')) {
+      switchView('signup');
+    } else if (path.includes('forgot')) {
+      switchView('forgot');
+    } else if (path.includes('reset')) {
+      switchView('reset');
+    } else if (path.includes('verify')) {
+      switchView('verify');
+    } else {
+      switchView('login');
     }
 
     if (error) {
