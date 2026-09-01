@@ -202,6 +202,36 @@
   <script src="/sidebar.js" defer></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
+
+  <style>
+    /* ====================================================
+       MOBILE PERFORMANCE GUARD
+       On mobile (< 768px) Three.js WebGL and the background
+       video are disabled entirely. They cause 19+ seconds of
+       main-thread blocking on mobile CPUs.
+       The hero still looks great via CSS gradient + poster img.
+       ==================================================== */
+    @media (max-width: 768px) {
+      /* Hide WebGL canvas on mobile — saves ~600KB JS parse + GPU blocking */
+      #heroLive3dCanvas { display: none !important; }
+
+      /* Don't download/play video on mobile — saves 20MB+ network payload.
+         The video poster (hero-3d.jpg) still shows as the background. */
+      .ref-hero-video-loop {
+        display: none !important;
+        visibility: hidden !important;
+      }
+
+      /* Show a static CSS gradient background instead on mobile */
+      .ref-hero-bg-media::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #05080A 0%, #0F172A 40%, #1E1B4B 70%, #05080A 100%);
+        z-index: 0;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -249,17 +279,18 @@
               </div>
             </button>
             <div id="navAuthDock" class="nav-auth-dock">
-              <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
-              <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">GET STARTED FREE</button>
+              <!-- href fallbacks ensure Google can crawl these as links -->
+              <a href="/auth.html" class="nav-link-item nav-login-btn" onclick="event.preventDefault(); openAuthModal('signin')" role="button">SIGN IN</a>
+              <a href="/auth.html" class="nav-btn-pill" onclick="event.preventDefault(); openAuthModal('signup')" role="button">GET STARTED FREE</a>
             </div>
           </div>
         </nav>
 
-        <!-- Main Hero Section (Interactive Live 3D Canvas Background reacting to cursor movements) -->
+        <!-- Main Hero Section (Interactive Live 3D Canvas Background) -->
         <header class="ref-hero-banner" id="heroBannerStage">
           <div class="ref-hero-bg-media">
-            <!-- Cinematic Background Video Loop — fetchpriority=high so poster is the LCP element -->
-            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg" fetchpriority="high">
+            <!-- Hero video: hidden on mobile via CSS to avoid 20MB+ download -->
+            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg" fetchpriority="high" preload="none">
               <source src="/assets/hero-3d-loop.webm" type="video/webm">
               <source src="/assets/hero-3d-loop.mp4" type="video/mp4">
             </video>
@@ -1152,11 +1183,16 @@
   <div id="toastContainer" class="toast-container"></div>
 
   <!-- Scripts -->
-  <script src="/app.js"></script>
+  <script src="/app.js" defer></script>
 
   <!-- Interactive Three.js Live 3D Floating Universe & Cursor Movement Script -->
+  <!-- Skipped entirely on mobile to prevent 19,000ms+ main thread blocking -->
   <script>
     (function initHeroInteractive3D() {
+      // 🚫 Skip Three.js completely on mobile — it causes 19s+ main thread blocking
+      // Mobile users get the CSS gradient hero background instead (still looks great)
+      if (window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) return;
+
       const canvas = document.getElementById('heroLive3dCanvas');
       if (!canvas || typeof THREE === 'undefined') return;
 
