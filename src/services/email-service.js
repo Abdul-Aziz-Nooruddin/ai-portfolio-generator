@@ -175,12 +175,12 @@ class EmailService {
   // =========================================================================
 
   async sendConversionEmail1(toEmail, { userId, name = 'there', previewUrl = '', subscribeUrl = '' }) {
-    const subject = "Your portfolio's alive... for 2 hours ⏳";
+    const subject = "Your portfolio's alive... for 24 hours ⏳";
     const text = `Hey ${name},
 
 Your portfolio just went live — and it looks good. Like, "did I really make this" good.
 
-Small catch: it's on a 2-hour timer right now. Think of it as a really impatient Cinderella situation — except instead of a pumpkin, you get a 404 page.
+Small catch: it's on a 24-hour preview window right now. You also have a 5-day grace period before archival.
 
 👉 See your portfolio: ${previewUrl}
 
@@ -192,10 +192,10 @@ Subscribe here: ${subscribeUrl}
 
     const html = `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #18181b; background: #fafafa; border-radius: 12px; line-height: 1.6;">
-        <h2 style="color: #18181b; margin-top: 0;">Your portfolio's alive... for 2 hours ⏳</h2>
+        <h2 style="color: #18181b; margin-top: 0;">Your portfolio's alive... for 24 hours ⏳</h2>
         <p>Hey ${name},</p>
         <p>Your portfolio just went live — and it looks good. Like, <em>"did I really make this"</em> good.</p>
-        <p>Small catch: it's on a <strong>2-hour timer</strong> right now. Think of it as a really impatient Cinderella situation — except instead of a pumpkin, you get a 404 page.</p>
+        <p>Small catch: it's on a <strong>24-hour preview timer</strong> right now, with an automated 5-day grace period before final takedown.</p>
         <div style="margin: 24px 0;">
           <a href="${previewUrl}" style="background: #18181b; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">👉 See Your Portfolio</a>
         </div>

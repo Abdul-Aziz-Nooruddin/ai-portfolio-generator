@@ -49,7 +49,7 @@ class HostingProvider {
 
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
 
-    // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 2 hours)
+    // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 24 hours)
     if (!fs.existsSync(siteDir)) {
       fs.mkdirSync(siteDir, { recursive: true });
     }
@@ -84,7 +84,7 @@ class HostingProvider {
     }
 
     // 3. ONLY deploy to Netlify if user is PAID / ACTIVE subscriber
-    // Unpaid preview trials (2-hour limit) are strictly self-hosted with watermarks
+    // Unpaid preview trials (24-hour limit) are strictly self-hosted with watermarks
     if (isPaid && this.useNetlify && this.netlifyDeployer) {
       try {
         const netlifyRes = await this.netlifyDeployer.deploySite(siteId, siteFiles, userData);
@@ -106,7 +106,7 @@ class HostingProvider {
   }
 
   /**
-   * Complete multi-surface purge for 2-hour preview timeouts or lapsed subscriptions
+   * Complete multi-surface purge for 24-hour preview timeouts or lapsed subscriptions
    */
   async purge(siteId) {
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);

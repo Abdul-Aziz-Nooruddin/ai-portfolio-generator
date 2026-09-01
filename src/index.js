@@ -2007,7 +2007,7 @@ app.get('/p/:siteId', async (req, res) => {
           PREVIEW ONLY
         </div>
         <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
-          2-HOUR TRIAL DEMO • UNLOCK AT @${botUsername}
+          24-HOUR TRIAL DEMO • UNLOCK AT @${botUsername}
         </div>
       </div>
 
@@ -2021,7 +2021,7 @@ app.get('/p/:siteId', async (req, res) => {
     <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 18px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
       <div style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
         <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
-        <span>🔒 <strong>Preview Mode</strong> (2-Hour Timer Active) • Created with @${botUsername}</span>
+        <span>🔒 <strong>Preview Mode</strong> (24-Hour Timer Active) • Created with @${botUsername}</span>
       </div>
       <a href="/subscribe?siteId=${siteId}" style="background: #22c55e; color: #000000; font-weight: 800; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
         💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
@@ -2306,7 +2306,7 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
       <div class="checkout-container">
         <div class="title-tag">PORTFOLIO STUDIO • SELECT YOUR PLAN</div>
         <h1 class="main-title">Unlock Your 3D Portfolio</h1>
-        <p class="subtitle">Remove the 2-hour preview watermark, keep your portfolio online, and choose the plan that best fits your workflow.</p>
+        <p class="subtitle">Remove the 24-hour preview watermark, keep your portfolio online, and choose the plan that best fits your workflow.</p>
 
         <div class="pricing-grid-side-by-side">
           <!-- Box 1: Lifetime Starter -->

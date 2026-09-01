@@ -28,7 +28,7 @@ const STATES = {
 };
 
 const PRICING = {
-  PREVIEW: { name: 'Preview', price: 0, period: '2 hours' },
+  PREVIEW: { name: 'Preview', price: 0, period: '24 hours' },
   LITE: { name: 'Lite', price: 149, period: 'month' },
   PRO: { name: 'Pro', price: 299, period: 'month' },
   EXTRA_PREVIEW: { name: 'Extra Preview', price: 49, period: 'one-time' }
@@ -701,7 +701,7 @@ Sit tight — I'll send you the preview link soon!`
 ${paymentLink}
 
 Pay ₹${PRICING.LITE.price}/month to get everything:
-✅ Remove 2-hour takedown timer & watermarks
+✅ Remove 24-hour takedown timer & watermarks
 ✅ Keep your portfolio hosted live 24/7
 ✅ Real-time visitor analytics & telemetry
 ✅ Automated SEO, OpenGraph & social cards
@@ -760,7 +760,7 @@ Reply:
         console.warn('[DB] createSite warning:', dbErr.message);
       }
 
-      // 6. Update conversation state with 2-Hour Preview Timer
+      // 6. Update conversation state with 24-Hour Preview Timer
       const nowIso = new Date().toISOString();
       try {
         await this.db.updateConversation(id, {

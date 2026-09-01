@@ -124,9 +124,6 @@ class DatabaseService {
       username: cleanUsername,
       password_hash: passwordHash,
       role: isSuperAdmin ? 'admin' : (role || 'user'),
-      is_admin: isSuperAdmin,
-      plan: isSuperAdmin ? 'unlimited' : 'free',
-      unlimited_generations: isSuperAdmin,
       phone_number: phone || `web_${normalizedEmail.replace(/[^a-z0-9]/g, '')}`,
       email_verified: isSuperAdmin ? true : Boolean(emailVerified),
       created_at: new Date().toISOString(),
@@ -139,7 +136,32 @@ class DatabaseService {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      if (error.code === '42703' || error.code === 'PGRST204' || (error.message && error.message.includes('column'))) {
+        const fallbackPayload = {
+          email: email.trim(),
+          phone_number: phone || `web_${normalizedEmail.replace(/[^a-z0-9]/g, '')}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+        if (name) fallbackPayload.name = name;
+        if (cleanUsername) fallbackPayload.username = cleanUsername;
+        if (passwordHash) fallbackPayload.password_hash = passwordHash;
+        if (role) fallbackPayload.role = isSuperAdmin ? 'admin' : role;
+        if (normalizedEmail) fallbackPayload.normalized_email = normalizedEmail;
+        fallbackPayload.email_verified = isSuperAdmin ? true : Boolean(emailVerified);
+
+        const { data: fallbackData, error: fbError } = await this.client
+          .from('users')
+          .insert(fallbackPayload)
+          .select()
+          .single();
+
+        if (fbError) throw fbError;
+        return this._decorateUser(fallbackData);
+      }
+      throw error;
+    }
     return this._decorateUser(data);
   }
 
@@ -222,7 +244,20 @@ class DatabaseService {
         delete safeUpdates.password_hash;
         delete safeUpdates.failed_login_attempts;
         delete safeUpdates.locked_until;
-        await this.client.from('users').update(safeUpdates).eq('id', userId);
+        delete safeUpdates.avatar_url;
+        delete safeUpdates.is_admin;
+        delete safeUpdates.plan;
+        delete safeUpdates.unlimited_generations;
+        delete safeUpdates.tier;
+        delete safeUpdates.allowance;
+        const { error: fbErr } = await this.client.from('users').update(safeUpdates).eq('id', userId);
+        if (fbErr) {
+          // Minimal fallback with just basic fields
+          await this.client.from('users').update({
+            name: cleanUpdates.name || undefined,
+            updated_at: new Date().toISOString()
+          }).eq('id', userId);
+        }
         return;
       }
       throw error;

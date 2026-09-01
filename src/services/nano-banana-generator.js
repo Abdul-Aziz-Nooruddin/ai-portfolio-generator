@@ -431,6 +431,36 @@ class NanoBanana3DGenerator {
   }
 
   /**
+   * Generates SVG 3D Isometric Fallback for offline / reduced-motion rendering
+   */
+  static generateSvgIsometricFallback(config = {}) {
+    const primary = config.primaryColor || '#6366f1';
+    const accent = config.accentColor || '#38bdf8';
+    const subject = config.subject || 'Spatial 3D Asset';
+    return `
+      <svg viewBox="0 0 400 300" class="nano-banana-svg-fallback" aria-label="${subject}" style="width:100%;height:100%;max-height:320px;" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="nb-grad-${config.geometryType || 'core'}" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="${primary}" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="${accent}" stop-opacity="0.9" />
+          </linearGradient>
+          <filter id="nb-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <ellipse cx="200" cy="240" rx="120" ry="30" fill="rgba(0,0,0,0.35)" filter="url(#nb-glow)" />
+        <g transform="translate(200, 140)">
+          <polygon points="0,-70 60,-35 60,35 0,70 -60,35 -60,-35" fill="url(#nb-grad-${config.geometryType || 'core'})" stroke="${accent}" stroke-width="2" />
+          <line x1="0" y1="70" x2="0" y2="-70" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" />
+          <line x1="-60" y1="-35" x2="60" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" />
+          <line x1="60" y1="-35" x2="-60" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" />
+        </g>
+      </svg>
+    `;
+  }
+
+  /**
    * 🍌 Synthesizes a live, interactive 3D visual card tailored to any project's exact title & description
    * @param {Object} project { name, desc, tech, category }
    * @param {string} theme Template visual universe theme

@@ -1,6 +1,6 @@
 /**
  * Lifecycle Service — Deterministic State Machine & Scheduled Automation
- * Enforces strict site lifecycles (2-hour preview takedown, 5-day lapsed grace period, permanent purge)
+ * Enforces strict site lifecycles (24-hour preview takedown, 5-day lapsed grace period, permanent purge)
  * Driven by cron (Section 6) — NOT reasoning/LLM-driven.
  */
 

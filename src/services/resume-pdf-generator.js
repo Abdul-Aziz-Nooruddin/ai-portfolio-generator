@@ -19,7 +19,7 @@ class ResumePdfGenerator {
             Title: `${profile.name || 'Candidate'} - Resume`,
             Author: profile.name || 'Portfolio Creator',
             Subject: 'Professional Resume / Curriculum Vitae',
-            Keywords: (profile.skills || []).join(', ')
+            Keywords: Array.isArray(profile.skills) ? profile.skills.map(s => typeof s === 'object' ? (s.name || s.category || '') : s).filter(Boolean).join(', ') : ''
           }
         });
 
