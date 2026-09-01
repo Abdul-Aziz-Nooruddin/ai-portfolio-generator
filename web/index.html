@@ -191,14 +191,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- Three.js for Live Interactive Hero 3D World & GSAP for Motion -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <!-- Three.js & GSAP — deferred so they don't block first paint (LCP fix) -->
+  <link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
   <!-- Canvas Confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
   <link rel="stylesheet" href="/style.css">
-  <script src="/sidebar.js"></script>
+  <script src="/sidebar.js" defer></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 </head>
@@ -257,8 +258,8 @@
         <!-- Main Hero Section (Interactive Live 3D Canvas Background reacting to cursor movements) -->
         <header class="ref-hero-banner" id="heroBannerStage">
           <div class="ref-hero-bg-media">
-            <!-- Cinematic Background Video Loop -->
-            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg">
+            <!-- Cinematic Background Video Loop — fetchpriority=high so poster is the LCP element -->
+            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg" fetchpriority="high">
               <source src="/assets/hero-3d-loop.webm" type="video/webm">
               <source src="/assets/hero-3d-loop.mp4" type="video/mp4">
             </video>
@@ -495,7 +496,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>ECO-TECH STEAMPUNK 3D</span>
                   </div>
-                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" onerror="this.src='/assets/3d/emerald_cyber_sanctuary_3d.png'" />
+                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" loading="lazy" decoding="async" onerror="this.src='/assets/3d/emerald_cyber_sanctuary_3d.png'" />
                 </div>
                 <div class="portfolio-theme-pill">🌱 Eco-Tech Steampunk Sanctuary</div>
                 <h3 class="speaker-name">ECO-TECH STEAMPUNK</h3>
@@ -510,7 +511,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COSMIC ASTRONAUT 3D</span>
                   </div>
-                  <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" />
+                  <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🌌 Cosmic Space Studio</div>
                 <h3 class="speaker-name">COSMIC ASTRONAUT</h3>
@@ -525,7 +526,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CYBER CRYSTAL 3D</span>
                   </div>
-                  <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" />
+                  <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">💎 Cyberpunk Crystal Holographic</div>
                 <h3 class="speaker-name">CYBER CRYSTAL</h3>
@@ -540,7 +541,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>BIOLUMINESCENT 3D</span>
                   </div>
-                  <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" />
+                  <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🌿 Bioluminescent Cyber-Botanical</div>
                 <h3 class="speaker-name">BIOLUMINESCENT</h3>
@@ -555,7 +556,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NATURALIST CODEX 3D</span>
                   </div>
-                  <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" />
+                  <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🪵 Botanical Woodcraft Naturalist</div>
                 <h3 class="speaker-name">BOTANICAL WOODCRAFT</h3>
@@ -570,7 +571,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CIRCUIT FUSION 3D</span>
                   </div>
-                  <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" />
+                  <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚡ Bio-Digital Circuit Fusion</div>
                 <h3 class="speaker-name">BIO-DIGITAL FUSION</h3>
@@ -585,7 +586,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>EMERALD BIODOME 3D</span>
                   </div>
-                  <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" />
+                  <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🍃 Emerald Cyber Sanctuary</div>
                 <h3 class="speaker-name">EMERALD SANCTUARY</h3>
@@ -600,7 +601,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CLAYMORPHIC GLASS 3D</span>
                   </div>
-                  <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" />
+                  <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">❄️ Pristine White Crystal</div>
                 <h3 class="speaker-name">WHITE CRYSTAL</h3>
@@ -615,7 +616,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>QUANTUM BIOLUMINESCENCE 3D</span>
                   </div>
-                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" />
+                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🪼 Abyssal Quantum Jellyfish</div>
                 <h3 class="speaker-name">QUANTUM JELLYFISH</h3>
@@ -630,7 +631,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CURIO CABINET 3D</span>
                   </div>
-                  <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" />
+                  <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🕰️ Mahogany Brass Steampunk</div>
                 <h3 class="speaker-name">MAHOGANY STEAMPUNK</h3>
@@ -645,7 +646,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COMMAND BRIDGE 3D</span>
                   </div>
-                  <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" />
+                  <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🔮 Lavender Cyber Bridge</div>
                 <h3 class="speaker-name">LAVENDER BRIDGE</h3>
@@ -660,7 +661,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>SAND BOTANICAL 3D</span>
                   </div>
-                  <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" />
+                  <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">📜 Sand Parchment Botanical</div>
                 <h3 class="speaker-name">SAND BOTANICAL</h3>
@@ -675,7 +676,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>HUNTER SYSTEM 3D</span>
                   </div>
-                  <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" />
+                  <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚔️ System Awakening</div>
                 <h3 class="speaker-name">SYSTEM AWAKENING</h3>
@@ -690,7 +691,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>SWISS BLUEPRINT 3D</span>
                   </div>
-                  <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" />
+                  <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">📐 Engineering Archive</div>
                 <h3 class="speaker-name">ENGINEERING ARCHIVE</h3>
@@ -705,7 +706,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COSMIC GEOMETRY 3D</span>
                   </div>
-                  <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" />
+                  <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🔮 Cosmic Cyber Geometry</div>
                 <h3 class="speaker-name">COSMIC CYBER GEOMETRY</h3>
@@ -720,7 +721,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>STELLAR BLUEPRINT 3D</span>
                   </div>
-                  <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" />
+                  <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">✦ Stellar Architect</div>
                 <h3 class="speaker-name">STELLAR ARCHITECT</h3>
@@ -735,7 +736,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>RPG PROGRESSION 3D</span>
                   </div>
-                  <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" />
+                  <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚔️ Abyssal Ascent</div>
                 <h3 class="speaker-name">ABYSSAL ASCENT</h3>
@@ -750,7 +751,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CYPHERPUNK NODE 3D</span>
                   </div>
-                  <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" />
+                  <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚡ Stealth Node</div>
                 <h3 class="speaker-name">STEALTH NODE</h3>
@@ -765,7 +766,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NEOBRUTALISM 3D</span>
                   </div>
-                  <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" />
+                  <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚡ Kinetic Brutalism</div>
                 <h3 class="speaker-name">KINETIC BRUTALISM</h3>
@@ -780,7 +781,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>MECHANICAL COG 3D</span>
                   </div>
-                  <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" />
+                  <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">⚙️ Circuit Core</div>
                 <h3 class="speaker-name">CIRCUIT CORE</h3>
@@ -795,7 +796,7 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NEON AURORA 3D</span>
                   </div>
-                  <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" />
+                  <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" loading="lazy" decoding="async" />
                 </div>
                 <div class="portfolio-theme-pill">🌌 Neon Aurora Cyber</div>
                 <h3 class="speaker-name">NEON AURORA</h3>
@@ -884,32 +885,32 @@
 
             <div class="faq-accordion-grid">
               <div class="faq-item-card reveal-on-scroll delay-1">
-                <h4 class="faq-question-text"><span>❓</span> How does the Nano Banana 3D Engine create project images?</h4>
+                <h3 class="faq-question-text"><span>❓</span> How does the Nano Banana 3D Engine create project images?</h3>
                 <p class="faq-answer-text">Instead of serving static placeholder JPGs, the Nano Banana engine synthesizes real-time 3D vector geometry tailored to each project's domain (e.g. Games, Neural Networks, UI Canvases, LeetCode Trees, Security Shields) with dynamic mouse look-at tilt physics.</p>
               </div>
 
               <div class="faq-item-card reveal-on-scroll delay-2">
-                <h4 class="faq-question-text"><span>🔒</span> Is my private GitHub code or personal data safe?</h4>
+                <h3 class="faq-question-text"><span>🔒</span> Is my private GitHub code or personal data safe?</h3>
                 <p class="faq-answer-text">Yes, 100%. We only analyze public repository metadata (repo names, descriptions, languages, star counts) and documents you explicitly upload. We never access private repos or share personal data.</p>
               </div>
 
               <div class="faq-item-card reveal-on-scroll delay-3">
-                <h4 class="faq-question-text"><span>⏳</span> What happens when the 24-Hour free preview expires?</h4>
+                <h3 class="faq-question-text"><span>⏳</span> What happens when the 24-Hour free preview expires?</h3>
                 <p class="faq-answer-text">Newly generated unpaid previews remain live on our Edge CDN for 24 hours so you can inspect and customize them. If not upgraded within 24 hours, you receive a 5-day takedown grace period before archival. You can unlock a permanent watermark-free link for ₹149 One-Time, or upgrade to Pro (₹149/mo) for your personal subdomain (<code>&lt;name&gt;.myfolio.tech</code>), GitHub auto-sync, and Telegram alerts.</p>
               </div>
 
               <div class="faq-item-card reveal-on-scroll delay-1">
-                <h4 class="faq-question-text"><span>🌐</span> Can I link my own custom domain?</h4>
+                <h3 class="faq-question-text"><span>🌐</span> Can I link my own custom domain?</h3>
                 <p class="faq-answer-text">Yes! Pro subscribers can connect any custom domain (e.g. <code>alexchen.dev</code> or <code>portfolio.yourbrand.com</code>) directly through the User Dashboard with automated SSL certificate provisioning.</p>
               </div>
 
               <div class="faq-item-card reveal-on-scroll delay-2">
-                <h4 class="faq-question-text"><span>📦</span> Can I download the source code to host myself?</h4>
+                <h3 class="faq-question-text"><span>📦</span> Can I download the source code to host myself?</h3>
                 <p class="faq-answer-text">Yes. The Studio workspace provides a one-click Static ZIP Export containing clean HTML, CSS, JavaScript, and Three.js assets ready to deploy on Vercel, Netlify, or GitHub Pages.</p>
               </div>
 
               <div class="faq-item-card reveal-on-scroll delay-3">
-                <h4 class="faq-question-text"><span>📱</span> How does the Telegram Bot work?</h4>
+                <h3 class="faq-question-text"><span>📱</span> How does the Telegram Bot work?</h3>
                 <p class="faq-answer-text">Our official bot (<a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" style="color: #38bdf8;">@ai_portfolio_generator_bot</a>) allows you to generate portfolios on mobile by sending a resume file or GitHub link, and forwards client leads directly to your Telegram chat.</p>
               </div>
             </div>
@@ -921,7 +922,7 @@
           <div class="ref-spot-container">
             <!-- Left: 3D Interactive Media Card -->
             <div class="spot-media-card reveal-on-scroll delay-1">
-              <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" />
+              <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" loading="lazy" decoding="async" />
               <button type="button" class="btn-spot-play" onclick="openSamplesModal()" aria-label="Play Demo Preview">
                 <span class="play-icon">▶</span>
               </button>
