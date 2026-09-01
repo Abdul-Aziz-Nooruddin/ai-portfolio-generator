@@ -3,28 +3,194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyFolio — Bespoke 3D WebGL Portfolios in Seconds</title>
-  <meta name="description" content="Turn your GitHub repositories, resume, images, or guided answers into a bespoke, award-winning 3D WebGL portfolio with live interactive project visual cards in seconds.">
+
+  <!-- ============================================================
+       PRIMARY SEO META — Target Keywords:
+       "AI portfolio generator", "3D WebGL portfolio",
+       "developer portfolio builder", "portfolio from GitHub",
+       "3D portfolio website", "free portfolio generator",
+       "portfolio from resume", "myfolio.tech"
+       ============================================================ -->
+  <title>MyFolio — Free AI 3D Portfolio Generator | Build from GitHub & Resume in Seconds</title>
+  <meta name="description" content="MyFolio turns your GitHub profile, PDF resume, or answers into a stunning 3D WebGL developer portfolio in seconds. Free 24-hour live preview. 20 bespoke visual universes. No coding required.">
+  <meta name="keywords" content="AI portfolio generator, 3D portfolio builder, developer portfolio website, portfolio from GitHub, resume to portfolio, WebGL portfolio, free portfolio generator, 3D portfolio template, online portfolio maker, portfolio website for developers, myfolio.tech">
+  <meta name="author" content="MyFolio Studio">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://myfolio.tech/">
+
+  <!-- ============================================================
+       OPEN GRAPH — LinkedIn, Facebook, WhatsApp previews
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MyFolio Studio">
+  <meta property="og:title" content="MyFolio — Free AI 3D Portfolio Generator | Build from GitHub & Resume in Seconds">
+  <meta property="og:description" content="Turn your GitHub profile, PDF resume, or career answers into a bespoke 3D WebGL developer portfolio in seconds. 20 visual universes, live preview, PDF resume export. Free to start.">
+  <meta property="og:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MyFolio 3D WebGL portfolio generator — cosmic astronaut universe example">
+  <meta property="og:url" content="https://myfolio.tech/">
+  <meta property="og:locale" content="en_US">
+
+  <!-- ============================================================
+       TWITTER / X CARDS
+       ============================================================ -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@myfoliotech">
+  <meta name="twitter:title" content="MyFolio — Free AI 3D Portfolio Generator from GitHub & Resume">
+  <meta name="twitter:description" content="Instant 3D WebGL developer portfolios from your GitHub profile or PDF resume. 20 bespoke visual universes, live 24-hour preview. Free to start.">
+  <meta name="twitter:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta name="twitter:image:alt" content="MyFolio 3D portfolio generator preview">
+
+  <!-- ============================================================
+       PWA / BROWSER
+       ============================================================ -->
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#05080A">
 
-  <!-- Open Graph & Social Cards -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="MyFolio — Bespoke 3D WebGL Portfolios in Seconds">
-  <meta property="og:description" content="Synthesize award-winning 3D WebGL developer portfolios with real-time physics, custom domains, and AI-powered resume intelligence.">
-  <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg">
-  <meta property="og:url" content="https://myfolio.tech/">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="MyFolio — Bespoke 3D WebGL Portfolios">
-  <meta name="twitter:description" content="Instant 3D developer portfolios from your GitHub & resume.">
-  <meta name="twitter:image" content="/assets/3d/cosmic_astronaut_3d.jpg">
-  
+  <!-- ============================================================
+       JSON-LD STRUCTURED DATA — Google Rich Results
+       1. WebApplication schema  (product info + ratings)
+       2. FAQPage schema         (FAQ accordion content)
+       3. Organization schema    (brand entity)
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MyFolio — AI 3D Portfolio Generator",
+    "url": "https://myfolio.tech/",
+    "description": "MyFolio is a free AI-powered 3D WebGL portfolio generator that transforms your GitHub profile, PDF resume, or career answers into a bespoke, interactive developer portfolio in seconds.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web Browser",
+    "browserRequirements": "Requires JavaScript. WebGL recommended.",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Free 24-Hour Preview",
+        "price": "0",
+        "priceCurrency": "INR",
+        "description": "Generate and preview your 3D portfolio for free with a 24-hour live CDN link."
+      },
+      {
+        "@type": "Offer",
+        "name": "Lifetime Starter",
+        "price": "149",
+        "priceCurrency": "INR",
+        "description": "One-time payment for a permanent, watermark-free Netlify-hosted portfolio link."
+      },
+      {
+        "@type": "Offer",
+        "name": "Pro Creator",
+        "price": "149",
+        "priceCurrency": "INR",
+        "description": "Monthly subscription with personal subdomain, unlimited edits, GitHub auto-sync, and Telegram recruiter alerts."
+      }
+    ],
+    "featureList": [
+      "AI-powered 3D WebGL portfolio generation",
+      "GitHub profile to portfolio in seconds",
+      "PDF resume OCR extraction",
+      "20 bespoke visual universe templates",
+      "Nano Banana 3D project card engine",
+      "Free 24-hour live CDN preview",
+      "PDF resume download",
+      "Static ZIP export",
+      "Custom domain support",
+      "Real-time Telegram recruiter alerts"
+    ],
+    "screenshot": "https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg",
+    "creator": {
+      "@type": "Organization",
+      "name": "MyFolio Studio",
+      "url": "https://myfolio.tech/"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How does MyFolio generate 3D portfolio websites?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "MyFolio uses AI to synthesize bespoke 3D WebGL developer portfolios from your GitHub profile, PDF resume, or guided questions. The Nano Banana 3D engine creates real-time interactive project visual cards instead of static placeholder images."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is MyFolio free to use?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. MyFolio generates your complete 3D portfolio for free with a 24-hour live preview link. Upgrade to Lifetime Starter (₹149 one-time) for a permanent link, or Pro Creator (₹149/month) for your personal subdomain and GitHub auto-sync."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What happens to my portfolio after 24 hours?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Newly generated portfolios remain live for 24 hours. If not upgraded, you receive a 5-day takedown grace period with email alerts before archival. Upgrade anytime to make your portfolio permanent."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I use my own custom domain with MyFolio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Pro subscribers can connect any custom domain (e.g. yourname.dev) through the dashboard with automated SSL certificate provisioning."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I download the source code of my portfolio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Studio workspace provides a one-click Static ZIP Export with clean HTML, CSS, JavaScript, and Three.js assets ready to deploy on Vercel, Netlify, or GitHub Pages."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is my GitHub data or resume safe?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, 100%. MyFolio only reads public repository metadata (names, descriptions, languages, star counts) and documents you explicitly upload. Private repos and personal data are never accessed or shared."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "MyFolio Studio",
+    "url": "https://myfolio.tech/",
+    "logo": "https://myfolio.tech/assets/logo-3d.jpg",
+    "description": "AI-powered 3D WebGL developer portfolio generator. Build from GitHub, PDF resume, or guided questions in seconds.",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer support",
+      "url": "https://t.me/ai_portfolio_generator_bot"
+    },
+    "sameAs": [
+      "https://t.me/ai_portfolio_generator_bot"
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <!-- Three.js for Live Interactive Hero 3D World & GSAP for Motion -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -36,6 +202,7 @@
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 </head>
+
 <body>
   <!-- Ambient Texture Layer -->
   <div class="product-mesh-layer" aria-hidden="true"></div>

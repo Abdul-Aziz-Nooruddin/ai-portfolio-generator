@@ -1,10 +1,63 @@
+# ==========================================================
+# MyFolio.tech — robots.txt
+# ==========================================================
+
+# Allow all well-behaved search engines
 User-agent: *
 Allow: /
 Allow: /studio.html
 Allow: /design-demo.html
-Allow: /p/
-Allow: /sites/
+Allow: /auth.html
+Allow: /dashboard.html
+Allow: /terms.html
+Allow: /privacy.html
+Allow: /assets/
+Allow: /style.css
+Allow: /sitemap.xml
+
+# Block internal/private pages from indexing
 Disallow: /api/
 Disallow: /admin.html
+Disallow: /profile.html
+Disallow: /p/
+Disallow: /sites/
 
+# Disallow common crawler traps
+Disallow: /*.json$
+Disallow: /src/
+Disallow: /node_modules/
+
+# Allow Google bot full access to key pages
+User-agent: Googlebot
+Allow: /
+Allow: /assets/3d/
+Allow: /assets/hero-3d.jpg
+Allow: /assets/preview-3d.jpg
+
+# Allow Twitter/X card crawler for OG images
+User-agent: Twitterbot
+Allow: /assets/
+
+# Allow LinkedIn post inspector
+User-agent: LinkedInBot
+Allow: /assets/
+
+# Block known scrapers & spam bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+# Crawl delay for less important bots
+User-agent: Bingbot
+Crawl-delay: 5
+
+# Sitemap location
 Sitemap: https://myfolio.tech/sitemap.xml
