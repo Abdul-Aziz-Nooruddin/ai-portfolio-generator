@@ -12,13 +12,14 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 — Page Not Found | MyFolio 3D Portfolio Studio</title>
-  <meta name="description" content="The requested page could not be located in this universe. Return to MyFolio 3D Studio or explore your developer dashboard." />
+  <title>404 — Dimensional Coordinates Not Found | MyFolio 3D Studio</title>
+  <meta name="description" content="The requested portfolio, page, or universe coordinates could not be located in this spacetime. Return to MyFolio 3D Studio or explore 22 bespoke visual universes." />
   
   <!-- Open Graph / Social Meta -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="404 — Page Not Found | MyFolio" />
-  <meta property="og:description" content="The requested page coordinates do not exist. Return to MyFolio 3D Portfolio Studio." />
+  <meta property="og:site_name" content="MyFolio Studio" />
+  <meta property="og:title" content="404 — Dimensional Coordinates Not Found | MyFolio" />
+  <meta property="og:description" content="The requested portfolio or coordinates could not be found. Synthesize your own 3D WebGL developer portfolio in under 60 seconds." />
   <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   
@@ -27,19 +28,22 @@
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Fonts & Icons -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <script src="https://unpkg.com/lucide@latest"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  
+  <!-- Three.js (Procedural 3D WebGL Scene) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
     :root {
-      --bg: #05080A;
-      --card-bg: rgba(13, 19, 28, 0.75);
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: #030712;
+      --card-bg: rgba(15, 23, 42, 0.72);
+      --border: rgba(56, 189, 248, 0.25);
       --primary: #38BDF8;
       --accent: #A855F7;
+      --pink: #EC4899;
       --text: #F8FAFC;
       --text-muted: #94A3B8;
       --font-display: 'Space Grotesk', sans-serif;
@@ -58,92 +62,162 @@
       color: var(--text);
       font-family: var(--font-body);
       min-height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow-x: hidden;
       padding: 24px;
     }
 
-    /* Ambient Glow Background */
+    /* 3D WebGL Background Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    /* Vignette & Radial Atmospheric Fog */
+    .vignette-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, rgba(3, 7, 18, 0.2) 0%, rgba(3, 7, 18, 0.85) 80%, rgba(3, 7, 18, 0.98) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Ambient Pulsing Glow */
     .ambient-glow {
       position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 600px;
-      height: 600px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 70%);
+      width: 650px;
+      height: 650px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(168, 85, 247, 0.12) 40%, transparent 70%);
       pointer-events: none;
-      z-index: 0;
-      filter: blur(60px);
+      z-index: 1;
+      filter: blur(80px);
+      animation: pulseGlow 6s ease-in-out infinite alternate;
     }
 
+    @keyframes pulseGlow {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
+      100% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+    }
+
+    /* Main 404 Holographic Glass Card */
     .error-container {
       position: relative;
-      z-index: 1;
-      max-width: 680px;
+      z-index: 2;
+      max-width: 640px;
       width: 100%;
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 28px;
-      padding: 48px 36px;
+      padding: 44px 36px;
       text-align: center;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(56, 189, 248, 0.1);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 50px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      animation: floatCard 4s ease-in-out infinite alternate;
     }
 
-    .glitch-code {
-      font-family: var(--font-display);
-      font-size: clamp(5rem, 15vw, 8.5rem);
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -4px;
-      background: linear-gradient(135deg, #38BDF8 0%, #A855F7 50%, #EC4899 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 12px;
-      display: inline-block;
-      position: relative;
+    @keyframes floatCard {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-8px); }
     }
 
     .status-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #F87171;
-      padding: 6px 14px;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #FCA5A5;
+      padding: 6px 16px;
       border-radius: 100px;
       font-family: var(--font-mono);
-      font-size: 0.82rem;
-      font-weight: 600;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: #EF4444;
+      border-radius: 50%;
+      animation: blinkDot 1.4s infinite;
+    }
+
+    @keyframes blinkDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.3; transform: scale(0.75); }
+    }
+
+    .glitch-code {
+      font-family: var(--font-display);
+      font-size: clamp(5.5rem, 16vw, 9rem);
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -4px;
+      background: linear-gradient(135deg, #38BDF8 0%, #818CF8 35%, #C084FC 70%, #F472B6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      display: inline-block;
+      text-shadow: 0 0 35px rgba(56, 189, 248, 0.3);
+      user-select: none;
     }
 
     .error-title {
       font-family: var(--font-display);
-      font-size: clamp(1.5rem, 4vw, 2rem);
-      font-weight: 700;
-      margin-bottom: 14px;
+      font-size: clamp(1.4rem, 4vw, 1.85rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
       color: #FFFFFF;
     }
 
     .error-desc {
       color: var(--text-muted);
-      font-size: 1.05rem;
-      line-height: 1.6;
-      margin-bottom: 32px;
+      font-size: 0.98rem;
+      line-height: 1.65;
+      margin-bottom: 28px;
+    }
+
+    /* Interactive 3D Orbit Tip */
+    .interaction-hint {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: rgba(56, 189, 248, 0.85);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px dashed rgba(56, 189, 248, 0.3);
+      padding: 5px 12px;
+      border-radius: 8px;
+      margin-bottom: 24px;
     }
 
     .button-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 12px;
       justify-content: center;
     }
 
@@ -151,9 +225,9 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 14px 28px;
-      border-radius: 14px;
-      font-size: 0.95rem;
+      padding: 13px 24px;
+      border-radius: 50px;
+      font-size: 0.92rem;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
@@ -162,41 +236,49 @@
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
-      color: #05080A;
-      box-shadow: 0 8px 24px rgba(56, 189, 248, 0.3);
+      background: linear-gradient(135deg, #0284C7 0%, #2563EB 50%, #7C3AED 100%);
+      color: #FFFFFF;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
     }
 
     .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 14px 35px rgba(37, 99, 235, 0.6);
     }
 
     .btn-secondary {
       background: rgba(255, 255, 255, 0.06);
       color: var(--text);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
     }
 
     .btn-secondary:hover {
       background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(56, 189, 248, 0.4);
       transform: translateY(-2px);
+      color: #38BDF8;
     }
 
     .footer-brand {
-      margin-top: 32px;
-      font-size: 0.85rem;
+      margin-top: 26px;
+      font-size: 0.82rem;
       color: var(--text-muted);
     }
 
     .footer-brand a {
       color: var(--primary);
       text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-brand a:hover {
+      text-decoration: underline;
     }
 
     @media (max-width: 600px) {
       .error-container {
-        padding: 36px 20px;
+        padding: 32px 20px;
       }
       .btn {
         width: 100%;
@@ -206,12 +288,16 @@
   </style>
 </head>
 <body>
+  <!-- Three.js 3D Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+  <div class="vignette-overlay"></div>
   <div class="ambient-glow"></div>
 
-  <div class="error-container">
+  <!-- Holographic Glassmorphism UI -->
+  <main class="error-container">
     <div class="status-badge">
-      <i data-lucide="alert-triangle" style="width:14px;height:14px;"></i>
-      <span>HTTP 404 • COSMIC DISCONNECT</span>
+      <span class="status-dot"></span>
+      <span>404 • DIMENSIONAL DESYNCHRONIZATION</span>
     </div>
 
     <div>
@@ -220,32 +306,197 @@
 
     <h2 class="error-title">Dimensional Coordinates Not Found</h2>
     <p class="error-desc">
-      The portfolio, page, or universe you are trying to reach has either been relocated, expired, or exists in an alternate timeline.
+      The portfolio, page, or universe you are searching for does not exist in this sector. It may have expired, moved to a custom domain, or collapsed into an alternate timeline.
     </p>
+
+    <div class="interaction-hint">
+      <span>✦ Tip: Move your cursor or touch to rotate the 3D quantum singularity</span>
+    </div>
 
     <div class="button-group">
       <a href="/studio" class="btn btn-primary">
-        <i data-lucide="zap" style="width:16px;height:16px;"></i> Launch 3D Studio
+        <span>⚡ Launch 3D Studio</span>
       </a>
-      <a href="/dashboard" class="btn btn-secondary">
-        <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
-        <span>My Dashboard</span>
+      <a href="/universes" class="btn btn-secondary">
+        <span>🎨 Explore 22 Universes</span>
       </a>
       <a href="/" class="btn btn-secondary">
-        <i data-lucide="home" style="width:18px;height:18px;"></i>
-        <span>Homepage</span>
+        <span>🏠 Return Home</span>
       </a>
     </div>
 
     <div class="footer-brand">
-      Powered by <a href="/">MyFolio AI Portfolio Generator</a>
+      Synthesized with precision by <a href="/">MyFolio AI 3D Platform</a>
     </div>
-  </div>
+  </main>
 
+  <!-- Procedural 3D WebGL Three.js Engine -->
   <script>
-    if (typeof lucide !== 'undefined') {
-      lucide.createIcons();
-    }
+    (function init3DErrorScene() {
+      const canvas = document.getElementById('webgl-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x030712, 0.025);
+
+      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.z = 24;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // 1. Central Rotating Quantum Polyhedron (Broken Tesseract)
+      const coreGroup = new THREE.Group();
+      scene.add(coreGroup);
+
+      // Inner Icosahedron
+      const innerGeom = new THREE.IcosahedronGeometry(4.2, 1);
+      const innerMat = new THREE.MeshStandardMaterial({
+        color: 0x0284C7,
+        roughness: 0.2,
+        metalness: 0.85,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.85
+      });
+      const innerMesh = new THREE.Mesh(innerGeom, innerMat);
+      coreGroup.add(innerMesh);
+
+      // Outer Torus Knot (Quantum Loop)
+      const knotGeom = new THREE.TorusKnotGeometry(6.5, 0.45, 120, 16, 2, 3);
+      const knotMat = new THREE.MeshStandardMaterial({
+        color: 0xA855F7,
+        roughness: 0.15,
+        metalness: 0.9,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.65
+      });
+      const knotMesh = new THREE.Mesh(knotGeom, knotMat);
+      coreGroup.add(knotMesh);
+
+      // Outer Orbital Rings
+      const ringGeom = new THREE.RingGeometry(9.5, 9.75, 64);
+      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38BDF8, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
+      const ringMesh = new THREE.Mesh(ringGeom, ringMat);
+      ringMesh.rotation.x = Math.PI / 3;
+      coreGroup.add(ringMesh);
+
+      // 2. Cosmic Stardust Particle Cloud (1,400 Particles)
+      const particleCount = 1400;
+      const particlePositions = new Float32Array(particleCount * 3);
+      const particleColors = new Float32Array(particleCount * 3);
+      const colorPalette = [
+        new THREE.Color(0x38BDF8),
+        new THREE.Color(0xA855F7),
+        new THREE.Color(0xEC4899),
+        new THREE.Color(0x0284C7)
+      ];
+
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        const radius = 8 + Math.random() * 32;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos((Math.random() * 2) - 1);
+
+        particlePositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+        particlePositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+        particlePositions[i3 + 2] = radius * Math.cos(phi);
+
+        const chosenColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+        particleColors[i3] = chosenColor.r;
+        particleColors[i3 + 1] = chosenColor.g;
+        particleColors[i3 + 2] = chosenColor.b;
+      }
+
+      const particleGeom = new THREE.BufferGeometry();
+      particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+      particleGeom.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
+
+      const particleMat = new THREE.PointsMaterial({
+        size: 0.18,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.85,
+        blending: THREE.AdditiveBlending
+      });
+      const particleCloud = new THREE.Points(particleGeom, particleMat);
+      scene.add(particleCloud);
+
+      // 3. Dynamic Colorful Lighting
+      const ambientLight = new THREE.AmbientLight(0x060D1E, 1.5);
+      scene.add(ambientLight);
+
+      const lightCyan = new THREE.PointLight(0x38BDF8, 3.5, 50);
+      lightCyan.position.set(12, 10, 15);
+      scene.add(lightCyan);
+
+      const lightPurple = new THREE.PointLight(0xA855F7, 3.5, 50);
+      lightPurple.position.set(-12, -10, 15);
+      scene.add(lightPurple);
+
+      const lightPink = new THREE.PointLight(0xEC4899, 2.5, 40);
+      lightPink.position.set(0, 15, -8);
+      scene.add(lightPink);
+
+      // 4. Mouse / Touch Parallax Dynamics
+      let targetRotX = 0;
+      let targetRotY = 0;
+      let mouseX = 0;
+      let mouseY = 0;
+
+      function onPointerMove(e) {
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        mouseX = (clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (clientY / window.innerHeight - 0.5) * 2;
+        targetRotY = mouseX * 0.75;
+        targetRotX = mouseY * 0.75;
+      }
+
+      window.addEventListener('mousemove', onPointerMove, { passive: true });
+      window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+      // Resize Handler
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      });
+
+      // Animation Loop
+      let clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+        const elapsedTime = clock.getElapsedTime();
+
+        // Rotate central 3D core
+        coreGroup.rotation.y += 0.007;
+        coreGroup.rotation.x += 0.004;
+
+        knotMesh.rotation.y = elapsedTime * 0.25;
+        knotMesh.rotation.z = elapsedTime * 0.15;
+
+        ringMesh.rotation.z = -elapsedTime * 0.18;
+
+        // Rotate particle galaxy
+        particleCloud.rotation.y = elapsedTime * 0.02;
+        particleCloud.rotation.x = Math.sin(elapsedTime * 0.05) * 0.1;
+
+        // Smooth Camera Parallax Lerp
+        camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.04;
+        camera.position.y += (-mouseY * 3.5 - camera.position.y) * 0.04;
+        camera.lookAt(0, 0, 0);
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    })();
   </script>
 </body>
 </html>
