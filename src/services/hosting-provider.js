@@ -69,8 +69,8 @@ class HostingProvider {
     let deployUrl = `${this.hostUrl}/p/${siteId}`;
     let provider = 'self_hosted';
 
-    // 2. Sync to Supabase Storage Bucket for paid accounts
-    if (isPaid && this.supabase) {
+    // 2. Sync to Supabase Storage Bucket (survives cloud container restarts & redeployments)
+    if (this.supabase) {
       try {
         await this.supabase.storage
           .from('portfolios')
@@ -103,6 +103,41 @@ class HostingProvider {
       url: deployUrl,
       provider
     };
+  }
+
+  /**
+   * Retrieves site HTML from local disk, falling back to Supabase Storage if disk was reset
+   */
+  async getSiteHtml(siteId) {
+    const filePath = path.join(process.cwd(), 'public', 'sites', siteId, 'index.html');
+    if (fs.existsSync(filePath)) {
+      try {
+        return fs.readFileSync(filePath, 'utf8');
+      } catch (e) {}
+    }
+
+    // Fallback: Check Supabase Storage
+    if (this.supabase) {
+      try {
+        const { data, error } = await this.supabase.storage
+          .from('portfolios')
+          .download(`${siteId}/index.html`);
+        if (data && !error) {
+          const html = await data.text();
+          // Restore to local filesystem so subsequent requests are instant
+          const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+          if (!fs.existsSync(siteDir)) {
+            fs.mkdirSync(siteDir, { recursive: true });
+          }
+          fs.writeFileSync(filePath, html, 'utf8');
+          return html;
+        }
+      } catch (err) {
+        // Non-blocking
+      }
+    }
+
+    return null;
   }
 
   /**

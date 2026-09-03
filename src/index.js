@@ -1752,8 +1752,10 @@ app.get('/p/:siteId', async (req, res) => {
     return res.status(400).send('Invalid portfolio identifier.');
   }
 
-  const filePath = path.join(sitesBaseDir, siteId, 'index.html');
-  if (!fs.existsSync(filePath)) {
+  // Retrieve site HTML from disk or Supabase Storage recovery
+  let html = await hostingProvider.getSiteHtml(siteId);
+
+  if (!html) {
     // If siteId is a registered template ID, render a rich live demo showcase on the fly
     const template = TemplateRegistry.templates[siteId];
     if (template) {
@@ -1993,7 +1995,7 @@ app.get('/p/:siteId', async (req, res) => {
   res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
   res.setHeader('X-Content-Type-Options', 'nosniff');
 
-  let html = fs.readFileSync(filePath, 'utf8');
+  // html is already populated from hostingProvider.getSiteHtml(siteId) above
 
   // Record real live visitor telemetry
   try {

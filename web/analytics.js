@@ -31,6 +31,8 @@
             body: JSON.stringify(payload),
             keepalive: true
           }).catch(() => {});
+        }
+
         // Also mirror event to GA4 if gtag is loaded
         if (typeof window.gtag === 'function') {
           try {
