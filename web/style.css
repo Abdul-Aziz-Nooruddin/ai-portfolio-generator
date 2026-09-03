@@ -378,7 +378,7 @@ html, body {
   justify-content: center;
   text-align: center;
   padding: 80px 24px 100px;
-  background: #0B1026 url('/assets/hero-3d-bg.jpg') center/cover no-repeat;
+  background: #0B1026 url('/assets/hero-3d-bg.webp') center/cover no-repeat; /* WebP: 98KB vs 739KB JPG */
   color: #FFFFFF;
   overflow: hidden;
 }

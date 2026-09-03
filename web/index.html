@@ -186,17 +186,33 @@
   }
   </script>
 
-  <!-- Fonts -->
+  <!-- Fonts — Non-render-blocking: print/all swap trick eliminates font-CSS blocking (Lighthouse fix) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
 
-  <!-- Three.js & GSAP — deferred so they don't block first paint (LCP fix) -->
-  <link rel="preload" as="script" href="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-  <!-- Canvas Confetti -->
+  <!-- Three.js & GSAP — conditionally loaded: desktop only, deferred to not block first paint -->
+  <!-- On mobile this script is skipped entirely — saves 600KB+ Three.js + GSAP download -->
+  <script>
+    // Only load Three.js + GSAP on desktop (save mobile users 600KB+ bandwidth)
+    if (window.innerWidth >= 768 && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+      var s1 = document.createElement('script');
+      s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      s1.defer = true;
+      document.head.appendChild(s1);
+      var s2 = document.createElement('script');
+      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+      s2.defer = true;
+      document.head.appendChild(s2);
+    }
+  </script>
+  <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
+
+  <!-- LCP Preload: Hero poster image is the Largest Contentful Paint element — highest priority fetch -->
+  <link rel="preload" as="image" href="/assets/hero-3d.webp" fetchpriority="high" type="image/webp">
 
   <link rel="stylesheet" href="/style.css">
   <script src="/sidebar.js" defer></script>
@@ -249,7 +265,10 @@
         <!-- Top Nav Header -->
         <nav class="reference-top-nav">
           <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
-            <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);">
+            <picture>
+              <source srcset="/assets/logo-3d.webp" type="image/webp">
+              <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" loading="lazy" decoding="async" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);">
+            </picture>
             <span class="nav-brand-text">MYFOLIO STUDIO</span>
           </div>
           <div class="nav-links">
@@ -290,7 +309,7 @@
         <header class="ref-hero-banner" id="heroBannerStage">
           <div class="ref-hero-bg-media">
             <!-- Hero video: hidden on mobile via CSS to avoid 20MB+ download -->
-            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.jpg" fetchpriority="high" preload="none">
+            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.webp" fetchpriority="high" preload="none">
               <source src="/assets/hero-3d-loop.webm" type="video/webm">
               <source src="/assets/hero-3d-loop.mp4" type="video/mp4">
             </video>
@@ -527,7 +546,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>ECO-TECH STEAMPUNK 3D</span>
                   </div>
-                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" loading="lazy" decoding="async" onerror="this.src='/assets/3d/emerald_cyber_sanctuary_3d.png'" />
+                  <picture>
+                    <source srcset="/assets/3d/crystal_leaf_hand_3d.webp" type="image/webp">
+                    <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🌱 Eco-Tech Steampunk Sanctuary</div>
                 <h3 class="speaker-name">ECO-TECH STEAMPUNK</h3>
@@ -542,7 +564,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COSMIC ASTRONAUT 3D</span>
                   </div>
-                  <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/cosmic_astronaut_3d.webp" type="image/webp">
+                    <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🌌 Cosmic Space Studio</div>
                 <h3 class="speaker-name">COSMIC ASTRONAUT</h3>
@@ -557,7 +582,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CYBER CRYSTAL 3D</span>
                   </div>
-                  <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/cyber_crystal_3d.webp" type="image/webp">
+                    <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">💎 Cyberpunk Crystal Holographic</div>
                 <h3 class="speaker-name">CYBER CRYSTAL</h3>
@@ -572,7 +600,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>BIOLUMINESCENT 3D</span>
                   </div>
-                  <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/bioluminescent_wireframe_3d.webp" type="image/webp">
+                    <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🌿 Bioluminescent Cyber-Botanical</div>
                 <h3 class="speaker-name">BIOLUMINESCENT</h3>
@@ -587,7 +618,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NATURALIST CODEX 3D</span>
                   </div>
-                  <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/botanical_woodcraft_3d.webp" type="image/webp">
+                    <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🪵 Botanical Woodcraft Naturalist</div>
                 <h3 class="speaker-name">BOTANICAL WOODCRAFT</h3>
@@ -602,7 +636,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CIRCUIT FUSION 3D</span>
                   </div>
-                  <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/bio_digital_fusion_3d.webp" type="image/webp">
+                    <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚡ Bio-Digital Circuit Fusion</div>
                 <h3 class="speaker-name">BIO-DIGITAL FUSION</h3>
@@ -617,7 +654,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>EMERALD BIODOME 3D</span>
                   </div>
-                  <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/emerald_cyber_sanctuary_3d.webp" type="image/webp">
+                    <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🍃 Emerald Cyber Sanctuary</div>
                 <h3 class="speaker-name">EMERALD SANCTUARY</h3>
@@ -632,7 +672,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CLAYMORPHIC GLASS 3D</span>
                   </div>
-                  <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/pristine_crystal_ribbon_hero_3d.webp" type="image/webp">
+                    <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">❄️ Pristine White Crystal</div>
                 <h3 class="speaker-name">WHITE CRYSTAL</h3>
@@ -647,7 +690,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>QUANTUM BIOLUMINESCENCE 3D</span>
                   </div>
-                  <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/crystal_leaf_hand_3d.webp" type="image/webp">
+                    <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🪼 Abyssal Quantum Jellyfish</div>
                 <h3 class="speaker-name">QUANTUM JELLYFISH</h3>
@@ -662,7 +708,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CURIO CABINET 3D</span>
                   </div>
-                  <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/steampunk_skills_crystal_obelisk_3d.webp" type="image/webp">
+                    <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🕰️ Mahogany Brass Steampunk</div>
                 <h3 class="speaker-name">MAHOGANY STEAMPUNK</h3>
@@ -677,7 +726,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COMMAND BRIDGE 3D</span>
                   </div>
-                  <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/space_command_deck_about_3d.webp" type="image/webp">
+                    <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🔮 Lavender Cyber Bridge</div>
                 <h3 class="speaker-name">LAVENDER BRIDGE</h3>
@@ -692,7 +744,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>SAND BOTANICAL 3D</span>
                   </div>
-                  <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/golden_lotus_experience_3d.webp" type="image/webp">
+                    <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">📜 Sand Parchment Botanical</div>
                 <h3 class="speaker-name">SAND BOTANICAL</h3>
@@ -707,7 +762,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>HUNTER SYSTEM 3D</span>
                   </div>
-                  <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/developer_showcase_portfolio_3d.webp" type="image/webp">
+                    <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚔️ System Awakening</div>
                 <h3 class="speaker-name">SYSTEM AWAKENING</h3>
@@ -722,7 +780,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>SWISS BLUEPRINT 3D</span>
                   </div>
-                  <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/engineering_archive_3d.webp" type="image/webp">
+                    <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">📐 Engineering Archive</div>
                 <h3 class="speaker-name">ENGINEERING ARCHIVE</h3>
@@ -737,7 +798,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>COSMIC GEOMETRY 3D</span>
                   </div>
-                  <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/cosmic_cyber_geometry_3d.webp" type="image/webp">
+                    <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🔮 Cosmic Cyber Geometry</div>
                 <h3 class="speaker-name">COSMIC CYBER GEOMETRY</h3>
@@ -752,7 +816,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>STELLAR BLUEPRINT 3D</span>
                   </div>
-                  <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/stellar_architect_3d.webp" type="image/webp">
+                    <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">✦ Stellar Architect</div>
                 <h3 class="speaker-name">STELLAR ARCHITECT</h3>
@@ -767,7 +834,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>RPG PROGRESSION 3D</span>
                   </div>
-                  <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/abyssal_ascent_3d.webp" type="image/webp">
+                    <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚔️ Abyssal Ascent</div>
                 <h3 class="speaker-name">ABYSSAL ASCENT</h3>
@@ -782,7 +852,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>CYPHERPUNK NODE 3D</span>
                   </div>
-                  <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/stealth_node_3d.webp" type="image/webp">
+                    <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚡ Stealth Node</div>
                 <h3 class="speaker-name">STEALTH NODE</h3>
@@ -797,7 +870,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NEOBRUTALISM 3D</span>
                   </div>
-                  <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/kinetic_brutalism_3d.webp" type="image/webp">
+                    <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚡ Kinetic Brutalism</div>
                 <h3 class="speaker-name">KINETIC BRUTALISM</h3>
@@ -812,7 +888,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>MECHANICAL COG 3D</span>
                   </div>
-                  <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/circuit_core_3d.webp" type="image/webp">
+                    <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">⚙️ Circuit Core</div>
                 <h3 class="speaker-name">CIRCUIT CORE</h3>
@@ -827,7 +906,10 @@
                     <span class="universe-telemetry-dot"></span>
                     <span>NEON AURORA 3D</span>
                   </div>
-                  <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  <picture>
+                    <source srcset="/assets/3d/neon_aurora_cyber_3d.webp" type="image/webp">
+                    <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" loading="lazy" decoding="async" />
+                  </picture>
                 </div>
                 <div class="portfolio-theme-pill">🌌 Neon Aurora Cyber</div>
                 <h3 class="speaker-name">NEON AURORA</h3>
@@ -953,7 +1035,10 @@
           <div class="ref-spot-container">
             <!-- Left: 3D Interactive Media Card -->
             <div class="spot-media-card reveal-on-scroll delay-1">
-              <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" loading="lazy" decoding="async" />
+              <picture>
+                <source srcset="/assets/preview-3d.webp" type="image/webp">
+                <img src="/assets/preview-3d.jpg" alt="3D Interactive Media Preview" class="spot-3d-img" loading="lazy" decoding="async" />
+              </picture>
               <button type="button" class="btn-spot-play" onclick="openSamplesModal()" aria-label="Play Demo Preview">
                 <span class="play-icon">▶</span>
               </button>
