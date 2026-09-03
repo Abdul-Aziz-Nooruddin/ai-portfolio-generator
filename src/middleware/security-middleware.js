@@ -13,12 +13,12 @@ class SecurityMiddleware {
       const isProduction = process.env.NODE_ENV === 'production';
       const csp = [
         "default-src 'self'",
-        "script-src 'self' 'unsafe-inline' https://checkout.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com",
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://tagassistant.google.com https://checkout.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
         "font-src 'self' https://fonts.gstatic.com data:",
-        "img-src 'self' data: https: blob:",
-        "frame-src 'self' https://api.razorpay.com https://checkout.razorpay.com",
-        "connect-src 'self' https://api.razorpay.com https://lumberjack.razorpay.com",
+        "img-src 'self' data: https: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.google.co.in",
+        "frame-src 'self' https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com",
+        "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'"
