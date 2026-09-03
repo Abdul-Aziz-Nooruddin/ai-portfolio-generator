@@ -2275,6 +2275,7 @@
           thumb: '/assets/3d/cosmic_astronaut_3d.jpg'
         };
         const isActive = activeSiteId ? item.siteId === activeSiteId : idx === 0;
+        const timeAgo = formatTimeAgo(item.timestamp || now);
         const isVip = isVipUser();
         const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
         const ghUserArg = item.githubUsername || '';
