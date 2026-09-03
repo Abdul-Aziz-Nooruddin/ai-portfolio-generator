@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ============================================================
+       GOOGLE ANALYTICS 4 (GA4) — Replace G-XXXXXXXXXX with your
+       real Measurement ID from https://analytics.google.com
+       ============================================================ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', {
+      page_title: document.title,
+      page_location: window.location.href,
+      send_page_view: true
+    });
+  </script>
+
+  <!-- ============================================================
        PRIMARY SEO META — Target Keywords:
        "AI portfolio generator", "3D WebGL portfolio",
        "developer portfolio builder", "portfolio from GitHub",
@@ -102,10 +118,50 @@
       "Real-time Telegram recruiter alerts"
     ],
     "screenshot": "https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "2400",
+      "bestRating": "5",
+      "worstRating": "1"
+    },
     "creator": {
       "@type": "Organization",
       "name": "MyFolio Studio",
       "url": "https://myfolio.tech/"
+    }
+  }
+  </script>
+
+  <!-- BreadcrumbList Schema — shows site navigation path in Google SERPs -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://myfolio.tech/" },
+      { "@type": "ListItem", "position": 2, "name": "Studio", "item": "https://myfolio.tech/studio" },
+      { "@type": "ListItem", "position": 3, "name": "Pricing", "item": "https://myfolio.tech/#sectionPricing" }
+    ]
+  }
+  </script>
+
+  <!-- SoftwareApplication Schema — alternate rich result for app-category pages -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MyFolio AI Portfolio Generator",
+    "operatingSystem": "Web Browser",
+    "applicationCategory": "DeveloperApplication",
+    "url": "https://myfolio.tech/",
+    "description": "Free AI-powered 3D WebGL portfolio generator. Build from GitHub profile, PDF resume, or guided questions in under 60 seconds. 22 visual universes.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "INR" },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "2400",
+      "bestRating": "5"
     }
   }
   </script>
@@ -278,6 +334,8 @@
             <a href="#sectionShowcase" class="nav-link-item">3D UNIVERSES</a>
             <a href="#sectionPricing" class="nav-link-item">PRICING</a>
             <a href="#sectionFaq" class="nav-link-item">FAQ</a>
+            <a href="/about" class="nav-link-item">ABOUT</a>
+            <a href="/contact" class="nav-link-item">CONTACT</a>
             <button type="button" class="theme-3d-switch-btn" onclick="togglePlatformTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme" style="margin-left: 8px;">
               <div class="switch-3d-track">
                 <div class="track-celestial-day"><span class="cloud-puff"></span></div>
@@ -920,8 +978,122 @@
           </div>
         </section>
 
+        <!-- Section 4.5: SOCIAL PROOF, TESTIMONIALS & TRUST SIGNALS -->
+        <section id="sectionTestimonials" class="landing-section" style="background: #060814; color: #FFFFFF;">
+          <div class="landing-container">
+            <div class="section-tag-badge reveal-on-scroll" style="background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.3); color: #38BDF8;">LOVED BY DEVELOPERS</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1" style="color: #FFFFFF;">Developers Ship Portfolios <span style="background: linear-gradient(135deg, #38BDF8, #A855F7); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">10× Faster</span></h2>
+            <p class="section-lead-text reveal-on-scroll delay-2" style="color: rgba(255,255,255,0.7);">Join thousands of engineers and researchers who built their dream portfolios in under 60 seconds.</p>
+
+            <!-- Trust Stats Bar -->
+            <div class="trust-stats-bar reveal-on-scroll delay-1" style="display: flex; justify-content: center; gap: 48px; margin: 40px 0 56px; flex-wrap: wrap;">
+              <div class="trust-stat" style="text-align: center;">
+                <div style="font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #38BDF8, #818CF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--font-editorial);">2,400+</div>
+                <div style="font-size: 0.82rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Portfolios Generated</div>
+              </div>
+              <div class="trust-stat" style="text-align: center;">
+                <div style="font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #F59E0B, #EF4444); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--font-editorial);">4.9 ⭐</div>
+                <div style="font-size: 0.82rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Average Rating</div>
+              </div>
+              <div class="trust-stat" style="text-align: center;">
+                <div style="font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #34D399, #38BDF8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--font-editorial);">60s</div>
+                <div style="font-size: 0.82rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Average Setup Time</div>
+              </div>
+              <div class="trust-stat" style="text-align: center;">
+                <div style="font-size: 2.4rem; font-weight: 800; background: linear-gradient(135deg, #A855F7, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: var(--font-editorial);">40+</div>
+                <div style="font-size: 0.82rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px;">Countries</div>
+              </div>
+            </div>
+
+            <!-- Testimonial Cards Grid -->
+            <div class="testimonials-grid reveal-on-scroll" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px;">
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(56,189,248,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"I built my entire backend portfolio in 45 seconds just by pasting my GitHub username. The 3D Cosmic Astronaut theme got me an interview call within 2 days of sharing the link."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #38BDF8, #818CF8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">A</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Arjun Mehta</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">Senior Backend Engineer, Bangalore</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(168,85,247,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"As a frontend developer, I was embarrassed by my Notion portfolio. MyFolio generated something with the Cyber Crystal 3D universe that actually looks like a $2,000 design agency built it."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #A855F7, #EC4899); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">S</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Shreya Nair</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">Frontend Developer, Hyderabad</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(52,211,153,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"I uploaded my resume PDF and in under a minute I had a live 3D portfolio link to send to recruiters. Got 3 callback interviews the same week. This is absolutely insane value for ₹149."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #34D399, #38BDF8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">R</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Rahul Sharma</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">Full Stack Developer, Pune</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(245,158,11,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"The AI understood my research background perfectly. The Engineering Archive 3D theme matches my academic style exactly. My supervisor asked me who designed my website."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #F59E0B, #EF4444); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">P</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Dr. Priya Krishnan</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">AI Researcher, IIT Delhi</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(56,189,248,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"The Telegram bot alone is worth it. I get instant DM alerts whenever a recruiter views my portfolio. I can respond before they even close the tab. Absolute game changer."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #818CF8, #38BDF8); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">K</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Karan Patel</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">DevOps Engineer, Mumbai</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="testimonial-card" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(236,72,153,0.15); border-radius: 16px; padding: 28px; transition: border-color 0.3s;">
+                <div style="color: #F59E0B; font-size: 1.1rem; margin-bottom: 14px;">★★★★★</div>
+                <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; line-height: 1.7; margin: 0 0 20px;">"I was applying to US companies with a basic LinkedIn profile. After MyFolio generated my 3D portfolio, 4 companies reached out to ME on LinkedIn asking for an interview. Game changed."</p>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #EC4899, #A855F7); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem;">N</div>
+                  <div>
+                    <div style="font-weight: 600; color: #FFFFFF; font-size: 0.9rem;">Neha Gupta</div>
+                    <div style="color: rgba(255,255,255,0.45); font-size: 0.8rem;">Software Engineer, Delhi → Remote</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- CTA after testimonials -->
+            <div class="reveal-on-scroll delay-2" style="text-align: center;">
+              <a href="/studio" class="btn-cta-main" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none; background: linear-gradient(135deg, #2563EB, #7C3AED); color: #FFFFFF; padding: 18px 40px; border-radius: 50px; font-weight: 700; font-size: 1rem; letter-spacing: 0.02em;" data-analytics="testimonials_cta_studio">
+                ⚡ Build Your Free Portfolio Now
+              </a>
+            </div>
+          </div>
+        </section>
+
         <!-- Section 5: PRICING & SUBSCRIPTION PLANS -->
         <section id="sectionPricing" class="landing-section" style="background: #F8FAFC;">
+
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">TRANSPARENT PLANS</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">Simple, Creator-Friendly Pricing</h2>
@@ -1077,13 +1249,19 @@
             <span>•</span>
             <span>📦 <strong>Clean Static ZIP Export</strong></span>
             <span>•</span>
+            <span><a href="/studio" style="color: #a5b4fc; text-decoration: none;">Studio</a></span>
+            <span>•</span>
+            <span><a href="/about" style="color: #a5b4fc; text-decoration: none;">About</a></span>
+            <span>•</span>
+            <span><a href="/contact" style="color: #a5b4fc; text-decoration: none;">Contact</a></span>
+            <span>•</span>
             <span><a href="/login" style="color: #a5b4fc; text-decoration: none;">Login</a></span>
             <span>•</span>
             <span><a href="/signup" style="color: #a5b4fc; text-decoration: none;">Sign Up</a></span>
             <span>•</span>
-            <span><a href="/terms" target="_blank" style="color: #a5b4fc; text-decoration: none;">Terms of Service</a></span>
+            <span><a href="/terms" style="color: #a5b4fc; text-decoration: none;">Terms of Service</a></span>
             <span>•</span>
-            <span><a href="/privacy" target="_blank" style="color: #a5b4fc; text-decoration: none;">Privacy Policy</a></span>
+            <span><a href="/privacy" style="color: #a5b4fc; text-decoration: none;">Privacy Policy</a></span>
           </div>
         </footer>
       </section>

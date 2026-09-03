@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- GA4 — Replace G-XXXXXXXXXX with your real Measurement ID from analytics.google.com -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <title>About MyFolio — AI-Powered 3D Developer Portfolio Generator | Our Mission</title>
+  <meta name="description" content="MyFolio was built to give every developer a stunning 3D portfolio in under 60 seconds. Learn about our mission, the team, and why we believe your work deserves better than a Notion page.">
+  <meta name="keywords" content="about myfolio, AI portfolio generator team, developer portfolio builder India, 3D portfolio mission, myfolio.tech">
+  <link rel="canonical" href="https://myfolio.tech/about">
+
+  <meta property="og:title" content="About MyFolio — AI-Powered 3D Developer Portfolio Generator">
+  <meta property="og:description" content="We built MyFolio so every developer can have a world-class 3D portfolio in under 60 seconds. Free to start.">
+  <meta property="og:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta property="og:url" content="https://myfolio.tech/about">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&display=swap"
+        rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&display=swap" rel="stylesheet"></noscript>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About MyFolio",
+    "url": "https://myfolio.tech/about",
+    "description": "MyFolio is an AI-powered 3D portfolio generator built for developers, engineers, and researchers who deserve a stunning portfolio without spending weeks building one.",
+    "publisher": { "@type": "Organization", "name": "MyFolio Studio", "url": "https://myfolio.tech/" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css">
+  <script src="/sidebar.js" defer></script>
+  <script src="/cookie-banner.js" defer></script>
+  <script src="/analytics.js" defer></script>
+
+  <style>
+    body { background: #FAF8F5; color: #1C1917; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+    .about-nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 48px; background: rgba(250,248,245,0.97); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(28,25,23,0.08); position: sticky; top: 0; z-index: 100; }
+    .about-nav a { text-decoration: none; color: #1C1917; }
+    .about-hero { text-align: center; padding: 96px 24px 72px; background: linear-gradient(180deg, #060814 0%, #0F172A 60%, #FAF8F5 100%); color: #FFFFFF; }
+    .about-hero-tag { display: inline-block; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.3); color: #38BDF8; padding: 6px 18px; border-radius: 50px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 24px; }
+    .about-hero h1 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 900; line-height: 1.1; margin: 0 auto 24px; max-width: 800px; }
+    .about-hero p { font-size: 1.15rem; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto; line-height: 1.7; }
+    .about-container { max-width: 860px; margin: 0 auto; padding: 72px 24px; }
+    .about-section { margin-bottom: 72px; }
+    .about-section-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: #C2410C; margin-bottom: 12px; }
+    .about-section h2 { font-family: 'Fraunces', Georgia, serif; font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin: 0 0 20px; line-height: 1.2; }
+    .about-section p { font-size: 1.05rem; color: #57534E; line-height: 1.8; margin-bottom: 16px; }
+    .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-top: 40px; }
+    .value-card { background: #FFFFFF; border: 1px solid rgba(28,25,23,0.08); border-radius: 16px; padding: 28px; }
+    .value-icon { font-size: 2rem; margin-bottom: 14px; }
+    .value-card h3 { font-weight: 700; font-size: 1rem; margin: 0 0 8px; }
+    .value-card p { font-size: 0.88rem; color: #78716C; line-height: 1.6; margin: 0; }
+    .stats-row { display: flex; gap: 32px; flex-wrap: wrap; margin: 40px 0; justify-content: center; }
+    .stat-item { text-align: center; flex: 1; min-width: 140px; }
+    .stat-num { font-family: 'Fraunces', Georgia, serif; font-size: 2.8rem; font-weight: 900; color: #C2410C; }
+    .stat-label { font-size: 0.82rem; color: #78716C; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 4px; }
+    .about-cta { background: #060814; border-radius: 24px; padding: 60px 40px; text-align: center; color: #FFFFFF; }
+    .about-cta h2 { font-family: 'Fraunces', Georgia, serif; font-size: 2.2rem; margin: 0 0 16px; }
+    .about-cta p { color: rgba(255,255,255,0.65); margin-bottom: 32px; font-size: 1.05rem; }
+    .about-cta-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, #2563EB, #7C3AED); color: #FFFFFF; text-decoration: none; padding: 16px 36px; border-radius: 50px; font-weight: 700; font-size: 0.95rem; }
+    .about-footer { text-align: center; padding: 40px 24px; border-top: 1px solid rgba(28,25,23,0.08); font-size: 0.85rem; color: #78716C; }
+    .about-footer a { color: #C2410C; text-decoration: none; }
+    @media (max-width: 768px) { .about-nav { padding: 16px 20px; } .about-hero { padding: 72px 20px 48px; } .about-container { padding: 48px 20px; } }
+  </style>
+</head>
+<body>
+<main>
+  <nav class="about-nav" role="navigation" aria-label="Main navigation">
+    <a href="/" style="font-weight: 800; font-size: 1rem; letter-spacing: 0.08em;">MYFOLIO STUDIO</a>
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <a href="/" style="font-size: 0.85rem; color: #78716C;">← Home</a>
+      <a href="/contact" style="font-size: 0.85rem; color: #78716C;">Contact</a>
+      <a href="/studio" style="background: #2563EB; color: #FFFFFF; padding: 10px 22px; border-radius: 50px; font-weight: 700; font-size: 0.85rem; text-decoration: none;" data-analytics="about_nav_studio">Build Free</a>
+    </div>
+  </nav>
+
+  <header class="about-hero">
+    <div class="about-hero-tag">OUR STORY</div>
+    <h1>We Built the Portfolio Every Developer Deserves</h1>
+    <p>Great work should speak for itself — not hide behind a generic template. MyFolio exists because developers deserve portfolios as impressive as their code.</p>
+  </header>
+
+  <div class="about-container">
+
+    <section class="about-section" id="mission" aria-label="Our Mission">
+      <div class="about-section-tag">MISSION</div>
+      <h2>Levelling the Playing Field for Developers</h2>
+      <p>We noticed a stark gap: top-tier engineers were losing job opportunities to candidates with slicker presentations — not because their work was inferior, but because their portfolio looked like a 2015 Bootstrap template.</p>
+      <p>MyFolio was built to close that gap. Using AI, we synthesize your GitHub repositories, resume, and career background into a bespoke 3D WebGL portfolio that makes hiring managers stop scrolling. In under 60 seconds. For free.</p>
+      <p>Your work is the product. We just build the stage it deserves.</p>
+      <div class="stats-row">
+        <div class="stat-item"><div class="stat-num">2,400+</div><div class="stat-label">Portfolios Generated</div></div>
+        <div class="stat-item"><div class="stat-num">40+</div><div class="stat-label">Countries</div></div>
+        <div class="stat-item"><div class="stat-num">60s</div><div class="stat-label">Average Build Time</div></div>
+        <div class="stat-item"><div class="stat-num">22</div><div class="stat-label">3D Visual Universes</div></div>
+      </div>
+    </section>
+
+    <section class="about-section" id="values" aria-label="Our Values">
+      <div class="about-section-tag">VALUES</div>
+      <h2>What We Stand For</h2>
+      <div class="values-grid">
+        <div class="value-card"><div class="value-icon">🔒</div><h3>Privacy First</h3><p>We only read public GitHub metadata. Your private repos and personal data are never accessed, stored, or shared.</p></div>
+        <div class="value-card"><div class="value-icon">⚡</div><h3>Speed is a Feature</h3><p>60 seconds from input to live 3D portfolio URL. No complex setup, no design decisions required from you.</p></div>
+        <div class="value-card"><div class="value-icon">🎨</div><h3>Real Design Quality</h3><p>Every portfolio has bespoke typography, color harmony, and layout geometry — not generic card grids or Bootstrap clones.</p></div>
+        <div class="value-card"><div class="value-icon">🌍</div><h3>Always Free to Start</h3><p>The core experience is always free. Our free tier gives you a live 24-hour portfolio link with no credit card required.</p></div>
+        <div class="value-card"><div class="value-icon">🤖</div><h3>AI With Integrity</h3><p>Our AI doesn't invent skills or projects. Every element is traceable to your actual work and genuine experience.</p></div>
+        <div class="value-card"><div class="value-icon">📱</div><h3>Built for India</h3><p>Pricing in INR, Telegram recruiter alerts, and UPI support — because the best engineers in the world live here too.</p></div>
+      </div>
+    </section>
+
+    <section class="about-section" id="technology" aria-label="How MyFolio Works">
+      <div class="about-section-tag">TECHNOLOGY</div>
+      <h2>How Our AI Builds Your Portfolio</h2>
+      <p>MyFolio's design intelligence engine analyzes your GitHub repositories (languages, stars, commit patterns, descriptions), your resume's content hierarchy, and your career answers to select the optimal 3D visual universe and information architecture for your unique profile.</p>
+      <p>It then generates bespoke HTML, CSS, and Three.js code with your real projects, actual skills, and genuine work history. No placeholder content. No generic cards. Your portfolio is truly yours.</p>
+      <p style="margin-top: 24px;">
+        <a href="/studio" style="color: #2563EB; font-weight: 600; text-decoration: none;">→ Try the Studio and build your portfolio now</a> &nbsp;·&nbsp;
+        <a href="/#sectionShowcase" style="color: #2563EB; font-weight: 600; text-decoration: none;">→ Explore all 22 3D universes</a> &nbsp;·&nbsp;
+        <a href="/contact" style="color: #2563EB; font-weight: 600; text-decoration: none;">→ Contact us</a>
+      </p>
+    </section>
+
+    <div class="about-cta">
+      <h2>Your Portfolio Awaits</h2>
+      <p>Join 2,400+ developers who built their dream portfolios in under 60 seconds.</p>
+      <a href="/studio" class="about-cta-btn" data-analytics="about_bottom_cta">⚡ Build Your 3D Portfolio Free</a>
+    </div>
+  </div>
+
+  <footer class="about-footer">
+    <p>&copy; 2026 MyFolio Studio. All rights reserved.</p>
+    <p style="margin-top: 8px;"><a href="/">Home</a> &middot; <a href="/studio">Studio</a> &middot; <a href="/about">About</a> &middot; <a href="/contact">Contact</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/terms">Terms</a></p>
+  </footer>
+</main>
+<script src="/app.js" defer></script>
+</body>
+</html>

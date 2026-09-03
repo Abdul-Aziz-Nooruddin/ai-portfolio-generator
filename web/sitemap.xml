@@ -1,87 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-  <!-- ==========================================
-       MyFolio.tech — XML Sitemap
-       Last updated: 2026-09-01
-       Covers: All public-facing pages
-       ========================================== -->
+  <!-- MyFolio.tech — XML Sitemap | Last updated: 2026-09-03 -->
 
   <!-- Homepage — Primary landing & conversion page -->
   <url>
     <loc>https://myfolio.tech/</loc>
-    <lastmod>2026-09-01</lastmod>
+    <lastmod>2026-09-03</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
-    <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg</image:loc>
-      <image:title>MyFolio — AI-Powered 3D WebGL Portfolio Generator</image:title>
-      <image:caption>Create bespoke 3D WebGL developer portfolios from GitHub, resume, or guided questions in seconds.</image:caption>
-    </image:image>
-    <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/cyber_crystal_3d.jpg</image:loc>
-      <image:title>Cyber Crystal 3D Portfolio Universe</image:title>
-    </image:image>
-    <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/bioluminescent_wireframe_3d.jpg</image:loc>
-      <image:title>Bioluminescent 3D Portfolio Universe</image:title>
-    </image:image>
+    <image:image><image:loc>https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg</image:loc><image:title>MyFolio AI 3D Portfolio Generator</image:title></image:image>
   </url>
 
-  <!-- Creator Studio — Core product page -->
+  <!-- Creator Studio -->
   <url>
-    <loc>https://myfolio.tech/studio.html</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://myfolio.tech/studio</loc>
+    <lastmod>2026-09-03</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-    <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg</image:loc>
-      <image:title>MyFolio Creator Studio — 3D Portfolio Builder</image:title>
-    </image:image>
+    <priority>0.95</priority>
   </url>
 
-  <!-- Design Demo — Showcase of universes -->
+  <!-- About Page — E-E-A-T trust signal -->
   <url>
-    <loc>https://myfolio.tech/design-demo.html</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-    <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/crystal_leaf_hand_3d.jpg</image:loc>
-      <image:title>3D Portfolio Design Universes Demo</image:title>
-    </image:image>
-  </url>
-
-  <!-- Sign Up / Login — Auth page -->
-  <url>
-    <loc>https://myfolio.tech/auth.html</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://myfolio.tech/about</loc>
+    <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Contact Page -->
+  <url>
+    <loc>https://myfolio.tech/contact</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.75</priority>
+  </url>
+
+  <!-- Design Demo -->
+  <url>
+    <loc>https://myfolio.tech/design-demo</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
 
-  <!-- User Dashboard -->
+  <!-- Auth -->
   <url>
-    <loc>https://myfolio.tech/dashboard.html</loc>
-    <lastmod>2026-09-01</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://myfolio.tech/auth</loc>
+    <lastmod>2026-09-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 
   <!-- Terms of Service -->
   <url>
-    <loc>https://myfolio.tech/terms.html</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://myfolio.tech/terms</loc>
+    <lastmod>2026-09-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
 
   <!-- Privacy Policy -->
   <url>
-    <loc>https://myfolio.tech/privacy.html</loc>
-    <lastmod>2026-09-01</lastmod>
+    <loc>https://myfolio.tech/privacy</loc>
+    <lastmod>2026-09-03</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>

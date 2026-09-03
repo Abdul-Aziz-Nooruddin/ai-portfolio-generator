@@ -11,6 +11,10 @@ Allow: /auth.html
 Allow: /dashboard.html
 Allow: /terms.html
 Allow: /privacy.html
+Allow: /about.html
+Allow: /about
+Allow: /contact.html
+Allow: /contact
 Allow: /assets/
 Allow: /style.css
 Allow: /sitemap.xml
@@ -31,8 +35,12 @@ Disallow: /node_modules/
 User-agent: Googlebot
 Allow: /
 Allow: /assets/3d/
+Allow: /assets/hero-3d.webp
 Allow: /assets/hero-3d.jpg
+Allow: /assets/preview-3d.webp
 Allow: /assets/preview-3d.jpg
+Allow: /about
+Allow: /contact
 
 # Allow Twitter/X card crawler for OG images
 User-agent: Twitterbot

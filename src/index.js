@@ -1294,6 +1294,32 @@ app.get(['/thank-you', '/success'], (req, res) => {
   res.sendFile(path.join(webPagesDir, 'thank-you.html'));
 });
 
+// New SEO Pages: About & Contact
+app.get(['/about', '/about-us', '/our-story'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'about.html'));
+});
+
+app.get(['/contact', '/contact-us', '/support'], (req, res) => {
+  res.sendFile(path.join(webPagesDir, 'contact.html'));
+});
+
+// Contact Form API — accepts form submissions from /contact page
+app.post('/api/contact', async (req, res) => {
+  try {
+    const { name, email, type, message } = req.body;
+    if (!name || !email || !message) {
+      return res.status(400).json({ error: 'Name, email, and message are required.' });
+    }
+    // Log the contact submission (extend to Telegram/email notification here)
+    console.log(`[CONTACT FORM] ${new Date().toISOString()} | ${type || 'general'} | ${name} <${email}>: ${message.substring(0, 100)}`);
+    // TODO: Send to Telegram bot or email service
+    res.json({ success: true, message: 'Thank you! We will respond within 24 hours.' });
+  } catch (err) {
+    console.error('[CONTACT] Error:', err);
+    res.status(500).json({ error: 'Failed to process contact form.' });
+  }
+});
+
 app.get(['/profile', '/account', '/settings'], (req, res) => {
   res.sendFile(path.join(process.cwd(), 'web/profile.html'));
 });
