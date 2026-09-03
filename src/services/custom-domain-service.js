@@ -14,7 +14,7 @@ class CustomDomainService {
     this.db = dbService;
     this.storagePath = path.join(process.cwd(), 'src', 'data', 'custom-domains.json');
     this.domainCache = this.loadCache();
-    this.primaryHost = process.env.PRIMARY_DOMAIN || 'portfolio.site';
+    this.primaryHost = process.env.PRIMARY_DOMAIN || 'myfolio.tech';
   }
 
   loadCache() {

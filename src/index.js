@@ -141,6 +141,41 @@ app.use(async (req, res, next) => {
     }
   }
 
+  // Dynamic Wildcard Subdomain Router for any <username>.myfolio.tech
+  if (host.endsWith('.myfolio.tech') && host !== 'www.myfolio.tech') {
+    const subdomain = host.replace(/\.myfolio\.tech$/, '').trim();
+    if (subdomain && subdomain !== 'api' && subdomain !== 'app' && subdomain !== 'mail') {
+      // 1. Check customDomainService mapping or direct handle
+      let siteId = customDomainService ? customDomainService.resolveHostname(host) : null;
+      if (!siteId) {
+        siteId = subdomain;
+      }
+      
+      let html = await hostingProvider.getSiteHtml(siteId);
+
+      // 2. Check Supabase DB for user's active site by handle/custom_domain
+      if (!html && dbService?.client) {
+        try {
+          const { data: siteRecord } = await dbService.client
+            .from('sites')
+            .select('provider_site_id, custom_domain')
+            .or(`custom_domain.eq.${host},provider_site_id.eq.${subdomain}`)
+            .limit(1)
+            .single();
+          if (siteRecord?.provider_site_id) {
+            html = await hostingProvider.getSiteHtml(siteRecord.provider_site_id);
+          }
+        } catch (dbLookupErr) {}
+      }
+
+      if (html) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+        return res.send(html);
+      }
+    }
+  }
+
   // Check if incoming domain or subdomain maps to a site
   if (customDomainService) {
     const siteId = customDomainService.resolveHostname(host);
