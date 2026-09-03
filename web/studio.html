@@ -1943,7 +1943,31 @@
       'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' }
     };
 
+    function isVipUser() {
+      if (currentVipAdmin) return true;
+      try {
+        if (localStorage.getItem('myfolio_vip_admin') === 'true') return true;
+        const userStr = localStorage.getItem('myfolio_user');
+        if (userStr) {
+          const u = JSON.parse(userStr);
+          const email = (u.email || '').toLowerCase();
+          if (email === 'abdulaziznoor9876@gmail.com') return true;
+        }
+        if (document.body && document.body.innerHTML.includes('abdulaziznoor9876@gmail.com')) return true;
+      } catch (e) {}
+      return false;
+    }
+
     function getAllowanceState() {
+      if (isVipUser()) {
+        return {
+          totalLimit: 999999,
+          used: 0,
+          firstGenTimestamp: null,
+          resetTimestamp: null
+        };
+      }
+
       let state = null;
       try {
         state = JSON.parse(localStorage.getItem(ALLOWANCE_CONFIG.STORAGE_KEY));
@@ -1973,6 +1997,11 @@
     }
 
     function consumeWeeklyAllowance() {
+      if (isVipUser()) {
+        updateAllowanceUI();
+        return { totalLimit: 999999, used: 0, firstGenTimestamp: null, resetTimestamp: null };
+      }
+
       const state = getAllowanceState();
       const now = Date.now();
 
@@ -1997,7 +2026,7 @@
 
       const days = Math.floor(diff / (24 * 60 * 60 * 1000));
       const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-      const mins = Math.floor((diff % (60 * 60 * 1000)) / (60 * 1000));
+      const mins = Math.floor((diff % (60 * 1000)) / (60 * 1000));
       const secs = Math.floor((diff % (60 * 1000)) / 1000);
 
       if (days > 0) {
@@ -2027,7 +2056,10 @@
             username === 'abdulazizpro'
           ) {
             currentVipAdmin = true;
-            try { localStorage.setItem('myfolio_vip_admin', 'true'); } catch (e) {}
+            try {
+              localStorage.setItem('myfolio_vip_admin', 'true');
+              localStorage.removeItem(ALLOWANCE_CONFIG.STORAGE_KEY); // Clear any cached limit
+            } catch (e) {}
             updateAllowanceUI();
           }
         }
@@ -2035,11 +2067,7 @@
     }
 
     function updateAllowanceUI() {
-      const isVip = currentVipAdmin || (function() {
-        try {
-          return localStorage.getItem('myfolio_vip_admin') === 'true';
-        } catch (e) { return false; }
-      })();
+      const isVip = isVipUser();
 
       const state = getAllowanceState();
       const remaining = isVip ? 999999 : Math.max(0, state.totalLimit - state.used);
@@ -2247,25 +2275,28 @@
           thumb: '/assets/3d/cosmic_astronaut_3d.jpg'
         };
         const isActive = activeSiteId ? item.siteId === activeSiteId : idx === 0;
-        const timeAgo = formatTimeAgo(item.timestamp || now);
-        const isExpired = (now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS;
+        const isVip = isVipUser();
+        const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
         const ghUserArg = item.githubUsername || '';
+        const cardUrl = (isVip && (item.subdomain || item.siteId === 'abdulaziz')) ? 'https://abdulaziz.myfolio.tech' : item.previewUrl;
 
-        const liveBadgeHtml = isExpired
-          ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
-          : `<span class="status-live-dot">🟢 Live WebGL</span>`;
+        const liveBadgeHtml = isVip
+          ? `<span class="status-live-dot" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4);">👑 VIP Permanent (abdulaziz.myfolio.tech)</span>`
+          : (isExpired
+            ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
+            : `<span class="status-live-dot">🟢 Live WebGL</span>`);
 
         const primaryActionBtnHtml = isExpired
           ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
               ⚡ Re-activate &amp; Open Live ↗
             </button>`
-          : `<a href="${item.previewUrl}" target="_blank" class="btn-launch-live">
+          : `<a href="${cardUrl}" target="_blank" class="btn-launch-live">
               🚀 Open Live Portfolio ↗
             </a>`;
 
         const thumbOverlayAction = isExpired
           ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')">⚡ Re-activate ↗</span>`
-          : `<span class="overlay-btn-preview" onclick="window.open('${item.previewUrl}', '_blank')">Live Preview ↗</span>`;
+          : `<span class="overlay-btn-preview" onclick="window.open('${cardUrl}', '_blank')">Live Preview ↗</span>`;
 
         return `
           <div class="generated-portfolio-card ${isActive ? 'active-pulse' : ''}" id="gen-card-${item.siteId}">
@@ -2300,8 +2331,8 @@
 
                 <div class="card-url-box">
                   <span class="url-label">LIVE URL:</span>
-                  <span class="url-text">${item.previewUrl}</span>
-                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${item.previewUrl}', this)" title="Copy Link">📋 Copy</button>
+                  <span class="url-text">${cardUrl}</span>
+                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${cardUrl}', this)" title="Copy Link">📋 Copy</button>
                 </div>
 
                 <div class="card-actions-bar">
@@ -2322,12 +2353,14 @@
     async function handleStudioGenerate(e) {
       e.preventDefault();
 
-      // Check allowance before proceeding
-      const allowanceState = getAllowanceState();
-      const remainingAllowance = Math.max(0, allowanceState.totalLimit - allowanceState.used);
-      if (remainingAllowance <= 0) {
-        alert(`You have reached your weekly limit of ${allowanceState.totalLimit} portfolio generations.\n\nYour allowance will reset ${formatCountdown(allowanceState.resetTimestamp)}.`);
-        return;
+      // Check allowance before proceeding (100% bypass for VIP Founder)
+      if (!isVipUser()) {
+        const allowanceState = getAllowanceState();
+        const remainingAllowance = Math.max(0, allowanceState.totalLimit - allowanceState.used);
+        if (remainingAllowance <= 0) {
+          alert(`You have reached your weekly limit of ${allowanceState.totalLimit} portfolio generations.\n\nYour allowance will reset ${formatCountdown(allowanceState.resetTimestamp)}.`);
+          return;
+        }
       }
 
       const btn = document.getElementById('btnSubmitGenerate');
@@ -2438,19 +2471,23 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to synthesize portfolio.');
 
-        const previewUrl = data.siteUrl || (data.previewUrl ? window.location.origin + data.previewUrl : `${window.location.origin}/p/preview`);
+        const isVip = isVipUser() || data.isVip;
+        let previewUrl = (isVip && data.customDomain)
+          ? `https://${data.customDomain}`
+          : (isVip ? 'https://abdulaziz.myfolio.tech' : (data.siteUrl || (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : `${window.location.origin}/p/preview`)));
         
         if (ghUser) {
           try { localStorage.setItem('myfolio_saved_gh_username', ghUser); } catch(e) {}
         }
 
-        // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle
+        // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle (VIP does not decrement)
         consumeWeeklyAllowance();
 
         // 2. Add Newly Generated Project Card below Generate Button
         addGeneratedPortfolioToHistory({
-          siteId: data.siteId || `gen-${Date.now()}`,
+          siteId: data.siteId || (isVip ? 'abdulaziz' : `gen-${Date.now()}`),
           previewUrl: previewUrl,
+          subdomain: isVip ? 'abdulaziz.myfolio.tech' : null,
           universeKey: selectedUniverseKey,
           githubUsername: ghUser || manualGithub || undefined,
           developerName: data.profileData?.name || candidateResolvedName,

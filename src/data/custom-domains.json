@@ -1,4 +1,14 @@
 {
+  "abdulaziz.myfolio.tech": {
+    "domain": "abdulaziz.myfolio.tech",
+    "handle": "abdulaziz",
+    "siteId": "abdulaziz",
+    "userId": "abdulaziz_founder",
+    "type": "subdomain",
+    "status": "active",
+    "createdAt": "2026-09-03T18:00:00.000Z",
+    "verifiedAt": "2026-09-03T18:00:00.000Z"
+  },
   "abdulaziz.portfolio.site": {
     "domain": "abdulaziz.portfolio.site",
     "handle": "abdulaziz",

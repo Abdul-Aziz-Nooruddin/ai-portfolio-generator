@@ -102,28 +102,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Dynamic Custom Domain & Subdomain Hostname Router
-app.use(async (req, res, next) => {
-  const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
-  if (!host || host === 'localhost' || host === '127.0.0.1' || host === 'portfolio.site') {
-    return next();
-  }
-
-  // Check if incoming domain or subdomain maps to a site
-  if (customDomainService) {
-    const siteId = customDomainService.resolveHostname(host);
-    if (siteId) {
-      const filePath = path.join(process.cwd(), 'public', 'sites', siteId, 'index.html');
-      if (fs.existsSync(filePath)) {
-        const html = fs.readFileSync(filePath, 'utf8');
-        res.setHeader('Content-Type', 'text/html; charset=utf-8');
-        return res.send(html); // Serve 100% clean, watermark-free custom domain portfolio
-      }
-    }
-  }
-  next();
-});
-
 // Initialize core services
 const aiService = new AIService(process.env.GEMINI_API_KEY);
 const dbService = new DatabaseService(
@@ -141,6 +119,42 @@ const hostingProvider = new HostingProvider(
 const netlifyDeployer = process.env.NETLIFY_TOKEN
   ? new NetlifyDeployer(process.env.NETLIFY_TOKEN, process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
   : null;
+
+// Dynamic Custom Domain & Subdomain Hostname Router
+app.use(async (req, res, next) => {
+  const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
+  if (!host || host === 'localhost' || host === '127.0.0.1' || host === 'myfolio.tech' || host === 'www.myfolio.tech' || host === 'portfolio.site') {
+    return next();
+  }
+
+  // Explicit VIP Subdomain Route: abdulaziz.myfolio.tech or abdulaziz.localhost
+  if (host === 'abdulaziz.myfolio.tech' || host === 'abdulaziz.localhost' || host.startsWith('abdulaziz.')) {
+    let siteId = customDomainService?.resolveHostname(host) || 'abdulaziz';
+    let html = await hostingProvider.getSiteHtml(siteId);
+    if (!html) {
+      html = await hostingProvider.getSiteHtml('abdulaziz');
+    }
+    if (html) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+      return res.send(html); // Serve 100% clean, watermark-free custom domain portfolio
+    }
+  }
+
+  // Check if incoming domain or subdomain maps to a site
+  if (customDomainService) {
+    const siteId = customDomainService.resolveHostname(host);
+    if (siteId) {
+      const html = await hostingProvider.getSiteHtml(siteId);
+      if (html) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+        return res.send(html); // Serve 100% clean, watermark-free custom domain portfolio
+      }
+    }
+  }
+  next();
+});
 
 const razorpayService = (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET)
   ? new RazorpayService(process.env.RAZORPAY_KEY_ID, process.env.RAZORPAY_KEY_SECRET, process.env.RAZORPAY_WEBHOOK_SECRET)
@@ -864,14 +878,45 @@ app.post('/api/generate/unified', async (req, res) => {
       creative_mode: selectedTemplate.id
     });
 
-    const siteId = `web-${crypto.randomUUID()}`;
-    await hostingProvider.deploy(siteId, siteResult, normalized);
+    const isVipFounder = Boolean(
+      req.user?.email === 'abdulaziznoor9876@gmail.com' ||
+      input.email === 'abdulaziznoor9876@gmail.com' ||
+      input.manualEmail === 'abdulaziznoor9876@gmail.com' ||
+      input.githubUsername?.toLowerCase() === 'abdul-aziz-nooruddin' ||
+      input.githubUsername?.toLowerCase() === 'aqifcodes' ||
+      input.ghUser?.toLowerCase() === 'abdul-aziz-nooruddin' ||
+      input.ghUser?.toLowerCase() === 'aqifcodes' ||
+      (req.user?.role === 'admin')
+    );
+
+    const siteId = isVipFounder ? 'abdulaziz' : `web-${crypto.randomUUID()}`;
+    await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
 
     // Also write to filesystem for local preview serving if needed
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
     fs.mkdirSync(siteDir, { recursive: true });
     fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
     fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
+
+    if (isVipFounder && customDomainService) {
+      customDomainService.domainCache['abdulaziz.myfolio.tech'] = {
+        domain: 'abdulaziz.myfolio.tech',
+        handle: 'abdulaziz',
+        siteId: 'abdulaziz',
+        type: 'subdomain',
+        status: 'active',
+        verifiedAt: new Date().toISOString()
+      };
+      customDomainService.domainCache['abdulaziz.localhost'] = {
+        domain: 'abdulaziz.localhost',
+        handle: 'abdulaziz',
+        siteId: 'abdulaziz',
+        type: 'subdomain',
+        status: 'active',
+        verifiedAt: new Date().toISOString()
+      };
+      customDomainService.saveCache();
+    }
 
     // Audit with Legacy Vibe Detector
     const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
@@ -883,13 +928,19 @@ app.post('/api/generate/unified', async (req, res) => {
     productTelemetry.recordEvent(EVENT_TYPES.GENERATION_COMPLETED, null, {
       siteId,
       source: 'unified',
-      vibeScore: vibeAudit.score
+      vibeScore: vibeAudit.score,
+      isVip: isVipFounder
     });
+
+    const finalPreviewUrl = isVipFounder ? 'https://abdulaziz.myfolio.tech' : `/p/${siteId}`;
 
     res.json({
       success: true,
       siteId,
-      previewUrl: `/p/${siteId}`,
+      previewUrl: finalPreviewUrl,
+      siteUrl: finalPreviewUrl,
+      customDomain: isVipFounder ? 'abdulaziz.myfolio.tech' : null,
+      isVip: isVipFounder,
       profileData: normalized,
       vibeAudit,
       designBlueprint: siteResult.designBlueprint
@@ -1738,6 +1789,17 @@ app.get(['/p/:siteId/resume.pdf', '/api/sites/:siteId/resume.pdf'], async (req, 
   }
 });
 
+// VIP Vanity Direct Route
+app.get(['/abdulaziz', '/u/abdulaziz'], async (req, res) => {
+  let html = await hostingProvider.getSiteHtml('abdulaziz');
+  if (html) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+    return res.send(html);
+  }
+  return res.redirect('/p/abdulaziz');
+});
+
 // ==========================================
 // Portfolio Live & Preview Route (/p/:siteId)
 // Injects Diagonal Watermark & Floating Bar for Unpaid Previews
@@ -2004,8 +2066,8 @@ app.get('/p/:siteId', async (req, res) => {
     await dbService.recordAnalyticsEvent(siteId, 'page_view', visitorHash, req.headers['referer'] || null);
   } catch (e) {}
 
-  // Check if site is paid / active
-  let isPaid = false;
+  // Check if site is paid / active or VIP Founder
+  let isPaid = siteId === 'abdulaziz' || req.user?.email === 'abdulaziznoor9876@gmail.com';
   try {
     const { data: siteRecord } = await dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
     if (siteRecord && (siteRecord.status === 'active' || siteRecord.status === 'paid')) {
