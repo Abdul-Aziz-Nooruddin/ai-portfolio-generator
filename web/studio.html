@@ -2279,10 +2279,10 @@
         const isVip = isVipUser();
         const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
         const ghUserArg = item.githubUsername || '';
-        const cardUrl = (isVip && (item.subdomain || item.siteId === 'abdulaziz')) ? 'https://abdulaziz.myfolio.tech' : item.previewUrl;
+        const cardUrl = (isVip && (item.subdomain || item.siteId === 'abdulaziz')) ? `${window.location.origin}/abdulaziz` : item.previewUrl;
 
         const liveBadgeHtml = isVip
-          ? `<span class="status-live-dot" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4);">👑 VIP Permanent (abdulaziz.myfolio.tech)</span>`
+          ? `<span class="status-live-dot" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4);">👑 VIP Permanent (${window.location.host}/abdulaziz)</span>`
           : (isExpired
             ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
             : `<span class="status-live-dot">🟢 Live WebGL</span>`);
@@ -2473,9 +2473,9 @@
         if (!res.ok) throw new Error(data.error || 'Failed to synthesize portfolio.');
 
         const isVip = isVipUser() || data.isVip;
-        let previewUrl = (isVip && data.customDomain)
-          ? `https://${data.customDomain}`
-          : (isVip ? 'https://abdulaziz.myfolio.tech' : (data.siteUrl || (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : `${window.location.origin}/p/preview`)));
+        let previewUrl = isVip
+          ? `${window.location.origin}/abdulaziz`
+          : (data.siteUrl || (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : `${window.location.origin}/p/preview`));
         
         if (ghUser) {
           try { localStorage.setItem('myfolio_saved_gh_username', ghUser); } catch(e) {}

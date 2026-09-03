@@ -1817,6 +1817,59 @@ app.get('/p/:siteId', async (req, res) => {
   // Retrieve site HTML from disk or Supabase Storage recovery
   let html = await hostingProvider.getSiteHtml(siteId);
 
+  // VIP Founder Instant Synthesis Fallback: If abdulaziz site is not yet on disk, synthesize on the fly
+  if (!html && siteId === 'abdulaziz') {
+    try {
+      const { TemplateRegistry } = require('./templates/template-registry');
+      const stealthTemplate = TemplateRegistry.templates['stealth-node'] || TemplateRegistry.templates['cosmic-astronaut'] || Object.values(TemplateRegistry.templates)[0];
+      const abdulAzizProfile = {
+        name: 'Abdul Aziz Nooruddin',
+        title: 'Full-Stack Developer & AI Systems Specialist',
+        headline: 'AI Systems & Machine Learning Researcher',
+        role: 'AI Systems Specialist',
+        bio: 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
+        about: 'Lead architect of MyFolio. Full-stack engineer specializing in modern web platforms, 3D spatial computing, and AI-driven automation systems.',
+        skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
+        projects: [
+          {
+            title: 'MyFolio Platform',
+            name: 'MyFolio Platform',
+            description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
+            tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+            url: 'https://myfolio.tech'
+          },
+          {
+            title: 'Telegram Autonomous Bot Engine',
+            name: 'Telegram Autonomous Bot Engine',
+            description: 'Conversational portfolio generator bot with real-time interactive generation telemetry and webhook pipeline.',
+            tags: ['Node.js', 'Telegram API', 'Automation'],
+            url: 'https://t.me/ai_portfolio_generator_bot'
+          },
+          {
+            title: '3D Spatial Visual Universe Engine',
+            name: '3D Spatial Visual Universe Engine',
+            description: 'Procedurally generated Three.js spatial environments with particle dynamics, orbital controls, and mobile GPU optimization.',
+            tags: ['Three.js', 'GLSL', 'WebGL', 'Performance'],
+            url: 'https://myfolio.tech'
+          }
+        ],
+        contact: {
+          email: 'abdulaziznoor9876@gmail.com',
+          github: 'https://github.com/Abdul-Aziz-Nooruddin'
+        },
+        social: {
+          github: 'https://github.com/Abdul-Aziz-Nooruddin'
+        }
+      };
+      const siteGen = new SiteGenerator();
+      const generated = await siteGen.generateSite({ id: 'abdulaziz', status: 'active' }, abdulAzizProfile, { theme: stealthTemplate.id, creative_mode: stealthTemplate.id });
+      html = generated.html || generated;
+      await hostingProvider.deploy('abdulaziz', html, abdulAzizProfile, true);
+    } catch (genErr) {
+      console.error('[VIP] Automatic on-the-fly portfolio generation notice:', genErr);
+    }
+  }
+
   if (!html) {
     // If siteId is a registered template ID, render a rich live demo showcase on the fly
     const template = TemplateRegistry.templates[siteId];
