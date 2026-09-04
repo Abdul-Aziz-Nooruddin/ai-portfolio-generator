@@ -146,9 +146,9 @@
 
   // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Progressive LOD)
   const astronautRoot = new THREE.Group();
-  // Positioned prominently on the right side of hero stage so it is never hidden behind text
-  astronautRoot.position.set(1.15, -0.45, 1.2);
-  astronautRoot.rotation.y = -0.32;
+  // Positioned prominently on the right side of hero stage facing left towards hero content
+  astronautRoot.position.set(1.35, -0.42, 1.25);
+  astronautRoot.rotation.y = -0.58;
   scene.add(astronautRoot);
 
   let astronautModel = null;
@@ -294,10 +294,10 @@
   let camTargetX = 0;
   let camTargetY = 0;
   let camTargetZ = 5.4;
-  let astroTargetX = 1.15;
-  let astroTargetY = -0.45;
-  let astroTargetZ = 1.2;
-  let astroTargetRotY = -0.32;
+  let astroTargetX = 1.35;
+  let astroTargetY = -0.42;
+  let astroTargetZ = 1.25;
+  let astroTargetRotY = -0.58;
 
   window.addEventListener('mousemove', e => {
     const cx = window.innerWidth / 2;
@@ -325,58 +325,56 @@
       scrollIndicator.style.opacity = Math.max(0, 1 - (scrollY / 150)).toFixed(2);
     }
 
-    // Continuous Scroll-Driven Galaxy & Astronaut Positioning on Every Scroll
-    const scrollRotation = scrollY * 0.0012;
+    // Dynamic Multi-Waypoint Zig-Zag Choreography:
+    // Sections alternate Left / Right across the viewport.
+    // When content is on LEFT, astronaut floats on RIGHT facing LEFT (rotY ~ -0.58).
+    // When content is on RIGHT, astronaut floats on LEFT facing RIGHT (rotY ~ +0.62).
+    const waypoints = [
+      // Beat 0: Hero Stage — Content on LEFT, Astronaut on RIGHT facing LEFT (-0.58 rad)
+      { p: 0.00, x: 1.35, y: -0.42, z: 1.25, rotY: -0.58, camX: 0.0, camY: 0.0, camZ: 5.4, anim: 'floating' },
+      { p: 0.16, x: 1.35, y: -0.42, z: 1.25, rotY: -0.58, camX: 0.0, camY: 0.0, camZ: 5.4, anim: 'floating' },
 
-    if (scrollProgress < 0.25) {
-      // Beat 1: Hero Stage — Visible on right side of title card, drifting smoothly
-      const p = scrollProgress / 0.25;
-      camTargetX = 0;
-      camTargetY = 0;
-      camTargetZ = 5.4 - p * 0.4;
-      astroTargetX = 1.15 * (1 - p * 0.2);
-      astroTargetY = -0.45 + p * 0.15;
-      astroTargetZ = 1.2 + p * 0.3;
-      astroTargetRotY = -0.32 + scrollRotation;
-    } else if (scrollProgress < 0.55) {
-      // Beat 2: Spatial Architecture — Astronaut sweeps across to left to frame 3 Feature Pillars
-      const p = (scrollProgress - 0.25) / 0.30;
-      camTargetX = 0.55 * p;
-      camTargetY = -0.15 * p;
-      camTargetZ = 5.0 - p * 0.3;
-      astroTargetX = 1.08 * (1 - p) - 1.35 * p;
-      astroTargetY = -0.20 - p * 0.15;
-      astroTargetZ = 1.5 - p * 0.3;
-      astroTargetRotY = -0.35 * (1 - p) + 0.45 * p + scrollRotation;
-    } else if (scrollProgress < 0.80) {
-      // Beat 3: 22 Universes — Moves forward into center-stage with cluster
-      const p = (scrollProgress - 0.55) / 0.25;
-      camTargetX = 0.55 * (1 - p);
-      camTargetY = -0.15 + p * 0.2;
-      camTargetZ = 4.7 + p * 0.4;
-      astroTargetX = -1.35 * (1 - p) + 0.25 * p;
-      astroTargetY = -0.35 + p * 0.15;
-      astroTargetZ = 1.2 + p * 0.5;
-      astroTargetRotY = 0.45 * (1 - p) + scrollRotation;
-    } else {
-      // Beat 4: Launch Studio — Dramatic hero orbit on right side
-      const p = (scrollProgress - 0.80) / 0.20;
-      camTargetX = -0.45 * p;
-      camTargetY = 0.05 - p * 0.2;
-      camTargetZ = 5.1 - p * 0.4;
-      astroTargetX = 0.25 * (1 - p) + 1.25 * p;
-      astroTargetY = -0.20 - p * 0.25;
-      astroTargetZ = 1.7 - p * 0.4;
-      astroTargetRotY = -0.45 * p + scrollRotation;
+      // Transition & Beat 1: Spatial Overview — Content on RIGHT, Astronaut on LEFT facing RIGHT (+0.62 rad)
+      { p: 0.36, x: -1.35, y: -0.26, z: 1.35, rotY: 0.62, camX: -0.22, camY: -0.08, camZ: 5.2, anim: 'moon_walk' },
+      { p: 0.50, x: -1.35, y: -0.26, z: 1.35, rotY: 0.62, camX: -0.22, camY: -0.08, camZ: 5.2, anim: 'moon_walk' },
+
+      // Transition & Beat 2: 22 Generative Universes — Content on LEFT, Astronaut on RIGHT facing LEFT (-0.60 rad)
+      { p: 0.66, x: 1.35, y: -0.34, z: 1.30, rotY: -0.60, camX: 0.22, camY: -0.08, camZ: 5.1, anim: 'moon_walk' },
+      { p: 0.78, x: 1.35, y: -0.34, z: 1.30, rotY: -0.60, camX: 0.22, camY: -0.08, camZ: 5.1, anim: 'moon_walk' },
+
+      // Transition & Beat 3: Launch Studio — Content on RIGHT, Astronaut on LEFT facing RIGHT (+0.62 rad)
+      { p: 0.90, x: -1.35, y: -0.28, z: 1.35, rotY: 0.62, camX: -0.18, camY: -0.10, camZ: 5.2, anim: 'floating' },
+      { p: 1.00, x: -1.35, y: -0.28, z: 1.35, rotY: 0.62, camX: -0.18, camY: -0.10, camZ: 5.2, anim: 'floating' }
+    ];
+
+    let w0 = waypoints[0];
+    let w1 = waypoints[waypoints.length - 1];
+    for (let i = 0; i < waypoints.length - 1; i++) {
+      if (scrollProgress >= waypoints[i].p && scrollProgress <= waypoints[i + 1].p) {
+        w0 = waypoints[i];
+        w1 = waypoints[i + 1];
+        break;
+      }
     }
 
+    const span = Math.max(0.001, w1.p - w0.p);
+    const rawT = Math.min(Math.max((scrollProgress - w0.p) / span, 0), 1);
+    // Smooth Hermite S-Curve
+    const t = rawT * rawT * (3 - 2 * rawT);
+
+    astroTargetX = w0.x + (w1.x - w0.x) * t;
+    astroTargetY = w0.y + (w1.y - w0.y) * t;
+    astroTargetZ = w0.z + (w1.z - w0.z) * t;
+    astroTargetRotY = w0.rotY + (w1.rotY - w0.rotY) * t;
+
+    camTargetX = w0.camX + (w1.camX - w0.camX) * t;
+    camTargetY = w0.camY + (w1.camY - w0.camY) * t;
+    camTargetZ = w0.camZ + (w1.camZ - w0.camZ) * t;
+
     // Dynamic Skeletal Animation Transition on Scroll
-    if (mixer) {
-      if (scrollProgress > 0.18 && scrollProgress < 0.72) {
-        if (actions['moon_walk']) setAstronautAction('moon_walk', 0.6);
-      } else {
-        if (actions['floating']) setAstronautAction('floating', 0.6);
-      }
+    const activeAnim = t < 0.5 ? w0.anim : w1.anim;
+    if (mixer && actions[activeAnim]) {
+      setAstronautAction(activeAnim, 0.5);
     }
 
     // Top Telemetry HUD
