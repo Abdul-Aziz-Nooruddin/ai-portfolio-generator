@@ -25,10 +25,9 @@
   const scrollHudPhase = document.getElementById('chronoHudPhase');
   const scrollIndicator = document.getElementById('chronoScrollIndicator');
 
-  // 1. Scene & Camera Setup
+  // 1. Scene & Camera Setup (Pure Deep Space — No Fog)
   const scene = new THREE.Scene();
-  // Subtle atmospheric depth (do not obscure deep space galaxy)
-  scene.fog = new THREE.FogExp2(0x04060E, 0.005);
+  scene.fog = null;
 
   const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
   camera.position.set(0, 0, 5.4);
@@ -56,8 +55,9 @@
     galaxyTex.wrapT = THREE.ClampToEdgeWrapping;
     if (THREE.SRGBColorSpace) galaxyTex.colorSpace = THREE.SRGBColorSpace;
 
-    // Set directly on Three.js scene background for guaranteed visibility
+    // Set directly on Three.js scene background & environment for reflective visor
     scene.background = galaxyTex;
+    scene.environment = galaxyTex;
 
     // Enclosing 360 celestial sky dome with fog explicitly disabled
     const skyGeo = new THREE.SphereGeometry(85, 60, 40);
@@ -68,7 +68,7 @@
       depthWrite: false
     });
     galaxySkyDome = new THREE.Mesh(skyGeo, skyMat);
-    galaxySkyDome.rotation.y = -Math.PI / 2;
+    galaxySkyDome.rotation.y = 1.15;
     scene.add(galaxySkyDome);
     console.log('🌌 [3D Engine] Deep space galaxy skybox fully active & illuminated.');
   });
@@ -86,10 +86,10 @@
   astroFillLight.position.set(-3.5, 0.5, 3.5);
   scene.add(astroFillLight);
 
-  // Radiant Solar Portal PointLight (Center of Event Horizon)
-  const portalPointLight = new THREE.PointLight(0xF5A623, 3.8, 25);
-  portalPointLight.position.set(0, 0.3, -2.5);
-  scene.add(portalPointLight);
+  // Gold visor specular highlight light
+  const visorGoldLight = new THREE.PointLight(0xF5A623, 2.6, 8);
+  visorGoldLight.position.set(1.2, 0.4, 2.5);
+  scene.add(visorGoldLight);
 
   // Key Sunlight (Front-Left)
   const sunLight = new THREE.DirectionalLight(0xFFD67A, 2.2);
@@ -101,108 +101,7 @@
   rimLight.position.set(3, -2, -3);
   scene.add(rimLight);
 
-  // 4. Stargate Dimensional Portal Assembly
-  const portalGroup = new THREE.Group();
-  portalGroup.position.set(0, 0.2, -3.2);
-  scene.add(portalGroup);
-
-  // Outer Heavy Mechanical Gate Ring
-  const outerRingGeo = new THREE.TorusGeometry(3.6, 0.16, 24, 120);
-  const outerRingMat = new THREE.MeshStandardMaterial({
-    color: 0x141A28,
-    roughness: 0.35,
-    metalness: 0.95
-  });
-  const outerRing = new THREE.Mesh(outerRingGeo, outerRingMat);
-  portalGroup.add(outerRing);
-
-  // Inner Concentric Glowing Energy Rings
-  const plasmaRingGeo1 = new THREE.TorusGeometry(3.3, 0.07, 16, 100);
-  const plasmaRingMat1 = new THREE.MeshBasicMaterial({
-    color: 0xF5A623,
-    transparent: true,
-    opacity: 0.95
-  });
-  const plasmaRing1 = new THREE.Mesh(plasmaRingGeo1, plasmaRingMat1);
-  portalGroup.add(plasmaRing1);
-
-  const plasmaRingGeo2 = new THREE.TorusGeometry(3.0, 0.045, 16, 90);
-  const plasmaRingMat2 = new THREE.MeshBasicMaterial({
-    color: 0xFFB020,
-    transparent: true,
-    opacity: 0.85
-  });
-  const plasmaRing2 = new THREE.Mesh(plasmaRingGeo2, plasmaRingMat2);
-  portalGroup.add(plasmaRing2);
-
-  // Rotating Runic Chevron Satellites
-  const chevronsGroup = new THREE.Group();
-  const chevronCount = 14;
-  const chevronGeo = new THREE.BoxGeometry(0.14, 0.34, 0.42);
-  const chevronMat = new THREE.MeshStandardMaterial({
-    color: 0xF5A623,
-    emissive: 0xF5A623,
-    emissiveIntensity: 1.5,
-    roughness: 0.2,
-    metalness: 0.8
-  });
-
-  for (let i = 0; i < chevronCount; i++) {
-    const angle = (i / chevronCount) * Math.PI * 2;
-    const ch = new THREE.Mesh(chevronGeo, chevronMat);
-    ch.position.set(Math.cos(angle) * 3.6, Math.sin(angle) * 3.6, 0);
-    ch.rotation.z = angle + Math.PI / 2;
-    chevronsGroup.add(ch);
-  }
-  portalGroup.add(chevronsGroup);
-
-  // Swirling Event Horizon Disc
-  const vortexGeo = new THREE.RingGeometry(0.3, 2.95, 48, 8);
-  const vortexMat = new THREE.MeshBasicMaterial({
-    color: 0xF5A623,
-    transparent: true,
-    opacity: 0.18,
-    side: THREE.DoubleSide,
-    wireframe: true
-  });
-  const vortexDisc = new THREE.Mesh(vortexGeo, vortexMat);
-  portalGroup.add(vortexDisc);
-
-  // 5. 3D Holographic Wireframe Universes (Archetypes Cluster)
-  const polyhedraGroup = new THREE.Group();
-  scene.add(polyhedraGroup);
-
-  const archetypes = [
-    { geo: new THREE.IcosahedronGeometry(0.32, 0), color: 0xF5A623, pos: [1.6, 0.4, 0.2], speed: 0.015 },
-    { geo: new THREE.DodecahedronGeometry(0.28, 0), color: 0x38BDF8, pos: [-1.7, 0.6, 0.1], speed: -0.018 },
-    { geo: new THREE.OctahedronGeometry(0.30, 0), color: 0xC084FC, pos: [1.4, -0.9, 0.3], speed: 0.022 },
-    { geo: new THREE.TetrahedronGeometry(0.26, 0), color: 0x34D399, pos: [-1.5, -0.7, 0.2], speed: -0.016 }
-  ];
-
-  const polyhedronMeshes = [];
-  archetypes.forEach(arch => {
-    const wireMat = new THREE.MeshBasicMaterial({
-      color: arch.color,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.85
-    });
-    const mesh = new THREE.Mesh(arch.geo, wireMat);
-    mesh.position.set(...arch.pos);
-    mesh.userData = { ...arch, basePos: [...arch.pos] };
-
-    // Glowing core inside each polyhedron
-    const coreGeo = new THREE.SphereGeometry(0.09, 12, 12);
-    const coreMat = new THREE.MeshBasicMaterial({
-      color: arch.color,
-      transparent: true,
-      opacity: 0.65
-    });
-    mesh.add(new THREE.Mesh(coreGeo, coreMat));
-
-    polyhedraGroup.add(mesh);
-    polyhedronMeshes.push(mesh);
-  });
+  // 4. Clean Spatial Staging (Portal removed per user request: pure Galaxy & Astronaut focus)
 
   // 6. Volumetric 3D Stardust Vortex
   const starCount = 1800;
@@ -248,8 +147,8 @@
   // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Progressive LOD)
   const astronautRoot = new THREE.Group();
   // Positioned prominently on the right side of hero stage so it is never hidden behind text
-  astronautRoot.position.set(1.35, -0.35, 1.2);
-  astronautRoot.rotation.y = -0.35;
+  astronautRoot.position.set(1.15, -0.45, 1.2);
+  astronautRoot.rotation.y = -0.32;
   scene.add(astronautRoot);
 
   let astronautModel = null;
@@ -298,10 +197,10 @@
 
       if (isRigged) {
         isAnimatedActive = true;
-        // Walking astronaut.glb scale & pivot
-        const scale = 1.35;
+        // Rigged animated astronaut scale & pivot
+        const scale = 0.82;
         astronautModel.scale.set(scale, scale, scale);
-        astronautModel.position.set(0, -1.18, 0);
+        astronautModel.position.set(0, -1.05, 0);
 
         // Setup skeletal AnimationMixer
         if (gltf.animations && gltf.animations.length > 0) {
@@ -325,8 +224,8 @@
         }
       } else {
         // Fast static model scale & centering
-        astronautModel.scale.set(1.55, 1.55, 1.55);
-        astronautModel.position.set(0, -0.9, 0);
+        astronautModel.scale.set(0.85, 0.85, 0.85);
+        astronautModel.position.set(0, -1.0, 0);
       }
 
       // Enhance materials with PBR metallic reflection properties
@@ -395,10 +294,10 @@
   let camTargetX = 0;
   let camTargetY = 0;
   let camTargetZ = 5.4;
-  let astroTargetX = 1.35;
-  let astroTargetY = -0.35;
+  let astroTargetX = 1.15;
+  let astroTargetY = -0.45;
   let astroTargetZ = 1.2;
-  let astroTargetRotY = -0.35;
+  let astroTargetRotY = -0.32;
 
   window.addEventListener('mousemove', e => {
     const cx = window.innerWidth / 2;
@@ -435,10 +334,10 @@
       camTargetX = 0;
       camTargetY = 0;
       camTargetZ = 5.4 - p * 0.4;
-      astroTargetX = 1.35 * (1 - p * 0.2);
-      astroTargetY = -0.35 + p * 0.15;
+      astroTargetX = 1.15 * (1 - p * 0.2);
+      astroTargetY = -0.45 + p * 0.15;
       astroTargetZ = 1.2 + p * 0.3;
-      astroTargetRotY = -0.35 + scrollRotation;
+      astroTargetRotY = -0.32 + scrollRotation;
     } else if (scrollProgress < 0.55) {
       // Beat 2: Spatial Architecture — Astronaut sweeps across to left to frame 3 Feature Pillars
       const p = (scrollProgress - 0.25) / 0.30;
@@ -519,7 +418,7 @@
 
     // 360 Deep-Space Galaxy Skybox Motion on Mouse & Scroll
     if (galaxySkyDome) {
-      galaxySkyDome.rotation.y = scrollProgress * Math.PI * 1.5 + elapsed * 0.012;
+      galaxySkyDome.rotation.y = 1.15 + scrollProgress * Math.PI * 1.5 + elapsed * 0.012;
       galaxySkyDome.rotation.x = -mouseY * 0.05 + scrollProgress * 0.12;
       galaxySkyDome.position.y = -scrollProgress * 6;
     }
@@ -537,15 +436,6 @@
     camera.position.z += (camTargetZ - camera.position.z) * 0.06;
     camera.lookAt(0, 0, 0);
 
-    // Stargate Rotations & Plasma Pulsing
-    chevronsGroup.rotation.z = -elapsed * 0.12;
-    plasmaRing1.rotation.z = elapsed * 0.22;
-    plasmaRing2.rotation.z = -elapsed * 0.18;
-    vortexDisc.rotation.z = elapsed * 0.08;
-
-    const pulseIntensity = 3.0 + Math.sin(elapsed * 3.0) * 0.8;
-    portalPointLight.intensity = pulseIntensity;
-
     // Weightless Astronaut Micro-Physics & Scroll Motion
     astronautRoot.position.x += (astroTargetX - astronautRoot.position.x) * 0.06;
     astronautRoot.position.y += (astroTargetY + Math.sin(elapsed * 1.6) * 0.08 - astronautRoot.position.y) * 0.06;
@@ -557,20 +447,7 @@
     astronautRoot.rotation.y += (targetRotY - astronautRoot.rotation.y) * 0.06;
     astronautRoot.rotation.z = Math.sin(elapsed * 0.9) * 0.03;
 
-    // Wireframe Universes Orbital Physics & Expansion
-    const polyExpansion = scrollProgress > 0.5 && scrollProgress < 0.85 ? 1.45 : 1.0;
-    polyhedronMeshes.forEach((mesh, idx) => {
-      mesh.rotation.x += mesh.userData.speed;
-      mesh.rotation.y += mesh.userData.speed * 1.3;
-
-      const base = mesh.userData.basePos;
-      const wave = Math.sin(elapsed * 2.0 + idx) * 0.08;
-      mesh.position.x = base[0] * polyExpansion;
-      mesh.position.y = (base[1] + wave) * polyExpansion;
-      mesh.position.z = base[2] * polyExpansion;
-    });
-
-    // Stardust Particle Stream Motion
+    // Stardust Particle Stream Motion (floating through galaxy)
     const positions = starGeo.attributes.position.array;
     for (let i = 0; i < starCount; i++) {
       positions[i * 3 + 2] += 0.025; // Flow forward along Z
