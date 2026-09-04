@@ -2555,23 +2555,16 @@
 
       const ctx = canvas.getContext('2d', { alpha: false });
 
-      // Multi-Clip Sequence Pipeline (Clip 1: 160 frames, ready for Clip 2 continuation!)
+      // Multi-Clip Sequence Pipeline (Part 2: 121 Pristine Frames, All Watermarks Purged)
       const MULTI_CLIP_PIPELINE = {
-        totalFrames: 160,
+        totalFrames: 121,
         clips: [
           {
-            id: 'clip_1_event_horizon_emergence',
+            id: 'clip_2_spatial_wireframe_synthesis',
             start: 1,
-            end: 160,
+            end: 121,
             getUrl: (idx) => `/assets/portal-sequence/frame_${String(idx).padStart(4, '0')}.webp`
           }
-          // When Part 2 is uploaded, seamlessly enable:
-          // {
-          //   id: 'clip_2_deep_space_traversal',
-          //   start: 161,
-          //   end: 320,
-          //   getUrl: (idx) => `/assets/portal-sequence/frame_${String(idx).padStart(4, '0')}.webp`
-          // }
         ]
       };
 
@@ -2686,10 +2679,9 @@
         }
         if (scrollHudPhase) {
           const pct = Math.round(scrollProgress * 100);
-          let phase = 'SYS: EVENT HORIZON';
-          if (scrollProgress < 0.25) phase = 'PORTAL EMERGENCE';
+          if (scrollProgress < 0.25) phase = 'HORIZON PORTAL';
           else if (scrollProgress < 0.55) phase = 'SPATIAL ARCHITECTURE';
-          else if (scrollProgress < 0.80) phase = '22 GENERATIVE UNIVERSES';
+          else if (scrollProgress < 0.80) phase = 'WIREFRAME SYNTHESIS';
           else phase = 'LAUNCH STUDIO';
           scrollHudPhase.textContent = `${phase} // ${pct}%`;
         }
