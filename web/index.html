@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -239,17 +239,13 @@
   }
   </script>
 
-  <!-- Fonts — Non-render-blocking: print/all swap trick eliminates font-CSS blocking (Lighthouse fix) -->
+  <!-- Typography: Syne (Avant-Garde Display) + Italiana (Cosmic Luxury Serif) + JetBrains Mono (Aerospace Telemetry) + Plus Jakarta Sans (Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-        rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Three.js & GSAP — conditionally loaded: desktop only, deferred to not block first paint -->
-  <!-- On mobile this script is skipped entirely — saves 600KB+ Three.js + GSAP download -->
   <script>
-    // Only load Three.js + GSAP on desktop (save mobile users 600KB+ bandwidth)
     if (window.innerWidth >= 768 && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
       var s1 = document.createElement('script');
       s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
@@ -264,8 +260,8 @@
   <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
-  <!-- LCP Preload: Hero poster image is the Largest Contentful Paint element — highest priority fetch -->
-  <link rel="preload" as="image" href="/assets/hero-3d.webp" fetchpriority="high" type="image/webp">
+  <!-- LCP Preload: Hero Concept 1 3D Artwork -->
+  <link rel="preload" as="image" href="/images/hero/chrono-astronaut.jpg" fetchpriority="high">
 
   <link rel="stylesheet" href="/style.css">
   <script src="/sidebar.js" defer></script>
@@ -273,37 +269,496 @@
   <script src="/analytics.js" defer></script>
 
   <style>
+    :root {
+      --space-void: #06070B;
+      --solar-gold: #F5A623;
+      --solar-flare: #FFB020;
+      --solar-amber: #FF8C00;
+      --solar-glow: rgba(245, 166, 35, 0.3);
+      --starfield-ice: #E8EDF5;
+      --telemetry-cyan: #38BDF8;
+      --text-dim: #94A3B8;
+      --card-glass: rgba(11, 14, 22, 0.72);
+      --card-border: rgba(245, 166, 35, 0.22);
+      --font-display: 'Syne', -apple-system, sans-serif;
+      --font-serif: 'Italiana', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    * {
+      cursor: none; /* Magnetic HUD Reticle handles pointer on desktop */
+    }
+
     /* ====================================================
-       MOBILE PERFORMANCE GUARD
-       On mobile (< 768px) Three.js WebGL and the background
-       video are disabled entirely. They cause 19+ seconds of
-       main-thread blocking on mobile CPUs.
-       The hero still looks great via CSS gradient + poster img.
+       AEROSPACE MAGNETIC HUD RETICLE CURSOR
        ==================================================== */
-    @media (max-width: 768px) {
-      /* Hide WebGL canvas on mobile — saves ~600KB JS parse + GPU blocking */
-      #heroLive3dCanvas { display: none !important; }
+    .hud-reticle-outer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(245, 166, 35, 0.55);
+      background: radial-gradient(circle, rgba(245, 166, 35, 0.08) 0%, transparent 70%);
+      box-shadow: 0 0 15px rgba(245, 166, 35, 0.2);
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.2s ease,
+                  background 0.2s ease;
+      will-change: transform;
+    }
 
-      /* Don't download/play video on mobile — saves 20MB+ network payload.
-         The video poster (hero-3d.jpg) still shows as the background. */
-      .ref-hero-video-loop {
-        display: none !important;
-        visibility: hidden !important;
-      }
+    .hud-reticle-inner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 10px #FFFFFF, 0 0 20px #F5A623;
+      pointer-events: none;
+      z-index: 100000;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s ease, height 0.2s ease, background 0.2s ease;
+    }
 
-      /* Show a static CSS gradient background instead on mobile */
-      .ref-hero-bg-media::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, #05080A 0%, #0F172A 40%, #1E1B4B 70%, #05080A 100%);
-        z-index: 0;
-      }
+    body.cursor-hover .hud-reticle-outer {
+      width: 64px;
+      height: 64px;
+      border-color: #F5A623;
+      background: radial-gradient(circle, rgba(245, 166, 35, 0.18) 0%, transparent 75%);
+      box-shadow: 0 0 25px rgba(245, 166, 35, 0.45);
+    }
+
+    body.cursor-hover .hud-reticle-inner {
+      width: 12px;
+      height: 12px;
+      background: #F5A623;
+      box-shadow: 0 0 15px #F5A623, 0 0 30px #FF8C00;
+    }
+
+    /* ====================================================
+       CONCEPT 1: CHRONO-ASTRONAUT 2.5D HERO STAGE
+       ==================================================== */
+    .chrono-hero-stage {
+      position: relative;
+      width: 100%;
+      min-height: 92vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      perspective: 1400px;
+      padding: 120px 24px 80px;
+      background: var(--space-void);
+    }
+
+    .chrono-hero-art {
+      position: absolute;
+      top: -6%;
+      left: -6%;
+      width: 112%;
+      height: 112%;
+      background: url('/images/hero/chrono-astronaut.jpg') center center / cover no-repeat;
+      transform-style: preserve-3d;
+      transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+      filter: saturate(1.18) brightness(0.88) contrast(1.06);
+      will-change: transform;
+      z-index: 1;
+    }
+
+    .chrono-hero-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.2) 0%, rgba(6, 7, 11, 0.65) 60%, rgba(6, 7, 11, 0.95) 100%),
+                  linear-gradient(to bottom, rgba(6, 7, 11, 0.4) 0%, transparent 40%, rgba(6, 7, 11, 0.95) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .chrono-stardust-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    .chrono-hero-content {
+      position: relative;
+      z-index: 10;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease-out;
+      will-change: transform;
+    }
+
+    /* Telemetry Badge */
+    .chrono-telemetry-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 100px;
+      background: rgba(14, 18, 27, 0.65);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--solar-gold);
+      box-shadow: 0 0 20px rgba(245, 166, 35, 0.15);
+      margin-bottom: 24px;
+    }
+
+    .telemetry-beacon {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--solar-gold);
+      box-shadow: 0 0 10px var(--solar-gold);
+      animation: beaconPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    /* Title & Typography */
+    .chrono-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(38px, 6.2vw, 76px);
+      font-weight: 900;
+      line-height: 1.06;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      text-transform: none;
+    }
+
+    .title-line-1 {
+      display: block;
+      color: #FFFFFF;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    .title-line-2 {
+      display: block;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F5A623 45%, #FF8C00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px rgba(245, 166, 35, 0.35));
+    }
+
+    .chrono-hero-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(15px, 1.8vw, 19px);
+      font-weight: 400;
+      line-height: 1.65;
+      color: var(--text-dim);
+      max-width: 680px;
+      margin: 0 auto 36px;
+    }
+
+    /* ====================================================
+       HOLOGRAPHIC GENERATOR CONSOLE
+       ==================================================== */
+    .chrono-console-card {
+      background: var(--card-glass);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border-radius: 24px;
+      padding: 16px 20px 20px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65),
+                  0 0 40px rgba(245, 166, 35, 0.12),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      max-width: 660px;
+      width: 100%;
+      margin-bottom: 32px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chrono-console-card:hover {
+      border-color: rgba(245, 166, 35, 0.45);
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75),
+                  0 0 50px rgba(245, 166, 35, 0.25);
+    }
+
+    .console-tabs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+    }
+
+    .console-tab {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 100px;
+      padding: 8px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      transition: all 0.25s ease;
+    }
+
+    .console-tab:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .console-tab.active {
+      background: rgba(245, 166, 35, 0.15);
+      border-color: rgba(245, 166, 35, 0.4);
+      color: var(--solar-gold);
+      box-shadow: 0 0 15px rgba(245, 166, 35, 0.2);
+    }
+
+    .console-input-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .console-input-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: rgba(6, 8, 12, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 0 14px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .console-input-wrap:focus-within {
+      border-color: var(--solar-gold);
+      box-shadow: 0 0 18px rgba(245, 166, 35, 0.3);
+    }
+
+    .input-prefix {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: rgba(245, 166, 35, 0.6);
+    }
+
+    .console-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 14px 8px;
+      color: #FFFFFF;
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    .console-input::placeholder {
+      color: rgba(148, 163, 184, 0.5);
+    }
+
+    .console-dropzone {
+      padding: 22px 16px;
+      border: 1.5px dashed rgba(245, 166, 35, 0.35);
+      border-radius: 14px;
+      background: rgba(6, 8, 12, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      transition: all 0.25s ease;
+    }
+
+    .console-dropzone:hover {
+      border-color: var(--solar-gold);
+      background: rgba(245, 166, 35, 0.08);
+      box-shadow: 0 0 20px rgba(245, 166, 35, 0.15);
+    }
+
+    .dropzone-icon {
+      font-size: 26px;
+    }
+
+    .dropzone-text {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .dropzone-text strong {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: #FFFFFF;
+    }
+
+    .dropzone-text span {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* Buttons */
+    .btn-solar-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #06070B;
+      background: linear-gradient(135deg, #FFFFFF 0%, #F5A623 40%, #FF8C00 100%);
+      border: none;
+      box-shadow: 0 10px 30px rgba(245, 166, 35, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      white-space: nowrap;
+    }
+
+    .btn-solar-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 16px 40px rgba(245, 166, 35, 0.6),
+                  0 0 25px rgba(255, 255, 255, 0.6);
+    }
+
+    .chrono-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .btn-solar-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 26px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #FFFFFF;
+      background: rgba(14, 18, 27, 0.5);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      backdrop-filter: blur(12px);
+      transition: all 0.25s ease;
+    }
+
+    .btn-solar-outline:hover {
+      background: rgba(245, 166, 35, 0.12);
+      border-color: var(--solar-gold);
+      color: var(--solar-gold);
+      box-shadow: 0 0 25px rgba(245, 166, 35, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .btn-solar-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 12px;
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: var(--telemetry-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    .btn-solar-ghost:hover {
+      background: rgba(56, 189, 248, 0.18);
+      border-color: var(--telemetry-cyan);
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .chrono-hint-row {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(245, 166, 35, 0.5);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hint-glyph {
+      font-size: 14px;
+      color: var(--solar-gold);
+    }
+
+    /* Navbar Audio Resonance Button */
+    .nav-audio-btn {
+      background: rgba(14, 18, 27, 0.6);
+      border: 1px solid rgba(245, 166, 35, 0.25);
+      backdrop-filter: blur(10px);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      color: var(--solar-gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.25s ease;
+      margin-right: 8px;
+    }
+
+    .nav-audio-btn:hover {
+      border-color: var(--solar-gold);
+      box-shadow: 0 0 16px rgba(245, 166, 35, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* Coarse pointer (touch/mobile) adjustments */
+    @media (pointer: coarse), (max-width: 768px) {
+      * { cursor: auto !important; }
+      .hud-reticle-outer, .hud-reticle-inner { display: none !important; }
+      .chrono-hero-stage { min-height: auto; padding: 100px 16px 60px; }
+      .chrono-console-card { padding: 14px 14px 18px; }
+      .console-input-row { flex-direction: column; width: 100%; }
+      .console-input-wrap { width: 100%; }
+      .btn-solar-primary { width: 100%; }
+      .chrono-cta-row { flex-direction: column; width: 100%; }
+      .btn-solar-outline, .btn-solar-ghost { width: 100%; justify-content: center; }
     }
   </style>
 </head>
 
 <body>
+  <!-- Magnetic HUD Reticle Cursor (Desktop) -->
+  <div class="hud-reticle-outer" id="hudReticleOuter"></div>
+  <div class="hud-reticle-inner" id="hudReticleInner"></div>
+
   <!-- Ambient Texture Layer -->
   <div class="product-mesh-layer" aria-hidden="true"></div>
 
@@ -320,7 +775,7 @@
           <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
             <picture>
               <source srcset="/assets/logo-3d.webp" type="image/webp">
-              <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" loading="lazy" decoding="async" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);">
+              <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" loading="lazy" decoding="async" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(245, 166, 35, 0.6); box-shadow: 0 0 12px rgba(245, 166, 35, 0.4);">
             </picture>
             <span class="nav-brand-text">MYFOLIO STUDIO</span>
           </div>
@@ -333,6 +788,13 @@
             <a href="#sectionFaq" class="nav-link-item">FAQ</a>
             <a href="/about" class="nav-link-item">ABOUT</a>
             <a href="/contact" class="nav-link-item">CONTACT</a>
+
+            <!-- Cosmic Audio Resonance Toggle -->
+            <button type="button" class="nav-audio-btn interactive-target" id="navAudioToggle" aria-label="Toggle Cosmic Audio Resonance">
+              <span id="navAudioIcon">🔈</span>
+              <span id="navAudioText">RESONANCE</span>
+            </button>
+
             <button type="button" class="theme-3d-switch-btn" onclick="togglePlatformTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme" style="margin-left: 8px;">
               <div class="switch-3d-track">
                 <div class="track-celestial-day"><span class="cloud-puff"></span></div>
@@ -354,54 +816,112 @@
             </button>
             <div id="navAuthDock" class="nav-auth-dock">
               <!-- href fallbacks ensure Google can crawl these as links -->
-              <a href="/auth" class="nav-link-item nav-login-btn" onclick="event.preventDefault(); openAuthModal('signin')" role="button">SIGN IN</a>
-              <a href="/auth" class="nav-btn-pill" onclick="event.preventDefault(); openAuthModal('signup')" role="button">GET STARTED FREE</a>
+              <a href="/auth" class="nav-link-item nav-login-btn interactive-target" onclick="event.preventDefault(); openAuthModal('signin')" role="button">SIGN IN</a>
+              <a href="/auth" class="nav-btn-pill interactive-target" onclick="event.preventDefault(); openAuthModal('signup')" role="button">GET STARTED FREE</a>
             </div>
           </div>
         </nav>
 
-        <!-- Main Hero Section (Interactive Live 3D Canvas Background) -->
-        <header class="ref-hero-banner" id="heroBannerStage">
-          <div class="ref-hero-bg-media">
-            <!-- Hero video: hidden on mobile via CSS to avoid 20MB+ download -->
-            <video class="ref-hero-video-loop" autoplay loop muted playsinline poster="/assets/hero-3d.webp" fetchpriority="high" preload="none">
-              <source src="/assets/hero-3d-loop.webm" type="video/webm">
-              <source src="/assets/hero-3d-loop.mp4" type="video/mp4">
-            </video>
-            <!-- Three.js Interactive Live 3D Canvas Overlay -->
-            <canvas id="heroLive3dCanvas" class="hero-live-3d-canvas"></canvas>
-            <div class="ref-hero-gradient-overlay"></div>
-          </div>
+        <!-- Concept 1: The Chrono-Astronaut & Shattered Portal 2.5D Spatial Hero -->
+        <header class="chrono-hero-stage" id="chronoHeroStage">
+          <!-- 2.5D Art Background Layer -->
+          <div class="chrono-hero-art" id="chronoHeroArt"></div>
+          <!-- Cinematic Vignette & Atmospheric Fog -->
+          <div class="chrono-hero-vignette"></div>
+          <!-- Golden Stardust Particle Canvas -->
+          <canvas id="chronoStardustCanvas" class="chrono-stardust-canvas"></canvas>
 
-          <div class="ref-hero-content reveal-on-scroll">
-            <h1 class="ref-hero-title">
-              <span class="ref-title-line">AI Portfolio</span>
-              <span class="ref-title-line">Studio</span>
+          <div class="chrono-hero-content" id="chronoHeroContent">
+            <!-- Telemetry Status HUD -->
+            <div class="chrono-telemetry-badge">
+              <span class="telemetry-beacon"></span>
+              <span>SYS: QUANTUM PORTAL ACTIVE // 22 UNIVERSES ACCESSIBLE</span>
+            </div>
+
+            <!-- Display Headline in Syne -->
+            <h1 class="chrono-hero-title">
+              <span class="title-line-1">Synthesize Bespoke</span>
+              <span class="title-line-2">3D WebGL Universes</span>
             </h1>
-            <p class="ref-hero-subtitle">Turn your work into a portfolio worth remembering. Connect your GitHub repositories, PDF resume, or career background into a bespoke 3D developer portfolio in seconds.</p>
-            
-            <div class="ref-hero-cta-row">
-              <button type="button" class="btn-ref-pill-outline" onclick="openAuthModal('signup')" style="cursor: pointer;">
-                🚀 START BUILDING FREE
+
+            <!-- Subtitle -->
+            <p class="chrono-hero-subtitle">
+              Transform your GitHub code, PDF resume, or engineering story into an interactive 3D spatial developer portfolio in seconds. 22 visual universes. Zero generic templates.
+            </p>
+
+            <!-- Holographic Instant Generator Console -->
+            <div class="chrono-console-card interactive-target">
+              <div class="console-tabs">
+                <button type="button" class="console-tab active" id="tabGithub" onclick="switchHeroTab('github')">
+                  <span>🐙 GitHub Ingestion</span>
+                </button>
+                <button type="button" class="console-tab" id="tabResume" onclick="switchHeroTab('resume')">
+                  <span>📄 PDF Resume Parser</span>
+                </button>
+                <button type="button" class="console-tab" id="tabDirect" onclick="switchHeroTab('direct')">
+                  <span>⚡ Quick 60s Synthesize</span>
+                </button>
+              </div>
+
+              <!-- GitHub Panel -->
+              <div class="console-panel" id="panelGithub">
+                <div class="console-input-row">
+                  <div class="console-input-wrap">
+                    <span class="input-prefix">github.com/</span>
+                    <input type="text" id="heroGithubInput" class="console-input" placeholder="your-username (e.g. torvalds)" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') launchHeroGithub()">
+                  </div>
+                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroGithub()">
+                    <span>✦ SYNTHESIZE NOW</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Resume Panel -->
+              <div class="console-panel" id="panelResume" style="display: none;">
+                <div class="console-dropzone" onclick="document.getElementById('heroResumeUpload').click()">
+                  <input type="file" id="heroResumeUpload" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleHeroResume(this)">
+                  <span class="dropzone-icon">📄</span>
+                  <div class="dropzone-text">
+                    <strong>Drop your PDF Resume or click to browse</strong>
+                    <span>Instant AI extraction of verified skills, projects, and career timeline</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Direct Prompt Panel -->
+              <div class="console-panel" id="panelDirect" style="display: none;">
+                <div class="console-input-row">
+                  <input type="text" id="heroPromptInput" class="console-input" placeholder="e.g. Senior Full-Stack Engineer specializing in AI &amp; WebGL..." style="padding-left: 18px;" onkeydown="if(event.key==='Enter') launchHeroPrompt()">
+                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroPrompt()">
+                    <span>✦ BUILD PORTFOLIO</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary CTAs Row -->
+            <div class="chrono-cta-row">
+              <a href="/studio" class="btn-solar-primary interactive-target">
+                <span>✦ Launch 3D Studio</span>
+              </a>
+              <button type="button" class="btn-solar-outline interactive-target" onclick="openSamplesModal()">
+                <span>🪐 Explore 22 Universes</span>
               </button>
-              <button type="button" class="btn-ref-pill-solid" onclick="openSamplesModal()">
-                🌌 EXPLORE 3D SAMPLES
-              </button>
-              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-ref-pill-solid" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center; background: rgba(56, 189, 248, 0.18); border: 1px solid #38bdf8; color: #38bdf8;">
-                📱 TELEGRAM BOT
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-ghost interactive-target">
+                <span>📱 Telegram Recruiter Bot</span>
               </a>
             </div>
 
-            <!-- Real-Time Interactive Cursor Hint -->
-            <div style="margin-top: 28px; font-family: var(--font-mono); font-size: 0.78rem; color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; gap: 8px;">
-              <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #38BDF8; box-shadow: 0 0 6px #38BDF8;"></span>
-              <span>Move your mouse across the screen to interact with the live 3D floating universe</span>
+            <!-- Real-time Interaction Hint -->
+            <div class="chrono-hint-row">
+              <span class="hint-glyph">∞</span>
+              <span>Move cursor to warp 2.5D spatial gravity &amp; dimensional portal</span>
             </div>
           </div>
         </header>
 
         <!-- Section 1: PRODUCT DETAILS & PLATFORM OVERVIEW -->
-        <section id="sectionOverview" class="landing-section" style="background: #FFFFFF;">
+        <section id="sectionOverview" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">PLATFORM OVERVIEW</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">Why Traditional Portfolios Fail &amp; How We Fix It</h2>
@@ -541,7 +1061,7 @@
         </section>
 
         <!-- Section 3: STEPS TO GENERATE -->
-        <section id="sectionSteps" class="landing-section" style="background: #FAF8F5;">
+        <section id="sectionSteps" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">GETTING STARTED</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">4 Simple Ways to Generate Your 3D Portfolio</h2>
@@ -1107,7 +1627,7 @@
         </section>
 
         <!-- Section 5: PRICING & SUBSCRIPTION PLANS -->
-        <section id="sectionPricing" class="landing-section" style="background: #F8FAFC;">
+        <section id="sectionPricing" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
 
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">TRANSPARENT PLANS</div>
@@ -1177,7 +1697,7 @@
         </section>
 
         <!-- Section 6: FREQUENTLY ASKED QUESTIONS (FAQ) -->
-        <section id="sectionFaq" class="landing-section" style="background: #FFFFFF;">
+        <section id="sectionFaq" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">QUESTIONS &amp; ANSWERS</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">Frequently Asked Questions</h2>
@@ -1463,177 +1983,314 @@
   <!-- Scripts -->
   <script src="/app.js" defer></script>
 
-  <!-- Interactive Three.js Live 3D Floating Universe & Cursor Movement Script -->
-  <!-- Skipped entirely on mobile to prevent 19,000ms+ main thread blocking -->
+  <!-- Concept 1: The Chrono-Astronaut Interactive Systems & Aerospace Telemetry Scripts -->
   <script>
-    (function initHeroInteractive3D() {
-      // 🚫 Skip Three.js completely on mobile — it causes 19s+ main thread blocking
-      // Mobile users get the CSS gradient hero background instead (still looks great)
-      if (window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) return;
+    /* ====================================================
+       1. AEROSPACE MAGNETIC HUD RETICLE CURSOR
+       ==================================================== */
+    (function initHudReticleCursor() {
+      if (window.matchMedia('(pointer: coarse)').matches) return;
 
-      const canvas = document.getElementById('heroLive3dCanvas');
-      if (!canvas || typeof THREE === 'undefined') return;
+      const reticleOuter = document.getElementById('hudReticleOuter');
+      const reticleInner = document.getElementById('hudReticleInner');
+      if (!reticleOuter || !reticleInner) return;
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 24;
-
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-
-      // 1. Lighting Setup
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
-      scene.add(ambientLight);
-
-      const mainLight = new THREE.DirectionalLight(0x38bdf8, 2.5);
-      mainLight.position.set(20, 20, 20);
-      scene.add(mainLight);
-
-      const purpleLight = new THREE.PointLight(0xa855f7, 3, 50);
-      purpleLight.position.set(-15, -10, 15);
-      scene.add(purpleLight);
-
-      const pinkLight = new THREE.PointLight(0xec4899, 2.5, 40);
-      pinkLight.position.set(10, -15, 10);
-      scene.add(pinkLight);
-
-      // 2. Floating 3D Geometries Group
-      const objectsGroup = new THREE.Group();
-      scene.add(objectsGroup);
-
-      const objects = [];
-
-      // A. Centerpiece Smooth Glass / Chrome Sphere
-      const sphereGeo = new THREE.SphereGeometry(4.2, 48, 48);
-      const sphereMat = new THREE.MeshPhysicalMaterial({
-        color: 0x8b5cf6,
-        roughness: 0.1,
-        metalness: 0.2,
-        transmission: 0.7,
-        ior: 1.5,
-        reflectivity: 0.9,
-        clearcoat: 1.0,
-        clearcoatRoughness: 0.1
-      });
-      const centerSphere = new THREE.Mesh(sphereGeo, sphereMat);
-      centerSphere.position.set(0, 0.5, 0);
-      objectsGroup.add(centerSphere);
-      objects.push({ mesh: centerSphere, rotX: 0.003, rotY: 0.005, floatSpeed: 0.02, floatAmp: 0.3, initialY: 0.5 });
-
-      // B. Floating Metallic Capsules / Pills
-      const capsuleGeo = new THREE.CylinderGeometry(1.2, 1.2, 3.8, 32);
-      const metalMat1 = new THREE.MeshStandardMaterial({
-        color: 0x4f46e5,
-        metalness: 0.85,
-        roughness: 0.15
-      });
-      const metalMat2 = new THREE.MeshStandardMaterial({
-        color: 0x9333ea,
-        metalness: 0.9,
-        roughness: 0.1
-      });
-      const cyanMat = new THREE.MeshStandardMaterial({
-        color: 0x06b6d4,
-        metalness: 0.8,
-        roughness: 0.2
-      });
-
-      // Capsule 1 (Top Left)
-      const cap1 = new THREE.Mesh(capsuleGeo, metalMat1);
-      cap1.position.set(-11, 5, -4);
-      cap1.rotation.z = Math.PI / 4;
-      objectsGroup.add(cap1);
-      objects.push({ mesh: cap1, rotX: 0.008, rotY: 0.006, floatSpeed: 0.018, floatAmp: 0.6, initialY: 5 });
-
-      // Capsule 2 (Bottom Right)
-      const cap2 = new THREE.Mesh(capsuleGeo, metalMat2);
-      cap2.position.set(12, -4, -2);
-      cap2.rotation.z = -Math.PI / 3;
-      objectsGroup.add(cap2);
-      objects.push({ mesh: cap2, rotX: 0.007, rotY: 0.009, floatSpeed: 0.022, floatAmp: 0.7, initialY: -4 });
-
-      // C. Floating Chrome Octahedra & Torus Rings
-      const octGeo = new THREE.OctahedronGeometry(2.2, 0);
-      const octMesh = new THREE.Mesh(octGeo, cyanMat);
-      octMesh.position.set(-9, -6, 2);
-      objectsGroup.add(octMesh);
-      objects.push({ mesh: octMesh, rotX: 0.012, rotY: 0.015, floatSpeed: 0.025, floatAmp: 0.5, initialY: -6 });
-
-      const torusGeo = new THREE.TorusGeometry(2.4, 0.45, 16, 40);
-      const torusMesh = new THREE.Mesh(torusGeo, metalMat1);
-      torusMesh.position.set(10, 6, -1);
-      objectsGroup.add(torusMesh);
-      objects.push({ mesh: torusMesh, rotX: 0.01, rotY: 0.012, floatSpeed: 0.015, floatAmp: 0.4, initialY: 6 });
-
-      // D. Background Particle Stars Nebula
-      const partGeo = new THREE.BufferGeometry();
-      const partCount = 400;
-      const posArray = new Float32Array(partCount * 3);
-      for (let i = 0; i < partCount * 3; i += 3) {
-        posArray[i] = (Math.random() - 0.5) * 60;
-        posArray[i + 1] = (Math.random() - 0.5) * 40;
-        posArray[i + 2] = (Math.random() - 0.5) * 40;
-      }
-      partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-      const partMat = new THREE.PointsMaterial({
-        size: 0.16,
-        color: 0x93c5fd,
-        transparent: true,
-        opacity: 0.8
-      });
-      const particlesMesh = new THREE.Points(partGeo, partMat);
-      scene.add(particlesMesh);
-
-      // 3. Real-Time Mouse Cursor Tracking & Parallax
-      let mouseX = 0;
-      let mouseY = 0;
-      let targetX = 0;
-      let targetY = 0;
+      let mouseX = window.innerWidth / 2;
+      let mouseY = window.innerHeight / 2;
+      let targetX = mouseX;
+      let targetY = mouseY;
+      let trailX = mouseX;
+      let trailY = mouseY;
 
       window.addEventListener('mousemove', (e) => {
-        mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        reticleInner.style.left = `${mouseX}px`;
+        reticleInner.style.top = `${mouseY}px`;
       });
 
-      // Resize handling
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-
-      // 4. Animation Loop with Inertia Lerp
-      let clock = new THREE.Clock();
-
-      function animate3D() {
-        requestAnimationFrame(animate3D);
-        const time = clock.getElapsedTime();
-
-        // Smooth Cursor Following (Lerp)
-        targetX += (mouseX - targetX) * 0.05;
-        targetY += (mouseY - targetY) * 0.05;
-
-        objectsGroup.rotation.y = targetX * 0.45;
-        objectsGroup.rotation.x = -targetY * 0.35;
-
-        camera.position.x = targetX * 2.5;
-        camera.position.y = -targetY * 2.0;
-        camera.lookAt(scene.position);
-
-        // Gentle Floating & Rotation Physics on every object
-        objects.forEach((obj, idx) => {
-          obj.mesh.rotation.x += obj.rotX;
-          obj.mesh.rotation.y += obj.rotY;
-          obj.mesh.position.y = obj.initialY + Math.sin(time * 2 + idx * 1.5) * obj.floatAmp;
+      // Magnetic Attraction & Audio Feedback on interactive targets
+      function bindMagneticTargets() {
+        const targets = document.querySelectorAll('.interactive-target, a, button, input, .feature-rich-card, .ref-universe-card');
+        targets.forEach(t => {
+          t.addEventListener('mouseenter', () => {
+            document.body.classList.add('cursor-hover');
+            playChime(880, 0.05); // High crystal hover chime
+          });
+          t.addEventListener('mouseleave', () => {
+            document.body.classList.remove('cursor-hover');
+          });
         });
+      }
+      bindMagneticTargets();
 
-        particlesMesh.rotation.y = time * 0.03;
-        renderer.render(scene, camera);
+      // Click ripple
+      window.addEventListener('mousedown', () => {
+        reticleInner.style.transform = 'translate(-50%, -50%) scale(0.6)';
+        reticleOuter.style.transform = 'translate(-50%, -50%) scale(1.35)';
+        playChime(523.25, 0.12);
+      });
+
+      window.addEventListener('mouseup', () => {
+        reticleInner.style.transform = 'translate(-50%, -50%) scale(1)';
+        reticleOuter.style.transform = 'translate(-50%, -50%) scale(1)';
+      });
+
+      function renderReticle() {
+        trailX += (mouseX - trailX) * 0.22;
+        trailY += (mouseY - trailY) * 0.22;
+        reticleOuter.style.left = `${trailX}px`;
+        reticleOuter.style.top = `${trailY}px`;
+        requestAnimationFrame(renderReticle);
+      }
+      renderReticle();
+    })();
+
+    /* ====================================================
+       2. 2.5D SPATIAL PARALLAX TILT PHYSICS
+       ==================================================== */
+    (function initChronoHeroParallax() {
+      const artLayer = document.getElementById('chronoHeroArt');
+      const contentLayer = document.getElementById('chronoHeroContent');
+      if (!artLayer || !contentLayer) return;
+
+      let targetRotX = 0;
+      let targetRotY = 0;
+      let currentRotX = 0;
+      let currentRotY = 0;
+
+      window.addEventListener('mousemove', (e) => {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const deltaX = (e.clientX - centerX) / centerX;
+        const deltaY = (e.clientY - centerY) / centerY;
+
+        targetRotY = deltaX * 14;
+        targetRotX = -deltaY * 12;
+      });
+
+      function renderParallax() {
+        currentRotX += (targetRotX - currentRotX) * 0.08;
+        currentRotY += (targetRotY - currentRotY) * 0.08;
+
+        artLayer.style.transform = `scale(1.06) translate3d(${currentRotY * 1.4}px, ${-currentRotX * 1.4}px, 0px)`;
+        contentLayer.style.transform = `perspective(1400px) rotateX(${currentRotX * 0.35}deg) rotateY(${currentRotY * 0.35}deg) translate3d(${currentRotY * 0.6}px, ${-currentRotX * 0.6}px, 20px)`;
+
+        requestAnimationFrame(renderParallax);
+      }
+      renderParallax();
+    })();
+
+    /* ====================================================
+       3. GOLDEN SOLAR STARDUST PARTICLE CANVAS
+       ==================================================== */
+    (function initChronoStardust() {
+      const canvas = document.getElementById('chronoStardustCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      let particles = [];
+      const particleCount = 65;
+
+      function resize() {
+        canvas.width = canvas.parentElement.offsetWidth || window.innerWidth;
+        canvas.height = canvas.parentElement.offsetHeight || window.innerHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      class SolarParticle {
+        constructor() {
+          this.reset();
+        }
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.size = Math.random() * 2.2 + 0.5;
+          this.baseAlpha = Math.random() * 0.6 + 0.2;
+          this.alpha = this.baseAlpha;
+          this.speedX = (Math.random() - 0.5) * 0.4;
+          this.speedY = -Math.random() * 0.45 - 0.1;
+          this.pulsePhase = Math.random() * Math.PI * 2;
+          this.pulseSpeed = Math.random() * 0.02 + 0.01;
+          const colors = ['245, 166, 35', '255, 176, 32', '255, 255, 255', '254, 215, 170'];
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+        }
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.pulsePhase += this.pulseSpeed;
+          this.alpha = this.baseAlpha + Math.sin(this.pulsePhase) * 0.25;
+
+          if (this.y < 0 || this.x < 0 || this.x > canvas.width) {
+            this.reset();
+            this.y = canvas.height + 10;
+          }
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${this.color}, ${Math.max(0, this.alpha)})`;
+          ctx.shadowBlur = this.size * 4;
+          ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
       }
 
-      animate3D();
+      for (let i = 0; i < particleCount; i++) {
+        particles.push(new SolarParticle());
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let p of particles) {
+          p.update();
+          p.draw();
+        }
+        requestAnimationFrame(animate);
+      }
+      animate();
     })();
+
+    /* ====================================================
+       4. WEB AUDIO COSMIC HARMONIC RESONANCE
+       ==================================================== */
+    let audioCtx = null;
+    let isAudioActive = false;
+    let ambientOscillators = [];
+
+    const navAudioToggle = document.getElementById('navAudioToggle');
+    const navAudioIcon = document.getElementById('navAudioIcon');
+    const navAudioText = document.getElementById('navAudioText');
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function startDrone() {
+      if (!audioCtx) return;
+      stopDrone();
+      // Ethereal space chord: Bb, D, F, A
+      const freqs = [116.54, 146.83, 174.61, 220.00];
+      freqs.forEach(f => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.02, audioCtx.currentTime + 3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        ambientOscillators.push({ osc, gain });
+      });
+    }
+
+    function stopDrone() {
+      ambientOscillators.forEach(({ osc, gain }) => {
+        try {
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+          setTimeout(() => osc.stop(), 1000);
+        } catch(e) {}
+      });
+      ambientOscillators = [];
+    }
+
+    function playChime(freq, vol = 0.08) {
+      if (!isAudioActive || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.45);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch(e) {}
+    }
+
+    if (navAudioToggle) {
+      navAudioToggle.addEventListener('click', () => {
+        initAudioContext();
+        isAudioActive = !isAudioActive;
+        if (isAudioActive) {
+          startDrone();
+          navAudioIcon.textContent = '🔊';
+          navAudioText.textContent = 'ACTIVE';
+          navAudioToggle.style.borderColor = '#F5A623';
+          navAudioToggle.style.boxShadow = '0 0 18px rgba(245, 166, 35, 0.4)';
+          playChime(659.25, 0.15); // E5 chord
+        } else {
+          stopDrone();
+          navAudioIcon.textContent = '🔈';
+          navAudioText.textContent = 'RESONANCE';
+          navAudioToggle.style.borderColor = 'rgba(245, 166, 35, 0.25)';
+          navAudioToggle.style.boxShadow = 'none';
+        }
+      });
+    }
+
+    /* ====================================================
+       5. HERO GENERATOR CONSOLE HANDLERS
+       ==================================================== */
+    window.switchHeroTab = function(tabName) {
+      const tabs = document.querySelectorAll('.console-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+
+      const panels = document.querySelectorAll('.console-panel');
+      panels.forEach(p => p.style.display = 'none');
+
+      if (tabName === 'github') {
+        document.getElementById('tabGithub').classList.add('active');
+        document.getElementById('panelGithub').style.display = 'block';
+      } else if (tabName === 'resume') {
+        document.getElementById('tabResume').classList.add('active');
+        document.getElementById('panelResume').style.display = 'block';
+      } else if (tabName === 'direct') {
+        document.getElementById('tabDirect').classList.add('active');
+        document.getElementById('panelDirect').style.display = 'block';
+      }
+      playChime(783.99, 0.08); // G5 note
+    };
+
+    window.launchHeroGithub = function() {
+      const input = document.getElementById('heroGithubInput');
+      let val = (input?.value || '').trim();
+      if (!val) {
+        window.location.href = '/studio';
+        return;
+      }
+      val = val.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/\/+$/, '').trim();
+      window.location.href = `/studio?github=${encodeURIComponent(val)}`;
+    };
+
+    window.handleHeroResume = function(input) {
+      if (input.files && input.files[0]) {
+        // Save file name in session and navigate to studio upload
+        sessionStorage.setItem('pendingResumeName', input.files[0].name);
+        window.location.href = '/studio?tab=resume';
+      }
+    };
+
+    window.launchHeroPrompt = function() {
+      const input = document.getElementById('heroPromptInput');
+      const val = (input?.value || '').trim();
+      if (!val) {
+        window.location.href = '/studio';
+        return;
+      }
+      window.location.href = `/studio?prompt=${encodeURIComponent(val)}`;
+    };
 
     // 5. Scroll Reveal Animation Trigger
     (function initScrollReveal() {
