@@ -1798,7 +1798,7 @@ app.use(express.static(webDir, {
   extensions: ['html'],
   maxAge: '7d',
   setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
+    if (filePath.endsWith('.html') || filePath.includes('spatial-realtime-engine')) {
       res.setHeader('Cache-Control', 'public, max-age=0, must-revalidate');
     } else if (/\.(js|css|png|jpg|jpeg|gif|ico|svg|woff2?|ttf|eot|webp)$/i.test(filePath)) {
       res.setHeader('Cache-Control', 'public, max-age=604800, immutable');
