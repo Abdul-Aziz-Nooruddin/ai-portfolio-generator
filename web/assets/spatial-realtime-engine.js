@@ -180,6 +180,13 @@
     }
   };
 
+  function getResponsiveAstronautScale() {
+    const w = window.innerWidth;
+    if (w < 640) return 0.38;
+    if (w < 1024) return 0.56;
+    return 0.72;
+  }
+
   if (gltfLoader) {
     const fastModelPath = '/assets/Astronaut.glb';
     const animatedModelPath = '/assets/astronaut-animated.glb';
@@ -195,10 +202,12 @@
 
       astronautModel = gltf.scene;
 
+      const baseScale = getResponsiveAstronautScale();
+
       if (isRigged) {
         isAnimatedActive = true;
         // Rigged animated astronaut scale & pivot
-        const scale = 0.72;
+        const scale = baseScale;
         astronautModel.scale.set(scale, scale, scale);
         astronautModel.position.set(0, -0.92, 0);
 
@@ -224,7 +233,8 @@
         }
       } else {
         // Fast static model scale & centering
-        astronautModel.scale.set(0.75, 0.75, 0.75);
+        const scale = baseScale * 1.04;
+        astronautModel.scale.set(scale, scale, scale);
         astronautModel.position.set(0, -0.9, 0);
       }
 
@@ -344,19 +354,18 @@
     const launchCenter = secLaunchEl ? (secLaunchEl.offsetTop + secLaunchEl.offsetHeight * 0.5) : (universesCenter + vh);
 
     const isMobile = window.innerWidth < 768;
-    const rightX = isMobile ? 0.75 : 1.85;
-    const leftX = isMobile ? -0.75 : -1.85;
-
-    // 4 Key Milestones matching the zig-zag layout:
-    // Hero: Content on LEFT -> Astronaut on RIGHT facing LEFT (-0.55)
-    // Overview: Content on RIGHT -> Astronaut on LEFT facing RIGHT (+0.55)
-    // Universes: Content on LEFT -> Astronaut on RIGHT facing LEFT (-0.55)
-    // Launch: Content on RIGHT -> Astronaut on LEFT facing RIGHT (+0.55)
-    const stages = [
-      { y: heroCenter, x: rightX, yOffset: -0.42, z: 1.25, rotY: -0.55, anim: 'floating' },
-      { y: overviewCenter, x: leftX, yOffset: -0.26, z: 1.30, rotY: 0.55, anim: 'moon_walk' },
-      { y: universesCenter, x: rightX, yOffset: -0.34, z: 1.25, rotY: -0.55, anim: 'moon_walk' },
-      { y: launchCenter, x: leftX, yOffset: -0.28, z: 1.30, rotY: 0.55, anim: 'floating' }
+    const stages = isMobile ? [
+      // Mobile choreography: scaled-down ambient astronaut in upper sky corners, never colliding with centered text cards
+      { y: heroCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.45, anim: 'floating' },
+      { y: overviewCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.45, anim: 'moon_walk' },
+      { y: universesCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.45, anim: 'moon_walk' },
+      { y: launchCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.45, anim: 'floating' }
+    ] : [
+      // Desktop choreography: bold perimeter docking opposite the active section
+      { y: heroCenter, x: 1.85, yOffset: -0.42, z: 1.25, rotY: -0.55, anim: 'floating' },
+      { y: overviewCenter, x: -1.85, yOffset: -0.26, z: 1.30, rotY: 0.55, anim: 'moon_walk' },
+      { y: universesCenter, x: 1.85, yOffset: -0.34, z: 1.25, rotY: -0.55, anim: 'moon_walk' },
+      { y: launchCenter, x: -1.85, yOffset: -0.28, z: 1.30, rotY: 0.55, anim: 'floating' }
     ];
 
     let s0 = stages[0];
@@ -428,6 +437,11 @@
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
+    if (astronautModel) {
+      const baseScale = getResponsiveAstronautScale();
+      const scale = isAnimatedActive ? baseScale : (baseScale * 1.04);
+      astronautModel.scale.set(scale, scale, scale);
+    }
     onScroll();
   });
 

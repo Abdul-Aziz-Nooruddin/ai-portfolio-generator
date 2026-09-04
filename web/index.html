@@ -239,10 +239,10 @@
   }
   </script>
 
-  <!-- Typography: Syne (Avant-Garde Display) + Italiana (Cosmic Luxury Serif) + JetBrains Mono (Aerospace Telemetry) + Plus Jakarta Sans (Body) -->
+  <!-- Typography: Space Grotesk (Aerospace Neo-Futurist Display) + Inter (High-Legibility Body) + JetBrains Mono (Telemetry) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Italiana&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <!-- Three.js & GLTFLoader for Real-Time 3D Spatial Universe -->
   <script src="/assets/three.min.js?v=r128"></script>
@@ -263,20 +263,21 @@
 
   <style>
     :root {
-      --space-void: #06070B;
-      --solar-gold: #F5A623;
-      --solar-flare: #FFB020;
-      --solar-amber: #FF8C00;
-      --solar-glow: rgba(245, 166, 35, 0.3);
-      --starfield-ice: #E8EDF5;
+      --space-void: #030509;
+      --solar-gold: #F59E0B;
+      --solar-flare: #FBBF24;
+      --solar-amber: #D97706;
+      --solar-glow: rgba(245, 158, 11, 0.28);
+      --starfield-ice: #F8FAFC;
       --telemetry-cyan: #38BDF8;
       --text-dim: #94A3B8;
-      --card-glass: rgba(11, 14, 22, 0.72);
-      --card-border: rgba(245, 166, 35, 0.22);
-      --font-display: 'Syne', -apple-system, sans-serif;
-      --font-serif: 'Italiana', serif;
+      --text-primary: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --card-glass: rgba(8, 12, 22, 0.78);
+      --card-border: rgba(245, 158, 11, 0.22);
+      --font-display: 'Space Grotesk', -apple-system, sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
     * {
@@ -1746,7 +1747,7 @@
       .btn-solar-outline, .btn-solar-ghost { width: 100%; justify-content: center; }
     }
     /* ==========================================================================
-       CINEMATIC SPATIAL TOP NAV & OBSERVATORY FOOTER
+       CINEMATIC SPATIAL TOP NAV & MOBILE RESPONSIVE DRAWER
        ========================================================================== */
     .reference-top-nav,
     [data-theme="light"] .reference-top-nav,
@@ -1758,33 +1759,48 @@
       align-items: center !important;
       justify-content: space-between !important;
       padding: 14px 36px !important;
-      background: rgba(5, 7, 16, 0.65) !important;
+      background: rgba(4, 7, 15, 0.78) !important;
       backdrop-filter: blur(28px) saturate(190%) !important;
       -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
-      border-bottom: 1px solid rgba(245, 166, 35, 0.25) !important;
-      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 166, 35, 0.08) !important;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.22) !important;
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.08) !important;
       transition: all 0.3s ease !important;
+    }
+
+    .nav-brand-container {
+      display: flex;
+      align-items: center;
     }
 
     .nav-brand-text,
     [data-theme="light"] .nav-brand-text,
     [data-theme="dark"] .nav-brand-text {
       color: #FFFFFF !important;
-      font-family: var(--font-display, 'Syne', sans-serif) !important;
-      font-weight: 800 !important;
-      font-size: 0.95rem !important;
-      letter-spacing: 0.12em !important;
-      text-shadow: 0 0 16px rgba(245, 166, 35, 0.5), 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+      font-family: var(--font-display) !important;
+      font-weight: 700 !important;
+      font-size: 1.05rem !important;
+      letter-spacing: 0.05em !important;
+      text-shadow: 0 0 16px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+    }
+
+    .desktop-only {
+      display: flex !important;
+      align-items: center !important;
+      gap: 16px !important;
+    }
+
+    .mobile-only {
+      display: none !important;
     }
 
     .nav-link-item,
     [data-theme="light"] .nav-link-item,
     [data-theme="dark"] .nav-link-item {
-      color: rgba(241, 245, 249, 0.85) !important;
-      font-family: var(--font-display, 'Syne', sans-serif) !important;
-      font-size: 0.82rem !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.08em !important;
+      color: var(--text-secondary) !important;
+      font-family: var(--font-display) !important;
+      font-size: 0.84rem !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.04em !important;
       text-decoration: none !important;
       position: relative !important;
       padding: 6px 0 !important;
@@ -1799,17 +1815,17 @@
       left: 0;
       width: 0%;
       height: 2px;
-      background: linear-gradient(90deg, #F5A623, #FFB020);
+      background: linear-gradient(90deg, #F59E0B, #FBBF24);
       border-radius: 2px;
-      box-shadow: 0 0 8px #F5A623;
+      box-shadow: 0 0 8px #F59E0B;
       transition: width 0.25s ease;
     }
 
     .nav-link-item:hover,
     [data-theme="light"] .nav-link-item:hover,
     [data-theme="dark"] .nav-link-item:hover {
-      color: #F5A623 !important;
-      text-shadow: 0 0 14px rgba(245, 166, 35, 0.7) !important;
+      color: var(--solar-flare) !important;
+      text-shadow: 0 0 14px rgba(245, 158, 11, 0.7) !important;
     }
 
     .nav-link-item:hover::after {
@@ -1817,17 +1833,17 @@
     }
 
     .nav-btn-pill {
-      background: linear-gradient(135deg, #F5A623 0%, #D97706 50%, #B45309 100%) !important;
-      border: 1px solid rgba(255, 235, 180, 0.6) !important;
-      color: #06070B !important;
-      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%) !important;
+      border: 1px solid rgba(254, 240, 138, 0.6) !important;
+      color: #030509 !important;
+      font-family: var(--font-display) !important;
       font-size: 0.82rem !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.06em !important;
-      padding: 9px 22px !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.04em !important;
+      padding: 9px 20px !important;
       border-radius: 9999px !important;
       cursor: pointer !important;
-      box-shadow: 0 0 20px rgba(245, 166, 35, 0.45), 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 4px 14px rgba(0, 0, 0, 0.5) !important;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
       display: inline-flex !important;
       align-items: center !important;
@@ -1836,38 +1852,38 @@
     }
 
     .nav-btn-pill:hover {
-      background: linear-gradient(135deg, #FFB020 0%, #F5A623 50%, #D97706 100%) !important;
+      background: linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%) !important;
       color: #000000 !important;
       transform: translateY(-2px) scale(1.02) !important;
-      box-shadow: 0 0 32px rgba(245, 166, 35, 0.75), 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.7), 0 6px 20px rgba(0, 0, 0, 0.6) !important;
       border-color: #FFFFFF !important;
     }
 
     .nav-login-btn {
       padding: 8px 18px !important;
       border-radius: 9999px !important;
-      border: 1px solid rgba(245, 166, 35, 0.35) !important;
-      background: rgba(245, 166, 35, 0.08) !important;
+      border: 1px solid rgba(245, 158, 11, 0.35) !important;
+      background: rgba(245, 158, 11, 0.08) !important;
       color: #FFFFFF !important;
-      font-weight: 700 !important;
+      font-weight: 600 !important;
       transition: all 0.2s ease !important;
     }
 
     .nav-login-btn:hover {
-      background: rgba(245, 166, 35, 0.2) !important;
+      background: rgba(245, 158, 11, 0.2) !important;
       border-color: var(--solar-gold) !important;
-      color: #F5A623 !important;
-      box-shadow: 0 0 16px rgba(245, 166, 35, 0.4) !important;
+      color: var(--solar-flare) !important;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.4) !important;
     }
 
     .nav-audio-btn {
-      background: rgba(245, 166, 35, 0.1) !important;
-      border: 1px solid rgba(245, 166, 35, 0.35) !important;
-      color: #F5A623 !important;
-      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      background: rgba(245, 158, 11, 0.1) !important;
+      border: 1px solid rgba(245, 158, 11, 0.35) !important;
+      color: var(--solar-flare) !important;
+      font-family: var(--font-display) !important;
       font-size: 0.76rem !important;
-      font-weight: 700 !important;
-      letter-spacing: 0.08em !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.06em !important;
       border-radius: 9999px !important;
       padding: 6px 14px !important;
       display: inline-flex !important;
@@ -1878,15 +1894,202 @@
     }
 
     .nav-audio-btn:hover {
-      background: rgba(245, 166, 35, 0.22) !important;
+      background: rgba(245, 158, 11, 0.22) !important;
       border-color: var(--solar-gold) !important;
-      box-shadow: 0 0 16px rgba(245, 166, 35, 0.45) !important;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.45) !important;
     }
 
     .theme-3d-switch-btn {
-      border: 1px solid rgba(245, 166, 35, 0.3) !important;
+      border: 1px solid rgba(245, 158, 11, 0.3) !important;
       border-radius: 9999px !important;
       background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Mobile Quick Controls */
+    .nav-mobile-controls {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-audio-btn-mobile,
+    .theme-3d-switch-btn-mobile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      color: var(--solar-flare);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .nav-hamburger-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-hamburger-btn .hamburger-line {
+      width: 20px;
+      height: 2px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .nav-hamburger-btn.active .hamburger-line:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+    .nav-hamburger-btn.active .hamburger-line:nth-child(2) {
+      opacity: 0;
+    }
+    .nav-hamburger-btn.active .hamburger-line:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* Full-Featured Cosmic Mobile Drawer */
+    .mobile-nav-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s ease;
+    }
+
+    .mobile-nav-drawer.open {
+      pointer-events: auto;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .mobile-drawer-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 5, 9, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .mobile-drawer-content {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 86%;
+      max-width: 360px;
+      background: rgba(7, 10, 20, 0.96);
+      border-left: 1px solid rgba(245, 158, 11, 0.28);
+      box-shadow: -15px 0 50px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      padding: 24px 20px;
+      transform: translateX(100%);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .mobile-nav-drawer.open .mobile-drawer-content {
+      transform: translateX(0);
+    }
+
+    .mobile-drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(245, 158, 11, 0.18);
+      margin-bottom: 24px;
+    }
+
+    .mobile-drawer-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      background: rgba(245, 158, 11, 0.1);
+      color: #FFFFFF;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mobile-drawer-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .mobile-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-primary);
+      background: rgba(245, 158, 11, 0.04);
+      border: 1px solid rgba(245, 158, 11, 0.12);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-link:hover,
+    .mobile-nav-link:active {
+      background: rgba(245, 158, 11, 0.14);
+      border-color: var(--solar-gold);
+      color: var(--solar-flare);
+      transform: translateX(4px);
+    }
+
+    .mobile-link-num {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--solar-flare);
+      opacity: 0.75;
+    }
+
+    .mobile-drawer-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(245, 158, 11, 0.18);
+    }
+
+    .mobile-drawer-footer {
+      margin-top: 18px;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      color: var(--text-dim);
+      text-align: center;
+      letter-spacing: 0.08em;
     }
 
     /* Ultra-Thin Half-Centimeter Footer (~32px) */
@@ -1894,7 +2097,7 @@
       position: relative !important;
       z-index: 10 !important;
       background: rgba(4, 6, 12, 0.85) !important;
-      border-top: 1px solid rgba(245, 166, 35, 0.25) !important;
+      border-top: 1px solid rgba(245, 158, 11, 0.25) !important;
       height: 32px !important;
       min-height: 32px !important;
       padding: 0 24px !important;
@@ -1917,7 +2120,7 @@
       letter-spacing: 0.05em;
     }
     .footer-thin-brand {
-      color: rgba(245, 166, 35, 0.85);
+      color: var(--solar-flare);
       font-weight: 600;
       font-size: 11px;
     }
@@ -1927,18 +2130,179 @@
       gap: 10px;
     }
     .footer-thin-nav a {
-      color: #94A3B8;
+      color: var(--text-secondary);
       text-decoration: none;
       font-size: 11px;
       transition: color 0.2s ease;
     }
     .footer-thin-nav a:hover {
-      color: #F5A623;
+      color: var(--solar-flare);
     }
     .footer-thin-nav .dot {
-      color: rgba(245, 166, 35, 0.35);
+      color: rgba(245, 158, 11, 0.35);
     }
+
+    /* ====================================================
+       RESPONSIVE MEDIA QUERIES (MOBILE & TABLET ADAPTATION)
+       ==================================================== */
     @media (max-width: 768px) {
+      .reference-top-nav {
+        padding: 10px 16px !important;
+      }
+      .desktop-only {
+        display: none !important;
+      }
+      .mobile-only {
+        display: flex !important;
+      }
+      .nav-brand-text {
+        font-size: 0.88rem !important;
+      }
+      * {
+        cursor: auto !important;
+      }
+      .hud-reticle-outer,
+      .hud-reticle-inner {
+        display: none !important;
+      }
+
+      /* Sections & Containers Fluid Containment */
+      .chrono-scroll-beat {
+        padding: 70px 16px !important;
+        min-height: auto !important;
+      }
+      .chrono-scroll-beat.beat-align-left .landing-container,
+      .chrono-scroll-beat.beat-align-right .landing-container {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .chrono-hero-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 16px !important;
+        box-sizing: border-box !important;
+        align-items: center !important;
+        text-align: center !important;
+      }
+      .chrono-hero-subtitle {
+        text-align: center !important;
+        margin: 0 auto 20px !important;
+      }
+      .chrono-cta-row,
+      .chrono-hint-row {
+        justify-content: center !important;
+        width: 100% !important;
+      }
+      .chrono-console-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px !important;
+        background: rgba(7, 10, 20, 0.82) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+      }
+      .section-title-large {
+        font-size: clamp(1.65rem, 6.5vw, 2.3rem) !important;
+        text-align: center !important;
+        line-height: 1.2 !important;
+        max-width: 100% !important;
+      }
+      .section-lead-text {
+        font-size: 0.92rem !important;
+        text-align: center !important;
+        max-width: 100% !important;
+        margin: 0 auto 28px !important;
+      }
+
+      /* Universes Cluster Responsive Stack */
+      .universe-pills-cluster {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .universe-pill-tag {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        justify-content: flex-start !important;
+        padding: 10px 16px !important;
+        font-size: 0.86rem !important;
+        background: rgba(7, 10, 20, 0.8) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+      }
+
+      /* Launch Cluster Responsive Stack */
+      .launch-actions-cluster {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 12px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .launch-actions-cluster .btn-solar-primary,
+      .launch-actions-cluster .btn-solar-outline,
+      .btn-solar-primary,
+      .btn-solar-outline {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 14px 18px !important;
+        font-size: 0.88rem !important;
+        white-space: normal !important;
+        text-align: center !important;
+        justify-content: center !important;
+        word-break: break-word !important;
+      }
+
+      .launch-trust-bar {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px !important;
+        background: rgba(7, 10, 20, 0.8) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+      }
+      .trust-divider {
+        display: none !important;
+      }
+      .trust-item {
+        padding: 6px !important;
+      }
+      .trust-num {
+        font-size: 1.2rem !important;
+      }
+      .trust-lbl {
+        font-size: 0.72rem !important;
+      }
+
+      .feature-rich-card,
+      .spatial-pillar-card {
+        background: rgba(7, 10, 20, 0.85) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-radius: 14px !important;
+        border: 1px solid rgba(245, 158, 11, 0.25) !important;
+        box-sizing: border-box !important;
+        width: 100% !important;
+      }
+      .chrono-scroll-hud {
+        display: none !important;
+      }
+
       .ref-landing-footer-thin {
         height: auto !important;
         padding: 8px 16px !important;
@@ -1987,15 +2351,20 @@
       <!-- 1. Main Homepage Landing -->
       <section id="heroLanding" class="hero-landing-reference">
         <!-- Top Nav Header -->
+        <!-- Top Nav Header -->
         <nav class="reference-top-nav">
-          <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
-            <picture>
-              <source srcset="/assets/logo-3d.webp" type="image/webp">
-              <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" loading="lazy" decoding="async" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(245, 166, 35, 0.6); box-shadow: 0 0 12px rgba(245, 166, 35, 0.4);">
-            </picture>
-            <span class="nav-brand-text">MYFOLIO STUDIO</span>
+          <div class="nav-brand-container">
+            <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+              <picture>
+                <source srcset="/assets/logo-3d.webp" type="image/webp">
+                <img src="/assets/logo-3d.jpg" alt="myfolio.tech logo" loading="lazy" decoding="async" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(245, 158, 11, 0.6); box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);">
+              </picture>
+              <span class="nav-brand-text">MYFOLIO STUDIO</span>
+            </a>
           </div>
-          <div class="nav-links">
+
+          <!-- Desktop Navigation -->
+          <div class="nav-links desktop-only">
             <a href="#sectionOverview" class="nav-link-item">OVERVIEW</a>
             <a href="#sectionUniverses" class="nav-link-item">3D UNIVERSES</a>
             <a href="#sectionLaunch" class="nav-link-item">LAUNCH STUDIO</a>
@@ -2027,13 +2396,75 @@
                 </div>
               </div>
             </button>
+
             <div id="navAuthDock" class="nav-auth-dock">
-              <!-- href fallbacks ensure Google can crawl these as links -->
               <a href="/auth" class="nav-link-item nav-login-btn interactive-target" onclick="event.preventDefault(); openAuthModal('signin')" role="button">SIGN IN</a>
               <a href="/auth" class="nav-btn-pill interactive-target" onclick="event.preventDefault(); openAuthModal('signup')" role="button">GET STARTED FREE</a>
             </div>
           </div>
+
+          <!-- Mobile Controls (Quick toggles + Hamburger) -->
+          <div class="nav-mobile-controls mobile-only">
+            <button type="button" class="nav-audio-btn-mobile interactive-target" id="navAudioToggleMobile" onclick="toggleAudio()" aria-label="Audio">
+              <span>🔈</span>
+            </button>
+            <button type="button" class="theme-3d-switch-btn-mobile" onclick="togglePlatformTheme()" aria-label="Theme">
+              <span>🌓</span>
+            </button>
+            <button type="button" class="nav-hamburger-btn interactive-target" id="navHamburgerBtn" onclick="toggleMobileNav()" aria-label="Open Navigation Menu">
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+              <span class="hamburger-line"></span>
+            </button>
+          </div>
         </nav>
+
+        <!-- Cosmic Mobile Slide-Over Drawer -->
+        <div id="mobileNavDrawer" class="mobile-nav-drawer">
+          <div class="mobile-drawer-backdrop" onclick="toggleMobileNav(false)"></div>
+          <div class="mobile-drawer-content">
+            <div class="mobile-drawer-header">
+              <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
+                <img src="/assets/logo-3d.jpg" alt="myfolio logo" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid rgba(245, 158, 11, 0.5);">
+                <span class="nav-brand-text" style="font-size: 0.95rem;">MYFOLIO STUDIO</span>
+              </div>
+              <button type="button" class="mobile-drawer-close" onclick="toggleMobileNav(false)" aria-label="Close Menu">✕</button>
+            </div>
+            <div class="mobile-drawer-links">
+              <a href="#sectionOverview" class="mobile-nav-link" onclick="toggleMobileNav(false)">
+                <span class="mobile-link-num">01</span>
+                <span class="mobile-link-text">Overview</span>
+              </a>
+              <a href="#sectionUniverses" class="mobile-nav-link" onclick="toggleMobileNav(false)">
+                <span class="mobile-link-num">02</span>
+                <span class="mobile-link-text">3D Universes</span>
+              </a>
+              <a href="#sectionLaunch" class="mobile-nav-link" onclick="toggleMobileNav(false)">
+                <span class="mobile-link-num">03</span>
+                <span class="mobile-link-text">Launch Studio</span>
+              </a>
+              <a href="/about" class="mobile-nav-link" onclick="toggleMobileNav(false)">
+                <span class="mobile-link-num">04</span>
+                <span class="mobile-link-text">About Codex</span>
+              </a>
+              <a href="/contact" class="mobile-nav-link" onclick="toggleMobileNav(false)">
+                <span class="mobile-link-num">05</span>
+                <span class="mobile-link-text">Contact Mission</span>
+              </a>
+            </div>
+            <div class="mobile-drawer-actions">
+              <button type="button" class="btn-solar-primary" onclick="toggleMobileNav(false); openAuthModal('signup');" style="width: 100%; margin-bottom: 10px; justify-content: center;">
+                <span>🚀 GET STARTED FREE</span>
+              </button>
+              <button type="button" class="btn-solar-outline" onclick="toggleMobileNav(false); openAuthModal('signin');" style="width: 100%; justify-content: center;">
+                <span>SIGN IN</span>
+              </button>
+            </div>
+            <div class="mobile-drawer-footer">
+              <span>© 2026 MYFOLIO STUDIO // 3D SPATIAL ENGINE</span>
+            </div>
+          </div>
+        </div>
 
         <!-- Main Hero Landing Stage (Floating over 3D Viewport) -->
         <header class="chrono-hero-stage" id="chronoHeroStage">
@@ -2214,7 +2645,7 @@
             </div>
 
             <div style="margin-top: 36px;" class="reveal-on-scroll delay-3">
-              <button type="button" class="btn-solar-primary interactive-target" onclick="openSamplesModal()" style="padding: 14px 32px; font-size: 0.95rem;">
+              <button type="button" class="btn-solar-primary interactive-target" onclick="openSamplesModal()">
                 <span>✨ EXPLORE ALL 22 UNIVERSES IN STUDIO</span>
               </button>
             </div>
@@ -2225,18 +2656,18 @@
         <section id="sectionLaunch" class="landing-section chrono-scroll-beat beat-align-right">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">GET STARTED IN SECONDS</div>
-            <h2 class="section-title-large reveal-on-scroll delay-1" style="font-size: clamp(2rem, 3.5vw, 3.2rem); line-height: 1.15; max-width: 780px;">
+            <h2 class="section-title-large reveal-on-scroll delay-1">
               Deploy Your 3D Portfolio Today
             </h2>
-            <p class="section-lead-text reveal-on-scroll delay-2" style="font-size: 1.05rem; max-width: 620px; line-height: 1.7; margin-bottom: 40px;">
+            <p class="section-lead-text reveal-on-scroll delay-2">
               Paste your GitHub username, upload your resume, or chat with our Telegram bot. Get an instant, shareable 3D link in under a minute.
             </p>
 
             <div class="launch-actions-cluster reveal-on-scroll delay-3">
-              <button type="button" class="btn-solar-primary interactive-target" onclick="openAuthModal('signup')" style="padding: 16px 36px; font-size: 1.0rem;">
+              <button type="button" class="btn-solar-primary interactive-target" onclick="openAuthModal('signup')">
                 <span>🚀 CREATE FREE ACCOUNT &amp; LAUNCH STUDIO</span>
               </button>
-              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-outline interactive-target" style="padding: 16px 28px; font-size: 0.92rem; text-decoration: none;">
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-outline interactive-target" style="text-decoration: none;">
                 <span>📱 GENERATE VIA TELEGRAM BOT</span>
               </a>
             </div>
@@ -2533,10 +2964,33 @@
       }
       renderReticle();
     })();
+
+    /* Mobile Navigation Drawer Toggle */
+    window.toggleMobileNav = function(forceState) {
+      const drawer = document.getElementById('mobileNavDrawer');
+      const btn = document.getElementById('navHamburgerBtn');
+      if (!drawer) return;
+      const isOpen = typeof forceState === 'boolean' ? forceState : !drawer.classList.contains('open');
+      if (isOpen) {
+        drawer.classList.add('open');
+        if (btn) btn.classList.add('active');
+        document.body.style.overflow = 'hidden';
+      } else {
+        drawer.classList.remove('open');
+        if (btn) btn.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        window.toggleMobileNav(false);
+      }
+    });
   </script>
 
   <!-- 2. REAL-TIME HARDWARE-ACCELERATED 3D SPATIAL UNIVERSE (Three.js WebGL) -->
-  <script src="/assets/spatial-realtime-engine.js?v=20260904_2130" defer></script>
+  <script src="/assets/spatial-realtime-engine.js?v=20260904_2230" defer></script>
 
   <script>
     /* ====================================================
