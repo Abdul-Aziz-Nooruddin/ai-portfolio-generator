@@ -24,7 +24,7 @@
        "3D portfolio website", "free portfolio generator",
        "portfolio from resume", "myfolio.tech"
        ============================================================ -->
-  <title>MyFolio — Free AI 3D Portfolio Generator | Build from GitHub & Resume in Seconds</title>
+  <title>MyFolio — Free AI 3D Portfolio Generator | Build from GitHub &amp; Resume in Seconds</title>
   <meta name="description" content="MyFolio turns your GitHub profile, PDF resume, or answers into a stunning 3D WebGL developer portfolio in seconds. Free 24-hour live preview. 22 bespoke visual universes. No coding required.">
   <meta name="keywords" content="AI portfolio generator, 3D portfolio builder, developer portfolio website, portfolio from GitHub, resume to portfolio, WebGL portfolio, free portfolio generator, 3D portfolio template, online portfolio maker, portfolio website for developers, myfolio.tech">
   <meta name="author" content="MyFolio Studio">
@@ -251,8 +251,8 @@
   <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
-  <!-- LCP Preload: Hero Portal Sequence Initial Frame -->
-  <link rel="preload" as="image" href="/assets/portal-sequence/frame_0001.webp" fetchpriority="high">
+  <!-- 3D Astronaut GLTF asset preload -->
+  <link rel="preload" as="fetch" href="/assets/Astronaut.glb" crossorigin="anonymous">
 
   <link rel="stylesheet" href="/style.css?v=2.6.0">
   <script src="/sidebar.js" defer></script>
@@ -516,6 +516,7 @@
       margin-bottom: 14px;
       background: linear-gradient(135deg, #FFFFFF 0%, #F5A623 50%, #FF8C00 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 25px rgba(245, 166, 35, 0.4));
     }
@@ -673,6 +674,7 @@
       display: block;
       background: linear-gradient(135deg, #FFFFFF 0%, #F5A623 45%, #FF8C00 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       filter: drop-shadow(0 0 25px rgba(245, 166, 35, 0.35));
     }
@@ -1587,6 +1589,7 @@
       .btn-solar-primary { width: 100%; }
       .chrono-cta-row { flex-direction: column; width: 100%; }
       .btn-solar-outline, .btn-solar-ghost { width: 100%; justify-content: center; }
+    }
     /* ==========================================================================
        CINEMATIC SPATIAL TOP NAV & OBSERVATORY FOOTER
        ========================================================================== */
