@@ -27,9 +27,10 @@
 
   // 1. Scene & Camera Setup
   const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x04060E, 0.045);
+  // Subtle atmospheric depth (do not obscure deep space galaxy)
+  scene.fog = new THREE.FogExp2(0x04060E, 0.005);
 
-  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 200);
   camera.position.set(0, 0, 5.4);
 
   // 2. WebGL Renderer
@@ -42,24 +43,53 @@
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.3;
+  renderer.toneMappingExposure = 1.35;
+
+  // 2.5 360 Realistic Deep-Space Galaxy Skybox
+  let galaxySkyDome = null;
+  const textureLoader = new THREE.TextureLoader();
+  textureLoader.load('/assets/galaxy-hdri-bg.webp', (galaxyTex) => {
+    galaxyTex.mapping = THREE.EquirectangularReflectionMapping;
+    if (THREE.SRGBColorSpace) galaxyTex.colorSpace = THREE.SRGBColorSpace;
+
+    // Enclosing 360 celestial sky dome
+    const skyGeo = new THREE.SphereGeometry(85, 60, 40);
+    const skyMat = new THREE.MeshBasicMaterial({
+      map: galaxyTex,
+      side: THREE.BackSide,
+      depthWrite: false
+    });
+    galaxySkyDome = new THREE.Mesh(skyGeo, skyMat);
+    galaxySkyDome.rotation.y = -Math.PI / 2;
+    scene.add(galaxySkyDome);
+    console.log('🌌 [3D Engine] Deep space galaxy skybox loaded.');
+  });
 
   // 3. Lighting Architecture
-  const ambientLight = new THREE.AmbientLight(0x0f172a, 1.2);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
   scene.add(ambientLight);
 
+  // Direct Key Lights on Foreground Astronaut
+  const astroFrontLight = new THREE.DirectionalLight(0xffffff, 2.8);
+  astroFrontLight.position.set(0, 2, 5.5);
+  scene.add(astroFrontLight);
+
+  const astroFillLight = new THREE.DirectionalLight(0xF5A623, 2.0);
+  astroFillLight.position.set(-3.5, 0.5, 3.5);
+  scene.add(astroFillLight);
+
   // Radiant Solar Portal PointLight (Center of Event Horizon)
-  const portalPointLight = new THREE.PointLight(0xF5A623, 3.5, 20);
+  const portalPointLight = new THREE.PointLight(0xF5A623, 3.8, 25);
   portalPointLight.position.set(0, 0.3, -2.5);
   scene.add(portalPointLight);
 
   // Key Sunlight (Front-Left)
-  const sunLight = new THREE.DirectionalLight(0xFFD67A, 2.0);
+  const sunLight = new THREE.DirectionalLight(0xFFD67A, 2.2);
   sunLight.position.set(-3, 4, 4);
   scene.add(sunLight);
 
   // Sci-Fi Cyan Rim Backlight (Outlining astronaut silhouette)
-  const rimLight = new THREE.DirectionalLight(0x38BDF8, 1.8);
+  const rimLight = new THREE.DirectionalLight(0x38BDF8, 2.2);
   rimLight.position.set(3, -2, -3);
   scene.add(rimLight);
 
@@ -209,7 +239,7 @@
 
   // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Skeletal Animation)
   const astronautRoot = new THREE.Group();
-  astronautRoot.position.set(0, -1.05, 0.4);
+  astronautRoot.position.set(0, -0.65, 0.8);
   scene.add(astronautRoot);
 
   let astronautModel = null;
@@ -249,10 +279,11 @@
       astronautModel = gltf.scene;
 
       if (isRigged) {
-        // Walking astronaut.glb is ~237cm tall, scale 0.012 brings it to ~2.85 units
-        const scale = 0.0125;
+        // Walking astronaut.glb root node already has 0.01 scale.
+        // Scale 1.35 brings it to ~3.2 units tall (prominent hero in viewport).
+        const scale = 1.35;
         astronautModel.scale.set(scale, scale, scale);
-        // Center torso pivot (bounds min: -0.05, max: 237)
+        // Center torso pivot (bounds min: -0.05, max: 237 -> half is ~118 = 1.18 units)
         astronautModel.position.set(0, -1.18, 0);
 
         // Setup skeletal AnimationMixer
@@ -303,9 +334,9 @@
       astronautRoot.add(astronautModel);
 
       // Entrance animation
-      const targetScale = isRigged ? 0.0125 : 1.55;
-      astronautModel.scale.set(targetScale * 0.05, targetScale * 0.05, targetScale * 0.05);
-      let s = targetScale * 0.05;
+      const targetScale = isRigged ? 1.35 : 1.55;
+      astronautModel.scale.set(targetScale * 0.1, targetScale * 0.1, targetScale * 0.1);
+      let s = targetScale * 0.1;
       const entryAnim = () => {
         s += (targetScale - s) * 0.08;
         astronautModel.scale.set(s, s, s);
@@ -356,7 +387,8 @@
   let camTargetY = 0;
   let camTargetZ = 5.4;
   let astroTargetX = 0;
-  let astroTargetY = -1.05;
+  let astroTargetY = -0.65;
+  let astroTargetZ = 0.8;
   let astroTargetRotY = 0;
 
   window.addEventListener('mousemove', e => {
@@ -385,7 +417,9 @@
       scrollIndicator.style.opacity = Math.max(0, 1 - (scrollY / 150)).toFixed(2);
     }
 
-    // Camera & Spatial Staging Choreography
+    // Continuous Scroll-Driven Galaxy & Astronaut Positioning on Every Scroll
+    const scrollRotation = scrollY * 0.001;
+
     if (scrollProgress < 0.25) {
       // Beat 1: Hero Stage — Centered Event Horizon Emergence
       const p = scrollProgress / 0.25;
@@ -393,40 +427,44 @@
       camTargetY = 0;
       camTargetZ = 5.4 - p * 0.4;
       astroTargetX = 0;
-      astroTargetY = -1.05 + p * 0.15;
-      astroTargetRotY = 0;
+      astroTargetY = -0.65 + p * 0.35;
+      astroTargetZ = 0.8 + p * 0.4;
+      astroTargetRotY = scrollRotation;
     } else if (scrollProgress < 0.55) {
       // Beat 2: Spatial Architecture — Astronaut shifts right to frame 3 Feature Pillars
       const p = (scrollProgress - 0.25) / 0.30;
-      camTargetX = -0.55 * p;
+      camTargetX = -0.65 * p;
       camTargetY = -0.15 * p;
       camTargetZ = 5.0 - p * 0.3;
-      astroTargetX = 1.15 * p;
-      astroTargetY = -0.90 + p * 0.2;
-      astroTargetRotY = -0.35 * p;
+      astroTargetX = 1.35 * p;
+      astroTargetY = -0.30 - p * 0.15;
+      astroTargetZ = 1.2 - p * 0.3;
+      astroTargetRotY = -0.45 * p + scrollRotation;
     } else if (scrollProgress < 0.80) {
-      // Beat 3: 22 Universes — Return toward center, polyhedrons expand
+      // Beat 3: 22 Universes — Shifts to left to balance cluster
       const p = (scrollProgress - 0.55) / 0.25;
-      camTargetX = -0.55 * (1 - p);
+      camTargetX = -0.65 * (1 - p) + 0.55 * p;
       camTargetY = -0.15 + p * 0.2;
       camTargetZ = 4.7 + p * 0.4;
-      astroTargetX = 1.15 * (1 - p);
-      astroTargetY = -0.70;
-      astroTargetRotY = -0.35 * (1 - p);
+      astroTargetX = 1.35 * (1 - p) - 1.25 * p;
+      astroTargetY = -0.45 + p * 0.15;
+      astroTargetZ = 0.9 + p * 0.2;
+      astroTargetRotY = -0.45 * (1 - p) + 0.45 * p + scrollRotation;
     } else {
       // Beat 4: Launch Studio — Dramatic hero staging behind launch buttons
       const p = (scrollProgress - 0.80) / 0.20;
-      camTargetX = 0;
-      camTargetY = 0.15 - p * 0.25;
-      camTargetZ = 5.1 - p * 0.5;
-      astroTargetX = 0;
-      astroTargetY = -0.70 - p * 0.25;
-      astroTargetRotY = 0;
+      camTargetX = 0.55 * (1 - p);
+      camTargetY = 0.05 - p * 0.2;
+      camTargetZ = 5.1 - p * 0.4;
+      astroTargetX = -1.25 * (1 - p);
+      astroTargetY = -0.30 - p * 0.35;
+      astroTargetZ = 1.1 - p * 0.3;
+      astroTargetRotY = 0.45 * (1 - p) + scrollRotation;
     }
 
     // Dynamic Skeletal Animation Transition on Scroll
     if (mixer) {
-      if (scrollProgress > 0.22 && scrollProgress < 0.70) {
+      if (scrollProgress > 0.18 && scrollProgress < 0.72) {
         if (actions['moon_walk']) setAstronautAction('moon_walk', 0.6);
       } else {
         if (actions['floating']) setAstronautAction('floating', 0.6);
@@ -470,6 +508,13 @@
       mixer.update(delta);
     }
 
+    // 360 Deep-Space Galaxy Skybox Motion on Mouse & Scroll
+    if (galaxySkyDome) {
+      galaxySkyDome.rotation.y = scrollProgress * Math.PI * 1.5 + elapsed * 0.012;
+      galaxySkyDome.rotation.x = -mouseY * 0.05 + scrollProgress * 0.12;
+      galaxySkyDome.position.y = -scrollProgress * 6;
+    }
+
     // Lerp Mouse for Silky-Smooth Parallax
     mouseX += (targetMouseX - mouseX) * 0.06;
     mouseY += (targetMouseY - mouseY) * 0.06;
@@ -489,15 +534,16 @@
     const pulseIntensity = 3.0 + Math.sin(elapsed * 3.0) * 0.8;
     portalPointLight.intensity = pulseIntensity;
 
-    // Weightless Astronaut Micro-Physics
+    // Weightless Astronaut Micro-Physics & Scroll Motion
     astronautRoot.position.x += (astroTargetX - astronautRoot.position.x) * 0.06;
-    astronautRoot.position.y += (astroTargetY + Math.sin(elapsed * 1.6) * 0.07 - astronautRoot.position.y) * 0.06;
+    astronautRoot.position.y += (astroTargetY + Math.sin(elapsed * 1.6) * 0.08 - astronautRoot.position.y) * 0.06;
+    astronautRoot.position.z += (astroTargetZ - astronautRoot.position.z) * 0.06;
 
-    const targetRotX = -mouseY * 0.22;
+    const targetRotX = -mouseY * 0.22 + (scrollProgress * 0.15);
     const targetRotY = astroTargetRotY + mouseX * 0.38;
     astronautRoot.rotation.x += (targetRotX - astronautRoot.rotation.x) * 0.06;
     astronautRoot.rotation.y += (targetRotY - astronautRoot.rotation.y) * 0.06;
-    astronautRoot.rotation.z = Math.sin(elapsed * 0.9) * 0.02;
+    astronautRoot.rotation.z = Math.sin(elapsed * 0.9) * 0.03;
 
     // Wireframe Universes Orbital Physics & Expansion
     const polyExpansion = scrollProgress > 0.5 && scrollProgress < 0.85 ? 1.45 : 1.0;
