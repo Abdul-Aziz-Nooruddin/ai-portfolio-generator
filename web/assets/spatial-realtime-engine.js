@@ -455,6 +455,96 @@
     onScroll();
   });
 
+  // ====================================================
+  // 9.5 ADAPTIVE OVERSCROLL EXPANSION (NAVBAR & FOOTER)
+  // When user overscrolls top -> expand navbar somewhat
+  // When user overscrolls bottom -> expand footer somewhat
+  // ====================================================
+  const topNavEl = document.querySelector('.reference-top-nav');
+  const footerEl = document.querySelector('.ref-landing-footer-thin');
+
+  let navExpandTimer = null;
+  let footerExpandTimer = null;
+
+  function setNavExpanded(expanded, timeout = 600) {
+    if (!topNavEl) return;
+    if (expanded) {
+      topNavEl.classList.add('nav-overscroll-expanded');
+      clearTimeout(navExpandTimer);
+      navExpandTimer = setTimeout(() => {
+        topNavEl.classList.remove('nav-overscroll-expanded');
+      }, timeout);
+    } else {
+      clearTimeout(navExpandTimer);
+      topNavEl.classList.remove('nav-overscroll-expanded');
+    }
+  }
+
+  function setFooterExpanded(expanded, timeout = 600) {
+    if (!footerEl) return;
+    if (expanded) {
+      footerEl.classList.add('footer-overscroll-expanded');
+      clearTimeout(footerExpandTimer);
+      footerExpandTimer = setTimeout(() => {
+        footerEl.classList.remove('footer-overscroll-expanded');
+      }, timeout);
+    } else {
+      clearTimeout(footerExpandTimer);
+      footerEl.classList.remove('footer-overscroll-expanded');
+    }
+  }
+
+  // 1. Wheel Overscroll Detection (Desktop trackpad / mousewheel)
+  window.addEventListener('wheel', (e) => {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+    // Overscrolling beyond top (wheel up at top boundary)
+    if (scrollY <= 2 && e.deltaY < -3) {
+      setNavExpanded(true, 550);
+    }
+
+    // Overscrolling beyond bottom (wheel down at bottom boundary)
+    if (scrollY >= maxScroll - 4 && e.deltaY > 3) {
+      setFooterExpanded(true, 550);
+    }
+  }, { passive: true });
+
+  // 2. Rubber-banding scroll detection (Safari & Chrome on macOS / iOS)
+  window.addEventListener('scroll', () => {
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+    if (scrollY < -2) {
+      setNavExpanded(true, 450);
+    } else if (scrollY > maxScroll + 2) {
+      setFooterExpanded(true, 450);
+    }
+  }, { passive: true });
+
+  // 3. Touch gesture boundary pull (Mobile touchscreens)
+  let touchStartY = 0;
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches[0]) {
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    const touchY = e.touches[0].clientY;
+    const diff = touchY - touchStartY;
+    const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+    if (scrollY <= 0 && diff > 15) {
+      setNavExpanded(true, 500);
+    }
+    if (scrollY >= maxScroll - 2 && diff < -15) {
+      setFooterExpanded(true, 500);
+    }
+  }, { passive: true });
+
   // 10. Animation Loop (60–120 FPS Hardware Render)
   const clock = new THREE.Clock();
 
