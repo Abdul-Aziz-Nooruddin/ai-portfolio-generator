@@ -376,14 +376,55 @@
       background: transparent;
     }
 
-    /* All Landing Sections Float over 3D Canvas */
-    .landing-section {
+    /* All Landing Sections & Containers Float over 3D Canvas */
+    .landing-section,
+    .ref-speakers-section,
+    .ref-spot-section,
+    .hero-landing-reference {
       position: relative;
       z-index: 10;
       background: transparent !important;
     }
 
-    /* Apple-Style Frame Scrubbing Canvas */
+    /* Translucent Frosted Glass Cards (Allows Astronaut Animation to Show Through) */
+    .feature-rich-card,
+    .workflow-pipeline-wrapper,
+    .workflow-stage-col,
+    .step-guide-card,
+    .ref-speaker-card,
+    .pricing-plan-card,
+    .faq-item-card,
+    .testimonial-card,
+    .spot-media-card,
+    .chrono-console-card {
+      background: rgba(14, 18, 28, 0.40) !important;
+      backdrop-filter: blur(14px) saturate(140%) !important;
+      -webkit-backdrop-filter: blur(14px) saturate(140%) !important;
+      border: 1px solid rgba(245, 166, 35, 0.22) !important;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45) !important;
+      transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+
+    .workflow-node-item {
+      background: rgba(6, 8, 12, 0.42) !important;
+      backdrop-filter: blur(10px) !important;
+      -webkit-backdrop-filter: blur(10px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    }
+
+    .feature-rich-card:hover,
+    .workflow-stage-col:hover,
+    .step-guide-card:hover,
+    .ref-speaker-card:hover,
+    .pricing-plan-card:hover,
+    .faq-item-card:hover,
+    .testimonial-card:hover {
+      background: rgba(14, 18, 28, 0.60) !important;
+      border-color: rgba(245, 166, 35, 0.5) !important;
+      box-shadow: 0 16px 45px rgba(0, 0, 0, 0.65), 0 0 25px rgba(245, 166, 35, 0.22) !important;
+    }
+
+    /* Apple-Style Frame Scrubbing Canvas (Crisp & High Contrast) */
     .chrono-sequence-canvas {
       position: absolute;
       top: 50%;
@@ -394,16 +435,17 @@
       transform: translate(-50%, -50%);
       pointer-events: none;
       z-index: 1;
-      filter: saturate(1.15) brightness(0.92) contrast(1.05);
+      filter: saturate(1.22) brightness(1.04) contrast(1.08);
       will-change: transform;
       transition: filter 0.3s ease;
     }
 
+    /* Lightened Cinematic Vignette (Preserves Bright Center for Full Visibility) */
     .chrono-hero-vignette {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.15) 0%, rgba(6, 7, 11, 0.6) 65%, rgba(6, 7, 11, 0.96) 100%),
-                  linear-gradient(to bottom, rgba(6, 7, 11, 0.4) 0%, transparent 30%, rgba(6, 7, 11, 0.3) 70%, rgba(6, 7, 11, 0.95) 100%);
+      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.04) 0%, rgba(6, 7, 11, 0.25) 60%, rgba(6, 7, 11, 0.82) 100%),
+                  linear-gradient(to bottom, rgba(6, 7, 11, 0.15) 0%, transparent 25%, rgba(6, 7, 11, 0.12) 75%, rgba(6, 7, 11, 0.70) 100%);
       pointer-events: none;
       z-index: 2;
     }
@@ -1525,7 +1567,7 @@
         </header>
 
         <!-- Section 1: PRODUCT DETAILS & PLATFORM OVERVIEW -->
-        <section id="sectionOverview" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
+        <section id="sectionOverview" class="landing-section">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">PLATFORM OVERVIEW</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">Why Traditional Portfolios Fail &amp; How We Fix It</h2>
@@ -1572,7 +1614,7 @@
         </section>
 
         <!-- Section 2: GENERATION WORKFLOW & ARCHITECTURE -->
-        <section id="sectionWorkflow" class="landing-section" style="background: #060814; color: #FFFFFF;">
+        <section id="sectionWorkflow" class="landing-section">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">SYSTEM ARCHITECTURE</div>
             <h2 class="section-title-large reveal-on-scroll delay-1" style="color: #FFFFFF;">The 4-Stage Autonomous Generation Pipeline</h2>
@@ -1665,7 +1707,7 @@
         </section>
 
         <!-- Section 3: STEPS TO GENERATE -->
-        <section id="sectionSteps" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
+        <section id="sectionSteps" class="landing-section">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">GETTING STARTED</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">4 Simple Ways to Generate Your 3D Portfolio</h2>
@@ -2118,7 +2160,7 @@
         </section>
 
         <!-- Section 4.5: SOCIAL PROOF, TESTIMONIALS & TRUST SIGNALS -->
-        <section id="sectionTestimonials" class="landing-section" style="background: #060814; color: #FFFFFF;">
+        <section id="sectionTestimonials" class="landing-section">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll" style="background: rgba(56,189,248,0.12); border-color: rgba(56,189,248,0.3); color: #38BDF8;">LOVED BY DEVELOPERS</div>
             <h2 class="section-title-large reveal-on-scroll delay-1" style="color: #FFFFFF;">Developers Ship Portfolios <span style="background: linear-gradient(135deg, #38BDF8, #A855F7); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;">10× Faster</span></h2>
@@ -2231,7 +2273,7 @@
         </section>
 
         <!-- Section 5: PRICING & SUBSCRIPTION PLANS -->
-        <section id="sectionPricing" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
+        <section id="sectionPricing" class="landing-section">
 
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">TRANSPARENT PLANS</div>
@@ -2301,7 +2343,7 @@
         </section>
 
         <!-- Section 6: FREQUENTLY ASKED QUESTIONS (FAQ) -->
-        <section id="sectionFaq" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
+        <section id="sectionFaq" class="landing-section">
           <div class="landing-container">
             <div class="section-tag-badge reveal-on-scroll">QUESTIONS &amp; ANSWERS</div>
             <h2 class="section-title-large reveal-on-scroll delay-1">Frequently Asked Questions</h2>
