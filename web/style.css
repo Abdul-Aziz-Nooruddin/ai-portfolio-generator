@@ -15,8 +15,8 @@
   --product-surface-alt: #131826;
   --product-surface-muted: #1A2234;
   --product-text: #FFFFFF;
-  --product-text-muted: #94A3B8;
-  --product-text-subtle: #64748B;
+  --product-text-muted: #F1F5F9;
+  --product-text-subtle: #E2E8F0;
   
   /* Accent & Interaction Tokens */
   --product-accent: #F5A623;
@@ -53,9 +53,9 @@
   --product-surface: #0F172A;
   --product-surface-alt: #1E293B;
   --product-surface-muted: #334155;
-  --product-text: #F8FAFC;
-  --product-text-muted: #94A3B8;
-  --product-text-subtle: #64748B;
+  --product-text: #FFFFFF;
+  --product-text-muted: #F1F5F9;
+  --product-text-subtle: #E2E8F0;
   
   /* Accent & Interaction Tokens */
   --product-accent: #38BDF8;
@@ -2764,7 +2764,7 @@ html, body {
 
 /* 🌙 Dark theme overrides for landing pricing */
 [data-theme="dark"] #sectionPricing {
-  background: #06070B !important;
+  background: transparent !important;
 }
 
 /* FAQ Accordion */
