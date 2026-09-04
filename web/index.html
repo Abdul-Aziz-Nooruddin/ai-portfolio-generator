@@ -1600,6 +1600,327 @@
       .btn-solar-primary { width: 100%; }
       .chrono-cta-row { flex-direction: column; width: 100%; }
       .btn-solar-outline, .btn-solar-ghost { width: 100%; justify-content: center; }
+    /* ==========================================================================
+       CINEMATIC SPATIAL TOP NAV & OBSERVATORY FOOTER
+       ========================================================================== */
+    .reference-top-nav,
+    [data-theme="light"] .reference-top-nav,
+    [data-theme="dark"] .reference-top-nav {
+      position: sticky !important;
+      top: 0 !important;
+      z-index: 100 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 14px 36px !important;
+      background: rgba(5, 7, 16, 0.65) !important;
+      backdrop-filter: blur(28px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+      border-bottom: 1px solid rgba(245, 166, 35, 0.25) !important;
+      box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 166, 35, 0.08) !important;
+      transition: all 0.3s ease !important;
+    }
+
+    .nav-brand-text,
+    [data-theme="light"] .nav-brand-text,
+    [data-theme="dark"] .nav-brand-text {
+      color: #FFFFFF !important;
+      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      font-weight: 800 !important;
+      font-size: 0.95rem !important;
+      letter-spacing: 0.12em !important;
+      text-shadow: 0 0 16px rgba(245, 166, 35, 0.5), 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+    }
+
+    .nav-link-item,
+    [data-theme="light"] .nav-link-item,
+    [data-theme="dark"] .nav-link-item {
+      color: rgba(241, 245, 249, 0.85) !important;
+      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      font-size: 0.82rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      text-decoration: none !important;
+      position: relative !important;
+      padding: 6px 0 !important;
+      transition: all 0.2s ease !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .nav-link-item::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0%;
+      height: 2px;
+      background: linear-gradient(90deg, #F5A623, #FFB020);
+      border-radius: 2px;
+      box-shadow: 0 0 8px #F5A623;
+      transition: width 0.25s ease;
+    }
+
+    .nav-link-item:hover,
+    [data-theme="light"] .nav-link-item:hover,
+    [data-theme="dark"] .nav-link-item:hover {
+      color: #F5A623 !important;
+      text-shadow: 0 0 14px rgba(245, 166, 35, 0.7) !important;
+    }
+
+    .nav-link-item:hover::after {
+      width: 100%;
+    }
+
+    .nav-btn-pill {
+      background: linear-gradient(135deg, #F5A623 0%, #D97706 50%, #B45309 100%) !important;
+      border: 1px solid rgba(255, 235, 180, 0.6) !important;
+      color: #06070B !important;
+      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      font-size: 0.82rem !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.06em !important;
+      padding: 9px 22px !important;
+      border-radius: 9999px !important;
+      cursor: pointer !important;
+      box-shadow: 0 0 20px rgba(245, 166, 35, 0.45), 0 4px 14px rgba(0, 0, 0, 0.5) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      text-decoration: none !important;
+    }
+
+    .nav-btn-pill:hover {
+      background: linear-gradient(135deg, #FFB020 0%, #F5A623 50%, #D97706 100%) !important;
+      color: #000000 !important;
+      transform: translateY(-2px) scale(1.02) !important;
+      box-shadow: 0 0 32px rgba(245, 166, 35, 0.75), 0 6px 20px rgba(0, 0, 0, 0.6) !important;
+      border-color: #FFFFFF !important;
+    }
+
+    .nav-login-btn {
+      padding: 8px 18px !important;
+      border-radius: 9999px !important;
+      border: 1px solid rgba(245, 166, 35, 0.35) !important;
+      background: rgba(245, 166, 35, 0.08) !important;
+      color: #FFFFFF !important;
+      font-weight: 700 !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .nav-login-btn:hover {
+      background: rgba(245, 166, 35, 0.2) !important;
+      border-color: var(--solar-gold) !important;
+      color: #F5A623 !important;
+      box-shadow: 0 0 16px rgba(245, 166, 35, 0.4) !important;
+    }
+
+    .nav-audio-btn {
+      background: rgba(245, 166, 35, 0.1) !important;
+      border: 1px solid rgba(245, 166, 35, 0.35) !important;
+      color: #F5A623 !important;
+      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      font-size: 0.76rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.08em !important;
+      border-radius: 9999px !important;
+      padding: 6px 14px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .nav-audio-btn:hover {
+      background: rgba(245, 166, 35, 0.22) !important;
+      border-color: var(--solar-gold) !important;
+      box-shadow: 0 0 16px rgba(245, 166, 35, 0.45) !important;
+    }
+
+    .theme-3d-switch-btn {
+      border: 1px solid rgba(245, 166, 35, 0.3) !important;
+      border-radius: 9999px !important;
+      background: rgba(0, 0, 0, 0.5) !important;
+    }
+
+    /* Spatial Cosmic Observatory Footer */
+    .ref-landing-footer {
+      position: relative !important;
+      z-index: 5 !important;
+      background: linear-gradient(to top, rgba(3, 4, 9, 0.95) 0%, rgba(5, 7, 16, 0.65) 50%, rgba(5, 7, 16, 0.1) 85%, transparent 100%) !important;
+      backdrop-filter: blur(24px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+      border-top: 1px solid rgba(245, 166, 35, 0.25) !important;
+      box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 166, 35, 0.08) inset !important;
+      padding: 72px 24px 44px !important;
+      text-align: center !important;
+      display: flex !important;
+      flex-direction: column !important;
+      align-items: center !important;
+      gap: 20px !important;
+      overflow: hidden !important;
+    }
+
+    .footer-starlight-glow {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      max-width: 80vw;
+      height: 2px;
+      background: radial-gradient(ellipse at center, #F5A623 0%, rgba(245, 166, 35, 0.4) 40%, transparent 80%);
+      box-shadow: 0 0 20px #F5A623, 0 0 40px rgba(245, 166, 35, 0.5);
+      pointer-events: none;
+    }
+
+    .footer-brand-stage {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .footer-portal-emblem {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 35% 35%, rgba(245, 166, 35, 0.3) 0%, rgba(10, 14, 26, 0.8) 100%);
+      border: 1px solid rgba(245, 166, 35, 0.45);
+      box-shadow: 0 0 20px rgba(245, 166, 35, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .portal-core-glyph {
+      font-size: 1.3rem;
+      color: #F5A623;
+      text-shadow: 0 0 12px #F5A623;
+      animation: pulsePortalGlyph 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulsePortalGlyph {
+      0% { transform: scale(0.95); opacity: 0.8; filter: drop-shadow(0 0 4px #F5A623); }
+      100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 12px #FFB020); }
+    }
+
+    .footer-brand-info {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .footer-brand-title {
+      font-family: var(--font-display, 'Syne', sans-serif) !important;
+      font-weight: 800 !important;
+      font-size: 1.15rem !important;
+      letter-spacing: 0.12em !important;
+      color: #FFFFFF !important;
+      text-shadow: 0 0 16px rgba(245, 166, 35, 0.4);
+    }
+
+    .footer-brand-subtitle {
+      font-family: var(--font-mono, monospace) !important;
+      font-size: 0.68rem !important;
+      letter-spacing: 0.16em !important;
+      color: #F5A623 !important;
+      opacity: 0.9;
+    }
+
+    .footer-philosophy {
+      font-family: var(--font-body, sans-serif);
+      font-size: 0.92rem;
+      color: #F1F5F9;
+      max-width: 580px;
+      line-height: 1.6;
+      margin: 0;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
+    }
+
+    .footer-trust-capsules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      max-width: 900px;
+      margin-top: 6px;
+    }
+
+    .trust-capsule {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background: rgba(245, 166, 35, 0.06);
+      border: 1px solid rgba(245, 166, 35, 0.22);
+      backdrop-filter: blur(10px);
+      color: #F1F5F9;
+      font-size: 0.78rem;
+      font-family: var(--font-ui, sans-serif);
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .trust-capsule:hover {
+      background: rgba(245, 166, 35, 0.14);
+      border-color: rgba(245, 166, 35, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 0 16px rgba(245, 166, 35, 0.25);
+    }
+
+    .footer-celestial-divider {
+      width: 100%;
+      max-width: 760px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(245, 166, 35, 0.35) 50%, transparent 100%);
+      margin: 10px 0;
+    }
+
+    .footer-nav-orbit {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .footer-orbit-link {
+      color: rgba(241, 245, 249, 0.78);
+      text-decoration: none;
+      font-family: var(--font-display, 'Syne', sans-serif);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      transition: all 0.2s ease;
+    }
+
+    .footer-orbit-link:hover {
+      color: #F5A623 !important;
+      text-shadow: 0 0 12px rgba(245, 166, 35, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .orbit-sep {
+      font-size: 0.55rem;
+      color: rgba(245, 166, 35, 0.5);
+    }
+
+    .footer-chronos-signature {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: rgba(148, 163, 184, 0.8);
+      margin-top: 4px;
+    }
+
+    .signature-tag {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.66rem;
+      letter-spacing: 0.18em;
+      color: rgba(245, 166, 35, 0.75);
     }
   </style>
 </head>
@@ -1913,32 +2234,63 @@
           </div>
         </section>
 
-        <!-- Trust & Transparency Footer -->
+        <!-- Trust & Transparency Spatial Observatory Footer -->
         <footer class="ref-landing-footer">
-          <div class="ref-footer-brand">
-            <span class="nav-monogram">✦</span>
-            <span>AI Portfolio Studio</span>
+          <div class="footer-starlight-glow"></div>
+          
+          <div class="footer-brand-stage">
+            <div class="footer-portal-emblem">
+              <span class="portal-core-glyph">✦</span>
+            </div>
+            <div class="footer-brand-info">
+              <span class="footer-brand-title">MYFOLIO STUDIO</span>
+              <span class="footer-brand-subtitle">AUTONOMOUS 3D SPATIAL PORTFOLIO ENGINE</span>
+            </div>
           </div>
-          <div class="trust-footer-note">
-            <span>🔒 <strong>Public Data Only</strong>: We only read public repository metadata and uploaded documents.</span>
-            <span>•</span>
-            <span>⚡ <strong>100% Free Live Preview</strong></span>
-            <span>•</span>
-            <span>📦 <strong>Clean Static ZIP Export</strong></span>
-            <span>•</span>
-            <span><a href="/studio" style="color: #a5b4fc; text-decoration: none;">Studio</a></span>
-            <span>•</span>
-            <span><a href="/about" style="color: #a5b4fc; text-decoration: none;">About</a></span>
-            <span>•</span>
-            <span><a href="/contact" style="color: #a5b4fc; text-decoration: none;">Contact</a></span>
-            <span>•</span>
-            <span><a href="/login" style="color: #a5b4fc; text-decoration: none;">Login</a></span>
-            <span>•</span>
-            <span><a href="/signup" style="color: #a5b4fc; text-decoration: none;">Sign Up</a></span>
-            <span>•</span>
-            <span><a href="/terms" style="color: #a5b4fc; text-decoration: none;">Terms of Service</a></span>
-            <span>•</span>
-            <span><a href="/privacy" style="color: #a5b4fc; text-decoration: none;">Privacy Policy</a></span>
+
+          <p class="footer-philosophy">
+            GPU-accelerated dimensional portfolios synthesized directly from your code, research, and career timeline.
+          </p>
+
+          <!-- Floating Telemetry Pills -->
+          <div class="footer-trust-capsules">
+            <div class="trust-capsule">
+              <span class="capsule-icon">🔒</span>
+              <span class="capsule-text">Public Repository Metadata Only</span>
+            </div>
+            <div class="trust-capsule">
+              <span class="capsule-icon">⚡</span>
+              <span class="capsule-text">100% Free Live Preview on Edge CDN</span>
+            </div>
+            <div class="trust-capsule">
+              <span class="capsule-icon">📦</span>
+              <span class="capsule-text">Clean Static ZIP Export • Zero Lock-in</span>
+            </div>
+          </div>
+
+          <!-- Starlight Hairline Divider -->
+          <div class="footer-celestial-divider"></div>
+
+          <!-- Refined Cosmic Navigation Links -->
+          <div class="footer-nav-orbit">
+            <a href="/studio" class="footer-orbit-link">3D Studio</a>
+            <span class="orbit-sep">✦</span>
+            <a href="#sectionUniverses" class="footer-orbit-link">22 Archetypes</a>
+            <span class="orbit-sep">✦</span>
+            <a href="/about" class="footer-orbit-link">About Codex</a>
+            <span class="orbit-sep">✦</span>
+            <a href="/contact" class="footer-orbit-link">Contact Mission</a>
+            <span class="orbit-sep">✦</span>
+            <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="footer-orbit-link">Telegram Bot</a>
+            <span class="orbit-sep">✦</span>
+            <a href="/terms" class="footer-orbit-link">Terms</a>
+            <span class="orbit-sep">✦</span>
+            <a href="/privacy" class="footer-orbit-link">Privacy Policy</a>
+          </div>
+
+          <div class="footer-chronos-signature">
+            <span>© 2026 MyFolio Studio. All dimensional rights reserved.</span>
+            <span class="signature-tag">BUILT FOR ENGINEERS &amp; RESEARCHERS</span>
           </div>
         </footer>
       </section>
