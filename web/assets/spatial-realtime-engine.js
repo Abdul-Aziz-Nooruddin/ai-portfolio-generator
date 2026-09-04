@@ -147,10 +147,10 @@
   // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB)
   const astronautRoot = new THREE.Group();
   // Positioned cleanly on far right of hero stage (x = 1.68) facing left towards hero content
-  // rotY = 0.65 turns towards left content; rotX = 0.22 pitches helmet forward/downward toward text
+  // rotY = -1.10 turns chest & visor towards left content; rotX = 0.12 pitches helmet slightly forward
   astronautRoot.position.set(1.68, -0.42, 1.20);
-  astronautRoot.rotation.y = 0.65;
-  astronautRoot.rotation.x = 0.22;
+  astronautRoot.rotation.y = -1.10;
+  astronautRoot.rotation.x = 0.12;
   scene.add(astronautRoot);
 
   let astronautModel = null;
@@ -316,7 +316,7 @@
   let astroTargetX = 1.68;
   let astroTargetY = -0.42;
   let astroTargetZ = 1.25;
-  let astroTargetRotY = 0.65;
+  let astroTargetRotY = -1.10;
 
   window.addEventListener('mousemove', e => {
     const cx = window.innerWidth / 2;
@@ -351,8 +351,8 @@
 
     // Dynamic Multi-Waypoint Zig-Zag Choreography:
     // Sections alternate Left / Right across the viewport.
-    // When content is on LEFT, astronaut floats on RIGHT facing LEFT (rotY = +0.65).
-    // When content is on RIGHT, astronaut floats on LEFT facing RIGHT (rotY = -0.65).
+    // When content is on LEFT, astronaut floats on RIGHT facing LEFT (rotY = -1.10).
+    // When content is on RIGHT, astronaut floats on LEFT facing RIGHT (rotY = +1.10).
     const vh = window.innerHeight;
     const viewCenter = scrollY + vh * 0.5;
 
@@ -365,16 +365,16 @@
     const isMobile = window.innerWidth < 768;
     const stages = isMobile ? [
       // Mobile choreography: scaled-down ambient astronaut in upper sky corners, facing toward content
-      { y: heroCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: 0.45, anim: 'floating' },
-      { y: overviewCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: -0.45, anim: 'moon_walk' },
-      { y: universesCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: 0.45, anim: 'moon_walk' },
-      { y: launchCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: -0.45, anim: 'floating' }
+      { y: heroCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.75, anim: 'floating' },
+      { y: overviewCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.75, anim: 'moon_walk' },
+      { y: universesCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.75, anim: 'moon_walk' },
+      { y: launchCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.75, anim: 'floating' }
     ] : [
       // Desktop choreography: bold perimeter docking opposite the active section, always facing towards content
-      { y: heroCenter, x: 1.68, yOffset: -0.42, z: 1.25, rotY: 0.65, anim: 'floating' },
-      { y: overviewCenter, x: -1.68, yOffset: -0.26, z: 1.30, rotY: -0.65, anim: 'moon_walk' },
-      { y: universesCenter, x: 1.68, yOffset: -0.34, z: 1.25, rotY: 0.65, anim: 'moon_walk' },
-      { y: launchCenter, x: -1.68, yOffset: -0.28, z: 1.30, rotY: -0.65, anim: 'floating' }
+      { y: heroCenter, x: 1.68, yOffset: -0.42, z: 1.25, rotY: -1.10, anim: 'floating' },
+      { y: overviewCenter, x: -1.68, yOffset: -0.26, z: 1.30, rotY: 1.10, anim: 'moon_walk' },
+      { y: universesCenter, x: 1.68, yOffset: -0.34, z: 1.25, rotY: -1.10, anim: 'moon_walk' },
+      { y: launchCenter, x: -1.68, yOffset: -0.28, z: 1.30, rotY: 1.10, anim: 'floating' }
     ];
 
     let s0 = stages[0];
@@ -584,9 +584,9 @@
     astronautRoot.position.y += (astroTargetY + Math.sin(elapsed * 1.6) * 0.08 - astronautRoot.position.y) * 0.06;
     astronautRoot.position.z += (astroTargetZ - astronautRoot.position.z) * 0.06;
 
-    // Pitch forward (+0.22) so astronaut looks forward/downward toward content instead of looking up at sky
-    const targetRotX = 0.22 - mouseY * 0.18 + (scrollProgress * 0.10);
-    const targetRotY = astroTargetRotY + mouseX * 0.32;
+    // Pitch forward (+0.12) so astronaut looks forward/downward toward content instead of looking up at sky
+    const targetRotX = 0.12 - mouseY * 0.15 + (scrollProgress * 0.08);
+    const targetRotY = astroTargetRotY + mouseX * 0.28;
     astronautRoot.rotation.x += (targetRotX - astronautRoot.rotation.x) * 0.06;
     astronautRoot.rotation.y += (targetRotY - astronautRoot.rotation.y) * 0.06;
     astronautRoot.rotation.z = Math.sin(elapsed * 0.9) * 0.03;

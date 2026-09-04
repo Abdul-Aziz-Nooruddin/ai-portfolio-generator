@@ -2385,13 +2385,6 @@
     <canvas id="chronoStardustCanvas" class="chrono-stardust-canvas"></canvas>
   </div>
 
-  <!-- Apple-Style Global Fixed Telemetry HUD Scrubber -->
-  <div class="chrono-scroll-hud" id="chronoScrollHud">
-    <div class="chrono-hud-track">
-      <div class="chrono-hud-progress" id="chronoHudProgress"></div>
-    </div>
-    <span id="chronoHudPhase">EVENT HORIZON // 0%</span>
-  </div>
 
   <div class="app-shell-layout">
     <!-- Universal Sidebar Mount -->
@@ -2422,11 +2415,6 @@
             <a href="/about" class="nav-link-item">ABOUT</a>
             <a href="/contact" class="nav-link-item">CONTACT</a>
 
-            <!-- Cosmic Audio Resonance Toggle -->
-            <button type="button" class="nav-audio-btn interactive-target" id="navAudioToggle" aria-label="Toggle Cosmic Audio Resonance">
-              <span id="navAudioIcon">🔈</span>
-              <span id="navAudioText">RESONANCE</span>
-            </button>
 
             <button type="button" class="theme-3d-switch-btn" onclick="togglePlatformTheme()" title="Toggle Dark / Light Theme" aria-label="Toggle Theme" style="margin-left: 8px;">
               <div class="switch-3d-track">
@@ -2456,9 +2444,6 @@
 
           <!-- Mobile Controls (Quick toggles + Hamburger) -->
           <div class="nav-mobile-controls mobile-only">
-            <button type="button" class="nav-audio-btn-mobile interactive-target" id="navAudioToggleMobile" onclick="toggleAudio()" aria-label="Audio">
-              <span>🔈</span>
-            </button>
             <button type="button" class="theme-3d-switch-btn-mobile" onclick="togglePlatformTheme()" aria-label="Theme">
               <span>🌓</span>
             </button>
@@ -2521,11 +2506,6 @@
         <header class="chrono-hero-stage" id="chronoHeroStage">
           <!-- Beat 0: Main Interactive Hero Console & Title -->
           <div class="chrono-hero-content" id="chronoHeroContent">
-            <!-- Telemetry Status HUD -->
-            <div class="chrono-telemetry-badge">
-              <span class="telemetry-beacon"></span>
-              <span>SYS: QUANTUM PORTAL ACTIVE // 22 UNIVERSES ACCESSIBLE</span>
-            </div>
 
             <!-- Display Headline in Syne -->
             <h1 class="chrono-hero-title">
@@ -3041,7 +3021,7 @@
   </script>
 
   <!-- 2. REAL-TIME HARDWARE-ACCELERATED 3D SPATIAL UNIVERSE (Three.js WebGL) -->
-  <script src="/assets/spatial-realtime-engine.js?v=20260904_2310" defer></script>
+  <script src="/assets/spatial-realtime-engine.js?v=20260904_2330" defer></script>
 
   <script>
     /* ====================================================
