@@ -134,6 +134,34 @@ app.use(async (req, res, next) => {
     if (!html) {
       html = await hostingProvider.getSiteHtml('abdulaziz');
     }
+    // VIP Founder instant synthesis fallback
+    if (!html) {
+      try {
+        const { TemplateRegistry } = require('./templates/template-registry');
+        const stealthTemplate = TemplateRegistry.templates['stealth-node'] || TemplateRegistry.templates['cosmic-astronaut'] || Object.values(TemplateRegistry.templates)[0];
+        const abdulAzizProfile = {
+          name: 'Abdul Aziz Nooruddin',
+          title: 'Full-Stack Developer & AI Systems Specialist',
+          headline: 'AI Systems & Machine Learning Researcher',
+          role: 'AI Systems Specialist',
+          bio: 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
+          about: 'Lead architect of MyFolio. Full-stack engineer specializing in modern web platforms, 3D spatial computing, and AI-driven automation systems.',
+          skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
+          projects: [
+            {
+              title: 'MyFolio Platform',
+              name: 'MyFolio Platform',
+              description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
+              tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+              url: 'https://myfolio.tech'
+            }
+          ]
+        };
+        html = stealthTemplate.render(abdulAzizProfile, {});
+      } catch (synthErr) {
+        console.error('[VIP Subdomain] Synthesis error:', synthErr);
+      }
+    }
     if (html) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- GA4 Google Analytics -->
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZJFT5YTN2"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -12,15 +12,15 @@
 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 — Dimensional Coordinates Not Found | MyFolio 3D Studio</title>
-  <meta name="description" content="The requested portfolio, page, or universe coordinates could not be located in this spacetime. Return to MyFolio 3D Studio or explore 22 bespoke visual universes." />
+  <title>404 — Dimensional Sanctuary Lost | MyFolio</title>
+  <meta name="description" content="The architectural coordinates you sought have dissolved into the cosmic twilight. Return to MyFolio 3D Studio or explore 22 bespoke visual universes." />
   
   <!-- Open Graph / Social Meta -->
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="MyFolio Studio" />
-  <meta property="og:title" content="404 — Dimensional Coordinates Not Found | MyFolio" />
-  <meta property="og:description" content="The requested portfolio or coordinates could not be found. Synthesize your own 3D WebGL developer portfolio in under 60 seconds." />
-  <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg" />
+  <meta property="og:title" content="404 — Dimensional Sanctuary Lost | MyFolio" />
+  <meta property="og:description" content="The architecture you sought has drifted beyond known coordinates. Synthesize your 3D WebGL developer universe." />
+  <meta property="og:image" content="/images/404/surreal-sanctuary.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   
   <!-- Favicon -->
@@ -28,475 +28,857 @@
   <link rel="apple-touch-icon" href="/favicon.png" />
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Fonts -->
+  <!-- Typography: Italiana (Cosmic Luxury Serif) + Syne (Avant-Garde Display) + Plus Jakarta Sans (Modern Body) -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  
-  <!-- Three.js (Procedural 3D WebGL Scene) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Italiana&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@500;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
 
   <style>
     :root {
-      --bg: #030712;
-      --card-bg: rgba(15, 23, 42, 0.72);
-      --border: rgba(56, 189, 248, 0.25);
-      --primary: #38BDF8;
-      --accent: #A855F7;
-      --pink: #EC4899;
-      --text: #F8FAFC;
-      --text-muted: #94A3B8;
-      --font-display: 'Space Grotesk', sans-serif;
+      --void-bg: #0A0614;
+      --twilight-violet: #1A0D33;
+      --celestial-lilac: #E9D5FF;
+      --mercury-chrome: #F1F5F9;
+      --starlight-gold: #FDE68A;
+      --ethereal-rose: #F472B6;
+      --text-main: #FAF5FF;
+      --text-muted: #A89CBD;
+      --card-glass: rgba(18, 10, 36, 0.55);
+      --card-border: rgba(233, 213, 255, 0.18);
+      --font-display: 'Italiana', serif;
+      --font-accent: 'Cinzel Decorative', serif;
+      --font-title: 'Syne', sans-serif;
+      --font-mono: 'Space Grotesk', monospace;
       --font-body: 'Plus Jakarta Sans', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      cursor: none; /* Liquid Mercury Cursor handles pointer */
     }
 
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
-      min-height: 100vh;
+    html, body {
+      width: 100vw;
+      height: 100vh;
       overflow: hidden;
+      background-color: var(--void-bg);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ====================================================
+       BACKGROUND 2.5D SPATIAL CANVAS & PARALLAX SCENE
+       ==================================================== */
+    .sanctuary-stage {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      perspective: 1200px;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sanctuary-art-layer {
+      position: absolute;
+      top: -5%;
+      left: -5%;
+      width: 110%;
+      height: 110%;
+      background: url('/images/404/surreal-sanctuary.jpg') center center / cover no-repeat;
+      transform-style: preserve-3d;
+      transition: transform 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+      filter: saturate(1.15) brightness(0.92) contrast(1.05);
+      will-change: transform;
+    }
+
+    /* Vignette & Cinematic Atmospheric Grading */
+    .sanctuary-vignette {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 48% 50%, rgba(10, 6, 20, 0.25) 0%, rgba(10, 6, 20, 0.65) 60%, rgba(10, 6, 20, 0.95) 100%),
+                  linear-gradient(to bottom, rgba(10, 6, 20, 0.6) 0%, transparent 35%, rgba(10, 6, 20, 0.85) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Stardust Particle Canvas */
+    #particle-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    /* Floating Liquid Mercury Spheres */
+    .floating-mercury-orb {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #D8B4FE 30%, #4C1D95 70%, #1E1B4B 100%);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7),
+                  0 0 40px rgba(192, 132, 252, 0.35),
+                  inset -8px -8px 20px rgba(15, 7, 34, 0.8),
+                  inset 6px 6px 14px rgba(255, 255, 255, 0.8);
+      pointer-events: none;
+      z-index: 4;
+      animation: orbFloat 7s ease-in-out infinite alternate;
+      will-change: transform;
+    }
+
+    .orb-1 {
+      width: 90px;
+      height: 90px;
+      bottom: 12%;
+      left: 10%;
+      animation-duration: 8.5s;
+    }
+
+    .orb-2 {
+      width: 55px;
+      height: 55px;
+      top: 18%;
+      right: 14%;
+      animation-duration: 6.2s;
+      animation-delay: -2s;
+    }
+
+    .orb-3 {
+      width: 36px;
+      height: 36px;
+      bottom: 28%;
+      right: 22%;
+      animation-duration: 9.8s;
+      animation-delay: -4s;
+    }
+
+    @keyframes orbFloat {
+      0% { transform: translateY(0px) rotate(0deg) scale(1); }
+      50% { transform: translateY(-24px) rotate(8deg) scale(1.03); }
+      100% { transform: translateY(-42px) rotate(-6deg) scale(0.98); }
+    }
+
+    /* ====================================================
+       HUD TOP BAR & CONTROLS
+       ==================================================== */
+    .sanctuary-hud {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      padding: 30px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 20;
+      pointer-events: auto;
+    }
+
+    .hud-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .hud-logo-glyph {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff 0%, #C084FC 50%, #4C1D95 100%);
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+    }
+
+    .hud-brand-name {
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #FFFFFF 0%, #E9D5FF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hud-telemetry {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: rgba(233, 213, 255, 0.65);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .hud-beacon {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #F472B6;
+      box-shadow: 0 0 10px #F472B6;
+      animation: beaconPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    @keyframes beaconPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .audio-toggle-btn {
+      background: rgba(30, 15, 55, 0.5);
+      border: 1px solid rgba(233, 213, 255, 0.2);
+      backdrop-filter: blur(12px);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--celestial-lilac);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .audio-toggle-btn:hover {
+      border-color: rgba(233, 213, 255, 0.5);
+      box-shadow: 0 0 20px rgba(192, 132, 252, 0.3);
+      transform: translateY(-1px);
+    }
+
+    /* ====================================================
+       MAIN EDITORIAL SURREALIST HERO COMPOSITION
+       ==================================================== */
+    .hero-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1080px;
+      width: 90%;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      position: relative;
-      padding: 24px;
-    }
-
-    /* 3D WebGL Background Canvas */
-    #webgl-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: auto;
-      touch-action: none;
-    }
-
-    /* Vignette & Radial Atmospheric Fog */
-    .vignette-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(circle at center, rgba(3, 7, 18, 0.2) 0%, rgba(3, 7, 18, 0.85) 80%, rgba(3, 7, 18, 0.98) 100%);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Ambient Pulsing Glow */
-    .ambient-glow {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 650px;
-      height: 650px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(168, 85, 247, 0.12) 40%, transparent 70%);
-      pointer-events: none;
-      z-index: 1;
-      filter: blur(80px);
-      animation: pulseGlow 6s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulseGlow {
-      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.7; }
-      100% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
-    }
-
-    /* Main 404 Holographic Glass Card */
-    .error-container {
-      position: relative;
-      z-index: 2;
-      max-width: 640px;
-      width: 100%;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 44px 36px;
       text-align: center;
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75), 0 0 50px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      animation: floatCard 4s ease-in-out infinite alternate;
+      pointer-events: auto;
+      transform-style: preserve-3d;
     }
 
-    @keyframes floatCard {
-      0% { transform: translateY(0px); }
-      100% { transform: translateY(-8px); }
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(239, 68, 68, 0.14);
-      border: 1px solid rgba(239, 68, 68, 0.4);
-      color: #FCA5A5;
-      padding: 6px 16px;
-      border-radius: 100px;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      margin-bottom: 20px;
-      box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #EF4444;
-      border-radius: 50%;
-      animation: blinkDot 1.4s infinite;
-    }
-
-    @keyframes blinkDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.3; transform: scale(0.75); }
-    }
-
-    .glitch-code {
+    /* Watermark Monolith 404 in Background */
+    .monolith-number {
       font-family: var(--font-display);
-      font-size: clamp(5.5rem, 16vw, 9rem);
-      font-weight: 900;
-      line-height: 1;
-      letter-spacing: -4px;
-      background: linear-gradient(135deg, #38BDF8 0%, #818CF8 35%, #C084FC 70%, #F472B6 100%);
+      font-size: clamp(140px, 26vw, 320px);
+      line-height: 0.82;
+      letter-spacing: -0.04em;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(216, 180, 254, 0.2) 50%, rgba(10, 6, 20, 0.02) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-      display: inline-block;
-      text-shadow: 0 0 35px rgba(56, 189, 248, 0.3);
+      filter: drop-shadow(0 0 60px rgba(192, 132, 252, 0.2));
+      pointer-events: none;
       user-select: none;
+      margin-bottom: -40px;
+      transition: transform 0.2s ease-out;
+      will-change: transform;
     }
 
-    .error-title {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 4vw, 1.85rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      margin-bottom: 12px;
-      color: #FFFFFF;
+    /* Floating Holographic Crystal Card */
+    .sanctuary-glass-card {
+      background: var(--card-glass);
+      backdrop-filter: blur(28px) saturate(160%);
+      -webkit-backdrop-filter: blur(28px) saturate(160%);
+      border: 1px solid var(--card-border);
+      box-shadow: 0 30px 80px rgba(4, 2, 12, 0.75),
+                  0 0 50px rgba(192, 132, 252, 0.15),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      border-radius: 32px;
+      padding: clamp(32px, 5vw, 56px) clamp(28px, 6vw, 68px);
+      max-width: 780px;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease-out, box-shadow 0.3s ease;
+      will-change: transform;
     }
 
-    .error-desc {
-      color: var(--text-muted);
-      font-size: 0.98rem;
-      line-height: 1.65;
-      margin-bottom: 28px;
+    .sanctuary-glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(253, 230, 138, 0.6) 30%, rgba(244, 114, 182, 0.8) 70%, transparent 100%);
     }
 
-    /* Interactive 3D Orbit Tip */
-    .interaction-hint {
+    /* Editorial Headline & Typography */
+    .status-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--starlight-gold);
+      margin-bottom: 14px;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.76rem;
-      color: rgba(56, 189, 248, 0.85);
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px dashed rgba(56, 189, 248, 0.3);
-      padding: 5px 12px;
-      border-radius: 8px;
-      margin-bottom: 24px;
+      gap: 10px;
     }
 
-    .button-group {
+    .headline-sanctuary {
+      font-family: var(--font-display);
+      font-size: clamp(34px, 5.2vw, 58px);
+      font-weight: 400;
+      line-height: 1.12;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #FFFFFF 0%, #FAF5FF 40%, #E9D5FF 80%, #FBCFE8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 18px;
+    }
+
+    .description-sanctuary {
+      font-family: var(--font-body);
+      font-size: clamp(14px, 1.6vw, 16px);
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 560px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+
+    /* Actions Matrix */
+    .actions-matrix {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      align-items: center;
       justify-content: center;
+      gap: 16px;
     }
 
-    .btn {
+    /* Liquid Mercury Chrome Button */
+    .btn-mercury-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 36px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-family: var(--font-title);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #0A0614;
+      background: linear-gradient(135deg, #FFFFFF 0%, #E9D5FF 40%, #C084FC 80%, #F472B6 100%);
+      box-shadow: 0 12px 35px rgba(192, 132, 252, 0.45),
+                  0 0 20px rgba(255, 255, 255, 0.5),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-mercury-primary:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 18px 45px rgba(192, 132, 252, 0.65),
+                  0 0 35px rgba(255, 255, 255, 0.8);
+    }
+
+    /* Celestial Glass Secondary Button */
+    .btn-celestial-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 32px;
+      border-radius: 100px;
+      text-decoration: none;
+      font-family: var(--font-title);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--celestial-lilac);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(233, 213, 255, 0.3);
+      backdrop-filter: blur(16px);
+      transition: all 0.3s ease;
+    }
+
+    .btn-celestial-secondary:hover {
+      background: rgba(233, 213, 255, 0.12);
+      border-color: rgba(253, 230, 138, 0.6);
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(192, 132, 252, 0.2);
+    }
+
+    /* Subtle Return Reality Link */
+    .btn-return-reality {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 13px 24px;
-      border-radius: 50px;
-      font-size: 0.92rem;
-      font-weight: 700;
+      padding: 12px 24px;
       text-decoration: none;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      cursor: pointer;
-      border: none;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(233, 213, 255, 0.55);
+      transition: all 0.25s ease;
+      position: relative;
     }
 
-    .btn-primary {
-      background: linear-gradient(135deg, #0284C7 0%, #2563EB 50%, #7C3AED 100%);
-      color: #FFFFFF;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+    .btn-return-reality::after {
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 24px;
+      right: 24px;
+      height: 1px;
+      background: rgba(233, 213, 255, 0.3);
+      transition: transform 0.25s ease;
+      transform: scaleX(0);
+      transform-origin: right;
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 14px 35px rgba(37, 99, 235, 0.6);
+    .btn-return-reality:hover {
+      color: var(--celestial-lilac);
     }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--text);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(8px);
+    .btn-return-reality:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
     }
 
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-2px);
-      color: #38BDF8;
+    /* Interactive Bottom Hint */
+    .parallax-hint {
+      margin-top: 28px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: rgba(233, 213, 255, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .footer-brand {
-      margin-top: 26px;
-      font-size: 0.82rem;
-      color: var(--text-muted);
+    /* ====================================================
+       LIQUID MERCURY CUSTOM CURSOR
+       ==================================================== */
+    .cursor-mercury-main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #E9D5FF 50%, #C084FC 100%);
+      box-shadow: 0 0 16px rgba(255, 255, 255, 0.8), 0 0 30px rgba(192, 132, 252, 0.6);
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.2s ease;
+      mix-blend-mode: screen;
     }
 
-    .footer-brand a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
+    .cursor-mercury-trail {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(233, 213, 255, 0.45);
+      background: radial-gradient(circle, rgba(192, 132, 252, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-color 0.2s ease,
+                  background 0.2s ease;
+      will-change: transform;
     }
 
-    .footer-brand a:hover {
-      text-decoration: underline;
+    /* Hovering State for Interactive Elements */
+    body.cursor-hover .cursor-mercury-main {
+      width: 24px;
+      height: 24px;
+      background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #FDE68A 50%, #F472B6 100%);
+      box-shadow: 0 0 24px rgba(253, 230, 138, 0.9), 0 0 45px rgba(244, 114, 182, 0.8);
     }
 
-    @media (max-width: 600px) {
-      .error-container {
-        padding: 32px 20px;
-      }
-      .btn {
-        width: 100%;
-        justify-content: center;
-      }
+    body.cursor-hover .cursor-mercury-trail {
+      width: 70px;
+      height: 70px;
+      border-color: rgba(253, 230, 138, 0.65);
+      background: radial-gradient(circle, rgba(253, 230, 138, 0.15) 0%, transparent 70%);
+    }
+
+    /* Touch fallback for mobile */
+    @media (pointer: coarse) {
+      * { cursor: auto !important; }
+      .cursor-mercury-main, .cursor-mercury-trail { display: none !important; }
+      .sanctuary-hud { padding: 20px 24px; }
+      .monolith-number { margin-bottom: -20px; }
+      .actions-matrix { flex-direction: column; width: 100%; }
+      .btn-mercury-primary, .btn-celestial-secondary { width: 100%; }
     }
   </style>
 </head>
 <body>
-  <!-- Three.js 3D Canvas -->
-  <canvas id="webgl-canvas"></canvas>
-  <div class="vignette-overlay"></div>
-  <div class="ambient-glow"></div>
 
-  <!-- Holographic Glassmorphism UI -->
-  <main class="error-container">
-    <div class="status-badge">
-      <span class="status-dot"></span>
-      <span>404 • DIMENSIONAL DESYNCHRONIZATION</span>
+  <!-- Liquid Mercury Magnetic Cursor -->
+  <div class="cursor-mercury-main" id="cursor-main"></div>
+  <div class="cursor-mercury-trail" id="cursor-trail"></div>
+
+  <!-- 2.5D Parallax Sanctuary Stage -->
+  <div class="sanctuary-stage" id="stage">
+    <!-- Nano Banana 3D Render Art Layer -->
+    <div class="sanctuary-art-layer" id="art-layer"></div>
+
+    <!-- Cinematic Vignette & Atmospheric Fog -->
+    <div class="sanctuary-vignette"></div>
+
+    <!-- Floating Interactive Mercury Spheres -->
+    <div class="floating-mercury-orb orb-1" id="orb-1"></div>
+    <div class="floating-mercury-orb orb-2" id="orb-2"></div>
+    <div class="floating-mercury-orb orb-3" id="orb-3"></div>
+
+    <!-- Stardust Particle Canvas -->
+    <canvas id="particle-canvas"></canvas>
+  </div>
+
+  <!-- HUD Top Bar -->
+  <header class="sanctuary-hud">
+    <a href="/" class="hud-brand interactive-target">
+      <div class="hud-logo-glyph">✦</div>
+      <span class="hud-brand-name">MyFolio</span>
+    </a>
+
+    <div class="hud-telemetry">
+      <span><span class="hud-beacon"></span> LAT: 404.092</span>
+      <span>SECTOR: SANCTUARY_VOID</span>
+      <button class="audio-toggle-btn interactive-target" id="audio-toggle" aria-label="Toggle Cosmic Audio">
+        <span id="audio-icon">🔈</span>
+        <span id="audio-label">HARMONIC SOUND</span>
+      </button>
     </div>
+  </header>
 
-    <div>
-      <h1 class="glitch-code">404</h1>
-    </div>
+  <!-- Editorial Surrealist Hero Composition -->
+  <main class="hero-container" id="hero-card">
+    <div class="monolith-number" id="monolith-num">404</div>
 
-    <h2 class="error-title">Dimensional Coordinates Not Found</h2>
-    <p class="error-desc">
-      The portfolio, page, or universe you are searching for does not exist in this sector. It may have expired, moved to a custom domain, or collapsed into an alternate timeline.
-    </p>
+    <section class="sanctuary-glass-card" id="glass-card">
+      <div class="status-eyebrow">
+        <span>✦</span> DIMENSIONAL SANCTUARY LOST <span>✦</span>
+      </div>
 
-    <div class="interaction-hint">
-      <span>✦ Tip: Move your cursor or touch to rotate the 3D quantum singularity</span>
-    </div>
+      <h1 class="headline-sanctuary">
+        The Architecture Dissolved into Cosmic Twilight
+      </h1>
 
-    <div class="button-group">
-      <a href="/studio" class="btn btn-primary">
-        <span>⚡ Launch 3D Studio</span>
-      </a>
-      <a href="/universes" class="btn btn-secondary">
-        <span>🎨 Explore 22 Universes</span>
-      </a>
-      <a href="/" class="btn btn-secondary">
-        <span>🏠 Return Home</span>
-      </a>
-    </div>
+      <p class="description-sanctuary">
+        The portfolio, universe coordinates, or creator profile you are seeking has drifted beyond the observable manifold. It may have evolved to a custom domain, expired, or collapsed into an alternate continuum.
+      </p>
 
-    <div class="footer-brand">
-      Synthesized with precision by <a href="/">MyFolio AI 3D Platform</a>
-    </div>
+      <div class="actions-matrix">
+        <a href="/studio" class="btn-mercury-primary interactive-target">
+          <span>✦ Enter 3D Studio</span>
+        </a>
+        <a href="/universes" class="btn-celestial-secondary interactive-target">
+          <span>🪐 Explore 22 Universes</span>
+        </a>
+        <a href="/" class="btn-return-reality interactive-target">
+          <span>⟵ Return to Reality</span>
+        </a>
+      </div>
+
+      <div class="parallax-hint">
+        <span>∞</span> Move cursor to warp spatial gravity <span>∞</span>
+      </div>
+    </section>
   </main>
 
-  <!-- Procedural 3D WebGL Three.js Engine -->
   <script>
-    (function init3DErrorScene() {
-      const canvas = document.getElementById('webgl-canvas');
-      if (!canvas || typeof THREE === 'undefined') return;
+    /* ====================================================
+       1. LIQUID MERCURY CURSOR PHYSICS WITH LERP
+       ==================================================== */
+    const cursorMain = document.getElementById('cursor-main');
+    const cursorTrail = document.getElementById('cursor-trail');
+    
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let trailX = mouseX;
+    let trailY = mouseY;
 
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x030712, 0.025);
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursorMain.style.left = `${mouseX}px`;
+      cursorMain.style.top = `${mouseY}px`;
+    });
 
-      const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 24;
-
-      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-      // 1. Central Rotating Quantum Polyhedron (Broken Tesseract)
-      const coreGroup = new THREE.Group();
-      scene.add(coreGroup);
-
-      // Inner Icosahedron
-      const innerGeom = new THREE.IcosahedronGeometry(4.2, 1);
-      const innerMat = new THREE.MeshStandardMaterial({
-        color: 0x0284C7,
-        roughness: 0.2,
-        metalness: 0.85,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.85
+    // Magnetic Attraction & Hover State
+    const interactiveTargets = document.querySelectorAll('.interactive-target');
+    interactiveTargets.forEach(target => {
+      target.addEventListener('mouseenter', () => {
+        document.body.classList.add('cursor-hover');
+        playChime(880, 0.05); // High crystal hover chime
       });
-      const innerMesh = new THREE.Mesh(innerGeom, innerMat);
-      coreGroup.add(innerMesh);
-
-      // Outer Torus Knot (Quantum Loop)
-      const knotGeom = new THREE.TorusKnotGeometry(6.5, 0.45, 120, 16, 2, 3);
-      const knotMat = new THREE.MeshStandardMaterial({
-        color: 0xA855F7,
-        roughness: 0.15,
-        metalness: 0.9,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.65
+      target.addEventListener('mouseleave', () => {
+        document.body.classList.remove('cursor-hover');
       });
-      const knotMesh = new THREE.Mesh(knotGeom, knotMat);
-      coreGroup.add(knotMesh);
+    });
 
-      // Outer Orbital Rings
-      const ringGeom = new THREE.RingGeometry(9.5, 9.75, 64);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38BDF8, side: THREE.DoubleSide, transparent: true, opacity: 0.35 });
-      const ringMesh = new THREE.Mesh(ringGeom, ringMat);
-      ringMesh.rotation.x = Math.PI / 3;
-      coreGroup.add(ringMesh);
+    // Click Ripple Pulse
+    window.addEventListener('mousedown', () => {
+      cursorMain.style.transform = 'translate(-50%, -50%) scale(0.65)';
+      cursorTrail.style.transform = 'translate(-50%, -50%) scale(1.4)';
+      playChime(523.25, 0.15); // C5 harmonic note
+    });
 
-      // 2. Cosmic Stardust Particle Cloud (1,400 Particles)
-      const particleCount = 1400;
-      const particlePositions = new Float32Array(particleCount * 3);
-      const particleColors = new Float32Array(particleCount * 3);
-      const colorPalette = [
-        new THREE.Color(0x38BDF8),
-        new THREE.Color(0xA855F7),
-        new THREE.Color(0xEC4899),
-        new THREE.Color(0x0284C7)
-      ];
+    window.addEventListener('mouseup', () => {
+      cursorMain.style.transform = 'translate(-50%, -50%) scale(1)';
+      cursorTrail.style.transform = 'translate(-50%, -50%) scale(1)';
+    });
 
-      for (let i = 0; i < particleCount; i++) {
-        const i3 = i * 3;
-        const radius = 8 + Math.random() * 32;
-        const theta = Math.random() * Math.PI * 2;
-        const phi = Math.acos((Math.random() * 2) - 1);
+    /* ====================================================
+       2. 2.5D SPATIAL PARALLAX TILT PHYSICS
+       ==================================================== */
+    const artLayer = document.getElementById('art-layer');
+    const monolithNum = document.getElementById('monolith-num');
+    const glassCard = document.getElementById('glass-card');
+    const orb1 = document.getElementById('orb-1');
+    const orb2 = document.getElementById('orb-2');
+    const orb3 = document.getElementById('orb-3');
 
-        particlePositions[i3] = radius * Math.sin(phi) * Math.cos(theta);
-        particlePositions[i3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
-        particlePositions[i3 + 2] = radius * Math.cos(phi);
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let currentRotX = 0;
+    let currentRotY = 0;
 
-        const chosenColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
-        particleColors[i3] = chosenColor.r;
-        particleColors[i3 + 1] = chosenColor.g;
-        particleColors[i3 + 2] = chosenColor.b;
+    window.addEventListener('mousemove', (e) => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      
+      const deltaX = (e.clientX - centerX) / centerX;
+      const deltaY = (e.clientY - centerY) / centerY;
+
+      targetRotY = deltaX * 16;  // Tilt degrees
+      targetRotX = -deltaY * 14;
+    });
+
+    function renderParallax() {
+      // Smooth lerp
+      currentRotX += (targetRotX - currentRotX) * 0.08;
+      currentRotY += (targetRotY - currentRotY) * 0.08;
+
+      // Trailing cursor physics
+      trailX += (mouseX - trailX) * 0.18;
+      trailY += (mouseY - trailY) * 0.18;
+      cursorTrail.style.left = `${trailX}px`;
+      cursorTrail.style.top = `${trailY}px`;
+
+      // 3D Tilt layers at different depth planes
+      artLayer.style.transform = `scale(1.08) translate3d(${currentRotY * 1.5}px, ${-currentRotX * 1.5}px, 0px)`;
+      monolithNum.style.transform = `translate3d(${currentRotY * 2.8}px, ${-currentRotX * 2.8}px, 40px)`;
+      glassCard.style.transform = `perspective(1000px) rotateX(${currentRotX * 0.45}deg) rotateY(${currentRotY * 0.45}deg) translate3d(${currentRotY * 0.8}px, ${-currentRotX * 0.8}px, 30px)`;
+      
+      // Floating Mercury Orbs Parallax
+      if (orb1) orb1.style.transform = `translate3d(${currentRotY * -3.2}px, ${-currentRotX * -3.2}px, 60px)`;
+      if (orb2) orb2.style.transform = `translate3d(${currentRotY * -2.4}px, ${-currentRotX * -2.4}px, 80px)`;
+      if (orb3) orb3.style.transform = `translate3d(${currentRotY * -4.0}px, ${-currentRotX * -4.0}px, 100px)`;
+
+      requestAnimationFrame(renderParallax);
+    }
+    renderParallax();
+
+    /* ====================================================
+       3. CELESTIAL STARDUST PARTICLES CANVAS
+       ==================================================== */
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+
+    let particles = [];
+    const particleCount = 80;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    class StardustParticle {
+      constructor() {
+        this.reset();
       }
 
-      const particleGeom = new THREE.BufferGeometry();
-      particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
-      particleGeom.setAttribute('color', new THREE.BufferAttribute(particleColors, 3));
-
-      const particleMat = new THREE.PointsMaterial({
-        size: 0.18,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.85,
-        blending: THREE.AdditiveBlending
-      });
-      const particleCloud = new THREE.Points(particleGeom, particleMat);
-      scene.add(particleCloud);
-
-      // 3. Dynamic Colorful Lighting
-      const ambientLight = new THREE.AmbientLight(0x060D1E, 1.5);
-      scene.add(ambientLight);
-
-      const lightCyan = new THREE.PointLight(0x38BDF8, 3.5, 50);
-      lightCyan.position.set(12, 10, 15);
-      scene.add(lightCyan);
-
-      const lightPurple = new THREE.PointLight(0xA855F7, 3.5, 50);
-      lightPurple.position.set(-12, -10, 15);
-      scene.add(lightPurple);
-
-      const lightPink = new THREE.PointLight(0xEC4899, 2.5, 40);
-      lightPink.position.set(0, 15, -8);
-      scene.add(lightPink);
-
-      // 4. Mouse / Touch Parallax Dynamics
-      let targetRotX = 0;
-      let targetRotY = 0;
-      let mouseX = 0;
-      let mouseY = 0;
-
-      function onPointerMove(e) {
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-        mouseX = (clientX / window.innerWidth - 0.5) * 2;
-        mouseY = (clientY / window.innerHeight - 0.5) * 2;
-        targetRotY = mouseX * 0.75;
-        targetRotX = mouseY * 0.75;
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.2 + 0.4;
+        this.baseAlpha = Math.random() * 0.7 + 0.2;
+        this.alpha = this.baseAlpha;
+        this.speedX = (Math.random() - 0.5) * 0.35;
+        this.speedY = -Math.random() * 0.45 - 0.1;
+        this.pulseSpeed = Math.random() * 0.02 + 0.01;
+        this.pulsePhase = Math.random() * Math.PI * 2;
+        // Palette: Lilac, Celestial Gold, Starlight White
+        const colors = ['233, 213, 255', '253, 230, 138', '255, 255, 255', '244, 114, 182'];
+        this.color = colors[Math.floor(Math.random() * colors.length)];
       }
 
-      window.addEventListener('mousemove', onPointerMove, { passive: true });
-      window.addEventListener('touchmove', onPointerMove, { passive: true });
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
 
-      // Resize Handler
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-      });
+        this.pulsePhase += this.pulseSpeed;
+        this.alpha = this.baseAlpha + Math.sin(this.pulsePhase) * 0.25;
 
-      // Animation Loop
-      let clock = new THREE.Clock();
-
-      function animate() {
-        requestAnimationFrame(animate);
-        const delta = clock.getDelta();
-        const elapsedTime = clock.getElapsedTime();
-
-        // Rotate central 3D core
-        coreGroup.rotation.y += 0.007;
-        coreGroup.rotation.x += 0.004;
-
-        knotMesh.rotation.y = elapsedTime * 0.25;
-        knotMesh.rotation.z = elapsedTime * 0.15;
-
-        ringMesh.rotation.z = -elapsedTime * 0.18;
-
-        // Rotate particle galaxy
-        particleCloud.rotation.y = elapsedTime * 0.02;
-        particleCloud.rotation.x = Math.sin(elapsedTime * 0.05) * 0.1;
-
-        // Smooth Camera Parallax Lerp
-        camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.04;
-        camera.position.y += (-mouseY * 3.5 - camera.position.y) * 0.04;
-        camera.lookAt(0, 0, 0);
-
-        renderer.render(scene, camera);
+        if (this.y < 0 || this.x < 0 || this.x > canvas.width) {
+          this.reset();
+          this.y = canvas.height + 10;
+        }
       }
 
-      animate();
-    })();
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${this.color}, ${Math.max(0, this.alpha)})`;
+        ctx.shadowBlur = this.size * 5;
+        ctx.shadowColor = `rgba(${this.color}, 0.8)`;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    for (let i = 0; i < particleCount; i++) {
+      particles.push(new StardustParticle());
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particles) {
+        p.update();
+        p.draw();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* ====================================================
+       4. WEB AUDIO HARMONIC RESONANCE (Zero MP3 Dependencies)
+       ==================================================== */
+    let audioCtx = null;
+    let isAudioActive = false;
+    let ambientOscillators = [];
+
+    const audioToggle = document.getElementById('audio-toggle');
+    const audioIcon = document.getElementById('audio-icon');
+    const audioLabel = document.getElementById('audio-label');
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function startAmbientDrone() {
+      if (!audioCtx) return;
+      stopAmbientDrone();
+
+      // Dreamy ethereal minor chord (F, Ab, C, Eb) in low octave
+      const freqs = [87.31, 103.83, 130.81, 155.56];
+      freqs.forEach(f => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, audioCtx.currentTime);
+
+        gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.025, audioCtx.currentTime + 3);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+
+        ambientOscillators.push({ osc, gain });
+      });
+    }
+
+    function stopAmbientDrone() {
+      ambientOscillators.forEach(({ osc, gain }) => {
+        try {
+          gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+          setTimeout(() => osc.stop(), 1000);
+        } catch(e) {}
+      });
+      ambientOscillators = [];
+    }
+
+    function playChime(freq, vol = 0.08) {
+      if (!isAudioActive || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.5, audioCtx.currentTime + 0.4);
+
+        gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.55);
+      } catch(e) {}
+    }
+
+    audioToggle.addEventListener('click', () => {
+      initAudio();
+      isAudioActive = !isAudioActive;
+
+      if (isAudioActive) {
+        startAmbientDrone();
+        audioIcon.textContent = '🔊';
+        audioLabel.textContent = 'RESONANCE ON';
+        audioToggle.style.borderColor = 'rgba(253, 230, 138, 0.7)';
+        audioToggle.style.boxShadow = '0 0 25px rgba(253, 230, 138, 0.4)';
+        playChime(659.25, 0.15); // E5 startup chime
+      } else {
+        stopAmbientDrone();
+        audioIcon.textContent = '🔈';
+        audioLabel.textContent = 'HARMONIC SOUND';
+        audioToggle.style.borderColor = 'rgba(233, 213, 255, 0.2)';
+        audioToggle.style.boxShadow = 'none';
+      }
+    });
   </script>
 </body>
 </html>
