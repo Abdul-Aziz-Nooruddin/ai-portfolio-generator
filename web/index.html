@@ -260,8 +260,8 @@
   <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
-  <!-- LCP Preload: Hero Concept 1 3D Artwork -->
-  <link rel="preload" as="image" href="/images/hero/chrono-astronaut.jpg" fetchpriority="high">
+  <!-- LCP Preload: Hero Portal Sequence Initial Frame -->
+  <link rel="preload" as="image" href="/assets/portal-sequence/frame_0001.webp" fetchpriority="high">
 
   <link rel="stylesheet" href="/style.css?v=2.6.0">
   <script src="/sidebar.js" defer></script>
@@ -349,7 +349,7 @@
     .chrono-hero-stage {
       position: relative;
       width: 100%;
-      min-height: 92vh;
+      min-height: 94vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -359,25 +359,26 @@
       background: var(--space-void);
     }
 
-    .chrono-hero-art {
+    /* Apple-Style Frame Scrubbing Canvas */
+    .chrono-sequence-canvas {
       position: absolute;
-      top: -6%;
-      left: -6%;
-      width: 112%;
-      height: 112%;
-      background: url('/images/hero/chrono-astronaut.jpg') center center / cover no-repeat;
-      transform-style: preserve-3d;
-      transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
-      filter: saturate(1.18) brightness(0.88) contrast(1.06);
-      will-change: transform;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
       z-index: 1;
+      filter: saturate(1.15) brightness(0.92) contrast(1.05);
+      will-change: transform;
     }
 
     .chrono-hero-vignette {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.2) 0%, rgba(6, 7, 11, 0.65) 60%, rgba(6, 7, 11, 0.95) 100%),
-                  linear-gradient(to bottom, rgba(6, 7, 11, 0.4) 0%, transparent 40%, rgba(6, 7, 11, 0.95) 100%);
+      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.15) 0%, rgba(6, 7, 11, 0.6) 65%, rgba(6, 7, 11, 0.96) 100%),
+                  linear-gradient(to bottom, rgba(6, 7, 11, 0.4) 0%, transparent 40%, rgba(6, 7, 11, 0.98) 100%);
       pointer-events: none;
       z-index: 2;
     }
@@ -1221,10 +1222,10 @@
           </div>
         </nav>
 
-        <!-- Concept 1: The Chrono-Astronaut & Shattered Portal 2.5D Spatial Hero -->
+        <!-- Concept 3: The Event Horizon Portal Apple-Style Scroll Sequence Canvas -->
         <header class="chrono-hero-stage" id="chronoHeroStage">
-          <!-- 2.5D Art Background Layer -->
-          <div class="chrono-hero-art" id="chronoHeroArt"></div>
+          <!-- Apple-Style Frame Scrubbing Canvas -->
+          <canvas id="chronoSequenceCanvas" class="chrono-sequence-canvas"></canvas>
           <!-- Cinematic Vignette & Atmospheric Fog -->
           <div class="chrono-hero-vignette"></div>
           <!-- Golden Stardust Particle Canvas -->
@@ -2446,38 +2447,114 @@
     })();
 
     /* ====================================================
-       2. 2.5D SPATIAL PARALLAX TILT PHYSICS
+       2. APPLE-STYLE CANVAS FRAME SCRUBBING ENGINE
        ==================================================== */
-    (function initChronoHeroParallax() {
-      const artLayer = document.getElementById('chronoHeroArt');
+    (function initAppleScrollSequence() {
+      const canvas = document.getElementById('chronoSequenceCanvas');
       const contentLayer = document.getElementById('chronoHeroContent');
-      if (!artLayer || !contentLayer) return;
+      const stage = document.getElementById('chronoHeroStage');
+      if (!canvas || !stage) return;
 
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const frameCount = 80;
+      const frames = [];
+      let imagesLoaded = 0;
+      let currentFrameIndex = 0;
+      let targetFrameIndex = 0;
+
+      // Mouse Parallax Physics for 3D Depth
       let targetRotX = 0;
       let targetRotY = 0;
       let currentRotX = 0;
       let currentRotY = 0;
 
+      // Fit and draw active frame keeping 16:9 aspect-ratio cover
+      function renderFrame(index) {
+        const img = frames[index];
+        if (!img || !img.complete) return;
+
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const imgRatio = 16 / 9;
+        const canvasRatio = cw / ch;
+
+        let dw, dh, dx, dy;
+        if (canvasRatio > imgRatio) {
+          dw = cw;
+          dh = cw / imgRatio;
+          dx = 0;
+          dy = (ch - dh) / 2;
+        } else {
+          dh = ch;
+          dw = ch * imgRatio;
+          dx = (cw - dw) / 2;
+          dy = 0;
+        }
+
+        ctx.drawImage(img, dx, dy, dw, dh);
+      }
+
+      function resize() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = (canvas.parentElement.offsetWidth || window.innerWidth) * dpr;
+        canvas.height = (canvas.parentElement.offsetHeight || window.innerHeight) * dpr;
+        renderFrame(currentFrameIndex);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      // Preload WebP sequence
+      for (let i = 1; i <= frameCount; i++) {
+        const img = new Image();
+        const num = String(i).padStart(4, '0');
+        img.src = `/assets/portal-sequence/frame_${num}.webp`;
+        img.onload = () => {
+          imagesLoaded++;
+          if (i === 1) renderFrame(0);
+        };
+        frames.push(img);
+      }
+
+      // Scroll Progress mapping (0.0 to 1.0 through hero scroll zone)
+      function onScroll() {
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const heroHeight = stage.offsetHeight || window.innerHeight;
+        // The scroll zone spans 1.25x the hero height for smooth progression
+        const progress = Math.min(Math.max(scrollY / (heroHeight * 1.1), 0), 1);
+        targetFrameIndex = Math.min(Math.floor(progress * (frameCount - 1)), frameCount - 1);
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Cursor movement for 2.5D spatial tilt
       window.addEventListener('mousemove', (e) => {
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         const deltaX = (e.clientX - centerX) / centerX;
         const deltaY = (e.clientY - centerY) / centerY;
 
-        targetRotY = deltaX * 14;
-        targetRotX = -deltaY * 12;
+        targetRotY = deltaX * 12;
+        targetRotX = -deltaY * 10;
       });
 
-      function renderParallax() {
+      // Smooth Animation Loop (Frame interpolation + 3D perspective tilt)
+      function loop() {
+        // Smooth frame scrub dampening
+        currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.18;
+        const frameToDraw = Math.round(currentFrameIndex);
+        renderFrame(frameToDraw);
+
+        // Subtle 3D perspective warp on mouse move
         currentRotX += (targetRotX - currentRotX) * 0.08;
         currentRotY += (targetRotY - currentRotY) * 0.08;
 
-        artLayer.style.transform = `scale(1.06) translate3d(${currentRotY * 1.4}px, ${-currentRotX * 1.4}px, 0px)`;
-        contentLayer.style.transform = `perspective(1400px) rotateX(${currentRotX * 0.35}deg) rotateY(${currentRotY * 0.35}deg) translate3d(${currentRotY * 0.6}px, ${-currentRotX * 0.6}px, 20px)`;
+        canvas.style.transform = `translate(-50%, -50%) scale(1.04) translate3d(${currentRotY * 1.2}px, ${-currentRotX * 1.2}px, 0px)`;
+        if (contentLayer) {
+          contentLayer.style.transform = `perspective(1400px) rotateX(${currentRotX * 0.3}deg) rotateY(${currentRotY * 0.3}deg) translate3d(${currentRotY * 0.5}px, ${-currentRotX * 0.5}px, 20px)`;
+        }
 
-        requestAnimationFrame(renderParallax);
+        requestAnimationFrame(loop);
       }
-      renderParallax();
+      loop();
     })();
 
     /* ====================================================
