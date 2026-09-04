@@ -1442,9 +1442,10 @@
       justify-content: flex-start !important;
     }
     .chrono-scroll-beat.beat-align-left .landing-container {
-      margin-left: clamp(24px, 8vw, 140px) !important;
+      margin-left: clamp(20px, 5vw, 70px) !important;
       margin-right: auto !important;
-      max-width: 650px !important;
+      max-width: 480px !important;
+      width: 100% !important;
       text-align: left !important;
       display: flex !important;
       flex-direction: column !important;
@@ -1455,9 +1456,10 @@
       justify-content: flex-end !important;
     }
     .chrono-scroll-beat.beat-align-right .landing-container {
-      margin-right: clamp(24px, 8vw, 140px) !important;
+      margin-right: clamp(20px, 5vw, 70px) !important;
       margin-left: auto !important;
-      max-width: 650px !important;
+      max-width: 480px !important;
+      width: 100% !important;
       text-align: left !important;
       display: flex !important;
       flex-direction: column !important;
@@ -1466,35 +1468,87 @@
 
     /* Spatial Pillars Compact Layout in Right-Aligned Card */
     .beat-align-right .spatial-pillars-grid {
-      grid-template-columns: 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr !important;
+      gap: 14px !important;
+      width: 100% !important;
     }
     .beat-align-right .spatial-pillar-card {
-      padding: 18px 22px;
-      display: flex;
-      gap: 18px;
-      align-items: flex-start;
+      padding: 16px 20px !important;
+      display: flex !important;
+      gap: 16px !important;
+      align-items: flex-start !important;
     }
     .beat-align-right .spatial-pillar-card .pillar-icon-badge {
-      flex-shrink: 0;
-      margin-bottom: 0;
+      flex-shrink: 0 !important;
+      margin-bottom: 0 !important;
+      width: 38px !important;
+      height: 38px !important;
+      font-size: 1.1rem !important;
+    }
+    .beat-align-right .spatial-pillar-card .pillar-title {
+      font-size: 1.02rem !important;
+      margin-bottom: 4px !important;
+    }
+    .beat-align-right .spatial-pillar-card .pillar-desc {
+      font-size: 0.82rem !important;
+      line-height: 1.5 !important;
     }
 
-    /* Left-Aligned Showcase Universe Pills */
+    /* Left-Aligned Showcase Universe Pills (Compact 2-col Grid within 480px) */
     .beat-align-left .universe-pills-cluster {
-      justify-content: flex-start;
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+      gap: 10px !important;
+      width: 100% !important;
+      max-width: 480px !important;
+      justify-content: flex-start !important;
+    }
+    .beat-align-left .universe-pill-tag {
+      padding: 8px 12px !important;
+      gap: 8px !important;
+      width: auto !important;
+    }
+    .beat-align-left .universe-pill-tag .pill-meta {
+      display: none !important;
     }
 
     /* Right-Aligned Launch Cluster & Trust Bar */
     .beat-align-right .launch-actions-cluster {
-      justify-content: flex-start;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 12px !important;
+      width: 100% !important;
+      max-width: 480px !important;
+      align-items: stretch !important;
+      margin-bottom: 24px !important;
+    }
+    .beat-align-right .launch-actions-cluster button,
+    .beat-align-right .launch-actions-cluster a {
+      width: 100% !important;
+      justify-content: center !important;
+      text-align: center !important;
     }
     .beat-align-right .launch-trust-bar {
-      justify-content: flex-start;
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 8px !important;
+      width: 100% !important;
+      max-width: 480px !important;
+      padding: 10px 14px !important;
+      border-radius: 14px !important;
+    }
+    .beat-align-right .trust-divider {
+      display: none !important;
+    }
+    .beat-align-right .trust-item .trust-num {
+      font-size: 0.95rem !important;
+    }
+    .beat-align-right .trust-item .trust-lbl {
+      font-size: 0.68rem !important;
     }
 
-    /* Mobile Responsive: Gracefully center on phones / small tablets */
-    @media (max-width: 900px) {
+    /* Mobile Responsive: Gracefully center on phones */
+    @media (max-width: 768px) {
       .chrono-hero-stage {
         justify-content: center !important;
       }
@@ -1518,13 +1572,7 @@
         align-items: center !important;
       }
       .beat-align-right .spatial-pillars-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      }
-      .beat-align-right .spatial-pillar-card {
-        display: block;
-      }
-      .beat-align-right .spatial-pillar-card .pillar-icon-badge {
-        margin-bottom: 18px;
+        grid-template-columns: 1fr;
       }
       .beat-align-left .universe-pills-cluster,
       .beat-align-right .launch-actions-cluster,
@@ -1841,183 +1889,70 @@
       background: rgba(0, 0, 0, 0.5) !important;
     }
 
-    /* Spatial Cosmic Observatory Footer */
-    .ref-landing-footer {
+    /* Ultra-Thin Half-Centimeter Footer (~32px) */
+    .ref-landing-footer-thin {
       position: relative !important;
-      z-index: 5 !important;
-      background: linear-gradient(to top, rgba(3, 4, 9, 0.95) 0%, rgba(5, 7, 16, 0.65) 50%, rgba(5, 7, 16, 0.1) 85%, transparent 100%) !important;
-      backdrop-filter: blur(24px) saturate(180%) !important;
-      -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+      z-index: 10 !important;
+      background: rgba(4, 6, 12, 0.85) !important;
       border-top: 1px solid rgba(245, 166, 35, 0.25) !important;
-      box-shadow: 0 -15px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(245, 166, 35, 0.08) inset !important;
-      padding: 72px 24px 44px !important;
-      text-align: center !important;
+      height: 32px !important;
+      min-height: 32px !important;
+      padding: 0 24px !important;
       display: flex !important;
-      flex-direction: column !important;
       align-items: center !important;
-      gap: 20px !important;
-      overflow: hidden !important;
+      justify-content: center !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      margin: 0 !important;
     }
-
-    .footer-starlight-glow {
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 600px;
-      max-width: 80vw;
-      height: 2px;
-      background: radial-gradient(ellipse at center, #F5A623 0%, rgba(245, 166, 35, 0.4) 40%, transparent 80%);
-      box-shadow: 0 0 20px #F5A623, 0 0 40px rgba(245, 166, 35, 0.5);
-      pointer-events: none;
-    }
-
-    .footer-brand-stage {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-
-    .footer-portal-emblem {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
-      background: radial-gradient(circle at 35% 35%, rgba(245, 166, 35, 0.3) 0%, rgba(10, 14, 26, 0.8) 100%);
-      border: 1px solid rgba(245, 166, 35, 0.45);
-      box-shadow: 0 0 20px rgba(245, 166, 35, 0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .portal-core-glyph {
-      font-size: 1.3rem;
-      color: #F5A623;
-      text-shadow: 0 0 12px #F5A623;
-      animation: pulsePortalGlyph 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes pulsePortalGlyph {
-      0% { transform: scale(0.95); opacity: 0.8; filter: drop-shadow(0 0 4px #F5A623); }
-      100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 12px #FFB020); }
-    }
-
-    .footer-brand-info {
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .footer-brand-title {
-      font-family: var(--font-display, 'Syne', sans-serif) !important;
-      font-weight: 800 !important;
-      font-size: 1.15rem !important;
-      letter-spacing: 0.12em !important;
-      color: #FFFFFF !important;
-      text-shadow: 0 0 16px rgba(245, 166, 35, 0.4);
-    }
-
-    .footer-brand-subtitle {
-      font-family: var(--font-mono, monospace) !important;
-      font-size: 0.68rem !important;
-      letter-spacing: 0.16em !important;
-      color: #F5A623 !important;
-      opacity: 0.9;
-    }
-
-    .footer-philosophy {
-      font-family: var(--font-body, sans-serif);
-      font-size: 0.92rem;
-      color: #F1F5F9;
-      max-width: 580px;
-      line-height: 1.6;
-      margin: 0;
-      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.9);
-    }
-
-    .footer-trust-capsules {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      max-width: 900px;
-      margin-top: 6px;
-    }
-
-    .trust-capsule {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 16px;
-      border-radius: 9999px;
-      background: rgba(245, 166, 35, 0.06);
-      border: 1px solid rgba(245, 166, 35, 0.22);
-      backdrop-filter: blur(10px);
-      color: #F1F5F9;
-      font-size: 0.78rem;
-      font-family: var(--font-ui, sans-serif);
-      font-weight: 500;
-      transition: all 0.25s ease;
-    }
-
-    .trust-capsule:hover {
-      background: rgba(245, 166, 35, 0.14);
-      border-color: rgba(245, 166, 35, 0.5);
-      transform: translateY(-2px);
-      box-shadow: 0 0 16px rgba(245, 166, 35, 0.25);
-    }
-
-    .footer-celestial-divider {
+    .footer-thin-bar {
       width: 100%;
-      max-width: 760px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent 0%, rgba(245, 166, 35, 0.35) 50%, transparent 100%);
-      margin: 10px 0;
-    }
-
-    .footer-nav-orbit {
+      max-width: 1200px;
       display: flex;
-      flex-wrap: wrap;
       align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-
-    .footer-orbit-link {
-      color: rgba(241, 245, 249, 0.78);
-      text-decoration: none;
-      font-family: var(--font-display, 'Syne', sans-serif);
-      font-size: 0.8rem;
-      font-weight: 600;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
       letter-spacing: 0.05em;
-      transition: all 0.2s ease;
     }
-
-    .footer-orbit-link:hover {
-      color: #F5A623 !important;
-      text-shadow: 0 0 12px rgba(245, 166, 35, 0.6);
-      transform: translateY(-1px);
+    .footer-thin-brand {
+      color: rgba(245, 166, 35, 0.85);
+      font-weight: 600;
+      font-size: 11px;
     }
-
-    .orbit-sep {
-      font-size: 0.55rem;
-      color: rgba(245, 166, 35, 0.5);
-    }
-
-    .footer-chronos-signature {
+    .footer-thin-nav {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 0.75rem;
-      color: rgba(148, 163, 184, 0.8);
-      margin-top: 4px;
+      align-items: center;
+      gap: 10px;
     }
-
-    .signature-tag {
-      font-family: var(--font-mono, monospace);
-      font-size: 0.66rem;
-      letter-spacing: 0.18em;
-      color: rgba(245, 166, 35, 0.75);
+    .footer-thin-nav a {
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 11px;
+      transition: color 0.2s ease;
+    }
+    .footer-thin-nav a:hover {
+      color: #F5A623;
+    }
+    .footer-thin-nav .dot {
+      color: rgba(245, 166, 35, 0.35);
+    }
+    @media (max-width: 768px) {
+      .ref-landing-footer-thin {
+        height: auto !important;
+        padding: 8px 16px !important;
+      }
+      .footer-thin-bar {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+      }
+      .footer-thin-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px;
+      }
     }
   </style>
 </head>
@@ -2331,63 +2266,25 @@
           </div>
         </section>
 
-        <!-- Trust & Transparency Spatial Observatory Footer -->
-        <footer class="ref-landing-footer">
-          <div class="footer-starlight-glow"></div>
-          
-          <div class="footer-brand-stage">
-            <div class="footer-portal-emblem">
-              <span class="portal-core-glyph">✦</span>
+        <!-- Ultra-Thin Half-Centimeter Footer (~32px) -->
+        <footer class="ref-landing-footer-thin">
+          <div class="footer-thin-bar">
+            <span class="footer-thin-brand">© 2026 MYFOLIO STUDIO</span>
+            <div class="footer-thin-nav">
+              <a href="/studio">3D Studio</a>
+              <span class="dot">•</span>
+              <a href="#sectionUniverses">22 Universes</a>
+              <span class="dot">•</span>
+              <a href="/about">About</a>
+              <span class="dot">•</span>
+              <a href="/contact">Contact</a>
+              <span class="dot">•</span>
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer">Telegram Bot</a>
+              <span class="dot">•</span>
+              <a href="/privacy">Privacy</a>
+              <span class="dot">•</span>
+              <a href="/terms">Terms</a>
             </div>
-            <div class="footer-brand-info">
-              <span class="footer-brand-title">MYFOLIO STUDIO</span>
-              <span class="footer-brand-subtitle">AUTONOMOUS 3D SPATIAL PORTFOLIO ENGINE</span>
-            </div>
-          </div>
-
-          <p class="footer-philosophy">
-            GPU-accelerated dimensional portfolios synthesized directly from your code, research, and career timeline.
-          </p>
-
-          <!-- Floating Telemetry Pills -->
-          <div class="footer-trust-capsules">
-            <div class="trust-capsule">
-              <span class="capsule-icon">🔒</span>
-              <span class="capsule-text">Public Repository Metadata Only</span>
-            </div>
-            <div class="trust-capsule">
-              <span class="capsule-icon">⚡</span>
-              <span class="capsule-text">100% Free Live Preview on Edge CDN</span>
-            </div>
-            <div class="trust-capsule">
-              <span class="capsule-icon">📦</span>
-              <span class="capsule-text">Clean Static ZIP Export • Zero Lock-in</span>
-            </div>
-          </div>
-
-          <!-- Starlight Hairline Divider -->
-          <div class="footer-celestial-divider"></div>
-
-          <!-- Refined Cosmic Navigation Links -->
-          <div class="footer-nav-orbit">
-            <a href="/studio" class="footer-orbit-link">3D Studio</a>
-            <span class="orbit-sep">✦</span>
-            <a href="#sectionUniverses" class="footer-orbit-link">22 Archetypes</a>
-            <span class="orbit-sep">✦</span>
-            <a href="/about" class="footer-orbit-link">About Codex</a>
-            <span class="orbit-sep">✦</span>
-            <a href="/contact" class="footer-orbit-link">Contact Mission</a>
-            <span class="orbit-sep">✦</span>
-            <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="footer-orbit-link">Telegram Bot</a>
-            <span class="orbit-sep">✦</span>
-            <a href="/terms" class="footer-orbit-link">Terms</a>
-            <span class="orbit-sep">✦</span>
-            <a href="/privacy" class="footer-orbit-link">Privacy Policy</a>
-          </div>
-
-          <div class="footer-chronos-signature">
-            <span>© 2026 MyFolio Studio. All dimensional rights reserved.</span>
-            <span class="signature-tag">BUILT FOR ENGINEERS &amp; RESEARCHERS</span>
           </div>
         </footer>
       </section>
@@ -2639,7 +2536,7 @@
   </script>
 
   <!-- 2. REAL-TIME HARDWARE-ACCELERATED 3D SPATIAL UNIVERSE (Three.js WebGL) -->
-  <script src="/assets/spatial-realtime-engine.js?v=20260904_2115" defer></script>
+  <script src="/assets/spatial-realtime-engine.js?v=20260904_2130" defer></script>
 
   <script>
     /* ====================================================
