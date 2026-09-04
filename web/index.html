@@ -244,19 +244,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Italiana&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Syne:wght@600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- Three.js & GSAP — conditionally loaded: desktop only, deferred to not block first paint -->
-  <script>
-    if (window.innerWidth >= 768 && !/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
-      var s1 = document.createElement('script');
-      s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-      s1.defer = true;
-      document.head.appendChild(s1);
-      var s2 = document.createElement('script');
-      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
-      s2.defer = true;
-      document.head.appendChild(s2);
-    }
-  </script>
+  <!-- Three.js & GLTFLoader for Real-Time 3D Spatial Universe -->
+  <script src="/assets/three.min.js"></script>
+  <script src="/assets/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
   <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
@@ -432,20 +423,16 @@
       box-shadow: 0 0 28px rgba(245, 166, 35, 0.25) !important;
     }
 
-    /* Apple-Style Frame Scrubbing Canvas (Crisp & High Contrast) */
+    /* Real-Time Hardware-Accelerated WebGL 3D Canvas */
     .chrono-sequence-canvas {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transform: translate(-50%, -50%);
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
       z-index: 1;
-      filter: saturate(1.22) brightness(1.04) contrast(1.08);
-      will-change: transform;
-      transition: filter 0.3s ease;
+      display: block;
     }
 
     /* Vignette completely disabled so dark gradient does not block 3D sequence */
@@ -2539,264 +2526,12 @@
       }
       renderReticle();
     })();
+  </script>
 
-    /* ====================================================
-       2. APPLE-STYLE FULL-PAGE CANVAS SEQUENCE ENGINE
-          (With Multi-Clip Stitching Architecture)
-       ==================================================== */
-    (function initAppleScrollSequence() {
-      const canvas = document.getElementById('chronoSequenceCanvas');
-      const contentLayer = document.getElementById('chronoHeroContent');
-      const heroStage = document.getElementById('chronoHeroStage');
-      const scrollHudProgress = document.getElementById('chronoHudProgress');
-      const scrollHudPhase = document.getElementById('chronoHudPhase');
-      const scrollIndicator = document.getElementById('chronoScrollIndicator');
-      if (!canvas) return;
+  <!-- 2. REAL-TIME HARDWARE-ACCELERATED 3D SPATIAL UNIVERSE (Three.js WebGL) -->
+  <script src="/assets/spatial-realtime-engine.js" defer></script>
 
-      const ctx = canvas.getContext('2d', { alpha: false });
-
-      // Multi-Clip Sequence Pipeline (Part 2: 121 Pristine Frames, All Watermarks Purged)
-      const MULTI_CLIP_PIPELINE = {
-        totalFrames: 121,
-        clips: [
-          {
-            id: 'clip_2_spatial_wireframe_synthesis',
-            start: 1,
-            end: 121,
-            getUrl: (idx) => `/assets/portal-sequence/frame_${String(idx).padStart(4, '0')}.webp`
-          }
-        ]
-      };
-
-      const frames = [];
-      let imagesLoaded = 0;
-      let currentFrameIndex = 0;
-      let targetFrameIndex = 0;
-      let scrollProgress = 0;
-
-      // Mouse Parallax Physics for 3D Depth
-      let targetRotX = 0;
-      let targetRotY = 0;
-      let currentRotX = 0;
-      let currentRotY = 0;
-
-      // Camera Choreography across the webpage
-      let currentCamScale = 1.0;
-      let targetCamScale = 1.0;
-      let currentCamX = 0;
-      let targetCamX = 0;
-      let currentCamY = 0;
-      let targetCamY = 0;
-
-      function renderFrame(index) {
-        const img = frames[index];
-        if (!img || !img.complete) return;
-
-        const cw = canvas.width;
-        const ch = canvas.height;
-        // True Cover Scaling + 1.35x Base Scale so Radiant Portal Expands across the entire screen
-        const scale = Math.max(cw / 1280, ch / 720) * 1.35;
-        const dw = 1280 * scale;
-        const dh = 720 * scale;
-        const dx = (cw - dw) / 2;
-        const dy = (ch - dh) / 2;
-
-        ctx.drawImage(img, dx, dy, dw, dh);
-      }
-
-      function resize() {
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        renderFrame(Math.round(currentFrameIndex));
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      // Preload WebP sequence for all configured clips (160 frames)
-      for (let i = 1; i <= MULTI_CLIP_PIPELINE.totalFrames; i++) {
-        const img = new Image();
-        const num = String(i).padStart(4, '0');
-        img.src = `/assets/portal-sequence/frame_${num}.webp`;
-        img.onload = () => {
-          imagesLoaded++;
-          if (i === 1) renderFrame(0);
-        };
-        frames.push(img);
-      }
-
-      // Dynamic Section-Aware Scroll Progress Mapping Across Entire Page
-      function onScroll() {
-        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-        scrollProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-
-        // Frame scrub target across all 160 frames
-        targetFrameIndex = Math.min(Math.floor(scrollProgress * (MULTI_CLIP_PIPELINE.totalFrames - 1)), MULTI_CLIP_PIPELINE.totalFrames - 1);
-
-        // 1. Hero Content & Indicator Transition
-        if (contentLayer && heroStage) {
-          const heroH = heroStage.offsetHeight || window.innerHeight;
-          const heroRatio = Math.min(scrollY / (heroH * 0.75), 1);
-          contentLayer.style.opacity = Math.max(0, 1 - heroRatio).toFixed(3);
-          contentLayer.style.transform = `perspective(1400px) translateY(${-heroRatio * 50}px) scale(${1 - heroRatio * 0.06})`;
-          contentLayer.style.pointerEvents = heroRatio < 0.3 ? 'auto' : 'none';
-        }
-
-        if (scrollIndicator) {
-          scrollIndicator.style.opacity = Math.max(0, 1 - (scrollY / 150)).toFixed(2);
-        }
-
-        // 2. Dynamic 3D Camera Choreography by Section
-        if (scrollProgress < 0.25) {
-          // Beat 1: Hero Stage - Centered portal emergence
-          const p = scrollProgress / 0.25;
-          targetCamScale = 1.0 + p * 0.06;
-          targetCamX = 0;
-          targetCamY = 0;
-        } else if (scrollProgress < 0.55) {
-          // Beat 2: Spatial Architecture - Subtle pan to frame left pillars
-          const p = (scrollProgress - 0.25) / 0.30;
-          targetCamScale = 1.06 + p * 0.05;
-          targetCamX = p * 35;
-          targetCamY = -p * 15;
-        } else if (scrollProgress < 0.80) {
-          // Beat 3: 22 Universes - Return toward center for aesthetic showcase
-          const p = (scrollProgress - 0.55) / 0.25;
-          targetCamScale = 1.11 - p * 0.04;
-          targetCamX = 35 * (1 - p);
-          targetCamY = -15 + p * 15;
-        } else {
-          // Beat 4: Launch Studio & Deep Space Horizon
-          targetCamScale = 1.05;
-          targetCamX = 0;
-          targetCamY = 0;
-        }
-
-        // 3. Apple-Style Global HUD Scrubber
-        if (scrollHudProgress) {
-          scrollHudProgress.style.width = `${(scrollProgress * 100).toFixed(1)}%`;
-        }
-        if (scrollHudPhase) {
-          const pct = Math.round(scrollProgress * 100);
-          if (scrollProgress < 0.25) phase = 'HORIZON PORTAL';
-          else if (scrollProgress < 0.55) phase = 'SPATIAL ARCHITECTURE';
-          else if (scrollProgress < 0.80) phase = 'WIREFRAME SYNTHESIS';
-          else phase = 'LAUNCH STUDIO';
-          scrollHudPhase.textContent = `${phase} // ${pct}%`;
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-
-      // Cursor movement for 2.5D spatial tilt
-      window.addEventListener('mousemove', (e) => {
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const deltaX = (e.clientX - centerX) / centerX;
-        const deltaY = (e.clientY - centerY) / centerY;
-
-        targetRotY = deltaX * 10;
-        targetRotX = -deltaY * 8;
-      });
-
-      // Smooth Animation Loop (Frame interpolation + Camera Choreography + 3D Tilt)
-      function loop() {
-        // Smooth frame scrub dampening (lerp with 0.15)
-        currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.15;
-        const frameToDraw = Math.round(currentFrameIndex);
-        renderFrame(frameToDraw);
-
-        // Smooth Camera Choreography
-        currentCamScale += (targetCamScale - currentCamScale) * 0.08;
-        currentCamX += (targetCamX - currentCamX) * 0.08;
-        currentCamY += (targetCamY - currentCamY) * 0.08;
-
-        // Subtle 3D perspective warp on mouse move
-        currentRotX += (targetRotX - currentRotX) * 0.08;
-        currentRotY += (targetRotY - currentRotY) * 0.08;
-
-        canvas.style.transform = `translate(-50%, -50%) scale(${currentCamScale.toFixed(3)}) translate3d(${(currentCamX + currentRotY * 1.2).toFixed(1)}px, ${(currentCamY - currentRotX * 1.2).toFixed(1)}px, 0px)`;
-
-        requestAnimationFrame(loop);
-      }
-      loop();
-      onScroll(); // initial state run
-    })();
-
-    /* ====================================================
-       3. GOLDEN SOLAR STARDUST PARTICLE CANVAS
-       ==================================================== */
-    (function initChronoStardust() {
-      const canvas = document.getElementById('chronoStardustCanvas');
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-
-      let particles = [];
-      const particleCount = 65;
-
-      function resize() {
-        canvas.width = canvas.parentElement.offsetWidth || window.innerWidth;
-        canvas.height = canvas.parentElement.offsetHeight || window.innerHeight;
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      class SolarParticle {
-        constructor() {
-          this.reset();
-        }
-        reset() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.size = Math.random() * 2.2 + 0.5;
-          this.baseAlpha = Math.random() * 0.6 + 0.2;
-          this.alpha = this.baseAlpha;
-          this.speedX = (Math.random() - 0.5) * 0.4;
-          this.speedY = -Math.random() * 0.45 - 0.1;
-          this.pulsePhase = Math.random() * Math.PI * 2;
-          this.pulseSpeed = Math.random() * 0.02 + 0.01;
-          const colors = ['245, 166, 35', '255, 176, 32', '255, 255, 255', '254, 215, 170'];
-          this.color = colors[Math.floor(Math.random() * colors.length)];
-        }
-        update() {
-          this.x += this.speedX;
-          this.y += this.speedY;
-          this.pulsePhase += this.pulseSpeed;
-          this.alpha = this.baseAlpha + Math.sin(this.pulsePhase) * 0.25;
-
-          if (this.y < 0 || this.x < 0 || this.x > canvas.width) {
-            this.reset();
-            this.y = canvas.height + 10;
-          }
-        }
-        draw() {
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${this.color}, ${Math.max(0, this.alpha)})`;
-          ctx.shadowBlur = this.size * 4;
-          ctx.shadowColor = `rgba(${this.color}, 0.8)`;
-          ctx.fill();
-          ctx.shadowBlur = 0;
-        }
-      }
-
-      for (let i = 0; i < particleCount; i++) {
-        particles.push(new SolarParticle());
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (let p of particles) {
-          p.update();
-          p.draw();
-        }
-        requestAnimationFrame(animate);
-      }
-      animate();
-    })();
-
+  <script>
     /* ====================================================
        4. WEB AUDIO COSMIC HARMONIC RESONANCE
        ==================================================== */
