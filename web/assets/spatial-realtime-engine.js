@@ -144,21 +144,25 @@
   const starField = new THREE.Points(starGeo, starMat);
   scene.add(starField);
 
-  // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Progressive LOD)
+  // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB)
   const astronautRoot = new THREE.Group();
-  // Positioned cleanly on the far right of hero stage (x = 1.85) facing left towards hero content
-  astronautRoot.position.set(1.85, -0.42, 1.20);
-  astronautRoot.rotation.y = -0.55;
+  // Positioned cleanly on far right of hero stage (x = 1.68) facing left towards hero content
+  // rotY = 0.65 turns towards left content; rotX = 0.22 pitches helmet forward/downward toward text
+  astronautRoot.position.set(1.68, -0.42, 1.20);
+  astronautRoot.rotation.y = 0.65;
+  astronautRoot.rotation.x = 0.22;
   scene.add(astronautRoot);
 
   let astronautModel = null;
   let mixer = null;
   const actions = {};
   let currentAction = null;
+  let activeBaseAnim = 'floating';
+  let isHoverWaving = false;
   let isAnimatedActive = false;
   const gltfLoader = typeof THREE.GLTFLoader !== 'undefined' ? new THREE.GLTFLoader() : null;
 
-  function setAstronautAction(name, crossFadeDuration = 0.4) {
+  function setAstronautAction(name, crossFadeDuration = 0.35) {
     if (!actions[name]) return;
     const nextAction = actions[name];
     if (currentAction === nextAction) return;
@@ -170,14 +174,27 @@
     currentAction = nextAction;
   }
 
-  // Expose wave trigger on astronaut or interactive hover
+  // Continuous Wave Controls for Button Hover
+  window.startAstronautWave = function () {
+    if (!actions['wave']) return;
+    isHoverWaving = true;
+    actions['wave'].setLoop(THREE.LoopRepeat);
+    actions['wave'].clampWhenFinished = false;
+    setAstronautAction('wave', 0.25);
+  };
+
+  window.stopAstronautWave = function () {
+    if (!isHoverWaving) return;
+    isHoverWaving = false;
+    // Smoothly restore base scroll animation
+    setAstronautAction(activeBaseAnim || 'floating', 0.45);
+  };
+
   window.triggerAstronautWave = function () {
-    if (actions['wave']) {
-      setAstronautAction('wave', 0.35);
-      setTimeout(() => {
-        setAstronautAction('floating', 0.6);
-      }, 3000);
-    }
+    window.startAstronautWave();
+    setTimeout(() => {
+      if (!isHoverWaving) window.stopAstronautWave();
+    }, 2800);
   };
 
   function getResponsiveAstronautScale() {
@@ -188,54 +205,46 @@
   }
 
   if (gltfLoader) {
-    const fastModelPath = '/assets/Astronaut.glb';
     const animatedModelPath = '/assets/astronaut-animated.glb';
 
-    function initAstronaut(gltf, isRigged) {
-      // If rigged model already arrived, ignore slower static model fallback
-      if (isAnimatedActive && !isRigged) return;
-
-      // Remove existing model if upgrading from fast static to rigged animated
+    function initAstronaut(gltf) {
       if (astronautModel) {
         astronautRoot.remove(astronautModel);
       }
 
       astronautModel = gltf.scene;
+      isAnimatedActive = true;
 
-      const baseScale = getResponsiveAstronautScale();
+      const scale = getResponsiveAstronautScale();
+      astronautModel.scale.set(scale, scale, scale);
+      astronautModel.position.set(0, -0.92, 0);
 
-      if (isRigged) {
-        isAnimatedActive = true;
-        // Rigged animated astronaut scale & pivot
-        const scale = baseScale;
-        astronautModel.scale.set(scale, scale, scale);
-        astronautModel.position.set(0, -0.92, 0);
+      // Setup skeletal AnimationMixer
+      if (gltf.animations && gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(astronautModel);
+        gltf.animations.forEach(clip => {
+          const act = mixer.clipAction(clip);
+          actions[clip.name] = act;
+        });
 
-        // Setup skeletal AnimationMixer
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(astronautModel);
-          gltf.animations.forEach(clip => {
-            const act = mixer.clipAction(clip);
-            actions[clip.name] = act;
-          });
-
-          // Play default weightless floating animation
-          if (actions['floating']) {
-            actions['floating'].play();
-            currentAction = actions['floating'];
-          } else if (gltf.animations[0]) {
-            const first = mixer.clipAction(gltf.animations[0]);
-            first.play();
-            currentAction = first;
-          }
-
-          console.log('✨ [3D Engine] Loaded rigged astronaut animations:', Object.keys(actions));
+        // Ensure wave animation is configured for looping while cursor is hovered
+        if (actions['wave']) {
+          actions['wave'].setLoop(THREE.LoopRepeat);
+          actions['wave'].clampWhenFinished = false;
         }
-      } else {
-        // Fast static model scale & centering
-        const scale = baseScale * 1.04;
-        astronautModel.scale.set(scale, scale, scale);
-        astronautModel.position.set(0, -0.9, 0);
+
+        // Play default weightless floating animation
+        if (actions['floating']) {
+          actions['floating'].setLoop(THREE.LoopRepeat);
+          actions['floating'].play();
+          currentAction = actions['floating'];
+        } else if (gltf.animations[0]) {
+          const first = mixer.clipAction(gltf.animations[0]);
+          first.play();
+          currentAction = first;
+        }
+
+        console.log('✨ [3D Engine] Loaded rigged astronaut animations:', Object.keys(actions));
       }
 
       // Enhance materials with PBR metallic reflection properties
@@ -258,40 +267,40 @@
       });
 
       astronautRoot.add(astronautModel);
-
-      // Hook hover wave triggers on hero buttons and interactive elements
-      const waveTriggers = document.querySelectorAll('.btn-solar-primary, .btn-solar-outline, .chrono-console-card, .chrono-hero-badge');
-      waveTriggers.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-          if (window.triggerAstronautWave) window.triggerAstronautWave();
-        }, { passive: true });
-      });
     }
 
-    // 1. Immediately load fast 2.8MB model (loads in <150ms so scene is NEVER empty)
-    gltfLoader.load(
-      fastModelPath,
-      function (gltf) {
-        initAstronaut(gltf, false);
-      },
-      undefined,
-      function (err) {
-        console.warn('[3D Engine] Fast model load issue:', err);
-      }
-    );
-
-    // 2. Concurrently load full 46MB rigged animated astronaut and upgrade seamlessly
+    // Directly load high-fidelity rigged animated astronaut (no low-poly placeholder)
     gltfLoader.load(
       animatedModelPath,
       function (gltf) {
-        initAstronaut(gltf, true);
+        initAstronaut(gltf);
       },
       undefined,
       function (err) {
-        console.warn('[3D Engine] Rigged model load issue, fast model stays active:', err);
+        console.warn('[3D Engine] Rigged model load issue:', err);
       }
     );
   }
+
+  // Universal button hover delegation:
+  // Whenever user hovers on ANY button, start waving hands continuously till cursor moves out
+  const buttonSelector = 'button, a.btn, a[role="button"], .btn-solar-primary, .btn-solar-outline, .btn-solar-nav, .universe-pill-tag, .nav-hamburger-btn, .chrono-theme-switch, .chrono-resonance-btn, input[type="submit"], [data-action], .quick-pill, .reference-nav-item, #mobileNavDrawer a, #mobileNavDrawer button';
+
+  document.addEventListener('mouseover', (e) => {
+    const btn = e.target.closest(buttonSelector);
+    if (btn) {
+      window.startAstronautWave();
+    }
+  }, { passive: true });
+
+  document.addEventListener('mouseout', (e) => {
+    const btn = e.target.closest(buttonSelector);
+    if (btn) {
+      if (!btn.contains(e.relatedTarget)) {
+        window.stopAstronautWave();
+      }
+    }
+  }, { passive: true });
 
   // 8. Interaction State (Mouse Look-At Tilt + Scroll Progression)
   let mouseX = 0;
@@ -304,10 +313,10 @@
   let camTargetX = 0;
   let camTargetY = -0.05;
   let camTargetZ = 5.2;
-  let astroTargetX = 1.85;
+  let astroTargetX = 1.68;
   let astroTargetY = -0.42;
   let astroTargetZ = 1.25;
-  let astroTargetRotY = -0.55;
+  let astroTargetRotY = 0.65;
 
   window.addEventListener('mousemove', e => {
     const cx = window.innerWidth / 2;
@@ -342,8 +351,8 @@
 
     // Dynamic Multi-Waypoint Zig-Zag Choreography:
     // Sections alternate Left / Right across the viewport.
-    // When content is on LEFT, astronaut floats on RIGHT facing LEFT (rotY ~ -0.55).
-    // When content is on RIGHT, astronaut floats on LEFT facing RIGHT (rotY ~ +0.55).
+    // When content is on LEFT, astronaut floats on RIGHT facing LEFT (rotY = +0.65).
+    // When content is on RIGHT, astronaut floats on LEFT facing RIGHT (rotY = -0.65).
     const vh = window.innerHeight;
     const viewCenter = scrollY + vh * 0.5;
 
@@ -355,17 +364,17 @@
 
     const isMobile = window.innerWidth < 768;
     const stages = isMobile ? [
-      // Mobile choreography: scaled-down ambient astronaut in upper sky corners, never colliding with centered text cards
-      { y: heroCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.45, anim: 'floating' },
-      { y: overviewCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.45, anim: 'moon_walk' },
-      { y: universesCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: -0.45, anim: 'moon_walk' },
-      { y: launchCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: 0.45, anim: 'floating' }
+      // Mobile choreography: scaled-down ambient astronaut in upper sky corners, facing toward content
+      { y: heroCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: 0.45, anim: 'floating' },
+      { y: overviewCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: -0.45, anim: 'moon_walk' },
+      { y: universesCenter, x: 0.65, yOffset: 0.42, z: 0.15, rotY: 0.45, anim: 'moon_walk' },
+      { y: launchCenter, x: -0.65, yOffset: 0.46, z: 0.15, rotY: -0.45, anim: 'floating' }
     ] : [
-      // Desktop choreography: bold perimeter docking opposite the active section
-      { y: heroCenter, x: 1.85, yOffset: -0.42, z: 1.25, rotY: -0.55, anim: 'floating' },
-      { y: overviewCenter, x: -1.85, yOffset: -0.26, z: 1.30, rotY: 0.55, anim: 'moon_walk' },
-      { y: universesCenter, x: 1.85, yOffset: -0.34, z: 1.25, rotY: -0.55, anim: 'moon_walk' },
-      { y: launchCenter, x: -1.85, yOffset: -0.28, z: 1.30, rotY: 0.55, anim: 'floating' }
+      // Desktop choreography: bold perimeter docking opposite the active section, always facing towards content
+      { y: heroCenter, x: 1.68, yOffset: -0.42, z: 1.25, rotY: 0.65, anim: 'floating' },
+      { y: overviewCenter, x: -1.68, yOffset: -0.26, z: 1.30, rotY: -0.65, anim: 'moon_walk' },
+      { y: universesCenter, x: 1.68, yOffset: -0.34, z: 1.25, rotY: 0.65, anim: 'moon_walk' },
+      { y: launchCenter, x: -1.68, yOffset: -0.28, z: 1.30, rotY: -0.65, anim: 'floating' }
     ];
 
     let s0 = stages[0];
@@ -412,9 +421,10 @@
     camTargetZ = 5.2;
 
     // Dynamic Skeletal Animation Transition on Scroll
-    const activeAnim = t < 0.5 ? s0.anim : s1.anim;
-    if (mixer && actions[activeAnim]) {
-      setAstronautAction(activeAnim, 0.5);
+    const nextBaseAnim = t < 0.5 ? s0.anim : s1.anim;
+    activeBaseAnim = nextBaseAnim;
+    if (!isHoverWaving && mixer && actions[nextBaseAnim]) {
+      setAstronautAction(nextBaseAnim, 0.5);
     }
 
     // Top Telemetry HUD
@@ -484,8 +494,9 @@
     astronautRoot.position.y += (astroTargetY + Math.sin(elapsed * 1.6) * 0.08 - astronautRoot.position.y) * 0.06;
     astronautRoot.position.z += (astroTargetZ - astronautRoot.position.z) * 0.06;
 
-    const targetRotX = -mouseY * 0.22 + (scrollProgress * 0.15);
-    const targetRotY = astroTargetRotY + mouseX * 0.38;
+    // Pitch forward (+0.22) so astronaut looks forward/downward toward content instead of looking up at sky
+    const targetRotX = 0.22 - mouseY * 0.18 + (scrollProgress * 0.10);
+    const targetRotY = astroTargetRotY + mouseX * 0.32;
     astronautRoot.rotation.x += (targetRotX - astronautRoot.rotation.x) * 0.06;
     astronautRoot.rotation.y += (targetRotY - astronautRoot.rotation.y) * 0.06;
     astronautRoot.rotation.z = Math.sin(elapsed * 0.9) * 0.03;
