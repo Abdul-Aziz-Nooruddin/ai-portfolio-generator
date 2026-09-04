@@ -47,22 +47,30 @@
 
   // 2.5 360 Realistic Deep-Space Galaxy Skybox
   let galaxySkyDome = null;
+  let galaxyTexture = null;
   const textureLoader = new THREE.TextureLoader();
   textureLoader.load('/assets/galaxy-hdri-bg.webp', (galaxyTex) => {
+    galaxyTexture = galaxyTex;
     galaxyTex.mapping = THREE.EquirectangularReflectionMapping;
+    galaxyTex.wrapS = THREE.RepeatWrapping;
+    galaxyTex.wrapT = THREE.ClampToEdgeWrapping;
     if (THREE.SRGBColorSpace) galaxyTex.colorSpace = THREE.SRGBColorSpace;
 
-    // Enclosing 360 celestial sky dome
+    // Set directly on Three.js scene background for guaranteed visibility
+    scene.background = galaxyTex;
+
+    // Enclosing 360 celestial sky dome with fog explicitly disabled
     const skyGeo = new THREE.SphereGeometry(85, 60, 40);
     const skyMat = new THREE.MeshBasicMaterial({
       map: galaxyTex,
       side: THREE.BackSide,
+      fog: false,
       depthWrite: false
     });
     galaxySkyDome = new THREE.Mesh(skyGeo, skyMat);
     galaxySkyDome.rotation.y = -Math.PI / 2;
     scene.add(galaxySkyDome);
-    console.log('🌌 [3D Engine] Deep space galaxy skybox loaded.');
+    console.log('🌌 [3D Engine] Deep space galaxy skybox fully active & illuminated.');
   });
 
   // 3. Lighting Architecture
@@ -237,15 +245,18 @@
   const starField = new THREE.Points(starGeo, starMat);
   scene.add(starField);
 
-  // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Skeletal Animation)
+  // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Progressive LOD)
   const astronautRoot = new THREE.Group();
-  astronautRoot.position.set(0, -0.65, 0.8);
+  // Positioned prominently on the right side of hero stage so it is never hidden behind text
+  astronautRoot.position.set(1.35, -0.35, 1.2);
+  astronautRoot.rotation.y = -0.35;
   scene.add(astronautRoot);
 
   let astronautModel = null;
   let mixer = null;
   const actions = {};
   let currentAction = null;
+  let isAnimatedActive = false;
   const gltfLoader = typeof THREE.GLTFLoader !== 'undefined' ? new THREE.GLTFLoader() : null;
 
   function setAstronautAction(name, crossFadeDuration = 0.4) {
@@ -271,19 +282,25 @@
   };
 
   if (gltfLoader) {
-    // Attempt loading newly added rigged animated astronaut, fallback to classic Astronaut.glb
-    const primaryModelPath = '/assets/astronaut-animated.glb';
-    const fallbackModelPath = '/assets/Astronaut.glb';
+    const fastModelPath = '/assets/Astronaut.glb';
+    const animatedModelPath = '/assets/astronaut-animated.glb';
 
     function initAstronaut(gltf, isRigged) {
+      // If rigged model already arrived, ignore slower static model fallback
+      if (isAnimatedActive && !isRigged) return;
+
+      // Remove existing model if upgrading from fast static to rigged animated
+      if (astronautModel) {
+        astronautRoot.remove(astronautModel);
+      }
+
       astronautModel = gltf.scene;
 
       if (isRigged) {
-        // Walking astronaut.glb root node already has 0.01 scale.
-        // Scale 1.35 brings it to ~3.2 units tall (prominent hero in viewport).
+        isAnimatedActive = true;
+        // Walking astronaut.glb scale & pivot
         const scale = 1.35;
         astronautModel.scale.set(scale, scale, scale);
-        // Center torso pivot (bounds min: -0.05, max: 237 -> half is ~118 = 1.18 units)
         astronautModel.position.set(0, -1.18, 0);
 
         // Setup skeletal AnimationMixer
@@ -307,46 +324,31 @@
           console.log('✨ [3D Engine] Loaded rigged astronaut animations:', Object.keys(actions));
         }
       } else {
-        // Classic static model scale
+        // Fast static model scale & centering
         astronautModel.scale.set(1.55, 1.55, 1.55);
-        astronautModel.position.set(0, 0, 0);
+        astronautModel.position.set(0, -0.9, 0);
       }
 
-      // Enhance materials with PBR reflection properties
+      // Enhance materials with PBR metallic reflection properties
       astronautModel.traverse(child => {
         if (child.isMesh && child.material) {
           child.castShadow = false;
           child.receiveShadow = false;
+          // Ensure material is visible & vibrant
           if (child.material.isMeshStandardMaterial) {
-            // Golden reflective visor
             const matName = (child.material.name || '').toLowerCase();
             if (matName.includes('visor') || matName.includes('glass') || child.material.metalness > 0.4) {
               child.material.metalness = 0.95;
               child.material.roughness = 0.08;
               child.material.color = new THREE.Color(0xFFD700);
             } else {
-              child.material.roughness = Math.max(0.4, child.material.roughness);
+              child.material.roughness = Math.max(0.35, child.material.roughness);
             }
           }
         }
       });
 
       astronautRoot.add(astronautModel);
-
-      // Entrance animation
-      const targetScale = isRigged ? 1.35 : 1.55;
-      astronautModel.scale.set(targetScale * 0.1, targetScale * 0.1, targetScale * 0.1);
-      let s = targetScale * 0.1;
-      const entryAnim = () => {
-        s += (targetScale - s) * 0.08;
-        astronautModel.scale.set(s, s, s);
-        if (Math.abs(targetScale - s) > targetScale * 0.01) {
-          requestAnimationFrame(entryAnim);
-        } else {
-          astronautModel.scale.set(targetScale, targetScale, targetScale);
-        }
-      };
-      entryAnim();
 
       // Hook hover wave triggers on hero buttons and interactive elements
       const waveTriggers = document.querySelectorAll('.btn-solar-primary, .btn-solar-outline, .chrono-console-card, .chrono-hero-badge');
@@ -357,20 +359,27 @@
       });
     }
 
+    // 1. Immediately load fast 2.8MB model (loads in <150ms so scene is NEVER empty)
     gltfLoader.load(
-      primaryModelPath,
+      fastModelPath,
+      function (gltf) {
+        initAstronaut(gltf, false);
+      },
+      undefined,
+      function (err) {
+        console.warn('[3D Engine] Fast model load issue:', err);
+      }
+    );
+
+    // 2. Concurrently load full 46MB rigged animated astronaut and upgrade seamlessly
+    gltfLoader.load(
+      animatedModelPath,
       function (gltf) {
         initAstronaut(gltf, true);
       },
       undefined,
       function (err) {
-        console.warn('[3D Engine] Animated model loading error, falling back:', err);
-        gltfLoader.load(
-          fallbackModelPath,
-          function (fallbackGltf) {
-            initAstronaut(fallbackGltf, false);
-          }
-        );
+        console.warn('[3D Engine] Rigged model load issue, fast model stays active:', err);
       }
     );
   }
@@ -386,10 +395,10 @@
   let camTargetX = 0;
   let camTargetY = 0;
   let camTargetZ = 5.4;
-  let astroTargetX = 0;
-  let astroTargetY = -0.65;
-  let astroTargetZ = 0.8;
-  let astroTargetRotY = 0;
+  let astroTargetX = 1.35;
+  let astroTargetY = -0.35;
+  let astroTargetZ = 1.2;
+  let astroTargetRotY = -0.35;
 
   window.addEventListener('mousemove', e => {
     const cx = window.innerWidth / 2;
@@ -418,48 +427,48 @@
     }
 
     // Continuous Scroll-Driven Galaxy & Astronaut Positioning on Every Scroll
-    const scrollRotation = scrollY * 0.001;
+    const scrollRotation = scrollY * 0.0012;
 
     if (scrollProgress < 0.25) {
-      // Beat 1: Hero Stage — Centered Event Horizon Emergence
+      // Beat 1: Hero Stage — Visible on right side of title card, drifting smoothly
       const p = scrollProgress / 0.25;
       camTargetX = 0;
       camTargetY = 0;
       camTargetZ = 5.4 - p * 0.4;
-      astroTargetX = 0;
-      astroTargetY = -0.65 + p * 0.35;
-      astroTargetZ = 0.8 + p * 0.4;
-      astroTargetRotY = scrollRotation;
+      astroTargetX = 1.35 * (1 - p * 0.2);
+      astroTargetY = -0.35 + p * 0.15;
+      astroTargetZ = 1.2 + p * 0.3;
+      astroTargetRotY = -0.35 + scrollRotation;
     } else if (scrollProgress < 0.55) {
-      // Beat 2: Spatial Architecture — Astronaut shifts right to frame 3 Feature Pillars
+      // Beat 2: Spatial Architecture — Astronaut sweeps across to left to frame 3 Feature Pillars
       const p = (scrollProgress - 0.25) / 0.30;
-      camTargetX = -0.65 * p;
+      camTargetX = 0.55 * p;
       camTargetY = -0.15 * p;
       camTargetZ = 5.0 - p * 0.3;
-      astroTargetX = 1.35 * p;
-      astroTargetY = -0.30 - p * 0.15;
-      astroTargetZ = 1.2 - p * 0.3;
-      astroTargetRotY = -0.45 * p + scrollRotation;
+      astroTargetX = 1.08 * (1 - p) - 1.35 * p;
+      astroTargetY = -0.20 - p * 0.15;
+      astroTargetZ = 1.5 - p * 0.3;
+      astroTargetRotY = -0.35 * (1 - p) + 0.45 * p + scrollRotation;
     } else if (scrollProgress < 0.80) {
-      // Beat 3: 22 Universes — Shifts to left to balance cluster
+      // Beat 3: 22 Universes — Moves forward into center-stage with cluster
       const p = (scrollProgress - 0.55) / 0.25;
-      camTargetX = -0.65 * (1 - p) + 0.55 * p;
+      camTargetX = 0.55 * (1 - p);
       camTargetY = -0.15 + p * 0.2;
       camTargetZ = 4.7 + p * 0.4;
-      astroTargetX = 1.35 * (1 - p) - 1.25 * p;
-      astroTargetY = -0.45 + p * 0.15;
-      astroTargetZ = 0.9 + p * 0.2;
-      astroTargetRotY = -0.45 * (1 - p) + 0.45 * p + scrollRotation;
+      astroTargetX = -1.35 * (1 - p) + 0.25 * p;
+      astroTargetY = -0.35 + p * 0.15;
+      astroTargetZ = 1.2 + p * 0.5;
+      astroTargetRotY = 0.45 * (1 - p) + scrollRotation;
     } else {
-      // Beat 4: Launch Studio — Dramatic hero staging behind launch buttons
+      // Beat 4: Launch Studio — Dramatic hero orbit on right side
       const p = (scrollProgress - 0.80) / 0.20;
-      camTargetX = 0.55 * (1 - p);
+      camTargetX = -0.45 * p;
       camTargetY = 0.05 - p * 0.2;
       camTargetZ = 5.1 - p * 0.4;
-      astroTargetX = -1.25 * (1 - p);
-      astroTargetY = -0.30 - p * 0.35;
-      astroTargetZ = 1.1 - p * 0.3;
-      astroTargetRotY = 0.45 * (1 - p) + scrollRotation;
+      astroTargetX = 0.25 * (1 - p) + 1.25 * p;
+      astroTargetY = -0.20 - p * 0.25;
+      astroTargetZ = 1.7 - p * 0.4;
+      astroTargetRotY = -0.45 * p + scrollRotation;
     }
 
     // Dynamic Skeletal Animation Transition on Scroll
@@ -513,6 +522,9 @@
       galaxySkyDome.rotation.y = scrollProgress * Math.PI * 1.5 + elapsed * 0.012;
       galaxySkyDome.rotation.x = -mouseY * 0.05 + scrollProgress * 0.12;
       galaxySkyDome.position.y = -scrollProgress * 6;
+    }
+    if (galaxyTexture) {
+      galaxyTexture.offset.x = (scrollProgress * 0.45) + (elapsed * 0.003);
     }
 
     // Lerp Mouse for Silky-Smooth Parallax
