@@ -207,57 +207,139 @@
   const starField = new THREE.Points(starGeo, starMat);
   scene.add(starField);
 
-  // 7. Load Real-Time 3D Astronaut (GLTF / GLB)
+  // 7. Load Real-Time 3D Animated Astronaut (GLTF / GLB with Skeletal Animation)
   const astronautRoot = new THREE.Group();
   astronautRoot.position.set(0, -1.05, 0.4);
   scene.add(astronautRoot);
 
   let astronautModel = null;
+  let mixer = null;
+  const actions = {};
+  let currentAction = null;
   const gltfLoader = typeof THREE.GLTFLoader !== 'undefined' ? new THREE.GLTFLoader() : null;
 
+  function setAstronautAction(name, crossFadeDuration = 0.4) {
+    if (!actions[name]) return;
+    const nextAction = actions[name];
+    if (currentAction === nextAction) return;
+
+    if (currentAction) {
+      currentAction.fadeOut(crossFadeDuration);
+    }
+    nextAction.reset().fadeIn(crossFadeDuration).play();
+    currentAction = nextAction;
+  }
+
+  // Expose wave trigger on astronaut or interactive hover
+  window.triggerAstronautWave = function () {
+    if (actions['wave']) {
+      setAstronautAction('wave', 0.35);
+      setTimeout(() => {
+        setAstronautAction('floating', 0.6);
+      }, 3000);
+    }
+  };
+
   if (gltfLoader) {
-    gltfLoader.load(
-      '/assets/Astronaut.glb',
-      function (gltf) {
-        astronautModel = gltf.scene;
-        // Optimal human scale in perspective
+    // Attempt loading newly added rigged animated astronaut, fallback to classic Astronaut.glb
+    const primaryModelPath = '/assets/astronaut-animated.glb';
+    const fallbackModelPath = '/assets/Astronaut.glb';
+
+    function initAstronaut(gltf, isRigged) {
+      astronautModel = gltf.scene;
+
+      if (isRigged) {
+        // Walking astronaut.glb is ~237cm tall, scale 0.012 brings it to ~2.85 units
+        const scale = 0.0125;
+        astronautModel.scale.set(scale, scale, scale);
+        // Center torso pivot (bounds min: -0.05, max: 237)
+        astronautModel.position.set(0, -1.18, 0);
+
+        // Setup skeletal AnimationMixer
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(astronautModel);
+          gltf.animations.forEach(clip => {
+            const act = mixer.clipAction(clip);
+            actions[clip.name] = act;
+          });
+
+          // Play default weightless floating animation
+          if (actions['floating']) {
+            actions['floating'].play();
+            currentAction = actions['floating'];
+          } else if (gltf.animations[0]) {
+            const first = mixer.clipAction(gltf.animations[0]);
+            first.play();
+            currentAction = first;
+          }
+
+          console.log('✨ [3D Engine] Loaded rigged astronaut animations:', Object.keys(actions));
+        }
+      } else {
+        // Classic static model scale
         astronautModel.scale.set(1.55, 1.55, 1.55);
         astronautModel.position.set(0, 0, 0);
+      }
 
-        // Enhance materials with PBR reflection properties
-        astronautModel.traverse(child => {
-          if (child.isMesh && child.material) {
-            child.castShadow = false;
-            child.receiveShadow = false;
-            if (child.material.isMeshStandardMaterial) {
-              // Enhance metallic visor shine
-              if (child.material.name.toLowerCase().includes('visor') || child.material.metalness > 0.5) {
-                child.material.metalness = 1.0;
-                child.material.roughness = 0.05;
-                child.material.color = new THREE.Color(0xFFD700);
-              } else {
-                child.material.roughness = Math.max(0.45, child.material.roughness);
-              }
+      // Enhance materials with PBR reflection properties
+      astronautModel.traverse(child => {
+        if (child.isMesh && child.material) {
+          child.castShadow = false;
+          child.receiveShadow = false;
+          if (child.material.isMeshStandardMaterial) {
+            // Golden reflective visor
+            const matName = (child.material.name || '').toLowerCase();
+            if (matName.includes('visor') || matName.includes('glass') || child.material.metalness > 0.4) {
+              child.material.metalness = 0.95;
+              child.material.roughness = 0.08;
+              child.material.color = new THREE.Color(0xFFD700);
+            } else {
+              child.material.roughness = Math.max(0.4, child.material.roughness);
             }
           }
-        });
+        }
+      });
 
-        astronautRoot.add(astronautModel);
+      astronautRoot.add(astronautModel);
 
-        // Subtle entry scale-in
-        astronautModel.scale.set(0.01, 0.01, 0.01);
-        let s = 0.01;
-        const entryAnim = () => {
-          s += (1.55 - s) * 0.1;
-          astronautModel.scale.set(s, s, s);
-          if (Math.abs(1.55 - s) > 0.01) requestAnimationFrame(entryAnim);
-          else astronautModel.scale.set(1.55, 1.55, 1.55);
-        };
-        entryAnim();
+      // Entrance animation
+      const targetScale = isRigged ? 0.0125 : 1.55;
+      astronautModel.scale.set(targetScale * 0.05, targetScale * 0.05, targetScale * 0.05);
+      let s = targetScale * 0.05;
+      const entryAnim = () => {
+        s += (targetScale - s) * 0.08;
+        astronautModel.scale.set(s, s, s);
+        if (Math.abs(targetScale - s) > targetScale * 0.01) {
+          requestAnimationFrame(entryAnim);
+        } else {
+          astronautModel.scale.set(targetScale, targetScale, targetScale);
+        }
+      };
+      entryAnim();
+
+      // Hook hover wave triggers on hero buttons and interactive elements
+      const waveTriggers = document.querySelectorAll('.btn-solar-primary, .btn-solar-outline, .chrono-console-card, .chrono-hero-badge');
+      waveTriggers.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          if (window.triggerAstronautWave) window.triggerAstronautWave();
+        }, { passive: true });
+      });
+    }
+
+    gltfLoader.load(
+      primaryModelPath,
+      function (gltf) {
+        initAstronaut(gltf, true);
       },
       undefined,
       function (err) {
-        console.warn('[3D Engine] GLTF Load fallback:', err);
+        console.warn('[3D Engine] Animated model loading error, falling back:', err);
+        gltfLoader.load(
+          fallbackModelPath,
+          function (fallbackGltf) {
+            initAstronaut(fallbackGltf, false);
+          }
+        );
       }
     );
   }
@@ -342,6 +424,15 @@
       astroTargetRotY = 0;
     }
 
+    // Dynamic Skeletal Animation Transition on Scroll
+    if (mixer) {
+      if (scrollProgress > 0.22 && scrollProgress < 0.70) {
+        if (actions['moon_walk']) setAstronautAction('moon_walk', 0.6);
+      } else {
+        if (actions['floating']) setAstronautAction('floating', 0.6);
+      }
+    }
+
     // Top Telemetry HUD
     if (scrollHudProgress) {
       scrollHudProgress.style.width = `${(scrollProgress * 100).toFixed(1)}%`;
@@ -371,7 +462,13 @@
   function animate() {
     requestAnimationFrame(animate);
 
+    const delta = Math.min(clock.getDelta(), 0.1);
     const elapsed = clock.getElapsedTime();
+
+    // Advance Skeletal Animation Mixer
+    if (mixer) {
+      mixer.update(delta);
+    }
 
     // Lerp Mouse for Silky-Smooth Parallax
     mouseX += (targetMouseX - mouseX) * 0.06;
