@@ -1425,6 +1425,169 @@
       color: #FFFFFF !important;
       text-shadow: 0 0 15px rgba(245, 166, 35, 0.4) !important;
     }
+    /* Floating Storytelling Beats Over Pinned 3D Sequence */
+    .chrono-scroll-beat {
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px;
+      position: relative;
+      z-index: 5;
+      background: transparent !important;
+    }
+
+    .spatial-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      width: 100%;
+    }
+
+    .spatial-pillar-card {
+      background: transparent !important;
+      border: 1px solid rgba(245, 166, 35, 0.28) !important;
+      border-radius: 18px;
+      padding: 32px 26px;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spatial-pillar-card:hover {
+      background: rgba(245, 166, 35, 0.05) !important;
+      border-color: var(--solar-gold) !important;
+      transform: translateY(-4px);
+      box-shadow: 0 0 25px rgba(245, 166, 35, 0.2) !important;
+    }
+
+    .pillar-icon-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(245, 166, 35, 0.15);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      margin-bottom: 18px;
+    }
+
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF !important;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.95);
+      margin-bottom: 10px;
+    }
+
+    .pillar-desc {
+      font-family: var(--font-body);
+      font-size: 0.88rem;
+      color: #F1F5F9 !important;
+      line-height: 1.6;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.95);
+      font-weight: 450;
+    }
+
+    .universe-pills-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      justify-content: center;
+      max-width: 860px;
+    }
+
+    .universe-pill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 22px;
+      border-radius: 100px;
+      background: transparent;
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .universe-pill-tag:hover {
+      background: rgba(245, 166, 35, 0.1);
+      border-color: var(--solar-gold);
+      transform: translateY(-2px);
+      box-shadow: 0 0 18px rgba(245, 166, 35, 0.35);
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .pill-label {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #FFFFFF;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+    }
+
+    .pill-meta {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #FFB830;
+      letter-spacing: 0.05em;
+    }
+
+    .launch-actions-cluster {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 48px;
+    }
+
+    .launch-trust-bar {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 18px 32px;
+      border-radius: 100px;
+      border: 1px solid rgba(245, 166, 35, 0.25);
+      background: transparent;
+    }
+
+    .trust-item {
+      text-align: center;
+    }
+
+    .trust-num {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #FFFFFF;
+      text-shadow: 0 0 12px rgba(245, 166, 35, 0.4);
+      display: block;
+    }
+
+    .trust-lbl {
+      font-family: var(--font-ui);
+      font-size: 0.76rem;
+      color: #F1F5F9;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+      display: block;
+      font-weight: 500;
+    }
+
+    .trust-divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(245, 166, 35, 0.25);
+    }
 
     /* Coarse pointer (touch/mobile) adjustments */
     @media (pointer: coarse), (max-width: 768px) {
@@ -1481,11 +1644,8 @@
           </div>
           <div class="nav-links">
             <a href="#sectionOverview" class="nav-link-item">OVERVIEW</a>
-            <a href="#sectionWorkflow" class="nav-link-item">WORKFLOW</a>
-            <a href="#sectionSteps" class="nav-link-item">HOW IT WORKS</a>
-            <a href="#sectionShowcase" class="nav-link-item">3D UNIVERSES</a>
-            <a href="#sectionPricing" class="nav-link-item">PRICING</a>
-            <a href="#sectionFaq" class="nav-link-item">FAQ</a>
+            <a href="#sectionUniverses" class="nav-link-item">3D UNIVERSES</a>
+            <a href="#sectionLaunch" class="nav-link-item">LAUNCH STUDIO</a>
             <a href="/about" class="nav-link-item">ABOUT</a>
             <a href="/contact" class="nav-link-item">CONTACT</a>
 
@@ -1622,595 +1782,133 @@
           </div>
         </header>
 
-        <!-- Section 1: PRODUCT DETAILS & PLATFORM OVERVIEW -->
-        <section id="sectionOverview" class="landing-section">
-          <div class="landing-container">
-            <div class="section-tag-badge reveal-on-scroll">PLATFORM OVERVIEW</div>
-            <h2 class="section-title-large reveal-on-scroll delay-1">Why Traditional Portfolios Fail &amp; How We Fix It</h2>
-            <p class="section-lead-text reveal-on-scroll delay-2">Generic static templates blur into the noise. AI Portfolio Studio crafts dynamic 3D web portfolios tailored specifically for developers, engineers, and researchers.</p>
+        <!-- Section 1: THE BREAKTHROUGH (Floating Editorial Beat 1) -->
+        <section id="sectionOverview" class="landing-section chrono-scroll-beat">
+          <div class="landing-container" style="max-width: 1080px;">
+            <div class="section-tag-badge reveal-on-scroll">SPATIAL INTELLIGENCE</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1" style="font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; max-width: 820px;">
+              Break Free From Flat, Static Resumes
+            </h2>
+            <p class="section-lead-text reveal-on-scroll delay-2" style="font-size: 1.05rem; max-width: 680px; line-height: 1.7; margin-bottom: 48px;">
+              Standard developer templates blur into the background. MyFolio Studio translates your engineering achievements into GPU-accelerated 3D WebGL environments that captivate recruiters instantly.
+            </p>
 
-            <div class="features-cards-grid">
-              <div class="feature-rich-card reveal-on-scroll delay-1">
-                <div class="feature-card-icon">💎</div>
-                <h3 class="feature-card-title">Interactive 3D Visual Engine</h3>
-                <p class="feature-card-desc">No more generic placeholder images. Every project card generates a bespoke, interactive 3D visual scene matching its exact title, description, and domain with real-time mouse look-at tilt.</p>
+            <div class="spatial-pillars-grid">
+              <div class="spatial-pillar-card reveal-on-scroll delay-1 interactive-target">
+                <div class="pillar-icon-badge">⚡</div>
+                <h3 class="pillar-title">Dynamic 3D Physics</h3>
+                <p class="pillar-desc">Interactive mouse look-at tilt, custom shaders, and particle dynamics that react fluidly as recruiters explore your projects.</p>
               </div>
 
-              <div class="feature-rich-card reveal-on-scroll delay-2">
-                <div class="feature-card-icon">🎨</div>
-                <h3 class="feature-card-title">Curated Design Systems</h3>
-                <p class="feature-card-desc">Intelligent design algorithms balance typography hierarchy, color harmony, layout geometry, contrast ratios, and motion choreography—ensuring every portfolio looks handcrafted.</p>
+              <div class="spatial-pillar-card reveal-on-scroll delay-2 interactive-target">
+                <div class="pillar-icon-badge">🎨</div>
+                <h3 class="pillar-title">Curated Design Systems</h3>
+                <p class="pillar-desc">Non-repeating HSL color tokens, balanced typography hierarchies, and architectural spacing scales with zero cookie-cutter templates.</p>
               </div>
 
-              <div class="feature-rich-card reveal-on-scroll delay-3">
-                <div class="feature-card-icon">🛡️</div>
-                <h3 class="feature-card-title">Accurate Project Data</h3>
-                <p class="feature-card-desc">Your real engineering achievements, verified GitHub repositories, programming languages, architectures, and career milestones are strictly preserved with zero filler text.</p>
-              </div>
-
-              <div class="feature-rich-card reveal-on-scroll delay-1">
-                <div class="feature-card-icon">📡</div>
-                <h3 class="feature-card-title">Real-Time Recruiter Telemetry</h3>
-                <p class="feature-card-desc">Interactive satellite transmission and contact forms deliver client inquiries and recruiter messages instantly to your Telegram bot and email with visitor analytics.</p>
-              </div>
-
-              <div class="feature-rich-card reveal-on-scroll delay-2">
-                <div class="feature-card-icon">📄</div>
-                <h3 class="feature-card-title">Automated PDF Resume Codex</h3>
-                <p class="feature-card-desc">Every generated portfolio includes a synchronized, high-resolution PDF resume dynamically compiled from your profile data for one-click recruiter downloads.</p>
-              </div>
-
-              <div class="feature-rich-card reveal-on-scroll delay-3">
-                <div class="feature-card-icon">🌐</div>
-                <h3 class="feature-card-title">Origin-Isolated Edge CDN</h3>
-                <p class="feature-card-desc">Instant zero-latency hosting with custom domain integration (<code>yourname.dev</code>), origin isolation, and clean static HTML/CSS ZIP export.</p>
+              <div class="spatial-pillar-card reveal-on-scroll delay-3 interactive-target">
+                <div class="pillar-icon-badge">🌐</div>
+                <h3 class="pillar-title">Instant Edge Deployment</h3>
+                <p class="pillar-desc">Zero build-step hosting with custom domains (<code>yourname.dev</code>), matching PDF resume codex, and offline-ready ZIP export.</p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Section 2: GENERATION WORKFLOW & ARCHITECTURE -->
-        <section id="sectionWorkflow" class="landing-section">
-          <div class="landing-container">
-            <div class="section-tag-badge reveal-on-scroll" style="background: rgba(56, 189, 248, 0.15); border-color: rgba(56, 189, 248, 0.35); color: #38bdf8;">SYSTEM ARCHITECTURE</div>
-            <h2 class="section-title-large reveal-on-scroll delay-1" style="color: #FFFFFF;">The 4-Stage Autonomous Generation Pipeline</h2>
-            <p class="section-lead-text reveal-on-scroll delay-2">From raw code to high-performance 3D WebGL deployment in under 60 seconds.</p>
+        <!-- Section 2: 22 BESPOKE UNIVERSES (Floating Interactive Beat 2) -->
+        <section id="sectionUniverses" class="landing-section chrono-scroll-beat">
+          <div class="landing-container" style="max-width: 1080px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+            <div class="section-tag-badge reveal-on-scroll">22 GENERATIVE ARCHETYPES</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1" style="font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15; max-width: 820px;">
+              One-of-a-Kind Visual Worlds
+            </h2>
+            <p class="section-lead-text reveal-on-scroll delay-2" style="font-size: 1.05rem; max-width: 650px; line-height: 1.7; margin-bottom: 40px;">
+              Every portfolio receives a distinct aesthetic universe tailored to your discipline. Never repeated, continuously fresh.
+            </p>
 
-            <div class="workflow-pipeline-wrapper reveal-on-scroll delay-3">
-              <div class="workflow-pipeline-grid">
-                <!-- Column 1 -->
-                <div class="workflow-stage-col">
-                  <span class="workflow-col-tag">STAGE 01</span>
-                  <h3 class="workflow-col-title">Multi-Modal Ingestion</h3>
-                  <div class="workflow-nodes-list">
-                    <div class="workflow-node-item">
-                      <strong>🐙 GitHub Deep Ingestion</strong>
-                      <p>Extracts public repositories, star counts, descriptions, primary languages, and commit history.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>📄 Resume OCR &amp; Document Parser</strong>
-                      <p>Extracts career timelines, education, certifications, and technical skills from PDF or image scans.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>💬 5-Question Adaptive Survey</strong>
-                      <p>Captures your engineering philosophy, flagship project, and contact information.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Column 2 -->
-                <div class="workflow-stage-col">
-                  <span class="workflow-col-tag">STAGE 02</span>
-                  <h3 class="workflow-col-title">3D Archetype Synthesis</h3>
-                  <div class="workflow-nodes-list">
-                    <div class="workflow-node-item">
-                      <strong>🍌 Nano Banana 3D Engine</strong>
-                      <p>Maps each project into tailored 3D geometric archetypes (Arcade/Games, AI Neural Matrices, UI Prisms, DSA Trees, IAM Shields).</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>📐 Dynamic Perspective Physics</strong>
-                      <p>Binds real-time 3D mouse look-at tilt (<code>perspective: 800px</code>, <code>rotateY</code>, <code>rotateX</code>) and neon glows.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>✨ Procedural Visual Synthesis</strong>
-                      <p>Eliminates static placeholder images and creates 100% unique visual cards.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Column 3 -->
-                <div class="workflow-stage-col">
-                  <span class="workflow-col-tag">STAGE 03</span>
-                  <h3 class="workflow-col-title">Design Intelligence</h3>
-                  <div class="workflow-nodes-list">
-                    <div class="workflow-node-item">
-                      <strong>🎨 Non-Repeating Color Palettes</strong>
-                      <p>Harmonizes curated HSL color tokens and typographic pairings (Plus Jakarta Sans, Fraunces, JetBrains Mono).</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>🌌 WebGL Motion Choreography</strong>
-                      <p>Builds interactive Three.js golden spores, astronaut orbits, quartz crystals, or botanical roots.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>🧪 Quality &amp; Accessibility Gate</strong>
-                      <p>Performs contrast audits, semantic HTML validation, and anti-AI-slop verification.</p>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Column 4 -->
-                <div class="workflow-stage-col">
-                  <span class="workflow-col-tag">STAGE 04</span>
-                  <h3 class="workflow-col-title">Instant Edge Deployment</h3>
-                  <div class="workflow-nodes-list">
-                    <div class="workflow-node-item">
-                      <strong>⚡ Direct Live Previews</strong>
-                      <p>Serves immediate 24-hour free preview links at <code>/p/:siteId</code> with zero build step delay.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>📑 Synchronized PDF Exporter</strong>
-                      <p>Automatically builds a matching PDF resume codex for recruiters.</p>
-                    </div>
-                    <div class="workflow-node-item">
-                      <strong>📦 Offline-Ready ZIP Export</strong>
-                      <p>Export clean static HTML, CSS, JavaScript, and asset bundles.</p>
-                    </div>
-                  </div>
-                </div>
+            <!-- Floating Universe Showcase Pills -->
+            <div class="universe-pills-cluster reveal-on-scroll delay-2">
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #38BDF8;"></span>
+                <span class="pill-label">Cosmic Astronaut</span>
+                <span class="pill-meta">Celestial Orbit</span>
               </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Section 3: STEPS TO GENERATE -->
-        <section id="sectionSteps" class="landing-section">
-          <div class="landing-container">
-            <div class="section-tag-badge reveal-on-scroll">GETTING STARTED</div>
-            <h2 class="section-title-large reveal-on-scroll delay-1">4 Simple Ways to Generate Your 3D Portfolio</h2>
-            <p class="section-lead-text reveal-on-scroll delay-2">Create your free account to access the Creator Studio, or generate on-the-go via Telegram.</p>
-
-            <div class="steps-cards-grid">
-              <div class="step-guide-card reveal-on-scroll delay-1">
-                <div class="step-num-pill">01</div>
-                <h3 class="step-guide-title">Paste GitHub Profile</h3>
-                <p class="step-guide-desc">Enter your GitHub username or profile URL (e.g. <code>github.com/torvalds</code>). We automatically extract all repositories, tech stacks, and commit history.</p>
-                <div class="step-guide-badge">⚡ Fastest • 100% Automated</div>
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #C084FC;"></span>
+                <span class="pill-label">Cyber Crystal</span>
+                <span class="pill-meta">Obsidian Prism</span>
               </div>
-
-              <div class="step-guide-card reveal-on-scroll delay-2">
-                <div class="step-num-pill">02</div>
-                <h3 class="step-guide-title">Upload PDF / Image CV</h3>
-                <p class="step-guide-desc">Drag and drop your existing resume in PDF, PNG, JPG, or WebP format (up to 10 MB). Our OCR pipeline parses your career milestones and project impact.</p>
-                <div class="step-guide-badge">📄 OCR Document Extraction</div>
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #34D399;"></span>
+                <span class="pill-label">Bioluminescent Botanica</span>
+                <span class="pill-meta">Fauna Matrix</span>
               </div>
-
-              <div class="step-guide-card reveal-on-scroll delay-3">
-                <div class="step-num-pill">03</div>
-                <h3 class="step-guide-title">Answer Guided Questions</h3>
-                <p class="step-guide-desc">Answer 5 quick questions about your discipline, flagship project, and core technologies to generate a tailored narrative and custom visual style.</p>
-                <div class="step-guide-badge">💬 Bespoke Career Narrative</div>
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #F59E0B;"></span>
+                <span class="pill-label">Eco-Tech Steampunk</span>
+                <span class="pill-meta">Brass Gears</span>
               </div>
-
-              <div class="step-guide-card reveal-on-scroll delay-4">
-                <div class="step-num-pill">04</div>
-                <h3 class="step-guide-title">Generate via Telegram Bot</h3>
-                <p class="step-guide-desc">Chat directly with <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" style="color:#38bdf8;font-weight:700;">@ai_portfolio_generator_bot</a> on mobile. Send your resume file or GitHub handle to receive an instant live portfolio link.</p>
-                <div class="step-guide-badge">📱 Mobile Bot Access</div>
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #F43F5E;"></span>
+                <span class="pill-label">Neon Aurora Cyber</span>
+                <span class="pill-meta">Heatmap Shaders</span>
+              </div>
+              <div class="universe-pill-tag interactive-target" onclick="openSamplesModal()">
+                <span class="pill-dot" style="background: #F5A623;"></span>
+                <span class="pill-label">Chrono Obsidian</span>
+                <span class="pill-meta">Amber Crystal</span>
               </div>
             </div>
 
-            <!-- Central Call To Action -->
-            <div style="text-align: center; margin-top: 32px;" class="reveal-on-scroll">
-              <button type="button" class="btn-ref-pill-outline" onclick="openAuthModal('signup')" style="display: inline-flex; align-items: center; justify-content: center; padding: 14px 36px; font-size: 1rem; cursor: pointer;">
-                ✨ Create Free Account &amp; Launch Studio ➔
+            <div style="margin-top: 36px;" class="reveal-on-scroll delay-3">
+              <button type="button" class="btn-solar-primary interactive-target" onclick="openSamplesModal()" style="padding: 14px 32px; font-size: 0.95rem;">
+                <span>✨ EXPLORE ALL 22 UNIVERSES IN STUDIO</span>
               </button>
             </div>
           </div>
         </section>
 
-        <!-- Section 4: FEATURED 3D UNIVERSES SHOWCASE (Genuine 3D Visual Assets) -->
-        <section id="sectionShowcase" class="ref-speakers-section">
-          <div class="ref-section-container">
-            <div class="section-tag-badge reveal-on-scroll">3D DESIGN UNIVERSES</div>
-            <h2 class="ref-section-title dark-text reveal-on-scroll delay-1">22 Bespoke Visual Universes</h2>
-            <p class="ref-section-lead dark-muted reveal-on-scroll delay-2">Award-winning WebGL architectures synthesized dynamically with interactive 3D geometry, neon illumination, and custom shaders.</p>
+        <!-- Section 3: LAUNCH STUDIO (Floating High-Impact Beat 3) -->
+        <section id="sectionLaunch" class="landing-section chrono-scroll-beat">
+          <div class="landing-container" style="max-width: 960px; text-align: center; display: flex; flex-direction: column; align-items: center;">
+            <div class="section-tag-badge reveal-on-scroll">GET STARTED IN SECONDS</div>
+            <h2 class="section-title-large reveal-on-scroll delay-1" style="font-size: clamp(2rem, 3.5vw, 3.2rem); line-height: 1.15; max-width: 780px;">
+              Deploy Your 3D Portfolio Today
+            </h2>
+            <p class="section-lead-text reveal-on-scroll delay-2" style="font-size: 1.05rem; max-width: 620px; line-height: 1.7; margin-bottom: 40px;">
+              Paste your GitHub username, upload your resume, or chat with our Telegram bot. Get an instant, shareable 3D link in under a minute.
+            </p>
 
-            <div class="ref-speakers-grid" style="grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
-              <!-- Template Card 0: Eco-Tech Steampunk -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>ECO-TECH STEAMPUNK 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/crystal_leaf_hand_3d.webp" type="image/webp">
-                    <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="3D Crystal Leaf Hologram and Clockwork Satellite" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🌱 Eco-Tech Steampunk Sanctuary</div>
-                <h3 class="speaker-name">ECO-TECH STEAMPUNK</h3>
-                <p class="speaker-bio">9-panel organic nature &amp; vintage steampunk fusion: glowing crystal leaf hologram, tree-trunk rings, and clockwork satellite relay.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('eco-tech-steampunk')">Preview Universe ↗</button>
-              </article>
+            <div class="launch-actions-cluster reveal-on-scroll delay-3">
+              <button type="button" class="btn-solar-primary interactive-target" onclick="openAuthModal('signup')" style="padding: 16px 36px; font-size: 1.0rem;">
+                <span>🚀 CREATE FREE ACCOUNT &amp; LAUNCH STUDIO</span>
+              </button>
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-outline interactive-target" style="padding: 16px 28px; font-size: 0.92rem; text-decoration: none;">
+                <span>📱 GENERATE VIA TELEGRAM BOT</span>
+              </a>
+            </div>
 
-              <!-- Template Card 1: Cosmic Astronaut -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>COSMIC ASTRONAUT 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/cosmic_astronaut_3d.webp" type="image/webp">
-                    <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="3D Chibi Astronaut in Planetary Orbit" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🌌 Cosmic Space Studio</div>
-                <h3 class="speaker-name">COSMIC ASTRONAUT</h3>
-                <p class="speaker-bio">3D Astronaut with floating planetary orbit constellation, deep space dark mode, and satellite telemetry.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cosmic-astronaut')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 2: Cyber Crystal -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CYBER CRYSTAL 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/cyber_crystal_3d.webp" type="image/webp">
-                    <img src="/assets/3d/cyber_crystal_3d.jpg" alt="3D Quartz Octahedra and Purple Cyber Matrix" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">💎 Cyberpunk Crystal Holographic</div>
-                <h3 class="speaker-name">CYBER CRYSTAL</h3>
-                <p class="speaker-bio">Obsidian amethyst theme with floating 3D quartz octahedra, glowing lilac matrix, and cybernetic project cards.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cyber-crystal')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 3: Bioluminescent -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>BIOLUMINESCENT 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/bioluminescent_wireframe_3d.webp" type="image/webp">
-                    <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Glowing Cyan Wireframe Sprout" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🌿 Bioluminescent Cyber-Botanical</div>
-                <h3 class="speaker-name">BIOLUMINESCENT</h3>
-                <p class="speaker-bio">Midnight teal with glowing wireframe sprout, concentric radar rings, and bio-tech circuit tree of skills.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('bioluminescent-wireframe')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 4: Botanical Woodcraft -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>NATURALIST CODEX 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/botanical_woodcraft_3d.webp" type="image/webp">
-                    <img src="/assets/3d/botanical_woodcraft_3d.jpg" alt="Hand-Illustrated Oak Tree and Timber Walnut Cards" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🪵 Botanical Woodcraft Naturalist</div>
-                <h3 class="speaker-name">BOTANICAL WOODCRAFT</h3>
-                <p class="speaker-bio">Warm antique parchment, hand-illustrated oak tree of skills, timber walnut cards, and naturalist field guide scroll.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('botanical-woodcraft')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 5: Bio-Digital Fusion -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CIRCUIT FUSION 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/bio_digital_fusion_3d.webp" type="image/webp">
-                    <img src="/assets/3d/bio_digital_fusion_3d.jpg" alt="Hybrid Dark Circuit Matrix with Neon Cyan Traces" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚡ Bio-Digital Circuit Fusion</div>
-                <h3 class="speaker-name">BIO-DIGITAL FUSION</h3>
-                <p class="speaker-bio">Hybrid dark circuit matrix blending neon cyan cyber traces with illuminated botanical flora and telemetry.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('bio-digital-fusion')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 6: Emerald Cyber Sanctuary -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>EMERALD BIODOME 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/emerald_cyber_sanctuary_3d.webp" type="image/webp">
-                    <img src="/assets/3d/emerald_cyber_sanctuary_3d.png" alt="Emerald Cyber Sanctuary Biodome" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🍃 Emerald Cyber Sanctuary</div>
-                <h3 class="speaker-name">EMERALD SANCTUARY</h3>
-                <p class="speaker-bio">Deep obsidian &amp; neon mint cyber jungle with biodome laboratory telemetry, cryo cylinder, and hexagonal cards.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('emerald-cyber-sanctuary')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 7: Pristine White Crystal -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CLAYMORPHIC GLASS 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/pristine_crystal_ribbon_hero_3d.webp" type="image/webp">
-                    <img src="/assets/3d/pristine_crystal_ribbon_hero_3d.jpg" alt="Pristine White Crystal Studio" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">❄️ Pristine White Crystal</div>
-                <h3 class="speaker-name">WHITE CRYSTAL</h3>
-                <p class="speaker-bio">Ultra-clean pearl white claymorphic glass with sky cyan accents, isometric crystal geode, and soft ambient shadows.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('pristine-white-crystal')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 8: Abyssal Quantum Jellyfish -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>QUANTUM BIOLUMINESCENCE 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/crystal_leaf_hand_3d.webp" type="image/webp">
-                    <img src="/assets/3d/crystal_leaf_hand_3d.jpg" alt="Abyssal Quantum Jellyfish" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🪼 Abyssal Quantum Jellyfish</div>
-                <h3 class="speaker-name">QUANTUM JELLYFISH</h3>
-                <p class="speaker-bio">Deep sea neural bioluminescence with glowing robotic hand, floating quantum discs, and neon circuit branches.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('abyssal-quantum-jellyfish')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 9: Mahogany Brass Steampunk -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CURIO CABINET 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/steampunk_skills_crystal_obelisk_3d.webp" type="image/webp">
-                    <img src="/assets/3d/steampunk_skills_crystal_obelisk_3d.jpg" alt="Mahogany Brass Steampunk" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🕰️ Mahogany Brass Steampunk</div>
-                <h3 class="speaker-name">MAHOGANY STEAMPUNK</h3>
-                <p class="speaker-bio">Rich dark walnut woodcraft with brass toggle switches, sliding glass curio display cabinets, and leather dossier.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('mahogany-brass-steampunk')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 10: Lavender Cyber Bridge -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>COMMAND BRIDGE 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/space_command_deck_about_3d.webp" type="image/webp">
-                    <img src="/assets/3d/space_command_deck_about_3d.jpg" alt="Lavender Cyber Bridge" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🔮 Lavender Cyber Bridge</div>
-                <h3 class="speaker-name">LAVENDER BRIDGE</h3>
-                <p class="speaker-bio">Cybernetic command bridge terminal with glowing 3D lavender cyber avatar, crystal icosahedron, and cryo capsule.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('lavender-cyber-bridge')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 11: Sand Parchment Botanical -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>SAND BOTANICAL 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/golden_lotus_experience_3d.webp" type="image/webp">
-                    <img src="/assets/3d/golden_lotus_experience_3d.jpg" alt="Sand Parchment Botanical" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">📜 Sand Parchment Botanical</div>
-                <h3 class="speaker-name">SAND BOTANICAL</h3>
-                <p class="speaker-bio">Warm sand parchment, pine timber woodcraft, carved botanical tree rings, and terracotta accents.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('sand-parchment-botanical')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 12: System Awakening (Shadow Monarch Hunter Interface) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>HUNTER SYSTEM 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/developer_showcase_portfolio_3d.webp" type="image/webp">
-                    <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="System Awakening" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚔️ System Awakening</div>
-                <h3 class="speaker-name">SYSTEM AWAKENING</h3>
-                <p class="speaker-bio">Translucent glowing blue holographic Status Windows, angular chamfered panels, Mana Gauges, Quest Logs, and Shadow Monarch purple aura.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('system-awakening')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 13: Engineering Archive (Swiss Blueprint / Industrial Editorial) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>SWISS BLUEPRINT 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/engineering_archive_3d.webp" type="image/webp">
-                    <img src="/assets/3d/engineering_archive_3d.jpg" alt="Engineering Archive" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">📐 Engineering Archive</div>
-                <h3 class="speaker-name">ENGINEERING ARCHIVE</h3>
-                <p class="speaker-bio">Industrial engineering archive and Swiss blueprint editorial with 12-col architectural grid, near-black graphite typography, and blueprint blue accents.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('engineering-archive')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 14: Cosmic Cyber Geometry (Futuristic Minimal / Neon Purple & Crimson) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>COSMIC GEOMETRY 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/cosmic_cyber_geometry_3d.webp" type="image/webp">
-                    <img src="/assets/3d/cosmic_cyber_geometry_3d.jpg" alt="Cosmic Cyber Geometry" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🔮 Cosmic Cyber Geometry</div>
-                <h3 class="speaker-name">COSMIC CYBER GEOMETRY</h3>
-                <p class="speaker-bio">Futuristic minimal cyber editorial with cosmic particle fields, neon crimson &amp; purple accents, isometric project schematics, radar charts, and frosted glass dossiers.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('cosmic-cyber-geometry')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 15: Stellar Architect (Cosmic Blueprint & Solar Gold) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>STELLAR BLUEPRINT 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/stellar_architect_3d.webp" type="image/webp">
-                    <img src="/assets/3d/stellar_architect_3d.jpg" alt="Stellar Architect" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">✦ Stellar Architect</div>
-                <h3 class="speaker-name">STELLAR ARCHITECT</h3>
-                <p class="speaker-bio">Cosmic structural architecture where space meets blueprints. Celestial orbital trails, star-map constellations, and ghost buttons with solar gold glow.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('stellar-architect')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 16: Abyssal Ascent (Dark Fantasy Progression RPG) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>RPG PROGRESSION 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/abyssal_ascent_3d.webp" type="image/webp">
-                    <img src="/assets/3d/abyssal_ascent_3d.jpg" alt="Abyssal Ascent" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚔️ Abyssal Ascent</div>
-                <h3 class="speaker-name">ABYSSAL ASCENT</h3>
-                <p class="speaker-bio">Gamified RPG progression aesthetic with monolithic dimensional gates, branching skill trees, quest log floor timelines, and ethereal purple aura.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('abyssal-ascent')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 17: Stealth Node (Web3 Cypherpunk & Cryptographic Terminal) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CYPHERPUNK NODE 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/stealth_node_3d.webp" type="image/webp">
-                    <img src="/assets/3d/stealth_node_3d.jpg" alt="Stealth Node" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚡ Stealth Node</div>
-                <h3 class="speaker-name">STEALTH NODE</h3>
-                <p class="speaker-bio">Cypherpunk Web3 decentralized terminal with frosted glassmorphism, cryptographic green data pulses, and immutable blockchain ledger timelines.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('stealth-node')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 18: Kinetic Brutalism (High-Contrast Poster Zine) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>NEOBRUTALISM 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/kinetic_brutalism_3d.webp" type="image/webp">
-                    <img src="/assets/3d/kinetic_brutalism_3d.jpg" alt="Kinetic Brutalism" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚡ Kinetic Brutalism</div>
-                <h3 class="speaker-name">KINETIC BRUTALISM</h3>
-                <p class="speaker-bio">Loud, high-contrast Neobrutalist zine aesthetic with thick black borders, hard drop shadows, scrolling marquee typography, and vibrant pop colors.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('kinetic-brutalism')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 19: Circuit Core (Industrial Cyber-Minimal & Brass) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-2">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>MECHANICAL COG 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/circuit_core_3d.webp" type="image/webp">
-                    <img src="/assets/3d/circuit_core_3d.jpg" alt="Circuit Core" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">⚙️ Circuit Core</div>
-                <h3 class="speaker-name">CIRCUIT CORE</h3>
-                <p class="speaker-bio">Industrial cyber-minimal aesthetic with mechanical cogwheels, exposed pistons, luminous circuit traces, and polished brass plates.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('circuit-core')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 20: Neon Aurora Cyber (Cyber-Minimalist Aurora Glass) -->
-              <article class="ref-speaker-card reveal-on-scroll delay-3">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>NEON AURORA 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/neon_aurora_cyber_3d.webp" type="image/webp">
-                    <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🌌 Neon Aurora Cyber</div>
-                <h3 class="speaker-name">NEON AURORA</h3>
-                <p class="speaker-bio">Cyber-minimalist aurora glassmorphism with Syne display typography, neon purple-pink-orange gradients, and GitHub activity heatmaps.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('neon-aurora-cyber')">Preview Universe ↗</button>
-              </article>
-
-              <!-- Template Card 21: Chrono-Obsidian Sanctuary -->
-              <article class="ref-speaker-card reveal-on-scroll delay-1">
-                <div class="speaker-img-wrapper">
-                  <div class="universe-badge-overlay">
-                    <span class="universe-telemetry-dot"></span>
-                    <span>CHRONO-OBSIDIAN 3D</span>
-                  </div>
-                  <picture>
-                    <source srcset="/assets/3d/chrono_obsidian_sanctuary_3d.webp" type="image/webp">
-                    <img src="/assets/3d/chrono_obsidian_sanctuary_3d.jpg" alt="Chrono-Obsidian Sanctuary" class="speaker-portrait-img" loading="lazy" decoding="async" />
-                  </picture>
-                </div>
-                <div class="portfolio-theme-pill">🏛️ Chrono-Obsidian Sanctuary</div>
-                <h3 class="speaker-name">CHRONO-OBSIDIAN</h3>
-                <p class="speaker-bio">Carved dark obsidian stonecraft with brass clockwork gears, illuminated amber crystal spires, curio shadowboxes, and engraved tablets.</p>
-                <button type="button" class="btn-card-preview" onclick="openStudioWithTemplate('chrono-obsidian-sanctuary')">Preview Universe ↗</button>
-              </article>
+            <!-- Trust Bar Floating Indicators -->
+            <div class="launch-trust-bar reveal-on-scroll delay-3">
+              <div class="trust-item">
+                <span class="trust-num">2,400+</span>
+                <span class="trust-lbl">Portfolios Created</span>
+              </div>
+              <div class="trust-divider"></div>
+              <div class="trust-item">
+                <span class="trust-num">4.9 ★</span>
+                <span class="trust-lbl">Developer Rating</span>
+              </div>
+              <div class="trust-divider"></div>
+              <div class="trust-item">
+                <span class="trust-num">60s</span>
+                <span class="trust-lbl">Instant Setup</span>
+              </div>
+              <div class="trust-divider"></div>
+              <div class="trust-item">
+                <span class="trust-num">FREE</span>
+                <span class="trust-lbl">24-Hr Live Preview</span>
+              </div>
             </div>
           </div>
         </section>
@@ -2863,35 +2561,28 @@
         }
 
         // 2. Dynamic 3D Camera Choreography by Section
-        if (scrollProgress < 0.18) {
-          // Hero Stage: Centered portal emergence
-          const p = scrollProgress / 0.18;
-          targetCamScale = 1.0 + p * 0.05;
+        if (scrollProgress < 0.25) {
+          // Beat 1: Hero Stage - Centered portal emergence
+          const p = scrollProgress / 0.25;
+          targetCamScale = 1.0 + p * 0.06;
           targetCamX = 0;
           targetCamY = 0;
-        } else if (scrollProgress < 0.42) {
-          // Platform Overview: Shift right so feature cards on left stand out
-          const p = (scrollProgress - 0.18) / 0.24;
-          targetCamScale = 1.05 + p * 0.05;
-          targetCamX = p * 45;
+        } else if (scrollProgress < 0.55) {
+          // Beat 2: Spatial Architecture - Subtle pan to frame left pillars
+          const p = (scrollProgress - 0.25) / 0.30;
+          targetCamScale = 1.06 + p * 0.05;
+          targetCamX = p * 35;
           targetCamY = -p * 15;
-        } else if (scrollProgress < 0.68) {
-          // 22 Universes Showcase: Zoom slightly into portal center
-          const p = (scrollProgress - 0.42) / 0.26;
-          targetCamScale = 1.10 - p * 0.04;
-          targetCamX = 45 * (1 - p);
-          targetCamY = -15 + p * 20;
-        } else if (scrollProgress < 0.88) {
-          // Pricing Matrix: Pull back to wide zero-gravity space
-          const p = (scrollProgress - 0.68) / 0.20;
-          targetCamScale = 1.06 - p * 0.03;
-          targetCamX = -p * 25;
-          targetCamY = 5 - p * 5;
+        } else if (scrollProgress < 0.80) {
+          // Beat 3: 22 Universes - Return toward center for aesthetic showcase
+          const p = (scrollProgress - 0.55) / 0.25;
+          targetCamScale = 1.11 - p * 0.04;
+          targetCamX = 35 * (1 - p);
+          targetCamY = -15 + p * 15;
         } else {
-          // FAQ & Deep Space Footer: Astronaut reaches towards user
-          const p = (scrollProgress - 0.88) / 0.12;
-          targetCamScale = 1.03 - p * 0.03;
-          targetCamX = -25 * (1 - p);
+          // Beat 4: Launch Studio & Deep Space Horizon
+          targetCamScale = 1.05;
+          targetCamX = 0;
           targetCamY = 0;
         }
 
@@ -2902,11 +2593,10 @@
         if (scrollHudPhase) {
           const pct = Math.round(scrollProgress * 100);
           let phase = 'SYS: EVENT HORIZON';
-          if (scrollProgress < 0.18) phase = 'PORTAL EMERGENCE';
-          else if (scrollProgress < 0.42) phase = '3D PLATFORM ENGINE';
-          else if (scrollProgress < 0.68) phase = '22 SPATIAL UNIVERSES';
-          else if (scrollProgress < 0.88) phase = 'PRODUCTION CDNS';
-          else phase = 'DEEP SPACE HORIZON';
+          if (scrollProgress < 0.25) phase = 'PORTAL EMERGENCE';
+          else if (scrollProgress < 0.55) phase = 'SPATIAL ARCHITECTURE';
+          else if (scrollProgress < 0.80) phase = '22 GENERATIVE UNIVERSES';
+          else phase = 'LAUNCH STUDIO';
           scrollHudPhase.textContent = `${phase} // ${pct}%`;
         }
       }
