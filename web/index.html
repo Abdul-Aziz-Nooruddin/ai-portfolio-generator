@@ -344,22 +344,13 @@
     }
 
     /* ====================================================
-       APPLE-STYLE 3D SEQUENCE PINNED SCROLL SYSTEM
+       APPLE-STYLE FULL-PAGE 3D SEQUENCE SPATIAL SYSTEM
        ==================================================== */
-    .chrono-scroll-track {
-      position: relative;
-      width: 100%;
-      height: 380vh; /* Delivers generous cinematic scrubbing across all 80 frames */
-      background: var(--space-void);
-      margin: 0;
-      padding: 0;
-    }
-
-    .chrono-sticky-stage {
-      position: sticky;
+    .chrono-global-viewport {
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
+      width: 100vw;
       height: 100vh;
       overflow: hidden;
       display: flex;
@@ -367,7 +358,29 @@
       justify-content: center;
       perspective: 1400px;
       background: var(--space-void);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .chrono-hero-stage {
+      position: relative;
+      width: 100%;
+      min-height: 96vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      perspective: 1400px;
+      padding: 110px 24px 70px;
       z-index: 10;
+      background: transparent;
+    }
+
+    /* All Landing Sections Float over 3D Canvas */
+    .landing-section {
+      position: relative;
+      z-index: 10;
+      background: transparent !important;
     }
 
     /* Apple-Style Frame Scrubbing Canvas */
@@ -383,13 +396,14 @@
       z-index: 1;
       filter: saturate(1.15) brightness(0.92) contrast(1.05);
       will-change: transform;
+      transition: filter 0.3s ease;
     }
 
     .chrono-hero-vignette {
       position: absolute;
       inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.12) 0%, rgba(6, 7, 11, 0.55) 65%, rgba(6, 7, 11, 0.98) 100%),
-                  linear-gradient(to bottom, rgba(6, 7, 11, 0.5) 0%, transparent 35%, rgba(6, 7, 11, 0.25) 75%, rgba(6, 7, 11, 1) 100%);
+      background: radial-gradient(circle at 50% 50%, rgba(6, 7, 11, 0.15) 0%, rgba(6, 7, 11, 0.6) 65%, rgba(6, 7, 11, 0.96) 100%),
+                  linear-gradient(to bottom, rgba(6, 7, 11, 0.4) 0%, transparent 30%, rgba(6, 7, 11, 0.3) 70%, rgba(6, 7, 11, 0.95) 100%);
       pointer-events: none;
       z-index: 2;
     }
@@ -414,34 +428,33 @@
       flex-direction: column;
       align-items: center;
       transform-style: preserve-3d;
-      transition: opacity 0.2s ease-out, transform 0.12s ease-out;
+      transition: opacity 0.25s ease-out, transform 0.15s ease-out;
       will-change: transform, opacity;
       padding: 0 24px;
     }
 
-    /* Apple-Style Sequential Narrative Overlay Beats */
-    .chrono-narrative-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.95);
-      z-index: 15;
-      text-align: center;
-      max-width: 760px;
-      width: calc(100% - 48px);
-      padding: 32px 36px;
-      border-radius: 24px;
-      background: rgba(10, 14, 24, 0.68);
-      border: 1px solid rgba(245, 166, 35, 0.3);
-      backdrop-filter: blur(28px) saturate(180%);
-      -webkit-backdrop-filter: blur(28px) saturate(180%);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85),
-                  0 0 40px rgba(245, 166, 35, 0.15),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      opacity: 0;
+    /* Apple-Style Global Fixed Telemetry HUD */
+    .chrono-scroll-hud {
+      position: fixed;
+      bottom: 26px;
+      right: 28px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 100px;
+      background: rgba(10, 14, 24, 0.85);
+      border: 1px solid rgba(245, 166, 35, 0.35);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), 0 0 15px rgba(245, 166, 35, 0.15);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--solar-gold);
+      letter-spacing: 0.12em;
       pointer-events: none;
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: opacity, transform;
+      transition: opacity 0.3s ease;
     }
 
     .narrative-tag {
@@ -1393,136 +1406,123 @@
           </div>
         </nav>
 
-        <!-- Concept 3: The Event Horizon Portal Apple-Style Scroll Sequence Pinned Track -->
-        <div class="chrono-scroll-track" id="chronoScrollTrack">
-          <div class="chrono-sticky-stage" id="chronoStickyStage">
-            <!-- Apple-Style Frame Scrubbing Canvas -->
-            <canvas id="chronoSequenceCanvas" class="chrono-sequence-canvas"></canvas>
-            <!-- Cinematic Vignette & Atmospheric Fog -->
-            <div class="chrono-hero-vignette"></div>
-            <!-- Golden Stardust Particle Canvas -->
-            <canvas id="chronoStardustCanvas" class="chrono-stardust-canvas"></canvas>
+        <!-- Concept 3: Full-Page Fixed 3D Sequence Viewport Layer -->
+        <div class="chrono-global-viewport" id="chronoGlobalViewport">
+          <!-- Apple-Style Frame Scrubbing Canvas -->
+          <canvas id="chronoSequenceCanvas" class="chrono-sequence-canvas"></canvas>
+          <!-- Cinematic Vignette & Atmospheric Fog -->
+          <div class="chrono-hero-vignette"></div>
+          <!-- Golden Stardust Particle Canvas -->
+          <canvas id="chronoStardustCanvas" class="chrono-stardust-canvas"></canvas>
+        </div>
 
-            <!-- Beat 0: Main Interactive Hero Console & Title -->
-            <div class="chrono-hero-content" id="chronoHeroContent">
-              <!-- Telemetry Status HUD -->
-              <div class="chrono-telemetry-badge">
-                <span class="telemetry-beacon"></span>
-                <span>SYS: QUANTUM PORTAL ACTIVE // 22 UNIVERSES ACCESSIBLE</span>
-              </div>
+        <!-- Apple-Style Global Fixed Telemetry HUD Scrubber -->
+        <div class="chrono-scroll-hud" id="chronoScrollHud">
+          <div class="chrono-hud-track">
+            <div class="chrono-hud-progress" id="chronoHudProgress"></div>
+          </div>
+          <span id="chronoHudPhase">EVENT HORIZON // 0%</span>
+        </div>
 
-              <!-- Display Headline in Syne -->
-              <h1 class="chrono-hero-title">
-                <span class="title-line-1">Synthesize Bespoke</span>
-                <span class="title-line-2">3D WebGL Universes</span>
-              </h1>
+        <!-- Main Hero Landing Stage (Floating over 3D Viewport) -->
+        <header class="chrono-hero-stage" id="chronoHeroStage">
+          <!-- Beat 0: Main Interactive Hero Console & Title -->
+          <div class="chrono-hero-content" id="chronoHeroContent">
+            <!-- Telemetry Status HUD -->
+            <div class="chrono-telemetry-badge">
+              <span class="telemetry-beacon"></span>
+              <span>SYS: QUANTUM PORTAL ACTIVE // 22 UNIVERSES ACCESSIBLE</span>
+            </div>
 
-              <!-- Subtitle -->
-              <p class="chrono-hero-subtitle">
-                Transform your GitHub code, PDF resume, or engineering story into an interactive 3D spatial developer portfolio in seconds. 22 visual universes. Zero generic templates.
-              </p>
+            <!-- Display Headline in Syne -->
+            <h1 class="chrono-hero-title">
+              <span class="title-line-1">Synthesize Bespoke</span>
+              <span class="title-line-2">3D WebGL Universes</span>
+            </h1>
 
-              <!-- Holographic Instant Generator Console -->
-              <div class="chrono-console-card interactive-target">
-                <div class="console-tabs">
-                  <button type="button" class="console-tab active" id="tabGithub" onclick="switchHeroTab('github')">
-                    <span>🐙 GitHub Ingestion</span>
-                  </button>
-                  <button type="button" class="console-tab" id="tabResume" onclick="switchHeroTab('resume')">
-                    <span>📄 PDF Resume Parser</span>
-                  </button>
-                  <button type="button" class="console-tab" id="tabDirect" onclick="switchHeroTab('direct')">
-                    <span>⚡ Quick 60s Synthesize</span>
-                  </button>
-                </div>
+            <!-- Subtitle -->
+            <p class="chrono-hero-subtitle">
+              Transform your GitHub code, PDF resume, or engineering story into an interactive 3D spatial developer portfolio in seconds. 22 visual universes. Zero generic templates.
+            </p>
 
-                <!-- GitHub Panel -->
-                <div class="console-panel" id="panelGithub">
-                  <div class="console-input-row">
-                    <div class="console-input-wrap">
-                      <span class="input-prefix">github.com/</span>
-                      <input type="text" id="heroGithubInput" class="console-input" placeholder="your-username (e.g. torvalds)" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') launchHeroGithub()">
-                    </div>
-                    <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroGithub()">
-                      <span>✦ SYNTHESIZE NOW</span>
-                    </button>
-                  </div>
-                </div>
-
-                <!-- Resume Panel -->
-                <div class="console-panel" id="panelResume" style="display: none;">
-                  <div class="console-dropzone" onclick="document.getElementById('heroResumeUpload').click()">
-                    <input type="file" id="heroResumeUpload" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleHeroResume(this)">
-                    <span class="dropzone-icon">📄</span>
-                    <div class="dropzone-text">
-                      <strong>Drop your PDF Resume or click to browse</strong>
-                      <span>Instant AI extraction of verified skills, projects, and career timeline</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Direct Prompt Panel -->
-                <div class="console-panel" id="panelDirect" style="display: none;">
-                  <div class="console-input-row">
-                    <input type="text" id="heroPromptInput" class="console-input" placeholder="e.g. Senior Full-Stack Engineer specializing in AI &amp; WebGL..." style="padding-left: 18px;" onkeydown="if(event.key==='Enter') launchHeroPrompt()">
-                    <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroPrompt()">
-                      <span>✦ BUILD PORTFOLIO</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Primary CTAs Row -->
-              <div class="chrono-cta-row">
-                <a href="/studio" class="btn-solar-primary interactive-target">
-                  <span>✦ Launch 3D Studio</span>
-                </a>
-                <button type="button" class="btn-solar-outline interactive-target" onclick="openSamplesModal()">
-                  <span>🪐 Explore 22 Universes</span>
+            <!-- Holographic Instant Generator Console -->
+            <div class="chrono-console-card interactive-target">
+              <div class="console-tabs">
+                <button type="button" class="console-tab active" id="tabGithub" onclick="switchHeroTab('github')">
+                  <span>🐙 GitHub Ingestion</span>
                 </button>
-                <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-ghost interactive-target">
-                  <span>📱 Telegram Recruiter Bot</span>
-                </a>
+                <button type="button" class="console-tab" id="tabResume" onclick="switchHeroTab('resume')">
+                  <span>📄 PDF Resume Parser</span>
+                </button>
+                <button type="button" class="console-tab" id="tabDirect" onclick="switchHeroTab('direct')">
+                  <span>⚡ Quick 60s Synthesize</span>
+                </button>
               </div>
 
-              <!-- Real-time Interaction Hint -->
-              <div class="chrono-hint-row">
-                <span class="hint-glyph">∞</span>
-                <span>Move cursor to warp 2.5D spatial gravity &amp; dimensional portal</span>
+              <!-- GitHub Panel -->
+              <div class="console-panel" id="panelGithub">
+                <div class="console-input-row">
+                  <div class="console-input-wrap">
+                    <span class="input-prefix">github.com/</span>
+                    <input type="text" id="heroGithubInput" class="console-input" placeholder="your-username (e.g. torvalds)" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') launchHeroGithub()">
+                  </div>
+                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroGithub()">
+                    <span>✦ SYNTHESIZE NOW</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Resume Panel -->
+              <div class="console-panel" id="panelResume" style="display: none;">
+                <div class="console-dropzone" onclick="document.getElementById('heroResumeUpload').click()">
+                  <input type="file" id="heroResumeUpload" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleHeroResume(this)">
+                  <span class="dropzone-icon">📄</span>
+                  <div class="dropzone-text">
+                    <strong>Drop your PDF Resume or click to browse</strong>
+                    <span>Instant AI extraction of verified skills, projects, and career timeline</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Direct Prompt Panel -->
+              <div class="console-panel" id="panelDirect" style="display: none;">
+                <div class="console-input-row">
+                  <input type="text" id="heroPromptInput" class="console-input" placeholder="e.g. Senior Full-Stack Engineer specializing in AI &amp; WebGL..." style="padding-left: 18px;" onkeydown="if(event.key==='Enter') launchHeroPrompt()">
+                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroPrompt()">
+                    <span>✦ BUILD PORTFOLIO</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <!-- Narrative Beat 1: Appears during portal traversal (~26% - 52% scroll) -->
-            <div class="chrono-narrative-overlay" id="chronoNarrativeBeat1">
-              <span class="narrative-tag">SPATIAL DIMENSION // PHASE 01</span>
-              <h2 class="narrative-headline">BEYOND FLAT TEMPLATES</h2>
-              <p class="narrative-desc">The astronaut navigates an uncharted expanse of real-time 3D environments, powered by procedural Three.js shaders and physics-based lighting.</p>
+            <!-- Primary CTAs Row -->
+            <div class="chrono-cta-row">
+              <a href="/studio" class="btn-solar-primary interactive-target">
+                <span>✦ Launch 3D Studio</span>
+              </a>
+              <button type="button" class="btn-solar-outline interactive-target" onclick="openSamplesModal()">
+                <span>🪐 Explore 22 Universes</span>
+              </button>
+              <a href="https://t.me/ai_portfolio_generator_bot" target="_blank" rel="noopener noreferrer" class="btn-solar-ghost interactive-target">
+                <span>📱 Telegram Recruiter Bot</span>
+              </a>
             </div>
 
-            <!-- Narrative Beat 2: Appears during astronaut emergence (~56% - 84% scroll) -->
-            <div class="chrono-narrative-overlay" id="chronoNarrativeBeat2">
-              <span class="narrative-tag">QUANTUM SYNTHESIS // PHASE 02</span>
-              <h2 class="narrative-headline">YOUR CODE. LIVING IN 3D.</h2>
-              <p class="narrative-desc">Every GitHub repository, commit history, and skill vector synthesizes into interactive spatial artifacts recruiters can explore in 360°.</p>
-            </div>
-
-            <!-- Apple-Style Scroll HUD Progress Scrubber Indicator -->
-            <div class="chrono-scroll-hud" id="chronoScrollHud">
-              <div class="chrono-hud-track">
-                <div class="chrono-hud-progress" id="chronoHudProgress"></div>
-              </div>
-              <span id="chronoHudPhase">PORTAL: 0%</span>
-            </div>
-
-            <!-- Scroll Prompt Indicator -->
-            <div class="chrono-scroll-indicator" id="chronoScrollIndicator">
-              <span class="scroll-mouse-icon">
-                <span class="scroll-wheel-dot"></span>
-              </span>
-              <span class="scroll-indicator-text">SCROLL TO TRAVERSE THE HORIZON</span>
+            <!-- Real-time Interaction Hint -->
+            <div class="chrono-hint-row">
+              <span class="hint-glyph">∞</span>
+              <span>Move cursor to warp 2.5D spatial gravity &amp; dimensional portal</span>
             </div>
           </div>
-        </div>
+
+          <!-- Scroll Prompt Indicator -->
+          <div class="chrono-scroll-indicator" id="chronoScrollIndicator">
+            <span class="scroll-mouse-icon">
+              <span class="scroll-wheel-dot"></span>
+            </span>
+            <span class="scroll-indicator-text">SCROLL TO TRAVERSE THE HORIZON</span>
+          </div>
+        </header>
 
         <!-- Section 1: PRODUCT DETAILS & PLATFORM OVERVIEW -->
         <section id="sectionOverview" class="landing-section" style="background: var(--product-bg); color: var(--product-text);">
@@ -2651,21 +2651,40 @@
     })();
 
     /* ====================================================
-       2. APPLE-STYLE CANVAS FRAME SCRUBBING ENGINE
+       2. APPLE-STYLE FULL-PAGE CANVAS SEQUENCE ENGINE
+          (With Multi-Clip Stitching Architecture)
        ==================================================== */
     (function initAppleScrollSequence() {
       const canvas = document.getElementById('chronoSequenceCanvas');
       const contentLayer = document.getElementById('chronoHeroContent');
-      const track = document.getElementById('chronoScrollTrack');
-      const beat1 = document.getElementById('chronoNarrativeBeat1');
-      const beat2 = document.getElementById('chronoNarrativeBeat2');
+      const heroStage = document.getElementById('chronoHeroStage');
       const scrollHudProgress = document.getElementById('chronoHudProgress');
       const scrollHudPhase = document.getElementById('chronoHudPhase');
       const scrollIndicator = document.getElementById('chronoScrollIndicator');
-      if (!canvas || !track) return;
+      if (!canvas) return;
 
       const ctx = canvas.getContext('2d', { alpha: false });
-      const frameCount = 80;
+
+      // Multi-Clip Sequence Pipeline (Clip 1: 160 frames, ready for Clip 2 continuation!)
+      const MULTI_CLIP_PIPELINE = {
+        totalFrames: 160,
+        clips: [
+          {
+            id: 'clip_1_event_horizon_emergence',
+            start: 1,
+            end: 160,
+            getUrl: (idx) => `/assets/portal-sequence/frame_${String(idx).padStart(4, '0')}.webp`
+          }
+          // When Part 2 is uploaded, seamlessly enable:
+          // {
+          //   id: 'clip_2_deep_space_traversal',
+          //   start: 161,
+          //   end: 320,
+          //   getUrl: (idx) => `/assets/portal-sequence/frame_${String(idx).padStart(4, '0')}.webp`
+          // }
+        ]
+      };
+
       const frames = [];
       let imagesLoaded = 0;
       let currentFrameIndex = 0;
@@ -2678,7 +2697,14 @@
       let currentRotX = 0;
       let currentRotY = 0;
 
-      // Fit and draw active frame keeping 16:9 aspect-ratio cover
+      // Camera Choreography across the webpage
+      let currentCamScale = 1.0;
+      let targetCamScale = 1.0;
+      let currentCamX = 0;
+      let targetCamX = 0;
+      let currentCamY = 0;
+      let targetCamY = 0;
+
       function renderFrame(index) {
         const img = frames[index];
         if (!img || !img.complete) return;
@@ -2706,15 +2732,15 @@
 
       function resize() {
         const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = (canvas.parentElement.offsetWidth || window.innerWidth) * dpr;
-        canvas.height = (canvas.parentElement.offsetHeight || window.innerHeight) * dpr;
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
         renderFrame(Math.round(currentFrameIndex));
       }
       resize();
       window.addEventListener('resize', resize);
 
-      // Preload WebP sequence
-      for (let i = 1; i <= frameCount; i++) {
+      // Preload WebP sequence for all configured clips (160 frames)
+      for (let i = 1; i <= MULTI_CLIP_PIPELINE.totalFrames; i++) {
         const img = new Image();
         const num = String(i).padStart(4, '0');
         img.src = `/assets/portal-sequence/frame_${num}.webp`;
@@ -2725,83 +2751,73 @@
         frames.push(img);
       }
 
-      // Scroll Progress mapping (0.0 to 1.0 pinned through the 380vh scroll track)
+      // Dynamic Section-Aware Scroll Progress Mapping Across Entire Page
       function onScroll() {
-        const rect = track.getBoundingClientRect();
-        const maxScroll = track.offsetHeight - window.innerHeight;
-        if (maxScroll <= 0) return;
+        const scrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        scrollProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
 
-        const scrolled = -rect.top;
-        scrollProgress = Math.min(Math.max(scrolled / maxScroll, 0), 1);
-        targetFrameIndex = Math.min(Math.floor(scrollProgress * (frameCount - 1)), frameCount - 1);
+        // Frame scrub target across all 160 frames
+        targetFrameIndex = Math.min(Math.floor(scrollProgress * (MULTI_CLIP_PIPELINE.totalFrames - 1)), MULTI_CLIP_PIPELINE.totalFrames - 1);
 
-        // 1. Hero Content Transition (Beat 0)
-        if (contentLayer) {
-          if (scrollProgress < 0.20) {
-            const p = scrollProgress / 0.20;
-            contentLayer.style.opacity = (1 - p).toFixed(3);
-            contentLayer.style.transform = `perspective(1400px) translateY(${-p * 60}px) scale(${1 - p * 0.08})`;
-            contentLayer.style.pointerEvents = scrollProgress < 0.04 ? 'auto' : 'none';
-          } else {
-            contentLayer.style.opacity = '0';
-            contentLayer.style.pointerEvents = 'none';
-          }
+        // 1. Hero Content & Indicator Transition
+        if (contentLayer && heroStage) {
+          const heroH = heroStage.offsetHeight || window.innerHeight;
+          const heroRatio = Math.min(scrollY / (heroH * 0.75), 1);
+          contentLayer.style.opacity = Math.max(0, 1 - heroRatio).toFixed(3);
+          contentLayer.style.transform = `perspective(1400px) translateY(${-heroRatio * 50}px) scale(${1 - heroRatio * 0.06})`;
+          contentLayer.style.pointerEvents = heroRatio < 0.3 ? 'auto' : 'none';
         }
 
-        // 2. Scroll Prompt Indicator fade out
         if (scrollIndicator) {
-          scrollIndicator.style.opacity = Math.max(0, 1 - scrollProgress * 12).toFixed(2);
+          scrollIndicator.style.opacity = Math.max(0, 1 - (scrollY / 150)).toFixed(2);
         }
 
-        // 3. Narrative Beat 1 (0.24 - 0.52)
-        if (beat1) {
-          if (scrollProgress >= 0.24 && scrollProgress <= 0.52) {
-            let op = 0;
-            if (scrollProgress < 0.32) {
-              op = (scrollProgress - 0.24) / 0.08;
-            } else if (scrollProgress <= 0.44) {
-              op = 1;
-            } else {
-              op = 1 - (scrollProgress - 0.44) / 0.08;
-            }
-            beat1.style.opacity = Math.max(0, Math.min(1, op)).toFixed(3);
-            const scale = 0.95 + (op * 0.05);
-            beat1.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
-          } else {
-            beat1.style.opacity = '0';
-          }
+        // 2. Dynamic 3D Camera Choreography by Section
+        if (scrollProgress < 0.18) {
+          // Hero Stage: Centered portal emergence
+          const p = scrollProgress / 0.18;
+          targetCamScale = 1.0 + p * 0.05;
+          targetCamX = 0;
+          targetCamY = 0;
+        } else if (scrollProgress < 0.42) {
+          // Platform Overview: Shift right so feature cards on left stand out
+          const p = (scrollProgress - 0.18) / 0.24;
+          targetCamScale = 1.05 + p * 0.05;
+          targetCamX = p * 45;
+          targetCamY = -p * 15;
+        } else if (scrollProgress < 0.68) {
+          // 22 Universes Showcase: Zoom slightly into portal center
+          const p = (scrollProgress - 0.42) / 0.26;
+          targetCamScale = 1.10 - p * 0.04;
+          targetCamX = 45 * (1 - p);
+          targetCamY = -15 + p * 20;
+        } else if (scrollProgress < 0.88) {
+          // Pricing Matrix: Pull back to wide zero-gravity space
+          const p = (scrollProgress - 0.68) / 0.20;
+          targetCamScale = 1.06 - p * 0.03;
+          targetCamX = -p * 25;
+          targetCamY = 5 - p * 5;
+        } else {
+          // FAQ & Deep Space Footer: Astronaut reaches towards user
+          const p = (scrollProgress - 0.88) / 0.12;
+          targetCamScale = 1.03 - p * 0.03;
+          targetCamX = -25 * (1 - p);
+          targetCamY = 0;
         }
 
-        // 4. Narrative Beat 2 (0.56 - 0.84)
-        if (beat2) {
-          if (scrollProgress >= 0.56 && scrollProgress <= 0.84) {
-            let op = 0;
-            if (scrollProgress < 0.64) {
-              op = (scrollProgress - 0.56) / 0.08;
-            } else if (scrollProgress <= 0.76) {
-              op = 1;
-            } else {
-              op = 1 - (scrollProgress - 0.76) / 0.08;
-            }
-            beat2.style.opacity = Math.max(0, Math.min(1, op)).toFixed(3);
-            const scale = 0.95 + (op * 0.05);
-            beat2.style.transform = `translate(-50%, -50%) scale(${scale.toFixed(3)})`;
-          } else {
-            beat2.style.opacity = '0';
-          }
-        }
-
-        // 5. Apple-Style HUD Scrubber Progress
+        // 3. Apple-Style Global HUD Scrubber
         if (scrollHudProgress) {
           scrollHudProgress.style.width = `${(scrollProgress * 100).toFixed(1)}%`;
         }
         if (scrollHudPhase) {
           const pct = Math.round(scrollProgress * 100);
           let phase = 'SYS: EVENT HORIZON';
-          if (scrollProgress < 0.22) phase = 'HERO CONSOLE';
-          else if (scrollProgress < 0.54) phase = 'PORTAL CROSSING';
-          else if (scrollProgress < 0.86) phase = '3D SYNTHESIS';
-          else phase = 'DEEP SPACE REACH';
+          if (scrollProgress < 0.18) phase = 'PORTAL EMERGENCE';
+          else if (scrollProgress < 0.42) phase = '3D PLATFORM ENGINE';
+          else if (scrollProgress < 0.68) phase = '22 SPATIAL UNIVERSES';
+          else if (scrollProgress < 0.88) phase = 'PRODUCTION CDNS';
+          else phase = 'DEEP SPACE HORIZON';
           scrollHudPhase.textContent = `${phase} // ${pct}%`;
         }
       }
@@ -2820,18 +2836,23 @@
         targetRotX = -deltaY * 8;
       });
 
-      // Smooth Animation Loop (Frame interpolation + 3D perspective tilt)
+      // Smooth Animation Loop (Frame interpolation + Camera Choreography + 3D Tilt)
       function loop() {
-        // Smooth frame scrub dampening (lerp with 0.16)
-        currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.16;
+        // Smooth frame scrub dampening (lerp with 0.15)
+        currentFrameIndex += (targetFrameIndex - currentFrameIndex) * 0.15;
         const frameToDraw = Math.round(currentFrameIndex);
         renderFrame(frameToDraw);
+
+        // Smooth Camera Choreography
+        currentCamScale += (targetCamScale - currentCamScale) * 0.08;
+        currentCamX += (targetCamX - currentCamX) * 0.08;
+        currentCamY += (targetCamY - currentCamY) * 0.08;
 
         // Subtle 3D perspective warp on mouse move
         currentRotX += (targetRotX - currentRotX) * 0.08;
         currentRotY += (targetRotY - currentRotY) * 0.08;
 
-        canvas.style.transform = `translate(-50%, -50%) scale(1.03) translate3d(${currentRotY * 1.2}px, ${-currentRotX * 1.2}px, 0px)`;
+        canvas.style.transform = `translate(-50%, -50%) scale(${currentCamScale.toFixed(3)}) translate3d(${(currentCamX + currentRotY * 1.2).toFixed(1)}px, ${(currentCamY - currentRotX * 1.2).toFixed(1)}px, 0px)`;
 
         requestAnimationFrame(loop);
       }
