@@ -1,0 +1,92 @@
+/* ====================================================
+   🌌 3D AMBIENT OPEN STAR CLUSTER BACKGROUND
+   Model: "Bright stars of an open cluster" by Salvatore Orlando
+   Sketchfab: bc068b682f4243b2b702202a65df804d
+   ==================================================== */
+
+:root {
+  --cosmic-bg: #05070F;
+}
+
+/* Background Ambient Container (Full Screen, Pointer-Events None) */
+.cosmic-cluster-bg-wrapper {
+  position: fixed;
+  top: -6%;
+  left: -6%;
+  width: 112vw;
+  height: 112vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: var(--cosmic-bg);
+  animation: cosmicClusterDrift 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.cosmic-cluster-bg-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  pointer-events: none;
+  filter: contrast(1.12) brightness(1.05);
+}
+
+/* Contrast & Vignette Atmosphere Overlay */
+.cosmic-cluster-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 35%, rgba(5, 7, 15, 0.35) 0%, rgba(5, 7, 15, 0.78) 65%, #05070F 100%);
+}
+
+/* Smooth Weightless Multi-Axis Organic Float */
+@keyframes cosmicClusterDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+  }
+  33% {
+    transform: translate3d(-18px, 14px, 0) scale(1.03) rotate(0.8deg);
+  }
+  66% {
+    transform: translate3d(16px, -18px, 0) scale(1.05) rotate(-0.6deg);
+  }
+  100% {
+    transform: translate3d(-10px, -12px, 0) scale(1.02) rotate(0.4deg);
+  }
+}
+
+/* Micro Sketchfab Model Attribution */
+.cosmic-cluster-credit {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+}
+.cosmic-cluster-credit a {
+  color: rgba(245, 166, 35, 0.7);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.cosmic-cluster-credit a:hover {
+  color: #F5A623;
+  text-decoration: underline;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .cosmic-cluster-bg-wrapper {
+    top: -8%;
+    left: -8%;
+    width: 116vw;
+    height: 116vh;
+    animation-duration: 22s;
+  }
+}
+
+/* Respect Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  .cosmic-cluster-bg-wrapper {
+    animation: none !important;
+  }
+}

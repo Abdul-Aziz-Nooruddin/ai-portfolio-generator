@@ -17,7 +17,7 @@ class SecurityMiddleware {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
         "font-src 'self' https://fonts.gstatic.com data:",
         "img-src 'self' data: https: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.google.co.in",
-        "frame-src 'self' https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com",
+        "frame-src 'self' https://sketchfab.com https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com",
         "connect-src 'self' blob: data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com",
         "object-src 'none'",
         "base-uri 'self'",

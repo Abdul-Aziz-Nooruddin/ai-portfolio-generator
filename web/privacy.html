@@ -24,6 +24,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
@@ -54,6 +55,8 @@
       padding: 48px;
       backdrop-filter: blur(20px);
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      position: relative;
+      z-index: 10;
     }
     h1 {
       font-family: var(--font-display);
@@ -99,6 +102,23 @@
   </style>
 </head>
 <body>
+  <!-- 🌌 3D Ambient Open Star Cluster Background -->
+  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
+    <iframe
+      title="Bright stars of an open cluster"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      xr-spatial-tracking
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share
+      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
+    </iframe>
+    <div class="cosmic-cluster-overlay"></div>
+  </div>
   <div class="container">
     <a href="/" class="back-btn"><i data-lucide="arrow-left" style="width:16px;height:16px;"></i> Back to MyFolio</a>
     <h1>Privacy Policy</h1>

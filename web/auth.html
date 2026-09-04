@@ -61,7 +61,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: #080B1E url('/assets/bg-auth.webp') center/cover no-repeat fixed;
+      background: #05070F;
       color: var(--text);
       font-family: var(--font-sans);
       min-height: 100vh;
@@ -339,9 +339,27 @@
     }
   </style>
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+  <!-- 🌌 3D Ambient Open Star Cluster Background -->
+  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
+    <iframe
+      title="Bright stars of an open cluster"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      xr-spatial-tracking
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share
+      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
+    </iframe>
+    <div class="cosmic-cluster-overlay"></div>
+  </div>
   <div class="ambient-glow"></div>
 
   <main style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; z-index: 10;">

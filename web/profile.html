@@ -23,6 +23,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
@@ -386,8 +387,23 @@
   </style>
 </head>
 <body>
-  <!-- Moving 3D Fluid Silk Background Container -->
-  <div class="fluid-silk-bg-container"></div>
+  <!-- 🌌 3D Ambient Open Star Cluster Background -->
+  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
+    <iframe
+      title="Bright stars of an open cluster"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      xr-spatial-tracking
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share
+      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
+    </iframe>
+    <div class="cosmic-cluster-overlay"></div>
+  </div>
 
   <div class="app-shell-layout">
     <!-- Universal Sidebar Mount -->
