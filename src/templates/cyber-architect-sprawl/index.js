@@ -13,6 +13,7 @@
  */
 
 const { TemplateHelper } = require('../template-helper');
+const { ProjectArtworkSynthesizer } = require('../project-artwork-synthesizer');
 
 const CyberArchitectSprawlTemplate = {
   id: 'cyber-architect-sprawl',
@@ -87,11 +88,16 @@ const CyberArchitectSprawlTemplate = {
     ];
 
     const rawProjects = (data.projects && data.projects.length) ? data.projects : defaultProjects;
+    const assignedArtworks = new Set();
+    const userSeed = data.github || data.username || data.name || '';
+
     const projectCardsHtml = rawProjects.slice(0, 6).map((proj, idx) => {
       const pTitle = TemplateHelper.escapeHtml(proj.title || `Node 0${idx + 1}`);
       const pCat = TemplateHelper.escapeHtml(proj.category || 'Grid App');
       const pDesc = TemplateHelper.escapeHtml(proj.desc || 'High-performance distributed telemetry protocol.');
-      const pImg = proj.image || '/assets/designs/cyber/project_crystal_nobg.png';
+      
+      const artwork = ProjectArtworkSynthesizer.resolveProjectArtwork(proj, 'cyber-architect-sprawl', idx, assignedArtworks, userSeed);
+      const pImg = proj.image || artwork.src;
       const pUrl = TemplateHelper.escapeHtml(proj.url || '#');
       const pTags = Array.isArray(proj.tags) ? proj.tags : ['Grid', 'Telemetry'];
       const tagsHtml = pTags.map(t => `<span class="tech-tag-chip">${TemplateHelper.escapeHtml(t)}</span>`).join('');

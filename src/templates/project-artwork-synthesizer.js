@@ -40,39 +40,49 @@ class ProjectArtworkSynthesizer {
     { src: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg', label: 'Chrono-Obsidian Monolith', icon: '🏛️', color: '#f59e0b', keywords: ['obsidian', 'steampunk', 'clockwork', 'gear', 'sanctuary', 'monolith', 'stone', 'brass', 'astrolabe', 'relic'] }
   ];
 
+  // Dedicated Cyber-Architect 3D Assets
+  static cyberCatalog = [
+    { src: '/assets/designs/cyber/project_ai_core_nobg.png', label: 'Neural AI Core', icon: '🧠', color: '#00F0FF', keywords: ['ai', 'intelligence', 'neural', 'machine learning', 'model', 'agent', 'brain', 'deep learning', 'vision', 'nlp', 'llm', 'gpt', 'generator'] },
+    { src: '/assets/designs/cyber/project_data_chain_nobg.png', label: 'ConsentChain Protocol', icon: '⛓️', color: '#FF007A', keywords: ['algorand', 'algo', 'consent', 'blockchain', 'chain', 'crypto', 'escrow', 'web3', 'ledger', 'token', 'nft', 'dapp', 'polygon'] },
+    { src: '/assets/designs/cyber/circuit_board_nobg.png', label: 'Systems & Management Hub', icon: '🖧', color: '#FFB800', keywords: ['lms', 'management', 'database', 'sql', 'system', 'user', 'backend', 'server', 'admin', 'records', 'portal', 'api', 'pass'] },
+    { src: '/assets/designs/cyber/project_crystal_nobg.png', label: 'Glassmorphic WebGL Portfolio', icon: '💎', color: '#00F0FF', keywords: ['portfolio', 'showcase', 'personal', 'design', 'glassmorphism', 'particle', 'ui', 'ux', 'frontend', 'website', 'devfolio'] },
+    { src: '/assets/designs/cyber/origami_bird_nobg.png', label: 'Encrypted Note Messenger', icon: '🕊️', color: '#38BDF8', keywords: ['pass', 'note', 'messenger', 'secret', 'chat', 'message', 'text', 'send', 'mail', 'notification', 'dispatch', 'cipher', 'iota'] },
+    { src: '/assets/designs/cyber/cyber_eye_nobg.png', label: 'Cybernetic Telemetry Radar', icon: '👁️', color: '#F43F5E', keywords: ['vision', 'eye', 'radar', 'monitoring', 'observability', 'telemetry', 'detector', 'lens', 'sensor'] },
+    { src: '/assets/designs/cyber/hero_hand_nobg.png', label: 'Robotic Automation Stage', icon: '🤖', color: '#00F0FF', keywords: ['robot', 'hand', 'automation', 'hardware', 'spatial', 'device', 'control', 'bot'] },
+    { src: '/assets/designs/cyber/resume_cards_nobg.png', label: 'Curated Codex Dossier', icon: '📜', color: '#C084FC', keywords: ['resume', 'dossier', 'codex', 'profile', 'auth', 'identity', 'credential', 'license'] },
+    { src: '/assets/designs/cyber/blog_ux_3d.jpg', label: 'Hyper-Reality UI Mesh', icon: '🥽', color: '#EC4899', keywords: ['reality', 'vr', 'ar', 'metaverse', 'ux', 'spatial', '3d'] },
+    { src: '/assets/designs/cyber/blog_api_3d.jpg', label: 'Quantum API Gateway', icon: '⚡', color: '#38BDF8', keywords: ['api', 'rest', 'graphql', 'rpc', 'gateway', 'microservice', 'distributed', 'socket'] },
+    { src: '/assets/designs/cyber/blog_ai_3d.jpg', label: 'Generative Shader Engine', icon: '🌌', color: '#A855F7', keywords: ['shader', 'generative', 'graphics', 'webgl', 'three', 'canvas'] }
+  ];
+
   /**
-   * Generates a context-aware live 3D card tailored to the project's exact name & description.
-   * Guarantees distinct, non-repeating visuals across project cards within the same portfolio.
-   * 
-   * @param {Object} project { name, desc, tech, category }
-   * @param {string} theme Template visual universe theme
-   * @param {number} projectIndex Index of project in the portfolio
-   * @param {Set<string>|Array<string>} usedAssets Optional set to track already-assigned images in this portfolio
-   * @param {string} userSeed Optional candidate username / identity seed
-   * @returns {string} Live 3D artwork markup
+   * Resolves a distinct, highly relevant 3D image for a project.
+   * Guarantees 0 duplicate matching images within the same portfolio.
    */
-  static generate3DProjectThumbnail(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
+  static resolveProjectArtwork(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
     const nameText = String(project.name || project.title || '').toLowerCase();
     const descText = String(project.desc || project.description || project.problem || '').toLowerCase();
     const categoryText = String(project.category || '').toLowerCase();
-    const techText = String(project.tech || '').toLowerCase();
+    const techText = String(project.tech || (Array.isArray(project.technologies) ? project.technologies.join(' ') : '') || '').toLowerCase();
     const seed = String(userSeed || '').toLowerCase();
     const combinedText = `${seed} ${nameText} ${descText} ${categoryText} ${techText}`;
 
-    const catalog = this.assetCatalog;
-    const idx = Number(projectIndex || 0);
+    const isCyberTheme = (theme === 'cyber-architect-sprawl');
+    const catalog = isCyberTheme
+      ? [...this.cyberCatalog, ...this.assetCatalog]
+      : this.assetCatalog;
 
-    // Track assigned assets to guarantee 100% uniqueness in the current portfolio
+    const idx = Number(projectIndex || 0);
     const assigned = (usedAssets instanceof Set) ? usedAssets : null;
 
     // 1. Score each asset in catalog based on keyword matches
     const scoredList = catalog.map((item, originalIndex) => {
       let score = 0;
       for (const kw of item.keywords) {
-        if (nameText.includes(kw)) score += 10;
-        else if (categoryText.includes(kw)) score += 6;
-        else if (descText.includes(kw)) score += 3;
-        else if (techText.includes(kw)) score += 1;
+        if (nameText.includes(kw)) score += 15;
+        else if (categoryText.includes(kw)) score += 8;
+        else if (descText.includes(kw)) score += 4;
+        else if (techText.includes(kw)) score += 2;
       }
       return { item, score, originalIndex };
     });
@@ -80,7 +90,7 @@ class ProjectArtworkSynthesizer {
     // Sort by match score descending
     scoredList.sort((a, b) => b.score - a.score);
 
-    // 2. Filter available assets (excluding already-assigned assets in this portfolio)
+    // 2. Filter available assets (STRICT: excluding already-assigned assets in this portfolio)
     let availableScored = scoredList;
     if (assigned && assigned.size > 0 && assigned.size < catalog.length) {
       const filtered = scoredList.filter(s => !assigned.has(s.item.src));
@@ -94,10 +104,8 @@ class ProjectArtworkSynthesizer {
     let chosenAsset;
 
     if (positiveMatches.length > 0) {
-      // Pick the top scoring available asset
       chosenAsset = positiveMatches[0].item;
     } else {
-      // Deterministic spread over remaining available catalog assets
       let hash = 0;
       for (let i = 0; i < combinedText.length; i++) {
         hash = ((hash << 5) - hash) + combinedText.charCodeAt(i);
@@ -117,16 +125,31 @@ class ProjectArtworkSynthesizer {
       assigned.add(chosenAsset.src);
     }
 
-    const imgSrc = chosenAsset.src;
-    const label = chosenAsset.label;
-    const icon = chosenAsset.icon;
-    const badgeColor = chosenAsset.color;
-    const altText = `${project.name || 'Project'} — ${label}`;
+    return {
+      src: chosenAsset.src,
+      label: chosenAsset.label,
+      icon: chosenAsset.icon,
+      color: chosenAsset.color,
+      altText: `${project.name || project.title || 'Project'} — ${chosenAsset.label}`
+    };
+  }
+
+  /**
+   * Generates a context-aware live 3D card tailored to the project's exact name & description.
+   * Guarantees distinct, non-repeating visuals across project cards within the same portfolio.
+   */
+  static generate3DProjectThumbnail(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
+    const artwork = this.resolveProjectArtwork(project, theme, projectIndex, usedAssets, userSeed);
+    const imgSrc = artwork.src;
+    const label = artwork.label;
+    const icon = artwork.icon;
+    const badgeColor = artwork.color;
+    const altText = artwork.altText;
 
     return `
       <div class="project-3d-image-card" style="width: 100%; height: 180px; position: relative; overflow: hidden; border-radius: 12px; background: #060919; margin-bottom: 4px;">
         <!-- High-Definition 3D Render -->
-        <img src="${imgSrc}" alt="${altText}" class="project-3d-img-thumb" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
+        <img src="${imgSrc}" alt="${altText}" class="project-3d-img-thumb" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover; border-radius: 12px; display: block; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
         
         <!-- Subtle Overlay Vignette -->
         <div style="position: absolute; inset: 0; pointer-events: none; border-radius: 12px; background: linear-gradient(180deg, rgba(6, 9, 25, 0.35) 0%, rgba(6, 9, 25, 0) 40%, rgba(6, 9, 25, 0.75) 100%); border: 1px solid rgba(255,255,255,0.1); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);"></div>
