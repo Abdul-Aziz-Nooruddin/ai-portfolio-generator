@@ -123,7 +123,7 @@ const AbyssalNautilusArtisanTemplate = {
       return `
         <article class="treasure-chest-card" data-category="${TemplateHelper.escapeHtml(tagsArray[0] || 'all')}">
           <div class="chest-lid-ornament">
-            <img src="${chestImg}" alt="3D Treasure Chest Ornament" class="chest-wheel-img" />
+            <img src="${chestImg}" alt="3D Treasure Chest Ornament" class="chest-wheel-img" loading="lazy" decoding="async" />
           </div>
           <div class="chest-body-plate">
             <div class="chest-plate-header">
@@ -264,7 +264,7 @@ const AbyssalNautilusArtisanTemplate = {
       return `
         <article class="sand-dune-chest">
           <div class="sand-chest-lid">
-            <img src="${lidImg}" alt="Treasure Chest Lid" class="sand-chest-lid-img" />
+            <img src="${lidImg}" alt="Treasure Chest Lid" class="sand-chest-lid-img" loading="lazy" decoding="async" />
           </div>
           <div class="sand-parchment-scroll">
             <div class="scroll-date">${art.date}</div>
@@ -1581,7 +1581,7 @@ const AbyssalNautilusArtisanTemplate = {
         <div class="hero-3d-stage">
           <div class="nautilus-ambient-glow"></div>
           <div class="hero-nautilus-artwork-pod">
-            <img src="/assets/designs/nautilus/nautilus_hand_nobg.png" alt="3D Nautilus Shell & Coral Hand" class="hero-nautilus-img" />
+            <img src="/assets/designs/nautilus/nautilus_hand_nobg.png" alt="3D Nautilus Shell & Coral Hand" class="hero-nautilus-img" fetchpriority="high" decoding="async" />
           </div>
         </div>
       </div>
@@ -1594,7 +1594,7 @@ const AbyssalNautilusArtisanTemplate = {
 
       <div class="about-abyss-grid">
         <div class="porthole-radar-stage">
-          <img src="/assets/designs/nautilus/porthole_nobg.png" alt="Submarine Porthole Sonar Radar" class="porthole-img" />
+          <img src="/assets/designs/nautilus/porthole_nobg.png" alt="Submarine Porthole Sonar Radar" class="porthole-img" loading="lazy" decoding="async" />
         </div>
 
         <div class="about-narrative-card">
@@ -1653,7 +1653,7 @@ const AbyssalNautilusArtisanTemplate = {
 
       <div class="skills-abyss-grid">
         <div class="coral-tree-stage">
-          <img src="/assets/designs/nautilus/coral_tree_nobg.png" alt="Bioluminescent Coral Tree of Life" class="coral-tree-img" />
+          <img src="/assets/designs/nautilus/coral_tree_nobg.png" alt="Bioluminescent Coral Tree of Life" class="coral-tree-img" loading="lazy" decoding="async" />
         </div>
 
         <div class="skills-dossier-panel">
@@ -1676,8 +1676,8 @@ const AbyssalNautilusArtisanTemplate = {
         </div>
 
         <div class="experience-creature-stage">
-          <img src="/assets/designs/nautilus/squid_nobg.png" alt="3D Giant Squid" class="squid-img" />
-          <img src="/assets/designs/nautilus/kelp_tree_nobg.png" alt="Underwater Sea Kelp" class="kelp-img" />
+          <img src="/assets/designs/nautilus/squid_nobg.png" alt="3D Giant Squid" class="squid-img" loading="lazy" decoding="async" />
+          <img src="/assets/designs/nautilus/kelp_tree_nobg.png" alt="Underwater Sea Kelp" class="kelp-img" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>
@@ -1689,9 +1689,9 @@ const AbyssalNautilusArtisanTemplate = {
 
       <div class="resume-abyss-grid">
         <div class="vintage-map-stage">
-          <img src="/assets/designs/nautilus/vintage_map_clean_nobg.png" alt="Vintage Nautical Treasure Map" class="vintage-map-img" />
+          <img src="/assets/designs/nautilus/vintage_map_clean_nobg.png" alt="Vintage Nautical Treasure Map" class="vintage-map-img" loading="lazy" decoding="async" />
           <div class="map-dynamic-overlay">
-            <img src="${safeAvatar}" alt="${safeName}" class="map-avatar-round" />
+            <img src="${safeAvatar}" alt="${safeName}" class="map-avatar-round" loading="lazy" decoding="async" />
             <div class="map-candidate-name">${safeName}</div>
             <div class="map-candidate-title">${safeTitle}</div>
           </div>
@@ -1763,7 +1763,7 @@ const AbyssalNautilusArtisanTemplate = {
         </div>
 
         <div class="seahorse-stage">
-          <img src="/assets/designs/nautilus/seahorse_nobg.png" alt="Ornate Pearlescent Seahorse on Coral" class="seahorse-img" />
+          <img src="/assets/designs/nautilus/seahorse_nobg.png" alt="Ornate Pearlescent Seahorse on Coral" class="seahorse-img" loading="lazy" decoding="async" />
         </div>
 
         <div class="contact-form-panel">

@@ -99,7 +99,7 @@ const CyberArchitectSprawlTemplate = {
       return `
         <div class="project-bento-card" data-category="${pCat.toLowerCase().replace(/[^a-z0-9]/g, '-')}">
           <div class="project-preview-wrap">
-            <img src="${pImg}" alt="${pTitle}" class="project-thumb-img" onerror="this.src='/assets/designs/cyber/project_crystal_nobg.png'" />
+            <img src="${pImg}" alt="${pTitle}" class="project-thumb-img" loading="lazy" decoding="async" onerror="this.src='/assets/designs/cyber/project_crystal_nobg.png'" />
             <div class="project-glow-overlay"></div>
             <span class="project-cat-badge">${pCat}</span>
           </div>
@@ -1643,7 +1643,7 @@ const CyberArchitectSprawlTemplate = {
         <div class="hero-3d-stage">
           <div class="hero-3d-ambient-glow"></div>
           <div class="hero-hand-artwork-container">
-            <img src="/assets/designs/cyber/hero_hand_nobg.png" alt="3D Floating Holographic Cyber Hand" class="hero-hand-clean-img" />
+            <img src="/assets/designs/cyber/hero_hand_nobg.png" alt="3D Floating Holographic Cyber Hand" class="hero-hand-clean-img" fetchpriority="high" decoding="async" />
             <canvas id="hero-crystals-canvas"></canvas>
           </div>
         </div>
@@ -1660,7 +1660,7 @@ const CyberArchitectSprawlTemplate = {
       <div class="about-sprawl-layout">
         <div class="about-visual-rig">
           <div class="cyber-eye-floating-pod">
-            <img src="/assets/designs/cyber/cyber_eye_nobg.png" alt="3D Cyber Eye Iris" class="cyber-eye-clean-img" />
+            <img src="/assets/designs/cyber/cyber_eye_nobg.png" alt="3D Cyber Eye Iris" class="cyber-eye-clean-img" loading="lazy" decoding="async" />
           </div>
           <div class="radar-canvas-pod">
             <canvas id="about-radar-canvas" width="360" height="360"></canvas>
@@ -1786,7 +1786,7 @@ const CyberArchitectSprawlTemplate = {
         </div>
 
         <div class="isometric-circuit-stage">
-          <img src="/assets/designs/cyber/circuit_board_nobg.png" alt="3D Isometric Circuit Board with Cityscape" class="circuit-clean-img" />
+          <img src="/assets/designs/cyber/circuit_board_nobg.png" alt="3D Isometric Circuit Board with Cityscape" class="circuit-clean-img" loading="lazy" decoding="async" />
         </div>
       </div>
     </section>
@@ -1800,7 +1800,7 @@ const CyberArchitectSprawlTemplate = {
 
       <div class="resume-sprawl-grid">
         <div class="resume-plates-stage">
-          <img src="/assets/designs/cyber/resume_cards_nobg.png" alt="Floating Tilted Glass Resume Sheets" class="resume-clean-art-img" />
+          <img src="/assets/designs/cyber/resume_cards_nobg.png" alt="Floating Tilted Glass Resume Sheets" class="resume-clean-art-img" loading="lazy" decoding="async" />
         </div>
 
         <div class="resume-credentials-dossier">
@@ -1831,7 +1831,7 @@ const CyberArchitectSprawlTemplate = {
 
       <div class="net-stream-grid">
         <article class="stream-card">
-          <img src="/assets/designs/cyber/blog_ux_3d.jpg" alt="Hyper-Reality UX" class="stream-thumb-img" />
+          <img src="/assets/designs/cyber/blog_ux_3d.jpg" alt="Hyper-Reality UX" class="stream-thumb-img" loading="lazy" decoding="async" />
           <div class="stream-card-body">
             <span class="stream-tag">Hyper-Reality UX</span>
             <h4 class="stream-title">Hyper-Reality: The Future of UX</h4>
@@ -1844,7 +1844,7 @@ const CyberArchitectSprawlTemplate = {
         </article>
 
         <article class="stream-card">
-          <img src="/assets/designs/cyber/blog_api_3d.jpg" alt="Decentralized APIs" class="stream-thumb-img" />
+          <img src="/assets/designs/cyber/blog_api_3d.jpg" alt="Decentralized APIs" class="stream-thumb-img" loading="lazy" decoding="async" />
           <div class="stream-card-body">
             <span class="stream-tag">Quantum Mesh</span>
             <h4 class="stream-title">Decentralized APIs & Quantum Mesh</h4>
@@ -1857,7 +1857,7 @@ const CyberArchitectSprawlTemplate = {
         </article>
 
         <article class="stream-card">
-          <img src="/assets/designs/cyber/blog_ai_3d.jpg" alt="Realtime AI Apps" class="stream-thumb-img" />
+          <img src="/assets/designs/cyber/blog_ai_3d.jpg" alt="Realtime AI Apps" class="stream-thumb-img" loading="lazy" decoding="async" />
           <div class="stream-card-body">
             <span class="stream-tag">AI Systems</span>
             <h4 class="stream-title">Building Realtime AI Apps</h4>
@@ -1911,7 +1911,7 @@ const CyberArchitectSprawlTemplate = {
         </div>
 
         <div class="contact-bird-rig">
-          <img src="/assets/designs/cyber/origami_bird_nobg.png" alt="3D Low-Poly Origami Bird on Neon Branch" class="origami-bird-clean-img" />
+          <img src="/assets/designs/cyber/origami_bird_nobg.png" alt="3D Low-Poly Origami Bird on Neon Branch" class="origami-bird-clean-img" loading="lazy" decoding="async" />
         </div>
 
         <div class="contact-form-pod">

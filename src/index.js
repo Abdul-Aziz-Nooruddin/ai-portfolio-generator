@@ -123,10 +123,63 @@ const netlifyDeployer = process.env.NETLIFY_TOKEN
 // Authenticate session early across all endpoints & API routers
 app.use(AuthMiddleware.authenticate(dbService, securityService));
 
+// =========================================================================
+// ULTRA-FAST STATIC ASSET ENGINE (Transparent WebP, Global CORS & 1-Year Cache)
+// =========================================================================
+app.use('/assets', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, HEAD, OPTIONS');
+  res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+  res.setHeader('Vary', 'Accept');
+
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    return next();
+  }
+
+  // Transparent WebP negotiation: if browser supports WebP and .webp version exists on disk, serve WebP immediately
+  const acceptHeader = req.headers['accept'] || '';
+  if (acceptHeader.includes('image/webp') && /\.(jpe?g|png)$/i.test(req.path)) {
+    const webpRelPath = req.path.replace(/\.(jpe?g|png)$/i, '.webp');
+    const candidates = [
+      path.join(process.cwd(), 'web', 'assets', webpRelPath),
+      path.join(process.cwd(), 'public', 'assets', webpRelPath)
+    ];
+    for (const cand of candidates) {
+      if (fs.existsSync(cand)) {
+        res.setHeader('Content-Type', 'image/webp');
+        return res.sendFile(cand);
+      }
+    }
+  }
+  next();
+});
+
+// Serve assets directly from web/assets and public/assets before domain rewrites
+app.use('/assets', express.static(path.join(process.cwd(), 'web', 'assets'), {
+  maxAge: '30d',
+  immutable: true
+}));
+app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets'), {
+  maxAge: '30d',
+  immutable: true
+}));
+
 // Dynamic Custom Domain & Subdomain Hostname Router
 app.use(async (req, res, next) => {
   const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
   if (!host || host === 'localhost' || host === '127.0.0.1' || host === 'myfolio.tech' || host === 'www.myfolio.tech' || host === 'portfolio.site') {
+    return next();
+  }
+
+  // CRITICAL: Never intercept static assets, APIs, previews or files with custom domain HTML
+  if (
+    req.path.startsWith('/assets/') ||
+    req.path.startsWith('/api/') ||
+    req.path.startsWith('/sites/') ||
+    req.path.startsWith('/p/') ||
+    req.path.startsWith('/u/') ||
+    /\.(png|jpe?g|webp|gif|svg|ico|css|js|glb|gltf|bin|wasm|woff2?|ttf|eot|json|mp4|webm|pdf)$/i.test(req.path)
+  ) {
     return next();
   }
 
