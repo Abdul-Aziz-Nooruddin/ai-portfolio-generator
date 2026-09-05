@@ -2003,12 +2003,18 @@ app.get('/p/:siteId', async (req, res) => {
         }
       };
 
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-      const rendered = template.render(demoData);
-      const htmlOutput = typeof rendered === 'string' ? rendered : (rendered?.html || '');
-      return res.send(htmlOutput);
+      try {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+        res.setHeader('X-Content-Type-Options', 'nosniff');
+        const rendered = template.render(demoData);
+        const htmlOutput = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+        hostingProvider.deploy(siteId, htmlOutput, demoData, true).catch(() => {});
+        return res.send(htmlOutput);
+      } catch (renderErr) {
+        console.error(`[DEMO PREVIEW] Error rendering template ${siteId}:`, renderErr);
+        return res.status(500).send('Unable to render live portfolio preview at this time.');
+      }
     }
 
     // If it is a web preview site ID that was auto-purged after the 24-hour window, render friendly expired page

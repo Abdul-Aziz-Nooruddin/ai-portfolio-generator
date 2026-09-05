@@ -1141,23 +1141,28 @@ async function loadSamplesList() {
     const res = await fetch('/api/demo/samples');
     const data = await res.json();
     if (data.success && data.samples) {
-      grid.innerHTML = data.samples.map(s => `
+      grid.innerHTML = data.samples.map(s => {
+        const cleanRole = (s.role || s.badge || 'Creative 3D').replace(/\//g, ' • ');
+        return `
         <div class="sample-card">
-          <div>
-            <div style="font-size:0.75rem; font-weight:800; color:var(--product-accent); text-transform:uppercase; margin-bottom:4px;">${s.badge}</div>
-            <h4 style="font-family:var(--font-editorial); font-size:1.15rem; margin-bottom:4px;">${s.name}</h4>
-            <div style="font-size:0.82rem; color:var(--product-text-muted); margin-bottom:8px;">${s.role}</div>
-            <p style="font-size:0.84rem; line-height:1.5; color:var(--product-text);">${s.description}</p>
+          <div class="sample-card-body">
+            <span class="sample-category-tag">${cleanRole}</span>
+            <h4 class="sample-title">${s.name}</h4>
+            <p class="sample-description">${s.description || 'Immersive 3D portfolio environment with responsive physics and spatial lighting.'}</p>
           </div>
-          <div style="margin-top:14px; display:flex; gap:8px;">
-            <a href="${s.previewUrl}" target="_blank" class="btn-subtle" style="flex:1; text-align:center; text-decoration:none; padding:8px 12px; font-size:0.85rem; font-weight:700; border-radius:8px;">Live Preview ↗</a>
-            <button type="button" class="btn-primary-mini" style="flex:1; padding:8px 12px; font-size:0.85rem; font-weight:700; border-radius:8px;" onclick="useTemplateInStudio('${s.id}')">Use in Studio &rarr;</button>
+          <div class="sample-action-row">
+            <a href="${s.previewUrl}" target="_blank" rel="noopener noreferrer" class="sample-btn-live">
+              <span>Live preview</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            <button type="button" class="sample-btn-studio" onclick="useTemplateInStudio('${s.id}')">Open in studio</button>
           </div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     }
   } catch (e) {
-    grid.innerHTML = '<p>Unable to load samples at this moment.</p>';
+    grid.innerHTML = '<p style="color: #9C97B8; text-align: center; padding: 20px;">Unable to load templates at this moment.</p>';
   }
 }
 

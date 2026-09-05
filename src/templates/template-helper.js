@@ -122,7 +122,30 @@ class TemplateHelper {
     let projects = rawProjects.map((p, idx) => {
       const pName = p.name || p.title || `Project #${idx + 1}`;
       const pDesc = p.desc || p.description || p.problem || 'Production software system engineered with modern practices.';
-      const pTech = p.tech || p.tech_stack || (Array.isArray(p.technologies) ? p.technologies.join(' • ') : skills.slice(0, 3).join(' • '));
+      
+      let techString = '';
+      let tagsArray = [];
+      if (Array.isArray(p.tech)) {
+        tagsArray = p.tech.map(t => String(t).trim()).filter(Boolean);
+        techString = tagsArray.join(' • ');
+      } else if (typeof p.tech === 'string' && p.tech.trim()) {
+        techString = p.tech;
+        tagsArray = p.tech.split(/[•,]/).map(t => t.trim()).filter(Boolean);
+      } else if (Array.isArray(p.technologies)) {
+        tagsArray = p.technologies.map(t => String(t).trim()).filter(Boolean);
+        techString = tagsArray.join(' • ');
+      } else if (Array.isArray(p.tags)) {
+        tagsArray = p.tags.map(t => String(t).trim()).filter(Boolean);
+        techString = tagsArray.join(' • ');
+      } else if (typeof p.tech_stack === 'string' && p.tech_stack.trim()) {
+        techString = p.tech_stack;
+        tagsArray = p.tech_stack.split(/[•,]/).map(t => t.trim()).filter(Boolean);
+      } else {
+        tagsArray = skills.slice(0, 3);
+        techString = tagsArray.join(' • ');
+      }
+      if (tagsArray.length === 0) tagsArray = ['TypeScript', 'WebGL'];
+
       const pGithub = sanitizeSocialUrl(p.github || p.repo) || github;
       const pLive = sanitizeSocialUrl(p.live || p.link) || website || pGithub;
       let pCategory = p.category;
@@ -158,8 +181,8 @@ class TemplateHelper {
         title: pName,
         desc: pDesc,
         description: pDesc,
-        tech: pTech,
-        tags: pTech.split(/[•,]/).map(t => t.trim()).filter(Boolean),
+        tech: techString,
+        tags: tagsArray,
         github: pGithub,
         live: pLive,
         category: pCategory,
