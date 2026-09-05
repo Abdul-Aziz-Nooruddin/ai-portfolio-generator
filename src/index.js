@@ -2010,7 +2010,7 @@ app.get('/p/:siteId', async (req, res) => {
         const rendered = template.render(demoData);
         const htmlOutput = typeof rendered === 'string' ? rendered : (rendered?.html || '');
         hostingProvider.deploy(siteId, htmlOutput, demoData, true).catch(() => {});
-        return res.send(htmlOutput);
+        html = htmlOutput;
       } catch (renderErr) {
         console.error(`[DEMO PREVIEW] Error rendering template ${siteId}:`, renderErr);
         return res.status(500).send('Unable to render live portfolio preview at this time.');
@@ -2203,29 +2203,31 @@ app.get('/p/:siteId', async (req, res) => {
 
   if (!isPaid) {
     const watermarkHtml = `
-    <!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->
-    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; display: flex; justify-content: center; align-items: center; overflow: hidden; opacity: 0.24; user-select: none;">
-      <!-- TOP NON-OVERLAPPING SURROUNDING TICKER -->
-      <div class="watermark-peripheral-text" style="position: absolute; top: 12%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
-        ✦ CREATED WITH @${botUsername} • UNLOCK FULL PORTFOLIO • @${botUsername} ✦
+    <!-- DIAGONAL LIVE PREVIEW BACKGROUND WATERMARK -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; opacity: 0.18; user-select: none;">
+      <!-- TOP DIAGONAL WATERMARK RIBBON -->
+      <div class="watermark-peripheral-text" style="white-space: nowrap; transform: rotate(-26deg) scale(1.35); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4vw, 3.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.7);">
+        LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D
       </div>
 
       <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
-      <div class="watermark-stamp-box" style="transform: rotate(-25deg); border: 3.5px solid rgba(128,128,128,0.5); border-radius: 16px; padding: 24px 44px; text-align: center; max-width: 90vw; background: rgba(128,128,128,0.03); color: rgba(128,128,128,0.45); box-sizing: border-box;">
-        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 12px;">
-          OFFICIAL PREVIEW TRIAL • @${botUsername}
-        </div>
-        <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.8rem, 7.5vw, 6rem); font-weight: 900; letter-spacing: 0.2em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 16px 24px; margin: 8px 0; white-space: nowrap;">
-          PREVIEW ONLY
-        </div>
-        <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.8rem, 1.6vw, 1.15rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 12px;">
-          24-HOUR TRIAL DEMO • UNLOCK AT @${botUsername}
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <div class="watermark-stamp-box" style="transform: rotate(-26deg); border: 3.5px solid rgba(232, 163, 61, 0.7); border-radius: 18px; padding: 22px 50px; text-align: center; max-width: 92vw; background: rgba(5, 8, 10, 0.35); color: #E8A33D; box-sizing: border-box; backdrop-filter: blur(2px);">
+          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.25rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 8px;">
+            ✦ OFFICIAL 3D DEMO SHOWCASE ✦
+          </div>
+          <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 950; letter-spacing: 0.22em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 14px 28px; margin: 8px 0; white-space: nowrap;">
+            LIVE PREVIEW
+          </div>
+          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.2rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 8px;">
+            MYFOLIO SPATIAL UNIVERSE • @${botUsername}
+          </div>
         </div>
       </div>
 
-      <!-- BOTTOM NON-OVERLAPPING SURROUNDING TICKER -->
-      <div class="watermark-peripheral-text" style="position: absolute; bottom: 14%; transform: rotate(-25deg); font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.3rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; white-space: nowrap; color: rgba(128,128,128,0.45);">
-        ✦ CREATED WITH @${botUsername} • UNLOCK FULL PORTFOLIO • @${botUsername} ✦
+      <!-- BOTTOM DIAGONAL WATERMARK RIBBON -->
+      <div class="watermark-peripheral-text" style="white-space: nowrap; transform: rotate(-26deg) scale(1.35); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4vw, 3.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.7);">
+        LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D
       </div>
     </div>
 

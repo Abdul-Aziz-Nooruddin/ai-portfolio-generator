@@ -173,20 +173,20 @@ const ChronoObsidianSanctuaryTemplate = {
 
     html {
       scroll-behavior: smooth;
-      background-color: var(--bg-obsidian);
+      background-color: #0A0D14;
       color: var(--text-main);
       font-family: var(--font-body);
     }
 
     body {
-      background-color: var(--bg-obsidian);
+      background-color: #0A0D14;
       background-image: 
-        radial-gradient(circle at 15% 20%, rgba(200, 138, 62, 0.06) 0%, transparent 45%),
-        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.05) 0%, transparent 45%),
-        linear-gradient(rgba(13, 16, 23, 0.96), rgba(13, 16, 23, 0.96));
+        radial-gradient(circle at 15% 20%, rgba(200, 138, 62, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
       min-height: 100vh;
       overflow-x: hidden;
       line-height: 1.6;
+      position: relative;
     }
 
     a {
@@ -204,6 +204,7 @@ const ChronoObsidianSanctuaryTemplate = {
       padding: 100px 0;
       border-bottom: 1px solid var(--border-stone);
       position: relative;
+      z-index: 2;
     }
 
     .section-badge-stone {
@@ -818,6 +819,9 @@ const ChronoObsidianSanctuaryTemplate = {
 </head>
 <body>
 
+  <!-- Live Interactive 3D WebGL Background Canvas -->
+  <canvas id="chrono-webgl-canvas" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 0;"></canvas>
+
   <!-- Navigation Header -->
   <header class="sanctuary-header">
     <div class="sanctuary-container">
@@ -1084,6 +1088,273 @@ const ChronoObsidianSanctuaryTemplate = {
         setTimeout(() => { btn.innerHTML = orig; }, 3000);
       }
       e.target.reset();
+    }
+    // =========================================================================
+    // 3D SPATIAL INTERACTIVE ENGINE (Obsidian Crystal • Brass Astrolabe • Scroll & Hover Reactive)
+    // =========================================================================
+    function initChronoObsidian3D() {
+      const canvas = document.getElementById('chrono-webgl-canvas');
+      if (!canvas || typeof THREE === 'undefined') return;
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 0, 28);
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas: canvas,
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance'
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+      // Main 3D Cluster Group
+      const cluster = new THREE.Group();
+      scene.add(cluster);
+
+      // 1. Faceted Obsidian Crystal Core
+      const crystalGeo = new THREE.IcosahedronGeometry(5.8, 0);
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: 0x141923,
+        roughness: 0.15,
+        metalness: 0.92,
+        flatShading: true
+      });
+      const crystalMesh = new THREE.Mesh(crystalGeo, crystalMat);
+      cluster.add(crystalMesh);
+
+      // 2. Brass Clockwork Wireframe Outer Cage
+      const wireCageGeo = new THREE.IcosahedronGeometry(6.1, 0);
+      const wireCageMat = new THREE.MeshBasicMaterial({
+        color: 0xE6B15C,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.55
+      });
+      const wireCageMesh = new THREE.Mesh(wireCageGeo, wireCageMat);
+      cluster.add(wireCageMesh);
+
+      // 3. Glowing Amber Heart
+      const heartGeo = new THREE.OctahedronGeometry(2.8, 0);
+      const heartMat = new THREE.MeshBasicMaterial({
+        color: 0xF59E0B,
+        wireframe: true
+      });
+      const heartMesh = new THREE.Mesh(heartGeo, heartMat);
+      cluster.add(heartMesh);
+
+      // 4. Concentric Astrolabe Brass Rings
+      const ringMat = new THREE.MeshStandardMaterial({
+        color: 0xE6B15C,
+        metalness: 0.95,
+        roughness: 0.25
+      });
+      const outerRing = new THREE.Mesh(new THREE.TorusGeometry(9.2, 0.16, 16, 64), ringMat);
+      const innerRing = new THREE.Mesh(new THREE.TorusGeometry(7.4, 0.12, 16, 64), ringMat);
+      outerRing.rotation.x = Math.PI / 3;
+      innerRing.rotation.y = Math.PI / 4;
+      cluster.add(outerRing);
+      cluster.add(innerRing);
+
+      // 5. Starfield & Glowing Amber Spark Particles
+      const particleCount = 1400;
+      const posArray = new Float32Array(particleCount * 3);
+      const colArray = new Float32Array(particleCount * 3);
+
+      const colorAmber = new THREE.Color(0xF59E0B);
+      const colorBrass = new THREE.Color(0xE6B15C);
+      const colorObsidian = new THREE.Color(0x94A3B8);
+
+      for (let i = 0; i < particleCount; i++) {
+        const i3 = i * 3;
+        posArray[i3] = (Math.random() - 0.5) * 140;
+        posArray[i3 + 1] = (Math.random() - 0.5) * 140;
+        posArray[i3 + 2] = (Math.random() - 0.5) * 90;
+
+        const mixRatio = Math.random();
+        const chosenCol = mixRatio > 0.6 ? colorAmber : (mixRatio > 0.25 ? colorBrass : colorObsidian);
+        colArray[i3] = chosenCol.r;
+        colArray[i3 + 1] = chosenCol.g;
+        colArray[i3 + 2] = chosenCol.b;
+      }
+
+      const particleGeo = new THREE.BufferGeometry();
+      particleGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+      particleGeo.setAttribute('color', new THREE.BufferAttribute(colArray, 3));
+
+      const particleMat = new THREE.PointsMaterial({
+        size: 0.45,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.85
+      });
+      const particleSystem = new THREE.Points(particleGeo, particleMat);
+      scene.add(particleSystem);
+
+      // 6. Floating Obsidian Shards
+      const shardsGroup = new THREE.Group();
+      scene.add(shardsGroup);
+      const shardGeo = new THREE.TetrahedronGeometry(1.0, 0);
+      const shardMat = new THREE.MeshStandardMaterial({
+        color: 0x1E2638,
+        roughness: 0.2,
+        metalness: 0.85,
+        flatShading: true
+      });
+
+      const shards = [];
+      for (let i = 0; i < 20; i++) {
+        const shard = new THREE.Mesh(shardGeo, shardMat);
+        const radius = 12 + Math.random() * 25;
+        const angle = Math.random() * Math.PI * 2;
+        shard.position.set(
+          Math.cos(angle) * radius,
+          (Math.random() - 0.5) * 35,
+          Math.sin(angle) * radius
+        );
+        shard.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
+        shard.userData = {
+          speedX: (Math.random() - 0.5) * 0.02,
+          speedY: (Math.random() - 0.5) * 0.02,
+          speedZ: (Math.random() - 0.5) * 0.02,
+          orbitRadius: radius,
+          orbitAngle: angle,
+          orbitSpeed: (0.002 + Math.random() * 0.004) * (Math.random() > 0.5 ? 1 : -1)
+        };
+        shardsGroup.add(shard);
+        shards.push(shard);
+      }
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0x1F2937, 2.2);
+      scene.add(ambientLight);
+
+      const amberPointLight = new THREE.PointLight(0xF59E0B, 4.0, 70);
+      amberPointLight.position.set(0, 0, 2);
+      cluster.add(amberPointLight);
+
+      const dirLight = new THREE.DirectionalLight(0xE6B15C, 2.0);
+      dirLight.position.set(20, 30, 25);
+      scene.add(dirLight);
+
+      const blueRimLight = new THREE.PointLight(0x38BDF8, 1.8, 80);
+      blueRimLight.position.set(-25, -20, -10);
+      scene.add(blueRimLight);
+
+      // Offset cluster initially to the right
+      cluster.position.set(7, 1, 0);
+
+      // Mouse Hover / Parallax Tracking
+      let mouseX = 0, mouseY = 0;
+      let targetMouseX = 0, targetMouseY = 0;
+      window.addEventListener('mousemove', (e) => {
+        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+        targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+      });
+
+      // Scroll Tracking & Depth Velocity
+      let scrollY = window.scrollY || 0;
+      let targetScrollY = scrollY;
+      let scrollVelocity = 0;
+      let lastScrollY = scrollY;
+
+      window.addEventListener('scroll', () => {
+        targetScrollY = window.scrollY || 0;
+      }, { passive: true });
+
+      // Interactive Card Hover Reaction
+      let excitationEnergy = 1.0;
+      const interactiveElements = document.querySelectorAll('.curio-specimen-box, .sanctuary-btn, .sanctuary-skill-slider-row, .hero-metric-card');
+      interactiveElements.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          excitationEnergy = 2.8;
+          amberPointLight.intensity = 6.5;
+        });
+        el.addEventListener('mouseleave', () => {
+          excitationEnergy = 1.0;
+        });
+      });
+
+      // Resize handler
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // Animation Loop
+      let clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+
+        // Smooth mouse lerp
+        mouseX += (targetMouseX - mouseX) * 0.06;
+        mouseY += (targetMouseY - mouseY) * 0.06;
+
+        // Smooth scroll lerp & velocity
+        scrollY += (targetScrollY - scrollY) * 0.08;
+        scrollVelocity = Math.abs(scrollY - lastScrollY);
+        lastScrollY = scrollY;
+
+        const maxScroll = Math.max(document.body.scrollHeight - window.innerHeight, 1);
+        const scrollFraction = scrollY / maxScroll;
+
+        // Base Rotations modulated by excitation and scroll velocity
+        const rotMultiplier = 1 + scrollVelocity * 0.03 + (excitationEnergy - 1) * 0.5;
+        crystalMesh.rotation.y += 0.006 * rotMultiplier;
+        crystalMesh.rotation.x += 0.003 * rotMultiplier;
+        wireCageMesh.rotation.y -= 0.008 * rotMultiplier;
+        heartMesh.rotation.z += 0.012 * rotMultiplier;
+
+        outerRing.rotation.z += 0.009 * rotMultiplier;
+        innerRing.rotation.x -= 0.007 * rotMultiplier;
+
+        // Cluster tracks mouse & moves with scroll
+        cluster.rotation.y = mouseX * 0.45;
+        cluster.rotation.x = -mouseY * 0.35;
+
+        // Camera scroll reactive travel
+        const targetCamZ = 28 - scrollFraction * 14;
+        camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+        camera.position.x = mouseX * 1.5 + Math.sin(scrollFraction * Math.PI * 2) * 2;
+        camera.position.y = -mouseY * 1.5 - scrollFraction * 6;
+        camera.lookAt(cluster.position.x * 0.5, cluster.position.y * 0.5, 0);
+
+        // Slowly ease excitation back
+        if (excitationEnergy > 1.0) {
+          excitationEnergy -= dt * 1.2;
+          if (amberPointLight.intensity > 4.0) {
+            amberPointLight.intensity -= dt * 2.5;
+          }
+        }
+
+        // Particle subtle drift & scroll reaction
+        particleSystem.rotation.y += 0.0008 + scrollVelocity * 0.0004;
+        particleSystem.rotation.x += 0.0004;
+
+        // Shards orbit
+        for (let i = 0; i < shards.length; i++) {
+          const s = shards[i];
+          s.userData.orbitAngle += s.userData.orbitSpeed * rotMultiplier;
+          s.position.x = Math.cos(s.userData.orbitAngle) * s.userData.orbitRadius;
+          s.position.z = Math.sin(s.userData.orbitAngle) * s.userData.orbitRadius;
+          s.rotation.x += s.userData.speedX;
+          s.rotation.y += s.userData.speedY;
+          s.rotation.z += s.userData.speedZ;
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initChronoObsidian3D);
+    } else {
+      initChronoObsidian3D();
     }
   </script>
 </body>
