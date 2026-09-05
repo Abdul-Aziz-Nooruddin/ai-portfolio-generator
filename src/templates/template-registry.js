@@ -26,9 +26,17 @@ const { KineticBrutalismTemplate } = require('./kinetic-brutalism');
 const { CircuitCoreTemplate } = require('./circuit-core');
 const { NeonAuroraCyberTemplate } = require('./neon-aurora-cyber');
 const { ChronoObsidianSanctuaryTemplate } = require('./chrono-obsidian-sanctuary');
+const { SwissEditorialMonographTemplate } = require('./swiss-editorial-monograph');
+const { SolarpunkHorizonTemplate } = require('./solarpunk-horizon');
+const { CyberArchitectSprawlTemplate } = require('./cyber-architect-sprawl');
+const { AbyssalNautilusArtisanTemplate } = require('./abyssal-nautilus-artisan');
 
 class TemplateRegistry {
   static templates = {
+    'abyssal-nautilus-artisan': AbyssalNautilusArtisanTemplate,
+    'cyber-architect-sprawl': CyberArchitectSprawlTemplate,
+    'swiss-editorial-monograph': SwissEditorialMonographTemplate,
+    'solarpunk-horizon': SolarpunkHorizonTemplate,
     'chrono-obsidian-sanctuary': ChronoObsidianSanctuaryTemplate,
     'neon-aurora-cyber': NeonAuroraCyberTemplate,
     'circuit-core': CircuitCoreTemplate,
@@ -93,6 +101,15 @@ class TemplateRegistry {
     // Role‑based heuristic – still respects explicit request
     if (candidateProfile && candidateProfile.role) {
       const r = candidateProfile.role.toLowerCase();
+      if (r.includes('cyber-architect') || r.includes('sprawl') || r.includes('sentient') || r.includes('ava chen')) {
+        return this.templates['cyber-architect-sprawl'];
+      }
+      if (r.includes('editorial') || r.includes('monograph') || r.includes('swiss') || r.includes('director') || r.includes('haute') || r.includes('typography')) {
+        return this.templates['swiss-editorial-monograph'];
+      }
+      if (r.includes('solarpunk') || r.includes('solar') || r.includes('climate') || r.includes('clean energy') || r.includes('sustainable')) {
+        return this.templates['solarpunk-horizon'];
+      }
       if (r.includes('obsidian') || r.includes('sanctuary') || r.includes('robotic') || r.includes('stonecraft') || r.includes('amber')) {
         return this.templates['chrono-obsidian-sanctuary'];
       }
@@ -168,15 +185,43 @@ class TemplateRegistry {
   }
 
   /**
-   * Render Dedicated 404 Forest Ruins Page
+   * Render Dedicated 404 Error State Page
    */
   static render404Page(siteId = '', candidateProfile = {}) {
+    const fs = require('fs');
+    const path = require('path');
+
+    const targetTemplate = candidateProfile.templateId || '';
+    if (targetTemplate === 'abyssal-nautilus-artisan' || siteId === 'abyssal-nautilus-artisan') {
+      return AbyssalNautilusArtisanTemplate.render404Page(siteId, candidateProfile);
+    }
+    if (targetTemplate === 'cyber-architect-sprawl' || siteId === 'cyber-architect-sprawl') {
+      return CyberArchitectSprawlTemplate.render404Page(siteId, candidateProfile);
+    }
+
+    if (siteId) {
+      const siteFile = path.join(process.cwd(), 'public', 'sites', siteId, 'index.html');
+      if (fs.existsSync(siteFile)) {
+        try {
+          const content = fs.readFileSync(siteFile, 'utf8');
+          if (content.includes('abyssal-nautilus-artisan') || content.includes('abyss-container') || content.includes('nautilus_hand_nobg.png')) {
+            return AbyssalNautilusArtisanTemplate.render404Page(siteId, candidateProfile);
+          }
+          if (content.includes('cyber-architect-sprawl') || content.includes('sprawl-wrapper') || content.includes('hero_hand_nobg.png')) {
+            return CyberArchitectSprawlTemplate.render404Page(siteId, candidateProfile);
+          }
+        } catch (e) {}
+      }
+    }
+
     return EcoTechSteampunkTemplate.render404Page(siteId, candidateProfile);
   }
 }
 
 module.exports = {
   TemplateRegistry,
+  AbyssalNautilusArtisanTemplate,
+  CyberArchitectSprawlTemplate,
   CosmicAstronautTemplate,
   CyberCrystalTemplate,
   BioluminescentWireframeTemplate,

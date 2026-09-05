@@ -269,17 +269,65 @@
       astronautRoot.add(astronautModel);
     }
 
-    // Directly load high-fidelity rigged animated astronaut (no low-poly placeholder)
-    gltfLoader.load(
-      animatedModelPath,
-      function (gltf) {
-        initAstronaut(gltf);
-      },
-      undefined,
-      function (err) {
-        console.warn('[3D Engine] Rigged model load issue:', err);
+    // Accelerated Progressive Loading with Cache API & HTTP Disk Cache
+    async function loadAstronautWithCache() {
+      const startTime = performance.now();
+      let fromCache = false;
+
+      try {
+        if (typeof window !== 'undefined' && 'caches' in window) {
+          const cache = await caches.open('myfolio-astronaut-v2');
+          let res = await cache.match(animatedModelPath);
+          if (res) {
+            fromCache = true;
+          } else {
+            res = await fetch(animatedModelPath, { cache: 'force-cache' });
+            if (res.ok) {
+              cache.put(animatedModelPath, res.clone()).catch(() => {});
+            }
+          }
+          if (res && res.ok) {
+            const buffer = await res.arrayBuffer();
+            gltfLoader.parse(
+              buffer,
+              '',
+              function (gltf) {
+                initAstronaut(gltf);
+                const elapsed = (performance.now() - startTime).toFixed(1);
+                console.log(`⚡ [3D Engine] Astronaut initialized in ${elapsed}ms (Cache: ${fromCache ? 'HIT' : 'FETCH'})`);
+              },
+              function (err) {
+                console.warn('[3D Engine] Parse error, fallback to standard loader:', err);
+                fallbackLoad();
+              }
+            );
+            return;
+          }
+        }
+      } catch (e) {
+        console.warn('[3D Engine] Cache API unavailable, falling back:', e);
       }
-    );
+
+      fallbackLoad();
+    }
+
+    function fallbackLoad() {
+      const startTime = performance.now();
+      gltfLoader.load(
+        animatedModelPath,
+        function (gltf) {
+          initAstronaut(gltf);
+          const elapsed = (performance.now() - startTime).toFixed(1);
+          console.log(`⚡ [3D Engine] Astronaut loaded via network in ${elapsed}ms`);
+        },
+        undefined,
+        function (err) {
+          console.warn('[3D Engine] Rigged model load issue:', err);
+        }
+      );
+    }
+
+    loadAstronautWithCache();
   }
 
   // Universal button hover delegation:

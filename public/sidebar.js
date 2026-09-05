@@ -671,8 +671,18 @@ async function hydrateSidebarUser() {
       const data = await res.json();
       const user = data.user || data;
       const displayName = user.name || user.username || (user.email ? user.email.split('@')[0] : 'Engineer');
-      const email = user.email || '';
+      const email = (user.email || '').toLowerCase().trim();
       const initial = displayName.charAt(0).toUpperCase();
+
+      try {
+        localStorage.setItem('myfolio_user', JSON.stringify(user));
+        if (email === 'abdulaziznoor9876@gmail.com') {
+          localStorage.setItem('myfolio_vip_admin', 'true');
+        } else {
+          localStorage.removeItem('myfolio_vip_admin');
+          localStorage.removeItem('myfolio_active_vip_site');
+        }
+      } catch (e) {}
 
       if (authNavItem) authNavItem.style.display = 'none';
 
@@ -695,6 +705,10 @@ async function hydrateSidebarUser() {
   }
 
   // Guest state
+  try {
+    localStorage.removeItem('myfolio_vip_admin');
+    localStorage.removeItem('myfolio_active_vip_site');
+  } catch (e) {}
   if (authNavItem) authNavItem.style.display = 'flex';
   dock.innerHTML = `
     <a href="/login" class="sidebar-login-btn">
@@ -707,6 +721,14 @@ async function hydrateSidebarUser() {
 async function sidebarSignOut() {
   try {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  } catch (e) {}
+  try {
+    localStorage.removeItem('myfolio_user');
+    localStorage.removeItem('myfolio_vip_admin');
+    localStorage.removeItem('myfolio_active_vip_site');
+    localStorage.removeItem('myfolio_weekly_allowance_v1');
+    localStorage.removeItem('myfolio_saved_gh_username');
+    localStorage.removeItem('portfolio_bot_github_user');
   } catch (e) {}
   window.location.href = '/login';
 }

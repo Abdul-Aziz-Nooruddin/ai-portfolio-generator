@@ -2,12 +2,11 @@
   "abdulaziz.myfolio.tech": {
     "domain": "abdulaziz.myfolio.tech",
     "handle": "abdulaziz",
-    "siteId": "abdulaziz",
+    "siteId": "abdulaziz-1788601265704",
     "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "createdAt": "2026-09-03T18:00:00.000Z",
-    "verifiedAt": "2026-09-03T18:00:00.000Z"
+    "updatedAt": "2026-09-05T09:45:11.218Z"
   },
   "abdulaziz.portfolio.site": {
     "domain": "abdulaziz.portfolio.site",
@@ -20,14 +19,13 @@
     "verifiedAt": "2026-08-22T15:51:48.607Z"
   },
   "abdulaziz.localhost": {
-    "domain": "abdulaziz.portfolio.site",
+    "domain": "abdulaziz.localhost",
     "handle": "abdulaziz",
-    "siteId": "test_custom_site_123",
-    "userId": null,
+    "siteId": "abdulaziz-1788601265704",
+    "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "createdAt": "2026-08-22T15:51:48.606Z",
-    "verifiedAt": "2026-08-22T15:51:48.607Z"
+    "updatedAt": "2026-09-05T09:45:11.218Z"
   },
   "abdulaziz.dev": {
     "domain": "abdulaziz.dev",

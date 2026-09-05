@@ -12,7 +12,7 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyFolio Design Intelligence — 22 3D WebGL Universes</title>
+  <title>MyFolio Design Intelligence — 26 3D WebGL Universes</title>
   <meta name="description" content="Explore 22 responsive 3D WebGL design universes with interactive Three.js physics, typography pairings, and color palettes.">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
@@ -432,6 +432,74 @@
       --border: rgba(245, 158, 11, 0.3);
       --card-border: 1px solid rgba(245, 158, 11, 0.4);
       --font-display: 'Fraunces', serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    [data-theme="swiss-editorial-monograph"] {
+      --bg: #0A0B0E;
+      --surface: rgba(19, 21, 27, 0.94);
+      --surface-card: rgba(26, 29, 36, 0.88);
+      --surface-glow: rgba(230, 57, 70, 0.35);
+      --primary: #E63946;
+      --primary-on: #FFFFFF;
+      --secondary: #D4AF37;
+      --accent: #F4F2EB;
+      --text: #F4F2EB;
+      --text-muted: #9FA2AD;
+      --border: rgba(230, 57, 70, 0.3);
+      --card-border: 1px solid rgba(230, 57, 70, 0.4);
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="solarpunk-horizon"] {
+      --bg: #0C1810;
+      --surface: rgba(16, 32, 22, 0.92);
+      --surface-card: rgba(24, 46, 32, 0.85);
+      --surface-glow: rgba(16, 185, 129, 0.35);
+      --primary: #10B981;
+      --primary-on: #0C1810;
+      --secondary: #F59E0B;
+      --accent: #06B6D4;
+      --text: #FEF3C7;
+      --text-muted: #A7F3D0;
+      --border: rgba(16, 185, 129, 0.3);
+      --card-border: 1px solid rgba(16, 185, 129, 0.4);
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    [data-theme="cyber-architect-sprawl"] {
+      --bg: #05050A;
+      --surface: rgba(10, 10, 20, 0.94);
+      --surface-card: rgba(18, 18, 34, 0.85);
+      --surface-glow: rgba(0, 240, 255, 0.35);
+      --primary: #00F0FF;
+      --primary-on: #05050A;
+      --secondary: #FF007A;
+      --accent: #FFB800;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border: rgba(0, 240, 255, 0.3);
+      --card-border: 1px solid rgba(0, 240, 255, 0.4);
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'Inter', sans-serif;
+    }
+
+    [data-theme="abyssal-nautilus-artisan"] {
+      --bg: #020B14;
+      --surface: rgba(4, 20, 36, 0.94);
+      --surface-card: rgba(8, 34, 54, 0.88);
+      --surface-glow: rgba(0, 245, 212, 0.35);
+      --primary: #00F5D4;
+      --primary-on: #020B14;
+      --secondary: #0EA5E9;
+      --accent: #F59E0B;
+      --text: #F1F5F9;
+      --text-muted: #7DD3FC;
+      --border: rgba(0, 245, 212, 0.3);
+      --card-border: 1px solid rgba(0, 245, 212, 0.4);
+      --font-display: 'Cinzel Decorative', serif;
       --font-body: 'Plus Jakarta Sans', sans-serif;
     }
 
@@ -1478,6 +1546,94 @@
               </button>
             </div>
           </div>
+
+          <!-- Universe 23: Swiss Editorial Monograph -->
+          <div class="universe-hub-card" id="card-swiss-editorial-monograph" onclick="activateUniverse('swiss-editorial-monograph')">
+            <div class="universe-media-viewport">
+              <img src="/assets/3d/bg_engineering_archive.jpg" alt="Swiss Editorial Monograph" />
+            </div>
+            <div class="universe-card-body">
+              <div>
+                <h3 class="universe-name">Swiss Editorial Monograph</h3>
+                <p class="universe-desc">Haute typographie &amp; archival Swiss monograph with Playfair Display, museum accession stamps, and vermilion accents.</p>
+                <div class="universe-swatch-row">
+                  <span class="swatch-circle" style="background:#E63946;"></span>
+                  <span class="swatch-circle" style="background:#D4AF37;"></span>
+                  <span class="swatch-circle" style="background:#0A0B0E;"></span>
+                  <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-left:4px;">#E63946 • #D4AF37</span>
+                </div>
+              </div>
+              <button class="universe-footer-btn">
+                <span>Switch to Swiss Monograph</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Universe 24: Solarpunk Horizon -->
+          <div class="universe-hub-card" id="card-solarpunk-horizon" onclick="activateUniverse('solarpunk-horizon')">
+            <div class="universe-media-viewport">
+              <img src="/assets/3d/bg_emerald_sanctuary.jpg" alt="Solarpunk Horizon" />
+            </div>
+            <div class="universe-card-body">
+              <div>
+                <h3 class="universe-name">Solarpunk Horizon</h3>
+                <p class="universe-desc">Lush utopian ecology &amp; biophilic glasshouse architecture with Outfit typography, renewable energy telemetry, and golden solar particle rays.</p>
+                <div class="universe-swatch-row">
+                  <span class="swatch-circle" style="background:#10B981;"></span>
+                  <span class="swatch-circle" style="background:#F59E0B;"></span>
+                  <span class="swatch-circle" style="background:#06B6D4;"></span>
+                  <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-left:4px;">#10B981 • #F59E0B</span>
+                </div>
+              </div>
+              <button class="universe-footer-btn">
+                <span>Switch to Solarpunk Horizon</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Universe 25: Cyber-Architect Sprawl -->
+          <div class="universe-hub-card" id="card-cyber-architect-sprawl" onclick="activateUniverse('cyber-architect-sprawl')">
+            <div class="universe-media-viewport" style="background:#05050A;">
+              <img src="/assets/designs/cyber/hero_hand_nobg.png" alt="Cyber-Architect Sprawl" style="object-fit:contain;padding:12px;" />
+            </div>
+            <div class="universe-card-body">
+              <div>
+                <h3 class="universe-name">Cyber-Architect Sprawl</h3>
+                <p class="universe-desc">High-density cyberpunk engineering sprawl with floating 3D robotic hand, holographic iris telemetry, isometric circuit motherboards, and quantum cores.</p>
+                <div class="universe-swatch-row">
+                  <span class="swatch-circle" style="background:#00F0FF;"></span>
+                  <span class="swatch-circle" style="background:#FF007A;"></span>
+                  <span class="swatch-circle" style="background:#FFB800;"></span>
+                  <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-left:4px;">#00F0FF • #FF007A</span>
+                </div>
+              </div>
+              <button class="universe-footer-btn">
+                <span>Switch to Cyber Sprawl</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Universe 26: Abyssal Nautilus Artisan -->
+          <div class="universe-hub-card" id="card-abyssal-nautilus-artisan" onclick="activateUniverse('abyssal-nautilus-artisan')">
+            <div class="universe-media-viewport" style="background:#020B14;">
+              <img src="/assets/designs/nautilus/nautilus_hand_nobg.png" alt="Abyssal Nautilus Artisan" style="object-fit:contain;padding:12px;" />
+            </div>
+            <div class="universe-card-body">
+              <div>
+                <h3 class="universe-name">Abyssal Nautilus Artisan</h3>
+                <p class="universe-desc">Deep ocean abyss with 3D treasure chest vaults, iridescent nautilus shell, submarine porthole radar, and vintage nautical cartography.</p>
+                <div class="universe-swatch-row">
+                  <span class="swatch-circle" style="background:#00F5D4;"></span>
+                  <span class="swatch-circle" style="background:#0EA5E9;"></span>
+                  <span class="swatch-circle" style="background:#F59E0B;"></span>
+                  <span style="font-family:var(--font-mono);font-size:0.75rem;color:var(--text-muted);margin-left:4px;">#00F5D4 • #0EA5E9</span>
+                </div>
+              </div>
+              <button class="universe-footer-btn">
+                <span>Switch to Abyssal Nautilus</span>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -1555,7 +1711,11 @@
       'kinetic-brutalism': '/assets/3d/bg_kinetic_brutalism.jpg',
       'circuit-core': '/assets/3d/bg_circuit_core.jpg',
       'neon-aurora-cyber': '/assets/3d/bg_neon_aurora_cyber.jpg',
-      'chrono-obsidian-sanctuary': '/assets/3d/chrono_obsidian_sanctuary_3d.jpg'
+      'chrono-obsidian-sanctuary': '/assets/3d/chrono_obsidian_sanctuary_3d.jpg',
+      'swiss-editorial-monograph': '/assets/3d/bg_engineering_archive.jpg',
+      'solarpunk-horizon': '/assets/3d/bg_emerald_sanctuary.jpg',
+      'cyber-architect-sprawl': '/assets/3d/bg_stealth_node.jpg',
+      'abyssal-nautilus-artisan': '/assets/3d/bg_abyssal_jellyfish.jpg'
     };
 
     // 22 Universe Tokens Mapping
@@ -1735,6 +1895,38 @@
         body: 'Plus Jakarta Sans / Fira Code',
         colorInt: 0xa855f7,
         secondaryColorInt: 0xec4899
+      },
+      'swiss-editorial-monograph': {
+        primary: '#E63946',
+        secondary: '#D4AF37',
+        heading: 'Playfair Display (Editorial)',
+        body: 'Inter / Instrument Serif',
+        colorInt: 0xe63946,
+        secondaryColorInt: 0xd4af37
+      },
+      'solarpunk-horizon': {
+        primary: '#10B981',
+        secondary: '#F59E0B',
+        heading: 'Outfit (Biophilic Modern)',
+        body: 'Plus Jakarta Sans / Fira Code',
+        colorInt: 0x10b981,
+        secondaryColorInt: 0xf59e0b
+      },
+      'cyber-architect-sprawl': {
+        primary: '#00F0FF',
+        secondary: '#FF007A',
+        heading: 'Syne & Orbitron (Cyberpunk)',
+        body: 'Inter / JetBrains Mono',
+        colorInt: 0x00f0ff,
+        secondaryColorInt: 0xff007a
+      },
+      'abyssal-nautilus-artisan': {
+        primary: '#00F5D4',
+        secondary: '#0EA5E9',
+        heading: 'Cinzel Decorative & Space Grotesk',
+        body: 'Plus Jakarta Sans / JetBrains Mono',
+        colorInt: 0x00f5d4,
+        secondaryColorInt: 0x0ea5e9
       }
     };
 
@@ -1986,6 +2178,24 @@
           const biodome = new THREE.Mesh(new THREE.SphereGeometry(65, 12, 12), wireMat);
           const innerGem = new THREE.Mesh(new THREE.IcosahedronGeometry(40, 0), glowMat);
           group.add(biodome, innerGem);
+        } else if (themeKey === 'swiss-editorial-monograph') {
+          const prism = new THREE.Mesh(new THREE.OctahedronGeometry(65, 0), wireMat);
+          const frame = new THREE.Mesh(new THREE.BoxGeometry(75, 75, 75), glowMat);
+          group.add(prism, frame);
+        } else if (themeKey === 'solarpunk-horizon') {
+          const sun = new THREE.Mesh(new THREE.SphereGeometry(45, 16, 16), glowMat);
+          const solarRing = new THREE.Mesh(new THREE.TorusGeometry(85, 3, 16, 64), wireMat);
+          solarRing.rotation.x = Math.PI / 3;
+          group.add(sun, solarRing);
+        } else if (themeKey === 'cyber-architect-sprawl') {
+          const circuitBox = new THREE.Mesh(new THREE.BoxGeometry(60, 60, 60), wireMat);
+          const cyberIris = new THREE.Mesh(new THREE.TorusGeometry(85, 4, 16, 32), glowMat);
+          cyberIris.rotation.y = Math.PI / 4;
+          group.add(circuitBox, cyberIris);
+        } else if (themeKey === 'abyssal-nautilus-artisan') {
+          const nautilusShell = new THREE.Mesh(new THREE.TorusKnotGeometry(55, 14, 128, 16, 1, 3), wireMat);
+          const pearl = new THREE.Mesh(new THREE.SphereGeometry(25, 16, 16), glowMat);
+          group.add(nautilusShell, pearl);
         } else {
           // cosmic-astronaut
           const orb = new THREE.Mesh(new THREE.SphereGeometry(65, 24, 24), glowMat);

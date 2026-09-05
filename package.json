@@ -69,6 +69,7 @@
     "nodemailer": "^9.0.5",
     "pdf-parse": "^1.1.1",
     "pdfkit": "^0.20.1",
+    "puppeteer-core": "^25.10.0",
     "sharp": "^0.33.0"
   },
   "devDependencies": {

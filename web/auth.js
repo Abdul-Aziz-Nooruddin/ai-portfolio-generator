@@ -135,6 +135,20 @@ if (loginForm) {
         throw new Error(data.message || data.error || 'Invalid credentials');
       }
 
+      if (data.user) {
+        try {
+          localStorage.setItem('myfolio_user', JSON.stringify(data.user));
+          const uEmail = (data.user.email || '').toLowerCase().trim();
+          if (uEmail === 'abdulaziznoor9876@gmail.com') {
+            localStorage.setItem('myfolio_vip_admin', 'true');
+          } else {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+            localStorage.removeItem('myfolio_weekly_allowance_v1');
+          }
+        } catch (e) {}
+      }
+
       showAlert('Signed in successfully! Redirecting...', 'success');
       setTimeout(() => {
         const params = new URLSearchParams(window.location.search);
@@ -198,6 +212,20 @@ if (signupForm) {
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || data.error || 'Signup failed');
+      }
+
+      if (data.user) {
+        try {
+          localStorage.setItem('myfolio_user', JSON.stringify(data.user));
+          const uEmail = (data.user.email || '').toLowerCase().trim();
+          if (uEmail === 'abdulaziznoor9876@gmail.com') {
+            localStorage.setItem('myfolio_vip_admin', 'true');
+          } else {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+            localStorage.removeItem('myfolio_weekly_allowance_v1');
+          }
+        } catch (e) {}
       }
 
       showAlert('Account created successfully! Redirecting...', 'success');

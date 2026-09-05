@@ -729,6 +729,7 @@
               <div class="url-actions">
                 <button class="btn-secondary" onclick="copyPortfolioUrl()">📋 Copy</button>
                 <a id="btnOpenLive" href="/p/preview" target="_blank" class="btn-primary">🚀 Open Live ↗</a>
+                <button id="btnDeletePortfolio" class="btn-secondary" onclick="deleteCurrentPortfolio()" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444; display: none;" title="Permanently Delete Portfolio">🗑️ Delete</button>
               </div>
             </div>
           </div>
@@ -946,21 +947,44 @@
       const openLiveBtn = document.getElementById('btnOpenLive');
       const urlTextEl = document.getElementById('portfolioUrlText');
 
-      if (siteId) {
+      const userEmail = (user.email || (currentUser && currentUser.email) || '').toLowerCase().trim();
+      const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
+
+      const deleteBtn = document.getElementById('btnDeletePortfolio');
+
+      if (isVip) {
+        currentSiteId = siteId || 'abdulaziz';
+        currentSiteUrl = 'https://abdulaziz.myfolio.tech';
+        urlTextEl.textContent = currentSiteUrl;
+        openLiveBtn.href = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? `${window.location.origin}/abdulaziz`
+          : 'https://abdulaziz.myfolio.tech';
+        openLiveBtn.innerHTML = '🚀 Open Live Portfolio ↗';
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+
+        if (badge) {
+          badge.textContent = '👑 VIP ACTIVE (abdulaziz.myfolio.tech)';
+          badge.className = 'status-badge status-live';
+        }
+      } else if (siteId) {
+        currentSiteId = siteId;
         currentSiteUrl = `${window.location.origin}/p/${siteId}`;
         urlTextEl.textContent = currentSiteUrl;
         openLiveBtn.href = currentSiteUrl;
         openLiveBtn.innerHTML = '🚀 Open Live ↗';
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
 
         if (badge) {
           badge.textContent = (state === 'paid' || state === 'live') ? '● ACTIVE LIVE' : '24-HR PREVIEW';
           badge.className = 'status-badge ' + (state === 'live' || state === 'paid' ? 'status-live' : (state.includes('lapsed') ? 'status-lapsed' : 'status-preview'));
         }
       } else {
+        currentSiteId = null;
         currentSiteUrl = `${window.location.origin}/studio.html`;
         urlTextEl.textContent = '⚡ No portfolio generated yet — Click "Create 3D Portfolio" to build your site';
         openLiveBtn.href = '/studio.html';
         openLiveBtn.innerHTML = '⚡ Create 3D Portfolio ↗';
+        if (deleteBtn) deleteBtn.style.display = 'none';
 
         if (badge) {
           badge.textContent = 'READY TO BUILD';
@@ -1109,6 +1133,42 @@
           alert(err.message);
         }
       });
+    }
+
+    let currentSiteId = null;
+
+    async function deleteCurrentPortfolio() {
+      const targetId = currentSiteId || (isVip ? 'abdulaziz' : null);
+      if (!targetId) return;
+
+      if (!confirm(`Are you sure you want to permanently delete your portfolio?\n\nThis will remove the live site, preview links, and all hosted assets permanently.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/sites/${encodeURIComponent(targetId)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to delete portfolio');
+
+        // Clear local storage
+        try {
+          const projects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]').filter(p => p.siteId !== targetId);
+          localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(projects));
+          localStorage.removeItem('myfolio_active_vip_site');
+        } catch (e) {}
+
+        showToast('Portfolio permanently deleted.');
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } catch (err) {
+        alert('Could not delete portfolio: ' + err.message);
+      }
     }
 
     function copyPortfolioUrl() {

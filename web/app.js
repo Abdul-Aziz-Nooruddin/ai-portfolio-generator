@@ -352,6 +352,34 @@ function openStudioWithTemplate(templateId) {
       bio: 'Synthesizing low-latency distributed networks, modern interfaces, and modular software pipelines.',
       skills: ['Go', 'TypeScript', 'React', 'Kubernetes', 'WebSockets', 'Tailwind'],
       theme: 'bio-digital-fusion'
+    },
+    'swiss-editorial-monograph': {
+      name: 'Julian Thorne',
+      role: 'Principal Design Technologist & Typographer',
+      bio: 'Authoring rigorous typographic systems, archival digital monographs, and high-fashion museum digital exhibitions.',
+      skills: ['Editorial Design', 'Typography', 'Web Architecture', 'Design Systems', 'WebGL', 'Creative Direction'],
+      theme: 'swiss-editorial-monograph'
+    },
+    'solarpunk-horizon': {
+      name: 'Rowan Vance',
+      role: 'Clean Energy & Climate Systems Engineer',
+      bio: 'Developing biophilic software ecosystems, solar telemetry platforms, and resilient carbon-negative web applications.',
+      skills: ['Climate APIs', 'Python', 'React', 'TypeScript', 'Clean Tech', 'IoT Telemetry'],
+      theme: 'solarpunk-horizon'
+    },
+    'cyber-architect-sprawl': {
+      name: 'Vector Vance',
+      role: 'Staff Cyber-Architect & Systems Core Engineer',
+      bio: 'Architecting high-throughput distributed systems, cyber iris telemetry, and holographic WebGL control planes.',
+      skills: ['Rust', 'Go', 'WebAssembly', 'Three.js', 'WebGPU', 'Distributed Systems'],
+      theme: 'cyber-architect-sprawl'
+    },
+    'abyssal-nautilus-artisan': {
+      name: 'Ava Chen',
+      role: 'Deep-Sea Tech Artisan & Systems Explorer',
+      bio: 'Engineering subsea acoustic telemetry networks, biomimetic UI algorithms, and resilient oceanic computing architectures.',
+      skills: ['WebGPU', 'Three.js', 'React', 'Python', 'Acoustic Telemetry', 'Distributed Nodes'],
+      theme: 'abyssal-nautilus-artisan'
     }
   };
 

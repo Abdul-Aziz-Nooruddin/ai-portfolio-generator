@@ -195,4 +195,58 @@ describe('🏛️ Multi-Template Catalog & Dynamic Content Replacement', () => {
       assert.ok(!result.html.includes('ConsentChain'), `${templateId} must NOT leak ConsentChain`);
     });
   });
+
+  test('18. Template: Swiss Editorial Monograph dynamically binds candidate data & 3D canvas', () => {
+    const res = TemplateRegistry.render('swiss-editorial-monograph', sampleCandidate);
+    assert.ok(res.html.includes('Abdul Aziz Nooruddin'), 'Must contain candidate name');
+    assert.ok(res.html.includes('ConsentChain'), 'Must contain project name');
+    assert.ok(res.html.includes('swiss-monograph-canvas'), 'Must include 3D origami prism canvas');
+    assert.ok(res.html.includes('Lords Institute of Engineering and Technology'), 'Must contain education');
+    assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), 'Must contain email');
+  });
+
+  test('19. Template: Solarpunk Horizon dynamically binds candidate data & 3D canvas', () => {
+    const res = TemplateRegistry.render('solarpunk-horizon', sampleCandidate);
+    assert.ok(res.html.includes('Abdul Aziz Nooruddin'), 'Must contain candidate name');
+    assert.ok(res.html.includes('ConsentChain'), 'Must contain project name');
+    assert.ok(res.html.includes('solarpunk-canvas'), 'Must include 3D solar ray canvas');
+    assert.ok(res.html.includes('Lords Institute of Engineering and Technology'), 'Must contain education');
+    assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), 'Must contain email');
+  });
+
+  test('20. Template: Cyber-Architect Sprawl dynamically binds sections, 3D canvas, and dedicated 404 page', () => {
+    const res = TemplateRegistry.render('cyber-architect-sprawl', sampleCandidate);
+    assert.ok(res.html.includes('Abdul Aziz Nooruddin'), 'Must contain candidate name');
+    assert.ok(res.html.includes('ConsentChain'), 'Must contain project name');
+    assert.ok(res.html.includes('cyber-sprawl-canvas'), 'Must include 3D holographic canvas');
+    assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), 'Must contain email');
+    assert.ok(!res.html.includes('id="error404"'), 'Homepage must not include inline 404 section');
+
+    // Verify Dedicated 404 Page
+    const page404 = TemplateRegistry.render404Page('cyber-architect-sprawl', sampleCandidate);
+    assert.ok(page404.includes('quantum-404-modal'), '404 page must include 404 quantum anomaly modal');
+    assert.ok(page404.includes('cyber_gnome_nobg.png'), '404 page must include 3D Cyber Gnome');
+    assert.ok(page404.includes('Quantum Path Diverged'), '404 page must include Quantum Path Diverged title');
+  });
+
+  test('21. Template: Abyssal Nautilus Artisan dynamically binds 3D treasure chests, cartography, and dedicated 404', () => {
+    const res = TemplateRegistry.render('abyssal-nautilus-artisan', sampleCandidate);
+    assert.ok(res.html.includes('Abdul Aziz Nooruddin'), 'Must contain candidate name');
+    assert.ok(res.html.includes('ConsentChain'), 'Must contain project name');
+    assert.ok(res.html.includes('abyss-bg-canvas'), 'Must include 3D ocean caustics canvas');
+    assert.ok(res.html.includes('treasure-chest-card'), 'Must include 3D treasure chest project cards');
+    assert.ok(res.html.includes('chest_wheel_lid_nobg.png'), 'Must include 3D ship wheel chest lid');
+    assert.ok(res.html.includes('porthole_nobg.png'), 'Must include 3D porthole sonar radar');
+    assert.ok(res.html.includes('coral_tree_nobg.png'), 'Must include 3D coral tree');
+    assert.ok(res.html.includes('vintage_map_clean_nobg.png'), 'Must include clean vintage map');
+    assert.ok(res.html.includes('seahorse_nobg.png'), 'Must include 3D pearlescent seahorse');
+    assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), 'Must contain email');
+    assert.ok(!res.html.includes('NAUTICAL COURSE LOST'), 'Homepage must not include inline 404 section');
+
+    // Dedicated 404 Verification
+    const page404 = TemplateRegistry.render404Page('abyssal-nautilus-artisan', sampleCandidate);
+    assert.ok(page404.includes('nautical_compass_nobg.png'), '404 must include 3D antique compass');
+    assert.ok(page404.includes('stone_404_nobg.png'), '404 must include overgrown 404 stone');
+    assert.ok(page404.includes('Return to Base'), '404 must include return button');
+  });
 });

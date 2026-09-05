@@ -1261,6 +1261,52 @@
       color: #38BDF8;
       background: rgba(56, 189, 248, 0.08);
     }
+
+    .btn-card-delete {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1.5px solid rgba(239, 68, 68, 0.35);
+      color: #EF4444;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-card-delete:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #EF4444;
+      color: #F87171;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
+    }
+
+    .btn-clear-all-portfolios {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #EF4444;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-clear-all-portfolios:hover {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: #EF4444;
+      color: #DC2626;
+    }
   </style>
 </head>
 <body>
@@ -1720,6 +1766,51 @@
                 <p>Syne • Neon Purple &amp; Magenta Aurora</p>
               </div>
             </div>
+
+            <!-- 22. Chrono-Obsidian Sanctuary -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('chrono-obsidian-sanctuary', this)">
+              <img src="/assets/3d/chrono_obsidian_sanctuary_3d.webp" class="universe-thumb" alt="Chrono-Obsidian Sanctuary">
+              <div class="universe-info">
+                <h4>🏛️ Chrono-Obsidian Sanctuary</h4>
+                <p>Cinzel • Obsidian &amp; Celestial Gold</p>
+              </div>
+            </div>
+
+            <!-- 23. Swiss Editorial Monograph -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('swiss-editorial-monograph', this)">
+              <img src="/assets/3d/bg_engineering_archive.webp" class="universe-thumb" alt="Swiss Editorial Monograph">
+              <div class="universe-info">
+                <h4>📰 Swiss Editorial Monograph</h4>
+                <p>Playfair Display • Alabaster &amp; Vermilion</p>
+              </div>
+            </div>
+
+            <!-- 24. Solarpunk Horizon -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('solarpunk-horizon', this)">
+              <img src="/assets/3d/bg_emerald_sanctuary.webp" class="universe-thumb" alt="Solarpunk Horizon">
+              <div class="universe-info">
+                <h4>☀️ Solarpunk Horizon</h4>
+                <p>Outfit • Sunstone Gold &amp; Moss Emerald</p>
+              </div>
+            </div>
+
+            <!-- 25. Cyber-Architect Sprawl -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
+              <img src="/assets/designs/cyber/hero_hand_nobg.png" class="universe-thumb" alt="Cyber-Architect Sprawl" style="background:#05050A;object-fit:contain;padding:8px;">
+              <div class="universe-info">
+                <h4>🤖 Cyber-Architect Sprawl</h4>
+                <p>Syne • Electric Cyan &amp; Neon Magenta</p>
+              </div>
+            </div>
+
+            <!-- 26. Abyssal Nautilus Artisan -->
+            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-nautilus-artisan', this)">
+              <img src="/assets/designs/nautilus/nautilus_hand_nobg.png" class="universe-thumb" alt="Abyssal Nautilus Artisan" style="background:#020B14;object-fit:contain;padding:8px;">
+              <div class="universe-info">
+                <h4>🐚 Abyssal Nautilus Artisan</h4>
+                <p>Cinzel Decorative • Biolume Cyan &amp; Sea Teal</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1759,7 +1850,12 @@
             <span class="headline-badge">⚡ CREATED PORTFOLIOS</span>
             <h3 class="headline-title">Generated 3D Portfolios</h3>
           </div>
-          <span class="history-count-badge" id="generatedCountBadge">0 Sites</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span class="history-count-badge" id="generatedCountBadge">0 Sites</span>
+            <button type="button" class="btn-clear-all-portfolios" onclick="deleteAllPortfoliosPermanently()" title="Permanently delete and purge all generated portfolios">
+              🗑️ Clear All
+            </button>
+          </div>
         </div>
 
         <div id="generatedProjectsList" class="generated-cards-grid">
@@ -1929,10 +2025,36 @@
     // =========================================================================
     const ALLOWANCE_CONFIG = {
       WEEKLY_TOTAL: 5,
-      CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000,
-      STORAGE_KEY: 'myfolio_weekly_allowance_v1',
-      HISTORY_KEY: 'myfolio_generated_projects_v1'
+      CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000
     };
+
+    function getHistoryStorageKey() {
+      try {
+        const userStr = localStorage.getItem('myfolio_user');
+        if (userStr) {
+          const u = JSON.parse(userStr);
+          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
+          if (email) {
+            return `myfolio_history_${email.replace(/[^a-z0-9]/g, '_')}`;
+          }
+        }
+      } catch (e) {}
+      return 'myfolio_history_guest';
+    }
+
+    function getAllowanceStorageKey() {
+      try {
+        const userStr = localStorage.getItem('myfolio_user');
+        if (userStr) {
+          const u = JSON.parse(userStr);
+          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
+          if (email) {
+            return `myfolio_allowance_${email.replace(/[^a-z0-9]/g, '_')}`;
+          }
+        }
+      } catch (e) {}
+      return 'myfolio_allowance_guest';
+    }
 
     const UNIVERSE_META = {
       'cosmic-astronaut': { name: 'Cosmic Astronaut Studio', icon: '🌌', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
@@ -1956,22 +2078,26 @@
       'kinetic-brutalism': { name: 'Kinetic Brutalism', icon: '💥', thumb: '/assets/3d/bg_kinetic_brutalism.jpg' },
       'circuit-core': { name: 'Circuit Core', icon: '🔌', thumb: '/assets/3d/bg_circuit_core.jpg' },
       'neon-aurora-cyber': { name: 'Neon Aurora Cyber', icon: '🌌', thumb: '/assets/3d/bg_neon_aurora_cyber.jpg' },
-      'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' }
+      'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' },
+      'swiss-editorial-monograph': { name: 'Swiss Editorial Monograph', icon: '📰', thumb: '/assets/3d/bg_engineering_archive.jpg' },
+      'solarpunk-horizon': { name: 'Solarpunk Horizon', icon: '☀️', thumb: '/assets/3d/bg_emerald_sanctuary.jpg' },
+      'cyber-architect-sprawl': { name: 'Cyber-Architect Sprawl', icon: '🤖', thumb: '/assets/designs/cyber/hero_hand_nobg.png' },
+      'abyssal-nautilus-artisan': { name: 'Abyssal Nautilus Artisan', icon: '🐚', thumb: '/assets/designs/nautilus/nautilus_hand_nobg.png' }
     };
 
+    let currentVipAdmin = false;
+
     function isVipUser() {
-      if (currentVipAdmin) return true;
       try {
-        if (localStorage.getItem('myfolio_vip_admin') === 'true') return true;
         const userStr = localStorage.getItem('myfolio_user');
         if (userStr) {
           const u = JSON.parse(userStr);
-          const email = (u.email || '').toLowerCase();
+          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
           if (email === 'abdulaziznoor9876@gmail.com') return true;
+          return false;
         }
-        if (document.body && document.body.innerHTML.includes('abdulaziznoor9876@gmail.com')) return true;
       } catch (e) {}
-      return false;
+      return currentVipAdmin;
     }
 
     function getAllowanceState() {
@@ -1984,9 +2110,10 @@
         };
       }
 
+      const storageKey = getAllowanceStorageKey();
       let state = null;
       try {
-        state = JSON.parse(localStorage.getItem(ALLOWANCE_CONFIG.STORAGE_KEY));
+        state = JSON.parse(localStorage.getItem(storageKey));
       } catch (e) {}
 
       const now = Date.now();
@@ -1997,7 +2124,7 @@
           firstGenTimestamp: null,
           resetTimestamp: null
         };
-        localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(storageKey, JSON.stringify(state));
       }
 
       // Check if 7 full days have elapsed since the first generation in this cycle
@@ -2006,7 +2133,7 @@
         state.used = 0;
         state.firstGenTimestamp = null;
         state.resetTimestamp = null;
-        localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+        localStorage.setItem(storageKey, JSON.stringify(state));
       }
 
       return state;
@@ -2018,6 +2145,7 @@
         return { totalLimit: 999999, used: 0, firstGenTimestamp: null, resetTimestamp: null };
       }
 
+      const storageKey = getAllowanceStorageKey();
       const state = getAllowanceState();
       const now = Date.now();
 
@@ -2028,7 +2156,7 @@
       }
 
       state.used = (state.used || 0) + 1;
-      localStorage.setItem(ALLOWANCE_CONFIG.STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(storageKey, JSON.stringify(state));
       updateAllowanceUI();
       return state;
     }
@@ -2054,32 +2182,51 @@
       return `Resets in ${mins}m ${secs}s`;
     }
 
-    let currentVipAdmin = false;
-
     async function checkUserVipStatus() {
       try {
         const res = await fetch('/api/auth/me', { credentials: 'include' });
         if (res.ok) {
           const data = await res.json();
-          const u = data.user || {};
-          const email = (u.email || u.normalized_email || '').toLowerCase();
-          const username = (u.username || '').toLowerCase();
-          if (
-            u.role === 'admin' ||
-            u.is_admin === true ||
-            email === 'abdulaziznoor9876@gmail.com' ||
-            username === 'abdulazizpro1' ||
-            username === 'abdulazizpro'
-          ) {
+          const u = data.user || data || {};
+          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
+          try {
+            localStorage.setItem('myfolio_user', JSON.stringify(u));
+          } catch (e) {}
+
+          if (email === 'abdulaziznoor9876@gmail.com') {
             currentVipAdmin = true;
             try {
               localStorage.setItem('myfolio_vip_admin', 'true');
-              localStorage.removeItem(ALLOWANCE_CONFIG.STORAGE_KEY); // Clear any cached limit
             } catch (e) {}
-            updateAllowanceUI();
+          } else {
+            currentVipAdmin = false;
+            try {
+              localStorage.removeItem('myfolio_vip_admin');
+              localStorage.removeItem('myfolio_active_vip_site');
+            } catch (e) {}
           }
+        } else {
+          currentVipAdmin = false;
+          try {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+          } catch (e) {}
         }
-      } catch (e) {}
+      } catch (e) {
+        try {
+          const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
+          const email = (u.email || '').toLowerCase().trim();
+          currentVipAdmin = (email === 'abdulaziznoor9876@gmail.com');
+          if (!currentVipAdmin) {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+          }
+        } catch (err) {
+          currentVipAdmin = false;
+        }
+      }
+      updateAllowanceUI();
+      renderGeneratedHistoryUI();
     }
 
     function updateAllowanceUI() {
@@ -2183,14 +2330,26 @@
     const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
 
     // =========================================================================
-    // GENERATED PROJECTS HISTORY LIST
+    // GENERATED PROJECTS HISTORY LIST (USER-SCOPED)
     // =========================================================================
     function getGeneratedHistory() {
       try {
-        const list = JSON.parse(localStorage.getItem(ALLOWANCE_CONFIG.HISTORY_KEY)) || [];
+        const key = getHistoryStorageKey();
+        let list = JSON.parse(localStorage.getItem(key));
+        if (!list || !Array.isArray(list)) {
+          // If abdulaziznoor9876@gmail.com and legacy history exists, migrate once
+          if (isVipUser()) {
+            const oldList = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
+            if (oldList.length > 0) {
+              list = oldList;
+              saveGeneratedHistory(list);
+            }
+          }
+        }
+        list = list || [];
         const now = Date.now();
         // Automatically purge unpurchased items older than 5 days entirely
-        const filtered = list.filter(item => (now - (item.timestamp || now)) < FIVE_DAYS_MS);
+        const filtered = list.filter(item => isVipUser() || (now - (item.timestamp || now)) < FIVE_DAYS_MS);
         if (filtered.length !== list.length) {
           saveGeneratedHistory(filtered);
         }
@@ -2202,7 +2361,8 @@
 
     function saveGeneratedHistory(list) {
       try {
-        localStorage.setItem(ALLOWANCE_CONFIG.HISTORY_KEY, JSON.stringify(list));
+        const key = getHistoryStorageKey();
+        localStorage.setItem(key, JSON.stringify(list));
       } catch (e) {}
     }
 
@@ -2265,6 +2425,99 @@
       }, 400);
     }
 
+    function showStudioToast(title, msg) {
+      let toast = document.getElementById('studioToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'studioToast';
+        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;background:rgba(15,23,42,0.95);border:1px solid rgba(56,189,248,0.4);border-radius:12px;padding:14px 20px;color:#F8FAFC;font-family:inherit;box-shadow:0 12px 36px rgba(0,0,0,0.5);backdrop-filter:blur(12px);transition:all 0.3s ease;transform:translateY(100px);opacity:0;max-width:380px;';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<strong style="display:block;color:#38BDF8;font-size:13px;margin-bottom:4px;">${title}</strong><span style="font-size:12px;color:#94A3B8;">${msg}</span>`;
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+      setTimeout(() => {
+        toast.style.transform = 'translateY(100px)';
+        toast.style.opacity = '0';
+      }, 4000);
+    }
+
+    async function setVipActiveSite(siteId) {
+      try {
+        const res = await fetch('/api/vip/set-active-site', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ siteId, email: 'abdulaziznoor9876@gmail.com' })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to switch live site.');
+
+        localStorage.setItem('myfolio_active_vip_site', siteId);
+        showStudioToast('Live Portfolio Updated', 'https://abdulaziz.myfolio.tech is now serving this version!');
+        renderGeneratedHistoryUI(siteId);
+      } catch (err) {
+        alert('Could not update active portfolio: ' + err.message);
+      }
+    }
+
+    async function deletePortfolioPermanently(siteId) {
+      if (!siteId) return;
+      if (!confirm(`Are you sure you want to permanently delete portfolio "${siteId}"?\n\nThis will purge all generated assets, code, and live routes permanently.`)) {
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/sites/${encodeURIComponent(siteId)}`, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to delete portfolio.');
+
+        // 1. Remove from local history
+        const history = getGeneratedHistory().filter(h => h.siteId !== siteId);
+        saveGeneratedHistory(history);
+
+        // 2. If this was the active VIP site, clear or switch to next
+        const activeVip = localStorage.getItem('myfolio_active_vip_site');
+        if (activeVip === siteId) {
+          localStorage.removeItem('myfolio_active_vip_site');
+          if (history.length > 0 && isVipUser()) {
+            localStorage.setItem('myfolio_active_vip_site', history[0].siteId);
+          }
+        }
+
+        showStudioToast('Portfolio Purged', `Portfolio "${siteId}" has been permanently deleted.`);
+        renderGeneratedHistoryUI();
+      } catch (err) {
+        alert('Could not delete portfolio: ' + err.message);
+      }
+    }
+
+    async function deleteAllPortfoliosPermanently() {
+      const history = getGeneratedHistory();
+      if (!history || history.length === 0) return;
+      if (!confirm(`Are you sure you want to permanently delete and terminate ALL ${history.length} portfolio(s)?\n\nThis will purge all hosted sites, files, and links permanently.`)) {
+        return;
+      }
+      for (const item of history) {
+        try {
+          await fetch(`/api/sites/${encodeURIComponent(item.siteId)}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          });
+        } catch (e) {}
+      }
+      saveGeneratedHistory([]);
+      localStorage.removeItem('myfolio_active_vip_site');
+      showStudioToast('All Portfolios Purged', 'All generated portfolio versions have been permanently deleted.');
+      renderGeneratedHistoryUI();
+    }
+
     function renderGeneratedHistoryUI(activeSiteId = null) {
       const history = getGeneratedHistory();
       const container = document.getElementById('generatedProjectsList');
@@ -2283,6 +2536,9 @@
       if (countBadge) countBadge.textContent = `${history.length} Site${history.length > 1 ? 's' : ''} Ready`;
 
       const now = Date.now();
+      const isVip = isVipUser();
+      const savedActiveVipSiteId = localStorage.getItem('myfolio_active_vip_site');
+      const effectiveActiveVipSiteId = activeSiteId || savedActiveVipSiteId || (history[0] ? history[0].siteId : null);
 
       container.innerHTML = history.map((item, idx) => {
         const uni = UNIVERSE_META[item.universeKey] || {
@@ -2290,30 +2546,81 @@
           icon: '✨',
           thumb: '/assets/3d/cosmic_astronaut_3d.jpg'
         };
-        const isActive = activeSiteId ? item.siteId === activeSiteId : idx === 0;
         const timeAgo = formatTimeAgo(item.timestamp || now);
-        const isVip = isVipUser();
-        const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
         const ghUserArg = item.githubUsername || '';
-        const cardUrl = (isVip && (item.subdomain || item.siteId === 'abdulaziz')) ? `${window.location.origin}/abdulaziz` : item.previewUrl;
+        const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
 
-        const liveBadgeHtml = isVip
-          ? `<span class="status-live-dot" style="background: rgba(56, 189, 248, 0.15); color: #38BDF8; border: 1px solid rgba(56, 189, 248, 0.4);">👑 VIP Permanent (${window.location.host}/abdulaziz)</span>`
-          : (isExpired
+        // Determine if this item is the currently active live portfolio
+        const isVipActive = isVip && (item.siteId === effectiveActiveVipSiteId || (!savedActiveVipSiteId && idx === 0));
+        const isActive = isVip ? isVipActive : (activeSiteId ? item.siteId === activeSiteId : idx === 0);
+
+        let displayedUrl = '';
+        let openUrl = '';
+        let liveBadgeHtml = '';
+        let primaryActionBtnHtml = '';
+        let secondaryActionBtnHtml = '';
+        let urlLabel = 'LIVE URL:';
+        const directVersionUrl = `${window.location.origin}/p/${item.siteId}`;
+
+        if (isVip) {
+          if (isVipActive) {
+            displayedUrl = 'https://abdulaziz.myfolio.tech';
+            openUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+              ? `${window.location.origin}/abdulaziz`
+              : 'https://abdulaziz.myfolio.tech';
+
+            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4);">👑 VIP ACTIVE (abdulaziz.myfolio.tech)</span>`;
+
+            primaryActionBtnHtml = `<a href="${openUrl}" target="_blank" class="btn-launch-live" style="background: linear-gradient(135deg, #059669 0%, #10B981 100%);">
+                🚀 Open Live Domain ↗
+              </a>
+              <a href="${directVersionUrl}" target="_blank" class="btn-universe-switch" style="border-color: rgba(16, 185, 129, 0.4); color: #34D399;" title="View exact version preview">
+                👁️ Direct Build ↗
+              </a>`;
+
+            secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
+                ↻ Switch / Regenerate
+              </button>`;
+          } else {
+            // Older generation / snapshot version
+            displayedUrl = directVersionUrl;
+            openUrl = directVersionUrl;
+            urlLabel = 'VERSION SNAPSHOT:';
+
+            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.3);">📁 Version Snapshot</span>`;
+
+            primaryActionBtnHtml = `<a href="${openUrl}" target="_blank" class="btn-launch-live" style="background: rgba(51, 65, 85, 0.9); border: 1px solid rgba(148, 163, 184, 0.3);">
+                👁️ View Snapshot ↗
+              </a>`;
+
+            secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="setVipActiveSite('${item.siteId}')" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8;">
+                ⚡ Set as Live (abdulaziz.myfolio.tech)
+              </button>`;
+          }
+        } else {
+          // Standard / Free User (e.g. generalknowledge987o@gmail.com)
+          displayedUrl = directVersionUrl;
+          openUrl = directVersionUrl;
+          liveBadgeHtml = isExpired
             ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
-            : `<span class="status-live-dot">🟢 Live WebGL</span>`);
+            : `<span class="status-live-dot">🟢 Live WebGL (24h Preview)</span>`;
 
-        const primaryActionBtnHtml = isExpired
-          ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
-              ⚡ Re-activate &amp; Open Live ↗
-            </button>`
-          : `<a href="${cardUrl}" target="_blank" class="btn-launch-live">
-              🚀 Open Live Portfolio ↗
-            </a>`;
+          primaryActionBtnHtml = isExpired
+            ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
+                ⚡ Re-activate &amp; Open Live ↗
+              </button>`
+            : `<a href="${openUrl}" target="_blank" class="btn-launch-live">
+                🚀 Open Live Portfolio ↗
+              </a>`;
+
+          secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
+              ↻ Switch / Regenerate
+            </button>`;
+        }
 
         const thumbOverlayAction = isExpired
           ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')">⚡ Re-activate ↗</span>`
-          : `<span class="overlay-btn-preview" onclick="window.open('${cardUrl}', '_blank')">Live Preview ↗</span>`;
+          : `<span class="overlay-btn-preview" onclick="window.open('${openUrl}', '_blank')">Live Preview ↗</span>`;
 
         return `
           <div class="generated-portfolio-card ${isActive ? 'active-pulse' : ''}" id="gen-card-${item.siteId}">
@@ -2347,15 +2654,17 @@
                 </div>
 
                 <div class="card-url-box">
-                  <span class="url-label">LIVE URL:</span>
-                  <span class="url-text">${cardUrl}</span>
-                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${cardUrl}', this)" title="Copy Link">📋 Copy</button>
+                  <span class="url-label">${urlLabel}</span>
+                  <span class="url-text">${displayedUrl}</span>
+                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${displayedUrl}', this)" title="Copy Link">📋 Copy</button>
                 </div>
 
                 <div class="card-actions-bar">
                   ${primaryActionBtnHtml}
-                  <button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
-                    ↻ Switch / Regenerate
+                  ${secondaryActionBtnHtml}
+                  <button type="button" class="btn-card-delete" onclick="deletePortfolioPermanently('${item.siteId}')" title="Permanently Terminate &amp; Delete Portfolio">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Terminate &amp; Delete</span>
                   </button>
                 </div>
               </div>
@@ -2450,7 +2759,21 @@
         const candidateResolvedName = fullName || ghUser || (projects[0]?.name ? `${projects[0].name} Creator` : 'Developer');
         const candidateResolvedRole = manualRole || (ghUser ? 'Full-Stack & Systems Developer' : 'Software Engineer');
 
+        const isVip = isVipUser();
+        let currentLoggedInEmail = '';
+        try {
+          const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
+          currentLoggedInEmail = (u.email || u.normalized_email || '').toLowerCase().trim();
+        } catch (e) {}
+
+        const userAccountEmail = currentLoggedInEmail || (isVip ? 'abdulaziznoor9876@gmail.com' : undefined);
+        const contactEmail = manualEmail || userAccountEmail;
+
         const payload = {
+          email: contactEmail,
+          userEmail: userAccountEmail,
+          isVip: isVip,
+          isVipFounder: isVip,
           githubData: ghUser ? { username: ghUser } : (manualGithub ? { username: manualGithub } : {}),
           resumeData: {
             rawBase64: uploadedResumeBase64 || undefined,
@@ -2460,7 +2783,7 @@
             title: manualRole || undefined,
             tagline: manualTagline || undefined,
             bio: manualBio || undefined,
-            email: manualEmail || undefined,
+            email: contactEmail,
             location: manualLocation || undefined,
             skills: manualSkills ? manualSkills.split(',').map(s => s.trim()).filter(Boolean) : undefined,
             languages: manualLanguages ? manualLanguages.split(',').map(s => s.trim()).filter(Boolean) : undefined,
@@ -2488,13 +2811,21 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to synthesize portfolio.');
 
-        const isVip = isVipUser() || data.isVip;
-        let previewUrl = isVip
-          ? `${window.location.origin}/abdulaziz`
-          : (data.siteUrl || (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : `${window.location.origin}/p/preview`));
+        // VIP result ONLY if client is verified VIP user AND backend confirmed isVip
+        const isVipResult = isVip && Boolean(data.isVip);
+        if (isVipResult && data.siteId) {
+          localStorage.setItem('myfolio_active_vip_site', data.siteId);
+        }
+
+        let previewUrl = isVipResult
+          ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `${window.location.origin}/abdulaziz` : 'https://abdulaziz.myfolio.tech')
+          : (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : (data.siteUrl || `${window.location.origin}/p/${data.siteId || 'preview'}`));
         
         if (ghUser) {
-          try { localStorage.setItem('myfolio_saved_gh_username', ghUser); } catch(e) {}
+          try {
+            const userKey = currentLoggedInEmail ? `myfolio_gh_user_${currentLoggedInEmail.replace(/[^a-z0-9]/g, '_')}` : 'myfolio_saved_gh_username';
+            localStorage.setItem(userKey, ghUser);
+          } catch(e) {}
         }
 
         // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle (VIP does not decrement)
@@ -2502,9 +2833,9 @@
 
         // 2. Add Newly Generated Project Card below Generate Button
         addGeneratedPortfolioToHistory({
-          siteId: data.siteId || (isVip ? 'abdulaziz' : `gen-${Date.now()}`),
+          siteId: data.siteId || (isVipResult ? `abdulaziz-${Date.now()}` : `gen-${Date.now()}`),
           previewUrl: previewUrl,
-          subdomain: isVip ? 'abdulaziz.myfolio.tech' : null,
+          subdomain: isVipResult ? 'abdulaziz.myfolio.tech' : null,
           universeKey: selectedUniverseKey,
           githubUsername: ghUser || manualGithub || undefined,
           developerName: data.profileData?.name || candidateResolvedName,
@@ -2514,7 +2845,8 @@
         });
 
         // 3. Update legacy preview card (if visible)
-        document.getElementById('generatedUrlText').textContent = previewUrl;
+        const displayLiveUrl = isVipResult ? 'https://abdulaziz.myfolio.tech' : previewUrl;
+        document.getElementById('generatedUrlText').textContent = displayLiveUrl;
         document.getElementById('btnOpenGeneratedLive').href = previewUrl;
 
         if (typeof confetti === 'function') {
@@ -2537,9 +2869,10 @@
     }
 
     function copyGeneratedUrl() {
-      const url = document.getElementById('generatedUrlText').textContent;
+      const isVip = isVipUser();
+      const url = isVip ? 'https://abdulaziz.myfolio.tech' : document.getElementById('generatedUrlText').textContent;
       navigator.clipboard.writeText(url);
-      alert('Portfolio URL copied to clipboard!');
+      alert('Portfolio URL copied to clipboard: ' + url);
     }
 
     window.switchIngestTab = switchIngestTab;
@@ -2549,6 +2882,10 @@
     window.copyGeneratedUrl = copyGeneratedUrl;
     window.copyPortfolioUrl = copyPortfolioUrl;
     window.regenerateWithUniverse = regenerateWithUniverse;
+    window.setVipActiveSite = setVipActiveSite;
+    window.deletePortfolioPermanently = deletePortfolioPermanently;
+    window.deleteAllPortfoliosPermanently = deleteAllPortfoliosPermanently;
+    window.showStudioToast = showStudioToast;
 
     // Three.js 3D Fluid Silk Flow Engine
     let scene, camera, renderer, silkMesh, silkGeometry, particles;
@@ -2684,7 +3021,15 @@
       checkUserVipStatus();
       renderGeneratedHistoryUI();
 
-      const savedGh = localStorage.getItem('myfolio_saved_gh_username') || localStorage.getItem('portfolio_bot_github_user');
+      let userGhKey = null;
+      try {
+        const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
+        const em = (u.email || u.normalized_email || '').toLowerCase().trim();
+        if (em) {
+          userGhKey = `myfolio_gh_user_${em.replace(/[^a-z0-9]/g, '_')}`;
+        }
+      } catch (e) {}
+      const savedGh = userGhKey ? localStorage.getItem(userGhKey) : null;
       if (savedGh) {
         const ghInput = document.getElementById('ghUsername');
         if (ghInput && !ghInput.value) ghInput.value = savedGh;
