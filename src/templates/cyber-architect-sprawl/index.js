@@ -92,20 +92,24 @@ const CyberArchitectSprawlTemplate = {
     const userSeed = data.github || data.username || data.name || '';
 
     const projectCardsHtml = rawProjects.slice(0, 6).map((proj, idx) => {
-      const pTitle = TemplateHelper.escapeHtml(proj.title || `Node 0${idx + 1}`);
+      const pTitle = TemplateHelper.escapeHtml(proj.title || proj.name || `Node 0${idx + 1}`);
       const pCat = TemplateHelper.escapeHtml(proj.category || 'Grid App');
-      const pDesc = TemplateHelper.escapeHtml(proj.desc || 'High-performance distributed telemetry protocol.');
+      const pDesc = TemplateHelper.escapeHtml(proj.desc || proj.description || 'High-performance distributed telemetry protocol.');
       
       const artwork = ProjectArtworkSynthesizer.resolveProjectArtwork(proj, 'cyber-architect-sprawl', idx, assignedArtworks, userSeed);
-      const pImg = proj.image || artwork.src;
-      const pUrl = TemplateHelper.escapeHtml(proj.url || '#');
-      const pTags = Array.isArray(proj.tags) ? proj.tags : ['Grid', 'Telemetry'];
-      const tagsHtml = pTags.map(t => `<span class="tech-tag-chip">${TemplateHelper.escapeHtml(t)}</span>`).join('');
+      let pImg = artwork.src;
+      if (proj.image && !assignedArtworks.has(proj.image) && !proj.image.includes('placeholder') && !proj.image.includes('project_crystal')) {
+        pImg = proj.image;
+        assignedArtworks.add(pImg);
+      }
+      const pUrl = TemplateHelper.escapeHtml(proj.url || proj.live || proj.github || '#');
+      const pTags = Array.isArray(proj.tags) ? proj.tags : (Array.isArray(proj.technologies) ? proj.technologies : (typeof proj.tech === 'string' ? proj.tech.split(/[,•|/]/) : ['Grid', 'Telemetry']));
+      const tagsHtml = pTags.slice(0, 3).map(t => `<span class="tech-tag-chip">${TemplateHelper.escapeHtml(t.trim())}</span>`).join('');
 
       return `
         <div class="project-bento-card" data-category="${pCat.toLowerCase().replace(/[^a-z0-9]/g, '-')}">
           <div class="project-preview-wrap">
-            <img src="${pImg}" alt="${pTitle}" class="project-thumb-img" loading="lazy" decoding="async" onerror="this.src='/assets/designs/cyber/project_crystal_nobg.png'" />
+            <img src="${pImg}" alt="${pTitle}" class="project-thumb-img" loading="lazy" decoding="async" />
             <div class="project-glow-overlay"></div>
             <span class="project-cat-badge">${pCat}</span>
           </div>

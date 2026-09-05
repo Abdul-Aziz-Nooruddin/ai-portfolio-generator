@@ -40,7 +40,7 @@ class ProjectArtworkSynthesizer {
     { src: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg', label: 'Chrono-Obsidian Monolith', icon: '🏛️', color: '#f59e0b', keywords: ['obsidian', 'steampunk', 'clockwork', 'gear', 'sanctuary', 'monolith', 'stone', 'brass', 'astrolabe', 'relic'] }
   ];
 
-  // Dedicated Cyber-Architect 3D Assets
+  // Dedicated Cyber-Architect 3D Assets (100% transparent high-res assets)
   static cyberCatalog = [
     { src: '/assets/designs/cyber/project_ai_core_nobg.png', label: 'Neural AI Core', icon: '🧠', color: '#00F0FF', keywords: ['ai', 'intelligence', 'neural', 'machine learning', 'model', 'agent', 'brain', 'deep learning', 'vision', 'nlp', 'llm', 'gpt', 'generator'] },
     { src: '/assets/designs/cyber/project_data_chain_nobg.png', label: 'ConsentChain Protocol', icon: '⛓️', color: '#FF007A', keywords: ['algorand', 'algo', 'consent', 'blockchain', 'chain', 'crypto', 'escrow', 'web3', 'ledger', 'token', 'nft', 'dapp', 'polygon'] },
@@ -50,9 +50,24 @@ class ProjectArtworkSynthesizer {
     { src: '/assets/designs/cyber/cyber_eye_nobg.png', label: 'Cybernetic Telemetry Radar', icon: '👁️', color: '#F43F5E', keywords: ['vision', 'eye', 'radar', 'monitoring', 'observability', 'telemetry', 'detector', 'lens', 'sensor'] },
     { src: '/assets/designs/cyber/hero_hand_nobg.png', label: 'Robotic Automation Stage', icon: '🤖', color: '#00F0FF', keywords: ['robot', 'hand', 'automation', 'hardware', 'spatial', 'device', 'control', 'bot'] },
     { src: '/assets/designs/cyber/resume_cards_nobg.png', label: 'Curated Codex Dossier', icon: '📜', color: '#C084FC', keywords: ['resume', 'dossier', 'codex', 'profile', 'auth', 'identity', 'credential', 'license'] },
-    { src: '/assets/designs/cyber/blog_ux_3d.jpg', label: 'Hyper-Reality UI Mesh', icon: '🥽', color: '#EC4899', keywords: ['reality', 'vr', 'ar', 'metaverse', 'ux', 'spatial', '3d'] },
-    { src: '/assets/designs/cyber/blog_api_3d.jpg', label: 'Quantum API Gateway', icon: '⚡', color: '#38BDF8', keywords: ['api', 'rest', 'graphql', 'rpc', 'gateway', 'microservice', 'distributed', 'socket'] },
-    { src: '/assets/designs/cyber/blog_ai_3d.jpg', label: 'Generative Shader Engine', icon: '🌌', color: '#A855F7', keywords: ['shader', 'generative', 'graphics', 'webgl', 'three', 'canvas'] }
+    { src: '/assets/designs/cyber/blog_ux_3d_nobg.png', label: 'Hyper-Reality UI Mesh', icon: '🥽', color: '#EC4899', keywords: ['reality', 'vr', 'ar', 'metaverse', 'ux', 'spatial', '3d', 'interface', 'glass'] },
+    { src: '/assets/designs/cyber/blog_api_3d_nobg.png', label: 'Quantum API Gateway', icon: '⚡', color: '#38BDF8', keywords: ['api', 'rest', 'graphql', 'rpc', 'gateway', 'microservice', 'distributed', 'socket'] },
+    { src: '/assets/designs/cyber/blog_ai_3d_nobg.png', label: 'Generative Shader Engine', icon: '🌌', color: '#A855F7', keywords: ['shader', 'generative', 'graphics', 'webgl', 'three', 'canvas'] },
+    { src: '/assets/designs/cyber/cyber_gnome_nobg.png', label: 'Automaton Sentinel Node', icon: '🦾', color: '#10B981', keywords: ['automaton', 'worker', 'daemon', 'cron', 'sentinel', 'service', 'task', 'scheduler'] }
+  ];
+
+  // Dedicated Abyssal Nautilus 3D Assets (Multi-variant treasure chests & oceanic relics)
+  static nautilusCatalog = [
+    { src: '/assets/designs/nautilus/treasure_chest_wheel_nobg.png', label: 'Abyssal Helm Chest', icon: '☸️', color: '#00F5D4', keywords: ['portfolio', 'wheel', 'helm', 'navigation', 'routing', 'engine', 'core', 'platform', 'framework'] },
+    { src: '/assets/designs/nautilus/chest_compass_lid_nobg.png', label: 'Cartographer Compass Vault', icon: '🧭', color: '#0EA5E9', keywords: ['compass', 'geo', 'map', 'cartography', 'tracking', 'location', 'travel', 'spatial', 'coordinate'] },
+    { src: '/assets/designs/nautilus/chest_wheel_lid_nobg.png', label: 'Submersible Mechanism Vault', icon: '⚙️', color: '#F59E0B', keywords: ['system', 'backend', 'mechanism', 'pipeline', 'service', 'database', 'sql', 'management', 'lms'] },
+    { src: '/assets/designs/nautilus/treasure_chest_compass_nobg.png', label: 'Sunken Astrolabe Coffer', icon: '🪙', color: '#FBBF24', keywords: ['crypto', 'finance', 'wallet', 'token', 'blockchain', 'escrow', 'algorand', 'web3', 'consent'] },
+    { src: '/assets/designs/nautilus/treasure_chest_nobg.png', label: 'Deep Relic Vault', icon: '📦', color: '#38BDF8', keywords: ['storage', 'archive', 'data', 'cloud', 'vault', 'records', 'file', 'student'] },
+    { src: '/assets/designs/nautilus/nautical_compass_nobg.png', label: 'Gilded Sextant Chronometer', icon: '⏱️', color: '#F59E0B', keywords: ['time', 'metrics', 'monitoring', 'clock', 'speed', 'performance', 'latency', 'telemetry'] },
+    { src: '/assets/designs/nautilus/porthole_nobg.png', label: 'Titanium Porthole Telemetry', icon: '🔍', color: '#00F5D4', keywords: ['vision', 'ui', 'view', 'dashboard', 'frontend', 'monitor', 'interface', 'glass'] },
+    { src: '/assets/designs/nautilus/coral_tree_nobg.png', label: 'Bioluminescent Coral Substrate', icon: '🪸', color: '#10B981', keywords: ['ai', 'neural', 'learning', 'tree', 'algorithm', 'bio', 'growth', 'model'] },
+    { src: '/assets/designs/nautilus/seahorse_nobg.png', label: 'Abyssal Seahorse Conduit', icon: '🌊', color: '#06B6D4', keywords: ['message', 'queue', 'stream', 'flow', 'chat', 'note', 'pass', 'protocol', 'messenger'] },
+    { src: '/assets/designs/nautilus/squid_nobg.png', label: 'Cephalopod Mesh Network', icon: '🦑', color: '#A855F7', keywords: ['distributed', 'mesh', 'network', 'peer', 'cluster', 'socket', 'node'] }
   ];
 
   /**
@@ -68,27 +83,56 @@ class ProjectArtworkSynthesizer {
     const combinedText = `${seed} ${nameText} ${descText} ${categoryText} ${techText}`;
 
     const isCyberTheme = (theme === 'cyber-architect-sprawl');
-    const catalog = isCyberTheme
-      ? [...this.cyberCatalog, ...this.assetCatalog]
-      : this.assetCatalog;
+    const isNautilusTheme = (theme === 'abyssal-nautilus-artisan');
+
+    let catalog;
+    if (isCyberTheme) {
+      catalog = [...this.cyberCatalog, ...this.assetCatalog];
+    } else if (isNautilusTheme) {
+      catalog = [...this.nautilusCatalog, ...this.assetCatalog];
+    } else {
+      catalog = this.assetCatalog;
+    }
 
     const idx = Number(projectIndex || 0);
     const assigned = (usedAssets instanceof Set) ? usedAssets : null;
 
-    // 1. Score each asset in catalog based on keyword matches
+    // Helper: word boundary match for short keywords (e.g. 'ai', 'ui', 'ux')
+    const matchesKeyword = (text, kw) => {
+      if (!text || !kw) return false;
+      if (kw.length <= 3) {
+        const regex = new RegExp(`(^|[^a-z0-9])${kw}([^a-z0-9]|$)`, 'i');
+        return regex.test(text);
+      }
+      return text.includes(kw);
+    };
+
+    // 1. Score each asset in catalog based on keyword matches & theme affinity
     const scoredList = catalog.map((item, originalIndex) => {
       let score = 0;
-      for (const kw of item.keywords) {
-        if (nameText.includes(kw)) score += 15;
-        else if (categoryText.includes(kw)) score += 8;
-        else if (descText.includes(kw)) score += 4;
-        else if (techText.includes(kw)) score += 2;
+      const isThemeNative = (isCyberTheme && this.cyberCatalog.some(c => c.src === item.src)) ||
+                            (isNautilusTheme && this.nautilusCatalog.some(n => n.src === item.src));
+
+      // Theme affinity boost: native 3D assets get a boost to match the aesthetic DNA
+      if (isThemeNative) {
+        score += 25;
       }
-      return { item, score, originalIndex };
+
+      for (const kw of item.keywords) {
+        if (matchesKeyword(nameText, kw)) score += 20;
+        else if (matchesKeyword(categoryText, kw)) score += 10;
+        else if (matchesKeyword(descText, kw)) score += 5;
+        else if (matchesKeyword(techText, kw)) score += 3;
+      }
+      return { item, score, originalIndex, isThemeNative };
     });
 
-    // Sort by match score descending
-    scoredList.sort((a, b) => b.score - a.score);
+    // Sort by match score descending, breaking ties with theme affinity
+    scoredList.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (b.isThemeNative !== a.isThemeNative) return (b.isThemeNative ? 1 : 0) - (a.isThemeNative ? 1 : 0);
+      return a.originalIndex - b.originalIndex;
+    });
 
     // 2. Filter available assets (STRICT: excluding already-assigned assets in this portfolio)
     let availableScored = scoredList;

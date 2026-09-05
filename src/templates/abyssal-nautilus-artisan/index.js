@@ -17,6 +17,7 @@
  */
 
 const { TemplateHelper } = require('../template-helper');
+const { ProjectArtworkSynthesizer } = require('../project-artwork-synthesizer');
 
 const AbyssalNautilusArtisanTemplate = {
   id: 'abyssal-nautilus-artisan',
@@ -98,6 +99,9 @@ const AbyssalNautilusArtisanTemplate = {
       }
     ];
 
+    const assignedArtworks = new Set();
+    const userSeed = data.github || data.username || data.name || '';
+
     const projectCardsHtml = rawProjects.map((project, idx) => {
       const pTitle = TemplateHelper.escapeHtml(project.title || project.name || `Artifact ${idx + 1}`);
       const pDesc = TemplateHelper.escapeHtml(project.description || project.desc || 'Deep-sea architectural artifact.');
@@ -113,17 +117,14 @@ const AbyssalNautilusArtisanTemplate = {
       }
       const tagsHtml = tagsArray.map(t => `<span class="abyss-tag">${TemplateHelper.escapeHtml(t)}</span>`).join('');
       const linkUrl = project.live || project.link || project.github || '#';
-      const chestVariants = [
-        '/assets/designs/nautilus/treasure_chest_wheel_nobg.png',
-        '/assets/designs/nautilus/chest_compass_lid_nobg.png',
-        '/assets/designs/nautilus/chest_wheel_lid_nobg.png'
-      ];
-      const chestImg = chestVariants[idx % chestVariants.length];
+      
+      const artwork = ProjectArtworkSynthesizer.resolveProjectArtwork(project, 'abyssal-nautilus-artisan', idx, assignedArtworks, userSeed);
+      const chestImg = artwork.src;
 
       return `
         <article class="treasure-chest-card" data-category="${TemplateHelper.escapeHtml(tagsArray[0] || 'all')}">
           <div class="chest-lid-ornament">
-            <img src="${chestImg}" alt="3D Treasure Chest Ornament" class="chest-wheel-img" loading="lazy" decoding="async" />
+            <img src="${chestImg}" alt="${artwork.label}" class="chest-wheel-img" loading="lazy" decoding="async" />
           </div>
           <div class="chest-body-plate">
             <div class="chest-plate-header">

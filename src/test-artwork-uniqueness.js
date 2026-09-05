@@ -103,4 +103,47 @@ test('🎨 100% Unique Project Artwork & Disambiguation Engine', async (t) => {
     assert.ok(htmlUserA.includes('/assets/3d/'), 'User A gets valid 3D asset');
     assert.ok(htmlUserB.includes('/assets/3d/'), 'User B gets valid 3D asset');
   });
+
+  await t.test('4. CyberArchitectSprawl guarantees 0 duplicate images & title relevance for user profile projects', () => {
+    const { CyberArchitectSprawlTemplate } = require('./templates/cyber-architect-sprawl');
+    const userProjects = [
+      { name: 'Ai Portfolio Generator', desc: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds.', tech: 'JavaScript, 3d-website, ai-portfolio' },
+      { name: 'ConsentChain Algorand', desc: 'A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.', tech: 'TypeScript, JavaScript, CSS' },
+      { name: 'Portfolio', desc: 'Personal portfolio - AI Student, Full-Stack & Blockchain Developer. Built with HTML, CSS & JS.', tech: 'CSS, TypeScript, HTML' },
+      { name: 'Pass A Note', desc: 'High-performance software project engineered in HTML.', tech: 'HTML' },
+      { name: 'Lms User Management', desc: 'High-performance software project engineered in JavaScript.', tech: 'JavaScript' }
+    ];
+
+    const rendered = CyberArchitectSprawlTemplate.render({ name: 'Abdul Aziz Nooruddin', projects: userProjects });
+    const matches = [...rendered.matchAll(/<img\s+src="([^"]+)"\s+alt="([^"]+)"\s+class="project-thumb-img"/g)].map(m => m[1]);
+
+    assert.strictEqual(matches.length, 5, 'Must render 5 project cards');
+    const unique = new Set(matches);
+    assert.strictEqual(unique.size, 5, `Must have ZERO duplicate images across project cards (Found: ${JSON.stringify(matches)})`);
+
+    // Verify title relevance
+    assert.ok(matches[0].includes('project_ai_core') || matches[0].includes('developer_showcase'), 'Ai Portfolio Generator gets AI Core / WebGL Showcase');
+    assert.ok(matches[1].includes('project_data_chain') || matches[1].includes('blockchain'), 'ConsentChain Algorand gets Data Chain / Blockchain');
+    assert.ok(matches[2].includes('project_crystal') || matches[2].includes('portfolio'), 'Portfolio gets Crystal / Portfolio asset');
+    assert.ok(matches[3].includes('origami_bird') || matches[3].includes('bird'), 'Pass A Note gets Note Messenger Bird');
+    assert.ok(matches[4].includes('circuit_board') || matches[4].includes('database'), 'Lms User Management gets Circuit Board Systems Hub');
+  });
+
+  await t.test('5. AbyssalNautilusArtisan guarantees 0 duplicate treasure chests / oceanic relics', () => {
+    const { AbyssalNautilusArtisanTemplate } = require('./templates/abyssal-nautilus-artisan');
+    const userProjects = [
+      { name: 'Ai Portfolio Generator', desc: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds.' },
+      { name: 'ConsentChain Algorand', desc: 'A decentralized Consent Management application powered by the Algorand blockchain.' },
+      { name: 'Portfolio', desc: 'Personal portfolio - AI Student, Full-Stack & Blockchain Developer.' },
+      { name: 'Pass A Note', desc: 'High-performance software project engineered in HTML.' },
+      { name: 'Lms User Management', desc: 'High-performance software project engineered in JavaScript.' }
+    ];
+
+    const rendered = AbyssalNautilusArtisanTemplate.render({ name: 'Abdul Aziz Nooruddin', projects: userProjects });
+    const matches = [...rendered.matchAll(/<img\s+src="([^"]+)"\s+alt="([^"]+)"\s+class="chest-wheel-img"/g)].map(m => m[1]);
+
+    assert.strictEqual(matches.length, 5, 'Must render 5 chest cards');
+    const unique = new Set(matches);
+    assert.strictEqual(unique.size, 5, `Must have ZERO duplicate chest images across project cards (Found: ${JSON.stringify(matches)})`);
+  });
 });
