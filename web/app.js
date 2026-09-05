@@ -64,13 +64,13 @@ function updateNavAuthDock() {
 
   if (currentUser) {
     dock.innerHTML = `
-      <a href="/studio.html" class="nav-link-item">WEB STUDIO</a>
-      <a href="/dashboard.html" class="nav-btn-pill" style="text-decoration: none;">DASHBOARD</a>
+      <a href="/studio.html" class="nav-link-item">Web studio</a>
+      <a href="/dashboard.html" class="nav-btn-pill" style="text-decoration: none;">Dashboard</a>
     `;
   } else {
     dock.innerHTML = `
-      <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">SIGN IN</button>
-      <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">GET STARTED FREE</button>
+      <button type="button" class="nav-link-item nav-login-btn" onclick="openAuthModal('signin')">Sign in</button>
+      <button type="button" class="nav-btn-pill" onclick="openAuthModal('signup')">Build my portfolio</button>
     `;
   }
 }
