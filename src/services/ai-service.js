@@ -632,10 +632,18 @@ Respond ONLY with valid JSON.`;
       }
     }
 
-    // 2. If we have text and AI is available, use Gemini with structured prompt
+    // 1b. Fast path: if extracted text contains clear certificate metadata, return heuristics immediately (< 5ms)
+    if (rawText && rawText.length > 30) {
+      const fastHeuristics = this.parseCertificateHeuristics(rawText, filename);
+      if (fastHeuristics && fastHeuristics.issuer && fastHeuristics.name && !fastHeuristics.name.includes('Certified Professional')) {
+        return fastHeuristics;
+      }
+    }
+
+    // 2. If text exists and AI is available, use Gemini with 8-second timeout
     if (this.apiKey && !this.apiKey.includes('test') && this.apiKey !== 'placeholder') {
       const prompt = `Analyze this professional certificate / credential document and extract key fields into strict JSON:
-${rawText ? `CERTIFICATE TEXT:\n${rawText}` : `(Attached image/document)`}
+${rawText ? `CERTIFICATE TEXT:\n${rawText.slice(0, 3000)}` : `(Attached image/document)`}
 
 Return ONLY this JSON structure:
 {
@@ -650,7 +658,9 @@ Return ONLY this JSON structure:
 
       if (rawText && rawText.length > 20) {
         try {
-          const res = await this.callGemini(prompt);
+          const geminiPromise = this.callGemini(prompt);
+          const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('AI timeout')), 8000));
+          const res = await Promise.race([geminiPromise, timeoutPromise]);
           if (res && (res.name || res.issuer)) {
             return {
               name: res.name || res.title || 'Verified Credential',
@@ -666,21 +676,23 @@ Return ONLY this JSON structure:
         } catch (err) {}
       }
 
-      // Multimodal vision for images or scanned PDFs
+      // Multimodal vision for images or scanned PDFs (with 10-second timeout to prevent gateway errors)
       if (normalizedMime.startsWith('image/') || (!rawText && normalizedMime === 'application/pdf')) {
         const base64Data = buffer.toString('base64');
-        const candidateModels = ['gemini-3.0-flash', 'gemini-3.1-pro-preview', 'gemini-2.5-flash-lite', 'gemini-flash-latest'];
+        const candidateModels = ['gemini-3.0-flash', 'gemini-flash-latest'];
         for (const mName of candidateModels) {
           try {
             if (this.sdkAvailable) {
               const m = this.genAI.getGenerativeModel({
                 model: mName,
-                generationConfig: { temperature: 0.1, maxOutputTokens: 2048, responseMimeType: 'application/json' }
+                generationConfig: { temperature: 0.1, maxOutputTokens: 1024, responseMimeType: 'application/json' }
               });
-              const result = await m.generateContent([
+              const visionPromise = m.generateContent([
                 { inlineData: { data: base64Data, mimeType: normalizedMime } },
                 prompt
               ]);
+              const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Vision timeout')), 10000));
+              const result = await Promise.race([visionPromise, timeoutPromise]);
               const parsed = this.parseJsonResponse(result.response.text());
               if (parsed && (parsed.name || parsed.issuer)) {
                 return {
@@ -695,7 +707,9 @@ Return ONLY this JSON structure:
                 };
               }
             }
-          } catch (mErr) {}
+          } catch (mErr) {
+            break; // Do not loop endlessly on timeouts
+          }
         }
       }
     }

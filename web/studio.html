@@ -2075,9 +2075,73 @@
         .replace(/"/g, '&quot;');
     }
 
-    function handlePhotoFileSelected(input) {
+    async function compressImageClientSide(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
+      if (!file || !file.type || !file.type.startsWith('image/')) return null;
+      return new Promise((resolve) => {
+        try {
+          const img = new Image();
+          const objectUrl = URL.createObjectURL(file);
+          img.onload = () => {
+            URL.revokeObjectURL(objectUrl);
+            let width = img.width;
+            let height = img.height;
+            if (width > maxWidth || height > maxHeight) {
+              if (width > height) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+              } else {
+                width = Math.round((width * maxHeight) / height);
+                height = maxHeight;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            const base64 = dataUrl.split(',')[1];
+            resolve({
+              dataUrl,
+              rawBase64: base64,
+              mimeType: 'image/jpeg',
+              size: Math.round((base64.length * 3) / 4)
+            });
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(objectUrl);
+            resolve(null);
+          };
+          img.src = objectUrl;
+        } catch (e) {
+          resolve(null);
+        }
+      });
+    }
+
+    async function handlePhotoFileSelected(input) {
       const file = input.files?.[0];
       if (!file) return;
+
+      const isImage = file.type?.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
+      if (isImage) {
+        const compressed = await compressImageClientSide(file, 1200, 1200, 0.85);
+        if (compressed) {
+          uploadedPhotoData = {
+            name: file.name,
+            mimeType: compressed.mimeType,
+            rawBase64: compressed.rawBase64,
+            dataUrl: compressed.dataUrl
+          };
+          const previewContainer = document.getElementById('photoPreviewContainer');
+          const previewImg = document.getElementById('photoPreviewImg');
+          const previewName = document.getElementById('photoPreviewName');
+          if (previewImg) previewImg.src = compressed.dataUrl;
+          if (previewName) previewName.innerText = `${file.name} (${Math.round(compressed.size / 1024)} KB optimized)`;
+          if (previewContainer) previewContainer.style.display = 'flex';
+          return;
+        }
+      }
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -2110,11 +2174,27 @@
       if (previewImg) previewImg.src = '';
     }
 
-    function handleCertFilesSelected(files) {
+    async function handleCertFilesSelected(files) {
       if (!files || files.length === 0) return;
 
-      Array.from(files).forEach(file => {
-        if (uploadedCertificates.some(c => c.name === file.name && c.size === file.size)) return;
+      for (const file of Array.from(files)) {
+        if (uploadedCertificates.some(c => c.name === file.name && c.size === file.size)) continue;
+
+        const isImage = file.type?.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
+        if (isImage) {
+          const compressed = await compressImageClientSide(file, 1600, 1600, 0.85);
+          if (compressed) {
+            uploadedCertificates.push({
+              name: file.name,
+              size: compressed.size,
+              mimeType: compressed.mimeType,
+              rawBase64: compressed.rawBase64,
+              dataUrl: compressed.dataUrl
+            });
+            renderCertificatesList();
+            continue;
+          }
+        }
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -2130,7 +2210,7 @@
           renderCertificatesList();
         };
         reader.readAsDataURL(file);
-      });
+      }
 
       const certInput = document.getElementById('certFileInput');
       if (certInput) certInput.value = '';
@@ -2190,7 +2270,7 @@
       if (card) card.classList.add('selected');
     }
 
-    function processStudioResumeFile(file) {
+    async function processStudioResumeFile(file) {
       if (!file) return;
 
       const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
@@ -2207,6 +2287,29 @@
       }
 
       uploadedResumeMime = file.type || (isPdf ? 'application/pdf' : (isImage ? 'image/png' : 'text/plain'));
+
+      if (isImage) {
+        const compressed = await compressImageClientSide(file, 1600, 1600, 0.85);
+        if (compressed) {
+          uploadedResumeBase64 = compressed.rawBase64;
+          uploadedResumeMime = compressed.mimeType;
+          if (!uploadedPhotoData) {
+            uploadedPhotoData = {
+              name: file.name,
+              mimeType: compressed.mimeType,
+              rawBase64: compressed.rawBase64,
+              dataUrl: compressed.dataUrl
+            };
+            const previewContainer = document.getElementById('photoPreviewContainer');
+            const previewImg = document.getElementById('photoPreviewImg');
+            const previewName = document.getElementById('photoPreviewName');
+            if (previewImg) previewImg.src = compressed.dataUrl;
+            if (previewName) previewName.innerText = `Detected from resume: ${file.name}`;
+            if (previewContainer) previewContainer.style.display = 'flex';
+          }
+          return;
+        }
+      }
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -3186,8 +3289,24 @@
           body: JSON.stringify(payload)
         });
 
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to synthesize portfolio.');
+        const rawResponseText = await res.text();
+        let data;
+        try {
+          data = JSON.parse(rawResponseText);
+        } catch (jsonErr) {
+          console.error('[Studio] Server returned non-JSON response:', rawResponseText.slice(0, 300));
+          if (res.status === 413) {
+            throw new Error('Upload payload is too large. Please use smaller files.');
+          } else if (res.status === 504 || res.status === 524) {
+            throw new Error('Synthesis timed out on cloud gateway. Please try again with fewer or smaller files.');
+          } else if (res.status === 502 || res.status === 503) {
+            throw new Error('Service is temporarily busy or restarting. Please try again in a few moments.');
+          } else {
+            throw new Error(`Server returned unexpected response (${res.status}). Please try again shortly.`);
+          }
+        }
+
+        if (!res.ok) throw new Error(data?.error || `Failed to synthesize portfolio (${res.status}).`);
 
         // VIP result ONLY if client is verified VIP user AND backend confirmed isVip
         const isVipResult = isVip && Boolean(data.isVip);
@@ -3243,8 +3362,11 @@
           document.getElementById('generatedPortfoliosSection').scrollIntoView({ behavior: 'smooth' });
         }
       } catch (err) {
-        alert('Generation note: ' + err.message);
+        showStudioToast('Generation Notice', err.message);
       } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i data-lucide="sparkles" style="width:22px;height:22px;"></i><span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>`;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
         delete btn.dataset.busy;
         updateAllowanceUI();
       }

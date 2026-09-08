@@ -1062,15 +1062,13 @@ app.post('/api/generate/unified', async (req, res) => {
       }
     }
 
-    // 5. Ingest, Save & AI-Parse Uploaded Certificates
+    // 5. Ingest, Save & AI-Parse Uploaded Certificates (Parallelized)
     if (Array.isArray(input.certificates) && input.certificates.length > 0) {
       const certsDir = path.join(siteDir, 'certificates');
       fs.mkdirSync(certsDir, { recursive: true });
-      const parsedCertList = [];
 
-      for (let i = 0; i < input.certificates.length; i++) {
-        const cert = input.certificates[i];
-        if (!cert) continue;
+      const parsedCertList = await Promise.all(input.certificates.map(async (cert, i) => {
+        if (!cert) return null;
 
         let certBuf = null;
         if (cert.rawBase64) {
@@ -1100,7 +1098,7 @@ app.post('/api/generate/unified', async (req, res) => {
           }
         }
 
-        parsedCertList.push({
+        return {
           name: parsedMeta?.name || cert.name?.replace(/\.[^/.]+$/, '') || `Professional Certification #${i + 1}`,
           issuer: parsedMeta?.issuer || 'Verified Professional Authority',
           date: parsedMeta?.issueDate || parsedMeta?.date || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
@@ -1108,10 +1106,10 @@ app.post('/api/generate/unified', async (req, res) => {
           url: certFileUrl,
           fileUrl: certFileUrl,
           verified: true
-        });
-      }
+        };
+      }));
 
-      input.certificates = parsedCertList;
+      input.certificates = parsedCertList.filter(Boolean);
     }
 
     const normalized = UnifiedProfileNormalizer.normalize(input);
