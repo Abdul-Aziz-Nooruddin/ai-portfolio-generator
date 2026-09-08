@@ -2465,21 +2465,40 @@
         }
         if (!handle) handle = getCurrentUsername();
 
+        const history = getGeneratedHistory();
+        const item = history.find(h => h.siteId === siteId) || {};
+
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ siteId, handle, email: 'abdulaziznoor9876@gmail.com' })
+          body: JSON.stringify({
+            siteId,
+            handle,
+            universeKey: item.universeKey,
+            developerName: item.developerName,
+            developerRole: item.developerRole,
+            githubUsername: item.githubUsername,
+            email: 'abdulaziznoor9876@gmail.com'
+          })
         });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to switch live site.');
+        if (!res.ok) {
+          // If cloud container restarted and ephemeral snapshot is missing, seamlessly re-activate & build it
+          if (res.status === 404 && item.universeKey) {
+            showStudioToast('Re-synthesizing Snapshot', `Cloud container restarted — generating fresh live build for ${item.universeKey}...`);
+            reactivateHistoryItem(item.universeKey, item.githubUsername || '');
+            return;
+          }
+          throw new Error(data.error || 'Failed to switch live site.');
+        }
 
         localStorage.setItem('myfolio_active_vip_site', siteId);
         const liveDomain = data.subdomain || `${handle}.myfolio.tech`;
         showStudioToast('Live Portfolio Updated', `https://${liveDomain} is now serving this version!`);
         renderGeneratedHistoryUI(siteId);
       } catch (err) {
-        alert('Could not update active portfolio: ' + err.message);
+        showStudioToast('Activation Notice', err.message);
       }
     }
 

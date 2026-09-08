@@ -2045,6 +2045,43 @@ app.post('/api/vip/set-active-site', async (req, res) => {
 
     let html = await hostingProvider.getSiteHtml(siteId);
     if (!html) {
+      // Cloud ephemeral recovery: if container restarted and snapshot was cleared, dynamically synthesize from template
+      const universeKey = req.body.universeKey || (siteId.includes('hunter') ? 'system-awakening' : null);
+      if (universeKey || req.body.developerName) {
+        try {
+          const { TemplateRegistry } = require('./templates/template-registry');
+          const tKey = universeKey || 'stealth-node';
+          const template = TemplateRegistry.templates[tKey] || Object.values(TemplateRegistry.templates)[0];
+          if (template && typeof template.render === 'function') {
+            const candidateProfile = {
+              name: req.body.developerName || 'Abdul Aziz Nooruddin',
+              title: req.body.developerRole || 'AI Systems & Machine Learning Researcher',
+              role: req.body.developerRole || 'AI Systems Specialist',
+              headline: req.body.developerRole || 'AI Systems & Machine Learning Researcher',
+              bio: 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
+              skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
+              projects: [
+                {
+                  title: 'MyFolio Platform',
+                  name: 'MyFolio Platform',
+                  description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
+                  tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+                  url: 'https://myfolio.tech'
+                }
+              ]
+            };
+            html = template.render(candidateProfile, {});
+            const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+            fs.mkdirSync(siteDir, { recursive: true });
+            fs.writeFileSync(path.join(siteDir, 'index.html'), html, 'utf8');
+          }
+        } catch (synthErr) {
+          console.warn('[SET ACTIVE SITE] Dynamic synthesis recovery notice:', synthErr.message);
+        }
+      }
+    }
+
+    if (!html) {
       return res.status(404).json({ error: `Target portfolio version "${siteId}" not found.` });
     }
 
