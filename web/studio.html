@@ -339,6 +339,101 @@
       transform: scale(1.02) !important;
     }
 
+    /* Photo & Certificate Upload Styling */
+    .photo-upload-card {
+      background: #FFFFFF;
+      border: 1.5px dashed #CBD5E1;
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-top: 18px;
+      transition: all 0.2s ease;
+    }
+    [data-theme="dark"] .photo-upload-card {
+      background: #1E293B;
+      border-color: #334155;
+    }
+    .cert-upload-card {
+      background: #FFFFFF;
+      border: 1.5px dashed #CBD5E1;
+      border-radius: 16px;
+      padding: 18px 20px;
+      margin-top: 18px;
+      transition: all 0.2s ease;
+    }
+    [data-theme="dark"] .cert-upload-card {
+      background: #1E293B;
+      border-color: #334155;
+    }
+    .cert-mini-drop {
+      border: 1.5px dashed #94A3B8;
+      border-radius: 12px;
+      padding: 18px 16px;
+      text-align: center;
+      background: #F8FAFC;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .cert-mini-drop:hover {
+      border-color: #2563EB;
+      background: rgba(37, 99, 235, 0.04);
+    }
+    [data-theme="dark"] .cert-mini-drop {
+      border-color: #475569;
+      background: #0F172A;
+    }
+    [data-theme="dark"] .cert-mini-drop:hover {
+      border-color: #38BDF8;
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .cert-card-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 14px;
+      background: #F8FAFC;
+      border: 1px solid #E2E8F0;
+      border-radius: 12px;
+      animation: fadeInCert 0.25s ease forwards;
+    }
+    [data-theme="dark"] .cert-card-item {
+      background: #0F172A;
+      border-color: #334155;
+    }
+    @keyframes fadeInCert {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .btn-outline-studio {
+      background: #FFFFFF;
+      border: 1.5px solid #CBD5E1;
+      color: #0F172A;
+      border-radius: 10px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-outline-studio:hover {
+      border-color: #2563EB;
+      color: #2563EB;
+      background: rgba(37, 99, 235, 0.04);
+    }
+    [data-theme="dark"] .btn-outline-studio {
+      background: #0F172A;
+      border-color: #475569;
+      color: #F1F5F9;
+    }
+    [data-theme="dark"] .btn-outline-studio:hover {
+      border-color: #38BDF8;
+      color: #38BDF8;
+      background: rgba(56, 189, 248, 0.08);
+    }
+
     .project-card-fieldset {
       background: #FFFFFF;
       border: 1px solid #E2E8F0;
@@ -1382,6 +1477,74 @@
             <label for="resumeRawText">Or Paste Resume Text</label>
             <textarea id="resumeRawText" class="form-control-input" rows="4" placeholder="Paste your resume bio, experience, and project bullet points here..."></textarea>
           </div>
+
+          <!-- Optional Candidate Profile Photo Card -->
+          <div class="photo-upload-card" id="photoUploadSection">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">👤</div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700;">Candidate Photo</h4>
+                    <span style="font-size: 0.72rem; font-weight: 600; color: #64748B; background: #E2E8F0; padding: 2px 8px; border-radius: 12px;">Optional</span>
+                  </div>
+                  <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
+                    Auto-extracted from resume if present, or upload a custom headshot to feature across your portfolio.
+                  </p>
+                </div>
+              </div>
+              <div>
+                <input type="file" id="photoFileInput" accept="image/png,image/jpeg,image/jpg,image/webp" style="display: none;" onchange="handlePhotoFileSelected(this)">
+                <button type="button" class="btn-outline-studio" onclick="document.getElementById('photoFileInput').click()">
+                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
+                  <span>Upload Photo</span>
+                </button>
+              </div>
+            </div>
+            <!-- Photo Preview Display -->
+            <div id="photoPreviewContainer" style="display: none; align-items: center; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #E2E8F0;">
+              <img id="photoPreviewImg" src="" alt="Candidate Photo" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #2563EB; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);" />
+              <div style="flex: 1;">
+                <div id="photoPreviewName" style="font-size: 0.85rem; font-weight: 600;">candidate-photo.png</div>
+                <div style="font-size: 0.74rem; color: #10B981; font-weight: 600;">✓ Ready to display in final portfolio</div>
+              </div>
+              <button type="button" onclick="removeUploadedPhoto()" style="background: none; border: none; color: #EF4444; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 4px 8px;">✕ Remove</button>
+            </div>
+          </div>
+
+          <!-- Optional Verified Certificates Upload Card -->
+          <div class="cert-upload-card" id="certUploadSection">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎖️</div>
+                <div>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700;">Upload Certificates</h4>
+                    <span style="font-size: 0.72rem; font-weight: 600; color: #059669; background: #D1FAE5; padding: 2px 8px; border-radius: 12px;">Optional</span>
+                  </div>
+                  <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
+                    Upload PDF or image certificates (e.g. Deloitte, AWS, Google). AI automatically extracts credential ID &amp; issuer.
+                  </p>
+                </div>
+              </div>
+              <div>
+                <input type="file" id="certFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple style="display: none;" onchange="handleCertFilesSelected(this.files)">
+                <button type="button" class="btn-outline-studio" onclick="document.getElementById('certFileInput').click()">
+                  <i data-lucide="file-badge" style="width: 14px; height: 14px;"></i>
+                  <span>+ Add Certificate</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Mini Drop Zone for Certificates -->
+            <div class="cert-mini-drop" id="studioCertDropZone" onclick="document.getElementById('certFileInput').click()">
+              <span style="font-size: 0.82rem; color: #475569; font-weight: 600;">Click or drag &amp; drop certificate PDFs or images here</span>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">Supports multiple files (.pdf, .png, .jpg, .webp)</div>
+            </div>
+
+            <!-- Uploaded Certificates List -->
+            <div id="certPreviewList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
+          </div>
         </div>
 
         <!-- Panel C: Guided Profile Questions (Same as Telegram Bot Flow) -->
@@ -1900,6 +2063,117 @@
     let selectedUniverseKey = 'cosmic-astronaut';
     let uploadedResumeBase64 = null;
     let uploadedResumeMime = null;
+    let uploadedCertificates = [];
+    let uploadedPhotoData = null;
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function handlePhotoFileSelected(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fullDataUrl = e.target.result;
+        const base64 = fullDataUrl.split(',')[1] || fullDataUrl;
+        uploadedPhotoData = {
+          name: file.name,
+          mimeType: file.type || 'image/png',
+          rawBase64: base64,
+          dataUrl: fullDataUrl
+        };
+
+        const previewContainer = document.getElementById('photoPreviewContainer');
+        const previewImg = document.getElementById('photoPreviewImg');
+        const previewName = document.getElementById('photoPreviewName');
+        if (previewImg) previewImg.src = fullDataUrl;
+        if (previewName) previewName.innerText = file.name;
+        if (previewContainer) previewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function removeUploadedPhoto() {
+      uploadedPhotoData = null;
+      const fileInput = document.getElementById('photoFileInput');
+      if (fileInput) fileInput.value = '';
+      const previewContainer = document.getElementById('photoPreviewContainer');
+      if (previewContainer) previewContainer.style.display = 'none';
+      const previewImg = document.getElementById('photoPreviewImg');
+      if (previewImg) previewImg.src = '';
+    }
+
+    function handleCertFilesSelected(files) {
+      if (!files || files.length === 0) return;
+
+      Array.from(files).forEach(file => {
+        if (uploadedCertificates.some(c => c.name === file.name && c.size === file.size)) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const fullDataUrl = e.target.result;
+          const base64 = fullDataUrl.split(',')[1] || fullDataUrl;
+          uploadedCertificates.push({
+            name: file.name,
+            size: file.size,
+            mimeType: file.type || (file.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/png'),
+            rawBase64: base64,
+            dataUrl: fullDataUrl
+          });
+          renderCertificatesList();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const certInput = document.getElementById('certFileInput');
+      if (certInput) certInput.value = '';
+    }
+
+    function removeCertificate(index) {
+      if (index >= 0 && index < uploadedCertificates.length) {
+        uploadedCertificates.splice(index, 1);
+        renderCertificatesList();
+      }
+    }
+
+    function renderCertificatesList() {
+      const container = document.getElementById('certPreviewList');
+      if (!container) return;
+
+      if (uploadedCertificates.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = uploadedCertificates.map((cert, idx) => {
+        const sizeKb = Math.round(cert.size / 1024);
+        const isPdf = cert.mimeType === 'application/pdf' || cert.name.toLowerCase().endsWith('.pdf');
+        const icon = isPdf ? '📄' : '🖼️';
+        return `
+          <div class="cert-card-item">
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
+              <span style="font-size: 1.2rem;">${icon}</span>
+              <div style="min-width: 0; flex: 1;">
+                <div style="font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                  ${escapeHtml(cert.name)}
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted);">
+                  ${sizeKb} KB · <span style="color: #059669; font-weight: 600;">✓ Ready to verify</span>
+                </div>
+              </div>
+            </div>
+            <button type="button" onclick="removeCertificate(${idx})" style="background: none; border: none; color: #EF4444; font-size: 0.82rem; font-weight: 700; cursor: pointer; padding: 4px 8px;" title="Remove this certificate">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
 
     function switchIngestTab(tabKey, btn) {
       document.querySelectorAll('.ingest-tab-btn').forEach(b => b.classList.remove('active'));
@@ -1938,6 +2212,22 @@
       reader.onload = (e) => {
         const fullDataUrl = e.target.result;
         uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
+
+        // If resume is an image and no separate photo is set, preview as candidate photo
+        if (isImage && !uploadedPhotoData) {
+          uploadedPhotoData = {
+            name: file.name,
+            mimeType: file.type || 'image/png',
+            rawBase64: uploadedResumeBase64,
+            dataUrl: fullDataUrl
+          };
+          const previewContainer = document.getElementById('photoPreviewContainer');
+          const previewImg = document.getElementById('photoPreviewImg');
+          const previewName = document.getElementById('photoPreviewName');
+          if (previewImg) previewImg.src = fullDataUrl;
+          if (previewName) previewName.innerText = `Detected from resume: ${file.name}`;
+          if (previewContainer) previewContainer.style.display = 'flex';
+        }
 
         if (file.type.startsWith('text/') || /\.(txt|md)$/i.test(file.name)) {
           const textReader = new FileReader();
@@ -2000,6 +2290,39 @@
           const files = e.dataTransfer?.files;
           if (files && files.length > 0) {
             processStudioResumeFile(files[0]);
+          }
+        }, false);
+      }
+
+      // Certificate Drop Zone handlers
+      const certDrop = document.getElementById('studioCertDropZone');
+      if (certDrop) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          certDrop.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            certDrop.style.borderColor = '#2563EB';
+            certDrop.style.background = 'rgba(37, 99, 235, 0.08)';
+          }, false);
+        });
+
+        ['dragleave', 'dragend'].forEach(eventName => {
+          certDrop.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            certDrop.style.borderColor = '#94A3B8';
+            certDrop.style.background = '#F8FAFC';
+          }, false);
+        });
+
+        certDrop.addEventListener('drop', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          certDrop.style.borderColor = '#94A3B8';
+          certDrop.style.background = '#F8FAFC';
+          const files = e.dataTransfer?.files;
+          if (files && files.length > 0) {
+            handleCertFilesSelected(files);
           }
         }, false);
       }
@@ -2849,6 +3172,8 @@
               linkedin: manualLinkedin || undefined
             }
           },
+          certificates: uploadedCertificates.length > 0 ? uploadedCertificates : undefined,
+          photoData: uploadedPhotoData || undefined,
           preferences: {
             theme: selectedUniverseKey
           }
@@ -2936,6 +3261,10 @@
     window.switchIngestTab = switchIngestTab;
     window.selectStudioUniverse = selectStudioUniverse;
     window.handleResumeFileSelected = handleResumeFileSelected;
+    window.handleCertFilesSelected = handleCertFilesSelected;
+    window.removeCertificate = removeCertificate;
+    window.handlePhotoFileSelected = handlePhotoFileSelected;
+    window.removeUploadedPhoto = removeUploadedPhoto;
     window.handleStudioGenerate = handleStudioGenerate;
     window.copyGeneratedUrl = copyGeneratedUrl;
     window.copyPortfolioUrl = copyPortfolioUrl;

@@ -140,13 +140,18 @@ class UnifiedProfileNormalizer {
     }
 
     // 4. Visual Material: Profile Photo & Supporting Gallery Images (Max 3)
-    const photoUrl = photoData?.url ||
+    const photoUrl = input?.avatar ||
+      input?.photoUrl ||
+      photoData?.url ||
       photoData?.dataUrl ||
       manualData?.photoUrl ||
+      manualData?.avatar ||
+      resumeData?.photoUrl ||
+      resumeData?.avatar ||
       ghAvatar ||
       null;
     if (photoUrl) {
-      recordProvenance('photoUrl', photoData?.url ? 'upload' : (ghAvatar ? 'github' : 'manual'), PROVENANCE_LEVELS.USER_PROVIDED);
+      recordProvenance('photoUrl', input?.avatar ? 'direct_upload' : (photoData?.url ? 'upload' : (ghAvatar ? 'github' : 'manual')), PROVENANCE_LEVELS.USER_PROVIDED);
     }
 
     const visualImages = (Array.isArray(imagesData) ? imagesData : [])
@@ -367,17 +372,53 @@ class UnifiedProfileNormalizer {
       period: edu.period || edu.year || 'Continuous'
     }));
 
-    let certifications = [];
-    if (Array.isArray(questionnaireData?.certifications) && questionnaireData.certifications.length > 0) {
-      certifications = questionnaireData.certifications;
-    } else if (Array.isArray(resumeData?.certifications) && resumeData.certifications.length > 0) {
-      certifications = resumeData.certifications;
-    } else if (Array.isArray(manualData?.certifications) && manualData.certifications.length > 0) {
-      certifications = manualData.certifications;
+    // 9. Certifications Normalization (Multi-source merge preserving uploads & metadata)
+    const allCerts = [];
+    const seenCerts = new Set();
+    const addCertList = (list = [], sourceTag = 'user') => {
+      if (!Array.isArray(list)) return;
+      list.forEach(c => {
+        if (!c) return;
+        const certObj = typeof c === 'string' ? {
+          name: c,
+          issuer: 'Verified Credential',
+          date: 'Verified',
+          id: '',
+          url: '#',
+          verified: true
+        } : {
+          name: c.name || c.title || 'Technical Specialist Certification',
+          issuer: c.issuer || c.organization || c.issuing_organization || 'Accredited Authority',
+          date: c.date || c.issueDate || c.year || 'Verified',
+          id: c.id || c.credentialId || c.code || '',
+          url: c.url || c.fileUrl || c.link || '#',
+          verified: c.verified !== false
+        };
+        const key = `${certObj.name.toLowerCase()}_${certObj.issuer.toLowerCase()}`;
+        if (!seenCerts.has(key)) {
+          seenCerts.add(key);
+          allCerts.push(certObj);
+        }
+      });
+    };
+
+    addCertList(input?.certificates, 'uploaded_certificates');
+    addCertList(input?.certifications, 'input_certifications');
+    addCertList(input?.data?.certificates, 'data_certificates');
+    addCertList(input?.data?.certifications, 'data_certifications');
+    addCertList(resumeData?.certificates, 'resume_certificates');
+    addCertList(resumeData?.certifications, 'resume_certifications');
+    addCertList(questionnaireData?.certifications, 'questionnaire');
+    addCertList(manualData?.certifications, 'manual');
+
+    let certifications = allCerts;
+    if (certifications.length > 0) {
+      recordProvenance('certifications', 'multi_source_merge', PROVENANCE_LEVELS.USER_PROVIDED);
     } else {
       certifications = [
-        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio' }
+        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio', date: 'Verified', id: 'STUDIO-VERIFIED', url: '#', verified: true }
       ];
+      recordProvenance('certifications', 'fallback', PROVENANCE_LEVELS.INFERRED);
     }
 
     const research = input.research || input.publications || questionnaireData?.research || questionnaireData?.publications || resumeData?.research || resumeData?.publications || manualData?.research || manualData?.publications || [];
@@ -437,6 +478,7 @@ class UnifiedProfileNormalizer {
       phone: contact.phone,
       location: contact.location,
       photoUrl,
+      avatar: photoUrl,
       images: visualImages,
       contact,
       socialLinks,

@@ -1352,8 +1352,9 @@ const SystemAwakeningTemplate = {
           <div style="margin-top: 14px; margin-bottom: 14px;">
             <div style="font-size: 0.82rem; color: #C084FC; font-weight: 800; text-transform: uppercase; margin-bottom: 6px;">Verified Hunter Certifications</div>
             ${data.certifications.map(c => `
-              <div style="font-size: 0.88rem; color: #E2E8F0; margin-bottom: 4px;">
-                📜 <strong>${TemplateHelper.escapeHtml(c.name)}</strong> — Issued by ${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}
+              <div style="font-size: 0.88rem; color: #E2E8F0; margin-bottom: 6px;">
+                📜 <strong>${TemplateHelper.escapeHtml(c.name)}</strong> — Issued by ${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}${c.date ? ` · ${TemplateHelper.escapeHtml(c.date)}` : ''}${c.id ? ` · Ref: ${TemplateHelper.escapeHtml(c.id)}` : ''}
+                ${c.url && c.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#38bdf8;text-decoration:none;display:inline-block;margin-left:6px;font-weight:600;">View Credential ↗</a>` : ''}
               </div>
             `).join('')}
           </div>

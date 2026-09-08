@@ -110,7 +110,8 @@ const SandParchmentBotanicalTemplate = {
       <div class="parchment-cert-card">
         <div class="parchment-cert-badge">VERIFIED CODEX</div>
         <h4 class="parchment-cert-name">${TemplateHelper.escapeHtml(c.name)}</h4>
-        <div class="parchment-cert-issuer">Issued by: <strong>${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}</strong></div>
+        <div class="parchment-cert-issuer">Issued by: <strong>${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}</strong>${c.date ? ` · ${TemplateHelper.escapeHtml(c.date)}` : ''}${c.id ? ` · Ref: ${TemplateHelper.escapeHtml(c.id)}` : ''}</div>
+        ${c.url && c.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#b45309;text-decoration:none;display:inline-block;margin-top:4px;font-weight:600;">View Credential ↗</a>` : ''}
       </div>
     `).join('');
 

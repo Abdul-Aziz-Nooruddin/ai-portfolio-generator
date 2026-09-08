@@ -34,6 +34,8 @@ const CyberArchitectSprawlTemplate = {
     const safeEmail = TemplateHelper.escapeHtml(data.email || 'contact@ava-architect.com');
     const safeLocation = TemplateHelper.escapeHtml(data.location || 'Sprawl Sector 07 // Remote');
     const safePhone = TemplateHelper.escapeHtml(data.phone || '+1 (800) 555-SPRAWL');
+    const initials = TemplateHelper.escapeHtml(data.initials || 'DEV');
+    const avatar = data.avatar || '';
 
     // 01. Projects Data (6 cards matching 18.jpeg 3x2 grid)
     const defaultProjects = [
@@ -205,7 +207,8 @@ const CyberArchitectSprawlTemplate = {
     ]).map(cert => `
       <div class="resume-cert-chip">
         <div class="cert-name-txt">★ ${TemplateHelper.escapeHtml(cert.name || cert.title || 'Specialist')}</div>
-        <div class="cert-issuer-txt">${TemplateHelper.escapeHtml(cert.issuer || cert.organization || 'Accredited Board')}</div>
+        <div class="cert-issuer-txt">${TemplateHelper.escapeHtml(cert.issuer || cert.organization || 'Accredited Board')}${cert.date ? ` · ${TemplateHelper.escapeHtml(cert.date)}` : ''}${cert.id ? ` · Ref: ${TemplateHelper.escapeHtml(cert.id)}` : ''}</div>
+        ${cert.url && cert.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(cert.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#00f0ff;text-decoration:none;display:inline-block;margin-top:4px;">View Credential ↗</a>` : ''}
       </div>
     `).join('');
 
@@ -1595,7 +1598,7 @@ const CyberArchitectSprawlTemplate = {
   <!-- Top Global Navigation Bar -->
   <header class="sprawl-header">
     <a href="#home" class="brand-logo-group">
-      <div class="brand-avatar-box">AL</div>
+      <div class="brand-avatar-box">${avatar ? `<img src="${avatar}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : initials}</div>
       <span class="brand-name-txt">${safeName}</span>
     </a>
 
@@ -1670,7 +1673,7 @@ const CyberArchitectSprawlTemplate = {
       <div class="about-sprawl-layout">
         <div class="about-visual-rig">
           <div class="cyber-eye-floating-pod">
-            <img src="/assets/designs/cyber/cyber_eye_nobg.png" alt="3D Cyber Eye Iris" class="cyber-eye-clean-img" loading="lazy" decoding="async" />
+            ${avatar ? `<img src="${avatar}" alt="${safeName}" style="width:130px;height:130px;border-radius:50%;object-fit:cover;border:2px solid #00f0ff;box-shadow:0 0 24px rgba(0,240,255,0.5);display:block;margin:0 auto;" />` : `<img src="/assets/designs/cyber/cyber_eye_nobg.png" alt="3D Cyber Eye Iris" class="cyber-eye-clean-img" loading="lazy" decoding="async" />`}
           </div>
           <div class="radar-canvas-pod">
             <canvas id="about-radar-canvas" width="360" height="360"></canvas>

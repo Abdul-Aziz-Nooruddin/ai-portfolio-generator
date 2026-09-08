@@ -228,9 +228,10 @@ const AbyssalNautilusArtisanTemplate = {
     const certificationsHtml = rawCertifications.map(c => `
       <div class="resume-dossier-row">
         <div class="dossier-row-icon">🎖️</div>
-        <div>
+        <div style="flex: 1;">
           <div class="dossier-row-title">${TemplateHelper.escapeHtml(c.name || c.title || 'Certification')}</div>
-          <div class="dossier-row-meta">${TemplateHelper.escapeHtml(c.issuer || c.authority || 'Issuing Authority')}</div>
+          <div class="dossier-row-meta">${TemplateHelper.escapeHtml(c.issuer || c.authority || 'Issuing Authority')}${c.date ? ` · ${TemplateHelper.escapeHtml(c.date)}` : ''}${c.id ? ` · Ref: ${TemplateHelper.escapeHtml(c.id)}` : ''}</div>
+          ${c.url && c.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#00f5d4;text-decoration:none;display:inline-block;margin-top:2px;">View Credential ↗</a>` : ''}
         </div>
       </div>
     `).join('');

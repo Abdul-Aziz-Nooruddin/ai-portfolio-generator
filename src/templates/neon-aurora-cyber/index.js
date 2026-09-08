@@ -1832,7 +1832,7 @@ const NeonAuroraCyberTemplate = {
           <div class="hero-avatar-wrap">
             <div class="hero-avatar">
               <div class="avatar-ring">
-                <div class="avatar-ring-inner">${initials}</div>
+                <div class="avatar-ring-inner">${data.avatar ? `<img src="${data.avatar}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : initials}</div>
               </div>
               <div class="avatar-name">${safeName}</div>
               <div class="avatar-handle">@${safeName.toLowerCase().replace(/\\s+/g, '')} · GitHub</div>
@@ -1922,7 +1922,7 @@ const NeonAuroraCyberTemplate = {
       <div class="about-grid">
         <div class="about-card">
           <div class="about-photo">
-            <div class="about-photo-inner">${initials}</div>
+            <div class="about-photo-inner">${data.avatar ? `<img src="${data.avatar}" alt="${safeName}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />` : initials}</div>
           </div>
           <h3 class="about-name">${safeName}</h3>
           <div class="about-role">${safeRole}</div>
@@ -2090,8 +2090,9 @@ const NeonAuroraCyberTemplate = {
 
           <h4 style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--purple); text-transform: uppercase; margin-top: 18px; margin-bottom: 12px;">Verified Certifications</h4>
           ${data.certifications.map(c => `
-            <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 4px;">
-              📜 <strong>${TemplateHelper.escapeHtml(c.name)}</strong> — Issued by ${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}
+            <div style="font-size: 0.9rem; color: var(--muted); margin-bottom: 8px;">
+              📜 <strong>${TemplateHelper.escapeHtml(c.name)}</strong> — Issued by ${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}${c.date ? ` · ${TemplateHelper.escapeHtml(c.date)}` : ''}${c.id ? ` · Ref: ${TemplateHelper.escapeHtml(c.id)}` : ''}
+              ${c.url && c.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);text-decoration:none;margin-left:8px;font-size:0.8rem;">View Credential ↗</a>` : ''}
             </div>
           `).join('')}
         </div>

@@ -1002,21 +1002,7 @@ app.post('/api/generate/unified', async (req, res) => {
       }
     }
 
-    const normalized = UnifiedProfileNormalizer.normalize(input);
-    const { TemplateRegistry } = require('./templates/template-registry');
-    const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
-    const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
-
-    const siteGen = new SiteGenerator();
-    const siteResult = await siteGen.generateSite({
-      id: `unified-${Date.now()}`,
-      status: 'active'
-    }, { ...normalized, templateId: selectedTemplate.id }, {
-      theme: selectedTemplate.id,
-      templateId: selectedTemplate.id,
-      creative_mode: selectedTemplate.id
-    });
-
+    // 3. Early resolution of userHandle & siteId for unified asset storage
     const authenticatedEmail = (req.user?.email || '').toLowerCase().trim();
     const candidateEmail = (
       authenticatedEmail ||
@@ -1024,12 +1010,10 @@ app.post('/api/generate/unified', async (req, res) => {
       input.manualEmail ||
       input.userEmail ||
       input.resumeData?.email ||
-      normalized?.email ||
       ''
     ).toLowerCase().trim();
 
     // STRICT: Only authenticated abdulaziznoor9876@gmail.com has VIP Founder privileges
-    // Never grant VIP status simply because an entered GitHub username or input email matches
     const isVipFounder = Boolean(
       authenticatedEmail === 'abdulaziznoor9876@gmail.com'
     );
@@ -1048,11 +1032,106 @@ app.post('/api/generate/unified', async (req, res) => {
 
     const versionSiteId = isVipFounder ? `${userHandle}-${Date.now()}` : `web-${crypto.randomUUID()}`;
     const siteId = versionSiteId;
-    await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
-
-    // Also write to filesystem for local preview serving
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
     fs.mkdirSync(siteDir, { recursive: true });
+
+    // 4. Ingest & Persist Candidate Photo / Avatar (if provided or present in resume)
+    if (input.photoData?.rawBase64) {
+      try {
+        const avatarBuf = Buffer.from(input.photoData.rawBase64, 'base64');
+        const avatarFileExt = (input.photoData.mimeType && input.photoData.mimeType.includes('jpeg')) ? 'jpg' : 'png';
+        const avatarFilename = `avatar.${avatarFileExt}`;
+        fs.writeFileSync(path.join(siteDir, avatarFilename), avatarBuf);
+        // Also save canonical avatar.png for template standard compatibility
+        if (avatarFileExt !== 'png') {
+          fs.writeFileSync(path.join(siteDir, 'avatar.png'), avatarBuf);
+        }
+        input.avatar = `/sites/${siteId}/avatar.png`;
+        input.photoUrl = `/sites/${siteId}/avatar.png`;
+      } catch (avErr) {
+        console.warn('[API] Avatar save error:', avErr.message);
+      }
+    } else if (!input.avatar && input.resumeData?.rawBase64 && input.resumeData?.mimeType?.startsWith('image/')) {
+      try {
+        const resumeImgBuf = Buffer.from(input.resumeData.rawBase64, 'base64');
+        fs.writeFileSync(path.join(siteDir, 'avatar.png'), resumeImgBuf);
+        input.avatar = `/sites/${siteId}/avatar.png`;
+        input.photoUrl = `/sites/${siteId}/avatar.png`;
+      } catch (resImgErr) {
+        console.warn('[API] Resume image avatar save error:', resImgErr.message);
+      }
+    }
+
+    // 5. Ingest, Save & AI-Parse Uploaded Certificates
+    if (Array.isArray(input.certificates) && input.certificates.length > 0) {
+      const certsDir = path.join(siteDir, 'certificates');
+      fs.mkdirSync(certsDir, { recursive: true });
+      const parsedCertList = [];
+
+      for (let i = 0; i < input.certificates.length; i++) {
+        const cert = input.certificates[i];
+        if (!cert) continue;
+
+        let certBuf = null;
+        if (cert.rawBase64) {
+          certBuf = Buffer.from(cert.rawBase64, 'base64');
+        }
+
+        const cleanBaseName = (cert.name || `credential_${i+1}`).replace(/[^a-zA-Z0-9.-]/g, '_');
+        const certFilename = `cert-${i + 1}-${cleanBaseName}`;
+        let certFileUrl = '#';
+
+        if (certBuf) {
+          try {
+            fs.writeFileSync(path.join(certsDir, certFilename), certBuf);
+            certFileUrl = `/sites/${siteId}/certificates/${certFilename}`;
+          } catch (cfErr) {
+            console.warn('[API] Certificate file write error:', cfErr.message);
+          }
+        }
+
+        // Deep AI / Heuristics Certificate Parsing (Extracts: name, issuer, issueDate, credentialId)
+        let parsedMeta = null;
+        if (certBuf && aiService) {
+          try {
+            parsedMeta = await aiService.parseCertificateDocument(certBuf, cert.mimeType || 'application/pdf', cert.name);
+          } catch (cErr) {
+            console.warn('[API] Certificate parse error:', cErr.message);
+          }
+        }
+
+        parsedCertList.push({
+          name: parsedMeta?.name || cert.name?.replace(/\.[^/.]+$/, '') || `Professional Certification #${i + 1}`,
+          issuer: parsedMeta?.issuer || 'Verified Professional Authority',
+          date: parsedMeta?.issueDate || parsedMeta?.date || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+          id: parsedMeta?.credentialId || parsedMeta?.id || `CERT-${Date.now().toString(36).toUpperCase()}-${i + 1}`,
+          url: certFileUrl,
+          fileUrl: certFileUrl,
+          verified: true
+        });
+      }
+
+      input.certificates = parsedCertList;
+    }
+
+    const normalized = UnifiedProfileNormalizer.normalize(input);
+    const { TemplateRegistry } = require('./templates/template-registry');
+    const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
+    const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
+
+    const siteGen = new SiteGenerator();
+    const siteResult = await siteGen.generateSite({
+      id: siteId,
+      status: 'active'
+    }, { ...normalized, templateId: selectedTemplate.id }, {
+      theme: selectedTemplate.id,
+      templateId: selectedTemplate.id,
+      creative_mode: selectedTemplate.id
+    });
+
+    await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
+
+    // Write index.html and profile.json to filesystem for local preview serving
     fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
     fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
 
@@ -1071,6 +1150,20 @@ app.post('/api/generate/unified', async (req, res) => {
       fs.mkdirSync(primaryHandleDir, { recursive: true });
       fs.writeFileSync(path.join(primaryHandleDir, 'index.html'), siteResult.html, 'utf8');
       fs.writeFileSync(path.join(primaryHandleDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
+      
+      // Mirror avatar & certificates to VIP primary handle directory
+      if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
+        try { fs.copyFileSync(path.join(siteDir, 'avatar.png'), path.join(primaryHandleDir, 'avatar.png')); } catch (e) {}
+      }
+      const certsDir = path.join(siteDir, 'certificates');
+      const primaryCertsDir = path.join(primaryHandleDir, 'certificates');
+      if (fs.existsSync(certsDir)) {
+        try {
+          fs.mkdirSync(primaryCertsDir, { recursive: true });
+          fs.cpSync(certsDir, primaryCertsDir, { recursive: true });
+        } catch (e) {}
+      }
+
       await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
 
       // 2. Move live subdomain mapping https://<userHandle>.myfolio.tech to the newest generated version

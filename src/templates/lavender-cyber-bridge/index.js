@@ -110,7 +110,8 @@ const LavenderCyberBridgeTemplate = {
       <div class="lavender-cert-card">
         <div class="lavender-cert-badge">VERIFIED</div>
         <h4 class="lavender-cert-name">${TemplateHelper.escapeHtml(c.name)}</h4>
-        <div class="lavender-cert-issuer">Issued by: <strong>${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}</strong></div>
+        <div class="lavender-cert-issuer">Issued by: <strong>${TemplateHelper.escapeHtml(c.issuer || 'Technical Authority')}</strong>${c.date ? ` · ${TemplateHelper.escapeHtml(c.date)}` : ''}${c.id ? ` · Ref: ${TemplateHelper.escapeHtml(c.id)}` : ''}</div>
+        ${c.url && c.url !== '#' ? `<a href="${TemplateHelper.escapeHtml(c.url)}" target="_blank" rel="noopener noreferrer" style="font-size:11px;color:#c084fc;text-decoration:none;display:inline-block;margin-top:4px;font-weight:600;">View Credential ↗</a>` : ''}
       </div>
     `).join('');
 

@@ -35,6 +35,16 @@ class TemplateHelper {
       initials = (nameWords[0][0] + nameWords[nameWords.length - 1][0]).toUpperCase();
     }
 
+    // Avatar / Photo extraction
+    const avatar = candidateData.avatar ||
+      candidateData.photoUrl ||
+      candidateData.identity?.photoUrl ||
+      candidateData.identity?.avatar ||
+      candidateData.githubData?.avatar_url ||
+      candidateData.githubData?.avatarUrl ||
+      candidateData.ghAvatar ||
+      '';
+
     // 2. Role & Specialization
     let role = candidateData.role ||
       candidateData.identity?.role ||
@@ -256,12 +266,26 @@ class TemplateHelper {
 
     // 9. Certifications
     let rawCertifications = Array.isArray(candidateData.certifications) ? candidateData.certifications : [];
-    let certifications = rawCertifications.map(c => typeof c === 'string' ? { name: c, issuer: 'Verified Standard' } : { name: c.name || c.title || 'Technical Specialist', issuer: c.issuer || c.organization || 'Verified Standard' });
+    let certifications = rawCertifications.map(c => typeof c === 'string' ? {
+      name: c,
+      issuer: 'Verified Standard',
+      date: 'Verified',
+      id: '',
+      url: '#',
+      verified: true
+    } : {
+      name: c.name || c.title || 'Technical Specialist',
+      issuer: c.issuer || c.organization || c.issuing_organization || 'Verified Standard',
+      date: c.date || c.issueDate || c.year || 'Verified',
+      id: c.id || c.credentialId || c.code || '',
+      url: c.url || c.fileUrl || c.link || '#',
+      verified: c.verified !== false
+    });
 
     if (certifications.length === 0) {
       certifications = [
-        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'Engineering Standard' },
-        { name: `Specialization in ${skills.slice(0, 2).join(' & ')}`, issuer: 'Professional Development' }
+        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'Engineering Standard', date: 'Verified', id: 'STUDIO-VERIFIED', url: '#', verified: true },
+        { name: `Specialization in ${skills.slice(0, 2).join(' & ')}`, issuer: 'Professional Development', date: 'Verified', id: 'SPEC-DEV', url: '#', verified: true }
       ];
     }
 
@@ -293,6 +317,8 @@ class TemplateHelper {
       tagline,
       bio,
       initials,
+      avatar,
+      photoUrl: avatar,
       email,
       phone,
       location,
