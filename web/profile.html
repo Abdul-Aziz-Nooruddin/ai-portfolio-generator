@@ -89,12 +89,17 @@
       width: 100%;
       position: relative;
       z-index: 1;
+      box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .profile-main-stage {
       flex: 1;
-      padding: 40px 32px 80px;
+      width: 100%;
       max-width: 1040px;
+      box-sizing: border-box;
+      min-width: 0;
+      padding: 40px 32px 80px;
       margin: 0 auto;
       position: relative;
       z-index: 2;
@@ -104,20 +109,26 @@
       background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
       color: #FFFFFF;
       border-radius: 20px;
-      padding: 36px 32px;
+      padding: 32px 28px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 24px;
+      gap: 20px;
       box-shadow: 0 16px 36px rgba(30, 27, 75, 0.18);
       margin-bottom: 32px;
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
     }
 
     .profile-user-left {
       display: flex;
       align-items: center;
       gap: 20px;
+      min-width: 0;
+      max-width: 100%;
+      flex: 1;
     }
 
     .profile-avatar-large {
@@ -133,6 +144,12 @@
       justify-content: center;
       border: 3px solid rgba(255, 255, 255, 0.3);
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0;
+    }
+
+    .profile-title-block {
+      min-width: 0;
+      flex: 1;
     }
 
     .profile-title-block h1 {
@@ -140,6 +157,8 @@
       font-size: 1.6rem;
       font-weight: 800;
       letter-spacing: -0.02em;
+      word-break: break-word;
+      overflow-wrap: break-word;
     }
 
     .profile-handle-tag {
@@ -149,6 +168,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex-wrap: wrap;
+      word-break: break-all;
     }
 
     .plan-status-pill {
@@ -160,12 +181,16 @@
       font-weight: 700;
       color: #E0E7FF;
       backdrop-filter: blur(8px);
+      white-space: nowrap;
     }
 
     .profile-sections-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
       gap: 24px;
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
     }
 
     .settings-panel-card {
@@ -174,6 +199,9 @@
       border-radius: 16px;
       padding: 28px;
       box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+      width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
     }
 
     .panel-header {
@@ -210,6 +238,7 @@
 
     .form-input-control {
       width: 100%;
+      max-width: 100%;
       box-sizing: border-box;
       background: #F8FAFC;
       border: 1.5px solid #CBD5E1;
@@ -255,6 +284,8 @@
       font-size: 0.88rem;
       cursor: pointer;
       transition: all 0.2s;
+      max-width: 100%;
+      white-space: normal;
     }
 
     .btn-danger-outline:hover {
@@ -271,6 +302,10 @@
       border: 1px solid var(--border-color);
       border-radius: 10px;
       margin-bottom: 12px;
+      gap: 12px;
+      box-sizing: border-box;
+      min-width: 0;
+      flex-wrap: wrap;
     }
 
     .account-type-info {
@@ -279,6 +314,7 @@
       gap: 12px;
       font-size: 0.92rem;
       font-weight: 600;
+      min-width: 0;
     }
 
     .status-connected-tag {
@@ -289,6 +325,7 @@
       border: 1px solid #A7F3D0;
       padding: 4px 10px;
       border-radius: 9999px;
+      white-space: nowrap;
     }
 
     /* Danger Modal Backdrop */
@@ -302,6 +339,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      box-sizing: border-box;
     }
 
     .danger-modal-card {
@@ -309,6 +347,7 @@
       border-radius: 20px;
       max-width: 440px;
       width: 100%;
+      box-sizing: border-box;
       padding: 32px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
       position: relative;
@@ -357,6 +396,11 @@
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
     }
 
+    [data-theme="dark"] .settings-panel-card.danger-zone-card {
+      background: rgba(30, 10, 10, 0.6) !important;
+      border-color: rgba(239, 68, 68, 0.3) !important;
+    }
+
     [data-theme="dark"] .form-input-control {
       background: #0B1120;
       border-color: rgba(255, 255, 255, 0.14);
@@ -383,6 +427,107 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
       color: #F8FAFC;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 📱 Responsive Mobile & Tablet Layout */
+    @media (max-width: 768px) {
+      .profile-main-stage {
+        padding: 24px 16px 60px;
+      }
+
+      .profile-header-card {
+        padding: 22px 18px;
+        margin-bottom: 20px;
+        border-radius: 16px;
+        gap: 16px;
+      }
+
+      .profile-user-left {
+        gap: 14px;
+        width: 100%;
+      }
+
+      .profile-avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 1.5rem;
+      }
+
+      .profile-title-block h1 {
+        font-size: 1.35rem;
+      }
+
+      .profile-handle-tag {
+        font-size: 0.8rem;
+        gap: 6px;
+      }
+
+      .profile-sections-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .settings-panel-card {
+        padding: 20px 16px;
+        border-radius: 14px;
+      }
+
+      .panel-header h2 {
+        font-size: 1.05rem;
+      }
+
+      .connected-account-row {
+        padding: 12px 14px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .profile-main-stage {
+        padding: 16px 12px 48px;
+      }
+
+      .profile-header-card {
+        padding: 18px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .profile-avatar-large {
+        width: 52px;
+        height: 52px;
+        font-size: 1.35rem;
+      }
+
+      .profile-title-block h1 {
+        font-size: 1.2rem;
+      }
+
+      .profile-handle-tag {
+        font-size: 0.76rem;
+      }
+
+      .plan-status-pill {
+        font-size: 0.72rem;
+        padding: 5px 12px;
+      }
+
+      .settings-panel-card {
+        padding: 16px 14px;
+      }
+
+      .btn-save-primary {
+        width: 100%;
+        padding: 12px 20px;
+      }
+
+      .btn-danger-outline {
+        width: 100%;
+        text-align: center;
+      }
+
+      .danger-modal-card {
+        padding: 24px 16px;
+      }
     }
   </style>
 </head>
@@ -514,7 +659,7 @@
         </section>
 
         <!-- Panel 3: Danger Zone & Account Wipe -->
-        <section class="settings-panel-card" style="border-color: #FECACA; background: #FFFDFD; grid-column: 1 / -1;">
+        <section class="settings-panel-card danger-zone-card" style="border-color: #FECACA; background: #FFFDFD; grid-column: 1 / -1;">
           <div class="panel-header" style="border-color: #FEE2E2;">
             <h2 style="color: #DC2626;"><span>⚠️</span> Danger Zone</h2>
           </div>
@@ -592,13 +737,13 @@
         if (ghWrap) {
           if (ghUsername) {
             ghWrap.innerHTML = `
-              <span class="status-connected-tag">Connected (@${ghUsername})</span>
-              <button type="button" onclick="unlinkGithub()" style="background:transparent; border:none; color:#EF4444; font-size:0.75rem; font-weight:700; cursor:pointer; margin-left:4px;">Unlink</button>
+              <span class="status-connected-tag" style="white-space:nowrap;">Connected (@${ghUsername})</span>
+              <button type="button" onclick="unlinkGithub()" style="background:transparent; border:none; color:#EF4444; font-size:0.75rem; font-weight:700; cursor:pointer; margin-left:4px; white-space:nowrap;">Unlink</button>
             `;
           } else {
             ghWrap.innerHTML = `
-              <span style="background:#F1F5F9; color:#64748B; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:600;">Not Linked</span>
-              <button type="button" onclick="linkGithubAccount()" style="background:transparent; border:none; color:#0284C7; font-size:0.82rem; font-weight:700; cursor:pointer; margin-left:6px;">Link ↗</button>
+              <span style="background:#F1F5F9; color:#64748B; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:600; white-space:nowrap;">Not Linked</span>
+              <button type="button" onclick="linkGithubAccount()" style="background:transparent; border:none; color:#0284C7; font-size:0.82rem; font-weight:700; cursor:pointer; margin-left:6px; white-space:nowrap;">Link ↗</button>
             `;
           }
         }
