@@ -260,6 +260,26 @@ app.use(async (req, res, next) => {
     }
   }
 
+  // Dynamic Wildcard Subdomain Router for any <username>.localhost
+  if (host.endsWith('.localhost') && host !== 'localhost') {
+    const subdomain = host.replace(/\.localhost$/, '').split(':')[0].trim();
+    if (subdomain && subdomain !== 'api' && subdomain !== 'app') {
+      let siteId = customDomainService ? customDomainService.resolveHostname(host) : null;
+      if (!siteId && customDomainService) {
+        siteId = customDomainService.resolveHostname(`${subdomain}.myfolio.tech`);
+      }
+      if (!siteId) {
+        siteId = subdomain;
+      }
+      let html = await hostingProvider.getSiteHtml(siteId);
+      if (html) {
+        res.setHeader('Content-Type', 'text/html; charset=utf-8');
+        res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+        return res.send(html);
+      }
+    }
+  }
+
   // Check if incoming domain or subdomain maps to a site
   if (customDomainService) {
     const siteId = customDomainService.resolveHostname(host);
@@ -1014,7 +1034,19 @@ app.post('/api/generate/unified', async (req, res) => {
       authenticatedEmail === 'abdulaziznoor9876@gmail.com'
     );
 
-    const versionSiteId = isVipFounder ? `abdulaziz-${Date.now()}` : `web-${crypto.randomUUID()}`;
+    // Determine the user's custom URL identifier (username)
+    let userHandle = (
+      req.user?.username ||
+      input.username ||
+      input.customUrlIdentifier ||
+      (isVipFounder ? 'abdulaziz' : '')
+    ).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '').replace(/^[-_]+|[-_]+$/g, '');
+
+    if (!userHandle) {
+      userHandle = `web-${crypto.randomUUID().slice(0, 8)}`;
+    }
+
+    const versionSiteId = isVipFounder ? `${userHandle}-${Date.now()}` : `web-${crypto.randomUUID()}`;
     const siteId = versionSiteId;
     await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
 
@@ -1029,30 +1061,34 @@ app.post('/api/generate/unified', async (req, res) => {
       await dbService.createSite(req.user.id, 'self_hosted', siteId).catch(() => {});
     }
 
-    if (isVipFounder) {
-      // 1. Move vanity URL files for /abdulaziz and fallback to the newly generated site
-      const primaryVipDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
-      fs.mkdirSync(primaryVipDir, { recursive: true });
-      fs.writeFileSync(path.join(primaryVipDir, 'index.html'), siteResult.html, 'utf8');
-      fs.writeFileSync(path.join(primaryVipDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
-      await hostingProvider.deploy('abdulaziz', siteResult, normalized, true).catch(() => {});
+    const customSubdomain = `${userHandle}.myfolio.tech`;
+    const customLocalDomain = `${userHandle}.localhost`;
+    const liveSubdomainUrl = `https://${customSubdomain}`;
 
-      // 2. Move live subdomain mapping https://abdulaziz.myfolio.tech to the newest generated version
+    if (isVipFounder) {
+      // 1. Move vanity URL files for /<userHandle> and fallback to the newly generated site
+      const primaryHandleDir = path.join(process.cwd(), 'public', 'sites', userHandle);
+      fs.mkdirSync(primaryHandleDir, { recursive: true });
+      fs.writeFileSync(path.join(primaryHandleDir, 'index.html'), siteResult.html, 'utf8');
+      fs.writeFileSync(path.join(primaryHandleDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
+      await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
+
+      // 2. Move live subdomain mapping https://<userHandle>.myfolio.tech to the newest generated version
       if (customDomainService) {
-        customDomainService.domainCache['abdulaziz.myfolio.tech'] = {
-          domain: 'abdulaziz.myfolio.tech',
-          handle: 'abdulaziz',
+        customDomainService.domainCache[customSubdomain] = {
+          domain: customSubdomain,
+          handle: userHandle,
           siteId: siteId,
-          userId: 'abdulaziz_founder',
+          userId: req.user?.id || 'abdulaziz_founder',
           type: 'subdomain',
           status: 'active',
           updatedAt: new Date().toISOString()
         };
-        customDomainService.domainCache['abdulaziz.localhost'] = {
-          domain: 'abdulaziz.localhost',
-          handle: 'abdulaziz',
+        customDomainService.domainCache[customLocalDomain] = {
+          domain: customLocalDomain,
+          handle: userHandle,
           siteId: siteId,
-          userId: 'abdulaziz_founder',
+          userId: req.user?.id || 'abdulaziz_founder',
           type: 'subdomain',
           status: 'active',
           updatedAt: new Date().toISOString()
@@ -1065,7 +1101,7 @@ app.post('/api/generate/unified', async (req, res) => {
         try {
           await dbService.client.from('sites').upsert({
             provider_site_id: siteId,
-            custom_domain: 'abdulaziz.myfolio.tech',
+            custom_domain: customSubdomain,
             user_id: req.user?.id || 'abdulaziz_founder',
             status: 'active'
           });
@@ -1087,17 +1123,16 @@ app.post('/api/generate/unified', async (req, res) => {
       isVip: isVipFounder
     });
 
-    const liveSubdomainUrl = 'https://abdulaziz.myfolio.tech';
-
     res.json({
       success: true,
       siteId,
       activeSiteId: siteId,
+      handle: userHandle,
       previewUrl: `/p/${siteId}`,
       siteUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
       liveUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
-      subdomain: isVipFounder ? 'abdulaziz.myfolio.tech' : null,
-      customDomain: isVipFounder ? 'abdulaziz.myfolio.tech' : null,
+      subdomain: isVipFounder ? customSubdomain : null,
+      customDomain: isVipFounder ? customSubdomain : null,
       isVip: isVipFounder,
       profileData: normalized,
       vibeAudit,
@@ -1962,19 +1997,35 @@ app.get(['/p/:siteId/resume.pdf', '/api/sites/:siteId/resume.pdf'], async (req, 
   }
 });
 
-// VIP Vanity Direct Route
-app.get(['/abdulaziz', '/u/abdulaziz'], async (req, res) => {
-  const activeSiteId = customDomainService?.domainCache?.['abdulaziz.myfolio.tech']?.siteId || 'abdulaziz';
+// Dynamic Vanity Direct Route for custom handles (/abdulaziz, /aziz, /u/:handle, /:handle)
+app.get(['/abdulaziz', '/u/abdulaziz', '/u/:handle', '/:handle([a-zA-Z0-9_-]{2,32})'], async (req, res, next) => {
+  let handle = (req.params.handle || (req.path.startsWith('/u/') ? req.path.slice(3) : req.path.slice(1))).toLowerCase().trim();
+  const reservedPaths = [
+    'api', 'sites', 'assets', 'p', 'u', 'login', 'signin', 'signup', 'register',
+    'auth', 'dashboard', 'app', 'dash', 'studio', 'webstudio', 'builder', 'generator',
+    'profile', 'settings', 'account', 'privacy', 'privacy-policy', 'terms', 'tos',
+    'terms-of-service', 'about', 'about-us', 'our-story', 'contact', 'contact-us',
+    'support', 'webhook', 'thank-you', 'success', 'design-demo', 'universes', 'themes', 'gallery'
+  ];
+  if (!handle || reservedPaths.includes(handle)) {
+    return next();
+  }
+
+  const subKey = `${handle}.myfolio.tech`;
+  const locKey = `${handle}.localhost`;
+  const activeSiteId = customDomainService?.domainCache?.[subKey]?.siteId ||
+                       customDomainService?.domainCache?.[locKey]?.siteId ||
+                       handle;
   let html = await hostingProvider.getSiteHtml(activeSiteId);
-  if (!html && activeSiteId !== 'abdulaziz') {
-    html = await hostingProvider.getSiteHtml('abdulaziz');
+  if (!html && activeSiteId !== handle) {
+    html = await hostingProvider.getSiteHtml(handle);
   }
   if (html) {
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
     return res.send(html);
   }
-  return res.redirect(`/p/${activeSiteId}`);
+  return next();
 });
 
 // VIP Set Active Live Site Endpoint
@@ -1997,22 +2048,34 @@ app.post('/api/vip/set-active-site', async (req, res) => {
       return res.status(404).json({ error: `Target portfolio version "${siteId}" not found.` });
     }
 
+    // Determine target handle from siteId or req.user.username
+    let targetHandle = (req.body.handle || '').toLowerCase().trim();
+    if (!targetHandle && siteId.includes('-')) {
+      targetHandle = siteId.split('-')[0].toLowerCase().trim();
+    }
+    if (!targetHandle) {
+      targetHandle = (req.user?.username || 'abdulaziz').toLowerCase().trim();
+    }
+
+    const targetSubdomain = `${targetHandle}.myfolio.tech`;
+    const targetLocalDomain = `${targetHandle}.localhost`;
+
     // 1. Update customDomainService domainCache
     if (customDomainService) {
-      customDomainService.domainCache['abdulaziz.myfolio.tech'] = {
-        domain: 'abdulaziz.myfolio.tech',
-        handle: 'abdulaziz',
+      customDomainService.domainCache[targetSubdomain] = {
+        domain: targetSubdomain,
+        handle: targetHandle,
         siteId: siteId,
-        userId: 'abdulaziz_founder',
+        userId: req.user?.id || 'abdulaziz_founder',
         type: 'subdomain',
         status: 'active',
         updatedAt: new Date().toISOString()
       };
-      customDomainService.domainCache['abdulaziz.localhost'] = {
-        domain: 'abdulaziz.localhost',
-        handle: 'abdulaziz',
+      customDomainService.domainCache[targetLocalDomain] = {
+        domain: targetLocalDomain,
+        handle: targetHandle,
         siteId: siteId,
-        userId: 'abdulaziz_founder',
+        userId: req.user?.id || 'abdulaziz_founder',
         type: 'subdomain',
         status: 'active',
         updatedAt: new Date().toISOString()
@@ -2020,17 +2083,17 @@ app.post('/api/vip/set-active-site', async (req, res) => {
       customDomainService.saveCache();
     }
 
-    // 2. Sync to public/sites/abdulaziz
-    const primaryVipDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
-    fs.mkdirSync(primaryVipDir, { recursive: true });
-    fs.writeFileSync(path.join(primaryVipDir, 'index.html'), html, 'utf8');
+    // 2. Sync to public/sites/${targetHandle}
+    const primaryDir = path.join(process.cwd(), 'public', 'sites', targetHandle);
+    fs.mkdirSync(primaryDir, { recursive: true });
+    fs.writeFileSync(path.join(primaryDir, 'index.html'), html, 'utf8');
 
     // 3. Update DB if available
     if (dbService?.client) {
       try {
         await dbService.client.from('sites').upsert({
           provider_site_id: siteId,
-          custom_domain: 'abdulaziz.myfolio.tech',
+          custom_domain: targetSubdomain,
           user_id: req.user?.id || 'abdulaziz_founder',
           status: 'active'
         });
@@ -2040,8 +2103,10 @@ app.post('/api/vip/set-active-site', async (req, res) => {
     return res.json({
       success: true,
       siteId,
-      liveUrl: 'https://abdulaziz.myfolio.tech',
-      message: `Active VIP portfolio successfully pointed to ${siteId}`
+      handle: targetHandle,
+      subdomain: targetSubdomain,
+      liveUrl: `https://${targetSubdomain}`,
+      message: `Active portfolio for ${targetHandle} successfully pointed to ${siteId}`
     });
   } catch (err) {
     console.error('[API] /api/vip/set-active-site error:', err);
@@ -2082,12 +2147,22 @@ async function handlePermanentSiteDelete(req, res) {
     // 1. Purge from disk and hosting provider
     await hostingProvider.purge(siteId);
 
-    // 2. If this was the active VIP site on customDomainService or /abdulaziz
-    if (customDomainService && (siteId === 'abdulaziz' || siteId.startsWith('abdulaziz-') || customDomainService.domainCache['abdulaziz.myfolio.tech']?.siteId === siteId)) {
+    // 2. If this was an active site on customDomainService
+    let deletedHandle = '';
+    if (siteId.includes('-')) {
+      deletedHandle = siteId.split('-')[0].toLowerCase().trim();
+    } else {
+      deletedHandle = siteId.toLowerCase().trim();
+    }
+
+    const subKey = `${deletedHandle}.myfolio.tech`;
+    const locKey = `${deletedHandle}.localhost`;
+
+    if (customDomainService && (siteId === deletedHandle || siteId.startsWith(`${deletedHandle}-`) || customDomainService.domainCache[subKey]?.siteId === siteId)) {
       const sitesDir = path.join(process.cwd(), 'public', 'sites');
       let remainingVersions = [];
       if (fs.existsSync(sitesDir)) {
-        remainingVersions = fs.readdirSync(sitesDir).filter(f => f.startsWith('abdulaziz-') && f !== siteId);
+        remainingVersions = fs.readdirSync(sitesDir).filter(f => f.startsWith(`${deletedHandle}-`) && f !== siteId);
         remainingVersions.sort().reverse(); // newest first
       }
 
@@ -2095,29 +2170,33 @@ async function handlePermanentSiteDelete(req, res) {
         const nextActiveId = remainingVersions[0];
         const nextHtml = await hostingProvider.getSiteHtml(nextActiveId);
         if (nextHtml) {
-          customDomainService.domainCache['abdulaziz.myfolio.tech'] = {
-            domain: 'abdulaziz.myfolio.tech',
-            handle: 'abdulaziz',
+          customDomainService.domainCache[subKey] = {
+            domain: subKey,
+            handle: deletedHandle,
             siteId: nextActiveId,
-            userId: 'abdulaziz_founder',
+            userId: req.user?.id || 'abdulaziz_founder',
             type: 'subdomain',
             status: 'active',
             updatedAt: new Date().toISOString()
           };
-          customDomainService.domainCache['abdulaziz.localhost'] = {
-            domain: 'abdulaziz.localhost',
-            handle: 'abdulaziz',
+          customDomainService.domainCache[locKey] = {
+            domain: locKey,
+            handle: deletedHandle,
             siteId: nextActiveId,
-            userId: 'abdulaziz_founder',
+            userId: req.user?.id || 'abdulaziz_founder',
             type: 'subdomain',
             status: 'active',
             updatedAt: new Date().toISOString()
           };
           customDomainService.saveCache();
-          const primaryVipDir = path.join(sitesDir, 'abdulaziz');
-          fs.mkdirSync(primaryVipDir, { recursive: true });
-          fs.writeFileSync(path.join(primaryVipDir, 'index.html'), nextHtml, 'utf8');
+          const primaryDir = path.join(sitesDir, deletedHandle);
+          fs.mkdirSync(primaryDir, { recursive: true });
+          fs.writeFileSync(path.join(primaryDir, 'index.html'), nextHtml, 'utf8');
         }
+      } else {
+        delete customDomainService.domainCache[subKey];
+        delete customDomainService.domainCache[locKey];
+        customDomainService.saveCache();
       }
     }
 

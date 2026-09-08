@@ -949,21 +949,23 @@
 
       const userEmail = (user.email || (currentUser && currentUser.email) || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
+      const currentUsername = (user.username || (currentUser && currentUser.username) || 'abdulaziz').toLowerCase().trim();
+      const currentSubdomain = `${currentUsername}.myfolio.tech`;
 
       const deleteBtn = document.getElementById('btnDeletePortfolio');
 
       if (isVip) {
-        currentSiteId = siteId || 'abdulaziz';
-        currentSiteUrl = 'https://abdulaziz.myfolio.tech';
+        currentSiteId = siteId || currentUsername;
+        currentSiteUrl = `https://${currentSubdomain}`;
         urlTextEl.textContent = currentSiteUrl;
         openLiveBtn.href = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-          ? `${window.location.origin}/abdulaziz`
-          : 'https://abdulaziz.myfolio.tech';
+          ? `${window.location.origin}/${currentUsername}`
+          : `https://${currentSubdomain}`;
         openLiveBtn.innerHTML = '🚀 Open Live Portfolio ↗';
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
 
         if (badge) {
-          badge.textContent = '👑 VIP ACTIVE (abdulaziz.myfolio.tech)';
+          badge.textContent = `👑 VIP ACTIVE (${currentSubdomain.toUpperCase()})`;
           badge.className = 'status-badge status-live';
         }
       } else if (siteId) {
@@ -1138,7 +1140,12 @@
     let currentSiteId = null;
 
     async function deleteCurrentPortfolio() {
-      const targetId = currentSiteId || (isVip ? 'abdulaziz' : null);
+      let targetUser = 'abdulaziz';
+      try {
+        const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
+        if (u.username) targetUser = u.username.toLowerCase().trim();
+      } catch (e) {}
+      const targetId = currentSiteId || (isVip ? targetUser : null);
       if (!targetId) return;
 
       if (!confirm(`Are you sure you want to permanently delete your portfolio?\n\nThis will remove the live site, preview links, and all hosted assets permanently.`)) {

@@ -799,55 +799,6 @@ class AuthHandler {
       req.user.name = cleanName;
       req.user.username = cleanUsername;
 
-      // Update custom domain service cache if username changed
-      if (cleanUsername !== oldUsername && this.customDomain) {
-        const oldSub = `${oldUsername}.myfolio.tech`;
-        const newSub = `${cleanUsername}.myfolio.tech`;
-        const oldLoc = `${oldUsername}.localhost`;
-        const newLoc = `${cleanUsername}.localhost`;
-
-        const existingRec = this.customDomain.domainCache[oldSub] || this.customDomain.domainCache[oldLoc];
-        const siteId = existingRec?.siteId || (req.user.id === 'abdulaziz_founder' ? 'abdulaziz-1788601265704' : `site_${cleanUsername}`);
-
-        if (oldUsername) {
-          delete this.customDomain.domainCache[oldSub];
-          delete this.customDomain.domainCache[oldLoc];
-        }
-
-        this.customDomain.domainCache[newSub] = {
-          domain: newSub,
-          handle: cleanUsername,
-          siteId: siteId,
-          userId: req.user.id,
-          type: 'subdomain',
-          status: 'active',
-          updatedAt: new Date().toISOString()
-        };
-        this.customDomain.domainCache[newLoc] = {
-          domain: newLoc,
-          handle: cleanUsername,
-          siteId: siteId,
-          userId: req.user.id,
-          type: 'subdomain',
-          status: 'active',
-          updatedAt: new Date().toISOString()
-        };
-        this.customDomain.saveCache();
-      }
-
-      // Copy local site files if existed for instant resolution
-      if (cleanUsername !== oldUsername && oldUsername) {
-        try {
-          const fs = require('fs');
-          const path = require('path');
-          const oldSiteDir = path.join(process.cwd(), 'public', 'sites', oldUsername);
-          const newSiteDir = path.join(process.cwd(), 'public', 'sites', cleanUsername);
-          if (fs.existsSync(oldSiteDir)) {
-            fs.cpSync(oldSiteDir, newSiteDir, { recursive: true });
-          }
-        } catch (fsErr) {}
-      }
-
       const updatedUser = await this.db.getUserById(req.user.id);
 
       res.json({

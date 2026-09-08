@@ -13,6 +13,11 @@ try {
   pdfParse = null;
 }
 const ACTIVE_MODELS = [
+  'gemini-3.0-flash',
+  'gemini-3.1-pro-preview',
+  'gemini-2.5-flash-lite',
+  'gemini-flash-latest',
+  'gemini-pro-latest',
   'gemini-2.5-flash',
   'gemini-2.0-flash',
   'gemini-1.5-flash',
@@ -517,7 +522,15 @@ Respond ONLY with valid JSON.`;
 
     // 3. SECONDARY STRATEGY: Multimodal Gemini Vision (inlineData)
     if (!parsedResult) {
-      const candidateModels = ['gemini-flash-latest', 'gemini-1.5-flash', 'gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-pro-latest'];
+      const candidateModels = [
+        'gemini-3.0-flash',
+        'gemini-3.1-pro-preview',
+        'gemini-2.5-flash-lite',
+        'gemini-flash-latest',
+        'gemini-pro-latest',
+        'gemini-2.5-flash',
+        'gemini-1.5-flash'
+      ];
       const base64Data = buffer.toString('base64');
 
       for (const mName of candidateModels) {

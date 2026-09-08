@@ -4,15 +4,12 @@ Whenever creating or adding a new visual template to the MyFolio platform:
 
 1. **Split into Sections**: Break down the reference design into clean, distinct functional sections (Hero, About, Projects, Skills, Timeline/Experience, Resume/Education, Articles/Stream, Interactive Node, 404 Anomaly, Footer).
 2. **Identify 3D Focal Elements & Backgrounds**: Separate foreground 3D models/holograms from the dynamic Three.js canvas and background environment.
-3. **Extract & Recreate with Nano Banana**:
-   - Extract reference crops.
-   - Recreate high-resolution 3D renders with Nano Banana (`generate_image`) with authentic 3D spatial depth, subsurface scattering materials, and cyber/theme lighting.
-4. **Remove Background**:
-   - Strip all backgrounds cleanly into alpha channel transparent PNGs (`_nobg.png`) using `rembg` / dark-studio matting.
-   - Deploy to both `public/assets/designs/<theme>/` and `web/assets/designs/<theme>/`.
-5. **Integrate into Template**:
-   - Embed transparent 3D PNGs with CSS drop shadows, ambient glow, and micro-floating animations so they float seamlessly over the WebGL canvas.
-6. **Strict Zero Hardcoded Content**:
+3. **Mandatory 4-Step Asset Pipeline**:
+   - **Step A (Extract Reference)**: Crop the exact focal visual from the source portfolio design.
+   - **Step B (Nano Banana 3D Recreation & Enhancement)**: Send the extracted reference to Nano Banana (`generate_image` with procedural prompt) to enhance and synthesize a brand-new, ultra-high-definition 3D asset with authentic spatial depth, procedural materials (subsurface scattering, brushed titanium, nacre, glowing neon), and cinematic lighting. Never directly paste the flat raw crop into the template.
+   - **Step C (Background Removal)**: Cleanly extract the alpha channel (`rembg` / dark-studio matting) yielding a transparent `_nobg.png` with zero halos or dark bounding boxes. Deploy to both `public/assets/designs/<theme>/` and `web/assets/designs/<theme>/`.
+   - **Step D (Portfolio Insertion)**: Embed the transparent 3D asset into the portfolio template with multi-axis CSS floating keyframes, ambient glow, and dynamic data binding.
+4. **Strict Zero Hardcoded Content**:
    - **Never display hardcoded template content in generated portfolios**.
    - Strictly bind candidate metadata (`data.name`, `data.title`, `data.bio`, `data.skills`, `data.projects`, `data.experience`, `data.education`, etc.).
    - Dynamically render lists without placeholder mock data leakage.

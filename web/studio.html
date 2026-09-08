@@ -2100,6 +2100,21 @@
       return currentVipAdmin;
     }
 
+    function getCurrentUser() {
+      try {
+        const userStr = localStorage.getItem('myfolio_user');
+        if (userStr) return JSON.parse(userStr);
+      } catch (e) {}
+      return {};
+    }
+
+    function getCurrentUsername() {
+      const u = getCurrentUser();
+      if (u && u.username) return u.username.toLowerCase().trim();
+      if (isVipUser()) return 'abdulaziz';
+      return 'developer';
+    }
+
     function getAllowanceState() {
       if (isVipUser()) {
         return {
@@ -2444,17 +2459,24 @@
 
     async function setVipActiveSite(siteId) {
       try {
+        let handle = '';
+        if (siteId && siteId.includes('-')) {
+          handle = siteId.split('-')[0].toLowerCase().trim();
+        }
+        if (!handle) handle = getCurrentUsername();
+
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ siteId, email: 'abdulaziznoor9876@gmail.com' })
+          body: JSON.stringify({ siteId, handle, email: 'abdulaziznoor9876@gmail.com' })
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to switch live site.');
 
         localStorage.setItem('myfolio_active_vip_site', siteId);
-        showStudioToast('Live Portfolio Updated', 'https://abdulaziz.myfolio.tech is now serving this version!');
+        const liveDomain = data.subdomain || `${handle}.myfolio.tech`;
+        showStudioToast('Live Portfolio Updated', `https://${liveDomain} is now serving this version!`);
         renderGeneratedHistoryUI(siteId);
       } catch (err) {
         alert('Could not update active portfolio: ' + err.message);
@@ -2550,6 +2572,15 @@
         const ghUserArg = item.githubUsername || '';
         const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
 
+        let itemHandle = item.handle || '';
+        if (!itemHandle && item.siteId && item.siteId.includes('-')) {
+          itemHandle = item.siteId.split('-')[0].toLowerCase().trim();
+        }
+        if (!itemHandle) {
+          itemHandle = getCurrentUsername();
+        }
+        const itemSubdomain = item.subdomain || `${itemHandle}.myfolio.tech`;
+
         // Determine if this item is the currently active live portfolio
         const isVipActive = isVip && (item.siteId === effectiveActiveVipSiteId || (!savedActiveVipSiteId && idx === 0));
         const isActive = isVip ? isVipActive : (activeSiteId ? item.siteId === activeSiteId : idx === 0);
@@ -2564,12 +2595,12 @@
 
         if (isVip) {
           if (isVipActive) {
-            displayedUrl = 'https://abdulaziz.myfolio.tech';
+            displayedUrl = `https://${itemSubdomain}`;
             openUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-              ? `${window.location.origin}/abdulaziz`
-              : 'https://abdulaziz.myfolio.tech';
+              ? `${window.location.origin}/${itemHandle}`
+              : `https://${itemSubdomain}`;
 
-            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4);">👑 VIP ACTIVE (abdulaziz.myfolio.tech)</span>`;
+            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4);">👑 VIP ACTIVE (${itemSubdomain.toUpperCase()})</span>`;
 
             primaryActionBtnHtml = `<a href="${openUrl}" target="_blank" class="btn-launch-live" style="background: linear-gradient(135deg, #059669 0%, #10B981 100%);">
                 🚀 Open Live Domain ↗
@@ -2594,7 +2625,7 @@
               </a>`;
 
             secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="setVipActiveSite('${item.siteId}')" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8;">
-                ⚡ Set as Live (abdulaziz.myfolio.tech)
+                ⚡ Set as Live (${itemSubdomain})
               </button>`;
           }
         } else {
@@ -2769,7 +2800,10 @@
         const userAccountEmail = currentLoggedInEmail || (isVip ? 'abdulaziznoor9876@gmail.com' : undefined);
         const contactEmail = manualEmail || userAccountEmail;
 
+        const currentHandle = getCurrentUsername();
         const payload = {
+          username: currentHandle,
+          customUrlIdentifier: currentHandle,
           email: contactEmail,
           userEmail: userAccountEmail,
           isVip: isVip,
@@ -2817,8 +2851,11 @@
           localStorage.setItem('myfolio_active_vip_site', data.siteId);
         }
 
+        const genHandle = data.handle || currentHandle;
+        const genSubdomain = data.subdomain || `${genHandle}.myfolio.tech`;
+
         let previewUrl = isVipResult
-          ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `${window.location.origin}/abdulaziz` : 'https://abdulaziz.myfolio.tech')
+          ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `${window.location.origin}/${genHandle}` : `https://${genSubdomain}`)
           : (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : (data.siteUrl || `${window.location.origin}/p/${data.siteId || 'preview'}`));
         
         if (ghUser) {
@@ -2833,9 +2870,10 @@
 
         // 2. Add Newly Generated Project Card below Generate Button
         addGeneratedPortfolioToHistory({
-          siteId: data.siteId || (isVipResult ? `abdulaziz-${Date.now()}` : `gen-${Date.now()}`),
+          siteId: data.siteId || `${genHandle}-${Date.now()}`,
+          handle: genHandle,
+          subdomain: isVipResult ? genSubdomain : null,
           previewUrl: previewUrl,
-          subdomain: isVipResult ? 'abdulaziz.myfolio.tech' : null,
           universeKey: selectedUniverseKey,
           githubUsername: ghUser || manualGithub || undefined,
           developerName: data.profileData?.name || candidateResolvedName,
@@ -2845,7 +2883,7 @@
         });
 
         // 3. Update legacy preview card (if visible)
-        const displayLiveUrl = isVipResult ? 'https://abdulaziz.myfolio.tech' : previewUrl;
+        const displayLiveUrl = isVipResult ? `https://${genSubdomain}` : previewUrl;
         document.getElementById('generatedUrlText').textContent = displayLiveUrl;
         document.getElementById('btnOpenGeneratedLive').href = previewUrl;
 
@@ -2870,7 +2908,8 @@
 
     function copyGeneratedUrl() {
       const isVip = isVipUser();
-      const url = isVip ? 'https://abdulaziz.myfolio.tech' : document.getElementById('generatedUrlText').textContent;
+      const handle = getCurrentUsername();
+      const url = isVip ? `https://${handle}.myfolio.tech` : document.getElementById('generatedUrlText').textContent;
       navigator.clipboard.writeText(url);
       alert('Portfolio URL copied to clipboard: ' + url);
     }

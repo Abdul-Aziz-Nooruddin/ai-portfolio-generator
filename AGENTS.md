@@ -41,13 +41,14 @@ For **ANY** future template addition or redesign, you MUST strictly follow this 
    - Identify the background environment (Three.js canvas, particle field, radial space grid, cyber sprawl, underwater ocean caustic mesh).
 
 3. **Asset Extraction & Nano Banana 3D Recreation**:
-   - Extract the reference crop/bounding box of the 3D element.
-   - Recreate the asset with **Nano Banana** (`generate_image` / high-end 3D spatial prompt) with ultra-high quality, authentic depth, procedural materials (subsurface scattering glass, brushed titanium, glowing neon wiring, holographic glyphs, iridescent mother-of-pearl, antique nautical brass, verdigris moss), and cinematic studio lighting.
+   - Extract the reference crop/bounding box of the focal element from the source portfolio design.
+   - **Send to Nano Banana**: Use `generate_image` with procedural 3D spatial prompts to enhance and synthesize a brand new ultra-high-quality 3D asset (authentic spatial depth, procedural subsurface scattering, brushed titanium, glowing neon wiring, iridescent mother-of-pearl, antique nautical brass) under cinematic studio lighting. Never insert flat raw crops directly.
 
-4. **Background Removal**:
+4. **Background Removal & Portfolio Insertion**:
    - Process all generated 3D images through the clean background removal pipeline (`rembg` / dark-studio alpha matting).
    - Output authentic transparent alpha PNGs (`_nobg.png`) with zero dark halos, clipping, or bounding boxes.
    - Deploy the transparent PNGs to both `public/assets/designs/<theme>/` and `web/assets/designs/<theme>/`.
+   - Insert the clean 3D asset into the portfolio template with CSS floating keyframes and ambient directional glow.
 
 5. **3D Treasure Chest Multi-Variant Standard**:
    - In oceanic, curio, exploration, and archival templates, **each project card MUST be rendered as an authentic 3D Treasure Chest / Vault**.

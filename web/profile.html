@@ -870,7 +870,9 @@
           statusGoogle.textContent = currentUserData.emailVerified ? 'Active' : 'Unverified';
         }
 
-        if (currentUserData.plan === 'pro') {
+        if (currentUserData.tier === 'vip_founder' || currentUserData.is_admin || currentUserData.role === 'admin') {
+          document.getElementById('profilePlanBadge').textContent = '💎 VIP FOUNDER';
+        } else if (currentUserData.plan === 'pro' || currentUserData.plan === 'unlimited') {
           document.getElementById('profilePlanBadge').textContent = '👑 PRO CREATOR';
         }
       } catch (err) {
@@ -1021,9 +1023,17 @@
 
     async function handleConfirmDelete(e) {
       e.preventDefault();
+      const delBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = delBtn ? delBtn.textContent : 'Permanently Delete';
+
       const password = document.getElementById('deleteAccountPassword').value;
 
       try {
+        if (delBtn) {
+          delBtn.disabled = true;
+          delBtn.textContent = 'Deleting...';
+        }
+
         const res = await fetch('/api/auth/delete-account', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1032,6 +1042,8 @@
         });
 
         const data = await res.json();
+        closeDeleteAccountModal();
+
         if (res.status === 401) {
           showStatusPopup({
             title: 'Authentication Required',
@@ -1052,12 +1064,18 @@
           onClose: () => { window.location.href = '/'; }
         });
       } catch (err) {
+        closeDeleteAccountModal();
         showStatusPopup({
           title: 'Deletion Error',
           message: err.message || 'Failed to delete account.',
           type: 'error',
           confirmText: 'Dismiss'
         });
+      } finally {
+        if (delBtn) {
+          delBtn.disabled = false;
+          delBtn.textContent = originalText;
+        }
       }
     }
 
