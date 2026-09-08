@@ -1437,7 +1437,7 @@ app.all('/api/cron/lifecycle', async (req, res) => {
 app.use(AuthMiddleware.authenticate(dbService, securityService));
 app.use(SecurityMiddleware.csrfProtection());
 
-const authHandler = new AuthHandler(dbService, securityService, emailService);
+const authHandler = new AuthHandler(dbService, securityService, emailService, customDomainService);
 
 // Strict rate limiter for brute-force sensitive auth routes
 const authLimiter = SecurityMiddleware.rateLimiter({
@@ -1608,6 +1608,21 @@ app.get(
   '/api/auth/me',
   AuthMiddleware.requireAuth,
   (req, res) => authHandler.getMe(req, res)
+);
+
+// 4b. Update Profile (Display Name & Custom URL Identifier / Username)
+app.post(
+  '/api/auth/profile',
+  AuthMiddleware.requireAuth,
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  (req, res) => authHandler.updateProfile(req, res)
+);
+
+app.put(
+  '/api/auth/profile',
+  AuthMiddleware.requireAuth,
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  (req, res) => authHandler.updateProfile(req, res)
 );
 
 // 5. Active Sessions & Device Management (Security Settings)

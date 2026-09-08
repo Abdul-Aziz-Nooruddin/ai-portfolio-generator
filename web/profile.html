@@ -13,7 +13,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Profile &amp; Settings — MyFolio</title>
-  <meta name="description" content="Manage your developer profile settings, password, sessions, and connected GitHub account.">
+  <meta name="description" content="Manage your developer profile settings, password, sessions, and account details.">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
@@ -429,6 +429,126 @@
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
     }
 
+    /* 🌟 Modern Status & Notification Popup */
+    .status-popup-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      box-sizing: border-box;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .status-popup-backdrop.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .status-popup-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      border-radius: 24px;
+      max-width: 430px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 36px 30px 30px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6);
+      position: relative;
+      text-align: center;
+      transform: scale(0.92) translateY(12px);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .status-popup-backdrop.active .status-popup-card {
+      transform: scale(1) translateY(0);
+    }
+
+    .status-popup-icon-wrap {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .status-popup-icon-wrap.success {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.25));
+      border: 2px solid #10B981;
+      color: #10B981;
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
+    }
+
+    .status-popup-icon-wrap.error {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(244, 63, 94, 0.25));
+      border: 2px solid #EF4444;
+      color: #EF4444;
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.3);
+    }
+
+    .status-popup-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      letter-spacing: -0.02em;
+      color: #0F172A;
+    }
+
+    .status-popup-msg {
+      font-size: 0.94rem;
+      color: #64748B;
+      margin: 0 0 24px 0;
+      line-height: 1.55;
+      word-break: break-word;
+    }
+
+    .status-popup-btn {
+      width: 100%;
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0284C7, #2563EB);
+      color: #FFFFFF;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
+    }
+
+    .status-popup-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(2, 132, 199, 0.4);
+    }
+
+    .status-popup-btn:active {
+      transform: translateY(0);
+    }
+
+    [data-theme="dark"] .status-popup-card {
+      background: #0F172A;
+      border-color: rgba(255, 255, 255, 0.12);
+      color: #F8FAFC;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(2, 132, 199, 0.15);
+    }
+
+    [data-theme="dark"] .status-popup-title {
+      color: #FFFFFF;
+    }
+
+    [data-theme="dark"] .status-popup-msg {
+      color: #94A3B8;
+    }
+
     /* 📱 Responsive Mobile & Tablet Layout */
     @media (max-width: 768px) {
       .profile-main-stage {
@@ -528,6 +648,26 @@
       .danger-modal-card {
         padding: 24px 16px;
       }
+
+      .status-popup-card {
+        padding: 28px 20px 22px;
+        border-radius: 20px;
+      }
+
+      .status-popup-icon-wrap {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 14px;
+      }
+
+      .status-popup-title {
+        font-size: 1.2rem;
+      }
+
+      .status-popup-msg {
+        font-size: 0.88rem;
+        margin-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -599,11 +739,6 @@
               <input type="text" id="inputUsername" class="form-input-control" required placeholder="abdulaziz">
             </div>
 
-            <div class="form-field-group">
-              <label for="inputGithub">GitHub Profile</label>
-              <input type="text" id="inputGithub" class="form-input-control" placeholder="https://github.com/Abdul-Aziz-Nooruddin">
-            </div>
-
             <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
               <button type="submit" class="btn-save-primary">Save Changes</button>
             </div>
@@ -627,18 +762,6 @@
               <span>Google Account</span>
             </div>
             <span class="status-connected-tag" id="statusGoogle">Active</span>
-          </div>
-
-          <div class="connected-account-row">
-            <div class="account-type-info">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-              </svg>
-              <span>GitHub Deep Ingestion</span>
-            </div>
-            <div id="githubConnectionWrap" style="display:flex; align-items:center; gap:8px;">
-              <span class="status-connected-tag" id="statusGithub">Checking...</span>
-            </div>
           </div>
 
           <div class="connected-account-row">
@@ -697,6 +820,23 @@
     </div>
   </div>
 
+  <!-- Modern Status & Notification Popup Modal -->
+  <div id="statusPopupModal" class="status-popup-backdrop" onclick="if(event.target === this) closeStatusPopup()">
+    <div class="status-popup-card">
+      <button type="button" class="modal-close-cross-btn" onclick="closeStatusPopup()" aria-label="Close modal">✕</button>
+      <div class="status-popup-icon-wrap success" id="statusPopupIcon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <h3 id="statusPopupTitle" class="status-popup-title">Profile Updated</h3>
+      <p id="statusPopupMessage" class="status-popup-msg">Your changes have been saved successfully.</p>
+      <div>
+        <button type="button" class="status-popup-btn" id="statusPopupConfirmBtn" onclick="closeStatusPopup()">Awesome</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     let currentUserData = null;
 
@@ -730,24 +870,6 @@
           statusGoogle.textContent = currentUserData.emailVerified ? 'Active' : 'Unverified';
         }
 
-        // Dynamic GitHub Connection Tag
-        const ghWrap = document.getElementById('githubConnectionWrap');
-        const ghUsername = currentUserData.githubUsername || currentUserData.github || (currentUserData.socialLinks?.github ? currentUserData.socialLinks.github.replace(/^https?:\/\/github\.com\//, '') : null);
-        
-        if (ghWrap) {
-          if (ghUsername) {
-            ghWrap.innerHTML = `
-              <span class="status-connected-tag" style="white-space:nowrap;">Connected (@${ghUsername})</span>
-              <button type="button" onclick="unlinkGithub()" style="background:transparent; border:none; color:#EF4444; font-size:0.75rem; font-weight:700; cursor:pointer; margin-left:4px; white-space:nowrap;">Unlink</button>
-            `;
-          } else {
-            ghWrap.innerHTML = `
-              <span style="background:#F1F5F9; color:#64748B; padding:4px 10px; border-radius:12px; font-size:0.78rem; font-weight:600; white-space:nowrap;">Not Linked</span>
-              <button type="button" onclick="linkGithubAccount()" style="background:transparent; border:none; color:#0284C7; font-size:0.82rem; font-weight:700; cursor:pointer; margin-left:6px; white-space:nowrap;">Link ↗</button>
-            `;
-          }
-        }
-
         if (currentUserData.plan === 'pro') {
           document.getElementById('profilePlanBadge').textContent = '👑 PRO CREATOR';
         }
@@ -756,32 +878,128 @@
       }
     }
 
-    function linkGithubAccount() {
-      const ghUser = prompt('Enter your GitHub username or profile URL:');
-      if (ghUser && ghUser.trim()) {
-        const clean = ghUser.trim().replace(/^https?:\/\/github\.com\//, '').replace(/\/$/, '');
-        localStorage.setItem('portfolio_bot_github_user', clean);
-        alert(`GitHub account @${clean} linked for portfolio generation!`);
-        loadUserProfile();
+    // 🌟 Modern Status Popup Controller
+    function showStatusPopup({ title, message, type = 'success', confirmText = 'Awesome', onClose = null }) {
+      const modal = document.getElementById('statusPopupModal');
+      const titleEl = document.getElementById('statusPopupTitle');
+      const msgEl = document.getElementById('statusPopupMessage');
+      const iconWrap = document.getElementById('statusPopupIcon');
+      const btn = document.getElementById('statusPopupConfirmBtn');
+
+      titleEl.textContent = title;
+      msgEl.textContent = message;
+      btn.textContent = confirmText;
+
+      iconWrap.className = `status-popup-icon-wrap ${type}`;
+      if (type === 'success') {
+        iconWrap.innerHTML = `
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+      } else {
+        iconWrap.innerHTML = `
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+        `;
       }
+
+      window._statusPopupOnClose = onClose;
+      modal.style.display = 'flex';
+      requestAnimationFrame(() => {
+        modal.classList.add('active');
+      });
+      btn.focus();
     }
 
-    function unlinkGithub() {
-      if (confirm('Unlink GitHub account from your profile?')) {
-        localStorage.removeItem('portfolio_bot_github_user');
-        alert('GitHub unlinked.');
-        loadUserProfile();
-      }
+    function closeStatusPopup() {
+      const modal = document.getElementById('statusPopupModal');
+      if (!modal) return;
+      modal.classList.remove('active');
+      setTimeout(() => {
+        modal.style.display = 'none';
+        if (typeof window._statusPopupOnClose === 'function') {
+          const cb = window._statusPopupOnClose;
+          window._statusPopupOnClose = null;
+          cb();
+        }
+      }, 200);
     }
 
     async function handleSaveProfile(e) {
       e.preventDefault();
+      const saveBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = saveBtn ? saveBtn.textContent : 'Save Changes';
+
       const name = document.getElementById('inputName').value.trim();
-      const email = document.getElementById('inputEmail').value.trim();
       const username = document.getElementById('inputUsername').value.trim();
 
-      alert(`Profile updated for ${name} (${email})!`);
-      loadUserProfile();
+      if (!name) {
+        showStatusPopup({
+          title: 'Display Name Required',
+          message: 'Please enter your display name to continue.',
+          type: 'error',
+          confirmText: 'Understood'
+        });
+        return;
+      }
+
+      if (!username) {
+        showStatusPopup({
+          title: 'Username Required',
+          message: 'Please enter a username (custom URL identifier).',
+          type: 'error',
+          confirmText: 'Understood'
+        });
+        return;
+      }
+
+      try {
+        if (saveBtn) {
+          saveBtn.disabled = true;
+          saveBtn.textContent = 'Saving...';
+        }
+
+        const res = await fetch('/api/auth/profile', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ name, username })
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Failed to update profile');
+        }
+
+        showStatusPopup({
+          title: 'Profile Updated',
+          message: `Your profile and custom URL identifier have been updated to @${username}!`,
+          type: 'success',
+          confirmText: 'Awesome'
+        });
+
+        await loadUserProfile();
+
+        if (typeof initUniversalSidebar === 'function') {
+          initUniversalSidebar('profile');
+        }
+      } catch (err) {
+        showStatusPopup({
+          title: 'Update Failed',
+          message: err.message || 'Failed to update profile. Please try again.',
+          type: 'error',
+          confirmText: 'Dismiss'
+        });
+      } finally {
+        if (saveBtn) {
+          saveBtn.disabled = false;
+          saveBtn.textContent = originalText;
+        }
+      }
     }
 
     function openDeleteAccountModal() {
@@ -797,6 +1015,7 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeDeleteAccountModal();
+        closeStatusPopup();
       }
     });
 
@@ -814,16 +1033,31 @@
 
         const data = await res.json();
         if (res.status === 401) {
-          alert('Session expired or incorrect password. Please sign in again.');
-          window.location.href = '/login';
+          showStatusPopup({
+            title: 'Authentication Required',
+            message: 'Session expired or incorrect password. Please sign in again.',
+            type: 'error',
+            confirmText: 'Sign In',
+            onClose: () => { window.location.href = '/login'; }
+          });
           return;
         }
 
         if (!res.ok) throw new Error(data.error || 'Failed to delete account');
-        alert('Your account and all associated data have been permanently deleted.');
-        window.location.href = '/';
+        showStatusPopup({
+          title: 'Account Deleted',
+          message: 'Your account and all associated data have been permanently deleted.',
+          type: 'success',
+          confirmText: 'Done',
+          onClose: () => { window.location.href = '/'; }
+        });
       } catch (err) {
-        alert(err.message);
+        showStatusPopup({
+          title: 'Deletion Error',
+          message: err.message || 'Failed to delete account.',
+          type: 'error',
+          confirmText: 'Dismiss'
+        });
       }
     }
 

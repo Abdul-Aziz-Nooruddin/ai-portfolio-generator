@@ -7,10 +7,11 @@
 const { GoogleOAuthService } = require('../services/google-oauth-service');
 
 class AuthHandler {
-  constructor(dbService, securityService, emailService) {
+  constructor(dbService, securityService, emailService, customDomainService = null) {
     this.db = dbService;
     this.security = securityService;
     this.email = emailService;
+    this.customDomain = customDomainService;
     this.googleOAuth = new GoogleOAuthService();
   }
 
@@ -743,6 +744,121 @@ class AuthHandler {
       user: req.user,
       session: req.session
     });
+  }
+
+  /**
+   * POST /api/auth/profile
+   * Update display name and custom URL identifier (username)
+   */
+  async updateProfile(req, res) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({ error: 'Not authenticated' });
+      }
+
+      const { name, username } = req.body;
+
+      if (!name || typeof name !== 'string' || name.trim().length < 2) {
+        return res.status(400).json({ error: 'Please enter a valid display name (at least 2 characters).' });
+      }
+
+      if (!username || typeof username !== 'string') {
+        return res.status(400).json({ error: 'Please enter a valid username (custom URL identifier).' });
+      }
+
+      const cleanName = this.security.sanitizeInput(name).trim();
+      const cleanUsername = username.toLowerCase().trim()
+        .replace(/[^a-z0-9-_]/g, '')
+        .replace(/^[-_]+|[-_]+$/g, '');
+
+      if (cleanUsername.length < 2 || cleanUsername.length > 32) {
+        return res.status(400).json({ error: 'Username must be between 2 and 32 alphanumeric characters.' });
+      }
+
+      const reserved = ['admin', 'api', 'www', 'mail', 'ftp', 'app', 'cname', 'dev', 'test', 'status', 'auth', 'login', 'signup', 'dashboard', 'profile'];
+      if (reserved.includes(cleanUsername)) {
+        return res.status(400).json({ error: `The username "${cleanUsername}" is reserved. Please choose another.` });
+      }
+
+      const oldUsername = (req.user.username || '').toLowerCase().trim();
+
+      // Check if username changed and is already taken
+      if (cleanUsername !== oldUsername) {
+        const existing = await this.db.getUserByUsername(cleanUsername);
+        if (existing && existing.id !== req.user.id) {
+          return res.status(409).json({ error: 'This username is already taken. Please choose another custom URL identifier.' });
+        }
+      }
+
+      // Update in database
+      await this.db.updateUser(req.user.id, {
+        name: cleanName,
+        username: cleanUsername
+      });
+
+      req.user.name = cleanName;
+      req.user.username = cleanUsername;
+
+      // Update custom domain service cache if username changed
+      if (cleanUsername !== oldUsername && this.customDomain) {
+        const oldSub = `${oldUsername}.myfolio.tech`;
+        const newSub = `${cleanUsername}.myfolio.tech`;
+        const oldLoc = `${oldUsername}.localhost`;
+        const newLoc = `${cleanUsername}.localhost`;
+
+        const existingRec = this.customDomain.domainCache[oldSub] || this.customDomain.domainCache[oldLoc];
+        const siteId = existingRec?.siteId || (req.user.id === 'abdulaziz_founder' ? 'abdulaziz-1788601265704' : `site_${cleanUsername}`);
+
+        if (oldUsername) {
+          delete this.customDomain.domainCache[oldSub];
+          delete this.customDomain.domainCache[oldLoc];
+        }
+
+        this.customDomain.domainCache[newSub] = {
+          domain: newSub,
+          handle: cleanUsername,
+          siteId: siteId,
+          userId: req.user.id,
+          type: 'subdomain',
+          status: 'active',
+          updatedAt: new Date().toISOString()
+        };
+        this.customDomain.domainCache[newLoc] = {
+          domain: newLoc,
+          handle: cleanUsername,
+          siteId: siteId,
+          userId: req.user.id,
+          type: 'subdomain',
+          status: 'active',
+          updatedAt: new Date().toISOString()
+        };
+        this.customDomain.saveCache();
+      }
+
+      // Copy local site files if existed for instant resolution
+      if (cleanUsername !== oldUsername && oldUsername) {
+        try {
+          const fs = require('fs');
+          const path = require('path');
+          const oldSiteDir = path.join(process.cwd(), 'public', 'sites', oldUsername);
+          const newSiteDir = path.join(process.cwd(), 'public', 'sites', cleanUsername);
+          if (fs.existsSync(oldSiteDir)) {
+            fs.cpSync(oldSiteDir, newSiteDir, { recursive: true });
+          }
+        } catch (fsErr) {}
+      }
+
+      const updatedUser = await this.db.getUserById(req.user.id);
+
+      res.json({
+        success: true,
+        message: 'Profile updated successfully',
+        user: updatedUser || req.user
+      });
+    } catch (err) {
+      console.error('[UPDATE PROFILE ERROR]', err);
+      res.status(500).json({ error: err.message || 'Failed to update profile' });
+    }
   }
 
   /**

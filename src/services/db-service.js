@@ -255,6 +255,7 @@ class DatabaseService {
           // Minimal fallback with just basic fields
           await this.client.from('users').update({
             name: cleanUpdates.name || undefined,
+            username: cleanUpdates.username || undefined,
             updated_at: new Date().toISOString()
           }).eq('id', userId);
         }
