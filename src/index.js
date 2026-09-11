@@ -44,6 +44,8 @@ const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detect
 const { ErrorRecoveryService } = require('./services/error-recovery-service');
 const { TemplateRegistry } = require('./templates/template-registry');
 const { globalConcurrencyManager } = require('./services/concurrency-manager');
+const { WhatsAppService } = require('./services/whatsapp-service');
+const { WhatsAppHandler } = require('./handlers/whatsapp-handler');
 const compression = require('compression');
 
 const app = express();
@@ -326,6 +328,51 @@ if (require.main === module) {
 // Initialize GitHub AI Portfolio Generation Pipeline
 const { GitHubGenerationPipeline } = require('./services/github-generation-pipeline');
 const githubPipeline = new GitHubGenerationPipeline(aiService, siteGenerator);
+
+// Initialize Meta Official WhatsApp Cloud API Service & Inbound Handler
+const whatsAppService = new WhatsAppService({
+  accessToken: process.env.WHATSAPP_ACCESS_TOKEN,
+  phoneNumberId: process.env.WHATSAPP_PHONE_NUMBER_ID,
+  verifyToken: process.env.WHATSAPP_VERIFY_TOKEN || 'myfolio_wa_verify_2026',
+  appSecret: process.env.WHATSAPP_APP_SECRET
+});
+
+const whatsAppHandler = new WhatsAppHandler({
+  whatsAppService,
+  aiService,
+  dbService,
+  hostingProvider
+});
+
+// Meta WhatsApp Cloud API Webhook Handshake (Verification Challenge)
+app.get('/api/webhook/whatsapp', (req, res) => {
+  const mode = req.query['hub.mode'];
+  const token = req.query['hub.verify_token'];
+  const challenge = req.query['hub.challenge'];
+
+  const verifiedChallenge = whatsAppService.verifyWebhookChallenge(mode, token, challenge);
+  if (verifiedChallenge) {
+    console.log('✅ [WHATSAPP WEBHOOK] Handshake verified successfully!');
+    return res.status(200).send(verifiedChallenge);
+  }
+
+  console.warn('❌ [WHATSAPP WEBHOOK] Verification failed. Token mismatch.');
+  return res.sendStatus(403);
+});
+
+// Meta WhatsApp Cloud API Real-Time Inbound Event Receiver
+app.post('/api/webhook/whatsapp', async (req, res) => {
+  // Always acknowledge immediately within 3 seconds to avoid Meta webhook retries
+  res.status(200).send('EVENT_RECEIVED');
+
+  try {
+    if (whatsAppHandler) {
+      await whatsAppHandler.handleWebhookEvent(req.body);
+    }
+  } catch (err) {
+    console.error('[WHATSAPP WEBHOOK PROCESS ERROR]', err);
+  }
+});
 
 // Razorpay Payment & Subscription Webhook Route
 app.post('/webhook/razorpay', async (req, res) => {
