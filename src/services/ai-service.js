@@ -23,19 +23,32 @@ const ACTIVE_MODELS = [
 
 class AIService {
   constructor(apiKey) {
-    this.apiKey = apiKey;
-    this.isAuthKey = apiKey && apiKey.startsWith('AQ.');
-    
-    // Multi-Key Rotation Pool: supports GEMINI_API_KEYS (comma-separated) or single GEMINI_API_KEY
-    const envKeys = (process.env.GEMINI_API_KEYS || '')
-      .split(',')
-      .map(k => k.trim())
-      .filter(Boolean);
-    const uniqueKeys = [...new Set([apiKey, ...envKeys].filter(Boolean))];
-    this.apiKeys = uniqueKeys.length > 0 ? uniqueKeys : (apiKey ? [apiKey] : []);
+    // Multi-Key Rotation Pool: seamlessly supports comma-separated keys in GEMINI_API_KEY,
+    // GEMINI_API_KEYS, or numbered variables GEMINI_API_KEY_1, GEMINI_API_KEY_2...
+    const rawKeys = [
+      apiKey,
+      process.env.GEMINI_API_KEYS,
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_API_KEY_1,
+      process.env.GEMINI_API_KEY_2,
+      process.env.GEMINI_API_KEY_3
+    ];
+
+    const extractedKeys = [];
+    for (const item of rawKeys) {
+      if (typeof item === 'string' && item.trim()) {
+        const split = item.split(',').map(k => k.trim().replace(/^['"]|['"]$/g, '')).filter(Boolean);
+        extractedKeys.push(...split);
+      }
+    }
+
+    const uniqueKeys = [...new Set(extractedKeys)];
+    this.apiKeys = uniqueKeys;
     this.keyIndex = 0;
-    
-    this.genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
+    this.apiKey = uniqueKeys[0] || apiKey || '';
+    this.isAuthKey = Boolean(this.apiKey && this.apiKey.startsWith('AQ.'));
+
+    this.genAI = this.apiKey ? new GoogleGenerativeAI(this.apiKey) : null;
     this.sdkAvailable = !!this.genAI;
 
     // Rate Limit (429) Adaptive Circuit Breaker
