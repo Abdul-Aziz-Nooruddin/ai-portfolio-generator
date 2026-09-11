@@ -9,9 +9,13 @@ You MUST strictly consult and apply the following three authoritative design and
    - Use intentional asymmetry, varied modular bento spans, and content-driven density that scales with the candidate's actual profile data.
    - Decouple dedicated error routes (404), interactive modals, and sub-systems from the main single-page scroll flow.
 
-2. **Styling, Color Physics & Typography**:
+2. **Styling, Color Physics & Mandatory Custom Typography Engine (Strict Zero Repetitive Fonts Rule)**:
    - Enforce WCAG 2.2 AAA contrast standards (minimum 4.5:1 text-to-background).
-   - Use curated typography scales: expressive display mastheads (`Syne`, `Cinzel Decorative`, `Playfair Display`, `Orbitron`, `Space Grotesk`), ultra-legible body fonts (`Plus Jakarta Sans`, `Inter`, `Spectral`, `IBM Plex Sans`), and precision monospace accents (`JetBrains Mono`, `Fira Code`, `Space Mono`).
+   - **MANDATORY CUSTOM TYPOGRAPHY ENGINE**: Under NO circumstances should generated portfolios recycle the same default font pairings (e.g. relying solely on `Inter`, `Plus Jakarta Sans`, or `Syne`). Every single portfolio template and generated portfolio MUST load and apply a distinct, tailored 3-tier font hierarchy:
+     1. **Expressive Display Mastheads**: `Orbitron`, `Chakra Petch`, `Cinzel Decorative`, `Playfair Display`, `Syne`, `Syncopate`, `Teko`, `Bebas Neue`, `MedievalSharp`, `Rajdhani`, `Fraunces`, `Clash Display`.
+     2. **Tailored Body Typefaces**: `Space Grotesk`, `Instrument Serif`, `Spectral`, `IBM Plex Sans`, `Outfit`, `Manrope`, `Epilogue`, `Titillium Web`, `Exo 2`, `Newsreader`.
+     3. **Precision Monospace Accents**: `Share Tech Mono`, `JetBrains Mono`, `Fira Code`, `Space Mono`, `IBM Plex Mono`, `Courier Prime`, `VT323`.
+   - **Non-Repeating Typography Cycles**: When generating portfolios iteratively, cycle through distinct typographic identities matching the candidate's archetype (e.g. Systems/Robotics -> `Chakra Petch` + `Space Grotesk` + `Share Tech Mono`; Luxury/Chrono -> `Cinzel Decorative` + `Spectral` + `Space Mono`; Web3/Security -> `VT323` + `Share Tech Mono` + `Fira Code`; Creative Editorial -> `Playfair Display` + `Instrument Serif` + `Courier Prime`). Zero repetition across consecutive generations.
    - Anti-AI-slop heuristics: Reject unmotivated purple/blue gradients, centered hero repetition, and arbitrary glassmorphism. Give every surface authentic material weight (brushed titanium, weathered parchment, obsidian stone, frosted nautical glass, or copper traces).
 
 3. **3D Live Images & Procedural Materials**:
@@ -29,6 +33,29 @@ You MUST strictly consult and apply the following three authoritative design and
    - Never leak dummy/hardcoded fallback data into generated portfolios.
    - Automatically provide interactive micro-affordances: card lift on hover, interactive sonar/detail modals, live telemetry counters, audio toggle triggers, and downloadable resume dossiers.
 
+6. **Mandatory 3D, Motion & Scrollytelling Plugin Suite**:
+   - Every template generation and render MUST incorporate the authoritative plugin stack:
+     - **`lenis`**: Universal smooth inertia scrolling (smooth wheel, responsive touch, and zero lag) synchronized with `gsap.ticker`.
+     - **`gsap` & `ScrollTrigger`**: Scroll-driven section pinning, staggered text reveals, velocity skew, and timeline choreography.
+     - **`motion`**: Hardware-accelerated spring physics, magnetic CTAs, and layout morphing for detail modals.
+     - **`three` & `@react-three/fiber` / `@react-three/drei`**: High-performance spatial 3D viewports, WebGL/WebGPU particles, and interactive 3D model loaders.
+     - **`postprocessing` & `@react-three/postprocessing`**: Cinematic shader passes including selective bloom on glowing runes/neon, vignette, and chromatic aberration.
+     - **`@theatre/core` & `@theatre/r3f`**: Scrollytelling choreography binding camera fly-throughs, lighting changes, and 3D rotations to user scroll progress.
+   - Always implement reduced-motion fallbacks (`prefers-reduced-motion: reduce`) by disabling Lenis smooth wheel and zeroing out rotational transforms.
+
+7. **Always-On Engineering Principle: Ponytail (Lazy Senior Dev Mode)**:
+   - **The Ladder (Stop at First Rung that Holds)**:
+     1. Does this need to be built at all? (YAGNI). Speculative need = skip it.
+     2. Already in this codebase? Reuse existing helpers, utils, and patterns. Look before writing.
+     3. Does the standard library do it? Use it.
+     4. Does a native platform feature cover it? Native first (CSS over JS, native inputs over bloated libs).
+     5. Does an already-installed dependency solve it? Use it. Never add an unrequested dependency.
+     6. Can this be one line? Make it one line.
+     7. Only then: write the minimum code that works.
+   - **Root Cause Fixes**: Fix the shared root function once across all callers rather than patching surface symptoms.
+   - **No Unrequested Abstractions**: No factories for one product, no interfaces for one implementation, no boilerplate nobody asked for. Shortest working diff wins.
+   - **Leave a Check**: Non-trivial logic must leave ONE runnable check behind (self-check assert or small test file).
+
 ## Standard Operating Procedure for Template Additions
 
 For **ANY** future template addition or redesign, you MUST strictly follow this mandatory pipeline:
@@ -40,15 +67,26 @@ For **ANY** future template addition or redesign, you MUST strictly follow this 
    - Identify all primary 3D visual focal points (e.g., robotic hands, cyber iris lenses, isometric circuit motherboards, floating glass credentials, low-poly creatures, quantum cores, 3D characters, iridescent nautilus shells, submarine portholes, brass treasure chests, bioluminescent coral trees, giant squids, antique compasses).
    - Identify the background environment (Three.js canvas, particle field, radial space grid, cyber sprawl, underwater ocean caustic mesh).
 
-3. **Asset Extraction & Nano Banana 3D Recreation**:
+3. **Asset Extraction & Nano Banana 3D Recreation (Strict Zero Flat SVGs / Stick Figures Rule)**:
    - Extract the reference crop/bounding box of the focal element from the source portfolio design.
-   - **Send to Nano Banana**: Use `generate_image` with procedural 3D spatial prompts to enhance and synthesize a brand new ultra-high-quality 3D asset (authentic spatial depth, procedural subsurface scattering, brushed titanium, glowing neon wiring, iridescent mother-of-pearl, antique nautical brass) under cinematic studio lighting. Never insert flat raw crops directly.
+   - **Send to Nano Banana**: Use `generate_image` with procedural 3D spatial prompts to enhance and synthesize a brand new ultra-high-quality 3D asset (authentic spatial depth, procedural subsurface scattering, brushed titanium, glowing neon wiring, iridescent mother-of-pearl, antique nautical brass) under cinematic studio lighting.
+   - **CRITICAL MANDATE - ZERO FLAT SVGS / PRIMITIVE LINES**: Under NO circumstances should flat 2D SVGs, stickmen, primitive vector paths, or basic line drawings be used as placeholders for 3D elements (such as cyborg holograms, gyroscopes, skill radar charts, or career trees). Every visual focal element across all templates (existing and future) MUST be generated as an authentic 3D spatial asset by Gemini Nano Banana or a fully interactive 3D WebGL mesh.
 
 4. **Background Removal & Portfolio Insertion**:
    - Process all generated 3D images through the clean background removal pipeline (`rembg` / dark-studio alpha matting).
    - Output authentic transparent alpha PNGs (`_nobg.png`) with zero dark halos, clipping, or bounding boxes.
    - Deploy the transparent PNGs to both `public/assets/designs/<theme>/` and `web/assets/designs/<theme>/`.
    - Insert the clean 3D asset into the portfolio template with CSS floating keyframes and ambient directional glow.
+
+5. **Apple Canvas-Like Scrollytelling Standard**:
+   - Hero and narrative showcases MUST feature an **Apple-style canvas scroll animation**:
+     - Pinned scroll track (`pin: true`, generous scroll depth like `250vh` - `350vh`, smooth `scrub: 1` or `1.2`).
+     - WebGL / Three.js canvas where camera position, Z-depth fly-through, and 3D rotational geometry are directly driven by user scroll progress.
+     - Synchronized milestone narrative/telemetry overlays that enter, pin, and crossfade smoothly as the user travels through the spatial 3D canvas.
+
+6. **Volumetric Living Background Standard (No Plain Revolving Dots)**:
+   - Reject plain empty space backgrounds with isolated revolving dots.
+   - Backgrounds MUST be living volumetric environments: dynamic neural constellation networks with distance-threshold synaptic connecting lines, deep-field particle nebulae, interactive ocean caustics, or reactive cyber grids with undulating wave passes.
 
 5. **3D Treasure Chest Multi-Variant Standard**:
    - In oceanic, curio, exploration, and archival templates, **each project card MUST be rendered as an authentic 3D Treasure Chest / Vault**.
@@ -65,21 +103,21 @@ For **ANY** future template addition or redesign, you MUST strictly follow this 
    - All text, candidate titles, biographies, skill tags, project cards, experience items, education, verified certifications, contact coordinates, and social links MUST dynamically bind to the user's parsed candidate data (`data.name`, `data.title`, `data.bio`, `data.skills`, `data.projects`, `data.experience`, `data.education`, `data.certifications`, `data.contact`).
    - If optional fields are absent, gracefully omit or adapt the section without leaking dummy placeholder text.
 
+8. **Universal Motion, 3D & Scrollytelling Standard**:
+   - All templates automatically inherit the unified `UniversalScrollMotion` pipeline:
+     - Mount **`lenis`** smooth inertia scrolling with `gsap.ticker` synchronization.
+     - Provide 3D card tilt physics with perspective (`preserve-3d`) and dynamic specular lighting.
+     - Implement continuous 3D rotation and scrub for hero stages on scroll up and down.
+     - Provide **`@theatre/core`** scrollytelling camera spline hooks (`__folioScrollytelling.bindCameraToScroll`).
+     - Always respect `prefers-reduced-motion: reduce` by disabling smooth wheel and zeroing transform rotations.
+
 ---
 
 ## Visual Template Model Knowledge Base (Catalog & Persona Matrix)
 
 Antigravity models must draw from this standardized catalog when generating, matching, or styling portfolios:
 
-### 1. Abyssal Nautilus Artisan (`abyssal-nautilus-artisan`)
-- **Aesthetic DNA**: Deep ocean abyss, bioluminescent cyber-aquatic artisan, procedural caustics.
-- **Color Palette**: Background `#020B14`, Sea Cyan `#0EA5E9`, Biolume Cyan `#00F5D4`, Coral Gold `#F59E0B`, Pearlescent Shell `#F1F5F9`.
-- **Typography**: Display `Cinzel Decorative` & `Space Grotesk`, Body `Plus Jakarta Sans`, Mono `JetBrains Mono`.
-- **3D Assets**: `nautilus_hand_nobg.png`, `porthole_nobg.png`, `treasure_chest_wheel_nobg.png`, `chest_compass_lid_nobg.png`, `coral_tree_nobg.png`, `squid_nobg.png`, `kelp_tree_nobg.png`, `vintage_map_clean_nobg.png`, `seahorse_nobg.png`, `nautical_compass_nobg.png`, `stone_404_nobg.png`.
-- **Key Features**: 3D Treasure Chests on every project card, Submarine porthole radar with concentric range rings, bioluminescent tree of life skills matrix, vintage nautical map cartography with candidate portrait overlay, interactive sand dune blog chests.
-- **Recommended For**: Oceanographers, Marine Biotech, AI Environmental Scientists, Full-Stack Artisans, Distributed Systems Architects.
-
-### 2. Cyber-Architect Sprawl (`cyber-architect-sprawl`)
+### 1. Cyber-Architect Sprawl (`cyber-architect-sprawl`)
 - **Aesthetic DNA**: High-fidelity cyberpunk engineering sprawl, isometric architecture, glowing holographic schematics.
 - **Color Palette**: Void `#05050A`, Neon Magenta `#FF007A`, Electric Cyan `#00F0FF`, Circuit Amber `#FFB800`, Grid Slate `#1F293D`.
 - **Typography**: Display `Syne` & `Orbitron`, Body `Inter`, Mono `JetBrains Mono`.

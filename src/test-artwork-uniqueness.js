@@ -128,22 +128,4 @@ test('🎨 100% Unique Project Artwork & Disambiguation Engine', async (t) => {
     assert.ok(matches[3].includes('origami_bird') || matches[3].includes('bird'), 'Pass A Note gets Note Messenger Bird');
     assert.ok(matches[4].includes('circuit_board') || matches[4].includes('database'), 'Lms User Management gets Circuit Board Systems Hub');
   });
-
-  await t.test('5. AbyssalNautilusArtisan guarantees 0 duplicate treasure chests / oceanic relics', () => {
-    const { AbyssalNautilusArtisanTemplate } = require('./templates/abyssal-nautilus-artisan');
-    const userProjects = [
-      { name: 'Ai Portfolio Generator', desc: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds.' },
-      { name: 'ConsentChain Algorand', desc: 'A decentralized Consent Management application powered by the Algorand blockchain.' },
-      { name: 'Portfolio', desc: 'Personal portfolio - AI Student, Full-Stack & Blockchain Developer.' },
-      { name: 'Pass A Note', desc: 'High-performance software project engineered in HTML.' },
-      { name: 'Lms User Management', desc: 'High-performance software project engineered in JavaScript.' }
-    ];
-
-    const rendered = AbyssalNautilusArtisanTemplate.render({ name: 'Abdul Aziz Nooruddin', projects: userProjects });
-    const matches = [...rendered.matchAll(/<img\s+src="([^"]+)"\s+alt="([^"]+)"\s+class="chest-wheel-img"/g)].map(m => m[1]);
-
-    assert.strictEqual(matches.length, 5, 'Must render 5 chest cards');
-    const unique = new Set(matches);
-    assert.strictEqual(unique.size, 5, `Must have ZERO duplicate chest images across project cards (Found: ${JSON.stringify(matches)})`);
-  });
 });

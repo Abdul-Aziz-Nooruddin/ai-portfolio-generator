@@ -48,6 +48,16 @@ const compression = require('compression');
 
 const app = express();
 
+// Instant 0ms Health Check for Render /healthz and monitoring probes (Bypasses all heavy middleware, DB & auth)
+app.get(['/health', '/healthz'], (req, res) => {
+  res.status(200).json({
+    status: 'healthy',
+    ok: true,
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 // High-Speed HTTP GZIP/Brotli Compression Middleware (Shrinks payloads by 70-80%)
 app.use(compression({
   level: 6,
@@ -1133,9 +1143,36 @@ app.post('/api/generate/unified', async (req, res) => {
     fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
     fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
 
-    // Associate generated site with authenticated user account
-    if (req.user?.id) {
-      await dbService.createSite(req.user.id, 'self_hosted', siteId).catch(() => {});
+    // Persist complete portfolio metadata for cross-device synchronization
+    const metaPayload = {
+      siteId,
+      handle: userHandle,
+      subdomain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
+      universeKey: input.preferences?.theme || 'cosmic-astronaut',
+      developerName: normalized.name,
+      developerRole: normalized.role || normalized.title,
+      projectsCount: normalized.projects?.length || 6,
+      timestamp: Date.now(),
+      userId: req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null),
+      userEmail: candidateEmail
+    };
+    try {
+      fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
+    } catch (e) {}
+
+    // Associate generated site with authenticated user account across both client_sites and sites tables
+    const effectiveOwnerId = req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null);
+    if (effectiveOwnerId && dbService?.client) {
+      await dbService.createSite(effectiveOwnerId, 'self_hosted', siteId).catch(() => {});
+      try {
+        await dbService.client.from('sites').upsert({
+          provider_site_id: siteId,
+          custom_domain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
+          user_id: effectiveOwnerId,
+          status: 'active',
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {}
     }
 
     const customSubdomain = `${userHandle}.myfolio.tech`;
@@ -1892,6 +1929,222 @@ app.get('/api/web/dashboard', AuthMiddleware.requireAuth, async (req, res) => {
 });
 
 // ==========================================
+// Cross-Device Portfolio Synchronization API (Phone, Laptop, Tablet Sync)
+// ==========================================
+app.get('/api/user/portfolios', AuthMiddleware.requireAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    const userId = user.id;
+    const userEmail = (user.email || '').toLowerCase().trim();
+    const isFounder = userEmail === 'abdulaziznoor9876@gmail.com';
+
+    const portfolios = [];
+    const seenSiteIds = new Set();
+    const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+
+    // 1. Fetch from sites & client_sites database tables
+    if (dbService?.client) {
+      try {
+        let query = dbService.client.from('sites').select('*');
+        if (isFounder) {
+          query = query.or(`user_id.eq.${userId},user_id.eq.abdulaziz_founder`);
+        } else {
+          query = query.eq('user_id', userId);
+        }
+        const { data: dbSites } = await query.order('created_at', { ascending: false });
+        if (dbSites && Array.isArray(dbSites)) {
+          for (const s of dbSites) {
+            const sid = s.provider_site_id || s.id;
+            if (sid && !seenSiteIds.has(sid)) {
+              seenSiteIds.add(sid);
+              const metaPath = path.join(sitesBaseDir, sid, 'meta.json');
+              const profilePath = path.join(sitesBaseDir, sid, 'profile.json');
+              let meta = {};
+              let prof = {};
+              if (fs.existsSync(metaPath)) {
+                try { meta = JSON.parse(fs.readFileSync(metaPath, 'utf8')); } catch (e) {}
+              }
+              if (fs.existsSync(profilePath)) {
+                try { prof = JSON.parse(fs.readFileSync(profilePath, 'utf8')); } catch (e) {}
+              }
+              portfolios.push({
+                siteId: sid,
+                handle: meta.handle || s.custom_domain?.split('.')[0] || user.username || 'developer',
+                subdomain: s.custom_domain || meta.subdomain || null,
+                previewUrl: `/p/${sid}`,
+                universeKey: meta.universeKey || 'cosmic-astronaut',
+                developerName: meta.developerName || prof.name || user.name || 'Developer',
+                developerRole: meta.developerRole || prof.role || prof.title || 'Software Engineer',
+                projectsCount: meta.projectsCount || prof.projects?.length || 6,
+                timestamp: meta.timestamp || (s.created_at ? new Date(s.created_at).getTime() : Date.now())
+              });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('[API] /api/user/portfolios dbSites error:', e.message);
+      }
+    }
+
+    // 2. Scan public/sites/ directory for sites belonging to this user
+    if (fs.existsSync(sitesBaseDir)) {
+      try {
+        const dirs = fs.readdirSync(sitesBaseDir, { withFileTypes: true });
+        for (const dir of dirs) {
+          if (!dir.isDirectory()) continue;
+          const sid = dir.name;
+          if (seenSiteIds.has(sid)) continue;
+
+          const metaPath = path.join(sitesBaseDir, sid, 'meta.json');
+          const profilePath = path.join(sitesBaseDir, sid, 'profile.json');
+          let isOwned = false;
+          let meta = {};
+          let prof = {};
+
+          if (fs.existsSync(metaPath)) {
+            try {
+              meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+              if (meta.userId === userId || (meta.userEmail && meta.userEmail.toLowerCase() === userEmail)) {
+                isOwned = true;
+              }
+            } catch (e) {}
+          }
+
+          if (!isOwned && fs.existsSync(profilePath)) {
+            try {
+              prof = JSON.parse(fs.readFileSync(profilePath, 'utf8'));
+              const profEmail = (prof.email || prof.contact?.email || '').toLowerCase().trim();
+              if (profEmail && profEmail === userEmail) {
+                isOwned = true;
+              }
+            } catch (e) {}
+          }
+
+          if (!isOwned && isFounder) {
+            // Any site in public/sites on the founder's instance without a different user ID belongs to the founder
+            if (!meta.userId || meta.userId === userId || meta.userId === 'abdulaziz_founder') {
+              isOwned = true;
+            }
+          }
+
+          const indexPath = path.join(sitesBaseDir, sid, 'index.html');
+          if (isOwned && fs.existsSync(indexPath)) {
+            seenSiteIds.add(sid);
+
+            // Extract developerName and developerRole from index.html if not present in meta or prof
+            if (!meta.developerName || meta.developerName === 'Developer') {
+              try {
+                const htmlHead = fs.readFileSync(indexPath, 'utf8').slice(0, 4000);
+                const titleMatch = htmlHead.match(/<title>([^<]+)<\/title>/i);
+                if (titleMatch && titleMatch[1]) {
+                  const parts = titleMatch[1].split(/[|—–-]/).map(s => s.trim());
+                  if (parts[0] && parts[0] !== 'MyFolio') meta.developerName = parts[0];
+                  if (parts[1]) meta.developerRole = parts[1];
+                }
+              } catch (e) {}
+            }
+
+            let mtime = Date.now();
+            try {
+              mtime = fs.statSync(indexPath).mtimeMs;
+            } catch (e) {}
+
+            const portfolioItem = {
+              siteId: sid,
+              handle: meta.handle || (isFounder ? 'abdulaziz' : (user.username || 'developer')),
+              subdomain: meta.subdomain || (isFounder ? `${user.username || 'abdulaziz'}.myfolio.tech` : null),
+              previewUrl: `/p/${sid}`,
+              universeKey: meta.universeKey || 'cyber-architect-sprawl',
+              developerName: meta.developerName || prof.name || user.name || 'Developer',
+              developerRole: meta.developerRole || prof.role || prof.title || 'Software Engineer',
+              projectsCount: meta.projectsCount || prof.projects?.length || 6,
+              timestamp: meta.timestamp || mtime
+            };
+
+            // Save back updated meta.json so future loads are instant
+            if (!fs.existsSync(metaPath)) {
+              try {
+                fs.writeFileSync(metaPath, JSON.stringify({
+                  ...portfolioItem,
+                  userId: isFounder ? 'abdulaziz_founder' : userId,
+                  userEmail: userEmail
+                }, null, 2), 'utf8');
+              } catch (e) {}
+            }
+
+            portfolios.push(portfolioItem);
+          }
+        }
+      } catch (e) {}
+    }
+
+    portfolios.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+    res.json({ success: true, portfolios });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/user/portfolios/sync', AuthMiddleware.requireAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    const userId = user.id;
+    const userEmail = (user.email || '').toLowerCase().trim();
+    const isFounder = userEmail === 'abdulaziznoor9876@gmail.com';
+    const items = Array.isArray(req.body?.items) ? req.body.items : (req.body?.item ? [req.body.item] : []);
+
+    const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+
+    for (const item of items) {
+      if (!item || !item.siteId) continue;
+      const sid = item.siteId;
+      const siteDir = path.join(sitesBaseDir, sid);
+
+      if (!fs.existsSync(siteDir)) {
+        fs.mkdirSync(siteDir, { recursive: true });
+      }
+
+      const metaPath = path.join(siteDir, 'meta.json');
+      let existingMeta = {};
+      if (fs.existsSync(metaPath)) {
+        try { existingMeta = JSON.parse(fs.readFileSync(metaPath, 'utf8')); } catch (e) {}
+      }
+      const meta = {
+        ...existingMeta,
+        siteId: sid,
+        handle: item.handle || (isFounder ? 'abdulaziz' : (user.username || 'developer')),
+        subdomain: item.subdomain || (isFounder ? `${user.username || 'abdulaziz'}.myfolio.tech` : null),
+        universeKey: item.universeKey || 'cyber-architect-sprawl',
+        developerName: item.developerName || user.name || 'Developer',
+        developerRole: item.developerRole || 'Software Engineer',
+        projectsCount: item.projectsCount || 6,
+        timestamp: item.timestamp || Date.now(),
+        userId: isFounder ? 'abdulaziz_founder' : userId,
+        userEmail: userEmail
+      };
+      fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf8');
+
+      if (dbService?.client) {
+        try {
+          await dbService.client.from('sites').upsert({
+            provider_site_id: sid,
+            custom_domain: item.subdomain || null,
+            user_id: isFounder ? 'abdulaziz_founder' : userId,
+            status: 'active',
+            updated_at: new Date().toISOString()
+          });
+        } catch (e) {}
+      }
+    }
+
+    res.json({ success: true, syncedCount: items.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==========================================
 // Pro Portfolio: Contact Lead & Analytics Beacon
 // ==========================================
 app.post('/api/sites/:siteId/contact', async (req, res) => {
@@ -1917,16 +2170,32 @@ app.post('/api/sites/:siteId/contact', async (req, res) => {
     let ownerEmail = null;
     let ownerName = 'Portfolio Creator';
 
-    // A. Lookup from database
+    // A. Lookup from database by provider_site_id or custom_domain
     try {
-      const { data: siteRecord } = await dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
-      if (siteRecord?.users?.email) {
-        ownerEmail = siteRecord.users.email;
-        ownerName = siteRecord.users.name || siteRecord.users.username || ownerName;
+      if (dbService?.client) {
+        const { data: siteRecord } = await dbService.client
+          .from('sites')
+          .select('*, users(*)')
+          .or(`provider_site_id.eq.${siteId},custom_domain.eq.${siteId}`)
+          .limit(1)
+          .maybeSingle();
+        if (siteRecord?.users?.email) {
+          ownerEmail = siteRecord.users.email;
+          ownerName = siteRecord.users.name || siteRecord.users.username || ownerName;
+        }
       }
     } catch (e) {}
 
-    // B. Lookup from siteDir profile.json fallback
+    // B. Lookup from siteDir meta.json (saved at portfolio generation)
+    if (!ownerEmail && fs.existsSync(path.join(siteDir, 'meta.json'))) {
+      try {
+        const meta = JSON.parse(fs.readFileSync(path.join(siteDir, 'meta.json'), 'utf8'));
+        if (meta.userEmail) ownerEmail = meta.userEmail;
+        if (meta.developerName) ownerName = meta.developerName;
+      } catch (e) {}
+    }
+
+    // C. Lookup from siteDir profile.json fallback
     if (!ownerEmail && fs.existsSync(path.join(siteDir, 'profile.json'))) {
       try {
         const profile = JSON.parse(fs.readFileSync(path.join(siteDir, 'profile.json'), 'utf8'));
@@ -1938,6 +2207,7 @@ app.post('/api/sites/:siteId/contact', async (req, res) => {
     if (ownerEmail && emailService) {
       await emailService.sendMail({
         to: ownerEmail,
+        replyTo: email || undefined,
         subject: `📬 New Inquiry from your Portfolio: ${name || 'Recruiter / Client'}`,
         html: `
           <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; background: #0B0F19; color: #FFFFFF; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">

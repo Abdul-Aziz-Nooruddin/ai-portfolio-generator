@@ -143,8 +143,6 @@ const SwissEditorialMonographTemplate = {
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Playfair+Display:ital,wght@0,600;0,800;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -571,7 +569,7 @@ const SwissEditorialMonographTemplate = {
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: all 0.4s var(--transition-smooth);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s var(--transition-smooth);
     }
 
     .monograph-exhibit-card:hover {
@@ -1408,18 +1406,9 @@ const SwissEditorialMonographTemplate = {
     window.addEventListener('DOMContentLoaded', () => {
       initMonograph3D();
 
-      if (window.gsap && window.ScrollTrigger) {
-        gsap.registerPlugin(ScrollTrigger);
+      if (window.gsap) {
         gsap.from('.hero-monumental-name', { opacity: 0, y: 40, duration: 1.2, ease: 'power3.out' });
         gsap.from('.hero-dossier-box', { opacity: 0, x: 40, duration: 1.2, delay: 0.2, ease: 'power3.out' });
-        gsap.from('.monograph-exhibit-card', {
-          scrollTrigger: { trigger: '#exhibits', start: 'top 80%' },
-          opacity: 0,
-          y: 50,
-          stagger: 0.15,
-          duration: 1,
-          ease: 'power3.out'
-        });
       }
     });
   </script>

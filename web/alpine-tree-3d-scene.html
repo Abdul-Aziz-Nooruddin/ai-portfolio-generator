@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpine Tree Awakening // 360° Three.js Scrollytelling Environment</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Three.js + GSAP + OrbitControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <style>
+    :root {
+      --bg-void: #060913;
+      --text-primary: #F8FAFC;
+      --text-muted: #94A3B8;
+      --accent-gold: #F59E0B;
+      --accent-amber: #D97706;
+      --accent-ice: #93C5FD;
+      --border: rgba(255, 255, 255, 0.14);
+      --font-display: 'Cinzel', serif;
+      --font-body: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      overflow-y: scroll;
+      height: 600vh; /* 6 full viewport scroll tracks for 360 rotation */
+    }
+
+    #webgl-canvas-container {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1;
+      pointer-events: none; /* Allows natural wheel and touch scroll everywhere */
+    }
+    #webgl-canvas-container.interactive {
+      pointer-events: all;
+    }
+
+    /* Cinematic Telemetry HUD Overlay */
+    .viewport-hud {
+      position: fixed;
+      top: 28px;
+      left: 32px;
+      z-index: 100;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .hud-title {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .hud-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-ice);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .hud-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent-ice);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-ice);
+      transition: background 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    /* Persistent Scrollytelling Telemetry Widget */
+    .telemetry-panel {
+      position: fixed;
+      bottom: 30px;
+      left: 32px;
+      z-index: 100;
+      background: rgba(8, 12, 22, 0.75);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      padding: 16px 22px;
+      border-radius: 12px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 280px;
+      pointer-events: all;
+    }
+
+    .telemetry-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .telemetry-val {
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .progress-bar-wrap {
+      width: 100%;
+      height: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-ice), var(--accent-gold));
+      transition: width 0.1s linear;
+    }
+
+    /* Camera Preset Controls */
+    .controls-overlay {
+      position: fixed;
+      bottom: 30px;
+      right: 32px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      background: rgba(8, 12, 22, 0.75);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(14px);
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    .cam-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .cam-btn:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .cam-btn.active {
+      color: var(--bg-void);
+      background: #fff;
+      font-weight: 700;
+    }
+
+    /* Scroll Milestone Chapters Overlay */
+    .chapter-card {
+      position: fixed;
+      right: 48px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 90;
+      max-width: 380px;
+      background: rgba(6, 10, 20, 0.82);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      padding: 28px;
+      border-radius: 16px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    }
+
+    .chapter-card.visible {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+      pointer-events: all;
+    }
+
+    .chapter-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-gold);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .chapter-heading {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+
+    .chapter-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Scroll Prompt Indicator */
+    .scroll-hint {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 90;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      pointer-events: none;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translate(-50%, 0); }
+      50% { transform: translate(-50%, 6px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed WebGL Viewport -->
+  <div id="webgl-canvas-container"></div>
+
+  <!-- HUD Telemetry -->
+  <div class="viewport-hud">
+    <div class="hud-title">Alpine Tree Awakening</div>
+    <div class="hud-subtitle">
+      <div class="hud-dot" id="state-dot"></div>
+      <span id="state-label">State: Deep Winter Thaw (0.0°)</span>
+    </div>
+  </div>
+
+  <!-- Real-Time Telemetry Panel -->
+  <div class="telemetry-panel">
+    <div class="telemetry-row">
+      <span>Orbit Azimuth</span>
+      <span class="telemetry-val" id="hud-azimuth">0.0°</span>
+    </div>
+    <div class="telemetry-row">
+      <span>Snow Coverage</span>
+      <span class="telemetry-val" id="hud-snow">100%</span>
+    </div>
+    <div class="telemetry-row">
+      <span>Surface Moss / Flora</span>
+      <span class="telemetry-val" id="hud-moss">0%</span>
+    </div>
+    <div class="telemetry-row">
+      <span>Sun Warmth Factor</span>
+      <span class="telemetry-val" id="hud-sun">Cold Dawn (15%)</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="hud-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Camera Preset Buttons & Auto-Play -->
+  <div class="controls-overlay">
+    <div class="btn-group">
+      <button class="cam-btn" id="auto-play-btn" onclick="toggleAutoPlay()" style="border: 1px solid var(--accent-gold); color: var(--accent-gold); font-weight: 700;">▶ Auto-Play 360°</button>
+      <button class="cam-btn active" onclick="jumpToAngle(0)">Front (0°)</button>
+      <button class="cam-btn" onclick="jumpToAngle(90)">Right (90°)</button>
+      <button class="cam-btn" onclick="jumpToAngle(180)">Back (180°)</button>
+      <button class="cam-btn" onclick="jumpToAngle(270)">Left (270°)</button>
+      <button class="cam-btn" onclick="jumpToAngle(360)">Full (360°)</button>
+    </div>
+    <div style="font-family: var(--font-mono); font-size: 0.68rem; color: #94A3B8;">
+      ✦ <strong>Auto-rotates 360° as you scroll</strong> or press Auto-Play
+    </div>
+  </div>
+
+  <!-- Dynamic Chapter Storyline Cards -->
+  <div class="chapter-card visible" id="card-0">
+    <div class="chapter-tag">Chapter 01 // Scroll 0.0</div>
+    <div class="chapter-heading">The Dormant Frost</div>
+    <div class="chapter-desc">
+      An ancient gnarled alpine juniper tree stands resilient upon a sheer limestone cliff above an ocean of clouds. Thick crystalline rime ice clings to the twisted bark under cool dawn blue-hour light.
+    </div>
+  </div>
+
+  <div class="chapter-card" id="card-1">
+    <div class="chapter-tag">Chapter 02 // Scroll 0.35</div>
+    <div class="chapter-heading">The Eastern Flank Thaw</div>
+    <div class="chapter-desc">
+      The camera orbits clockwise along the rock ledge. The morning sun strikes the eastern face, beginning to melt the snow into glistening droplets and revealing ancient moss and roots gripping the stone.
+    </div>
+  </div>
+
+  <div class="chapter-card" id="card-2">
+    <div class="chapter-tag">Chapter 03 // Scroll 0.65</div>
+    <div class="chapter-heading">The Sunburst Crest</div>
+    <div class="chapter-desc">
+      Reversing behind the tree, blinding golden morning rays break through the gnarled branches. Alpine yellow buttercups and mountain grasses wave in the wind as floating leaves catch the breeze.
+    </div>
+  </div>
+
+  <div class="chapter-card" id="card-3">
+    <div class="chapter-tag">Chapter 04 // Scroll 1.0</div>
+    <div class="chapter-heading">Spring Awakening</div>
+    <div class="chapter-desc">
+      Full 360-degree rotation complete. The snow has melted away, the tree is bursting with vibrant emerald needles, rich moss blankets the cliff, and golden hour alpenglow bathes the entire alpine world.
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <span>Scroll Down To Orbit & Melt</span>
+    <span>↓</span>
+  </div>
+
+  <script>
+    /* =========================================================================
+       THREE.JS PHOTOREALISTIC ALPINE ENVIRONMENT ENGINE
+       ========================================================================= */
+    const container = document.getElementById('webgl-canvas-container');
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    // 1. Scene, Camera, Renderer
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x8fa8c6, 0.0035);
+
+    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 1500);
+    const CAM_RADIUS = 22.0;
+    const CAM_HEIGHT = 5.2;
+    const TREE_CENTER = new THREE.Vector3(0, 3.8, 0);
+
+    camera.position.set(0, CAM_HEIGHT, CAM_RADIUS);
+    camera.lookAt(TREE_CENTER);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    container.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.target.copy(TREE_CENTER);
+    controls.maxPolarAngle = Math.PI / 2 + 0.05; // prevent going beneath cliff
+    controls.minDistance = 8.0;
+    controls.maxDistance = 45.0;
+
+    // 2. Lighting System (State A Winter -> State B Spring)
+    const ambientLight = new THREE.AmbientLight(0x7694b8, 0.7);
+    scene.add(ambientLight);
+
+    const hemiLight = new THREE.HemisphereLight(0x93b5dd, 0x334455, 0.85);
+    scene.add(hemiLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffecd0, 2.2);
+    sunLight.position.set(-60, 45, -80);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 10;
+    sunLight.shadow.camera.far = 250;
+    sunLight.shadow.camera.left = -25;
+    sunLight.shadow.camera.right = 25;
+    sunLight.shadow.camera.top = 25;
+    sunLight.shadow.camera.bottom = -25;
+    sunLight.shadow.bias = -0.0008;
+    scene.add(sunLight);
+
+    // Dynamic Sun Flare Sprite
+    const canvasSun = document.createElement('canvas');
+    canvasSun.width = 128;
+    canvasSun.height = 128;
+    const ctxSun = canvasSun.getContext('2d');
+    const gradSun = ctxSun.createRadialGradient(64, 64, 0, 64, 64, 64);
+    gradSun.addColorStop(0, 'rgba(255, 240, 200, 1.0)');
+    gradSun.addColorStop(0.3, 'rgba(255, 200, 120, 0.6)');
+    gradSun.addColorStop(1, 'rgba(255, 160, 60, 0.0)');
+    ctxSun.fillStyle = gradSun;
+    ctxSun.fillRect(0, 0, 128, 128);
+
+    const sunTex = new THREE.CanvasTexture(canvasSun);
+    const sunMat = new THREE.SpriteMaterial({ map: sunTex, color: 0xfff2d4, blending: THREE.AdditiveBlending });
+    const sunSprite = new THREE.Sprite(sunMat);
+    sunSprite.position.set(-240, 180, -320);
+    sunSprite.scale.set(120, 120, 1);
+    scene.add(sunSprite);
+
+    // =========================================================================
+    // 3. CONTINUOUS 360° SURROUNDING MOUNTAIN ENVIRONMENT (Mountains & Sky Dome)
+    // =========================================================================
+    // Surrounding 360 Sky Dome
+    const skyGeo = new THREE.SphereGeometry(700, 32, 24);
+    const skyMat = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms: {
+        uSunWarmth: { value: 0.15 },
+        uSunPos: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform float uSunWarmth;
+        uniform vec3 uSunPos;
+        varying vec3 vWorldPosition;
+        void main() {
+          vec3 dir = normalize(vWorldPosition);
+          float heightFactor = clamp(dir.y * 1.5, 0.0, 1.0);
+          
+          // Cool winter dawn -> warm golden sunrise
+          vec3 zenithCold = vec3(0.18, 0.28, 0.44);
+          vec3 zenithWarm = vec3(0.24, 0.38, 0.58);
+          vec3 horizonCold = vec3(0.68, 0.76, 0.86);
+          vec3 horizonWarm = vec3(0.98, 0.72, 0.45);
+          
+          vec3 zenith = mix(zenithCold, zenithWarm, uSunWarmth);
+          vec3 horizon = mix(horizonCold, horizonWarm, uSunWarmth);
+          
+          vec3 sky = mix(horizon, zenith, heightFactor);
+          
+          // Sun glow aura
+          float sunDot = max(0.0, dot(dir, uSunPos));
+          sky += vec3(1.0, 0.65, 0.25) * pow(sunDot, 16.0) * (0.4 + 0.6 * uSunWarmth);
+          
+          gl_FragColor = vec4(sky, 1.0);
+        }
+      `
+    });
+    const skyMesh = new THREE.Mesh(skyGeo, skyMat);
+    scene.add(skyMesh);
+
+    // Continuous 360° Surrounding Mountain Range with DYNAMIC SNOW MELTING
+    const mountainGroup = new THREE.Group();
+    const MOUNTAIN_COUNT = 18;
+    const MOUNTAIN_RADIUS = 380;
+
+    // Mountain Shader with Dynamic Snow Melt (Snow vanishes as user scrolls, exposing rock)
+    const mountainMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSnowMelt: { value: 1.0 },
+        uSunWarmth: { value: 0.15 },
+        uLightDir: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+          vec4 worldPos = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPos.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPos;
+        }
+      `,
+      fragmentShader: `
+        uniform float uSnowMelt;
+        uniform float uSunWarmth;
+        uniform vec3 uLightDir;
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+
+        void main() {
+          vec3 darkGranite = vec3(0.18, 0.22, 0.28);
+          vec3 warmStone = vec3(0.32, 0.28, 0.26);
+          vec3 snowColor = vec3(0.95, 0.97, 1.0);
+          vec3 valleyGreen = vec3(0.14, 0.32, 0.16);
+
+          float height = vWorldPosition.y;
+          float slope = clamp(vWorldNormal.y, 0.0, 1.0);
+          
+          // Mountain base rock color
+          vec3 rock = mix(darkGranite, warmStone, uSunWarmth * 0.5);
+          if (height < 20.0) {
+            rock = mix(valleyGreen, rock, clamp(height / 20.0, 0.0, 1.0));
+          }
+
+          // Snow melt elevation line: retreats up the peaks as uSnowMelt drops
+          float snowMinHeight = mix(120.0, -10.0, uSnowMelt);
+          float snowAmount = smoothstep(snowMinHeight - 15.0, snowMinHeight + 25.0, height);
+          snowAmount *= smoothstep(0.2, 0.7, slope); // sticks to gentler slopes
+          snowAmount *= uSnowMelt;
+
+          vec3 finalColor = mix(rock, snowColor, snowAmount);
+          
+          float nDotL = max(0.25, dot(vWorldNormal, uLightDir));
+          finalColor *= (nDotL * 0.8 + 0.3);
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    for (let i = 0; i < MOUNTAIN_COUNT; i++) {
+      const angle = (i / MOUNTAIN_COUNT) * Math.PI * 2;
+      const mHeight = 125 + Math.sin(i * 1.8) * 35 + Math.cos(i * 3.2) * 20;
+      const mWidth = 85 + Math.sin(i * 2.4) * 20;
+      
+      const mGeo = new THREE.ConeGeometry(mWidth, mHeight, 6, 8);
+      const pos = mGeo.attributes.position;
+      for (let p = 0; p < pos.count; p++) {
+        const py = pos.getY(p);
+        if (py < mHeight * 0.45) {
+          pos.setX(p, pos.getX(p) + (Math.sin(p * 2.5) - 0.5) * 14);
+          pos.setZ(p, pos.getZ(p) + (Math.cos(p * 2.1) - 0.5) * 14);
+        }
+      }
+      mGeo.computeVertexNormals();
+
+      const peak = new THREE.Mesh(mGeo, mountainMat);
+      const px = Math.cos(angle) * (MOUNTAIN_RADIUS + (Math.sin(i * 3.1) * 40));
+      const pz = Math.sin(angle) * (MOUNTAIN_RADIUS + (Math.cos(i * 2.7) * 40));
+      peak.position.set(px, mHeight * 0.38 - 30, pz);
+      peak.rotation.y = angle + Math.sin(i);
+      mountainGroup.add(peak);
+    }
+    scene.add(mountainGroup);
+
+    // Cascading Glacial Meltwater Streams (Flowing down mountain crevices)
+    const waterfallGroup = new THREE.Group();
+    const waterMat = new THREE.ShaderMaterial({
+      transparent: true,
+      uniforms: {
+        uTime: { value: 0.0 },
+        uFlowSpeed: { value: 3.5 },
+        uMeltProgress: { value: 0.0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float uTime;
+        uniform float uFlowSpeed;
+        uniform float uMeltProgress;
+        varying vec2 vUv;
+        void main() {
+          vec2 flowUv = vec2(vUv.x, vUv.y * 8.0 - uTime * uFlowSpeed);
+          float foam = sin(flowUv.y * 6.0) * cos(flowUv.x * 12.0);
+          vec3 deepWater = vec3(0.12, 0.45, 0.65);
+          vec3 whiteFoam = vec3(0.92, 0.97, 1.0);
+          vec3 waterCol = mix(deepWater, whiteFoam, clamp(foam * 0.6 + 0.3, 0.0, 1.0));
+          
+          float alpha = clamp(uMeltProgress * 1.5, 0.0, 0.85);
+          gl_FragColor = vec4(waterCol, alpha);
+        }
+      `
+    });
+
+    // Mountain stream ribbons & cliff waterfalls
+    const streamCurves = [
+      new THREE.CatmullRomCurve3([new THREE.Vector3(-140, 60, -220), new THREE.Vector3(-130, 20, -200), new THREE.Vector3(-120, -10, -180)]),
+      new THREE.CatmullRomCurve3([new THREE.Vector3(160, 70, -210), new THREE.Vector3(145, 30, -190), new THREE.Vector3(135, -10, -170)]),
+      new THREE.CatmullRomCurve3([new THREE.Vector3(-220, 55, 120), new THREE.Vector3(-200, 25, 110), new THREE.Vector3(-180, -10, 100)]),
+      // Cliff waterfall (cascades directly off the hero cliff edge)
+      new THREE.CatmullRomCurve3([new THREE.Vector3(3.5, 1.2, 5.0), new THREE.Vector3(4.2, -6.0, 5.8), new THREE.Vector3(5.0, -18.0, 6.5)])
+    ];
+
+    streamCurves.forEach(curve => {
+      const sGeo = new THREE.TubeGeometry(curve, 32, 1.2, 6, false);
+      const sMesh = new THREE.Mesh(sGeo, waterMat);
+      waterfallGroup.add(sMesh);
+    });
+    scene.add(waterfallGroup);
+
+    // =========================================================================
+    // 4. VOLUMETRIC VALLEY CLOUD SEA (Below Cliff)
+    // =========================================================================
+    const cloudGroup = new THREE.Group();
+    const cloudGeo = new THREE.PlaneGeometry(160, 160);
+    const canvasCloud = document.createElement('canvas');
+    canvasCloud.width = 256;
+    canvasCloud.height = 256;
+    const ctxCloud = canvasCloud.getContext('2d');
+    const gradCloud = ctxCloud.createRadialGradient(128, 128, 20, 128, 128, 120);
+    gradCloud.addColorStop(0, 'rgba(235, 242, 252, 0.85)');
+    gradCloud.addColorStop(0.5, 'rgba(210, 225, 245, 0.45)');
+    gradCloud.addColorStop(1, 'rgba(180, 205, 235, 0.0)');
+    ctxCloud.fillStyle = gradCloud;
+    ctxCloud.fillRect(0, 0, 256, 256);
+
+    const cloudTex = new THREE.CanvasTexture(canvasCloud);
+    const cloudMat = new THREE.MeshBasicMaterial({
+      map: cloudTex,
+      transparent: true,
+      opacity: 0.65,
+      depthWrite: false
+    });
+
+    const CLOUD_COUNT = 32;
+    for (let c = 0; c < CLOUD_COUNT; c++) {
+      const cMesh = new THREE.Mesh(cloudGeo, cloudMat);
+      const cAngle = (c / CLOUD_COUNT) * Math.PI * 2;
+      const cDist = 80 + Math.random() * 220;
+      cMesh.position.set(
+        Math.cos(cAngle) * cDist,
+        -16 + (Math.random() - 0.5) * 8,
+        Math.sin(cAngle) * cDist
+      );
+      cMesh.rotation.x = -Math.PI / 2;
+      cMesh.rotation.z = Math.random() * Math.PI;
+      cMesh.scale.setScalar(1.2 + Math.random() * 1.5);
+      cloudGroup.add(cMesh);
+    }
+    scene.add(cloudGroup);
+
+    // =========================================================================
+    // 5. THE MASSIVE ROCKY ALPINE CLIFF & GROUND
+    // =========================================================================
+    const cliffGroup = new THREE.Group();
+    
+    // Main Cliff Bedrock
+    const cliffGeo = new THREE.CylinderGeometry(14, 19, 32, 14, 8);
+    // Deform cliff vertices for natural jagged stone facets
+    const cPos = cliffGeo.attributes.position;
+    for (let i = 0; i < cPos.count; i++) {
+      const y = cPos.getY(i);
+      const x = cPos.getX(i);
+      const z = cPos.getZ(i);
+      const noise = (Math.sin(x * 0.8) + Math.cos(z * 0.7) + Math.sin(y * 0.4)) * 1.4;
+      cPos.setX(i, x + noise);
+      cPos.setZ(i, z + noise * 0.9);
+      if (y > 14) {
+        cPos.setY(i, y + (Math.sin(x * 1.2) + Math.cos(z * 1.2)) * 0.6); // rocky plateau irregularities
+      }
+    }
+    cliffGeo.computeVertexNormals();
+
+    // Custom PBR Shader for Rock with Dynamic Snow Melting & Moss Awakening
+    const cliffMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSnowMelt: { value: 1.0 }, // 1.0 = deep winter snow, 0.0 = melted spring
+        uLightDir: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+          vec4 worldPos = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPos.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPos;
+        }
+      `,
+      fragmentShader: `
+        uniform float uSnowMelt;
+        uniform vec3 uLightDir;
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+
+        void main() {
+          // Base rock color (dark weathered limestone)
+          vec3 rockColor = vec3(0.22, 0.24, 0.27);
+          
+          // Alpine Moss color (lush vibrant emerald green in spring)
+          vec3 mossColor = vec3(0.18, 0.42, 0.14);
+          
+          // Pristine Winter Snow color
+          vec3 snowColor = vec3(0.94, 0.96, 1.0);
+          
+          // Normal upward bias (snow lands on top surfaces)
+          float upBias = clamp(vWorldNormal.y * 1.2, 0.0, 1.0);
+          
+          // Noise factor based on world coordinate
+          float rockNoise = fract(sin(dot(vWorldPosition.xz, vec2(12.9898, 78.233))) * 43758.5453);
+          
+          // Surface moss appears in cracks and top ledges when snow melts
+          float mossFactor = clamp((1.0 - uSnowMelt) * (upBias * 0.8 + rockNoise * 0.4), 0.0, 1.0);
+          vec3 surfaceColor = mix(rockColor, mossColor, mossFactor * 0.7);
+          
+          // Dynamic Snow Melting coverage
+          float snowThreshold = mix(0.9, 0.1, uSnowMelt);
+          float snowCoverage = smoothstep(snowThreshold - 0.15, snowThreshold + 0.15, upBias + rockNoise * 0.25);
+          snowCoverage *= uSnowMelt;
+          
+          vec3 finalColor = mix(surfaceColor, snowColor, snowCoverage);
+          
+          // Lighting calculation
+          float nDotL = max(0.2, dot(vWorldNormal, uLightDir));
+          finalColor *= (nDotL * 0.75 + 0.35);
+          
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    const cliffMesh = new THREE.Mesh(cliffGeo, cliffMat);
+    cliffMesh.position.set(0, -14, 0);
+    cliffMesh.receiveShadow = true;
+    cliffGroup.add(cliffMesh);
+
+    // Scattered Foreground Boulders & Ledge Formations
+    const BOULDER_COUNT = 14;
+    for (let b = 0; b < BOULDER_COUNT; b++) {
+      const bRad = 0.8 + Math.random() * 1.6;
+      const bGeo = new THREE.DodecahedronGeometry(bRad, 1);
+      const bMesh = new THREE.Mesh(bGeo, cliffMat);
+      const bAngle = Math.random() * Math.PI * 2;
+      const bDist = 4 + Math.random() * 8.5;
+      bMesh.position.set(Math.cos(bAngle) * bDist, 1.6 + (Math.random() - 0.5) * 0.6, Math.sin(bAngle) * bDist);
+      bMesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+      bMesh.castShadow = true;
+      bMesh.receiveShadow = true;
+      cliffGroup.add(bMesh);
+    }
+    scene.add(cliffGroup);
+
+    // =========================================================================
+    // 6. HERO ANCIENT TREE (Trunk, Twisted Roots, Branches & Foliage)
+    // =========================================================================
+    const treeGroup = new THREE.Group();
+
+    // Procedural Twisted Gnarled Trunk (Extruded along curved 3D Spline)
+    const trunkCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.4, 1.5, 0.2),
+      new THREE.Vector3(0.1, 3.2, 0.4),
+      new THREE.Vector3(-0.4, 5.0, 0.1),
+      new THREE.Vector3(0.3, 7.2, -0.3),
+      new THREE.Vector3(-0.2, 9.4, 0.2),
+      new THREE.Vector3(0.0, 11.0, 0.0)
+    ]);
+
+    const trunkGeo = new THREE.TubeGeometry(trunkCurve, 40, 0.95, 14, false);
+    // Deform trunk vertices for bark ridges and weather knots
+    const tPos = trunkGeo.attributes.position;
+    for (let i = 0; i < tPos.count; i++) {
+      const y = tPos.getY(i);
+      const taper = 1.0 - (y / 12.0) * 0.65; // naturally tapers upward
+      const barkGroove = 1.0 + Math.sin(tPos.getX(i) * 16.0) * 0.08 + Math.cos(tPos.getZ(i) * 16.0) * 0.08;
+      tPos.setX(i, tPos.getX(i) * taper * barkGroove);
+      tPos.setZ(i, tPos.getZ(i) * taper * barkGroove);
+    }
+    trunkGeo.computeVertexNormals();
+
+    const barkMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSnowMelt: { value: 1.0 },
+        uLightDir: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+          vec4 worldPos = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPos.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPos;
+        }
+      `,
+      fragmentShader: `
+        uniform float uSnowMelt;
+        uniform vec3 uLightDir;
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          vec3 weatheredBark = vec3(0.24, 0.21, 0.19);
+          vec3 innerWarmWood = vec3(0.36, 0.28, 0.22);
+          vec3 snowColor = vec3(0.95, 0.97, 1.0);
+
+          float heightBias = clamp(vWorldPosition.y / 11.0, 0.0, 1.0);
+          vec3 bark = mix(weatheredBark, innerWarmWood, heightBias * 0.35);
+
+          // Snow clings to upper horizontal bark ridges
+          float snowGrip = clamp(vWorldNormal.y * 1.5, 0.0, 1.0) * uSnowMelt;
+          float snowPattern = smoothstep(0.4, 0.7, snowGrip);
+
+          vec3 finalColor = mix(bark, snowColor, snowPattern * 0.85);
+          float nDotL = max(0.22, dot(vWorldNormal, uLightDir));
+          finalColor *= (nDotL * 0.8 + 0.3);
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    const trunkMesh = new THREE.Mesh(trunkGeo, barkMat);
+    trunkMesh.castShadow = true;
+    trunkMesh.receiveShadow = true;
+    treeGroup.add(trunkMesh);
+
+    // Sprawling Roots Gripping Cliff Face (Physical Connection to Ground)
+    const ROOT_COUNT = 7;
+    for (let r = 0; r < ROOT_COUNT; r++) {
+      const rAngle = (r / ROOT_COUNT) * Math.PI * 2 + (Math.sin(r) * 0.4);
+      const rootCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0.3, 2.0, 0.1),
+        new THREE.Vector3(Math.cos(rAngle) * 1.8, 1.6, Math.sin(rAngle) * 1.8),
+        new THREE.Vector3(Math.cos(rAngle) * 3.4, 1.4, Math.sin(rAngle) * 3.4),
+        new THREE.Vector3(Math.cos(rAngle) * 5.0, 0.8, Math.sin(rAngle) * 5.0)
+      ]);
+      const rootGeo = new THREE.TubeGeometry(rootCurve, 18, 0.38, 8, false);
+      const rootMesh = new THREE.Mesh(rootGeo, barkMat);
+      rootMesh.castShadow = true;
+      rootMesh.receiveShadow = true;
+      treeGroup.add(rootMesh);
+    }
+
+    // Heavy Twisted Primary & Secondary Branches
+    const BRANCH_COUNT = 9;
+    const branchPoints = [
+      { start: new THREE.Vector3(-0.3, 5.2, 0.1), end: new THREE.Vector3(-3.2, 6.4, 1.5), thick: 0.48 },
+      { start: new THREE.Vector3(0.2, 6.0, -0.2), end: new THREE.Vector3(3.6, 7.1, -1.8), thick: 0.52 },
+      { start: new THREE.Vector3(-0.2, 7.5, 0.2), end: new THREE.Vector3(-2.8, 8.8, -1.6), thick: 0.44 },
+      { start: new THREE.Vector3(0.3, 8.2, 0.1), end: new THREE.Vector3(2.5, 9.6, 1.8), thick: 0.42 },
+      { start: new THREE.Vector3(-0.1, 9.5, -0.2), end: new THREE.Vector3(-1.8, 11.2, 0.8), thick: 0.36 },
+      { start: new THREE.Vector3(0.1, 10.2, 0.1), end: new THREE.Vector3(1.6, 11.8, -1.0), thick: 0.32 }
+    ];
+
+    branchPoints.forEach((b, idx) => {
+      const midPoint = new THREE.Vector3().addVectors(b.start, b.end).multiplyScalar(0.5);
+      midPoint.y += 0.4;
+      midPoint.x += (Math.sin(idx * 2) - 0.5) * 0.8;
+      
+      const bCurve = new THREE.CatmullRomCurve3([b.start, midPoint, b.end]);
+      const bGeo = new THREE.TubeGeometry(bCurve, 14, b.thick, 8, false);
+      const bMesh = new THREE.Mesh(bGeo, barkMat);
+      bMesh.castShadow = true;
+      bMesh.receiveShadow = true;
+      treeGroup.add(bMesh);
+    });
+
+    // Alpine Needle Foliage Clusters (Terminal Canopy Tufts)
+    const foliageGroup = new THREE.Group();
+    const foliageMat = new THREE.ShaderMaterial({
+      uniforms: {
+        uSnowMelt: { value: 1.0 },
+        uTime: { value: 0.0 },
+        uLightDir: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        uniform float uTime;
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+          vec3 pos = position;
+          // Organic wind breeze sway
+          pos.x += sin(uTime * 2.0 + pos.y * 3.0) * 0.06;
+          pos.z += cos(uTime * 1.8 + pos.x * 3.0) * 0.05;
+          vec4 worldPos = modelMatrix * vec4(pos, 1.0);
+          vWorldPosition = worldPos.xyz;
+          gl_Position = projectionMatrix * viewMatrix * worldPos;
+        }
+      `,
+      fragmentShader: `
+        uniform float uSnowMelt;
+        uniform vec3 uLightDir;
+        varying vec3 vWorldNormal;
+        varying vec3 vWorldPosition;
+        void main() {
+          // Dormant frosted winter pine -> lush spring emerald needles
+          vec3 dormantNeedles = vec3(0.28, 0.35, 0.32);
+          vec3 springNeedles = vec3(0.12, 0.52, 0.16);
+          vec3 snowCoat = vec3(0.96, 0.98, 1.0);
+
+          vec3 needleColor = mix(springNeedles, dormantNeedles, uSnowMelt * 0.7);
+
+          // Snow accumulation on top of needle clusters
+          float snowGrip = clamp(vWorldNormal.y * 1.6, 0.0, 1.0) * uSnowMelt;
+          vec3 finalColor = mix(needleColor, snowCoat, smoothstep(0.3, 0.65, snowGrip));
+
+          float nDotL = max(0.25, dot(vWorldNormal, uLightDir));
+          finalColor *= (nDotL * 0.8 + 0.3);
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `
+    });
+
+    const FOLIAGE_TUFT_COUNT = 48;
+    const foliageTuftGeo = new THREE.DodecahedronGeometry(1.0, 1);
+    for (let f = 0; f < FOLIAGE_TUFT_COUNT; f++) {
+      const tuftMesh = new THREE.Mesh(foliageTuftGeo, foliageMat);
+      const fAngle = Math.random() * Math.PI * 2;
+      const fDist = 1.2 + Math.random() * 3.8;
+      const fHeight = 6.0 + Math.random() * 6.5;
+      tuftMesh.position.set(
+        Math.cos(fAngle) * fDist,
+        fHeight,
+        Math.sin(fAngle) * fDist
+      );
+      tuftMesh.scale.set(
+        0.8 + Math.random() * 0.7,
+        0.5 + Math.random() * 0.5,
+        0.8 + Math.random() * 0.7
+      );
+      tuftMesh.castShadow = true;
+      foliageGroup.add(tuftMesh);
+    }
+    treeGroup.add(foliageGroup);
+    scene.add(treeGroup);
+
+    // =========================================================================
+    // 7. ALPINE GRASS SPROUTING & WIND WAVE SYSTEM (1,200 Instanced Blades)
+    // =========================================================================
+    const GRASS_COUNT = 1200;
+    const grassBladeGeo = new THREE.PlaneGeometry(0.12, 0.75, 1, 4);
+    grassBladeGeo.translate(0, 0.375, 0); // pivot at base
+
+    const grassMat = new THREE.ShaderMaterial({
+      side: THREE.DoubleSide,
+      uniforms: {
+        uTime: { value: 0.0 },
+        uGrowth: { value: 0.0 }, // 0.0 under winter snow, 1.0 full spring growth
+        uLightDir: { value: sunLight.position.clone().normalize() }
+      },
+      vertexShader: `
+        uniform float uTime;
+        uniform float uGrowth;
+        varying vec2 vUv;
+        varying vec3 vWorldNormal;
+        void main() {
+          vUv = uv;
+          vWorldNormal = normalize((modelMatrix * vec4(normal, 0.0)).xyz);
+          
+          vec3 pos = position;
+          // Scale height by growth factor as snow melts
+          pos.y *= uGrowth;
+          pos.xz *= min(1.0, uGrowth * 1.5);
+
+          // Organic wind waving motion (stronger at blade tip)
+          float wind = sin(uTime * 3.2 + instanceMatrix[3][0] * 1.5 + instanceMatrix[3][2] * 1.2) * 0.25;
+          wind += cos(uTime * 2.1 + instanceMatrix[3][0] * 2.4) * 0.15;
+          pos.x += wind * uv.y * uv.y * uGrowth;
+          pos.z += wind * 0.6 * uv.y * uv.y * uGrowth;
+
+          vec4 mvPosition = modelViewMatrix * instanceMatrix * vec4(pos, 1.0);
+          gl_Position = projectionMatrix * mvPosition;
+        }
+      `,
+      fragmentShader: `
+        uniform float uGrowth;
+        uniform vec3 uLightDir;
+        varying vec2 vUv;
+        varying vec3 vWorldNormal;
+        void main() {
+          vec3 dormantYellow = vec3(0.42, 0.44, 0.24);
+          vec3 vibrantGreen = vec3(0.16, 0.55, 0.18);
+          vec3 grassCol = mix(dormantYellow, vibrantGreen, clamp(uGrowth * 1.2, 0.0, 1.0));
+          
+          // Blade tip highlight
+          grassCol += vec3(0.1, 0.2, 0.05) * vUv.y;
+          
+          float nDotL = max(0.35, dot(vWorldNormal, uLightDir));
+          grassCol *= (nDotL * 0.7 + 0.35);
+
+          gl_FragColor = vec4(grassCol, 1.0);
+        }
+      `
+    });
+
+    const grassMesh = new THREE.InstancedMesh(grassBladeGeo, grassMat, GRASS_COUNT);
+    const dummy = new THREE.Object3D();
+    for (let g = 0; g < GRASS_COUNT; g++) {
+      const gAngle = Math.random() * Math.PI * 2;
+      const gDist = 1.0 + Math.random() * 9.5; // across the cliff plateau
+      const gx = Math.cos(gAngle) * gDist;
+      const gz = Math.sin(gAngle) * gDist;
+      const gy = 1.65 + (Math.sin(gx * 1.2) + Math.cos(gz * 1.2)) * 0.3; // match plateau surface
+
+      dummy.position.set(gx, gy, gz);
+      dummy.rotation.set(0, Math.random() * Math.PI, (Math.random() - 0.5) * 0.2);
+      dummy.scale.set(0.8 + Math.random() * 0.6, 0.8 + Math.random() * 0.8, 1);
+      dummy.updateMatrix();
+      grassMesh.setMatrixAt(g, dummy.matrix);
+    }
+    grassMesh.instanceMatrix.needsUpdate = true;
+    scene.add(grassMesh);
+
+    // Blooming Alpine Buttercup Flowers (Pop up in spring)
+    const FLOWER_COUNT = 80;
+    const flowerGeo = new THREE.DodecahedronGeometry(0.14, 1);
+    const flowerMat = new THREE.MeshStandardMaterial({
+      color: 0xfacc15,
+      emissive: 0xca8a04,
+      emissiveIntensity: 0.3,
+      roughness: 0.4
+    });
+    const flowerGroup = new THREE.Group();
+    for (let fl = 0; fl < FLOWER_COUNT; fl++) {
+      const flMesh = new THREE.Mesh(flowerGeo, flowerMat);
+      const flAngle = Math.random() * Math.PI * 2;
+      const flDist = 2.0 + Math.random() * 8.5;
+      flMesh.position.set(
+        Math.cos(flAngle) * flDist,
+        1.75 + (Math.random() - 0.5) * 0.3,
+        Math.sin(flAngle) * flDist
+      );
+      flMesh.scale.setScalar(0.001); // starts hidden under snow
+      flowerGroup.add(flMesh);
+    }
+    scene.add(flowerGroup);
+
+    // =========================================================================
+    // 8. MELTWATER DRIPS & FALLING LEAF BREEZE SYSTEM
+    // =========================================================================
+    const DRIP_COUNT = 150;
+    const dripGeo = new THREE.BufferGeometry();
+    const dripPositions = new Float32Array(DRIP_COUNT * 3);
+    const dripVelocities = [];
+
+    for (let d = 0; d < DRIP_COUNT; d++) {
+      dripPositions[d * 3 + 0] = (Math.random() - 0.5) * 14;
+      dripPositions[d * 3 + 1] = 2.0 + Math.random() * 8;
+      dripPositions[d * 3 + 2] = (Math.random() - 0.5) * 14;
+      dripVelocities.push({
+        vy: -0.06 - Math.random() * 0.08,
+        vx: (Math.random() - 0.5) * 0.01,
+        vz: (Math.random() - 0.5) * 0.01
+      });
+    }
+    dripGeo.setAttribute('position', new THREE.BufferAttribute(dripPositions, 3));
+    const dripMat = new THREE.PointsMaterial({
+      color: 0xa5f3fc,
+      size: 0.22,
+      transparent: true,
+      opacity: 0.75
+    });
+    const dripParticles = new THREE.Points(dripGeo, dripMat);
+    scene.add(dripParticles);
+
+    const LEAF_COUNT = 90;
+    const leafGeo = new THREE.BufferGeometry();
+    const leafPositions = new Float32Array(LEAF_COUNT * 3);
+    const leafVelocities = [];
+
+    for (let i = 0; i < LEAF_COUNT; i++) {
+      leafPositions[i * 3 + 0] = (Math.random() - 0.5) * 16;
+      leafPositions[i * 3 + 1] = 4 + Math.random() * 8;
+      leafPositions[i * 3 + 2] = (Math.random() - 0.5) * 16;
+      leafVelocities.push({
+        vx: 0.02 + Math.random() * 0.04,
+        vy: -0.015 - Math.random() * 0.03,
+        vz: 0.01 + Math.random() * 0.03,
+        rot: Math.random() * Math.PI
+      });
+    }
+    leafGeo.setAttribute('position', new THREE.BufferAttribute(leafPositions, 3));
+
+    const leafMat = new THREE.PointsMaterial({
+      color: 0x6bb83c,
+      size: 0.35,
+      transparent: true,
+      opacity: 0.8
+    });
+    const leafParticles = new THREE.Points(leafGeo, leafMat);
+    scene.add(leafParticles);
+
+    // =========================================================================
+    // 9. SCROLL SYNCHRONIZATION & 360° CONTINUOUS ORBIT CONTROLLER
+    // =========================================================================
+    let targetAzimuth = 0.0;
+    let currentAzimuth = 0.0;
+    let scrollProgress = 0.0;
+    let isManualCamera = false;
+
+    function updateTimeline(progress) {
+      scrollProgress = Math.max(0.0, Math.min(1.0, progress));
+      targetAzimuth = scrollProgress * Math.PI * 2; // 0 to 360 degrees
+
+      // Snow Melt Factor (1.0 = deep winter, 0.0 = spring)
+      const snowMelt = 1.0 - scrollProgress;
+      cliffMat.uniforms.uSnowMelt.value = snowMelt;
+      barkMat.uniforms.uSnowMelt.value = snowMelt;
+      foliageMat.uniforms.uSnowMelt.value = snowMelt;
+      mountainMat.uniforms.uSnowMelt.value = snowMelt;
+      mountainMat.uniforms.uSunWarmth.value = 0.15 + 0.85 * scrollProgress;
+
+      // Cascading Glacial Waterfalls Flow Progress
+      waterMat.uniforms.uMeltProgress.value = scrollProgress;
+
+      // Alpine Grass Growth & Flower Sprouting
+      const grassGrowth = Math.max(0.0, (scrollProgress - 0.15) / 0.85);
+      grassMat.uniforms.uGrowth.value = grassGrowth;
+
+      flowerGroup.children.forEach(fl => {
+        fl.scale.setScalar(grassGrowth * (0.8 + Math.random() * 0.4));
+      });
+
+      // Sun Warmth & Sky Transition
+      skyMat.uniforms.uSunWarmth.value = 0.15 + 0.85 * scrollProgress;
+      sunLight.color.setHSL(0.08 + 0.04 * scrollProgress, 0.8, 0.6 + 0.2 * scrollProgress);
+      sunLight.intensity = 2.0 + 1.2 * scrollProgress;
+
+      // Telemetry HUD Updates
+      const deg = (scrollProgress * 360).toFixed(1);
+      const snowPct = Math.round(snowMelt * 100);
+      const mossPct = Math.round(scrollProgress * 100);
+
+      document.getElementById('hud-azimuth').innerText = `${deg}°`;
+      document.getElementById('hud-snow').innerText = `${snowPct}%`;
+      document.getElementById('hud-moss').innerText = `${mossPct}%`;
+      document.getElementById('hud-sun').innerText = scrollProgress < 0.3 ? 'Cold Dawn (15%)' : scrollProgress < 0.7 ? 'Morning Thaw (55%)' : 'Golden Hour (100%)';
+      document.getElementById('hud-progress-fill').style.width = `${scrollProgress * 100}%`;
+
+      const stateLabel = document.getElementById('state-label');
+      const stateDot = document.getElementById('state-dot');
+
+      if (scrollProgress < 0.25) {
+        stateLabel.innerText = `State: Deep Winter Thaw (${deg}°)`;
+        stateDot.style.background = 'var(--accent-ice)';
+        stateDot.style.boxShadow = '0 0 10px var(--accent-ice)';
+      } else if (scrollProgress < 0.75) {
+        stateLabel.innerText = `State: Sunburst Orbit (${deg}°)`;
+        stateDot.style.background = 'var(--accent-amber)';
+        stateDot.style.boxShadow = '0 0 10px var(--accent-amber)';
+      } else {
+        stateLabel.innerText = `State: Spring Awakening (${deg}°)`;
+        stateDot.style.background = 'var(--accent-gold)';
+        stateDot.style.boxShadow = '0 0 10px var(--accent-gold)';
+      }
+
+      // Chapter Card Highlights
+      const activeCardIdx = scrollProgress < 0.25 ? 0 : scrollProgress < 0.55 ? 1 : scrollProgress < 0.85 ? 2 : 3;
+      for (let i = 0; i < 4; i++) {
+        const card = document.getElementById(`card-${i}`);
+        if (i === activeCardIdx) {
+          card.classList.add('visible');
+        } else {
+          card.classList.remove('visible');
+        }
+      }
+
+      // Active Button Highlight
+      const buttons = document.querySelectorAll('.cam-btn');
+      buttons.forEach((btn, idx) => {
+        const targetDeg = idx * 90;
+        if (Math.abs(scrollProgress * 360 - targetDeg) < 30) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    // =========================================================================
+    // AUTO-ROTATION ON SCROLL & AUTO-PLAY CONTROLLER
+    // =========================================================================
+    let isAutoPlaying = false;
+    let autoPlaySpeed = 0.0016;
+
+    window.toggleAutoPlay = function() {
+      isAutoPlaying = !isAutoPlaying;
+      const btn = document.getElementById('auto-play-btn');
+      if (isAutoPlaying) {
+        btn.innerText = '⏸ Pause Orbit';
+        btn.style.background = 'var(--accent-gold)';
+        btn.style.color = '#000';
+      } else {
+        btn.innerText = '▶ Auto-Play 360°';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--accent-gold)';
+      }
+    };
+
+    function stopAutoPlay() {
+      if (!isAutoPlaying) return;
+      isAutoPlaying = false;
+      const btn = document.getElementById('auto-play-btn');
+      if (btn) {
+        btn.innerText = '▶ Auto-Play 360°';
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--accent-gold)';
+      }
+    }
+
+    // Direct Wheel Listener: Instantly auto-rotates the 3D scene on wheel or trackpad
+    window.addEventListener('wheel', (e) => {
+      stopAutoPlay();
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const nextScroll = Math.max(0, Math.min(maxScroll, window.scrollY + e.deltaY * 1.6));
+      window.scrollTo(0, nextScroll);
+      updateTimeline(nextScroll / maxScroll);
+    }, { passive: true });
+
+    // Standard Window Scroll Listener
+    window.addEventListener('scroll', () => {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = window.scrollY / maxScroll;
+      updateTimeline(progress);
+    });
+
+    // Touch Swipe Support for Mobile & Trackpad
+    let touchStartY = 0;
+    window.addEventListener('touchstart', (e) => {
+      stopAutoPlay();
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (e) => {
+      const touchY = e.touches[0].clientY;
+      const deltaY = (touchStartY - touchY) * 2.5;
+      touchStartY = touchY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const nextScroll = Math.max(0, Math.min(maxScroll, window.scrollY + deltaY));
+      window.scrollTo(0, nextScroll);
+      updateTimeline(nextScroll / maxScroll);
+    }, { passive: true });
+
+    // Clickable HUD Progress Bar for direct scrubbing
+    const progressWrap = document.querySelector('.progress-bar-wrap');
+    if (progressWrap) {
+      progressWrap.style.cursor = 'pointer';
+      progressWrap.addEventListener('click', (e) => {
+        stopAutoPlay();
+        const rect = progressWrap.getBoundingClientRect();
+        const ratio = Math.max(0.0, Math.min(1.0, (e.clientX - rect.left) / rect.width));
+        jumpToAngle(ratio * 360);
+      });
+    }
+
+    window.jumpToAngle = function(targetDeg) {
+      stopAutoPlay();
+      const targetProgress = targetDeg / 360.0;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      
+      gsap.to(window, {
+        scrollTo: targetProgress * maxScroll,
+        duration: 1.2,
+        ease: "power2.inOut",
+        onUpdate: () => {
+          const progress = window.scrollY / maxScroll;
+          updateTimeline(progress);
+        }
+      });
+    };
+
+    // =========================================================================
+    // 9. RENDER LOOP
+    // =========================================================================
+    let clock = new THREE.Clock();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const delta = clock.getDelta();
+      const elapsedTime = clock.getElapsedTime();
+
+      // Auto-Play Progress
+      if (isAutoPlaying) {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        let nextProg = scrollProgress + autoPlaySpeed;
+        if (nextProg > 1.0) nextProg = 0.0;
+        window.scrollTo(0, nextProg * maxScroll);
+        updateTimeline(nextProg);
+      }
+
+      // Update Shaders Time Uniforms
+      foliageMat.uniforms.uTime.value = elapsedTime;
+      grassMat.uniforms.uTime.value = elapsedTime;
+      waterMat.uniforms.uTime.value = elapsedTime;
+
+      // Slow cinematic cloud movement
+      cloudGroup.rotation.y = elapsedTime * 0.008;
+
+      // Falling Leaf Particles animation
+      const posAttr = leafGeo.attributes.position;
+      for (let i = 0; i < LEAF_COUNT; i++) {
+        leafPositions[i * 3 + 0] += leafVelocities[i].vx;
+        leafPositions[i * 3 + 1] += leafVelocities[i].vy;
+        leafPositions[i * 3 + 2] += leafVelocities[i].vz;
+
+        if (leafPositions[i * 3 + 1] < -4.0) {
+          leafPositions[i * 3 + 1] = 9.0 + Math.random() * 2.0;
+          leafPositions[i * 3 + 0] = (Math.random() - 0.5) * 8.0;
+          leafPositions[i * 3 + 2] = (Math.random() - 0.5) * 8.0;
+        }
+      }
+      posAttr.needsUpdate = true;
+
+      // Animated Meltwater Droplets Drips (Active when snow is melting)
+      const dripAttr = dripGeo.attributes.position;
+      const dripSpeed = scrollProgress > 0.05 ? 1.0 : 0.0;
+      for (let d = 0; d < DRIP_COUNT; d++) {
+        dripPositions[d * 3 + 1] += dripVelocities[d].vy * dripSpeed;
+        dripPositions[d * 3 + 0] += dripVelocities[d].vx * dripSpeed;
+        dripPositions[d * 3 + 2] += dripVelocities[d].vz * dripSpeed;
+
+        if (dripPositions[d * 3 + 1] < -6.0) {
+          dripPositions[d * 3 + 1] = 3.0 + Math.random() * 7.0;
+          dripPositions[d * 3 + 0] = (Math.random() - 0.5) * 12.0;
+          dripPositions[d * 3 + 2] = (Math.random() - 0.5) * 12.0;
+        }
+      }
+      dripAttr.needsUpdate = true;
+
+      // CONTINUOUS 360° CAMERA ORBIT DRIVEN DIRECTLY BY SCROLL AZIMUTH
+      currentAzimuth += (targetAzimuth - currentAzimuth) * 0.1;
+      camera.position.x = Math.sin(currentAzimuth) * CAM_RADIUS;
+      camera.position.z = Math.cos(currentAzimuth) * CAM_RADIUS;
+      camera.position.y = CAM_HEIGHT + Math.sin(currentAzimuth * 2.0) * 0.8;
+      camera.lookAt(TREE_CENTER);
+      controls.target.copy(TREE_CENTER);
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Window Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

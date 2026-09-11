@@ -103,7 +103,7 @@ describe('🎖️ Certificate & Candidate Photo Ingestion Pipeline', () => {
     const normalized = UnifiedProfileNormalizer.normalize(candidateData);
 
     // Test across several templates
-    ['cyber-architect-sprawl', 'abyssal-nautilus-artisan', 'neon-aurora-cyber'].forEach(templateId => {
+    ['cyber-architect-sprawl', 'neon-aurora-cyber'].forEach(templateId => {
       const template = TemplateRegistry.templates[templateId];
       assert.ok(template, `Template ${templateId} must exist in registry`);
       const html = template.render(normalized);

@@ -1,7 +1,7 @@
 /**
  * 3D Visual Artworks & Section Graphics Engine (Nano Banana 3D Integrated)
  * Synthesizes high-fidelity 3D spatial visual assets, interactive WebGL physics meshes,
- * and Octane-rendered 3D hero specimens for all portfolio universes.
+ * R3F/Three.js spatial viewports, and Octane-rendered 3D hero specimens for all portfolio universes.
  */
 
 class Template3DVisuals {
@@ -43,6 +43,32 @@ class Template3DVisuals {
         </div>
       </aside>
     `;
+  }
+
+  /**
+   * 3D Spatial R3F / Three.js Viewport Wrapper
+   */
+  static renderSpatialStage(canvasId = 'spatial-hero-canvas', options = {}) {
+    const { minHeight = '460px', theme = 'cosmic' } = options;
+    return `
+      <div class="${theme}-spatial-stage-wrapper" style="width: 100%; height: 100%; min-height: ${minHeight}; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+        <canvas id="${canvasId}" class="spatial-webgl-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto;"></canvas>
+        <div class="spatial-stage-content" style="position: relative; z-index: 2; pointer-events: none;">
+          ${options.overlayHtml || ''}
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 3D Multi-Variant Treasure Chest Cycle (Oceanic / Archival standard)
+   */
+  static get3DTreasureChestVariants() {
+    return [
+      '/assets/designs/nautilus/treasure_chest_wheel_nobg.png',
+      '/assets/designs/nautilus/chest_compass_lid_nobg.png',
+      '/assets/designs/nautilus/chest_wheel_lid_nobg.png'
+    ];
   }
 
   /**

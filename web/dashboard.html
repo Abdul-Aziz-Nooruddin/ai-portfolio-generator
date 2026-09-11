@@ -438,6 +438,34 @@
       font-family: var(--font-mono);
     }
 
+    /* Cross-Device Synced Portfolios Section */
+    .synced-portfolio-card {
+      background: #FFFFFF;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 18px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .synced-portfolio-card:hover {
+      border-color: #3B33D1;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(59, 51, 209, 0.08);
+    }
+    .synced-badge-pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
     /* Modal */
     .modal-overlay {
       position: fixed;
@@ -766,6 +794,38 @@
             </a>
           </div>
 
+          <!-- Cross-Device Cloud Synced Portfolios Section -->
+          <div class="dash-card" id="crossDevicePortfoliosCard" style="border-radius: 24px; padding: 1.75rem; background: #FFFFFF; border: 1px solid rgba(15, 23, 42, 0.08); box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
+              <div>
+                <div style="display: flex; align-items: center; gap: 0.6rem;">
+                  <h2 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin: 0; letter-spacing: -0.02em;">📱 Synced Portfolios (Phone &amp; Desktop)</h2>
+                  <span id="syncedCountBadge" class="synced-badge-pill" style="background: #EEF2FF; color: #3B33D1; border: 1px solid #C7D2FE;">
+                    ☁️ SYNCED (0)
+                  </span>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.86rem; margin-top: 4px;">
+                  Portfolios generated on your phone, laptop, or Telegram bot are automatically synced to your account.
+                </p>
+              </div>
+              <div style="display: flex; gap: 0.6rem; align-items: center;">
+                <button class="btn-card-action" onclick="refreshUserPortfolios()" style="padding: 0.5rem 0.9rem; font-size: 0.82rem;" title="Refresh Cloud Sync">
+                  🔄 Sync Now
+                </button>
+                <a href="/studio.html" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.82rem; text-decoration: none;">
+                  ⚡ New in Studio
+                </a>
+              </div>
+            </div>
+
+            <div id="syncedPortfoliosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+              <!-- Dynamically populated by loadCrossDevicePortfolios() -->
+              <div style="padding: 2.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1;">
+                Loading your synced portfolios...
+              </div>
+            </div>
+          </div>
+
           <!-- Dashboard 3-Col Bento Grid -->
           <div class="dash-grid">
             <!-- Subscription Status -->
@@ -908,6 +968,7 @@
             if (dashData.success) {
               renderDashboard(dashData);
               loadActiveSessions();
+              loadCrossDevicePortfolios();
               return;
             }
           }
@@ -918,9 +979,11 @@
         // Graceful fallback render if dashboard API had no site or network delay
         renderDashboard({ success: true, user: currentUser });
         loadActiveSessions();
+        loadCrossDevicePortfolios();
       } catch (e) {
         console.warn('Dashboard error:', e);
         renderDashboard({ success: true, user: currentUser || {} });
+        loadCrossDevicePortfolios();
       }
     }
 
@@ -1195,12 +1258,220 @@
       return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
     }
 
+    // =========================================================================
+    // CROSS-DEVICE CLOUD SYNC ENGINE (Phone & Desktop Unified)
+    // =========================================================================
+    async function loadCrossDevicePortfolios() {
+      const grid = document.getElementById('syncedPortfoliosGrid');
+      const badge = document.getElementById('syncedCountBadge');
+      if (!grid) return;
+
+      try {
+        const res = await fetch('/api/user/portfolios', { credentials: 'include' });
+        let cloudPortfolios = [];
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.portfolios)) {
+            cloudPortfolios = data.portfolios;
+          }
+        }
+
+        // Also merge any local browser storage projects
+        let localProjects = [];
+        try {
+          localProjects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
+          if (currentUser && currentUser.email) {
+            const userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
+            const userHist = JSON.parse(localStorage.getItem(userKey) || '[]');
+            localProjects = [...userHist, ...localProjects];
+          }
+        } catch (e) {}
+
+        const unifiedMap = new Map();
+        cloudPortfolios.forEach(p => unifiedMap.set(p.siteId, p));
+
+        // Sync local-only items up to server
+        const localOnly = [];
+        localProjects.forEach(lp => {
+          if (lp && lp.siteId && !unifiedMap.has(lp.siteId)) {
+            unifiedMap.set(lp.siteId, lp);
+            localOnly.push(lp);
+          }
+        });
+
+        if (localOnly.length > 0) {
+          fetch('/api/user/portfolios/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ items: localOnly })
+          }).catch(() => {});
+        }
+
+        const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        if (badge) {
+          badge.textContent = `☁️ SYNCED (${merged.length})`;
+        }
+
+        // If hero currently has no active site or default, automatically point to the newest synced portfolio
+        if (merged.length > 0 && (!currentSiteId || currentSiteUrl.includes('/studio.html'))) {
+          const newest = merged[0];
+          currentSiteId = newest.siteId;
+          const openLiveBtn = document.getElementById('btnOpenLive');
+          const urlTextEl = document.getElementById('portfolioUrlText');
+          const lifecycleBadge = document.getElementById('lifecycleBadge');
+          const deleteBtn = document.getElementById('btnDeletePortfolio');
+
+          const userEmail = (currentUser?.email || '').toLowerCase().trim();
+          const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
+          const handle = newest.handle || currentUser?.username || 'abdulaziz';
+          const targetSubdomain = `${handle}.myfolio.tech`;
+
+          if (isVip) {
+            currentSiteUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+              ? `${window.location.origin}/${handle}`
+              : `https://${targetSubdomain}`;
+            if (urlTextEl) urlTextEl.textContent = `https://${targetSubdomain}`;
+            if (openLiveBtn) {
+              openLiveBtn.href = currentSiteUrl;
+              openLiveBtn.innerHTML = '🚀 Open Live Portfolio ↗';
+            }
+            if (lifecycleBadge) {
+              lifecycleBadge.textContent = `👑 VIP ACTIVE (${targetSubdomain.toUpperCase()})`;
+              lifecycleBadge.className = 'status-badge status-live';
+            }
+          } else {
+            currentSiteUrl = `${window.location.origin}/p/${newest.siteId}`;
+            if (urlTextEl) urlTextEl.textContent = currentSiteUrl;
+            if (openLiveBtn) {
+              openLiveBtn.href = currentSiteUrl;
+              openLiveBtn.innerHTML = '🚀 Open Live ↗';
+            }
+            if (lifecycleBadge) {
+              lifecycleBadge.textContent = '● ACTIVE LIVE';
+              lifecycleBadge.className = 'status-badge status-live';
+            }
+          }
+          if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        }
+
+        renderSyncedPortfolios(merged);
+      } catch (err) {
+        console.warn('loadCrossDevicePortfolios error:', err);
+        grid.innerHTML = `<div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1;">
+          Could not sync cloud portfolios. Check your connection or click "Sync Now".
+        </div>`;
+      }
+    }
+
+    function renderSyncedPortfolios(portfolios) {
+      const grid = document.getElementById('syncedPortfoliosGrid');
+      if (!grid) return;
+
+      if (!portfolios || portfolios.length === 0) {
+        grid.innerHTML = `
+          <div style="padding: 3rem 1.5rem; text-align: center; background: #F8FAFC; border: 1px dashed rgba(15, 23, 42, 0.15); border-radius: 16px; grid-column: 1 / -1;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🌐</div>
+            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.35rem;">No Portfolios Generated Yet</h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px; margin: 0 auto 1.25rem;">
+              Generate your bespoke 3D portfolio website in Web Studio or with our mobile Telegram assistant.
+            </p>
+            <a href="/studio.html" class="btn-primary" style="text-decoration: none; padding: 0.65rem 1.5rem; font-size: 0.9rem;">
+              ⚡ Launch Web Studio
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      const userEmail = (currentUser?.email || '').toLowerCase().trim();
+      const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
+      const defaultHandle = currentUser?.username || 'abdulaziz';
+
+      grid.innerHTML = portfolios.map((p, idx) => {
+        const sid = p.siteId || `site-${idx}`;
+        const name = p.developerName || 'Developer';
+        const role = p.developerRole || 'Software Engineer';
+        const universe = p.universeKey || 'cyber-architect-sprawl';
+        const timeStr = formatTimeAgoDashboard(p.timestamp || Date.now());
+        const handle = p.handle || defaultHandle;
+        const subdomain = p.subdomain || `${handle}.myfolio.tech`;
+
+        const liveHref = isVip
+          ? ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? `/${handle}` : `https://${subdomain}`)
+          : `/p/${sid}`;
+
+        const directVersionHref = `/p/${sid}`;
+
+        return `
+          <div class="synced-portfolio-card">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+              <span class="synced-badge-pill" style="background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0;">
+                🎨 ${escapeHtml(universe.toUpperCase())}
+              </span>
+              <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">
+                ${timeStr}
+              </span>
+            </div>
+
+            <div>
+              <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; line-height: 1.3;">
+                ${escapeHtml(name)}
+              </div>
+              <div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px; font-weight: 500;">
+                ${escapeHtml(role)}
+              </div>
+            </div>
+
+            <div style="font-size: 0.8rem; font-family: var(--font-mono); color: #3B33D1; background: #EEF2FF; padding: 0.4rem 0.65rem; border-radius: 8px; word-break: break-all;">
+              🔗 ${escapeHtml(directVersionHref)}
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
+              <a href="${liveHref}" target="_blank" class="btn-primary" style="flex: 1; justify-content: center; text-decoration: none; padding: 0.5rem 0.75rem; font-size: 0.8rem;">
+                🚀 Open Live ↗
+              </a>
+              <button class="btn-card-action" onclick="copySiteLink('${directVersionHref}')" style="padding: 0.5rem 0.75rem; font-size: 0.8rem;" title="Copy direct link">
+                📋
+              </button>
+              <a href="/studio.html" class="btn-card-action" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; text-decoration: none;" title="Edit in Studio">
+                ⚡
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function formatTimeAgoDashboard(timestamp) {
+      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
+      if (diffSec < 60) return 'Just now';
+      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+      return new Date(timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function copySiteLink(path) {
+      const full = `${window.location.origin}${path}`;
+      navigator.clipboard.writeText(full);
+      showToast('Copied: ' + full);
+    }
+
+    async function refreshUserPortfolios() {
+      showToast('🔄 Synchronizing cross-device portfolios...');
+      await loadCrossDevicePortfolios();
+      showToast('✅ Portfolios synchronized!');
+    }
+
     // Global window exports for HTML onclick handlers
     window.copyPortfolioUrl = copyPortfolioUrl;
     window.revokeAllSessions = revokeAllSessions;
     window.revokeSession = revokeSession;
     window.openDeleteModal = openDeleteModal;
     window.closeDeleteModal = closeDeleteModal;
+    window.refreshUserPortfolios = refreshUserPortfolios;
+    window.copySiteLink = copySiteLink;
 
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof initUniversalSidebar === 'function') {

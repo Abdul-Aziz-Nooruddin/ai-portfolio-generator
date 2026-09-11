@@ -19,8 +19,19 @@ This rule governs all UI/UX structure, hierarchy, accessibility, and micro-inter
 - **Clean Alpha Extraction**: All generated 3D visuals must pass through clean alpha isolation (`rembg` / dark-studio matting) yielding authentic `_nobg.png` assets with zero halos, fringing, or clipping boxes.
 - **Organic Float Dynamics**: 3D isolated assets must be styled with organic multi-axis CSS keyframe floats (`floatingAsset 6s ease-in-out infinite alternate`) and ambient drop-shadows tailored to the theme's lighting source.
 
-## 3. Heuristic Decision Making for Unmentioned Features
-When designing aspects not explicitly specified by the user:
-- **Telemetry & Social Proof**: Automatically synthesize meaningful telemetry meters, project count badges, and verified credential pills that bind dynamically to parsed profile data.
-- **Responsive Navigation**: Implement sleek sticky floating glass navbars with active section observers, smooth anchor scrolling, and mobile sliding hamburger drawers.
-- **Dedicated Route Isolation**: Error states (404), success states, and modals must remain decoupled from the single-page scroll layout and served via dedicated handlers.
+## 4. Mandatory Custom Typography Architecture (Strict Zero Repetitive Fonts Rule)
+- **Zero Repetitive Typography**: Never reuse the same standard system fonts or default pairings (`Inter`, `Plus Jakarta Sans`, or `Syne`) across different portfolios.
+- **Strict 3-Tier Font Hierarchy**: Every portfolio MUST load and apply a distinct, tailored 3-tier Google Fonts combination:
+  1. **Expressive Display Masthead**: `Orbitron`, `Chakra Petch`, `Cinzel Decorative`, `Playfair Display`, `Syne`, `Syncopate`, `Teko`, `Bebas Neue`, `MedievalSharp`, `Rajdhani`, `Fraunces`, `Clash Display`.
+  2. **Tailored Body Typeface**: `Space Grotesk`, `Instrument Serif`, `Spectral`, `IBM Plex Sans`, `Outfit`, `Manrope`, `Epilogue`, `Titillium Web`, `Exo 2`, `Newsreader`.
+  3. **Precision Monospace Accents**: `Share Tech Mono`, `JetBrains Mono`, `Fira Code`, `Space Mono`, `IBM Plex Mono`, `Courier Prime`, `VT323`.
+- **Persona Alignment**: The typographic tone must directly embody the candidate's professional universe:
+  - Systems Architects & Bio-Engineers: `Chakra Petch` + `Space Grotesk` + `Share Tech Mono`
+  - High-Finance & Cryptographic Protocol: `Cinzel Decorative` + `Spectral` + `Space Mono`
+  - Deep Security & Cypherpunk Hackers: `VT323` + `Share Tech Mono` + `Fira Code`
+  - Creative Directors & UX Architects: `Playfair Display` + `Instrument Serif` + `Courier Prime`
+  - Climate Tech & Biophilic Founders: `Outfit` + `Plus Jakarta Sans` + `Fira Code`
+  - Mechanical & CAD Engineers: `Space Grotesk` + `IBM Plex Sans` + `IBM Plex Mono`
+  - Game Developers & Worldbuilders: `MedievalSharp` + `Cinzel` + `Cormorant Garamond`
+- **Exhaustive Cycles**: Consecutive portfolio generations must rotate across these distinct typography archetypes with zero repetition until all are exhausted.
+

@@ -13,17 +13,13 @@ try {
   pdfParse = null;
 }
 const ACTIVE_MODELS = [
-  'gemini-3.0-flash',
-  'gemini-3.1-pro-preview',
-  'gemini-2.5-flash-lite',
   'gemini-flash-latest',
-  'gemini-pro-latest',
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-2.5-pro',
-  'gemini-1.5-pro'
+  'gemini-3.5-flash',
+  'gemini-flash-lite-latest',
+  'gemini-pro-latest'
 ];
+
 
 class AIService {
   constructor(apiKey) {
@@ -75,7 +71,7 @@ class AIService {
     throw new Error('All Gemini AI models currently busy or unreachable. Please try again in a moment!');
   }
 
-  async callGeminiRest(prompt, modelName = 'gemini-3.5-flash-lite') {
+  async callGeminiRest(prompt, modelName = 'gemini-flash-latest') {
     const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${this.apiKey}`;
 
     const response = await fetch(url, {
@@ -523,13 +519,11 @@ Respond ONLY with valid JSON.`;
     // 3. SECONDARY STRATEGY: Multimodal Gemini Vision (inlineData)
     if (!parsedResult) {
       const candidateModels = [
-        'gemini-3.0-flash',
-        'gemini-3.1-pro-preview',
-        'gemini-2.5-flash-lite',
         'gemini-flash-latest',
-        'gemini-pro-latest',
         'gemini-2.5-flash',
-        'gemini-1.5-flash'
+        'gemini-3.5-flash',
+        'gemini-flash-lite-latest',
+        'gemini-pro-latest'
       ];
       const base64Data = buffer.toString('base64');
 
@@ -679,7 +673,7 @@ Return ONLY this JSON structure:
       // Multimodal vision for images or scanned PDFs (with 10-second timeout to prevent gateway errors)
       if (normalizedMime.startsWith('image/') || (!rawText && normalizedMime === 'application/pdf')) {
         const base64Data = buffer.toString('base64');
-        const candidateModels = ['gemini-3.0-flash', 'gemini-flash-latest'];
+        const candidateModels = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-3.5-flash'];
         for (const mName of candidateModels) {
           try {
             if (this.sdkAvailable) {

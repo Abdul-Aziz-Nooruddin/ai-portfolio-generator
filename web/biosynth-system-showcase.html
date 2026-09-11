@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BIOSYNTH SYSTEM // Full-Page 3D Apple-Canvas Scrollytelling Suite</title>
+  
+  <!-- Distinct Bio-Digital Technical Typography (Zero Generic System Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Motion & 3D Plugin Stack: Lenis + GSAP + ScrollTrigger + Three.js + GLTFLoader -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <style>
+    :root {
+      --bg-void: #02050D;
+      --bg-surface: #060e1e;
+      --bg-surface-elevated: #0a1832;
+      --accent-orange: #FF7A00;
+      --accent-amber: #FFA726;
+      --accent-glow: rgba(255, 122, 0, 0.55);
+      --accent-blue: #0EA5E9;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --border-subtle: rgba(255, 122, 0, 0.22);
+      --border-glow: rgba(255, 122, 0, 0.65);
+      --font-display: 'Chakra Petch', sans-serif;
+      --font-masthead: 'Orbitron', 'Chakra Petch', sans-serif;
+      --font-body: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Lenis Smooth Scroll Rules */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    /* Top Glowing Progress Bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3.5px;
+      background: linear-gradient(90deg, var(--accent-orange), var(--accent-amber), var(--accent-blue));
+      z-index: 100000;
+      box-shadow: 0 0 16px var(--accent-orange);
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       PERSISTENT FULL-PAGE 3D APPLE CANVAS (Fixed from First to Last Section)
+       ========================================================================== */
+    #biosynth-global-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Ambient Subtle Grid Overlay */
+    .viewport-grid-mesh {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background-image: 
+        linear-gradient(rgba(255, 122, 0, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 122, 0, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Persistent Scrollytelling HUD Floating Telemetry */
+    .scrolly-telemetry-hud {
+      position: fixed;
+      bottom: 28px;
+      right: 32px;
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-amber);
+      background: rgba(3, 7, 18, 0.75);
+      border: 1px solid var(--border-subtle);
+      padding: 10px 18px;
+      border-radius: 8px;
+      backdrop-filter: blur(12px);
+      pointer-events: none;
+    }
+    .scrolly-telemetry-hud span {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hud-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-orange);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent-orange);
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.4; }
+    }
+
+    /* Navigation Header */
+    header.biosynth-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 999;
+      background: rgba(2, 5, 13, 0.82);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo-box {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--accent-orange);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent-orange);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+    .brand-text {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--text-primary);
+    }
+    .nav-menu {
+      display: flex;
+      gap: 22px;
+      list-style: none;
+    }
+    .nav-menu a {
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 500;
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+    .nav-menu a:hover, .nav-menu a.active {
+      color: var(--accent-orange);
+      text-shadow: 0 0 12px var(--accent-glow);
+    }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      background: rgba(255, 122, 0, 0.12);
+      border: 1px solid var(--accent-orange);
+      border-radius: 6px;
+      color: var(--accent-orange);
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(255, 122, 0, 0.25);
+      transition: all 0.2s ease;
+    }
+    .nav-cta:hover {
+      background: var(--accent-orange);
+      color: #02050D;
+      box-shadow: 0 0 20px var(--accent-orange);
+    }
+
+    /* Main Content Layer */
+    main.biosynth-flow {
+      position: relative;
+      z-index: 2;
+    }
+
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* Section Frame Styling */
+    section.biosynth-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 0;
+      position: relative;
+    }
+
+    .section-header-tag {
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      color: var(--accent-orange);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .section-header-tag::after {
+      content: "";
+      flex-grow: 1;
+      max-width: 90px;
+      height: 1.5px;
+      background: var(--accent-orange);
+      box-shadow: 0 0 8px var(--accent-orange);
+    }
+
+    /* Magnetic Spring Buttons */
+    .btn-biosynth-magnetic {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--accent-orange) 0%, #d95e00 100%);
+      color: #02050D;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.45);
+      transition: box-shadow 0.25s ease, transform 0.2s ease;
+      will-change: transform;
+    }
+    .btn-biosynth-magnetic:hover {
+      box-shadow: 0 12px 36px rgba(255, 122, 0, 0.75);
+    }
+
+    .btn-biosynth-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 24px;
+      background: rgba(6, 14, 30, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .btn-biosynth-outline:hover {
+      border-color: var(--accent-orange);
+      color: var(--accent-orange);
+      box-shadow: 0 0 18px rgba(255, 122, 0, 0.35);
+    }
+
+    /* ==========================================================================
+       SECTION 01: HERO STAGE
+       ========================================================================== */
+    .hero-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .hero-title {
+      font-family: var(--font-masthead);
+      font-size: clamp(2.4rem, 4.8vw, 4.2rem);
+      font-weight: 900;
+      line-height: 1.12;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title .gradient-span {
+      background: linear-gradient(135deg, #FF7A00 0%, #FFA726 50%, #FFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 35px rgba(255, 122, 0, 0.4);
+    }
+    .hero-lead {
+      color: var(--text-secondary);
+      font-size: 1.12rem;
+      line-height: 1.75;
+      max-width: 580px;
+      margin-bottom: 36px;
+    }
+    .hero-cta-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    /* 3D Showcase Card Container */
+    .showcase-3d-card {
+      position: relative;
+      border: 1px solid var(--border-subtle);
+      background: rgba(6, 14, 30, 0.65);
+      border-radius: 18px;
+      padding: 24px;
+      backdrop-filter: blur(16px);
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+      perspective: 1000px;
+    }
+    .showcase-3d-card:hover {
+      border-color: var(--accent-orange);
+      box-shadow: 0 24px 60px rgba(255, 122, 0, 0.25);
+    }
+    .showcase-3d-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      display: block;
+      filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.8));
+      transition: transform 0.4s ease;
+    }
+    .showcase-3d-card:hover .showcase-3d-img {
+      transform: scale(1.03);
+    }
+    .showcase-telemetry-badge {
+      position: absolute;
+      bottom: 18px;
+      left: 18px;
+      right: 18px;
+      background: rgba(2, 5, 13, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--accent-amber);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       SECTION 02: ABOUT SONAR
+       ========================================================================== */
+    .about-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .telemetry-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .telemetry-stat-card {
+      background: rgba(6, 14, 30, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px;
+      backdrop-filter: blur(10px);
+    }
+    .stat-val {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent-orange);
+      line-height: 1.1;
+    }
+    .stat-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+    }
+
+    /* ==========================================================================
+       SECTION 03: PROJECTS (Authentic 3D Artwork Stack)
+       ========================================================================== */
+    .projects-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .project-grid-trio {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin: 28px 0;
+    }
+    .project-3d-item {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 20px;
+      background: rgba(6, 14, 30, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px;
+      backdrop-filter: blur(14px);
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-3d-item:hover {
+      border-color: var(--accent-orange);
+      transform: translateX(8px);
+      box-shadow: 0 10px 30px rgba(255, 122, 0, 0.2);
+    }
+    .project-3d-thumb {
+      width: 140px;
+      height: 95px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 122, 0, 0.25);
+    }
+    .project-3d-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+    .project-3d-item:hover .project-3d-thumb img {
+      transform: scale(1.08);
+    }
+    .project-item-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .project-item-title span {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent-orange);
+    }
+    .project-item-desc {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ==========================================================================
+       SECTION 04: SKILLS TELEMETRY
+       ========================================================================== */
+    .skills-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .skills-tags-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+    }
+    .skill-badge-pill {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 30px;
+      background: rgba(255, 122, 0, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      letter-spacing: 0.04em;
+      transition: all 0.2s ease;
+    }
+    .skill-badge-pill:hover {
+      border-color: var(--accent-orange);
+      background: rgba(255, 122, 0, 0.2);
+      color: var(--accent-orange);
+      box-shadow: 0 0 14px rgba(255, 122, 0, 0.3);
+    }
+
+    /* ==========================================================================
+       SECTION 05: EXPERIENCE & CAREER CODEX
+       ========================================================================== */
+    .experience-layout {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+    }
+    .timeline-stream {
+      position: relative;
+      padding-left: 28px;
+      margin-top: 28px;
+    }
+    .timeline-stream::before {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-orange) 0%, rgba(255, 122, 0, 0.1) 100%);
+    }
+    .timeline-node {
+      position: relative;
+      margin-bottom: 30px;
+    }
+    .timeline-node::before {
+      content: "";
+      position: absolute;
+      left: -28px;
+      top: 5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #02050D;
+      border: 2px solid var(--accent-orange);
+      box-shadow: 0 0 10px var(--accent-orange);
+    }
+    .timeline-node-period {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--accent-amber);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+    .timeline-node-role {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin: 4px 0 6px;
+    }
+    .timeline-node-desc {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       SECTION 06: OPEN SOURCE ECOSYSTEM
+       ========================================================================== */
+    .opensource-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .repo-card-item {
+      background: rgba(6, 14, 30, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px 22px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .repo-card-item:hover {
+      border-color: var(--accent-orange);
+      transform: translateX(6px);
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.2);
+    }
+
+    /* ==========================================================================
+       SECTION 07: RESUME & ARCHITECTURAL DOSSIER
+       ========================================================================== */
+    .resume-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 50px;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       SECTION 08: CONTACT TRANSMISSION BEACON
+       ========================================================================== */
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .contact-cyber-form-card {
+      background: rgba(6, 14, 30, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 32px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+    .form-row {
+      margin-bottom: 20px;
+    }
+    .form-row label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--accent-orange);
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+    .input-cyber {
+      width: 100%;
+      padding: 13px 18px;
+      background: rgba(2, 5, 13, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .input-cyber:focus {
+      border-color: var(--accent-orange);
+      box-shadow: 0 0 16px rgba(255, 122, 0, 0.35);
+    }
+
+    /* ==========================================================================
+       SECTION 09: DEDICATED 404 SPATIAL MONOLITH MODAL
+       ========================================================================== */
+    .portal-404-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 5, 13, 0.92);
+      backdrop-filter: blur(24px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .portal-404-modal-overlay.active {
+      display: flex;
+    }
+    .portal-404-card {
+      max-width: 580px;
+      width: 100%;
+      background: rgba(6, 14, 30, 0.95);
+      border: 1.5px solid var(--accent-orange);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(255, 122, 0, 0.4);
+    }
+
+    /* Footer */
+    footer.biosynth-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px 0;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      background: rgba(2, 5, 13, 0.95);
+    }
+    footer.biosynth-footer p {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+    }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 980px) {
+      .hero-layout, .about-layout, .projects-layout, 
+      .skills-layout, .experience-layout, .opensource-layout, 
+      .resume-layout, .contact-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .nav-menu {
+        display: none;
+      }
+      .scrolly-telemetry-hud {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Real-Time Scroll Progress Indicator -->
+  <div id="scroll-progress"></div>
+
+  <!-- Perspective Ambient Space Grid -->
+  <div class="viewport-grid-mesh"></div>
+
+  <!-- PERSISTENT FULL-PAGE 3D THREE.JS CANVAS (From First to Last Section) -->
+  <canvas id="biosynth-global-canvas"></canvas>
+
+  <!-- Real-Time Scrollytelling Telemetry HUD -->
+  <div class="scrolly-telemetry-hud">
+    <span><span class="hud-dot"></span> 3D CAMERA: ACTIVE FLIGHT</span>
+    <span id="hud-camera-coords">Z: 180.0 // PITCH: 0.0°</span>
+    <span id="hud-section-label">ACTIVE SECTOR: 01 // HERO</span>
+  </div>
+
+  <!-- Navigation Bar -->
+  <header class="biosynth-nav">
+    <div class="nav-brand">
+      <div class="brand-logo-box">NR</div>
+      <div class="brand-text">BIOSYNTH // ARCHITECT</div>
+    </div>
+    <ul class="nav-menu">
+      <li><a href="#hero" class="active">01. HERO</a></li>
+      <li><a href="#about">02. ABOUT</a></li>
+      <li><a href="#projects">03. PROJECTS</a></li>
+      <li><a href="#skills">04. SKILLS</a></li>
+      <li><a href="#experience">05. TIMELINE</a></li>
+      <li><a href="#opensource">06. OPEN SOURCE</a></li>
+      <li><a href="#resume">07. RESUME</a></li>
+      <li><a href="#contact">08. CONTACT</a></li>
+      <li><a href="#route-404" id="open-404-btn" style="color:var(--accent-amber);">09. 404 ROUTE</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">TRANSMIT ✦</a>
+  </header>
+
+  <!-- MAIN SCROLLABLE 9-SECTION SUITE -->
+  <main class="biosynth-flow">
+
+    <!-- 01. HERO STAGE -->
+    <section id="hero" class="biosynth-section">
+      <div class="container">
+        <div class="hero-layout">
+          <div>
+            <div class="section-header-tag">01. HELLO, I'M // NEEL RAY</div>
+            <h1 class="hero-title">
+              Architecting <span class="gradient-span">Bio-Digital</span> Neural Systems.
+            </h1>
+            <p class="hero-lead">
+              Principal Distributed Systems Architect synthesizing high-throughput neural protocols, real-time spatial interfaces, and resilient edge meshes.
+            </p>
+            <div class="hero-cta-group">
+              <a href="#projects" class="btn-biosynth-magnetic">Explore Telemetry ➔</a>
+              <a href="#about" class="btn-biosynth-outline">Inspect Blueprint</a>
+            </div>
+          </div>
+
+          <!-- Hero 3D Focal Card -->
+          <div class="showcase-3d-card" style="min-height: 440px;">
+            <img src="/assets/designs/biosynth/hero_neural_energy.jpg" alt="3D Bio-Digital Neural Energy Core" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>NEURAL CORE: ONLINE</span>
+              <span>SYNAPSE: 99.98%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. ABOUT SONAR SECTION -->
+    <section id="about" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">02. ABOUT // MISSION MATRIX</div>
+        <div class="about-layout">
+          <!-- Authentic 3D Cyborg Hologram on Pedestal -->
+          <div class="showcase-3d-card" style="min-height: 480px;">
+            <img src="/assets/designs/biosynth/cyborg_hologram.jpg" alt="3D Anatomical Cyborg Hologram on Pedestal" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>CYBORG TELEMETRY: SYNAPSE_V2</span>
+              <span>STATE: VERIFIED</span>
+            </div>
+          </div>
+
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 4vw, 3.2rem);font-weight:800;line-height:1.15;margin-bottom:20px;">
+              Synthesizing Biology & Distributed Computing
+            </h2>
+            <p style="color:var(--text-secondary);font-size:1.02rem;line-height:1.75;margin-bottom:20px;">
+              Over a decade engineering resilient decentralized networks, sub-millisecond data serialization, and high-performance WebGL graphics engines.
+            </p>
+            <p style="color:var(--text-secondary);font-size:0.95rem;line-height:1.7;">
+              My work converges biological heuristics with cryptographic consensus, providing mission-critical infrastructure for frontier AI labs and high-throughput systems.
+            </p>
+
+            <div class="telemetry-stat-grid">
+              <div class="telemetry-stat-card">
+                <div class="stat-val">10+</div>
+                <div class="stat-lbl">YEARS DISTRIBUTED ARCHITECTURE</div>
+              </div>
+              <div class="telemetry-stat-card">
+                <div class="stat-val">&lt;1ms</div>
+                <div class="stat-lbl">SUB-MILLISECOND P99 LATENCY</div>
+              </div>
+              <div class="telemetry-stat-card">
+                <div class="stat-val">500k+</div>
+                <div class="stat-lbl">ACTIVE RUNTIME INSTANCES</div>
+              </div>
+              <div class="telemetry-stat-card">
+                <div class="stat-val">100%</div>
+                <div class="stat-lbl">OPEN-SOURCE VERIFIABILITY</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. PROJECTS SECTION (100% Unique 3D Artwork) -->
+    <section id="projects" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">03. PROJECTS // PRODUCTION VAULTS</div>
+        <div class="projects-layout">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 3.8vw, 3rem);font-weight:800;margin-bottom:14px;">
+              Impactful Software Projections
+            </h2>
+            <p style="color:var(--text-secondary);font-size:0.98rem;line-height:1.7;">
+              A curated selection of production-grade architectures, WebGL environments, and distributed protocols.
+            </p>
+
+            <div class="project-grid-trio">
+              <!-- Project 1: Stargate Mesh -->
+              <a href="#projects" class="project-3d-item">
+                <div class="project-3d-thumb">
+                  <img src="/assets/designs/biosynth/project_stargate.jpg" alt="3D Stargate Mesh Node" />
+                </div>
+                <div>
+                  <div class="project-item-title">
+                    Stargate Mesh <span>RUST // WEBGPU</span>
+                  </div>
+                  <div class="project-item-desc">
+                    Zero-latency P2P spatial protocol for distributed state synchronization across edge clusters.
+                  </div>
+                </div>
+              </a>
+
+              <!-- Project 2: Vortex Core -->
+              <a href="#projects" class="project-3d-item">
+                <div class="project-3d-thumb">
+                  <img src="/assets/designs/biosynth/project_vortex.jpg" alt="3D Vortex Core" />
+                </div>
+                <div>
+                  <div class="project-item-title">
+                    Vortex Core <span>GLSL // COMPUTE</span>
+                  </div>
+                  <div class="project-item-desc">
+                    Volumetric black hole caustics and astrophysical accretion simulation running at 120 FPS.
+                  </div>
+                </div>
+              </a>
+
+              <!-- Project 3: Synapse RPC -->
+              <a href="#projects" class="project-3d-item">
+                <div class="project-3d-thumb">
+                  <img src="/assets/designs/biosynth/project_synapse.jpg" alt="3D Synapse RPC Chip" />
+                </div>
+                <div>
+                  <div class="project-item-title">
+                    Synapse RPC <span>WASM // NETWORK</span>
+                  </div>
+                  <div class="project-item-desc">
+                    Ultra-lightweight binary serialization library achieving 4.8 million ops/sec in browser clients.
+                  </div>
+                </div>
+              </a>
+            </div>
+
+            <div style="display:flex;gap:16px;align-items:center;">
+              <a href="#contact" class="btn-biosynth-magnetic">Inspect All Repositories ➔</a>
+              <span style="font-family:var(--font-mono);font-size:0.8rem;color:var(--accent-orange);">&lt; 01 / 02 / 03 / 04 &gt;</span>
+            </div>
+          </div>
+
+          <!-- 3D Celestial Astrolabe Card -->
+          <div class="showcase-3d-card" style="min-height: 490px;">
+            <img src="/assets/designs/biosynth/orbital_astrolabe.jpg" alt="3D Celestial Astrolabe Gyroscope with Glowing Orbital Rings" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>ASTROLABE GYROSCOPE: ROTATING</span>
+              <span>ORBITAL RINGS: 60 FPS</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. SKILLS SECTION (Featuring 3D Holographic Radar Console) -->
+    <section id="skills" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">04. SKILLS // NEURAL TELEMETRY</div>
+        <div class="skills-layout">
+          <!-- Authentic 3D Radar Spider Console -->
+          <div class="showcase-3d-card" style="min-height: 480px;">
+            <img src="/assets/designs/biosynth/radar_spider_console.jpg" alt="3D Futuristic Holographic Radar Telemetry Console" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>NEURAL RADAR: 6 NODES LOCKED</span>
+              <span>COORDINATES: ACTIVE</span>
+            </div>
+          </div>
+
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 3.8vw, 3rem);font-weight:800;margin-bottom:14px;">
+              Full-Stack Technical Capabilities
+            </h2>
+            <p style="color:var(--text-secondary);font-size:1rem;line-height:1.7;margin-bottom:20px;">
+              Comprehensive mastery spanning low-level systems programming, real-time 3D spatial computing, and distributed database consensus.
+            </p>
+
+            <div class="skills-tags-cluster">
+              <span class="skill-badge-pill">Distributed Architecture // 99%</span>
+              <span class="skill-badge-pill">WebGL & Three.js // 98%</span>
+              <span class="skill-badge-pill">Rust Systems // 95%</span>
+              <span class="skill-badge-pill">TypeScript Ecosystem // 97%</span>
+              <span class="skill-badge-pill">WebGPU & GLSL Compute // 92%</span>
+              <span class="skill-badge-pill">Kubernetes & Edge Mesh // 94%</span>
+              <span class="skill-badge-pill">P2P Protocols & Libp2p // 91%</span>
+              <span class="skill-badge-pill">GSAP Motion Choreography // 96%</span>
+            </div>
+
+            <div style="margin-top: 32px;">
+              <a href="#experience" class="btn-biosynth-magnetic">View Career Trajectory ➔</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. EXPERIENCE SECTION (Featuring 3D Neural Tree of Life) -->
+    <section id="experience" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">05. EXPERIENCE // CHRONOLOGY STREAM</div>
+        <div class="experience-layout">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 3.8vw, 3rem);font-weight:800;margin-bottom:14px;">
+              Milestones & Leadership Drift
+            </h2>
+            <p style="color:var(--text-secondary);font-size:0.98rem;line-height:1.7;">
+              Continuous trajectory spearheading enterprise engineering teams and pioneering spatial web architectures.
+            </p>
+
+            <div class="timeline-stream">
+              <div class="timeline-node">
+                <div class="timeline-node-period">2023 — PRESENT // LEAD MESH ARCHITECT</div>
+                <div class="timeline-node-role">BioSynth Labs Inc.</div>
+                <div class="timeline-node-desc">
+                  Directed the architecture of a real-time decentralized compute mesh processing 12M transactions daily with zero downtime.
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-node-period">2020 — 2023 // SENIOR GRAPHICS & INFRA ENGINEER</div>
+                <div class="timeline-node-role">Apex Spatial Systems</div>
+                <div class="timeline-node-desc">
+                  Engineered browser WebGL visualization pipelines and optimized shader runtimes delivering 60 FPS on low-power mobile devices.
+                </div>
+              </div>
+
+              <div class="timeline-node">
+                <div class="timeline-node-period">2018 — 2020 // DISTRIBUTED SYSTEMS RESEARCHER</div>
+                <div class="timeline-node-role">Helios Protocol Core</div>
+                <div class="timeline-node-desc">
+                  Researched Byzantine fault tolerant consensus mechanisms and published open-source formal proofs.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Authentic 3D Neural Tree Card -->
+          <div class="showcase-3d-card" style="min-height: 490px;">
+            <img src="/assets/designs/biosynth/neural_tree.jpg" alt="3D Bioluminescent Neural Tree of Life" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>GROWTH TREE: 3 TIERS MATURE</span>
+              <span>SYNAPSE: EXPANDING</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. OPEN SOURCE SECTION (Featuring 3D Repository Nexus) -->
+    <section id="opensource" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">06. OPEN SOURCE // COMMUNITY HUB</div>
+        <div class="opensource-layout">
+          <!-- 3D Open Source Nexus Card -->
+          <div class="showcase-3d-card" style="min-height: 480px;">
+            <img src="/assets/designs/biosynth/opensource_nexus.jpg" alt="3D Open-Source Repository Neural Hub" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>REPO NEXUS: SYNAPSED</span>
+              <span>COMMUNITY: 12.4K STARS</span>
+            </div>
+          </div>
+
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 3.8vw, 3rem);font-weight:800;margin-bottom:14px;">
+              Ecosystem & Public Libraries
+            </h2>
+            <p style="color:var(--text-secondary);font-size:0.98rem;line-height:1.7;margin-bottom:24px;">
+              Open-source core libraries, developer toolkits, and algorithmic specifications published under permissive MIT licensing.
+            </p>
+
+            <div class="repo-card-item">
+              <div style="font-family:var(--font-mono);font-size:0.92rem;color:var(--accent-orange);font-weight:700;">biosynth-engine/core</div>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin:6px 0;">Procedural 3D scene graph and shader choreography runtime for spatial applications.</p>
+              <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--text-muted);">★ 1.8k • Rust / WebGL</div>
+            </div>
+
+            <div class="repo-card-item">
+              <div style="font-family:var(--font-mono);font-size:0.92rem;color:var(--accent-orange);font-weight:700;">synapse-protocol-rfc</div>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin:6px 0;">High-speed binary transport specification and zero-copy packet parser for browsers.</p>
+              <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--text-muted);">★ 940 • TypeScript</div>
+            </div>
+
+            <a href="https://github.com" target="_blank" class="btn-biosynth-magnetic" style="margin-top:12px;">
+              Explore GitHub Profile ➔
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07. RESUME SECTION (Featuring 3D Architectural Dossier Credential) -->
+    <section id="resume" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">07. RESUME // DOSSIER CREDENTIALS</div>
+        <div class="resume-layout">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(2.2rem, 3.8vw, 3rem);font-weight:800;margin-bottom:14px;">
+              Architectural Dossier
+            </h2>
+            <p style="color:var(--text-secondary);font-size:1.02rem;line-height:1.75;margin-bottom:28px;">
+              Verified credentials, technical milestones, and academic telemetry compiled into a standardized verifiable engineering dossier.
+            </p>
+            <button class="btn-biosynth-magnetic" onclick="alert('Verified Dossier downloaded successfully.');">
+              Download PDF Dossier (1.8 MB) ⬇
+            </button>
+          </div>
+
+          <!-- Authentic 3D Resume Credential Card -->
+          <div class="showcase-3d-card" style="min-height: 480px;">
+            <img src="/assets/designs/biosynth/resume_dossier.jpg" alt="3D Engineering Dossier Credential Badge" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>CREDENTIAL ID: AHC-894-ALPHA-07</span>
+              <span>STATUS: AUTHENTICATED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08. CONTACT SECTION (Featuring 3D Transmission Beacon) -->
+    <section id="contact" class="biosynth-section">
+      <div class="container">
+        <div class="section-header-tag">08. CONTACT // BEACON TRANSMISSION</div>
+        <div class="contact-layout">
+          <!-- Authentic 3D Contact Beacon Card -->
+          <div class="showcase-3d-card" style="min-height: 480px;">
+            <img src="/assets/designs/biosynth/contact_beacon.jpg" alt="3D Futuristic Transmitter Beacon Tower" class="showcase-3d-img" />
+            <div class="showcase-telemetry-badge">
+              <span>BEACON CORE: TRANSMITTING</span>
+              <span>FREQUENCY: 0047-GAMMA</span>
+            </div>
+          </div>
+
+          <div class="contact-cyber-form-card">
+            <h2 style="font-family:var(--font-display);font-size:2rem;font-weight:800;margin-bottom:12px;">
+              Dispatch Core Transmission
+            </h2>
+            <p style="color:var(--text-secondary);font-size:0.92rem;line-height:1.6;margin-bottom:24px;">
+              Direct frequency channel to initialize high-throughput architectural engagements or advisory roles.
+            </p>
+            <form onsubmit="event.preventDefault(); alert('Transmission dispatched to core beacon.');">
+              <div class="form-row">
+                <label>IDENTIFIER // NAME</label>
+                <input type="text" class="input-cyber" placeholder="Sarah Connor" required />
+              </div>
+              <div class="form-row">
+                <label>FREQUENCY // EMAIL</label>
+                <input type="email" class="input-cyber" placeholder="sarah@resistance.ai" required />
+              </div>
+              <div class="form-row">
+                <label>PAYLOAD // MESSAGE</label>
+                <textarea class="input-cyber" rows="4" placeholder="Let's architect something phenomenal..." required></textarea>
+              </div>
+              <button type="submit" class="btn-biosynth-magnetic" style="width:100%;justify-content:center;">
+                Transmit Message ➔
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- 09. DEDICATED 404 ROUTE MODAL (Featuring 3D Quantum Monolith) -->
+  <div id="modal-404-portal" class="portal-404-modal-overlay">
+    <div class="portal-404-card">
+      <div style="font-family:var(--font-mono);font-size:0.82rem;color:var(--accent-amber);letter-spacing:0.12em;margin-bottom:12px;">
+        09. DEDICATED ERROR ROUTE // SPATIAL ANOMALY
+      </div>
+      <div style="max-width: 260px; margin: 0 auto 20px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border-glow); box-shadow: 0 0 30px var(--accent-glow);">
+        <img src="/assets/designs/biosynth/404_monolith.jpg" alt="3D Shattered Quantum Monolith" style="width:100%;height:auto;display:block;" />
+      </div>
+      <h2 style="font-family:var(--font-display);font-size:1.8rem;margin-bottom:12px;">
+        SECTOR ANOMALY DETECTED // 404
+      </h2>
+      <p style="color:var(--text-secondary);font-size:0.92rem;line-height:1.6;margin-bottom:24px;">
+        The requested coordinates do not exist in the active neural matrix. Return to known beacon telemetry coordinates.
+      </p>
+      <button id="close-404-btn" class="btn-biosynth-magnetic">
+        Return to Safe Coordinates ➔
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="biosynth-footer">
+    <div class="container">
+      <p>© 2026 BIOSYNTH SYSTEM • FULL-PAGE THREE.JS APPLE SCROLLYTELLING SUITE • ALL 9 SECTIONS AUTHENTIC 3D</p>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       CLIENT-SIDE SCRIPT: LENIS + FULL-PAGE APPLE 3D SCROLLYTELLING ENGINE
+       ========================================================================== -->
+  <script>
+    (function() {
+      // 1. Lenis Smooth Momentum Scroll Engine
+      var lenis = null;
+      if (typeof Lenis !== 'undefined') {
+        lenis = new Lenis({
+          duration: 1.25,
+          easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+          smoothWheel: true,
+          wheelMultiplier: 1.0,
+          touchMultiplier: 1.5
+        });
+
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add(function(time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
+
+      // 2. Real-Time Top Progress Bar
+      window.addEventListener('scroll', function() {
+        var winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        var bar = document.getElementById('scroll-progress');
+        if (bar) bar.style.width = scrolled + '%';
+      });
+
+      // 3. Navigation Active Tracker
+      var navLinks = document.querySelectorAll('.nav-menu a');
+      var sections = document.querySelectorAll('section.biosynth-section');
+      window.addEventListener('scroll', function() {
+        var scrollPos = window.scrollY + 200;
+        sections.forEach(function(sec) {
+          if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
+            var id = sec.getAttribute('id');
+            navLinks.forEach(function(link) {
+              link.classList.remove('active');
+              if (link.getAttribute('href') === '#' + id) {
+                link.classList.add('active');
+              }
+            });
+            var hudSec = document.getElementById('hud-section-label');
+            if (hudSec) hudSec.textContent = 'ACTIVE SECTOR: ' + id.toUpperCase();
+          }
+        });
+      });
+
+      // 4. Dedicated 404 Route Modal Handlers
+      var modal404 = document.getElementById('modal-404-portal');
+      var open404Btn = document.getElementById('open-404-btn');
+      var close404Btn = document.getElementById('close-404-btn');
+
+      if (open404Btn && modal404) {
+        open404Btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          modal404.classList.add('active');
+        });
+      }
+      if (close404Btn && modal404) {
+        close404Btn.addEventListener('click', function() {
+          modal404.classList.remove('active');
+        });
+      }
+
+      // ==========================================================================
+      // 5. MASTERPIECE 3D SPATIAL CANVAS (PERSISTENT FROM FIRST TO LAST SECTION)
+      // ==========================================================================
+      var canvas = document.getElementById('biosynth-global-canvas');
+      if (canvas && typeof THREE !== 'undefined') {
+        var scene = new THREE.Scene();
+        // Camera with wide natural perspective
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
+        camera.position.set(0, 0, 180);
+
+        var renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Atmospheric Volumetric Lighting
+        var ambientLight = new THREE.AmbientLight(0x0a1428, 1.8);
+        scene.add(ambientLight);
+
+        // Warm directional key light
+        var dirLight1 = new THREE.DirectionalLight(0xFF7A00, 2.5);
+        dirLight1.position.set(120, 80, 100);
+        scene.add(dirLight1);
+
+        // Cool azure rim light
+        var dirLight2 = new THREE.DirectionalLight(0x0EA5E9, 1.8);
+        dirLight2.position.set(-100, -80, 80);
+        scene.add(dirLight2);
+
+        // Point light inside the core
+        var coreLight = new THREE.PointLight(0xFF7A00, 3.2, 350);
+        coreLight.position.set(0, 0, 0);
+        scene.add(coreLight);
+
+        // ------------------------------------------------------------------------
+        // 3D Masterpiece Bio-Digital Neural Core (Centerpiece)
+        // ------------------------------------------------------------------------
+        var masterGroup = new THREE.Group();
+        scene.add(masterGroup);
+
+        // ------------------------------------------------------------------------
+        // Real 3D Spatial Model (Loaded via GLTFLoader - Zero Primitives)
+        // ------------------------------------------------------------------------
+        var cyberMesh = null;
+        if (typeof THREE.GLTFLoader !== 'undefined') {
+          var loader = new THREE.GLTFLoader();
+          loader.load('/assets/cyber-helmet.glb', function(gltf) {
+            cyberMesh = gltf.scene;
+
+            // Center geometry and scale to majestic spatial dimensions
+            var bbox = new THREE.Box3().setFromObject(cyberMesh);
+            var center = bbox.getCenter(new THREE.Vector3());
+            var size = bbox.getSize(new THREE.Vector3());
+            cyberMesh.position.sub(center); // perfect center alignment
+
+            var maxAxis = Math.max(size.x, size.y, size.z);
+            var targetScale = 52 / maxAxis;
+            cyberMesh.scale.set(targetScale, targetScale, targetScale);
+
+            // Ensure full PBR lighting response
+            cyberMesh.traverse(function(node) {
+              if (node.isMesh && node.material) {
+                if (node.material.isMeshStandardMaterial) {
+                  node.material.envMapIntensity = 1.4;
+                  node.material.roughness = Math.max(0.18, node.material.roughness * 0.85);
+                }
+              }
+            });
+
+            masterGroup.add(cyberMesh);
+          });
+        }
+
+        // ------------------------------------------------------------------------
+        // Volumetric Dynamic Neural Constellation Web (Background Starfield)
+        // ------------------------------------------------------------------------
+        var starCount = 140;
+        var starPositions = [];
+        var starVelocities = [];
+        var starGeo = new THREE.BufferGeometry();
+        var starPosArray = new Float32Array(starCount * 3);
+
+        for (var s = 0; s < starCount; s++) {
+          var sx = (Math.random() - 0.5) * 700;
+          var sy = (Math.random() - 0.5) * 700;
+          var sz = (Math.random() - 0.5) * 500;
+          starPositions.push({ x: sx, y: sy, z: sz });
+          starVelocities.push({
+            vx: (Math.random() - 0.5) * 0.18,
+            vy: (Math.random() - 0.5) * 0.18,
+            vz: (Math.random() - 0.5) * 0.18
+          });
+          starPosArray[s * 3] = sx;
+          starPosArray[s * 3 + 1] = sy;
+          starPosArray[s * 3 + 2] = sz;
+        }
+
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPosArray, 3));
+        var starMat = new THREE.PointsMaterial({
+          color: 0xFFA726,
+          size: 3.5,
+          transparent: true,
+          opacity: 0.8,
+          blending: THREE.AdditiveBlending
+        });
+        var starPoints = new THREE.Points(starGeo, starMat);
+        scene.add(starPoints);
+
+        // Dynamic Line Mesh Connecting Nearby Stars
+        var maxLines = 160;
+        var lineGeo = new THREE.BufferGeometry();
+        var linePos = new Float32Array(maxLines * 2 * 3);
+        lineGeo.setAttribute('position', new THREE.BufferAttribute(linePos, 3));
+        var lineMat = new THREE.LineBasicMaterial({
+          color: 0xFF7A00,
+          transparent: true,
+          opacity: 0.22,
+          blending: THREE.AdditiveBlending
+        });
+        var starLines = new THREE.LineSegments(lineGeo, lineMat);
+        scene.add(starLines);
+
+        // Camera Target State
+        var targetCamX = 0, targetCamY = 0, targetCamZ = 180;
+        var targetRotY = 0, targetRotX = 0;
+
+        // Continuous Ambient & Motion Loop
+        var clock = new THREE.Clock();
+        function animateScene() {
+          requestAnimationFrame(animateScene);
+          var elapsed = clock.getElapsedTime();
+
+          // Smooth 60fps inertial lerping toward scroll targets
+          camera.position.x += (targetCamX - camera.position.x) * 0.08;
+          camera.position.y += (targetCamY - camera.position.y) * 0.08;
+          camera.position.z += (targetCamZ - camera.position.z) * 0.08;
+
+          masterGroup.rotation.y += (targetRotY - masterGroup.rotation.y) * 0.08;
+          masterGroup.rotation.x += (targetRotX - masterGroup.rotation.x) * 0.08;
+
+          // Organic ambient floating drift on the real 3D model
+          if (cyberMesh) {
+            cyberMesh.position.y = Math.sin(elapsed * 1.5) * 1.8;
+          }
+
+          // Pulse core light intensity
+          coreLight.intensity = 2.4 + Math.sin(elapsed * 2.0) * 0.6;
+
+          // Update background star drift
+          var lineIdx = 0;
+          var posAttr = starPoints.geometry.attributes.position;
+          var lineAttr = starLines.geometry.attributes.position;
+
+          for (var i = 0; i < starCount; i++) {
+            var sp = starPositions[i];
+            var sv = starVelocities[i];
+            sp.x += sv.vx;
+            sp.y += sv.vy;
+            sp.z += sv.vz;
+
+            if (Math.abs(sp.x) > 350) sv.vx *= -1;
+            if (Math.abs(sp.y) > 350) sv.vy *= -1;
+            if (Math.abs(sp.z) > 250) sv.vz *= -1;
+
+            posAttr.array[i * 3] = sp.x;
+            posAttr.array[i * 3 + 1] = sp.y;
+            posAttr.array[i * 3 + 2] = sp.z;
+
+            // Connect nearby stars with luminous synaptic lines
+            if (lineIdx < maxLines) {
+              for (var j = i + 1; j < Math.min(i + 8, starCount); j++) {
+                var sp2 = starPositions[j];
+                var dx = sp.x - sp2.x;
+                var dy = sp.y - sp2.y;
+                var dz = sp.z - sp2.z;
+                var distSq = dx * dx + dy * dy + dz * dz;
+
+                if (distSq < 13000 && lineIdx < maxLines) {
+                  lineAttr.array[lineIdx * 6] = sp.x;
+                  lineAttr.array[lineIdx * 6 + 1] = sp.y;
+                  lineAttr.array[lineIdx * 6 + 2] = sp.z;
+                  lineAttr.array[lineIdx * 6 + 3] = sp2.x;
+                  lineAttr.array[lineIdx * 6 + 4] = sp2.y;
+                  lineAttr.array[lineIdx * 6 + 5] = sp2.z;
+                  lineIdx++;
+                }
+              }
+            }
+          }
+          posAttr.needsUpdate = true;
+          lineAttr.needsUpdate = true;
+
+          // Update live HUD readout
+          if (hudCoords) {
+            hudCoords.textContent = 'Z: ' + camera.position.z.toFixed(1) + ' // ROT: ' + (masterGroup.rotation.y * 57.3).toFixed(0) + '°';
+          }
+
+          renderer.render(scene, camera);
+        }
+        animateScene();
+
+        // ======================================================================
+        // FULL-PAGE APPLE-CANVAS SCROLLYTELLING (First to Last Section)
+        // ======================================================================
+        var hudCoords = document.getElementById('hud-camera-coords');
+
+        ScrollTrigger.create({
+          trigger: "main.biosynth-flow",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: 1.4,
+          onUpdate: function(self) {
+            var p = self.progress; // 0.0 at top of Hero, 1.0 at bottom of Contact
+
+            if (p < 0.14) { // Sector 01: Hero
+              var subP = p / 0.14;
+              targetCamX = 0 - (subP * 40);
+              targetCamY = 0 - (subP * 8);
+              targetCamZ = 180 - (subP * 45);
+              targetRotY = subP * 0.7;
+              targetRotX = 0;
+            } else if (p < 0.28) { // Sector 02: About
+              var subP = (p - 0.14) / 0.14;
+              targetCamX = -40 + (subP * 75);
+              targetCamY = -8 + (subP * 20);
+              targetCamZ = 135 - (subP * 30);
+              targetRotY = 0.7 - (subP * 1.4);
+              targetRotX = subP * 0.35;
+            } else if (p < 0.42) { // Sector 03: Projects
+              var subP = (p - 0.28) / 0.14;
+              targetCamX = 35 - (subP * 35);
+              targetCamY = 12 + (subP * 18);
+              targetCamZ = 105 + (subP * 20);
+              targetRotY = -0.7 + (subP * 0.7);
+              targetRotX = 0.35 + (subP * 0.25);
+            } else if (p < 0.57) { // Sector 04: Skills
+              var subP = (p - 0.42) / 0.15;
+              targetCamX = 0 + (subP * 40);
+              targetCamY = 30 - (subP * 65);
+              targetCamZ = 125 - (subP * 7);
+              targetRotY = subP * 0.8;
+              targetRotX = 0.6 - (subP * 0.85);
+            } else if (p < 0.71) { // Sector 05: Experience
+              var subP = (p - 0.57) / 0.14;
+              targetCamX = 40 - (subP * 78);
+              targetCamY = -35 + (subP * 52);
+              targetCamZ = 118 - (subP * 6);
+              targetRotY = 0.8 - (subP * 1.4);
+              targetRotX = -0.25 + (subP * 0.35);
+            } else if (p < 0.85) { // Sector 06: Open Source
+              var subP = (p - 0.71) / 0.14;
+              targetCamX = -38 + (subP * 38);
+              targetCamY = 17 - (subP * 28);
+              targetCamZ = 112 + (subP * 50);
+              targetRotY = -0.6 + (subP * 0.6);
+              targetRotX = 0.1 - (subP * 0.2);
+            } else { // Sector 07-08: Resume & Contact
+              var subP = (p - 0.85) / 0.15;
+              targetCamX = 0;
+              targetCamY = -11 + (subP * 58);
+              targetCamZ = 162 - (subP * 70);
+              targetRotY = subP * 1.8;
+              targetRotX = -0.1 + (subP * 0.8);
+            }
+          }
+        });
+
+        // Resize Listener
+        window.addEventListener('resize', function() {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+      }
+
+      // 6. Interactive 3D Card Perspective Tilt
+      var cards = document.querySelectorAll('.showcase-3d-card, .project-3d-item, .contact-cyber-form-card');
+      cards.forEach(function(card) {
+        card.addEventListener('mousemove', function(e) {
+          var rect = card.getBoundingClientRect();
+          var x = e.clientX - rect.left - rect.width / 2;
+          var y = e.clientY - rect.top - rect.height / 2;
+          var rotX = (-y / rect.height) * 12;
+          var rotY = (x / rect.width) * 12;
+          card.style.transform = 'perspective(900px) rotateX(' + rotX.toFixed(2) + 'deg) rotateY(' + rotY.toFixed(2) + 'deg) scale3d(1.02, 1.02, 1.02)';
+        });
+        card.addEventListener('mouseleave', function() {
+          card.style.transform = 'perspective(900px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>

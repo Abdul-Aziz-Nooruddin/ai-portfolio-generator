@@ -28,7 +28,7 @@ class EmailService {
     }
   }
 
-  async sendMail({ to, subject, html, text, meta = {} }) {
+  async sendMail({ to, subject, html, text, replyTo, meta = {} }) {
     if (!to || !to.includes('@')) {
       console.warn('[EMAIL] Skipped sending email: invalid or missing recipient', to);
       return { success: false, reason: 'invalid_email' };
@@ -46,7 +46,8 @@ class EmailService {
           to,
           subject,
           html,
-          text: text || html.replace(/<[^>]+>/g, ' ')
+          text: text || html.replace(/<[^>]+>/g, ' '),
+          replyTo: replyTo || undefined
         });
       } catch (err) {
         console.error(`[EMAIL ERROR] Failed to send email to ${to}:`, err.message);

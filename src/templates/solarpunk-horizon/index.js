@@ -145,8 +145,6 @@ const SolarpunkHorizonTemplate = {
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -590,7 +588,7 @@ const SolarpunkHorizonTemplate = {
       display: flex;
       flex-direction: column;
       box-shadow: var(--shadow-glass);
-      transition: all 0.4s var(--transition-organic);
+      transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s var(--transition-organic);
     }
 
     .greenhouse-project-card:hover {
@@ -1429,18 +1427,9 @@ const SolarpunkHorizonTemplate = {
     window.addEventListener('DOMContentLoaded', () => {
       initSolarpunk3D();
 
-      if (window.gsap && window.ScrollTrigger) {
-        gsap.registerPlugin(ScrollTrigger);
+      if (window.gsap) {
         gsap.from('.hero-solar-headline', { opacity: 0, y: 35, duration: 1.1, ease: 'power3.out' });
         gsap.from('.hero-glass-pavilion', { opacity: 0, x: 35, duration: 1.1, delay: 0.15, ease: 'power3.out' });
-        gsap.from('.greenhouse-project-card', {
-          scrollTrigger: { trigger: '#ecosystem', start: 'top 80%' },
-          opacity: 0,
-          y: 45,
-          stagger: 0.14,
-          duration: 0.9,
-          ease: 'power3.out'
-        });
       }
     });
   </script>

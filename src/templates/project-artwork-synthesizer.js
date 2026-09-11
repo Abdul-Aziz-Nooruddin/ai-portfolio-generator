@@ -56,20 +56,6 @@ class ProjectArtworkSynthesizer {
     { src: '/assets/designs/cyber/cyber_gnome_nobg.png', label: 'Automaton Sentinel Node', icon: '🦾', color: '#10B981', keywords: ['automaton', 'worker', 'daemon', 'cron', 'sentinel', 'service', 'task', 'scheduler'] }
   ];
 
-  // Dedicated Abyssal Nautilus 3D Assets (Multi-variant treasure chests & oceanic relics)
-  static nautilusCatalog = [
-    { src: '/assets/designs/nautilus/treasure_chest_wheel_nobg.png', label: 'Abyssal Helm Chest', icon: '☸️', color: '#00F5D4', keywords: ['portfolio', 'wheel', 'helm', 'navigation', 'routing', 'engine', 'core', 'platform', 'framework'] },
-    { src: '/assets/designs/nautilus/chest_compass_lid_nobg.png', label: 'Cartographer Compass Vault', icon: '🧭', color: '#0EA5E9', keywords: ['compass', 'geo', 'map', 'cartography', 'tracking', 'location', 'travel', 'spatial', 'coordinate'] },
-    { src: '/assets/designs/nautilus/chest_wheel_lid_nobg.png', label: 'Submersible Mechanism Vault', icon: '⚙️', color: '#F59E0B', keywords: ['system', 'backend', 'mechanism', 'pipeline', 'service', 'database', 'sql', 'management', 'lms'] },
-    { src: '/assets/designs/nautilus/treasure_chest_compass_nobg.png', label: 'Sunken Astrolabe Coffer', icon: '🪙', color: '#FBBF24', keywords: ['crypto', 'finance', 'wallet', 'token', 'blockchain', 'escrow', 'algorand', 'web3', 'consent'] },
-    { src: '/assets/designs/nautilus/treasure_chest_nobg.png', label: 'Deep Relic Vault', icon: '📦', color: '#38BDF8', keywords: ['storage', 'archive', 'data', 'cloud', 'vault', 'records', 'file', 'student'] },
-    { src: '/assets/designs/nautilus/nautical_compass_nobg.png', label: 'Gilded Sextant Chronometer', icon: '⏱️', color: '#F59E0B', keywords: ['time', 'metrics', 'monitoring', 'clock', 'speed', 'performance', 'latency', 'telemetry'] },
-    { src: '/assets/designs/nautilus/porthole_nobg.png', label: 'Titanium Porthole Telemetry', icon: '🔍', color: '#00F5D4', keywords: ['vision', 'ui', 'view', 'dashboard', 'frontend', 'monitor', 'interface', 'glass'] },
-    { src: '/assets/designs/nautilus/coral_tree_nobg.png', label: 'Bioluminescent Coral Substrate', icon: '🪸', color: '#10B981', keywords: ['ai', 'neural', 'learning', 'tree', 'algorithm', 'bio', 'growth', 'model'] },
-    { src: '/assets/designs/nautilus/seahorse_nobg.png', label: 'Abyssal Seahorse Conduit', icon: '🌊', color: '#06B6D4', keywords: ['message', 'queue', 'stream', 'flow', 'chat', 'note', 'pass', 'protocol', 'messenger'] },
-    { src: '/assets/designs/nautilus/squid_nobg.png', label: 'Cephalopod Mesh Network', icon: '🦑', color: '#A855F7', keywords: ['distributed', 'mesh', 'network', 'peer', 'cluster', 'socket', 'node'] }
-  ];
-
   /**
    * Resolves a distinct, highly relevant 3D image for a project.
    * Guarantees 0 duplicate matching images within the same portfolio.
@@ -83,13 +69,10 @@ class ProjectArtworkSynthesizer {
     const combinedText = `${seed} ${nameText} ${descText} ${categoryText} ${techText}`;
 
     const isCyberTheme = (theme === 'cyber-architect-sprawl');
-    const isNautilusTheme = (theme === 'abyssal-nautilus-artisan');
 
     let catalog;
     if (isCyberTheme) {
       catalog = [...this.cyberCatalog, ...this.assetCatalog];
-    } else if (isNautilusTheme) {
-      catalog = [...this.nautilusCatalog, ...this.assetCatalog];
     } else {
       catalog = this.assetCatalog;
     }
@@ -110,8 +93,7 @@ class ProjectArtworkSynthesizer {
     // 1. Score each asset in catalog based on keyword matches & theme affinity
     const scoredList = catalog.map((item, originalIndex) => {
       let score = 0;
-      const isThemeNative = (isCyberTheme && this.cyberCatalog.some(c => c.src === item.src)) ||
-                            (isNautilusTheme && this.nautilusCatalog.some(n => n.src === item.src));
+      const isThemeNative = (isCyberTheme && this.cyberCatalog.some(c => c.src === item.src));
 
       // Theme affinity boost: native 3D assets get a boost to match the aesthetic DNA
       if (isThemeNative) {

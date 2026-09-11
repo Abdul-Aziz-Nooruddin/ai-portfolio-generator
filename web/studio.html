@@ -1965,15 +1965,6 @@
                 <p>Syne • Electric Cyan &amp; Neon Magenta</p>
               </div>
             </div>
-
-            <!-- 26. Abyssal Nautilus Artisan -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-nautilus-artisan', this)">
-              <img src="/assets/designs/nautilus/nautilus_hand_nobg.png" class="universe-thumb" alt="Abyssal Nautilus Artisan" style="background:#020B14;object-fit:contain;padding:8px;">
-              <div class="universe-info">
-                <h4>🐚 Abyssal Nautilus Artisan</h4>
-                <p>Cinzel Decorative • Biolume Cyan &amp; Sea Teal</p>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -2507,8 +2498,7 @@
       'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' },
       'swiss-editorial-monograph': { name: 'Swiss Editorial Monograph', icon: '📰', thumb: '/assets/3d/bg_engineering_archive.jpg' },
       'solarpunk-horizon': { name: 'Solarpunk Horizon', icon: '☀️', thumb: '/assets/3d/bg_emerald_sanctuary.jpg' },
-      'cyber-architect-sprawl': { name: 'Cyber-Architect Sprawl', icon: '🤖', thumb: '/assets/designs/cyber/hero_hand_nobg.png' },
-      'abyssal-nautilus-artisan': { name: 'Abyssal Nautilus Artisan', icon: '🐚', thumb: '/assets/designs/nautilus/nautilus_hand_nobg.png' }
+      'cyber-architect-sprawl': { name: 'Cyber-Architect Sprawl', icon: '🤖', thumb: '/assets/designs/cyber/hero_hand_nobg.png' }
     };
 
     let currentVipAdmin = false;
@@ -2668,6 +2658,45 @@
       }
       updateAllowanceUI();
       renderGeneratedHistoryUI();
+      await syncPortfoliosFromCloud();
+    }
+
+    async function syncPortfoliosFromCloud() {
+      try {
+        const res = await fetch('/api/user/portfolios', { credentials: 'include' });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (data.success && Array.isArray(data.portfolios)) {
+          const localHistory = getGeneratedHistory();
+          const localMap = new Map();
+          localHistory.forEach(h => localMap.set(h.siteId, h));
+
+          // Merge cloud portfolios into local history
+          data.portfolios.forEach(cloudItem => {
+            if (!localMap.has(cloudItem.siteId)) {
+              localMap.set(cloudItem.siteId, cloudItem);
+            }
+          });
+
+          const merged = Array.from(localMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+          saveGeneratedHistory(merged);
+          renderGeneratedHistoryUI();
+
+          // Sync any local-only items up to cloud
+          const cloudIds = new Set(data.portfolios.map(p => p.siteId));
+          const localOnly = localHistory.filter(h => !cloudIds.has(h.siteId));
+          if (localOnly.length > 0) {
+            fetch('/api/user/portfolios/sync', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ items: localOnly })
+            }).catch(() => {});
+          }
+        }
+      } catch (e) {
+        console.warn('[Studio] Cloud portfolio sync warning:', e);
+      }
     }
 
     function updateAllowanceUI() {
@@ -2813,6 +2842,14 @@
       const updated = [item, ...history.filter(h => h.siteId !== item.siteId)].slice(0, 15);
       saveGeneratedHistory(updated);
       renderGeneratedHistoryUI(item.siteId);
+
+      // Instantly sync to cloud database so phone and all other devices see it
+      fetch('/api/user/portfolios/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ item })
+      }).catch(() => {});
     }
 
     function formatTimeAgo(timestamp) {

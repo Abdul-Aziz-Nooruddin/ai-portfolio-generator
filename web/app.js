@@ -373,13 +373,6 @@ function openStudioWithTemplate(templateId) {
       bio: 'Architecting high-throughput distributed systems, cyber iris telemetry, and holographic WebGL control planes.',
       skills: ['Rust', 'Go', 'WebAssembly', 'Three.js', 'WebGPU', 'Distributed Systems'],
       theme: 'cyber-architect-sprawl'
-    },
-    'abyssal-nautilus-artisan': {
-      name: 'Ava Chen',
-      role: 'Deep-Sea Tech Artisan & Systems Explorer',
-      bio: 'Engineering subsea acoustic telemetry networks, biomimetic UI algorithms, and resilient oceanic computing architectures.',
-      skills: ['WebGPU', 'Three.js', 'React', 'Python', 'Acoustic Telemetry', 'Distributed Nodes'],
-      theme: 'abyssal-nautilus-artisan'
     }
   };
 

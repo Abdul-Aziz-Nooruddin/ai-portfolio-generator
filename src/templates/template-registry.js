@@ -29,11 +29,9 @@ const { ChronoObsidianSanctuaryTemplate } = require('./chrono-obsidian-sanctuary
 const { SwissEditorialMonographTemplate } = require('./swiss-editorial-monograph');
 const { SolarpunkHorizonTemplate } = require('./solarpunk-horizon');
 const { CyberArchitectSprawlTemplate } = require('./cyber-architect-sprawl');
-const { AbyssalNautilusArtisanTemplate } = require('./abyssal-nautilus-artisan');
 
 class TemplateRegistry {
   static templates = {
-    'abyssal-nautilus-artisan': AbyssalNautilusArtisanTemplate,
     'cyber-architect-sprawl': CyberArchitectSprawlTemplate,
     'swiss-editorial-monograph': SwissEditorialMonographTemplate,
     'solarpunk-horizon': SolarpunkHorizonTemplate,
@@ -192,9 +190,6 @@ class TemplateRegistry {
     const path = require('path');
 
     const targetTemplate = candidateProfile.templateId || '';
-    if (targetTemplate === 'abyssal-nautilus-artisan' || siteId === 'abyssal-nautilus-artisan') {
-      return AbyssalNautilusArtisanTemplate.render404Page(siteId, candidateProfile);
-    }
     if (targetTemplate === 'cyber-architect-sprawl' || siteId === 'cyber-architect-sprawl') {
       return CyberArchitectSprawlTemplate.render404Page(siteId, candidateProfile);
     }
@@ -204,9 +199,6 @@ class TemplateRegistry {
       if (fs.existsSync(siteFile)) {
         try {
           const content = fs.readFileSync(siteFile, 'utf8');
-          if (content.includes('abyssal-nautilus-artisan') || content.includes('abyss-container') || content.includes('nautilus_hand_nobg.png')) {
-            return AbyssalNautilusArtisanTemplate.render404Page(siteId, candidateProfile);
-          }
           if (content.includes('cyber-architect-sprawl') || content.includes('sprawl-wrapper') || content.includes('hero_hand_nobg.png')) {
             return CyberArchitectSprawlTemplate.render404Page(siteId, candidateProfile);
           }
@@ -220,7 +212,6 @@ class TemplateRegistry {
 
 module.exports = {
   TemplateRegistry,
-  AbyssalNautilusArtisanTemplate,
   CyberArchitectSprawlTemplate,
   CosmicAstronautTemplate,
   CyberCrystalTemplate,
