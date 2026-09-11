@@ -794,7 +794,7 @@ Reply:
         }
       }
 
-      // 7. Notify user via Telegram / webhook notifier
+      // 7. Notify user via webhook notifier
       if (this.notifier) {
         let recipient = conversation.phone_number;
         if (!recipient && user_id) {

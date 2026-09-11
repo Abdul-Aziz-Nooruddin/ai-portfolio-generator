@@ -292,11 +292,11 @@ Subscribe here: ${subscribeUrl}
         <h2 style="color: #18181b; margin-top: 0;">Time to polish your portfolio?</h2>
         <p>Hey ${name},</p>
         <p>New projects, new skills, or a new role? Your portfolio is your 24/7 online resume.</p>
-        <p>Remember, you can generate a fresh AI portfolio in 60 seconds with our Telegram bot or Web Studio anytime.</p>
+        <p>Remember, you can generate a fresh AI portfolio in 60 seconds with our Web Studio anytime.</p>
         <div style="margin: 24px 0;">
-          <a href="${studioUrl || 'https://t.me/ai_portfolio_generator_bot'}" style="background: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">Generate a Fresh Preview &rarr;</a>
+          <a href="${studioUrl || 'https://myfolio.tech/studio'}" style="background: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: 600; display: inline-block;">Generate a Fresh Preview &rarr;</a>
         </div>
-        <p style="color: #71717a; font-size: 14px;">— Devfolio AI</p>
+        <p style="color: #71717a; font-size: 14px;">— MyFolio 3D</p>
       </div>
     `;
 

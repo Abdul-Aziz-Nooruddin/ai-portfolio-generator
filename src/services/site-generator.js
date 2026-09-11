@@ -63,14 +63,13 @@ class SiteGenerator {
 
   injectPreviewWatermark(html, isPaid = false) {
     if (isPaid) return html;
-    const botUsername = process.env.TELEGRAM_BOT_USERNAME || 'ai_portfolio_generator_bot';
 
     const watermarkHtml = `
     <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
     <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 10px 24px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
       <div style="font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
         <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%; box-shadow: 0 0 8px #38bdf8;"></span>
-        <span>🔒 <strong>Official 3D Preview</strong> • Created with @${botUsername}</span>
+        <span>🔒 <strong>Official 3D Preview</strong> • Powered by MyFolio 3D</span>
       </div>
       <a href="/subscribe" target="_blank" style="background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; font-weight: 800; font-size: 0.84rem; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(16,185,129,0.4); transition: transform 0.2s ease;">
         💳 Unlock Full Portfolio (₹149/mo) ➔

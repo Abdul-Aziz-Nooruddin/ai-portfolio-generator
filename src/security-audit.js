@@ -44,7 +44,7 @@ async function runSecurityAudit() {
           const vulnCounts = auditResult.metadata?.vulnerabilities || {};
           const highCritical = (vulnCounts.high || 0) + (vulnCounts.critical || 0);
           if (highCritical > 0) {
-            report('Dependencies', 'Upstream Package Advisories', 'WARN', `${highCritical} transitive advisories in node-telegram-bot-api upstream tree.`);
+            report('Dependencies', 'Upstream Package Advisories', 'WARN', `${highCritical} transitive advisories in upstream dependencies.`);
           } else {
             report('Dependencies', 'Low/Moderate Vulnerabilities', 'WARN', `${vulnCounts.moderate || 0} moderate vulnerabilities found.`);
           }

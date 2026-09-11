@@ -1,5 +1,5 @@
 /**
- * Telegram & Web Portfolio Studio - Main Server
+ * Web Portfolio Studio - Main Server
  */
 
 require('dotenv').config();
@@ -24,7 +24,6 @@ const { HostingProvider, NetlifyDeployer } = require('./services/hosting-provide
 const { RazorpayService } = require('./services/razorpay-service');
 const { EmailService } = require('./services/email-service');
 const { LifecycleService } = require('./services/lifecycle-service');
-const { TelegramHandler } = require('./handlers/telegram-handler');
 const { FigmaService } = require('./services/figma-service');
 const { CustomDomainService } = require('./services/custom-domain-service');
 const { DesignEngine, IA_MODELS, VISUAL_UNIVERSES } = require('./design-engine');
@@ -327,17 +326,6 @@ if (require.main === module) {
 // Initialize GitHub AI Portfolio Generation Pipeline
 const { GitHubGenerationPipeline } = require('./services/github-generation-pipeline');
 const githubPipeline = new GitHubGenerationPipeline(aiService, siteGenerator);
-
-// 1. Initialize Telegram Bot Handler (Polling when running as main server)
-let telegramHandler = null;
-if (require.main === module && process.env.TELEGRAM_BOT_TOKEN) {
-  telegramHandler = new TelegramHandler(
-    conversationEngine,
-    aiService,
-    process.env.TELEGRAM_BOT_TOKEN
-  );
-  lifecycleService.setNotifier((chatId, msg, opts) => telegramHandler.sendSafe(chatId, msg, opts));
-}
 
 // Razorpay Payment & Subscription Webhook Route
 app.post('/webhook/razorpay', async (req, res) => {
@@ -1697,9 +1685,8 @@ app.post('/api/contact', async (req, res) => {
     if (!name || !email || !message) {
       return res.status(400).json({ error: 'Name, email, and message are required.' });
     }
-    // Log the contact submission (extend to Telegram/email notification here)
+    // Log the contact submission
     console.log(`[CONTACT FORM] ${new Date().toISOString()} | ${type || 'general'} | ${name} <${email}>: ${message.substring(0, 100)}`);
-    // TODO: Send to Telegram bot or email service
     res.json({ success: true, message: 'Thank you! We will respond within 24 hours.' });
   } catch (err) {
     console.error('[CONTACT] Error:', err);
@@ -2172,16 +2159,7 @@ app.post('/api/sites/:siteId/contact', async (req, res) => {
 
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
 
-    // 1. Send instant alert to site owner on Telegram if available
-    if (telegramHandler) {
-      const user = await dbService.getUser(siteId) || await dbService.getUserById(siteId);
-      if (user?.phone_number) {
-        const leadMsg = `📬 **New Client Lead from your Portfolio!**\n\n**Name:** ${name}\n**Email:** ${email}\n**Message:** "${message}"`;
-        await telegramHandler.sendSafe(user.phone_number, leadMsg);
-      }
-    }
-
-    // 2. Send direct email notification to the portfolio owner
+    // Send direct email notification to the portfolio owner
     let ownerEmail = null;
     let ownerName = 'Portfolio Creator';
 
@@ -2670,11 +2648,11 @@ app.get('/p/:siteId', async (req, res) => {
             url: 'https://myfolio.tech'
           },
           {
-            title: 'Telegram Autonomous Bot Engine',
-            name: 'Telegram Autonomous Bot Engine',
-            description: 'Conversational portfolio generator bot with real-time interactive generation telemetry and webhook pipeline.',
-            tags: ['Node.js', 'Telegram API', 'Automation'],
-            url: 'https://t.me/ai_portfolio_generator_bot'
+            title: 'Autonomous AI Synthesis Engine',
+            name: 'Autonomous AI Synthesis Engine',
+            description: 'Conversational portfolio generator engine with real-time interactive generation telemetry and streaming pipeline.',
+            tags: ['Node.js', 'AI Systems', 'Automation'],
+            url: 'https://myfolio.tech'
           },
           {
             title: '3D Spatial Visual Universe Engine',
@@ -2762,8 +2740,7 @@ app.get('/p/:siteId', async (req, res) => {
         contact: {
           email: 'alex.vance@myfolio.tech',
           github: 'https://github.com/Abdul-Aziz-Nooruddin',
-          linkedin: 'https://linkedin.com',
-          telegram: 'https://t.me/ai_portfolio_generator_bot'
+          linkedin: 'https://linkedin.com'
         },
         social: {
           github: 'https://github.com/Abdul-Aziz-Nooruddin',
@@ -2967,8 +2944,6 @@ app.get('/p/:siteId', async (req, res) => {
     // Unpaid preview
   }
 
-  const botUsername = process.env.TELEGRAM_BOT_USERNAME || 'ai_portfolio_generator_bot';
-
   if (!isPaid) {
     const watermarkHtml = `
     <!-- DIAGONAL LIVE PREVIEW BACKGROUND WATERMARK -->
@@ -2988,7 +2963,7 @@ app.get('/p/:siteId', async (req, res) => {
             LIVE PREVIEW
           </div>
           <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.2rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 8px;">
-            MYFOLIO SPATIAL UNIVERSE • @${botUsername}
+            MYFOLIO SPATIAL UNIVERSE • MYFOLIO.TECH
           </div>
         </div>
       </div>
@@ -3319,7 +3294,7 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
                 <li>Personal Domain: <code>&lt;name&gt;.myfolio.tech</code></li>
                 <li>Custom Domain Linking (<code>yourname.dev</code>)</li>
                 <li>Unlimited Edits &amp; GitHub Auto-Sync</li>
-                <li>Real-Time Telegram &amp; WhatsApp Visitor Alerts</li>
+                <li>Real-Time Email &amp; Recruiter Visitor Alerts</li>
                 <li>Recruiter Telemetry &amp; Analytics Dashboard</li>
                 <li>24/7 Priority Cloud Maintenance</li>
               </ul>
@@ -3446,7 +3421,6 @@ app.get('/health/deep', async (req, res) => {
     status: 'ok',
     database: await dbHealthCheck(dbService),
     gemini: await aiService.healthCheck(),
-    telegram: !!process.env.TELEGRAM_BOT_TOKEN,
     timestamp: new Date().toISOString()
   };
   res.json(checks);
@@ -3486,12 +3460,9 @@ if (require.main === module) {
 
   function startServer(portToUse) {
     const server = app.listen(portToUse, HOST, () => {
-      console.log(`🚀 Portfolio Bot Server running on port ${portToUse}`);
+      console.log(`🚀 MyFolio Platform Server running on port ${portToUse}`);
       console.log(`🌐 Local Studio:     http://localhost:${portToUse}`);
       console.log(`📱 Direct Previews:  http://localhost:${portToUse}/p/:siteId`);
-      if (process.env.TELEGRAM_BOT_TOKEN) {
-        console.log(`🤖 Telegram Bot: Active & Listening`);
-      }
     });
 
     server.on('error', (err) => {
