@@ -51,12 +51,14 @@ class HostingProvider {
 
     // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 24 hours)
     if (!fs.existsSync(siteDir)) {
-      fs.mkdirSync(siteDir, { recursive: true });
+      await fs.promises.mkdir(siteDir, { recursive: true });
     }
-    fs.writeFileSync(path.join(siteDir, 'index.html'), html);
-    if (css) fs.writeFileSync(path.join(siteDir, 'style.css'), css);
-    if (js) fs.writeFileSync(path.join(siteDir, 'script.js'), js);
-    fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8');
+    await Promise.all([
+      fs.promises.writeFile(path.join(siteDir, 'index.html'), html, 'utf8'),
+      css ? fs.promises.writeFile(path.join(siteDir, 'style.css'), css, 'utf8') : Promise.resolve(),
+      js ? fs.promises.writeFile(path.join(siteDir, 'script.js'), js, 'utf8') : Promise.resolve(),
+      fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8')
+    ]);
 
     // Generate genuine ATS-friendly PDF resume for the portfolio owner
     try {

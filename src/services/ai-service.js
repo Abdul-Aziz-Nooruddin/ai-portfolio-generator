@@ -25,54 +25,137 @@ class AIService {
   constructor(apiKey) {
     this.apiKey = apiKey;
     this.isAuthKey = apiKey && apiKey.startsWith('AQ.');
+    
+    // Multi-Key Rotation Pool: supports GEMINI_API_KEYS (comma-separated) or single GEMINI_API_KEY
+    const envKeys = (process.env.GEMINI_API_KEYS || '')
+      .split(',')
+      .map(k => k.trim())
+      .filter(Boolean);
+    const uniqueKeys = [...new Set([apiKey, ...envKeys].filter(Boolean))];
+    this.apiKeys = uniqueKeys.length > 0 ? uniqueKeys : (apiKey ? [apiKey] : []);
+    this.keyIndex = 0;
+    
     this.genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
     this.sdkAvailable = !!this.genAI;
+
+    // Rate Limit (429) Adaptive Circuit Breaker
+    this.circuitBreaker = {
+      isOpen: false,
+      openUntil: 0,
+      consecutive429s: 0,
+      cooldownMs: 25000
+    };
+  }
+
+  /**
+   * Returns next API key in round-robin sequence to distribute RPM quotas
+   */
+  getNextApiKey() {
+    if (this.apiKeys.length === 0) return this.apiKey;
+    const key = this.apiKeys[this.keyIndex % this.apiKeys.length];
+    this.keyIndex++;
+    return key;
+  }
+
+  /**
+   * Records a 429 rate limit violation and trips the circuit breaker if consecutive limit reached
+   */
+  recordRateLimitViolation() {
+    this.circuitBreaker.consecutive429s++;
+    if (this.circuitBreaker.consecutive429s >= 2) {
+      this.circuitBreaker.isOpen = true;
+      this.circuitBreaker.openUntil = Date.now() + this.circuitBreaker.cooldownMs;
+    }
+  }
+
+  /**
+   * Checks if the 429 circuit breaker is currently open
+   */
+  isCircuitOpen() {
+    if (!this.circuitBreaker.isOpen) return false;
+    if (Date.now() < this.circuitBreaker.openUntil) return true;
+    this.circuitBreaker.isOpen = false;
+    this.circuitBreaker.consecutive429s = 0;
+    return false;
+  }
+
+  /**
+   * Resets the circuit breaker state
+   */
+  resetCircuitBreaker() {
+    this.circuitBreaker.isOpen = false;
+    this.circuitBreaker.openUntil = 0;
+    this.circuitBreaker.consecutive429s = 0;
   }
 
   async callGemini(prompt) {
-    if (!this.apiKey || this.apiKey.includes('test') || this.apiKey === 'placeholder') {
+    // Circuit Breaker: If external API is currently in 429 cooldown, immediately fast-fail to trigger local fallback
+    if (this.isCircuitOpen()) {
+      throw new Error('CIRCUIT_OPEN_429: Gemini rate limit cooldown active. Using fast deterministic synthesis.');
+    }
+
+    const effectiveKey = this.apiKey || (this.apiKeys.length > 0 ? this.apiKeys[0] : '');
+    if (!effectiveKey || effectiveKey.includes('test') || effectiveKey === 'placeholder') {
       throw new Error('Gemini API key not configured.');
     }
 
     // Multi-model rotating fallback with ultra-fast priority
     for (const modelName of ACTIVE_MODELS) {
-      if (this.sdkAvailable) {
-        try {
-          const model = this.genAI.getGenerativeModel({
-            model: modelName,
-            generationConfig: {
-              temperature: 0.1,
-              maxOutputTokens: 2048,
-              responseMimeType: 'application/json'
-            }
-          });
-          const result = await model.generateContent(prompt);
-          const text = result.response.text();
-          const parsed = this.parseJsonResponse(text);
-          if (parsed && (parsed.extracted_data || parsed.branch || parsed.status || Object.keys(parsed).length > 0)) {
-            return parsed;
+      const activeKey = this.getNextApiKey();
+      const client = (activeKey === this.apiKey && this.genAI) ? this.genAI : new GoogleGenerativeAI(activeKey);
+
+      try {
+        const model = client.getGenerativeModel({
+          model: modelName,
+          generationConfig: {
+            temperature: 0.1,
+            maxOutputTokens: 2048,
+            responseMimeType: 'application/json'
           }
-        } catch (sdkError) {
-          console.warn(`[AI] Model ${modelName} fallback (${sdkError.message}), trying next...`);
+        });
+        const result = await model.generateContent(prompt);
+        const text = result.response.text();
+        const parsed = this.parseJsonResponse(text);
+        if (parsed && (parsed.extracted_data || parsed.branch || parsed.status || Object.keys(parsed).length > 0)) {
+          this.circuitBreaker.consecutive429s = 0;
+          return parsed;
         }
+      } catch (sdkError) {
+        if (sdkError.message && (sdkError.message.includes('429') || sdkError.message.includes('quota'))) {
+          this.circuitBreaker.consecutive429s++;
+          if (this.circuitBreaker.consecutive429s >= 2) {
+            this.circuitBreaker.isOpen = true;
+            this.circuitBreaker.openUntil = Date.now() + this.circuitBreaker.cooldownMs;
+          }
+        }
+        console.warn(`[AI] Model ${modelName} fallback (${sdkError.message.substring(0, 100)}), trying next...`);
       }
 
       // REST fallback for this model
       try {
-        const restResult = await this.callGeminiRest(prompt, modelName);
+        const restResult = await this.callGeminiRest(prompt, modelName, activeKey);
         if (restResult && (restResult.extracted_data || restResult.branch || restResult.status || Object.keys(restResult).length > 0)) {
+          this.circuitBreaker.consecutive429s = 0;
           return restResult;
         }
       } catch (restError) {
-        console.warn(`[AI] REST ${modelName} fallback: ${restError.message}`);
+        if (restError.message && (restError.message.includes('429') || restError.message.includes('quota'))) {
+          this.circuitBreaker.consecutive429s++;
+          if (this.circuitBreaker.consecutive429s >= 2) {
+            this.circuitBreaker.isOpen = true;
+            this.circuitBreaker.openUntil = Date.now() + this.circuitBreaker.cooldownMs;
+          }
+        }
+        console.warn(`[AI] REST ${modelName} fallback: ${restError.message.substring(0, 100)}`);
       }
     }
 
     throw new Error('All Gemini AI models currently busy or unreachable. Please try again in a moment!');
   }
 
-  async callGeminiRest(prompt, modelName = 'gemini-flash-latest') {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${this.apiKey}`;
+  async callGeminiRest(prompt, modelName = 'gemini-flash-latest', overrideKey = null) {
+    const keyToUse = overrideKey || this.apiKey;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${keyToUse}`;
 
     const response = await fetch(url, {
       method: 'POST',

@@ -44,6 +44,7 @@ const { UnifiedProfileNormalizer } = require('./services/unified-profile-normali
 const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
 const { ErrorRecoveryService } = require('./services/error-recovery-service');
 const { TemplateRegistry } = require('./templates/template-registry');
+const { globalConcurrencyManager } = require('./services/concurrency-manager');
 const compression = require('compression');
 
 const app = express();
@@ -970,307 +971,321 @@ app.post('/api/questionnaire/adaptive', (req, res) => {
   }
 });
 
-app.post('/api/generate/unified', async (req, res) => {
-  try {
-    const input = req.body || {};
-
-    // 1. If GitHub username is provided, fetch complete GitHub profile & synthesize real case studies
-    if (input.githubData?.username) {
-      try {
-        const { GitHubParser } = require('./services/github/github-parser');
-        const { GitHubClient } = require('./services/github/github-client');
-        const { GitHubNormalizer } = require('./services/github/github-normalizer');
-        const { GitHubProfileSynthesizer } = require('./services/github-profile-synthesizer');
-
-        const parsed = GitHubParser.parse(input.githubData.username);
-        if (parsed.valid) {
-          const ghClient = new GitHubClient();
-          const rawGithub = await ghClient.fetchCompleteProfile(parsed.username);
-          const normGithub = GitHubNormalizer.normalize(rawGithub);
-          const synth = new GitHubProfileSynthesizer(aiService);
-          const synthesizedGithub = await synth.synthesize(normGithub);
-
-          input.githubData = { ...input.githubData, ...synthesizedGithub };
-        }
-      } catch (ghErr) {
-        console.warn('[API] GitHub deep fetch fallback:', ghErr.message);
-      }
-    }
-
-    // 2. If resume was provided with rawBase64 or extractedTextSnippet, run deep parser if not yet done
-    if (input.resumeData?.rawBase64 && (!input.resumeData.skills || input.resumeData.skills.length === 0 || !input.resumeData.projects || input.resumeData.projects.length === 0) && aiService) {
-      try {
-        const buffer = Buffer.from(input.resumeData.rawBase64, 'base64');
-        const rawParsed = await aiService.parseResumeDocument(buffer, input.resumeData.mimeType || 'application/pdf');
-        if (rawParsed && rawParsed.extracted_data) {
-          input.resumeData = { ...input.resumeData, ...rawParsed.extracted_data };
-        } else if (rawParsed) {
-          input.resumeData = { ...input.resumeData, ...rawParsed };
-        }
-      } catch (resErr) {
-        console.warn('[API] Deep resume parse fallback:', resErr.message);
-      }
-    }
-
-    // 3. Early resolution of userHandle & siteId for unified asset storage
-    const authenticatedEmail = (req.user?.email || '').toLowerCase().trim();
-    const candidateEmail = (
-      authenticatedEmail ||
-      input.email ||
-      input.manualEmail ||
-      input.userEmail ||
-      input.resumeData?.email ||
-      ''
-    ).toLowerCase().trim();
-
-    // STRICT: Only authenticated abdulaziznoor9876@gmail.com has VIP Founder privileges
-    const isVipFounder = Boolean(
-      authenticatedEmail === 'abdulaziznoor9876@gmail.com'
-    );
-
-    // Determine the user's custom URL identifier (username)
-    let userHandle = (
-      req.user?.username ||
-      input.username ||
-      input.customUrlIdentifier ||
-      (isVipFounder ? 'abdulaziz' : '')
-    ).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '').replace(/^[-_]+|[-_]+$/g, '');
-
-    if (!userHandle) {
-      userHandle = `web-${crypto.randomUUID().slice(0, 8)}`;
-    }
-
-    const versionSiteId = isVipFounder ? `${userHandle}-${Date.now()}` : `web-${crypto.randomUUID()}`;
-    const siteId = versionSiteId;
-    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
-    fs.mkdirSync(siteDir, { recursive: true });
-
-    // 4. Ingest & Persist Candidate Photo / Avatar (if provided or present in resume)
-    if (input.photoData?.rawBase64) {
-      try {
-        const avatarBuf = Buffer.from(input.photoData.rawBase64, 'base64');
-        const avatarFileExt = (input.photoData.mimeType && input.photoData.mimeType.includes('jpeg')) ? 'jpg' : 'png';
-        const avatarFilename = `avatar.${avatarFileExt}`;
-        fs.writeFileSync(path.join(siteDir, avatarFilename), avatarBuf);
-        // Also save canonical avatar.png for template standard compatibility
-        if (avatarFileExt !== 'png') {
-          fs.writeFileSync(path.join(siteDir, 'avatar.png'), avatarBuf);
-        }
-        input.avatar = `/sites/${siteId}/avatar.png`;
-        input.photoUrl = `/sites/${siteId}/avatar.png`;
-      } catch (avErr) {
-        console.warn('[API] Avatar save error:', avErr.message);
-      }
-    } else if (!input.avatar && input.resumeData?.rawBase64 && input.resumeData?.mimeType?.startsWith('image/')) {
-      try {
-        const resumeImgBuf = Buffer.from(input.resumeData.rawBase64, 'base64');
-        fs.writeFileSync(path.join(siteDir, 'avatar.png'), resumeImgBuf);
-        input.avatar = `/sites/${siteId}/avatar.png`;
-        input.photoUrl = `/sites/${siteId}/avatar.png`;
-      } catch (resImgErr) {
-        console.warn('[API] Resume image avatar save error:', resImgErr.message);
-      }
-    }
-
-    // 5. Ingest, Save & AI-Parse Uploaded Certificates (Parallelized)
-    if (Array.isArray(input.certificates) && input.certificates.length > 0) {
-      const certsDir = path.join(siteDir, 'certificates');
-      fs.mkdirSync(certsDir, { recursive: true });
-
-      const parsedCertList = await Promise.all(input.certificates.map(async (cert, i) => {
-        if (!cert) return null;
-
-        let certBuf = null;
-        if (cert.rawBase64) {
-          certBuf = Buffer.from(cert.rawBase64, 'base64');
-        }
-
-        const cleanBaseName = (cert.name || `credential_${i+1}`).replace(/[^a-zA-Z0-9.-]/g, '_');
-        const certFilename = `cert-${i + 1}-${cleanBaseName}`;
-        let certFileUrl = '#';
-
-        if (certBuf) {
-          try {
-            fs.writeFileSync(path.join(certsDir, certFilename), certBuf);
-            certFileUrl = `/sites/${siteId}/certificates/${certFilename}`;
-          } catch (cfErr) {
-            console.warn('[API] Certificate file write error:', cfErr.message);
-          }
-        }
-
-        // Deep AI / Heuristics Certificate Parsing (Extracts: name, issuer, issueDate, credentialId)
-        let parsedMeta = null;
-        if (certBuf && aiService) {
-          try {
-            parsedMeta = await aiService.parseCertificateDocument(certBuf, cert.mimeType || 'application/pdf', cert.name);
-          } catch (cErr) {
-            console.warn('[API] Certificate parse error:', cErr.message);
-          }
-        }
-
-        return {
-          name: parsedMeta?.name || cert.name?.replace(/\.[^/.]+$/, '') || `Professional Certification #${i + 1}`,
-          issuer: parsedMeta?.issuer || 'Verified Professional Authority',
-          date: parsedMeta?.issueDate || parsedMeta?.date || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-          id: parsedMeta?.credentialId || parsedMeta?.id || `CERT-${Date.now().toString(36).toUpperCase()}-${i + 1}`,
-          url: certFileUrl,
-          fileUrl: certFileUrl,
-          verified: true
-        };
-      }));
-
-      input.certificates = parsedCertList.filter(Boolean);
-    }
-
-    const normalized = UnifiedProfileNormalizer.normalize(input);
-    const { TemplateRegistry } = require('./templates/template-registry');
-    const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
-    const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
-
-    const siteGen = new SiteGenerator();
-    const siteResult = await siteGen.generateSite({
-      id: siteId,
-      status: 'active'
-    }, { ...normalized, templateId: selectedTemplate.id }, {
-      theme: selectedTemplate.id,
-      templateId: selectedTemplate.id,
-      creative_mode: selectedTemplate.id
-    });
-
-    await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
-
-    // Write index.html and profile.json to filesystem for local preview serving
-    fs.writeFileSync(path.join(siteDir, 'index.html'), siteResult.html, 'utf8');
-    fs.writeFileSync(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
-
-    // Persist complete portfolio metadata for cross-device synchronization
-    const metaPayload = {
-      siteId,
-      handle: userHandle,
-      subdomain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
-      universeKey: input.preferences?.theme || 'cosmic-astronaut',
-      developerName: normalized.name,
-      developerRole: normalized.role || normalized.title,
-      projectsCount: normalized.projects?.length || 6,
-      timestamp: Date.now(),
-      userId: req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null),
-      userEmail: candidateEmail
-    };
+app.post(
+  '/api/generate/unified',
+  SecurityMiddleware.limitBodySize(10 * 1024 * 1024),
+  AuthMiddleware.quotaLimiter(dbService, 'ai_generation', 20),
+  async (req, res) => {
+    const slot = await globalConcurrencyManager.acquire({ canFastTrack: true });
+    const isOverloadFastTrack = slot.isFastTrack;
     try {
-      fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
-    } catch (e) {}
+      const input = req.body || {};
 
-    // Associate generated site with authenticated user account across both client_sites and sites tables
-    const effectiveOwnerId = req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null);
-    if (effectiveOwnerId && dbService?.client) {
-      await dbService.createSite(effectiveOwnerId, 'self_hosted', siteId).catch(() => {});
-      try {
-        await dbService.client.from('sites').upsert({
-          provider_site_id: siteId,
-          custom_domain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
-          user_id: effectiveOwnerId,
-          status: 'active',
-          updated_at: new Date().toISOString()
-        });
-      } catch (e) {}
-    }
-
-    const customSubdomain = `${userHandle}.myfolio.tech`;
-    const customLocalDomain = `${userHandle}.localhost`;
-    const liveSubdomainUrl = `https://${customSubdomain}`;
-
-    if (isVipFounder) {
-      // 1. Move vanity URL files for /<userHandle> and fallback to the newly generated site
-      const primaryHandleDir = path.join(process.cwd(), 'public', 'sites', userHandle);
-      fs.mkdirSync(primaryHandleDir, { recursive: true });
-      fs.writeFileSync(path.join(primaryHandleDir, 'index.html'), siteResult.html, 'utf8');
-      fs.writeFileSync(path.join(primaryHandleDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8');
-      
-      // Mirror avatar & certificates to VIP primary handle directory
-      if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
-        try { fs.copyFileSync(path.join(siteDir, 'avatar.png'), path.join(primaryHandleDir, 'avatar.png')); } catch (e) {}
-      }
-      const certsDir = path.join(siteDir, 'certificates');
-      const primaryCertsDir = path.join(primaryHandleDir, 'certificates');
-      if (fs.existsSync(certsDir)) {
+      // 1. If GitHub username is provided, fetch complete GitHub profile & synthesize real case studies
+      if (input.githubData?.username) {
         try {
-          fs.mkdirSync(primaryCertsDir, { recursive: true });
-          fs.cpSync(certsDir, primaryCertsDir, { recursive: true });
-        } catch (e) {}
+          const { GitHubParser } = require('./services/github/github-parser');
+          const { GitHubClient } = require('./services/github/github-client');
+          const { GitHubNormalizer } = require('./services/github/github-normalizer');
+          const { GitHubProfileSynthesizer } = require('./services/github-profile-synthesizer');
+
+          const parsed = GitHubParser.parse(input.githubData.username);
+          if (parsed.valid) {
+            const ghClient = new GitHubClient();
+            const rawGithub = await ghClient.fetchCompleteProfile(parsed.username);
+            const normGithub = GitHubNormalizer.normalize(rawGithub);
+            const synth = new GitHubProfileSynthesizer(isOverloadFastTrack ? null : aiService);
+            const synthesizedGithub = await synth.synthesize(normGithub);
+
+            input.githubData = { ...input.githubData, ...synthesizedGithub };
+          }
+        } catch (ghErr) {
+          console.warn('[API] GitHub deep fetch fallback:', ghErr.message);
+        }
       }
 
-      await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
-
-      // 2. Move live subdomain mapping https://<userHandle>.myfolio.tech to the newest generated version
-      if (customDomainService) {
-        customDomainService.domainCache[customSubdomain] = {
-          domain: customSubdomain,
-          handle: userHandle,
-          siteId: siteId,
-          userId: req.user?.id || 'abdulaziz_founder',
-          type: 'subdomain',
-          status: 'active',
-          updatedAt: new Date().toISOString()
-        };
-        customDomainService.domainCache[customLocalDomain] = {
-          domain: customLocalDomain,
-          handle: userHandle,
-          siteId: siteId,
-          userId: req.user?.id || 'abdulaziz_founder',
-          type: 'subdomain',
-          status: 'active',
-          updatedAt: new Date().toISOString()
-        };
-        customDomainService.saveCache();
+      // 2. If resume was provided with rawBase64 or extractedTextSnippet, run deep parser if not yet done
+      if (!isOverloadFastTrack && input.resumeData?.rawBase64 && (!input.resumeData.skills || input.resumeData.skills.length === 0 || !input.resumeData.projects || input.resumeData.projects.length === 0) && aiService) {
+        try {
+          const buffer = Buffer.from(input.resumeData.rawBase64, 'base64');
+          const rawParsed = await aiService.parseResumeDocument(buffer, input.resumeData.mimeType || 'application/pdf');
+          if (rawParsed && rawParsed.extracted_data) {
+            input.resumeData = { ...input.resumeData, ...rawParsed.extracted_data };
+          } else if (rawParsed) {
+            input.resumeData = { ...input.resumeData, ...rawParsed };
+          }
+        } catch (resErr) {
+          console.warn('[API] Deep resume parse fallback:', resErr.message);
+        }
       }
 
-      // 3. Persist to DB if available
-      if (dbService?.client) {
+      // 3. Early resolution of userHandle & siteId for unified asset storage
+      const authenticatedEmail = (req.user?.email || '').toLowerCase().trim();
+      const candidateEmail = (
+        authenticatedEmail ||
+        input.email ||
+        input.manualEmail ||
+        input.userEmail ||
+        input.resumeData?.email ||
+        ''
+      ).toLowerCase().trim();
+
+      // STRICT: Only authenticated abdulaziznoor9876@gmail.com has VIP Founder privileges
+      const isVipFounder = Boolean(
+        authenticatedEmail === 'abdulaziznoor9876@gmail.com'
+      );
+
+      // Determine the user's custom URL identifier (username)
+      let userHandle = (
+        req.user?.username ||
+        input.username ||
+        input.customUrlIdentifier ||
+        (isVipFounder ? 'abdulaziz' : '')
+      ).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '').replace(/^[-_]+|[-_]+$/g, '');
+
+      if (!userHandle) {
+        userHandle = `web-${crypto.randomUUID().slice(0, 8)}`;
+      }
+
+      const versionSiteId = isVipFounder ? `${userHandle}-${Date.now()}` : `web-${crypto.randomUUID()}`;
+      const siteId = versionSiteId;
+      const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+      await fs.promises.mkdir(siteDir, { recursive: true });
+
+      // 4. Ingest & Persist Candidate Photo / Avatar (if provided or present in resume)
+      if (input.photoData?.rawBase64) {
+        try {
+          const avatarBuf = Buffer.from(input.photoData.rawBase64, 'base64');
+          const avatarFileExt = (input.photoData.mimeType && input.photoData.mimeType.includes('jpeg')) ? 'jpg' : 'png';
+          const avatarFilename = `avatar.${avatarFileExt}`;
+          await fs.promises.writeFile(path.join(siteDir, avatarFilename), avatarBuf);
+          // Also save canonical avatar.png for template standard compatibility
+          if (avatarFileExt !== 'png') {
+            await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), avatarBuf);
+          }
+          input.avatar = `/sites/${siteId}/avatar.png`;
+          input.photoUrl = `/sites/${siteId}/avatar.png`;
+        } catch (avErr) {
+          console.warn('[API] Avatar save error:', avErr.message);
+        }
+      } else if (!input.avatar && input.resumeData?.rawBase64 && input.resumeData?.mimeType?.startsWith('image/')) {
+        try {
+          const resumeImgBuf = Buffer.from(input.resumeData.rawBase64, 'base64');
+          await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), resumeImgBuf);
+          input.avatar = `/sites/${siteId}/avatar.png`;
+          input.photoUrl = `/sites/${siteId}/avatar.png`;
+        } catch (resImgErr) {
+          console.warn('[API] Resume image avatar save error:', resImgErr.message);
+        }
+      }
+
+      // 5. Ingest, Save & AI-Parse Uploaded Certificates (Parallelized)
+      if (Array.isArray(input.certificates) && input.certificates.length > 0) {
+        const certsDir = path.join(siteDir, 'certificates');
+        await fs.promises.mkdir(certsDir, { recursive: true });
+
+        const parsedCertList = await Promise.all(input.certificates.map(async (cert, i) => {
+          if (!cert) return null;
+
+          let certBuf = null;
+          if (cert.rawBase64) {
+            certBuf = Buffer.from(cert.rawBase64, 'base64');
+          }
+
+          const cleanBaseName = (cert.name || `credential_${i+1}`).replace(/[^a-zA-Z0-9.-]/g, '_');
+          const certFilename = `cert-${i + 1}-${cleanBaseName}`;
+          let certFileUrl = '#';
+
+          if (certBuf) {
+            try {
+              await fs.promises.writeFile(path.join(certsDir, certFilename), certBuf);
+              certFileUrl = `/sites/${siteId}/certificates/${certFilename}`;
+            } catch (cfErr) {
+              console.warn('[API] Certificate file write error:', cfErr.message);
+            }
+          }
+
+          // Deep AI / Heuristics Certificate Parsing (Extracts: name, issuer, issueDate, credentialId)
+          let parsedMeta = null;
+          if (!isOverloadFastTrack && certBuf && aiService) {
+            try {
+              parsedMeta = await aiService.parseCertificateDocument(certBuf, cert.mimeType || 'application/pdf', cert.name);
+            } catch (cErr) {
+              console.warn('[API] Certificate parse error:', cErr.message);
+            }
+          }
+
+          return {
+            name: parsedMeta?.name || cert.name?.replace(/\.[^/.]+$/, '') || `Professional Certification #${i + 1}`,
+            issuer: parsedMeta?.issuer || 'Verified Professional Authority',
+            date: parsedMeta?.issueDate || parsedMeta?.date || new Date().toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+            id: parsedMeta?.credentialId || parsedMeta?.id || `CERT-${Date.now().toString(36).toUpperCase()}-${i + 1}`,
+            url: certFileUrl,
+            fileUrl: certFileUrl,
+            verified: true
+          };
+        }));
+
+        input.certificates = parsedCertList.filter(Boolean);
+      }
+
+      const normalized = UnifiedProfileNormalizer.normalize(input);
+      const { TemplateRegistry } = require('./templates/template-registry');
+      const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
+      const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
+
+      const siteGen = new SiteGenerator();
+      const siteResult = await siteGen.generateSite({
+        id: siteId,
+        status: 'active'
+      }, { ...normalized, templateId: selectedTemplate.id }, {
+        theme: selectedTemplate.id,
+        templateId: selectedTemplate.id,
+        creative_mode: selectedTemplate.id
+      });
+
+      await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
+
+      // Write index.html and profile.json to filesystem for local preview serving non-blockingly
+      await Promise.all([
+        fs.promises.writeFile(path.join(siteDir, 'index.html'), siteResult.html, 'utf8'),
+        fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+      ]);
+
+      // Persist complete portfolio metadata for cross-device synchronization
+      const metaPayload = {
+        siteId,
+        handle: userHandle,
+        subdomain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
+        universeKey: input.preferences?.theme || 'cosmic-astronaut',
+        developerName: normalized.name,
+        developerRole: normalized.role || normalized.title,
+        projectsCount: normalized.projects?.length || 6,
+        timestamp: Date.now(),
+        userId: req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null),
+        userEmail: candidateEmail
+      };
+      try {
+        await fs.promises.writeFile(path.join(siteDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
+      } catch (e) {}
+
+      // Associate generated site with authenticated user account across both client_sites and sites tables
+      const effectiveOwnerId = req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null);
+      if (effectiveOwnerId && dbService?.client) {
+        await dbService.createSite(effectiveOwnerId, 'self_hosted', siteId).catch(() => {});
         try {
           await dbService.client.from('sites').upsert({
             provider_site_id: siteId,
-            custom_domain: customSubdomain,
-            user_id: req.user?.id || 'abdulaziz_founder',
-            status: 'active'
+            custom_domain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
+            user_id: effectiveOwnerId,
+            status: 'active',
+            updated_at: new Date().toISOString()
           });
-        } catch (dbE) {}
+        } catch (e) {}
       }
+
+      const customSubdomain = `${userHandle}.myfolio.tech`;
+      const customLocalDomain = `${userHandle}.localhost`;
+      const liveSubdomainUrl = `https://${customSubdomain}`;
+
+      if (isVipFounder) {
+        // 1. Move vanity URL files for /<userHandle> and fallback to the newly generated site
+        const primaryHandleDir = path.join(process.cwd(), 'public', 'sites', userHandle);
+        await fs.promises.mkdir(primaryHandleDir, { recursive: true });
+        await Promise.all([
+          fs.promises.writeFile(path.join(primaryHandleDir, 'index.html'), siteResult.html, 'utf8'),
+          fs.promises.writeFile(path.join(primaryHandleDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+        ]);
+        
+        // Mirror avatar & certificates to VIP primary handle directory
+        if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
+          try { await fs.promises.copyFile(path.join(siteDir, 'avatar.png'), path.join(primaryHandleDir, 'avatar.png')); } catch (e) {}
+        }
+        const certsDir = path.join(siteDir, 'certificates');
+        const primaryCertsDir = path.join(primaryHandleDir, 'certificates');
+        if (fs.existsSync(certsDir)) {
+          try {
+            await fs.promises.mkdir(primaryCertsDir, { recursive: true });
+            await fs.promises.cp(certsDir, primaryCertsDir, { recursive: true });
+          } catch (e) {}
+        }
+
+        await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
+
+        // 2. Move live subdomain mapping https://<userHandle>.myfolio.tech to the newest generated version
+        if (customDomainService) {
+          customDomainService.domainCache[customSubdomain] = {
+            domain: customSubdomain,
+            handle: userHandle,
+            siteId: siteId,
+            userId: req.user?.id || 'abdulaziz_founder',
+            type: 'subdomain',
+            status: 'active',
+            updatedAt: new Date().toISOString()
+          };
+          customDomainService.domainCache[customLocalDomain] = {
+            domain: customLocalDomain,
+            handle: userHandle,
+            siteId: siteId,
+            userId: req.user?.id || 'abdulaziz_founder',
+            type: 'subdomain',
+            status: 'active',
+            updatedAt: new Date().toISOString()
+          };
+          customDomainService.saveCache();
+        }
+
+        // 3. Persist to DB if available
+        if (dbService?.client) {
+          try {
+            await dbService.client.from('sites').upsert({
+              provider_site_id: siteId,
+              custom_domain: customSubdomain,
+              user_id: req.user?.id || 'abdulaziz_founder',
+              status: 'active'
+            });
+          } catch (dbE) {}
+        }
+      }
+
+      // Audit with Legacy Vibe Detector
+      const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
+        iaModel: siteResult.designBrief?.informationArchitecture,
+        visualUniverse: siteResult.designBrief?.visualUniverse
+      });
+
+      // Record Telemetry
+      productTelemetry.recordEvent(EVENT_TYPES.GENERATION_COMPLETED, null, {
+        siteId,
+        source: 'unified',
+        vibeScore: vibeAudit.score,
+        isVip: isVipFounder,
+        isFastTrack: isOverloadFastTrack
+      });
+
+      res.json({
+        success: true,
+        siteId,
+        activeSiteId: siteId,
+        handle: userHandle,
+        previewUrl: `/p/${siteId}`,
+        siteUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
+        liveUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
+        subdomain: isVipFounder ? customSubdomain : null,
+        customDomain: isVipFounder ? customSubdomain : null,
+        isVip: isVipFounder,
+        profileData: normalized,
+        vibeAudit,
+        designBlueprint: siteResult.designBlueprint
+      });
+    } catch (err) {
+      console.error('[API] /api/generate/unified error:', err);
+      res.status(500).json({ error: err.message || 'Failed to synthesize portfolio from unified input.' });
+    } finally {
+      slot.release();
     }
-
-    // Audit with Legacy Vibe Detector
-    const vibeAudit = LegacyVibeDetector.evaluate(siteResult.html, siteResult.css, {
-      iaModel: siteResult.designBrief?.informationArchitecture,
-      visualUniverse: siteResult.designBrief?.visualUniverse
-    });
-
-    // Record Telemetry
-    productTelemetry.recordEvent(EVENT_TYPES.GENERATION_COMPLETED, null, {
-      siteId,
-      source: 'unified',
-      vibeScore: vibeAudit.score,
-      isVip: isVipFounder
-    });
-
-    res.json({
-      success: true,
-      siteId,
-      activeSiteId: siteId,
-      handle: userHandle,
-      previewUrl: `/p/${siteId}`,
-      siteUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
-      liveUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
-      subdomain: isVipFounder ? customSubdomain : null,
-      customDomain: isVipFounder ? customSubdomain : null,
-      isVip: isVipFounder,
-      profileData: normalized,
-      vibeAudit,
-      designBlueprint: siteResult.designBlueprint
-    });
-  } catch (err) {
-    console.error('[API] /api/generate/unified error:', err);
-    res.status(500).json({ error: err.message || 'Failed to synthesize portfolio from unified input.' });
   }
-});
+);
 
 /// Studio & Design Engine API Endpoints
 app.get('/api/design-resources', (req, res) => {
