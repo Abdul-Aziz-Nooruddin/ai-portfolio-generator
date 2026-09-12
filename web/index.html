@@ -2777,6 +2777,75 @@
         gap: 6px;
       }
     }
+
+    /* Live Spatial Telemetry Corner Pill (Overlays bottom-right watermark area) */
+    .spatial-telemetry-pill {
+      position: fixed;
+      bottom: clamp(60px, 12vh, 120px);
+      right: clamp(20px, 4.5vw, 84px);
+      z-index: 85;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 16px;
+      border-radius: 9999px;
+      background: rgba(10, 15, 26, 0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(56, 189, 248, 0.32);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 18px rgba(56, 189, 248, 0.16);
+      font-family: var(--font-mono, 'Space Mono', monospace);
+      font-size: 0.72rem;
+      letter-spacing: 0.09em;
+      color: #E2E8F0;
+      pointer-events: auto;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .spatial-telemetry-pill:hover {
+      border-color: rgba(245, 166, 35, 0.65);
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.75), 0 0 24px rgba(245, 166, 35, 0.28);
+      transform: translateY(-2px);
+    }
+
+    .telemetry-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981, 0 0 14px #10B981;
+      animation: telemetryDotPulse 2.2s infinite ease-in-out;
+    }
+
+    @keyframes telemetryDotPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    .telemetry-text-title {
+      font-weight: 600;
+      color: #F8FAFC;
+    }
+
+    .telemetry-divider {
+      color: rgba(255, 255, 255, 0.25);
+    }
+
+    .telemetry-text-stat {
+      color: #38BDF8;
+      font-weight: 500;
+    }
+
+    .telemetry-text-mode {
+      color: #F5A623;
+      font-size: 0.68rem;
+    }
+
+    @media (max-width: 768px) {
+      .spatial-telemetry-pill {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -3688,6 +3757,16 @@
         <span>Launch studio</span>
       </a>
     </div>
+  </div>
+
+  <!-- 7. Live Spatial Telemetry Corner Pill (Overlays bottom-right watermark area) -->
+  <div class="spatial-telemetry-pill" id="spatialTelemetryPill" title="MyFolio Spatial Scrollytelling Engine">
+    <span class="telemetry-live-dot"></span>
+    <span class="telemetry-text-title">CELESTIAL REALM</span>
+    <span class="telemetry-divider">/</span>
+    <span class="telemetry-text-stat">60 FPS</span>
+    <span class="telemetry-divider">•</span>
+    <span class="telemetry-text-mode">3D SPATIAL</span>
   </div>
 </body>
 </html>

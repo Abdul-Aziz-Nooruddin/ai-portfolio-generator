@@ -41,7 +41,7 @@
   for (let i = 1; i <= TOTAL_FRAMES; i++) {
     const img = new Image();
     const pad = String(i).padStart(3, '0');
-    img.src = `/assets/scrolly-floating-islands/frame_${pad}.jpg`;
+    img.src = `/assets/scrolly-floating-islands/frame_${pad}.jpg?v=clean_v3`;
     img.onload = () => {
       loadedFrames++;
       if ('decode' in img) {
@@ -57,7 +57,6 @@
   // 2. Aspect-Ratio Cover Frame Renderer (High GPU Scanout)
   function renderFrame(index, force = false) {
     if (index === activeFrameIdx && !force) return;
-    activeFrameIdx = index;
 
     const img = frames[index];
     const imgToDraw = (img && img.complete && img.naturalWidth > 0) 
@@ -65,6 +64,7 @@
       : (frames[0] && frames[0].complete && frames[0].naturalWidth > 0 ? frames[0] : null);
 
     if (!imgToDraw || !width || !height) return;
+    activeFrameIdx = index;
 
     const imgW = imgToDraw.naturalWidth;
     const imgH = imgToDraw.naturalHeight;
