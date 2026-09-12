@@ -253,7 +253,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
   <!-- Apple-Style Celestial Scrollytelling Sequence Preload -->
-  <link rel="preload" as="image" href="/assets/scrolly-floating-islands/frame_001.jpg" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/scrolly-floating-islands-v2/frame_001.jpg" fetchpriority="high">
 
   <link rel="stylesheet" href="/style.css?v=2.7.0">
   <script src="/sidebar.js" defer></script>
@@ -2778,24 +2778,38 @@
       }
     }
 
-    /* Live Spatial Telemetry Corner Pill (Overlays bottom-right watermark area) */
+    /* Bottom-Right Corner Scrim to Guarantee 100% Watermark Concealment */
+    .corner-watermark-concealer {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: clamp(280px, 24vw, 420px);
+      height: clamp(140px, 16vh, 220px);
+      background: radial-gradient(ellipse at 88% 85%, rgba(6, 7, 11, 0.96) 0%, rgba(6, 7, 11, 0.72) 48%, transparent 75%);
+      pointer-events: none;
+      z-index: 80;
+    }
+
+    /* Live Spatial Telemetry Corner Pill (Directly Overlays bottom-right watermark) */
     .spatial-telemetry-pill {
       position: fixed;
-      bottom: clamp(60px, 12vh, 120px);
-      right: clamp(20px, 4.5vw, 84px);
+      bottom: clamp(14px, 3vh, 32px);
+      right: clamp(18px, 4vw, 68px);
       z-index: 85;
       display: inline-flex;
       align-items: center;
-      gap: 9px;
-      padding: 7px 16px;
+      justify-content: center;
+      min-width: 280px;
+      gap: 10px;
+      padding: 9px 20px;
       border-radius: 9999px;
-      background: rgba(10, 15, 26, 0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(56, 189, 248, 0.32);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 18px rgba(56, 189, 248, 0.16);
+      background: rgba(8, 12, 22, 0.95);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(56, 189, 248, 0.38);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.2);
       font-family: var(--font-mono, 'Space Mono', monospace);
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       letter-spacing: 0.09em;
       color: #E2E8F0;
       pointer-events: auto;
@@ -3759,7 +3773,8 @@
     </div>
   </div>
 
-  <!-- 7. Live Spatial Telemetry Corner Pill (Overlays bottom-right watermark area) -->
+  <!-- 7. Bottom-Right Corner Scrim & Telemetry Pill (Entirely Conceals Watermark) -->
+  <div class="corner-watermark-concealer"></div>
   <div class="spatial-telemetry-pill" id="spatialTelemetryPill" title="MyFolio Spatial Scrollytelling Engine">
     <span class="telemetry-live-dot"></span>
     <span class="telemetry-text-title">CELESTIAL REALM</span>

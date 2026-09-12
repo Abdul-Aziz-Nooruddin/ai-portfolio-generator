@@ -41,7 +41,7 @@
   for (let i = 1; i <= TOTAL_FRAMES; i++) {
     const img = new Image();
     const pad = String(i).padStart(3, '0');
-    img.src = `/assets/scrolly-floating-islands/frame_${pad}.jpg?v=clean_v3`;
+    img.src = `/assets/scrolly-floating-islands-v2/frame_${pad}.jpg`;
     img.onload = () => {
       loadedFrames++;
       if ('decode' in img) {
