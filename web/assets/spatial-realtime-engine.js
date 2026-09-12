@@ -124,39 +124,78 @@
   window.addEventListener('resize', resizeCanvases, { passive: true });
   resizeCanvases();
 
-  // 4. Volumetric Floating Celestial Particles (Stardust Canvas)
-  const PARTICLE_COUNT = 65;
+  // 4. Enhanced Volumetric Celestial Particles & Interactive Cursor Sparks
+  const PARTICLE_COUNT = 85;
   const particles = [];
   const particleColors = [
-    'rgba(245, 166, 35, 0.75)',   // Celestial Solar Gold
-    'rgba(56, 189, 248, 0.80)',   // Bioluminescent Cyan
-    'rgba(217, 119, 6, 0.65)',    // Amber Starlight
-    'rgba(255, 255, 255, 0.85)',  // Pure Star Speck
-    'rgba(192, 132, 252, 0.70)'   // Crystalline Violet
+    'rgba(245, 166, 35, 0.85)',   // Celestial Solar Gold
+    'rgba(56, 189, 248, 0.90)',   // Bioluminescent Cyan
+    'rgba(0, 240, 255, 0.95)',    // Electric Neon Aqua
+    'rgba(255, 255, 255, 0.90)',  // Diamond White
+    'rgba(192, 132, 252, 0.75)'   // Crystalline Violet
   ];
 
   for (let p = 0; p < PARTICLE_COUNT; p++) {
     particles.push({
       x: Math.random() * (width || window.innerWidth),
       y: Math.random() * (height || window.innerHeight),
-      size: 0.8 + Math.random() * 2.2,
+      size: 0.8 + Math.random() * 2.4,
       vx: (Math.random() - 0.5) * 0.35,
-      vy: -0.15 - Math.random() * 0.45,
-      alpha: 0.2 + Math.random() * 0.7,
+      vy: -0.12 - Math.random() * 0.35,
+      alpha: 0.25 + Math.random() * 0.7,
       color: particleColors[Math.floor(Math.random() * particleColors.length)],
-      twinkleSpeed: 0.015 + Math.random() * 0.03,
+      twinkleSpeed: 0.018 + Math.random() * 0.035,
       twinklePhase: Math.random() * Math.PI * 2
     });
   }
 
+  // Interactive Cursor Spark Pool
+  const sparks = [];
+  let rawMouseX = -100;
+  let rawMouseY = -100;
+  let lastSparkX = -100;
+  let lastSparkY = -100;
   let mouseX = 0;
   let mouseY = 0;
   let mouseParallaxX = 0;
   let mouseParallaxY = 0;
 
+  function spawnSpark(x, y, count = 1, isBurst = false) {
+    if (isReducedMotion) return;
+    for (let i = 0; i < count; i++) {
+      if (sparks.length > 120) sparks.shift();
+      const angle = Math.random() * Math.PI * 2;
+      const speed = isBurst ? (1.5 + Math.random() * 3.5) : (0.4 + Math.random() * 1.6);
+      sparks.push({
+        x: x + (Math.random() - 0.5) * 6,
+        y: y + (Math.random() - 0.5) * 6,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 0.2,
+        size: isBurst ? (1.2 + Math.random() * 2.8) : (0.8 + Math.random() * 2.2),
+        alpha: 1.0,
+        decay: 0.02 + Math.random() * 0.03,
+        color: particleColors[Math.floor(Math.random() * particleColors.length)]
+      });
+    }
+  }
+
   window.addEventListener('mousemove', (e) => {
+    rawMouseX = e.clientX;
+    rawMouseY = e.clientY;
     mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
     mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+    // Emit trailing stardust sparks on cursor move
+    const dist = Math.hypot(e.clientX - lastSparkX, e.clientY - lastSparkY);
+    if (dist > 18) {
+      lastSparkX = e.clientX;
+      lastSparkY = e.clientY;
+      spawnSpark(e.clientX, e.clientY, 1, false);
+    }
+  }, { passive: true });
+
+  window.addEventListener('click', (e) => {
+    spawnSpark(e.clientX, e.clientY, 14, true);
   }, { passive: true });
 
   // 5. Scroll Progression Calculation
@@ -216,14 +255,47 @@
       scrollHudPhase.textContent = `${phaseName} // ${Math.round(pct)}%`;
     }
 
-    // Render Atmospheric Floating Particles
+    // Render Atmospheric Floating Particles & Constellation Web
     if (starCtx && width && height) {
       starCtx.clearRect(0, 0, width, height);
 
       const scrollVelocityShift = (targetProgress - currentProgress) * 80;
 
+      // Draw Living Constellation Links between nearby stars
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        for (let j = i + 1; j < PARTICLE_COUNT; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const distSq = dx * dx + dy * dy;
+          if (distSq < 5625) { // 75px threshold
+            const dist = Math.sqrt(distSq);
+            const lineAlpha = (1 - dist / 75) * 0.16;
+            starCtx.beginPath();
+            starCtx.moveTo(particles[i].x, particles[i].y);
+            starCtx.lineTo(particles[j].x, particles[j].y);
+            starCtx.strokeStyle = 'rgba(56, 189, 248, ' + lineAlpha.toFixed(3) + ')';
+            starCtx.lineWidth = 0.75;
+            starCtx.stroke();
+          }
+        }
+      }
+
+      // Draw Floating Stardust Particles with Interactive Mouse Deflection
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         const pt = particles[i];
+
+        // Mouse gentle repulsion/attraction field
+        if (rawMouseX > 0 && rawMouseY > 0) {
+          const mdx = pt.x - rawMouseX;
+          const mdy = pt.y - rawMouseY;
+          const mdist = Math.hypot(mdx, mdy);
+          if (mdist < 120 && mdist > 1) {
+            const force = (1 - mdist / 120) * 1.1;
+            pt.x += (mdx / mdist) * force;
+            pt.y += (mdy / mdist) * force;
+          }
+        }
+
         pt.x += pt.vx;
         pt.y += pt.vy - scrollVelocityShift * 0.1;
         pt.twinklePhase += pt.twinkleSpeed;
@@ -237,10 +309,34 @@
         const dynamicAlpha = Math.max(0.1, pt.alpha * (0.6 + 0.4 * Math.sin(pt.twinklePhase)));
 
         starCtx.beginPath();
-        starCtx.arc(pt.x + mouseParallaxX * 0.3, pt.y + mouseParallaxY * 0.3, pt.size, 0, Math.PI * 2);
+        starCtx.arc(pt.x, pt.y, pt.size, 0, Math.PI * 2);
         starCtx.fillStyle = pt.color;
         starCtx.globalAlpha = dynamicAlpha;
         starCtx.fill();
+      }
+
+      // Draw Interactive Trailing Sparks with Radiant Bloom Glow
+      for (let s = sparks.length - 1; s >= 0; s--) {
+        const sp = sparks[s];
+        sp.x += sp.vx;
+        sp.y += sp.vy;
+        sp.alpha -= sp.decay;
+        sp.size = Math.max(0.3, sp.size * 0.97);
+
+        if (sp.alpha <= 0) {
+          sparks.splice(s, 1);
+          continue;
+        }
+
+        starCtx.save();
+        starCtx.globalAlpha = Math.min(1, sp.alpha);
+        starCtx.shadowBlur = 10;
+        starCtx.shadowColor = sp.color;
+        starCtx.beginPath();
+        starCtx.arc(sp.x, sp.y, sp.size, 0, Math.PI * 2);
+        starCtx.fillStyle = sp.color;
+        starCtx.fill();
+        starCtx.restore();
       }
       starCtx.globalAlpha = 1.0;
     }
