@@ -252,9 +252,8 @@
   <!-- Canvas Confetti — small (18KB), safe to always load deferred -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
 
-  <!-- 3D Rigged Animated Astronaut & 360 Galaxy Skybox Preloads -->
-  <link rel="preload" as="image" href="/assets/galaxy-hdri-bg.webp" type="image/webp" crossorigin="anonymous" fetchpriority="high">
-  <link rel="preload" as="fetch" href="/assets/astronaut-animated.glb" type="model/gltf-binary" crossorigin="anonymous" fetchpriority="high">
+  <!-- Apple-Style Celestial Scrollytelling Sequence Preload -->
+  <link rel="preload" as="image" href="/assets/scrolly-floating-islands/frame_001.jpg" fetchpriority="high">
 
   <link rel="stylesheet" href="/style.css?v=2.7.0">
   <script src="/sidebar.js" defer></script>
@@ -361,6 +360,16 @@
       background: #06070B;
       z-index: 0;
       pointer-events: none;
+    }
+
+    .chrono-global-viewport::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 35%, rgba(6, 7, 11, 0.20) 0%, rgba(6, 7, 11, 0.54) 72%, rgba(4, 5, 8, 0.88) 100%),
+                  linear-gradient(180deg, rgba(6, 7, 11, 0.40) 0%, rgba(6, 7, 11, 0.08) 30%, rgba(6, 7, 11, 0.18) 65%, rgba(4, 5, 8, 0.80) 100%);
+      z-index: 2;
     }
 
     /* ============================================================
@@ -3620,8 +3629,8 @@
     });
   </script>
 
-  <!-- 2. REAL-TIME HARDWARE-ACCELERATED 3D SPATIAL UNIVERSE (Three.js WebGL) -->
-  <script src="/assets/spatial-realtime-engine.js?v=20260904_2330" defer></script>
+  <!-- 2. APPLE-STYLE CELESTIAL SCROLLYTELLING ENGINE & PARTICLES -->
+  <script src="/assets/spatial-realtime-engine.js?v=20260912_celestial_scrolly" defer></script>
 
   <script>
     /* ====================================================
