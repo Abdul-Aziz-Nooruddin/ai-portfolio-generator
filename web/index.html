@@ -363,13 +363,16 @@
       pointer-events: none;
     }
 
+    /* ============================================================
+       CONCEPT A: CINEMATIC SPATIAL COMMAND CENTER ARCHITECTURE
+       ============================================================ */
     .chrono-hero-stage {
       position: relative;
       width: 100%;
-      min-height: 96vh;
+      min-height: 94vh;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       overflow: visible;
       perspective: 1400px;
       padding: 110px 24px 70px;
@@ -377,36 +380,261 @@
       background: transparent;
     }
 
-    /* Directional Scrim: Dark nebula scrim behind hero text column so 3D background stays vivid */
+    /* Subtle atmospheric radial spotlight scrim behind hero command grid */
     .chrono-hero-stage::before {
       content: '';
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, rgba(5, 8, 10, 0.92) 0%, rgba(5, 8, 10, 0.75) 45%, rgba(5, 8, 10, 0.15) 75%, transparent 100%);
+      background: radial-gradient(ellipse at 40% 40%, rgba(13, 17, 30, 0.88) 0%, rgba(7, 9, 15, 0.72) 50%, rgba(6, 7, 11, 0.3) 85%, transparent 100%);
       pointer-events: none;
       z-index: 2;
     }
 
-    /* All Landing Sections & Containers Float over 3D Canvas Without Backgrounds */
+    .hero-command-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: clamp(32px, 5vw, 64px);
+      align-items: center;
+    }
+
+    .hero-command-content {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+    }
+
+    .hero-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-family: var(--font-mono, 'Space Mono', monospace);
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #38BDF8;
+      margin-bottom: 18px;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+    }
+
+    .hero-badge-pill .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 8px #38BDF8;
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.35); opacity: 0.55; }
+    }
+
+    .chrono-hero-title {
+      font-family: var(--font-display, 'Space Grotesk', sans-serif);
+      font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.035em;
+      color: #FFFFFF;
+      margin: 0 0 16px 0;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .chrono-hero-title .title-gradient-span {
+      background: linear-gradient(135deg, #FFFFFF 20%, #38BDF8 60%, #818CF8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .chrono-hero-subtitle {
+      font-family: var(--font-body, 'Inter', sans-serif);
+      font-size: clamp(1rem, 1.2vw, 1.12rem);
+      color: #94A3B8;
+      line-height: 1.62;
+      margin: 0 0 24px 0;
+      max-width: 580px;
+    }
+
+    .hero-trust-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 18px;
+      font-size: 0.8rem;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    .hero-trust-pills span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Right Column: Interactive 3D Perspective Card */
+    .hero-preview-col {
+      display: flex;
+      justify-content: center;
+      perspective: 1200px;
+    }
+
+    .hero-interactive-card {
+      position: relative;
+      width: 100%;
+      max-width: 520px;
+      background: rgba(13, 18, 30, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65), 0 0 35px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .hero-interactive-card:hover {
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
+
+    .hero-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .live-telemetry-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #10B981;
+      letter-spacing: 0.04em;
+    }
+
+    .live-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+      animation: pulseGlow 1.6s infinite ease-in-out;
+    }
+
+    .telemetry-stats {
+      display: flex;
+      gap: 12px;
+      font-family: var(--font-mono, monospace);
+      font-size: 0.7rem;
+      color: #64748B;
+    }
+
+    .hero-card-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+      background: #0B0E17;
+    }
+
+    .hero-card-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .hero-interactive-card:hover .hero-card-viewport img {
+      transform: scale(1.04);
+    }
+
+    .hero-card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 20px 18px;
+      background: linear-gradient(180deg, transparent 0%, rgba(11, 15, 25, 0.88) 40%, rgba(7, 9, 16, 0.98) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-overlay-tags {
+      display: flex;
+      gap: 8px;
+    }
+
+    .hero-overlay-tags .tag-pill {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .hero-overlay-title {
+      font-family: var(--font-display, sans-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0;
+    }
+
+    .hero-overlay-desc {
+      font-size: 0.82rem;
+      color: #94A3B8;
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .hero-overlay-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 6px;
+      align-items: center;
+    }
+
+    /* All Landing Sections & Containers Float over 3D Canvas with Frosted Glass */
     .app-shell-layout,
     .app-main-content,
     .landing-section,
     .ref-speakers-section,
     .ref-spot-section,
-    .hero-landing-reference,
-    .product-mesh-layer {
+    .hero-landing-reference {
       position: relative;
       z-index: 5;
-      background: transparent !important;
+      background: transparent;
     }
 
     .product-mesh-layer {
       display: none !important;
     }
 
-    /* Transparent Cards for Sub-Sections (Unhindered 3D Astronaut Visibility) */
+    /* Frosted Glass Material for Sub-Section Cards */
     .feature-rich-card,
     .workflow-pipeline-wrapper,
     .workflow-stage-col,
@@ -418,12 +646,13 @@
     .faq-item-card,
     .testimonial-card,
     .spot-media-card {
-      background: transparent !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      border: 1px solid rgba(74, 63, 122, 0.35) !important;
-      box-shadow: none !important;
-      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease !important;
+      background: rgba(13, 18, 30, 0.74);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     }
 
     .feature-rich-card:hover,
@@ -431,18 +660,18 @@
     .step-guide-card:hover,
     .ref-speaker-card:hover,
     .ref-universe-card:hover,
-    .pricing-plan-card:hover,
     .faq-item-card:hover,
     .testimonial-card:hover {
-      background: rgba(245, 166, 35, 0.05) !important;
-      border-color: rgba(245, 166, 35, 0.55) !important;
-      box-shadow: 0 0 20px rgba(245, 166, 35, 0.2) !important;
+      background: rgba(18, 25, 42, 0.85);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.15);
+      transform: translateY(-3px);
     }
 
     .pricing-plan-card.featured {
-      background: rgba(245, 166, 35, 0.08) !important;
-      border: 1.5px solid var(--solar-gold) !important;
-      box-shadow: 0 0 28px rgba(245, 166, 35, 0.25) !important;
+      background: rgba(20, 26, 44, 0.88);
+      border: 1.5px solid #38BDF8;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.25);
     }
 
     /* Real-Time Hardware-Accelerated WebGL 3D Canvas */
@@ -457,7 +686,6 @@
       display: block;
     }
 
-    /* Vignette completely disabled so dark gradient does not block 3D sequence */
     .chrono-hero-vignette {
       display: none !important;
     }
@@ -469,22 +697,6 @@
       height: 100%;
       pointer-events: none;
       z-index: 3;
-    }
-
-    .chrono-hero-content {
-      position: relative;
-      z-index: 10;
-      max-width: 660px;
-      width: 100%;
-      margin: 0 0 0 clamp(24px, 7vw, 120px);
-      text-align: left;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      transform-style: preserve-3d;
-      transition: opacity 0.25s ease-out, transform 0.15s ease-out;
-      will-change: transform, opacity;
-      padding: 0 24px;
     }
 
     /* Apple-Style Global Fixed Telemetry HUD */
@@ -1628,113 +1840,175 @@
       justify-content: flex-start;
     }
 
-    .chrono-scroll-beat.beat-align-left {
-      justify-content: flex-start !important;
-    }
-    .chrono-scroll-beat.beat-align-left .landing-container {
-      margin-left: clamp(20px, 5vw, 70px) !important;
-      margin-right: auto !important;
-      max-width: 480px !important;
-      width: 100% !important;
-      text-align: left !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: flex-start !important;
+    /* Relaxed Landing Containers & 12-Column Bento Grid */
+    .landing-container {
+      max-width: 1320px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 24px;
     }
 
-    .chrono-scroll-beat.beat-align-right {
-      justify-content: flex-end !important;
-    }
-    .chrono-scroll-beat.beat-align-right .landing-container {
-      margin-right: clamp(20px, 5vw, 70px) !important;
-      margin-left: auto !important;
-      max-width: 480px !important;
-      width: 100% !important;
-      text-align: left !important;
-      display: flex !important;
-      flex-direction: column !important;
-      align-items: flex-start !important;
+    .universes-showcase-section {
+      width: 100%;
+      padding: 80px 24px 100px;
+      position: relative;
+      z-index: 5;
     }
 
-    /* Spatial Pillars Compact Layout in Right-Aligned Card */
-    .beat-align-right .spatial-pillars-grid {
-      grid-template-columns: 1fr !important;
-      gap: 14px !important;
-      width: 100% !important;
-    }
-    .beat-align-right .spatial-pillar-card {
-      padding: 16px 20px !important;
-      display: flex !important;
-      gap: 16px !important;
-      align-items: flex-start !important;
-    }
-    .beat-align-right .spatial-pillar-card .pillar-icon-badge {
-      flex-shrink: 0 !important;
-      margin-bottom: 0 !important;
-      width: 38px !important;
-      height: 38px !important;
-      font-size: 1.1rem !important;
-    }
-    .beat-align-right .spatial-pillar-card .pillar-title {
-      font-size: 1.02rem !important;
-      margin-bottom: 4px !important;
-    }
-    .beat-align-right .spatial-pillar-card .pillar-desc {
-      font-size: 0.82rem !important;
-      line-height: 1.5 !important;
+    .section-heading-centered {
+      text-align: center;
+      max-width: 760px;
+      margin: 0 auto 48px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    /* Left-Aligned Showcase Universe Pills (Compact 2-col Grid within 480px) */
-    .beat-align-left .universe-pills-cluster {
-      display: grid !important;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-      gap: 10px !important;
-      width: 100% !important;
-      max-width: 480px !important;
-      justify-content: flex-start !important;
-    }
-    .beat-align-left .universe-pill-tag {
-      padding: 8px 12px !important;
-      gap: 8px !important;
-      width: auto !important;
-    }
-    .beat-align-left .universe-pill-tag .pill-meta {
-      display: none !important;
+    .universes-bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+      width: 100%;
     }
 
-    /* Right-Aligned Launch Cluster & Trust Bar */
-    .beat-align-right .launch-actions-cluster {
-      display: flex !important;
-      flex-direction: column !important;
-      gap: 12px !important;
-      width: 100% !important;
-      max-width: 480px !important;
-      align-items: stretch !important;
-      margin-bottom: 24px !important;
+    .bento-hero-shelf {
+      grid-column: span 7;
     }
-    .beat-align-right .launch-actions-cluster button,
-    .beat-align-right .launch-actions-cluster a {
-      width: 100% !important;
-      justify-content: center !important;
-      text-align: center !important;
+
+    .bento-hero-sylva {
+      grid-column: span 5;
     }
-    .beat-align-right .launch-trust-bar {
-      display: grid !important;
-      grid-template-columns: repeat(4, 1fr) !important;
-      gap: 8px !important;
-      width: 100% !important;
-      max-width: 480px !important;
-      padding: 10px 14px !important;
-      border-radius: 14px !important;
+
+    .bento-compact-card {
+      grid-column: span 3;
     }
-    .beat-align-right .trust-divider {
-      display: none !important;
+
+    .universe-bento-card {
+      background: rgba(13, 18, 30, 0.76);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      cursor: pointer;
     }
-    .beat-align-right .trust-item .trust-num {
-      font-size: 0.95rem !important;
+
+    .universe-bento-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(56, 189, 248, 0.18);
     }
-    .beat-align-right .trust-item .trust-lbl {
-      font-size: 0.68rem !important;
+
+    .bento-card-media {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .bento-hero-shelf .bento-card-media,
+    .bento-hero-sylva .bento-card-media {
+      aspect-ratio: 16 / 10;
+    }
+
+    .bento-compact-card .bento-card-media {
+      aspect-ratio: 16 / 11;
+    }
+
+    .bento-card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .universe-bento-card:hover .bento-card-media img {
+      transform: scale(1.05);
+    }
+
+    .bento-card-content {
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      gap: 6px;
+    }
+
+    .bento-card-tag {
+      font-family: var(--font-mono, monospace);
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #38BDF8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .bento-card-title {
+      font-family: var(--font-display, sans-serif);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin: 0;
+    }
+
+    .bento-card-desc {
+      font-size: 0.84rem;
+      color: #94A3B8;
+      line-height: 1.5;
+      margin: 0 0 10px 0;
+    }
+
+    .bento-card-footer {
+      margin-top: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Spatial Pillars Compact Layout in Full Container */
+    .spatial-pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      width: 100%;
+    }
+
+    /* Responsive Queries for Hero & Bento */
+    @media (max-width: 1100px) {
+      .hero-command-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .hero-command-content {
+        align-items: center;
+        text-align: center;
+      }
+      .chrono-hero-subtitle {
+        margin: 0 auto 24px auto;
+      }
+      .hero-trust-pills {
+        justify-content: center;
+      }
+      .bento-hero-shelf {
+        grid-column: span 12;
+      }
+      .bento-hero-sylva {
+        grid-column: span 12;
+      }
+      .bento-compact-card {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .bento-compact-card {
+        grid-column: span 12;
+      }
     }
 
     /* Mobile Responsive: Gracefully center on phones */
@@ -2707,93 +2981,142 @@
 
         <!-- Main Hero Landing Stage (Floating over 3D Viewport) -->
         <header class="chrono-hero-stage" id="chronoHeroStage">
-          <!-- Beat 0: Main Interactive Hero Console & Title -->
-          <div class="chrono-hero-content" id="chronoHeroContent">
-
-            <!-- Display Headline in Space Grotesk -->
-            <h1 class="chrono-hero-title">
-              Your resume, rendered as a world.
-            </h1>
-
-            <!-- Subtitle in Inter -->
-            <p class="chrono-hero-subtitle">
-              Paste your GitHub, upload a resume, or talk to the bot. In under a minute you get a 3D portfolio recruiters actually explore instead of skim.
-            </p>
-
-            <!-- Interactive Generator Console -->
-            <div class="chrono-console-card interactive-target">
-              <div class="console-tabs">
-                <button type="button" class="console-tab active" id="tabGithub" onclick="switchHeroTab('github')">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-                  </svg>
-                  <span>GitHub profile</span>
-                </button>
-                <button type="button" class="console-tab" id="tabResume" onclick="switchHeroTab('resume')">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                    <line x1="16" y1="13" x2="8" y2="13"></line>
-                    <line x1="16" y1="17" x2="8" y2="17"></line>
-                  </svg>
-                  <span>PDF resume</span>
-                </button>
-                <button type="button" class="console-tab" id="tabDirect" onclick="switchHeroTab('direct')">
-                  <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                  </svg>
-                  <span>Quick prompt</span>
-                </button>
+          <div class="hero-command-container">
+            <!-- Column 1: Command Center & Synthesis Console -->
+            <div class="hero-command-content" id="chronoHeroContent">
+              <div class="hero-badge-pill">
+                <span class="pulse-dot"></span>
+                <span>Instant 3D WebGL Portfolio Engine</span>
               </div>
 
-              <!-- GitHub Panel -->
-              <div class="console-panel" id="panelGithub">
-                <div class="console-input-row">
-                  <div class="console-input-wrap">
-                    <span class="input-prefix">github.com/</span>
-                    <input type="text" id="heroGithubInput" class="console-input" placeholder="username (e.g. torvalds)" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') launchHeroGithub()">
-                  </div>
-                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroGithub()">
-                    <span>Build portfolio</span>
+              <!-- Display Headline in Space Grotesk -->
+              <h1 class="chrono-hero-title">
+                Your Career, Rendered as a <span class="title-gradient-span">Living 3D World</span>
+              </h1>
+
+              <!-- Subtitle in Inter -->
+              <p class="chrono-hero-subtitle">
+                Paste your GitHub handle, upload a PDF resume, or describe your stack. The engine extracts your repositories, metrics, and career milestones into an interactive 3D universe in under 60 seconds.
+              </p>
+
+              <!-- Interactive Generator Console -->
+              <div class="chrono-console-card interactive-target">
+                <div class="console-tabs">
+                  <button type="button" class="console-tab active" id="tabGithub" onclick="switchHeroTab('github')">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    <span>GitHub profile</span>
+                  </button>
+                  <button type="button" class="console-tab" id="tabResume" onclick="switchHeroTab('resume')">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                    </svg>
+                    <span>PDF resume</span>
+                  </button>
+                  <button type="button" class="console-tab" id="tabDirect" onclick="switchHeroTab('direct')">
+                    <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                    </svg>
+                    <span>Quick prompt</span>
                   </button>
                 </div>
-              </div>
 
-              <!-- Resume Panel -->
-              <div class="console-panel" id="panelResume" style="display: none;">
-                <div class="console-dropzone" onclick="document.getElementById('heroResumeUpload').click()">
-                  <input type="file" id="heroResumeUpload" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleHeroResume(this)">
-                  <svg class="dropzone-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <div class="dropzone-text">
-                    <strong>Drop your PDF resume or click to upload</strong>
-                    <span>Extracts skills, projects, and career milestones automatically</span>
+                <!-- GitHub Panel -->
+                <div class="console-panel" id="panelGithub">
+                  <div class="console-input-row">
+                    <div class="console-input-wrap">
+                      <span class="input-prefix">github.com/</span>
+                      <input type="text" id="heroGithubInput" class="console-input" placeholder="username (e.g. torvalds)" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter') launchHeroGithub()">
+                    </div>
+                    <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroGithub()">
+                      <span>Build portfolio</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Resume Panel -->
+                <div class="console-panel" id="panelResume" style="display: none;">
+                  <div class="console-dropzone" onclick="document.getElementById('heroResumeUpload').click()">
+                    <input type="file" id="heroResumeUpload" accept=".pdf,.doc,.docx" style="display: none;" onchange="handleHeroResume(this)">
+                    <svg class="dropzone-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <div class="dropzone-text">
+                      <strong>Drop your PDF resume or click to upload</strong>
+                      <span>Extracts skills, projects, and career milestones automatically</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Direct Prompt Panel -->
+                <div class="console-panel" id="panelDirect" style="display: none;">
+                  <div class="console-input-row">
+                    <input type="text" id="heroPromptInput" class="console-input" placeholder="e.g. Senior systems engineer specializing in distributed storage..." style="padding-left: 18px;" onkeydown="if(event.key==='Enter') launchHeroPrompt()">
+                    <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroPrompt()">
+                      <span>Build portfolio</span>
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <!-- Direct Prompt Panel -->
-              <div class="console-panel" id="panelDirect" style="display: none;">
-                <div class="console-input-row">
-                  <input type="text" id="heroPromptInput" class="console-input" placeholder="e.g. Senior systems engineer specializing in distributed storage..." style="padding-left: 18px;" onkeydown="if(event.key==='Enter') launchHeroPrompt()">
-                  <button type="button" class="btn-solar-primary interactive-target" onclick="launchHeroPrompt()">
-                    <span>Build portfolio</span>
-                  </button>
-                </div>
+              <!-- Primary CTAs Row -->
+              <div class="chrono-cta-row">
+                <a href="/studio" class="btn-solar-primary interactive-target">
+                  <span>Synthesize 3D Portfolio ✦</span>
+                </a>
+                <button type="button" class="btn-solar-outline interactive-target" onclick="openSamplesModal()">
+                  <span>Explore 34+ universes</span>
+                </button>
+              </div>
+
+              <!-- Quick Trust Pills -->
+              <div class="hero-trust-pills">
+                <span>⚡ Free 24h live preview</span>
+                <span>📁 1-click static ZIP export</span>
+                <span>🌐 Custom subdomain</span>
               </div>
             </div>
 
-            <!-- Primary CTAs Row -->
-            <div class="chrono-cta-row">
-              <a href="/studio" class="btn-solar-primary interactive-target">
-                <span>Build my portfolio</span>
-              </a>
-              <button type="button" class="btn-solar-outline interactive-target" onclick="openSamplesModal()">
-                <span>See example universes</span>
-              </button>
+            <!-- Column 2: Interactive 3D Perspective Card (Complete Shelf 3D) -->
+            <div class="hero-preview-col">
+              <div class="hero-interactive-card" id="heroInteractiveCard" onclick="window.location.href='/complete-shelf-3d'">
+                <div class="hero-card-header">
+                  <div class="live-telemetry-badge">
+                    <span class="live-status-dot"></span>
+                    <span>LIVE TELEMETRY // 3D Hardcover Physics</span>
+                  </div>
+                  <div class="telemetry-stats">
+                    <span>FPS: 60</span>
+                    <span>WebGL 2.0</span>
+                  </div>
+                </div>
+                <div class="hero-card-viewport">
+                  <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="eager">
+                  <div class="hero-card-overlay">
+                    <div class="hero-overlay-tags">
+                      <span class="tag-pill">3D Library</span>
+                      <span class="tag-pill">Physics Tilt</span>
+                      <span class="tag-pill">Interactive Volumes</span>
+                    </div>
+                    <h3 class="hero-overlay-title">Complete Shelf 3D</h3>
+                    <p class="hero-overlay-desc">Pull volumes forward, turn physical pages, and inspect project archives in real-time space.</p>
+                    <div class="hero-overlay-actions">
+                      <a href="/complete-shelf-3d" class="btn-solar-primary" style="padding: 7px 16px; font-size: 0.8rem; text-decoration: none;" onclick="event.stopPropagation()">
+                        <span>👁️ Live Demo ↗</span>
+                      </a>
+                      <a href="/studio?template=threeui-shelf" class="btn-solar-outline" style="padding: 7px 16px; font-size: 0.8rem; text-decoration: none; border-color: rgba(56, 189, 248, 0.4); color: #38BDF8;" onclick="event.stopPropagation()">
+                        <span>⚡ Launch Studio ➔</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -2808,15 +3131,17 @@
 
 
         <!-- Section 1: How It Works (Connected Sequential 1-2-3 Path) -->
-        <section id="sectionOverview" class="landing-section chrono-scroll-beat beat-align-right">
+        <section id="sectionOverview" class="landing-section">
           <div class="landing-container">
-            <span class="section-tag-badge reveal-on-scroll">How it works</span>
-            <h2 class="section-title-large reveal-on-scroll delay-1">
-              From code to interactive world in three steps
-            </h2>
-            <p class="section-lead-text reveal-on-scroll delay-2">
-              No manual 3D modeling. No WebGL shader coding. Just your authentic engineering experience brought to life.
-            </p>
+            <div class="section-heading-centered">
+              <span class="section-tag-badge reveal-on-scroll">How it works</span>
+              <h2 class="section-title-large reveal-on-scroll delay-1">
+                From code to interactive world in three steps
+              </h2>
+              <p class="section-lead-text reveal-on-scroll delay-2">
+                No manual 3D modeling. No WebGL shader coding. Just your authentic engineering experience brought to life.
+              </p>
+            </div>
 
             <div class="connected-steps-container">
               <div class="connected-step-card reveal-on-scroll delay-1">
@@ -2829,9 +3154,9 @@
 
               <div class="connected-step-card reveal-on-scroll delay-2">
                 <div class="step-num-badge">02</div>
-                <h3 class="step-title">Choose a universe</h3>
+                <h3 class="step-title">Synthesize a universe</h3>
                 <p class="step-desc">
-                  Select from distinct architectural worlds — from orbital deep space to obsidian prisms. Each world is generated with custom Three.js lighting and physics.
+                  Select from 34+ distinct architectural worlds — from tactile 3D libraries to living seasonal biomes with custom Three.js lighting and physics.
                 </p>
               </div>
 
@@ -2839,36 +3164,38 @@
                 <div class="step-num-badge">03</div>
                 <h3 class="step-title">Deploy to the world</h3>
                 <p class="step-desc">
-                  Publish instantly with a shareable URL, connect your custom domain, or export clean standalone code. Live preview ready in under 60 seconds.
+                  Publish instantly with your personal subdomain, connect custom DNS, or download standalone static code ready for Vercel and Netlify.
                 </p>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Section 2: Universes (Asymmetrical Visual Gallery with Real Rendered Thumbnails) -->
-        <!-- Section 2: Universes (Asymmetrical Visual Gallery with Real Rendered Thumbnails) -->
-        <section id="sectionUniverses" class="landing-section chrono-scroll-beat beat-align-left">
-          <div class="landing-container">
-            <span class="section-tag-badge reveal-on-scroll">3D Visual Universes</span>
-            <h2 class="section-title-large reveal-on-scroll delay-1">
-              Living, interactive worlds — never duplicated
-            </h2>
-            <p class="section-lead-text reveal-on-scroll delay-2">
-              Every portfolio receives a bespoke 3D spatial universe tailored to your discipline with custom physics, procedural shaders, and tactile micro-interactions.
-            </p>
+        <!-- Section 2: Universes (12-Column Responsive Bento Grid with Bespoke 3D Thumbnails) -->
+        <section id="sectionUniverses" class="universes-showcase-section">
+          <div class="landing-container universes-full-container">
+            <div class="section-heading-centered">
+              <span class="section-tag-badge reveal-on-scroll">3D Visual Universes</span>
+              <h2 class="section-title-large reveal-on-scroll delay-1">
+                Living, interactive worlds — never duplicated
+              </h2>
+              <p class="section-lead-text reveal-on-scroll delay-2">
+                Every portfolio receives a bespoke 3D spatial universe tailored to your discipline with custom physics, procedural shaders, and tactile micro-interactions.
+              </p>
+            </div>
 
-            <!-- 2 Featured Universes -->
-            <div class="universes-asymm-grid">
-              <div class="universe-hero-card interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/complete-shelf-3d'">
-                <div class="universe-card-thumb">
+            <!-- 12-Column Bento Grid -->
+            <div class="universes-bento-grid">
+              <!-- Bento Card 1: Complete Shelf 3D (7-col) -->
+              <div class="universe-bento-card bento-hero-shelf interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/complete-shelf-3d'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="lazy">
                 </div>
-                <div class="universe-card-body">
-                  <span class="universe-card-tag">3D Interactive Library • Physics Engine</span>
-                  <h3 class="universe-card-title">Complete Shelf 3D</h3>
-                  <p class="universe-card-desc">Interactive mahogany library with real-time 3D hardcover tilts, gold foil embossing, and tactile book spine physics.</p>
-                  <div style="display: flex; gap: 12px; margin-top: 10px; align-items: center;">
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">3D Interactive Library • Physics Engine</span>
+                  <h3 class="bento-card-title">Complete Shelf 3D</h3>
+                  <p class="bento-card-desc">Interactive mahogany library with real-time 3D hardcover tilts, gold foil embossing, and tactile book spine physics.</p>
+                  <div class="bento-card-footer">
                     <a href="/complete-shelf-3d" class="btn-solar-primary" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;" onclick="event.stopPropagation()">
                       <span>👁️ Live Demo ↗</span>
                     </a>
@@ -2879,15 +3206,16 @@
                 </div>
               </div>
 
-              <div class="universe-hero-card interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/sylva-living-world'">
-                <div class="universe-card-thumb">
+              <!-- Bento Card 2: Pure Sylva Living World (5-col) -->
+              <div class="universe-bento-card bento-hero-sylva interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/sylva-living-world'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_sylva_3d.jpg" alt="Pure Sylva Living World" loading="lazy">
                 </div>
-                <div class="universe-card-body">
-                  <span class="universe-card-tag">Living Biome • 4 Seasonal Weather Shaders</span>
-                  <h3 class="universe-card-title">Pure Sylva Living World</h3>
-                  <p class="universe-card-desc">Living moss-covered bough with fluttering iridescent butterfly flight dynamics and 4 seasonal dynamic shaders.</p>
-                  <div style="display: flex; gap: 12px; margin-top: 10px; align-items: center;">
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">Living Biome • 4 Seasonal Weather Shaders</span>
+                  <h3 class="bento-card-title">Pure Sylva Living World</h3>
+                  <p class="bento-card-desc">Living moss-covered bough with fluttering iridescent butterfly flight dynamics and 4 seasonal dynamic shaders.</p>
+                  <div class="bento-card-footer">
                     <a href="/sylva-living-world" class="btn-solar-primary" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;" onclick="event.stopPropagation()">
                       <span>👁️ Live Demo ↗</span>
                     </a>
@@ -2897,78 +3225,65 @@
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- 6 Compact Universes Grid -->
-            <div class="universes-compact-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));">
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/kage-living-world'">
-                <div class="universe-compact-thumb">
+              <!-- Bento Card 3: Kage Shrine 3D (3-col) -->
+              <div class="universe-bento-card bento-compact-card interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/kage-living-world'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_kage_3d.jpg" alt="Kage Shrine 3D" loading="lazy">
                 </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">Kyoto Pagoda • Night Moon</span>
-                  <h4 class="universe-compact-title">Kage Shrine 3D</h4>
-                  <a href="/studio?template=threeui-kage" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">Kyoto Pagoda • Night Moon</span>
+                  <h4 class="bento-card-title">Kage Shrine 3D</h4>
+                  <div class="bento-card-footer">
+                    <a href="/studio?template=threeui-kage" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                  </div>
                 </div>
               </div>
 
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/threeui-constellation'">
-                <div class="universe-compact-thumb">
+              <!-- Bento Card 4: Synaptic Constellation (3-col) -->
+              <div class="universe-bento-card bento-compact-card interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/threeui-constellation'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_constellation_3d.jpg" alt="Synaptic Constellation" loading="lazy">
                 </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">Neural AI • Synaptic Graph</span>
-                  <h4 class="universe-compact-title">Synaptic Constellation</h4>
-                  <a href="/studio?template=threeui-constellation" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">Neural AI • Synaptic Graph</span>
+                  <h4 class="bento-card-title">Synaptic Constellation</h4>
+                  <div class="bento-card-footer">
+                    <a href="/studio?template=threeui-constellation" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                  </div>
                 </div>
               </div>
 
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-3" onclick="window.location.href='/threeui-liquid-metal'">
-                <div class="universe-compact-thumb">
+              <!-- Bento Card 5: Liquid Metal Chrome (3-col) -->
+              <div class="universe-bento-card bento-compact-card interactive-target reveal-on-scroll delay-3" onclick="window.location.href='/threeui-liquid-metal'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_liquid_metal_3d.jpg" alt="Liquid Metal Chrome" loading="lazy">
                 </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">MengTo Chromatic Chrome</span>
-                  <h4 class="universe-compact-title">Liquid Metal</h4>
-                  <a href="/studio?template=threeui-liquid-metal" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">MengTo Chromatic Chrome</span>
+                  <h4 class="bento-card-title">Liquid Metal</h4>
+                  <div class="bento-card-footer">
+                    <a href="/studio?template=threeui-liquid-metal" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                  </div>
                 </div>
               </div>
 
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-4" onclick="window.location.href='/threeui-matrix-field'">
-                <div class="universe-compact-thumb">
+              <!-- Bento Card 6: Quantum Matrix (3-col) -->
+              <div class="universe-bento-card bento-compact-card interactive-target reveal-on-scroll delay-4" onclick="window.location.href='/threeui-matrix-field'">
+                <div class="bento-card-media">
                   <img src="/assets/3d/threeui_matrix_3d.jpg" alt="Quantum Matrix" loading="lazy">
                 </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">High-Voltage Quantum Arcs</span>
-                  <h4 class="universe-compact-title">Quantum Matrix</h4>
-                  <a href="/studio?template=threeui-matrix" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
-                </div>
-              </div>
-
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/depth-showcase'">
-                <div class="universe-compact-thumb">
-                  <img src="/assets/3d/spatial_depth_voyage_3d.jpg" alt="Spatial Depth Voyage" loading="lazy">
-                </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">Carrara Marble • Luxury</span>
-                  <h4 class="universe-compact-title">Spatial Depth Voyage</h4>
-                  <a href="/studio?template=spatial-depth-voyage" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
-                </div>
-              </div>
-
-              <div class="universe-compact-card interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/sketchbook-3d'">
-                <div class="universe-compact-thumb">
-                  <img src="/assets/3d/threeui_sketchbook_3d.jpg" alt="Living Sketchbook" loading="lazy">
-                </div>
-                <div class="universe-compact-body">
-                  <span class="universe-compact-tag">Architectural Spreads • Loupe</span>
-                  <h4 class="universe-compact-title">Living Sketchbook</h4>
-                  <a href="/studio?template=threeui-sketchbook" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                <div class="bento-card-content">
+                  <span class="bento-card-tag">Volumetric Lightning</span>
+                  <h4 class="bento-card-title">Quantum Matrix</h4>
+                  <div class="bento-card-footer">
+                    <a href="/studio?template=threeui-matrix" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div style="margin-top: 36px; display: flex; gap: 14px; flex-wrap: wrap;" class="reveal-on-scroll delay-3">
+            <div style="margin-top: 42px; display: flex; gap: 14px; flex-wrap: wrap; justify-content: center;" class="reveal-on-scroll delay-3">
               <a href="/studio" class="btn-solar-primary interactive-target" style="text-decoration: none;">
                 <span>⚡ Open Interactive Web Studio</span>
               </a>
@@ -2980,7 +3295,7 @@
         </section>
 
         <!-- Section 3: Launch Studio (Closing CTA) -->
-        <section id="sectionLaunch" class="landing-section chrono-scroll-beat beat-align-right">
+        <section id="sectionLaunch" class="landing-section">
           <div class="landing-container">
             <div class="launch-cta-card">
               <span class="section-tag-badge reveal-on-scroll">Get started</span>
@@ -3462,6 +3777,32 @@
       }, { threshold: 0.12 });
 
       revealEls.forEach(el => observer.observe(el));
+    })();
+
+    // 6. Interactive 3D Card Mouse Tilt (Hardware Accelerated)
+    (function initHeroCardTilt() {
+      const card = document.getElementById('heroInteractiveCard');
+      if (!card) return;
+
+      let bounds;
+      function updateBounds() {
+        bounds = card.getBoundingClientRect();
+      }
+      updateBounds();
+      window.addEventListener('resize', updateBounds, { passive: true });
+
+      card.addEventListener('mousemove', (e) => {
+        if (!bounds) updateBounds();
+        const x = e.clientX - bounds.left - bounds.width / 2;
+        const y = e.clientY - bounds.top - bounds.height / 2;
+        const rotateX = -(y / bounds.height) * 14;
+        const rotateY = (x / bounds.width) * 14;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) scale3d(1.02, 1.02, 1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+      });
     })();
   </script>
 
