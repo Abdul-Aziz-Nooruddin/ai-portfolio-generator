@@ -8,6 +8,24 @@
     "status": "active",
     "updatedAt": "2026-09-05T09:45:11.218Z"
   },
+  "aziz.myfolio.tech": {
+    "domain": "aziz.myfolio.tech",
+    "handle": "aziz",
+    "siteId": "abdulaziz-1788601265704",
+    "userId": "abdulaziz_founder",
+    "type": "subdomain",
+    "status": "active",
+    "updatedAt": "2026-09-05T09:45:11.218Z"
+  },
+  "aziz.localhost": {
+    "domain": "aziz.localhost",
+    "handle": "aziz",
+    "siteId": "abdulaziz-1788601265704",
+    "userId": "abdulaziz_founder",
+    "type": "subdomain",
+    "status": "active",
+    "updatedAt": "2026-09-05T09:45:11.218Z"
+  },
   "abdulaziz.portfolio.site": {
     "domain": "abdulaziz.portfolio.site",
     "handle": "abdulaziz",

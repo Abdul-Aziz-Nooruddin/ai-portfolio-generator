@@ -228,4 +228,34 @@ describe('🏛️ Multi-Template Catalog & Dynamic Content Replacement', () => {
     assert.ok(page404.includes('cyber_gnome_nobg.png'), '404 page must include 3D Cyber Gnome');
     assert.ok(page404.includes('Quantum Path Diverged'), '404 page must include Quantum Path Diverged title');
   });
+
+  test('21. Template: ThreeUI Complete Shelf dynamically binds candidate data & 3D interactive library', () => {
+    const res = TemplateRegistry.render('threeui-shelf', sampleCandidate);
+    assert.ok(res.html.includes('Abdul Aziz Nooruddin'), 'Must contain candidate name');
+    assert.ok(res.html.includes('ConsentChain'), 'Must contain project name');
+    assert.ok(res.html.includes('id="scene"'), 'Must include 3D canvas');
+    assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), 'Must contain email');
+    assert.ok(res.html.includes('+91 99128 36034'), 'Must contain phone');
+  });
+
+  test('22. All ThreeUI & Living World templates dynamically bind candidate data', () => {
+    const threeuiTemplates = [
+      'threeui-shelf',
+      'threeui-sylva',
+      'threeui-kage',
+      'threeui-sketchbook',
+      'threeui-landscape',
+      'threeui-constellation',
+      'threeui-liquid-metal',
+      'threeui-matrix'
+    ];
+
+    threeuiTemplates.forEach(tId => {
+      const res = TemplateRegistry.render(tId, sampleCandidate);
+      assert.ok(res.html.includes('Abdul Aziz Nooruddin'), `${tId} must contain candidate name`);
+      assert.ok(res.html.includes('ConsentChain'), `${tId} must contain ConsentChain`);
+      assert.ok(res.html.includes('abdulaziznoor9876@gmail.com'), `${tId} must contain email`);
+    });
+  });
 });
+

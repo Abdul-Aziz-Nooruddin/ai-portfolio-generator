@@ -10,7 +10,7 @@ const { NetlifyDeployer } = require('./netlify-deployer');
 
 class HostingProvider {
   constructor(netlifyToken = null, supabaseUrl = null, supabaseKey = null) {
-    this.hostUrl = process.env.HOST_URL || 'http://localhost:3000';
+    this.hostUrl = process.env.HOST_URL || 'http://localhost:5050';
     this.useNetlify = process.env.USE_NETLIFY === 'true' && !!netlifyToken;
     
     if (this.useNetlify) {
@@ -118,13 +118,15 @@ class HostingProvider {
       } catch (e) {}
     }
 
-    // Fallback: Check Supabase Storage
+    // Fallback: Check Supabase Storage with fast timeout
     if (this.supabase) {
       try {
-        const { data, error } = await this.supabase.storage
+        const downloadPromise = this.supabase.storage
           .from('portfolios')
           .download(`${siteId}/index.html`);
-        if (data && !error) {
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null, error: 'timeout' }), 600));
+        const { data, error } = await Promise.race([downloadPromise, timeoutPromise]);
+        if (data && !error && typeof data.text === 'function') {
           const html = await data.text();
           // Restore to local filesystem so subsequent requests are instant
           const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);

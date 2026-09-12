@@ -197,7 +197,7 @@ class RazorpayService {
     
     const config = planConfig[plan] || planConfig.all_access;
     const finalAmount = Math.round(Number(amount || config.amount));
-    const appHost = process.env.APP_URL || process.env.HOST_URL || 'http://localhost:3000';
+    const appHost = process.env.APP_URL || process.env.HOST_URL || 'http://localhost:5050';
     
     try {
       const response = await fetch(`${this.baseUrl}/payment_links`, {

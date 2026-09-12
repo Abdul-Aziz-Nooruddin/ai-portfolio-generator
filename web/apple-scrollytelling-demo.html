@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaelen Vance — Principal Spatial Systems Architect</title>
+  
+  <!-- 3-Tier Non-Repeating Typographic Engine (Extracted to match 3D Frames) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* -------------------------------------------------------------
+       PALETTE EXTRACTED DIRECTLY FROM 3D START & END FRAMES
+    ------------------------------------------------------------- */
+    :root {
+      --bg-void: #04070B;
+      --bg-surface: #090D17;
+      --bg-card: rgba(10, 15, 26, 0.72);
+      --bg-card-hover: rgba(14, 22, 38, 0.85);
+      
+      --border-subtle: rgba(93, 205, 224, 0.18);
+      --border-active: rgba(211, 82, 196, 0.55);
+      --border-accent: rgba(0, 240, 255, 0.35);
+      
+      --cyan-core: #00F0FF;
+      --cyan-seam: #5DCDE0;
+      --cyan-glow: rgba(93, 205, 224, 0.4);
+      --magenta-bloom: #D352C4;
+      --magenta-glow: rgba(211, 82, 196, 0.35);
+      --amber-circuit: #FFB800;
+      --starlight: #E6FCFF;
+      
+      --text-main: #F4F7FB;
+      --text-muted: #94A3B8;
+      --text-dim: #526075;
+
+      --font-display: 'Orbitron', -apple-system, sans-serif;
+      --font-body: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: none;
+    }
+
+    /* -------------------------------------------------------------
+       FIXED BACKGROUND 3D VIDEO & CANVAS (Zero Space in Front!)
+    ------------------------------------------------------------- */
+    .fixed-scrolly-background {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      transform: translateZ(0);
+      will-change: transform;
+    }
+
+    .bg-canvas-element {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.88;
+      transform: translateZ(0);
+    }
+
+    .bg-vignette-overlay {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(4, 7, 11, 0.25) 0%, rgba(4, 7, 11, 0.82) 75%, #04070B 100%);
+      pointer-events: none;
+    }
+
+    .viewport-grid {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(93, 205, 224, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(93, 205, 224, 0.035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      pointer-events: none;
+    }
+
+    /* -------------------------------------------------------------
+       MASTHEAD NAVIGATION
+    ------------------------------------------------------------- */
+    .masthead-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      background: rgba(4, 7, 11, 0.94);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-mark .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan-core);
+      box-shadow: 0 0 12px var(--cyan-core);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan-core);
+    }
+
+    .nav-telemetry {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+    }
+
+    .telemetry-val {
+      color: var(--cyan-core);
+      font-weight: 700;
+    }
+
+    .nav-threeui-pill {
+      color: var(--cyan-core);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(93, 205, 224, 0.4);
+      background: rgba(93, 205, 224, 0.08);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-threeui-pill:hover {
+      background: var(--cyan-core);
+      color: #04070B;
+      box-shadow: 0 0 15px rgba(93, 205, 224, 0.5);
+    }
+
+    /* Fixed HUD removed so it never blocks telemetry strip or stats */
+    .fixed-telemetry-hud {
+      display: none !important;
+    }
+
+    .hud-tag {
+      color: var(--cyan-core);
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.6rem;
+      font-size: 0.72rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .hud-tag::before {
+      content: '';
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--magenta-bloom);
+      box-shadow: 0 0 10px var(--magenta-bloom);
+      animation: pulse 1.5s infinite;
+    }
+
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1.4rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .hud-val {
+      color: var(--cyan-core);
+      font-weight: 700;
+    }
+
+    .hud-val-accent {
+      color: var(--magenta-bloom);
+      font-weight: 700;
+    }
+
+    .hud-palette {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.8rem;
+      padding-top: 0.6rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .palette-swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      display: inline-block;
+    }
+
+    /* -------------------------------------------------------------
+       PAGE CONTENT WRAPPER & SECTION ARCHITECTURE
+    ------------------------------------------------------------- */
+    .page-content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
+
+    .content-section {
+      padding: 6.5rem 0;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      color: var(--cyan-seam);
+      font-size: 0.82rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .section-tag::before {
+      content: '•';
+      color: var(--magenta-bloom);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-bottom: 0.6rem;
+    }
+
+    .section-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      line-height: 1.6;
+    }
+
+    /* -------------------------------------------------------------
+       01. HERO STAGE (Refined, Compact, Center 100% Open for 3D!)
+    ------------------------------------------------------------- */
+    .hero-stage {
+      min-height: 52vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 6rem;
+      padding-bottom: 2rem;
+    }
+
+    .hero-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan-core);
+      background: rgba(93, 205, 224, 0.08);
+      padding: 0.4rem 0.9rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 1.2rem;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1.15;
+      text-transform: uppercase;
+      margin-bottom: 0.9rem;
+      background: linear-gradient(135deg, #FFFFFF 35%, var(--cyan-seam) 70%, var(--magenta-bloom) 100%);
+      -webkit-background-clip : text;
+      -webkit-text-fill-color: transparent;
+      max-width: 720px;
+    }
+
+    .hero-subtitle {
+      font-size: 0.98rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 580px;
+      margin-bottom: 1.8rem;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--cyan-core);
+      color: #04070B;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 0 20px var(--cyan-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.6);
+    }
+
+    /* MengTo ThreeUI Gradient Border Shell */
+    .threeui-btn-shell {
+      display: inline-block;
+      padding: 1px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(93, 205, 224, 0.8) 0%, rgba(211, 82, 196, 0.6) 50%, rgba(230, 200, 121, 0.4) 100%);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 20px rgba(93, 205, 224, 0.25);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .threeui-btn-shell:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 32px rgba(93, 205, 224, 0.45);
+    }
+
+    .threeui-btn-shell .btn-primary {
+      border-radius: 9999px;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(10, 15, 26, 0.7);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.6rem;
+      border-radius: 6px;
+      text-decoration: none;
+      background: rgba(10, 15, 26, 0.85);
+      border: 1px solid var(--border-subtle);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--cyan-core);
+      transform: translateY(-2px);
+    }
+
+    /* -------------------------------------------------------------
+       02. FIXED FLOATING MILESTONE STATUS PILL (Bottom Center)
+    ------------------------------------------------------------- */
+    .fixed-milestone-pill {
+      position: fixed;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translate(-50%, 18px);
+      z-index: 90;
+      background: rgba(4, 7, 11, 0.94);
+      border: 1px solid var(--border-active);
+      border-radius: 30px;
+      padding: 0.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), 0 0 20px rgba(93, 205, 224, 0.25);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .fixed-milestone-pill.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    .milestone-badge-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      color: var(--cyan-core);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .milestone-badge-divider {
+      color: rgba(255, 255, 255, 0.2);
+    }
+
+    .milestone-badge-title {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .milestone-badge-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* -------------------------------------------------------------
+       03. TELEMETRY & PRODUCTION METRICS (Compact & Translucent)
+    ------------------------------------------------------------- */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.2rem;
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.6rem 2rem;
+      margin: 2rem 0 3.5rem;
+    }
+
+    .metric-item .label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.4rem;
+    }
+
+    .metric-item .value {
+      font-family: var(--font-display);
+      font-size: 2.3rem;
+      font-weight: 900;
+      color: var(--cyan-core);
+    }
+
+    .metric-item .subtext {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-top: 0.2rem;
+      font-family: var(--font-mono);
+    }
+
+    /* -------------------------------------------------------------
+       03. ABOUT & ARCHITECTURAL PHILOSOPHY
+    ------------------------------------------------------------- */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 7fr 5fr;
+      gap: 3.5rem;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .about-text strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .philosophy-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .philosophy-card {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.6rem;
+    }
+
+    .philosophy-card h4 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      color: var(--cyan-core);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .philosophy-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* -------------------------------------------------------------
+       04. SKILLS & TECHNICAL ECOSYSTEM
+    ------------------------------------------------------------- */
+    .skills-category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+
+    .skill-card {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid rgba(93, 205, 224, 0.18);
+      border-radius: 12px;
+      padding: 1.3rem 1.5rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .skill-card:hover {
+      border-color: var(--cyan-core);
+      transform: translateY(-3px);
+    }
+
+    .skill-card-icon {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan-core);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.12em;
+    }
+
+    .skill-card-title {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+      color: #FFF;
+    }
+
+    .skill-card-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 0.9rem;
+    }
+
+    .skill-pill-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .skill-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 0.22rem 0.6rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    /* -------------------------------------------------------------
+       05. VERIFIED PROJECTS BENTO VAULT (Compact & Space-Efficient)
+    ------------------------------------------------------------- */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 1.2rem;
+    }
+
+    .bento-card {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid rgba(93, 205, 224, 0.18);
+      border-radius: 12px;
+      padding: 1.3rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .bento-card:hover {
+      border-color: var(--cyan-core);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(93, 205, 224, 0.15);
+    }
+
+    .span-8 { grid-column: span 8; }
+    .span-4 { grid-column: span 4; }
+
+    .card-3d-asset {
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-3d-asset img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 6px 16px rgba(93, 205, 224, 0.3));
+      transition: transform 0.4s ease;
+    }
+
+    .bento-card:hover .card-3d-asset img {
+      transform: scale(1.08) rotate(1deg);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--cyan-seam);
+      margin-bottom: 0.35rem;
+    }
+
+    .card-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      color: #FFF;
+      letter-spacing: 0.02em;
+    }
+
+    .card-desc {
+      color: var(--text-muted);
+      font-size: 0.84rem;
+      line-height: 1.45;
+      margin-bottom: 0.85rem;
+    }
+
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: auto;
+    }
+
+    .tech-chip {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 0.2rem 0.55rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      color: var(--text-muted);
+    }
+
+    /* -------------------------------------------------------------
+       06. EXPERIENCE & CAREER DRIFT TIMELINE (Compact)
+    ------------------------------------------------------------- */
+    .timeline-container {
+      position: relative;
+      padding-left: 2rem;
+      border-left: 2px solid var(--border-subtle);
+      margin-left: 0.8rem;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 2rem;
+    }
+
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-node {
+      position: absolute;
+      left: -2.5rem;
+      top: 0.25rem;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--bg-void);
+      border: 2px solid var(--cyan-core);
+      box-shadow: 0 0 10px var(--cyan-core);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 0.35rem;
+    }
+
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #FFF;
+    }
+
+    .timeline-period {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--cyan-seam);
+    }
+
+    .timeline-company {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--magenta-bloom);
+      margin-bottom: 0.6rem;
+    }
+
+    .timeline-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 0.8rem;
+    }
+
+    .timeline-bullets {
+      list-style: none;
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .timeline-bullets li {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      position: relative;
+      padding-left: 1.2rem;
+      line-height: 1.45;
+    }
+
+    .timeline-bullets li::before {
+      content: '▹';
+      position: absolute;
+      left: 0;
+      color: var(--cyan-core);
+    }
+
+    /* -------------------------------------------------------------
+       07. EDUCATION & CREDENTIALS (Compact)
+    ------------------------------------------------------------- */
+    .edu-cert-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.4rem;
+    }
+
+    .info-card {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid rgba(93, 205, 224, 0.18);
+      border-radius: 12px;
+      padding: 1.3rem 1.5rem;
+    }
+
+    .info-card-title {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      font-weight: 800;
+      margin-bottom: 0.35rem;
+      color: #FFF;
+    }
+
+    .info-card-sub {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--cyan-seam);
+      margin-bottom: 0.6rem;
+    }
+
+    .info-card-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* -------------------------------------------------------------
+       08. ARTICLES & WRITTEN DOSSIERS (Compact)
+    ------------------------------------------------------------- */
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+
+    .article-card {
+      background: rgba(7, 11, 20, 0.85);
+      border: 1px solid rgba(93, 205, 224, 0.18);
+      border-radius: 12px;
+      padding: 1.3rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .article-card:hover {
+      border-color: var(--cyan-core);
+      transform: translateY(-3px);
+    }
+
+    .article-meta {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: var(--cyan-seam);
+      margin-bottom: 0.4rem;
+    }
+
+    .article-title {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #FFF;
+      line-height: 1.3;
+      margin-bottom: 0.5rem;
+    }
+
+    .article-snippet {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 0.8rem;
+    }
+
+    .article-link {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--cyan-core);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: auto;
+    }
+
+    /* -------------------------------------------------------------
+       09. CONTACT TERMINAL & BEACON
+    ------------------------------------------------------------- */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 5fr 7fr;
+      gap: 3.5rem;
+      background: rgba(7, 11, 20, 0.90);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 3.5rem;
+    }
+
+    .contact-detail-row {
+      margin-bottom: 1.8rem;
+    }
+
+    .contact-detail-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan-seam);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 0.4rem;
+    }
+
+    .contact-detail-val {
+      font-size: 1.1rem;
+      color: #FFF;
+      font-weight: 500;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .form-input, .form-textarea {
+      background: rgba(4, 7, 11, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 0.9rem 1.2rem;
+      color: #FFF;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--cyan-core);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+    }
+
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    /* -------------------------------------------------------------
+       10. TERMINAL FOOTER
+    ------------------------------------------------------------- */
+    .terminal-footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 4.5rem 0 6rem;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .footer-colophon {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 1.5rem;
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.6; transform: scale(0.95); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    @media (max-width: 1024px) {
+      .span-8, .span-4 { grid-column: span 12; }
+      .skills-category-grid, .articles-grid { grid-template-columns: 1fr; }
+      .about-grid, .contact-grid, .edu-cert-grid { grid-template-columns: 1fr; }
+      .telemetry-strip { grid-template-columns: repeat(2, 1fr); }
+      .masthead-nav { padding: 1rem 1.5rem; }
+      .nav-links, .nav-telemetry { display: none; }
+      .fixed-telemetry-hud { display: none; }
+    }
+
+    /* Mobile High-Performance Mode (Zero GPU Lag, No Backdrop-Filter Thrashing) */
+    @media (max-width: 768px), (hover: none) and (pointer: coarse) {
+      .masthead-nav,
+      .fixed-milestone-pill,
+      .telemetry-strip,
+      .philosophy-card,
+      .skill-card,
+      .bento-card,
+      .info-card,
+      .article-card,
+      .contact-grid,
+      .btn-secondary {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+      }
+
+      .bento-card,
+      .skill-card,
+      .info-card,
+      .article-card {
+        background: rgba(7, 11, 20, 0.88) !important;
+        transform: translateZ(0);
+      }
+
+      .philosophy-card {
+        background: rgba(7, 11, 20, 0.88) !important;
+      }
+
+      .telemetry-strip {
+        background: rgba(7, 11, 20, 0.88) !important;
+      }
+
+      .masthead-nav {
+        background: rgba(4, 7, 11, 0.95) !important;
+      }
+
+      .contact-grid {
+        padding: 2rem 1.4rem !important;
+        background: rgba(7, 11, 20, 0.92) !important;
+      }
+
+      .fixed-milestone-pill {
+        bottom: 1.2rem;
+        padding: 0.5rem 1.2rem;
+        background: rgba(4, 7, 11, 0.95) !important;
+        font-size: 0.7rem;
+      }
+
+      .page-content-wrapper {
+        padding: 0 1.2rem 4rem !important;
+      }
+
+      .hero-title {
+        font-size: 1.95rem !important;
+      }
+
+      .hero-subtitle {
+        font-size: 0.92rem !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- =========================================================
+       FIXED BACKGROUND 3D VFX SCROLLYTELLING ENGINE (0px in Front!)
+  ========================================================= -->
+  <aside class="fixed-scrolly-background">
+    <!-- ThreeUI Synaptic Constellation Canvas (Living Particle Network) -->
+    <canvas id="threeuiConstellationCanvas" class="bg-canvas-element" style="opacity: 0.45; z-index: 0;"></canvas>
+
+    <!-- Kinetic 3D VFX Shader & Scrollytelling Canvas (God Rays, Shockwaves, Particle Vortex) -->
+    <canvas id="bgScrollyCanvas" class="bg-canvas-element" style="z-index: 1;"></canvas>
+
+    <!-- Dark Vignette & Sci-Fi Grid Overlay -->
+    <div class="bg-vignette-overlay" style="z-index: 2;"></div>
+    <div class="viewport-grid" style="z-index: 3;"></div>
+  </aside>
+
+  <!-- Global Masthead Navigation -->
+  <header class="masthead-nav">
+    <a href="#" class="brand-mark">
+      <span class="pulse-dot"></span>
+      <span class="brand-name">Kaelen Vance</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#vault">Projects</a></li>
+      <li><a href="#experience">Experience</a></li>
+      <li><a href="#articles">Articles</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-telemetry">
+      <div>STAGE: <span id="navStageVal" class="telemetry-val" style="color: var(--cyan-seam);">[STAGE 01] DORMANT</span></div>
+      <div>SCROLL: <span id="navScrollVal" class="telemetry-val">0.0%</span></div>
+      <div>SYSTEM: <span class="telemetry-val">ONLINE (60 FPS)</span></div>
+      <a href="threeui-showcase.html" target="_blank" class="nav-threeui-pill">✦ ThreeUI Suite ↗</a>
+    </div>
+  </header>
+
+  <!-- Fixed Floating Milestone Status Pill (Appears dynamically when scrolling past hero) -->
+  <div class="fixed-milestone-pill" id="milestonePill">
+    <span class="milestone-badge-tag" id="milestoneBadge">0.0% [STAGE 01]</span>
+    <span class="milestone-badge-divider">|</span>
+    <span class="milestone-badge-title" id="milestoneTitle">Dormant Titanium Chassis</span>
+  </div>
+
+  <!-- =========================================================
+       FOREGROUND PORTFOLIO CONTENT (Starts immediately from top!)
+  ========================================================= -->
+  <div class="page-content-wrapper">
+    
+    <!-- 01. HERO STAGE -->
+    <section class="hero-stage" id="hero">
+      <div class="hero-status-pill">
+        <span>●</span> Available for Principal Architecture &amp; Advisory Contracts
+      </div>
+      <h1 class="hero-title">
+        Autonomous Systems<br>&amp; Real-Time Spatial Runtimes
+      </h1>
+      <p class="hero-subtitle">
+        Principal Distributed Systems Architect engineering high-throughput WebGPU spatial runtimes, zero-latency state synchronization across 45,000 distributed nodes, and hardware-accelerated cognitive surfaces.
+      </p>
+      <div class="hero-cta-row">
+        <div class="threeui-btn-shell">
+          <a href="#about" class="btn-primary">Explore Architecture ↓</a>
+        </div>
+        <a href="#vault" class="btn-secondary">View Featured Projects ↗</a>
+        <a href="threeui-showcase.html" target="_blank" class="btn-secondary" style="border-color: rgba(93, 205, 224, 0.4); color: var(--cyan-core);">✦ ThreeUI 3D Suite ↗</a>
+        <a href="#contact" class="btn-secondary">Contact Me</a>
+      </div>
+    </section>
+
+    <!-- 02. VERIFIED PRODUCTION TELEMETRY STRIP -->
+    <section class="telemetry-strip">
+      <div class="metric-item">
+        <div class="label">Throughput Rate</div>
+        <div class="value">2.4M ops/s</div>
+        <div class="subtext">WebGPU &amp; Rust Pipeline</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">P99.9 Latency</div>
+        <div class="value">&lt; 0.8ms</div>
+        <div class="subtext">Zero-GC Memory Architecture</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">Audited Commits</div>
+        <div class="value">1,480+</div>
+        <div class="subtext">Audited Across 32 Repositories</div>
+      </div>
+      <div class="metric-item">
+        <div class="label">Nodes Orchestrated</div>
+        <div class="value">45,000</div>
+        <div class="subtext">Global Mesh Infrastructure</div>
+      </div>
+    </section>
+
+    <!-- 03. ABOUT & ARCHITECTURAL PHILOSOPHY -->
+    <section class="content-section" id="about">
+      <div class="section-header">
+        <div class="section-tag">About Me</div>
+        <h2 class="section-heading">Architectural Mission</h2>
+        <p class="section-subtitle">
+          Bridging spatial 3D computer graphics with fault-tolerant distributed protocol engineering.
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-text">
+          <p>
+            With over <strong>9 years of core infrastructure engineering</strong>, I specialize in building systems that operate at the physical limit of silicon and network physics. My work spans custom WebGPU compute shaders, real-time spatial consensus protocols, and low-latency microsecond distributed state machines.
+          </p>
+          <p>
+            I reject bloated abstractions and speculative architectural layers. Instead, I practice <strong>data-oriented design</strong>: mechanical sympathy with CPU cache lines, zero-copy deserialization, and mathematically verified consensus boundaries that ensure flawless reliability under peak planetary loads.
+          </p>
+        </div>
+
+        <div class="philosophy-cards">
+          <div class="philosophy-card">
+            <h4>01. Mechanical Sympathy</h4>
+            <p>Every byte of memory allocation must justify its existence. Optimizing for CPU L1/L2 caches and SIMD instructions before touching application logic.</p>
+          </div>
+          <div class="philosophy-card">
+            <h4>02. Deterministic State</h4>
+            <p>Distributed clusters must remain mathematically deterministic across failure cascades, split-brain network partitions, and clock drifts.</p>
+          </div>
+          <div class="philosophy-card">
+            <h4>03. Weightless Spatial UI</h4>
+            <p>Visual frontends should run at 120fps with sub-millisecond gesture input response and hardware-accelerated shader passes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. SKILLS & TECHNICAL ECOSYSTEM -->
+    <section class="content-section" id="skills">
+      <div class="section-header">
+        <div class="section-tag">Technical Competencies</div>
+        <h2 class="section-heading">Skills &amp; Ecosystem Matrix</h2>
+        <p class="section-subtitle">
+          A rigorous mastery of low-level systems languages, cloud infrastructure, and 3D graphics.
+        </p>
+      </div>
+
+      <div class="skills-category-grid">
+        <!-- Skill Group 1 -->
+        <div class="skill-card">
+          <div class="skill-card-icon">Core Languages &amp; Runtimes</div>
+          <h3 class="skill-card-title">Systems &amp; Runtimes</h3>
+          <p class="skill-card-desc">Low-level memory-safe engineering with zero-cost abstractions and sub-millisecond asynchronous scheduling.</p>
+          <div class="skill-pill-wrap">
+            <span class="skill-pill">Rust (Tokio, Actix)</span>
+            <span class="skill-pill">TypeScript (ESNext)</span>
+            <span class="skill-pill">C++20</span>
+            <span class="skill-pill">Go (Goroutines)</span>
+            <span class="skill-pill">Python (PyTorch)</span>
+            <span class="skill-pill">WebAssembly (WASM)</span>
+          </div>
+        </div>
+
+        <!-- Skill Group 2 -->
+        <div class="skill-card">
+          <div class="skill-card-icon">Graphics &amp; Spatial Compute</div>
+          <h3 class="skill-card-title">3D &amp; Spatial Compute</h3>
+          <p class="skill-card-desc">Hardware-accelerated rendering pipelines, compute shaders, and real-time volumetric raymarching.</p>
+          <div class="skill-pill-wrap">
+            <span class="skill-pill">WebGPU (WGSL)</span>
+            <span class="skill-pill">Three.js / R3F</span>
+            <span class="skill-pill">GLSL Shaders</span>
+            <span class="skill-pill">GSAP / ScrollTrigger</span>
+            <span class="skill-pill">Lenis Inertia</span>
+            <span class="skill-pill">OpenCV</span>
+          </div>
+        </div>
+
+        <!-- Skill Group 3 -->
+        <div class="skill-card">
+          <div class="skill-card-icon">Distributed Infrastructure</div>
+          <h3 class="skill-card-title">Distributed Cloud</h3>
+          <p class="skill-card-desc">High-availability global orchestrations, edge networks, and cryptographic verification pipelines.</p>
+          <div class="skill-pill-wrap">
+            <span class="skill-pill">Kubernetes (K8s)</span>
+            <span class="skill-pill">Docker</span>
+            <span class="skill-pill">WebSockets / gRPC</span>
+            <span class="skill-pill">Kafka / Redpanda</span>
+            <span class="skill-pill">PostgreSQL / Redis</span>
+            <span class="skill-pill">zk-SNARKs</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. VERIFIED PROJECTS BENTO VAULT -->
+    <section class="content-section" id="vault">
+      <div class="section-header">
+        <div class="section-tag">Featured Projects</div>
+        <h2 class="section-heading">Selected Production Systems</h2>
+        <p class="section-subtitle">
+          Audited open-source repositories and high-throughput production runtimes deployed worldwide.
+        </p>
+      </div>
+
+      <div class="bento-grid">
+        
+        <!-- Bento 1: Large Span 8 -->
+        <article class="bento-card span-8">
+          <div class="card-3d-asset">
+            <img src="assets/designs/cyber/circuit_board_nobg.png" alt="Aetherial Core Runtime">
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>Core Architecture • Open Source</span>
+              <span>RUST + WEBGPU + WGSL</span>
+            </div>
+            <h3 class="card-title">Aetherial Spatial Core Runtime</h3>
+            <p class="card-desc">
+              Decentralized real-time WebGPU spatial rendering engine running dynamic volumetric particle swarms with distance-threshold raymarching and sub-millisecond frame delivery. Eliminates main-thread garbage collection pauses via zero-copy shared ArrayBuffers.
+            </p>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-chip">WebGPU</span>
+            <span class="tech-chip">Rust WASM</span>
+            <span class="tech-chip">WGSL Shaders</span>
+            <span class="tech-chip">SharedArrayBuffer</span>
+            <span class="tech-chip">2.4M ops/s</span>
+          </div>
+        </article>
+
+        <!-- Bento 2: Span 4 -->
+        <article class="bento-card span-4">
+          <div class="card-3d-asset">
+            <img src="assets/designs/cyber/cyber_eye_nobg.png" alt="Iris Spatial Tracking">
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>Edge Computer Vision</span>
+              <span>PYTHON + TENSORRT</span>
+            </div>
+            <h3 class="card-title">Iris Spatial Tracking Engine</h3>
+            <p class="card-desc">
+              Sub-pixel 6-DoF optical gaze tracking running locally at 120Hz on low-power edge silicon with zero remote cloud dependency.
+            </p>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-chip">OpenCV</span>
+            <span class="tech-chip">TensorRT</span>
+            <span class="tech-chip">C++20</span>
+            <span class="tech-chip">120 FPS Edge</span>
+          </div>
+        </article>
+
+        <!-- Bento 3: Span 4 -->
+        <article class="bento-card span-4">
+          <div class="card-3d-asset">
+            <img src="assets/designs/cyber/project_ai_core_nobg.png" alt="Synapse Mesh HUD">
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>Distributed Telemetry HUD</span>
+              <span>WEBSOCKETS + GSAP</span>
+            </div>
+            <h3 class="card-title">Synapse Cluster Mesh HUD</h3>
+            <p class="card-desc">
+              Sub-millisecond telemetry visualizer streaming node health, memory topologies, and failover states across 45,000 distributed cognitive nodes.
+            </p>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-chip">TypeScript</span>
+            <span class="tech-chip">GSAP 3</span>
+            <span class="tech-chip">WebSockets</span>
+            <span class="tech-chip">&lt; 0.8ms P99</span>
+          </div>
+        </article>
+
+        <!-- Bento 4: Span 8 -->
+        <article class="bento-card span-8">
+          <div class="card-3d-asset">
+            <img src="assets/designs/cyber/project_crystal_nobg.png" alt="Krypton Zero-Knowledge Proof Pipeline">
+          </div>
+          <div>
+            <div class="card-meta">
+              <span>System Security • Cryptography</span>
+              <span>RUST + FORMAL VERIFICATION</span>
+            </div>
+            <h3 class="card-title">Krypton Zero-Knowledge Proof Pipeline</h3>
+            <p class="card-desc">
+              High-throughput cryptographic validator verifying recursive SNARK proofs in under 12ms with audited mathematical isolation and zero secret leakage across untrusted adversarial nodes.
+            </p>
+          </div>
+          <div class="tech-tags">
+            <span class="tech-chip">zk-SNARKs</span>
+            <span class="tech-chip">Rust</span>
+            <span class="tech-chip">Bellman / Arkworks</span>
+            <span class="tech-chip">Formal Proofs</span>
+            <span class="tech-chip">Audited</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 06. EXPERIENCE & CAREER DRIFT TIMELINE -->
+    <section class="content-section" id="experience">
+      <div class="section-header">
+        <div class="section-tag">Work Experience</div>
+        <h2 class="section-heading">Career Chronology &amp; Impact</h2>
+        <p class="section-subtitle">
+          Leading systems architecture and performance engineering across frontier technology firms.
+        </p>
+      </div>
+
+      <div class="timeline-container">
+        
+        <!-- Role 1 -->
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-header">
+            <h3 class="timeline-role">Principal Systems Architect</h3>
+            <span class="timeline-period">2023 — PRESENT</span>
+          </div>
+          <div class="timeline-company">Apex Quantum Labs • San Francisco, CA</div>
+          <p class="timeline-desc">
+            Directing core architectural evolution of the real-time spatial simulation platform. Leading an elite engineering team of 14 systems and shader specialists.
+          </p>
+          <ul class="timeline-bullets">
+            <li>Pioneered distributed WebGPU compute pipeline cutting simulation roundtrip latency from 45ms down to 3.2ms.</li>
+            <li>Designed custom zero-copy memory ring buffers processing 2.4M incoming telemetry events per second.</li>
+            <li>Authored patent-pending spatial state consensus algorithm deployed across 45,000 edge nodes globally.</li>
+          </ul>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-header">
+            <h3 class="timeline-role">Staff Distributed Systems Engineer</h3>
+            <span class="timeline-period">2020 — 2023</span>
+          </div>
+          <div class="timeline-company">Nebula Cloud Infrastructure • Remote</div>
+          <p class="timeline-desc">
+            Engineered mission-critical cloud telemetry backbones serving over 18 million active developer requests daily with five-nines (99.999%) availability.
+          </p>
+          <ul class="timeline-bullets">
+            <li>Re-architected core Kafka ingestion pipelines in Rust, reducing cloud infrastructure spend by $180,000 monthly.</li>
+            <li>Eliminated GC tail-latency spikes in JVM microservices by migrating high-throughput ingress proxies to Go.</li>
+            <li>Mentored 20+ senior engineers and established company-wide RFC architectural standards.</li>
+          </ul>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="timeline-item">
+          <div class="timeline-node"></div>
+          <div class="timeline-header">
+            <h3 class="timeline-role">Senior Infrastructure Engineer</h3>
+            <span class="timeline-period">2017 — 2020</span>
+          </div>
+          <div class="timeline-company">Hyperion Protocol • Boston, MA</div>
+          <p class="timeline-desc">
+            Developed cryptographic validation layers and consensus gossip protocols for distributed peer-to-peer ledger networks.
+          </p>
+          <ul class="timeline-bullets">
+            <li>Implemented multi-threaded cryptographic signature verification pipeline accelerating block throughput by 340%.</li>
+            <li>Hardened network ingress layers against DDOS amplification attacks, maintaining zero downtime during adversarial audits.</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 07. EDUCATION & VERIFIED CREDENTIALS -->
+    <section class="content-section" id="education">
+      <div class="section-header">
+        <div class="section-tag">Education &amp; Credentials</div>
+        <h2 class="section-heading">Credentials &amp; Education</h2>
+        <p class="section-subtitle">
+          Rigorous foundational grounding in computer science and industry-standard security certs.
+        </p>
+      </div>
+
+      <div class="edu-cert-grid">
+        <div class="info-card">
+          <div class="info-card-title">M.S. in Computer Science</div>
+          <div class="info-card-sub">Massachusetts Institute of Technology (MIT) • 2015 — 2017</div>
+          <p class="info-card-desc">
+            Specialized in Distributed Operating Systems, High-Performance Parallel Computing, and Asynchronous Concurrency Runtimes. Thesis: <em>"Zero-Copy Memory Synchronization in Heterogeneous GPU Clusters"</em> (Advised by Distributed Systems Group).
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">B.S. in Software Engineering</div>
+          <div class="info-card-sub">Carnegie Mellon University (CMU) • 2011 — 2015</div>
+          <p class="info-card-desc">
+            Graduated Magna Cum Laude. Dean's Honors List all semesters. Capstone: Autonomous Distributed Sensor Swarm with Fault-Tolerant Mesh Routing over Low-Bandwidth Radios.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">AWS Certified Solutions Architect</div>
+          <div class="info-card-sub">Professional Level • ID: AWS-PSA-889412</div>
+          <p class="info-card-desc">
+            Verified mastery of planetary-scale multi-region fault tolerance, hybrid cloud security architectures, and automated disaster recovery failover networks.
+          </p>
+        </div>
+
+        <div class="info-card">
+          <div class="info-card-title">Certified Kubernetes Administrator (CKA)</div>
+          <div class="info-card-sub">Linux Foundation • ID: CKA-2024-9128</div>
+          <p class="info-card-desc">
+            Validated proficiency in container storage interfaces (CSI), custom resource definitions (CRDs), eBPF networking, and air-gapped cluster hardening.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08. ARTICLES & WRITTEN DOSSIERS -->
+    <section class="content-section" id="articles">
+      <div class="section-header">
+        <div class="section-tag">Articles &amp; Research</div>
+        <h2 class="section-heading">Engineering Dossiers</h2>
+        <p class="section-subtitle">
+          In-depth technical writeups and case studies read by over 85,000 systems engineers.
+        </p>
+      </div>
+
+      <div class="articles-grid">
+        <article class="article-card">
+          <div>
+            <div class="article-meta">Systems &amp; WebGPU • 12 min read</div>
+            <h3 class="article-title">Zero-Copy Memory Serialization in WebGPU Pipelines</h3>
+            <p class="article-snippet">
+              How avoiding serialization overhead in SharedArrayBuffers unlocked 120fps physics simulations across millions of interactive particles.
+            </p>
+          </div>
+          <a href="#" class="article-link">Read Full Dossier ↗</a>
+        </article>
+
+        <article class="article-card">
+          <div>
+            <div class="article-meta">Distributed Consensus • 16 min read</div>
+            <h3 class="article-title">Scaling Consensus to 45,000 Nodes with Sub-Millisecond Jitter</h3>
+            <p class="article-snippet">
+              A deep dive into gossip protocol optimizations, clock skew mitigation, and UDP ring buffer tuning in adversarial networks.
+            </p>
+          </div>
+          <a href="#" class="article-link">Read Full Dossier ↗</a>
+        </article>
+
+        <article class="article-card">
+          <div>
+            <div class="article-meta">Shaders &amp; Mathematics • 9 min read</div>
+            <h3 class="article-title">Procedural Volumetric Raymarching on Low-Power Silicon</h3>
+            <p class="article-snippet">
+              Raymarching signed distance fields (SDFs) with screen-space ambient occlusion running within a 4W mobile thermal envelope.
+            </p>
+          </div>
+          <a href="#" class="article-link">Read Full Dossier ↗</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- 09. CONTACT TERMINAL & TRANSMISSION BEACON -->
+    <section class="content-section" id="contact">
+      <div class="section-header">
+        <div class="section-tag">Get in Touch</div>
+        <h2 class="section-heading">Initiate Communications</h2>
+        <p class="section-subtitle">
+          Open for strategic architecture advisory, principal contracts, and foundation building.
+        </p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info-panel">
+          <div class="contact-detail-row">
+            <div class="contact-detail-label">Direct Email</div>
+            <div class="contact-detail-val">kaelen@vance.systems</div>
+          </div>
+          <div class="contact-detail-row">
+            <div class="contact-detail-label">Physical Base</div>
+            <div class="contact-detail-val">San Francisco, CA • Global Remote</div>
+          </div>
+          <div class="contact-detail-row">
+            <div class="contact-detail-label">Verified PGP Fingerprint</div>
+            <div class="contact-detail-val" style="font-family: var(--font-mono); font-size: 0.85rem; color: var(--cyan-seam);">
+              4E8B 91F2 A77C 3341 0D19 B902 65EF 82B1
+            </div>
+          </div>
+          <div class="contact-detail-row">
+            <div class="contact-detail-label">Public Coordinates</div>
+            <div style="display: flex; gap: 1rem; margin-top: 0.6rem;">
+              <a href="https://github.com" target="_blank" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.78rem;">GitHub ↗</a>
+              <a href="https://linkedin.com" target="_blank" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.78rem;">LinkedIn ↗</a>
+              <a href="https://x.com" target="_blank" class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.78rem;">X / Twitter ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('Transmission dispatched successfully to Kaelen Vance.');">
+          <div class="form-group">
+            <label class="form-label">Full Name / Organization</label>
+            <input type="text" class="form-input" placeholder="e.g. Elena Rostova (DeepTech Foundry)" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Direct Communication Endpoint (Email)</label>
+            <input type="email" class="form-input" placeholder="elena@deeptech.io" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transmission Payload / Project Scope</label>
+            <textarea class="form-textarea" placeholder="Detail your systems challenge, timeline, and architectural objectives..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="border: none; cursor: pointer; align-self: flex-start;">
+            Send Message ↗
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 10. TERMINAL FOOTER -->
+    <footer class="terminal-footer">
+      <div style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: #FFF; margin-bottom: 0.5rem;">
+        KAELEN VANCE — SPATIAL SYSTEMS ARCHITECT
+      </div>
+      <p style="max-width: 540px; margin: 0 auto 1.5rem; color: var(--text-muted);">
+        Crafted with authentic 3D procedural VFX, smooth hardware scroll synchronization, and refined typography.
+      </p>
+      <div class="footer-colophon">
+        <span>Spatial Systems Architecture</span>
+        <span>Interactive 3D Scrollytelling</span>
+        <span>60 FPS Hardware Synchronized</span>
+        <span>© 2026 Kaelen Vance</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =========================================================
+       SCROLLYTELLING PROCEDURAL VFX ENGINE SCRIPT
+  ========================================================= -->
+  <script>
+    // 1. High-Speed 60-Frame Apple Scrollytelling Engine (Synchronized 120Hz/60Hz Hardware Acceleration)
+    const canvas = document.getElementById('bgScrollyCanvas');
+    // alpha: false eliminates transparent compositor passes for maximum GPU fill rate
+    const ctx = canvas.getContext('2d', { alpha: false });
+    let width, height;
+
+    const TOTAL_FRAMES = 60;
+    const frames = [];
+    let loadedCount = 0;
+    let activeFrameIdx = -1;
+    const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+    // Fast preload with asynchronous off-thread decoding
+    for (let i = 1; i <= TOTAL_FRAMES; i++) {
+      const img = new Image();
+      const pad = String(i).padStart(3, '0');
+      img.src = `assets/scrolly-sequence/apple-frames-opt/frame_${pad}.jpg`;
+      img.onload = () => {
+        loadedCount++;
+        if ('decode' in img) {
+          img.decode().catch(() => {});
+        }
+        if (i === 1 && activeFrameIdx === -1) {
+          renderFrame(0, true);
+        }
+      };
+      frames.push(img);
+    }
+
+    function renderFrame(index, force = false) {
+      if (index === activeFrameIdx && !force) return;
+      activeFrameIdx = index;
+
+      const img = frames[index];
+      const imgToDraw = (img && img.complete && img.naturalWidth > 0) ? img : (frames[0] && frames[0].complete ? frames[0] : null);
+
+      if (!imgToDraw) return;
+
+      const imgAspect = imgToDraw.naturalWidth / imgToDraw.naturalHeight;
+      const canvasAspect = width / height;
+      let drawW, drawH;
+
+      // Perfectly scaled cover aspect
+      if (canvasAspect > imgAspect) {
+        drawW = width;
+        drawH = drawW / imgAspect;
+      } else {
+        drawH = height;
+        drawW = drawH * imgAspect;
+      }
+
+      const drawX = (width - drawW) * 0.5;
+      const drawY = (height - drawH) * 0.5;
+
+      ctx.drawImage(imgToDraw, drawX, drawY, drawW, drawH);
+    }
+
+    let lastWidth = 0;
+    let lastHeight = 0;
+
+    function resizeBackground() {
+      const curW = window.innerWidth;
+      const curH = window.innerHeight;
+
+      // On mobile phones, ignore small height changes caused by the address bar collapsing on scroll
+      if (isTouchDevice && lastWidth === curW && Math.abs(lastHeight - curH) < 140) {
+        return;
+      }
+
+      lastWidth = curW;
+      lastHeight = curH;
+
+      width = canvas.width = curW;
+      height = canvas.height = curH;
+      renderFrame(activeFrameIdx >= 0 ? activeFrameIdx : 0, true);
+    }
+    window.addEventListener('resize', resizeBackground, { passive: true });
+    resizeBackground();
+
+    // 2. Pure Native Hardware Scroll Sync (Zero Latency, 0ms Delay)
+    const navScrollVal = document.getElementById('navScrollVal');
+    const navStageVal = document.getElementById('navStageVal');
+    const milestonePill = document.getElementById('milestonePill');
+    const milestoneBadge = document.getElementById('milestoneBadge');
+    const milestoneTitle = document.getElementById('milestoneTitle');
+
+    let ticking = false;
+
+    function onScroll() {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+          const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+          const progress = Math.min(1.0, Math.max(0.0, scrollY / maxScroll));
+
+          const targetIdx = Math.min(TOTAL_FRAMES - 1, Math.round(progress * (TOTAL_FRAMES - 1)));
+          renderFrame(targetIdx);
+
+          const frameStr = String(targetIdx + 1).padStart(2, '0');
+          const pctStr = (progress * 100).toFixed(1);
+
+          // Update Top Nav Telemetry
+          if (navScrollVal) navScrollVal.textContent = `${pctStr}%`;
+
+          // Reveal milestone pill only when scrolling past the hero fold
+          if (milestonePill) {
+            if (scrollY > 120) {
+              milestonePill.classList.add('visible');
+            } else {
+              milestonePill.classList.remove('visible');
+            }
+          }
+
+          // Update Milestone Floating Caption and Masthead Stage
+          let currentStageName = '[STAGE 01] DORMANT';
+          let stageColor = 'var(--cyan-seam)';
+
+          if (progress < 0.20) {
+            currentStageName = '[STAGE 01] DORMANT';
+            stageColor = 'var(--cyan-seam)';
+            if (milestoneBadge) milestoneBadge.textContent = `${pctStr}% [STAGE 01]`;
+            if (milestoneTitle) milestoneTitle.textContent = 'Dormant Titanium Chassis';
+          } else if (progress < 0.50) {
+            currentStageName = '[STAGE 02] UNLOCKING';
+            stageColor = 'var(--cyan-core)';
+            if (milestoneBadge) milestoneBadge.textContent = `${pctStr}% [STAGE 02]`;
+            if (milestoneTitle) milestoneTitle.textContent = 'Aperture Plates Peel Back & Gears Turn';
+          } else if (progress < 0.80) {
+            currentStageName = '[STAGE 03] PLASMA ATOM';
+            stageColor = '#38BDF8';
+            if (milestoneBadge) milestoneBadge.textContent = `${pctStr}% [STAGE 03]`;
+            if (milestoneTitle) milestoneTitle.textContent = 'Cyan Plasma Lightning & Quantum Atom Vortex';
+          } else {
+            currentStageName = '[STAGE 04] AWAKENED';
+            stageColor = 'var(--magenta-bloom)';
+            if (milestoneBadge) milestoneBadge.textContent = `${pctStr}% [STAGE 04]`;
+            if (milestoneTitle) milestoneTitle.textContent = 'Crystalline Diamond Core Awakened with God Rays';
+          }
+
+          if (navStageVal) {
+            navStageVal.textContent = currentStageName;
+            navStageVal.style.color = stageColor;
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 3. THREEUI SYNAPTIC CONSTELLATION NETWORK ENGINE
+    // (Adapted from MengTo/threeui constellation shader)
+    // -------------------------------------------------------------
+    const constCanvas = document.getElementById('threeuiConstellationCanvas');
+    if (constCanvas) {
+      const constCtx = constCanvas.getContext('2d');
+      let cWidth = constCanvas.width = window.innerWidth;
+      let cHeight = constCanvas.height = window.innerHeight;
+      const MAX_NODES = isTouchDevice ? 28 : 55;
+      const LINK_DIST = isTouchDevice ? 100 : 130;
+      const cPointer = { x: -1000, y: -1000 };
+
+      const cNodes = [];
+      for (let i = 0; i < MAX_NODES; i++) {
+        cNodes.push({
+          x: Math.random() * cWidth,
+          y: Math.random() * cHeight,
+          vx: (Math.random() - 0.5) * 0.3,
+          vy: (Math.random() - 0.5) * 0.3,
+          radius: Math.random() * 1.6 + 1.0
+        });
+      }
+
+      if (!isTouchDevice) {
+        window.addEventListener('mousemove', e => {
+          cPointer.x = e.clientX;
+          cPointer.y = e.clientY;
+        }, { passive: true });
+        document.addEventListener('mouseleave', () => {
+          cPointer.x = -1000;
+          cPointer.y = -1000;
+        });
+      }
+
+      window.addEventListener('resize', () => {
+        if (isTouchDevice && lastWidth === window.innerWidth) return;
+        cWidth = constCanvas.width = window.innerWidth;
+        cHeight = constCanvas.height = window.innerHeight;
+      }, { passive: true });
+
+      function animateConstellation() {
+        constCtx.clearRect(0, 0, cWidth, cHeight);
+        
+        // Draw Links
+        constCtx.strokeStyle = '#5DCDE0';
+        constCtx.lineWidth = 0.65;
+        for (let i = 0; i < cNodes.length; i++) {
+          for (let j = i + 1; j < cNodes.length; j++) {
+            const dx = cNodes[i].x - cNodes[j].x;
+            const dy = cNodes[i].y - cNodes[j].y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d < LINK_DIST) {
+              constCtx.globalAlpha = (1 - d / LINK_DIST) * 0.32;
+              constCtx.beginPath();
+              constCtx.moveTo(cNodes[i].x, cNodes[i].y);
+              constCtx.lineTo(cNodes[j].x, cNodes[j].y);
+              constCtx.stroke();
+            }
+          }
+        }
+
+        // Draw Nodes
+        for (let i = 0; i < cNodes.length; i++) {
+          const n = cNodes[i];
+          n.x += n.vx;
+          n.y += n.vy;
+          if (n.x < 0 || n.x > cWidth) n.vx *= -1;
+          if (n.y < 0 || n.y > cHeight) n.vy *= -1;
+
+          if (!isTouchDevice) {
+            const pdx = n.x - cPointer.x;
+            const pdy = n.y - cPointer.y;
+            const pd = Math.sqrt(pdx * pdx + pdy * pdy);
+            if (pd < 160) {
+              n.x -= pdx * 0.003;
+              n.y -= pdy * 0.003;
+            }
+          }
+
+          const pulse = 0.7 + Math.sin(Date.now() * 0.0015 + n.x) * 0.3;
+          constCtx.fillStyle = '#5DCDE0';
+          constCtx.globalAlpha = pulse * 0.6;
+          constCtx.beginPath();
+          constCtx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+          constCtx.fill();
+        }
+
+        requestAnimationFrame(animateConstellation);
+      }
+      requestAnimationFrame(animateConstellation);
+    }
+
+    // Passive listener ensures 0ms latency on trackpads and mouse wheels
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  </script>
+</body>
+</html>

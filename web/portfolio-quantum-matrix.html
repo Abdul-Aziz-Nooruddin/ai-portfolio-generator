@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kaelen Vance — High-Frequency Systems & Cryptographic Protocol Architect</title>
+  <meta name="description" content="Portfolio of Kaelen Vance: Principal Distributed Systems Architect engineering zero-latency WebGPU state synchronization, cryptographic verifiable runtimes, and high-frequency protocol substrates.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Chakra+Petch:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-base: #040507;
+      --bg-surface: #090C12;
+      --bg-card: rgba(9, 12, 18, 0.85);
+      --text-main: #F1F5F9;
+      --text-muted: #8E9DB2;
+      --text-dim: #4B5565;
+      --cyan-core: #5DCDE0;
+      --cyan-glow: rgba(93, 205, 224, 0.4);
+      --magenta-bloom: #D352C4;
+      --magenta-glow: rgba(211, 82, 196, 0.35);
+      --matrix-mint: #22C55E;
+      --border-subtle: rgba(93, 205, 224, 0.16);
+      --border-active: rgba(93, 205, 224, 0.55);
+      --font-display: 'Orbitron', sans-serif;
+      --font-heading: 'Chakra Petch', sans-serif;
+      --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* Fixed WebGL Lightning Canvas Layer */
+    .webgl-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #glcanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Framing Grid & Registration Marks */
+    .framing-mesh {
+      position: fixed;
+      inset: 1.25rem;
+      border: 1px solid rgba(93, 205, 224, 0.08);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .corner-mark {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      border: 1px solid var(--cyan-core);
+      background: var(--bg-base);
+    }
+    .c-tl { top: -3px; left: -3px; }
+    .c-tr { top: -3px; right: -3px; }
+    .c-bl { bottom: -3px; left: -3px; }
+    .c-br { bottom: -3px; right: -3px; }
+
+    /* Masthead Navigation */
+    .masthead-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(4, 5, 7, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .masthead-nav { padding: 1rem 1.5rem; }
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-core-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cyan-core);
+      box-shadow: 0 0 10px var(--cyan-core);
+      animation: corePulse 1.8s infinite;
+    }
+
+    @keyframes corePulse {
+      0%, 100% { transform: scale(1); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 1; }
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .brand-badge {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--matrix-mint);
+      background: rgba(34, 197, 94, 0.1);
+      padding: 0.2rem 0.5rem;
+      border-radius: 3px;
+      margin-left: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--cyan-core);
+    }
+
+    .nav-telemetry {
+      display: flex;
+      align-items: center;
+      gap: 1.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+    }
+
+    .nav-telemetry span {
+      color: var(--cyan-core);
+      font-weight: 700;
+    }
+
+    .nav-threeui-btn {
+      color: var(--cyan-core);
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-active);
+      background: rgba(93, 205, 224, 0.08);
+      transition: all 0.2s ease;
+    }
+
+    .nav-threeui-btn:hover {
+      background: var(--cyan-core);
+      color: #040507;
+      box-shadow: 0 0 15px var(--cyan-glow);
+    }
+
+    /* Page Container */
+    .page-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* 01. HERO STAGE */
+    .hero-stage {
+      min-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 0 3.5rem;
+    }
+
+    .hero-protocol-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--cyan-core);
+      background: rgba(93, 205, 224, 0.08);
+      border: 1px solid var(--border-subtle);
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
+      margin-bottom: 1.6rem;
+      width: fit-content;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.3rem, 4.8vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.015em;
+      line-height: 1.12;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      margin-bottom: 1.4rem;
+      max-width: 960px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #FFFFFF 30%, var(--cyan-core) 70%, var(--magenta-bloom) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 650px;
+      line-height: 1.7;
+      margin-bottom: 2.8rem;
+      font-weight: 300;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      align-items: center;
+    }
+
+    .btn-cyan-solid {
+      background: var(--cyan-core);
+      color: #040507;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      box-shadow: 0 0 25px var(--cyan-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-cyan-solid:hover {
+      background: #7DE1F2;
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px var(--cyan-glow);
+    }
+
+    .btn-matrix-hollow {
+      background: rgba(9, 12, 18, 0.85);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.85rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-matrix-hollow:hover {
+      border-color: var(--cyan-core);
+      color: var(--cyan-core);
+      transform: translateY(-2px);
+    }
+
+    /* 02. PRODUCTION TELEMETRY STRIP */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.75rem 2.2rem;
+      margin-bottom: 6rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    @media (max-width: 800px) {
+      .telemetry-strip { grid-template-columns: repeat(2, 1fr); padding: 1.25rem; }
+    }
+
+    .stat-card .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.35rem;
+    }
+
+    .stat-card .stat-val {
+      font-family: var(--font-display);
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--cyan-core);
+      line-height: 1.1;
+    }
+
+    .stat-card .stat-sub {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION STYLES */
+    .section-wrap {
+      padding: 5rem 0;
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--cyan-core);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .section-tag::before {
+      content: '✦';
+      color: var(--magenta-bloom);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 800;
+      line-height: 1.2;
+      text-transform: uppercase;
+      color: #FFFFFF;
+    }
+
+    .section-title span {
+      color: var(--cyan-core);
+    }
+
+    /* 03. ZERO LATENCY ARCHITECTURE MANIFESTO */
+    .manifesto-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 3.5rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3.5rem;
+    }
+
+    @media (max-width: 850px) {
+      .manifesto-box { grid-template-columns: 1fr; padding: 2rem; }
+    }
+
+    .manifesto-copy p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .manifesto-copy p strong {
+      color: #FFFFFF;
+    }
+
+    .manifesto-metrics-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .metric-brick {
+      background: rgba(4, 5, 7, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 1.4rem 1.6rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .metric-brick:hover {
+      border-color: var(--cyan-core);
+    }
+
+    .metric-brick h4 {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.35rem;
+    }
+
+    .metric-brick p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 04. PROJECTS REGISTRY */
+    .registry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2rem;
+    }
+
+    .registry-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .registry-card:hover {
+      border-color: var(--cyan-core);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 25px var(--cyan-glow);
+    }
+
+    .registry-coord {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--magenta-bloom);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .registry-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 0.8rem;
+    }
+
+    .registry-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .registry-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .registry-tag {
+      background: rgba(93, 205, 224, 0.06);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.25rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan-core);
+    }
+
+    .registry-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .registry-link {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--cyan-core);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: gap 0.2s ease;
+    }
+
+    .registry-link:hover {
+      gap: 0.7rem;
+    }
+
+    /* 05. CAPABILITIES GRID */
+    .caps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .caps-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.8rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .caps-card:hover {
+      border-color: var(--cyan-core);
+    }
+
+    .caps-heading {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--cyan-core);
+      margin-bottom: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .caps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .caps-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .caps-gauge {
+      width: 60px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .caps-gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--cyan-core), var(--magenta-bloom));
+    }
+
+    /* 06. TIMELINE */
+    .timeline-wrap {
+      position: relative;
+      padding-left: 2.5rem;
+    }
+
+    .timeline-wrap::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--cyan-core) 0%, rgba(93, 205, 224, 0.1) 100%);
+    }
+
+    .timeline-block {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .timeline-block:hover {
+      border-color: var(--cyan-core);
+    }
+
+    .timeline-block::before {
+      content: '';
+      position: absolute;
+      left: -2.85rem;
+      top: 2.2rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--cyan-core);
+      box-shadow: 0 0 10px var(--cyan-core);
+    }
+
+    .timeline-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+    }
+
+    .timeline-time {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--cyan-core);
+      background: rgba(93, 205, 224, 0.08);
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+    }
+
+    .timeline-corp {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--magenta-bloom);
+      margin-bottom: 1rem;
+    }
+
+    .timeline-body {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
+    /* 07. CONTACT BEACON */
+    .beacon-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 3.5rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.6);
+    }
+
+    .beacon-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      margin-bottom: 1rem;
+    }
+
+    .beacon-desc {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .beacon-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    .footer-bar {
+      margin-top: 6rem;
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bar a {
+      color: var(--cyan-core);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL Matrix Lightning Canvas Layer -->
+  <div class="webgl-fixed-layer">
+    <canvas id="glcanvas"></canvas>
+  </div>
+
+  <!-- Precision Framing Grid -->
+  <div class="framing-mesh">
+    <div class="corner-mark c-tl"></div>
+    <div class="corner-mark c-tr"></div>
+    <div class="corner-mark c-bl"></div>
+    <div class="corner-mark c-br"></div>
+  </div>
+
+  <!-- Global Masthead Navigation -->
+  <header class="masthead-nav">
+    <a href="#" class="brand-mark">
+      <span class="brand-core-dot"></span>
+      <span class="brand-name">Kaelen Vance</span>
+      <span class="brand-badge">PROTOCOL ONLINE</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#manifesto">Architecture</a></li>
+      <li><a href="#registry">Registry</a></li>
+      <li><a href="#capabilities">Capabilities</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#beacon">Beacon</a></li>
+    </ul>
+
+    <div class="nav-telemetry">
+      <div>PING: <span>0.8ms</span></div>
+      <div>UPTIME: <span>99.999%</span></div>
+      <a href="threeui-showcase.html" class="nav-threeui-btn">✦ ThreeUI Suite ↗</a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="page-wrapper">
+
+    <!-- 01. HERO STAGE -->
+    <section class="hero-stage">
+      <div class="hero-protocol-pill">
+        ● High-Frequency Distributed Systems &amp; WebGPU State Synchronization
+      </div>
+
+      <h1 class="hero-title">
+        Engineering zero-latency<br>
+        <span>cryptographic runtimes</span> &amp; mesh protocols
+      </h1>
+
+      <p class="hero-subtitle">
+        Principal Distributed Systems Architect engineering zero-GC WebGPU spatial compute substrates, sub-millisecond state synchronization across 45,000 nodes, and formal verification pipelines.
+      </p>
+
+      <div class="hero-actions">
+        <a href="#registry" class="btn-cyan-solid">Inspect Protocol Registry ↓</a>
+        <a href="#manifesto" class="btn-matrix-hollow">Memory Architecture</a>
+        <a href="#beacon" class="btn-matrix-hollow">Encrypted Channel</a>
+      </div>
+    </section>
+
+    <!-- 02. PRODUCTION TELEMETRY STRIP -->
+    <section class="telemetry-strip">
+      <div class="stat-card">
+        <div class="stat-label">Throughput Velocity</div>
+        <div class="stat-val">2.4M</div>
+        <div class="stat-sub">Ops / sec WebGPU &amp; Rust</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">P99.9 Packet Latency</div>
+        <div class="stat-val">&lt; 0.8ms</div>
+        <div class="stat-sub">Zero-GC Kernel Memory</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Audited Commits</div>
+        <div class="stat-val">1,400+</div>
+        <div class="stat-sub">Formal Verification Passed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Distributed Nodes</div>
+        <div class="stat-val">45,000</div>
+        <div class="stat-sub">Active Global Mesh</div>
+      </div>
+    </section>
+
+    <!-- 03. ZERO LATENCY ARCHITECTURE MANIFESTO -->
+    <section class="section-wrap" id="manifesto">
+      <div class="section-header">
+        <div class="section-tag">Systems Architecture</div>
+        <h2 class="section-title">Zero-Garbage Collection <span>Memory Physics</span></h2>
+      </div>
+
+      <div class="manifesto-box">
+        <div class="manifesto-copy">
+          <p>
+            Traditional web applications surrender determinism to runtime garbage collection pauses. When orchestrating <strong>high-throughput WebGPU spatial grids</strong>, single-digit millisecond latency spikes translate to dropped frames and desynchronized distributed state.
+          </p>
+          <p>
+            My architectures operate on static ring buffers, zero-copy memory transfers, and SIMD parallelization. By aligning memory pages directly to L1/L2 cache boundaries and GPU compute blocks, we sustain deterministic 60-120 FPS under extreme transaction pressure.
+          </p>
+        </div>
+
+        <div class="manifesto-metrics-col">
+          <div class="metric-brick">
+            <h4>Static Memory Ring Buffers</h4>
+            <p>Pre-allocated continuous memory pools preventing allocator locks in high-frequency trading and graphics execution paths.</p>
+          </div>
+          <div class="metric-brick">
+            <h4>Decentralized Raft State Consensus</h4>
+            <p>Sub-millisecond quorum validation over UDP socket tunnels with cryptographic Blake3 block hashing.</p>
+          </div>
+          <div class="metric-brick">
+            <h4>WebGPU Compute Shaders</h4>
+            <p>Direct GPU execution of matrix mathematical calculations avoiding CPU marshalling overhead.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. PROJECTS REGISTRY -->
+    <section class="section-wrap" id="registry">
+      <div class="section-header">
+        <div class="section-tag">Verified Production Code</div>
+        <h2 class="section-title">High-Throughput <span>Systems Registry</span></h2>
+      </div>
+
+      <div class="registry-grid">
+        <article class="registry-card">
+          <div>
+            <div class="registry-coord">SYS-01 • Rust / WebGPU</div>
+            <h3 class="registry-title">Apex Protocol Compute Grid</h3>
+            <p class="registry-desc">
+              Decentralized state machine processing 2.4M operations per second across 45,000 validator nodes with hardware-accelerated cryptographic proof generation.
+            </p>
+            <div class="registry-tags">
+              <span class="registry-tag">Rust</span>
+              <span class="registry-tag">WebGPU</span>
+              <span class="registry-tag">Zero-Copy</span>
+              <span class="registry-tag">WASM</span>
+            </div>
+          </div>
+          <div class="registry-foot">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">P99.9 &lt; 0.8MS</span>
+            <a href="https://github.com" target="_blank" class="registry-link">Audit Source ↗</a>
+          </div>
+        </article>
+
+        <article class="registry-card">
+          <div>
+            <div class="registry-coord">SYS-02 • WebGL / GLSL</div>
+            <h3 class="registry-title">Quantum Matrix Lightning Field</h3>
+            <p class="registry-desc">
+              Real-time WebGL procedural lightning shader that calculates high-frequency noise branches and directional axis electrical arcs reacting dynamically to pointer telemetry.
+            </p>
+            <div class="registry-tags">
+              <span class="registry-tag">WebGL</span>
+              <span class="registry-tag">GLSL Shaders</span>
+              <span class="registry-tag">Procedural Noise</span>
+              <span class="registry-tag">ThreeUI</span>
+            </div>
+          </div>
+          <div class="registry-foot">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">CORE SHADER</span>
+            <a href="threeui-matrix-field.html" target="_blank" class="registry-link">Launch Shader ↗</a>
+          </div>
+        </article>
+
+        <article class="registry-card">
+          <div>
+            <div class="registry-coord">SYS-03 • TypeScript / C++</div>
+            <h3 class="registry-title">Hyperion Telemetry Daemon</h3>
+            <p class="registry-desc">
+              Low-overhead background observability daemon capturing GPU instruction stall rates, cache miss percentages, and network socket buffer exhaustion in real-time.
+            </p>
+            <div class="registry-tags">
+              <span class="registry-tag">C++20</span>
+              <span class="registry-tag">eBPF</span>
+              <span class="registry-tag">Prometheus</span>
+              <span class="registry-tag">WebSockets</span>
+            </div>
+          </div>
+          <div class="registry-foot">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">PRODUCTION AGENT</span>
+            <a href="https://github.com" target="_blank" class="registry-link">View Telemetry ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 05. CAPABILITIES GRID -->
+    <section class="section-wrap" id="capabilities">
+      <div class="section-header">
+        <div class="section-tag">Core Technical Capabilities</div>
+        <h2 class="section-title">Protocol &amp; <span>Systems Tooling</span></h2>
+      </div>
+
+      <div class="caps-grid">
+        <div class="caps-card">
+          <h3 class="caps-heading">Compute &amp; Shaders</h3>
+          <ul class="caps-list">
+            <li class="caps-item"><span>WebGPU / WGSL</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 98%;"></div></div></li>
+            <li class="caps-item"><span>GLSL ES Shaders</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 95%;"></div></div></li>
+            <li class="caps-item"><span>CUDA Parallelism</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 92%;"></div></div></li>
+            <li class="caps-item"><span>DirectX 12 / Metal</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 88%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="caps-card">
+          <h3 class="caps-heading">Systems Languages</h3>
+          <ul class="caps-list">
+            <li class="caps-item"><span>Rust (Tokio / Actix)</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 97%;"></div></div></li>
+            <li class="caps-item"><span>Modern C++ (20/23)</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 93%;"></div></div></li>
+            <li class="caps-item"><span>Go (Distributed)</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 91%;"></div></div></li>
+            <li class="caps-item"><span>Assembly / SIMD</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 86%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="caps-card">
+          <h3 class="caps-heading">Protocol &amp; Crypto</h3>
+          <ul class="caps-list">
+            <li class="caps-item"><span>Zero-Knowledge Proofs</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 92%;"></div></div></li>
+            <li class="caps-item"><span>Formal Verification</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 89%;"></div></div></li>
+            <li class="caps-item"><span>Byzantine Consensus</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 95%;"></div></div></li>
+            <li class="caps-item"><span>P2P Gossip Meshes</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 94%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="caps-card">
+          <h3 class="caps-heading">Hardware &amp; Network</h3>
+          <ul class="caps-list">
+            <li class="caps-item"><span>eBPF Kernel Probes</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 90%;"></div></div></li>
+            <li class="caps-item"><span>DPDK Packet Filtering</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 87%;"></div></div></li>
+            <li class="caps-item"><span>Zero-Copy Networking</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 96%;"></div></div></li>
+            <li class="caps-item"><span>RDMA Architecture</span><div class="caps-gauge"><div class="caps-gauge-fill" style="width: 85%;"></div></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. TIMELINE -->
+    <section class="section-wrap" id="timeline">
+      <div class="section-header">
+        <div class="section-tag">Deployment History</div>
+        <h2 class="section-title">Production <span>Systems Leadership</span></h2>
+      </div>
+
+      <div class="timeline-wrap">
+        <div class="timeline-block">
+          <div class="timeline-top">
+            <h3 class="timeline-role">Principal Systems Architect</h3>
+            <span class="timeline-time">2022 — PRESENT</span>
+          </div>
+          <div class="timeline-corp">Apex Protocol Substrates • Zurich &amp; Remote</div>
+          <p class="timeline-body">
+            Overseeing architecture of high-throughput WebGPU consensus runtimes. Built the core ring-buffer execution engine sustaining 2.4M ops/sec with sub-millisecond packet latency across 45,000 nodes.
+          </p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-top">
+            <h3 class="timeline-role">Lead Cryptographic Infrastructure Engineer</h3>
+            <span class="timeline-time">2019 — 2022</span>
+          </div>
+          <div class="timeline-corp">CipherGrid Systems • Singapore</div>
+          <p class="timeline-body">
+            Engineered automated vulnerability auditing tooling and high-speed Blake3 cryptographic hashing daemons in Rust and C++. Directed multi-region zero-downtime database state migrations.
+          </p>
+        </div>
+
+        <div class="timeline-block">
+          <div class="timeline-top">
+            <h3 class="timeline-role">Staff Distributed Systems Engineer</h3>
+            <span class="timeline-time">2016 — 2019</span>
+          </div>
+          <div class="timeline-corp">Chronos High-Frequency Labs • New York</div>
+          <p class="timeline-body">
+            Developed low-latency UDP socket gateways and kernel-bypass packet ingestion engines in C++20 for financial protocol state replication.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07. CONTACT BEACON -->
+    <section class="section-wrap" id="beacon">
+      <div class="beacon-card">
+        <div class="section-tag" style="justify-content: center;">Encrypted Channel</div>
+        <h2 class="beacon-title">Establish Communications</h2>
+        <p class="beacon-desc">
+          Available for principal protocol architecture, zero-latency system audits, and high-stakes cryptographic engineering advisory.
+        </p>
+
+        <div class="beacon-actions">
+          <a href="mailto:kaelen.vance@apex-protocol.net" class="btn-cyan-solid">Transmit Dispatch ↗</a>
+          <a href="https://github.com" target="_blank" class="btn-matrix-hollow">GitHub Repository</a>
+          <a href="threeui-matrix-field.html" class="btn-matrix-hollow">Solo WebGL Shader ↗</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-bar">
+      <div>
+        <span>Kaelen Vance</span> • Principal Systems Architect
+      </div>
+      <div>
+        THREEUI QUANTUM MATRIX // ZERO-LATENCY SECURE
+      </div>
+      <div>
+        <a href="#hero">Return to Top ↑</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- =============================================================
+       THREEUI QUANTUM MATRIX PROCEDURAL LIGHTNING SHADER ENGINE
+  ============================================================= -->
+  <script>
+  (() => {
+    const canvas = document.getElementById('glcanvas');
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl');
+    if (!gl) return;
+
+    const vsSource = `
+      attribute vec4 aVertexPosition;
+      void main() {
+        gl_Position = aVertexPosition;
+      }
+    `;
+
+    const fsSource = `
+      precision highp float;
+      uniform vec2 u_resolution;
+      uniform float u_time;
+      uniform vec2 u_mouse;
+      uniform float u_mouseActive;
+
+      float hash(float n) { return fract(sin(n)*753.5453123); }
+      float noise(float x) {
+        float i = floor(x);
+        float f = fract(x);
+        f = f*f*(3.0-2.0*f);
+        return mix(hash(i), hash(i+1.0), f);
+      }
+
+      vec2 sdLine(vec2 p, vec2 a, vec2 b) {
+        vec2 pa = p - a, ba = b - a;
+        float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+        return vec2(length(pa - ba * h), h);
+      }
+
+      float lightning(vec2 uv, vec2 a, vec2 b, float t) {
+        vec2 ab = b - a;
+        float len = length(ab);
+        if(len < 0.01) return 0.0;
+        vec2 dir = ab / len;
+        
+        vec2 pa = uv - a;
+        float h = clamp(dot(pa, dir) / len, 0.0, 1.0);
+        float dist = length(pa - dir * (h * len));
+        
+        float env = sin(h * 3.1415);
+        float offset = (noise(h * 25.0 - t * 35.0) - 0.5) * 0.08 * env;
+        offset += (noise(h * 70.0 + t * 50.0) - 0.5) * 0.02 * env;
+        
+        float d = abs(dist + offset);
+        return (0.0002 / (d + 0.0002) + 0.00001 / (d*d + 0.00001)) * env;
+      }
+
+      void main() {
+        vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+        uv = uv * 2.0 - 1.0;
+        uv.x *= u_resolution.x / u_resolution.y;
+
+        vec2 mouseUV = u_mouse / u_resolution.xy;
+        mouseUV = mouseUV * 2.0 - 1.0;
+        mouseUV.x *= u_resolution.x / u_resolution.y;
+
+        vec2 center = vec2(-0.4, -0.1);
+        center.x += sin(u_time * 0.4) * 0.03;
+        center.y += cos(u_time * 0.3) * 0.03;
+
+        vec2 dirUp = normalize(vec2(0.15, 1.0));
+        vec2 dirRight = normalize(vec2(1.0, -0.25));
+        vec2 dirDownLeft = normalize(vec2(-0.8, -0.6));
+
+        vec2 l1 = sdLine(uv, center, center + dirUp * 5.0);
+        vec2 l2 = sdLine(uv, center, center + dirRight * 5.0);
+        vec2 l3 = sdLine(uv, center, center + dirDownLeft * 5.0);
+
+        float intensity = 0.006;
+        float glow = intensity / (l1.x + 0.001) +
+                     intensity / (l2.x + 0.001) +
+                     (intensity * 0.4) / (l3.x + 0.001);
+
+        float pulse1 = smoothstep(0.1, 0.0, abs(l1.y - fract(u_time * 0.4))) * 0.03 / (l1.x + 0.001);
+        float pulse2 = smoothstep(0.1, 0.0, abs(l2.y - fract(u_time * 0.5 + 0.3))) * 0.03 / (l2.x + 0.001);
+        float pulse3 = smoothstep(0.1, 0.0, abs(l3.y - fract(u_time * 0.3 + 0.7))) * 0.015 / (l3.x + 0.001);
+        glow += pulse1 + pulse2 + pulse3;
+
+        vec2 p1 = center + dirUp * clamp(dot(mouseUV - center, dirUp), 0.0, 5.0);
+        vec2 p2 = center + dirRight * clamp(dot(mouseUV - center, dirRight), 0.0, 5.0);
+        vec2 p3 = center + dirDownLeft * clamp(dot(mouseUV - center, dirDownLeft), 0.0, 5.0);
+
+        float d1 = length(mouseUV - p1);
+        float d2 = length(mouseUV - p2);
+        float d3 = length(mouseUV - p3);
+
+        vec2 target = p1;
+        float minDist = d1;
+        if(d2 < minDist) { minDist = d2; target = p2; }
+        if(d3 < minDist) { minDist = d3; target = p3; }
+
+        float arc1 = lightning(uv, mouseUV, target, u_time);
+        float arc2 = lightning(uv, mouseUV, center, u_time * 1.2);
+        float totalArc = (arc1 * 0.8 + arc2 * 0.4) * u_mouseActive;
+
+        float mouseGlow = (0.008 / (length(uv - mouseUV) + 0.005)) * u_mouseActive;
+
+        vec3 baseColor = vec3(0.1, 0.65, 0.9);
+        vec3 pulseColor = vec3(0.9, 0.3, 0.85);
+        vec3 arcColor = vec3(0.4, 0.85, 1.0);
+
+        vec3 finalColor = baseColor * glow + pulseColor * (pulse1 + pulse2 + pulse3) * 1.5;
+        finalColor += arcColor * totalArc * 2.0;
+        finalColor += arcColor * mouseGlow;
+
+        gl_FragColor = vec4(finalColor, 1.0);
+      }
+    `;
+
+    function loadShader(gl, type, source) {
+      const shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      return shader;
+    }
+
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
+
+    const programInfo = {
+      program: shaderProgram,
+      attribLocations: { vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition') },
+      uniformLocations: {
+        resolution: gl.getUniformLocation(shaderProgram, 'u_resolution'),
+        time: gl.getUniformLocation(shaderProgram, 'u_time'),
+        mouse: gl.getUniformLocation(shaderProgram, 'u_mouse'),
+        mouseActive: gl.getUniformLocation(shaderProgram, 'u_mouseActive'),
+      },
+    };
+
+    const positionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0]), gl.STATIC_DRAW);
+
+    let mouse = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+    let targetMouse = { ...mouse };
+    let mouseActive = 1.0;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    window.addEventListener('mousemove', (e) => {
+      targetMouse.x = e.clientX;
+      targetMouse.y = canvas.height - e.clientY;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+      if(e.touches.length > 0) {
+        targetMouse.x = e.touches[0].clientX;
+        targetMouse.y = canvas.height - e.touches[0].clientY;
+      }
+    });
+
+    let startTime = performance.now();
+
+    function render() {
+      const currentTime = (performance.now() - startTime) * 0.001;
+      mouse.x += (targetMouse.x - mouse.x) * 0.08;
+      mouse.y += (targetMouse.y - mouse.y) * 0.08;
+
+      gl.clearColor(0.015, 0.02, 0.03, 1.0);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+
+      gl.useProgram(programInfo.program);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+      gl.uniform2f(programInfo.uniformLocations.resolution, canvas.width, canvas.height);
+      gl.uniform1f(programInfo.uniformLocations.time, currentTime);
+      gl.uniform2f(programInfo.uniformLocations.mouse, mouse.x, mouse.y);
+      gl.uniform1f(programInfo.uniformLocations.mouseActive, mouseActive);
+
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+  })();
+  </script>
+</body>
+</html>

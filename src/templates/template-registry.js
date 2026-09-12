@@ -29,9 +29,27 @@ const { ChronoObsidianSanctuaryTemplate } = require('./chrono-obsidian-sanctuary
 const { SwissEditorialMonographTemplate } = require('./swiss-editorial-monograph');
 const { SolarpunkHorizonTemplate } = require('./solarpunk-horizon');
 const { CyberArchitectSprawlTemplate } = require('./cyber-architect-sprawl');
+const { SpatialDepthVoyageTemplate } = require('./spatial-depth-voyage');
+const { ThreeUIConstellationTemplate } = require('./threeui-constellation');
+const { ThreeUILiquidMetalTemplate } = require('./threeui-liquid-metal');
+const { ThreeUIMatrixTemplate } = require('./threeui-matrix');
+const { ThreeUIShelfTemplate } = require('./threeui-shelf');
+const { ThreeUISylvaTemplate } = require('./threeui-sylva');
+const { ThreeUIKageTemplate } = require('./threeui-kage');
+const { ThreeUISketchbookTemplate } = require('./threeui-sketchbook');
+const { ThreeUILandscapeTemplate } = require('./threeui-landscape');
 
 class TemplateRegistry {
   static templates = {
+    'threeui-shelf': ThreeUIShelfTemplate,
+    'threeui-sylva': ThreeUISylvaTemplate,
+    'threeui-kage': ThreeUIKageTemplate,
+    'threeui-sketchbook': ThreeUISketchbookTemplate,
+    'threeui-landscape': ThreeUILandscapeTemplate,
+    'threeui-constellation': ThreeUIConstellationTemplate,
+    'threeui-liquid-metal': ThreeUILiquidMetalTemplate,
+    'threeui-matrix': ThreeUIMatrixTemplate,
+    'spatial-depth-voyage': SpatialDepthVoyageTemplate,
     'cyber-architect-sprawl': CyberArchitectSprawlTemplate,
     'swiss-editorial-monograph': SwissEditorialMonographTemplate,
     'solarpunk-horizon': SolarpunkHorizonTemplate,
@@ -99,6 +117,9 @@ class TemplateRegistry {
     // Role‑based heuristic – still respects explicit request
     if (candidateProfile && candidateProfile.role) {
       const r = candidateProfile.role.toLowerCase();
+      if (r.includes('spatial') || r.includes('3d') || r.includes('webgl') || r.includes('depth') || r.includes('flythrough') || r.includes('creative technologist')) {
+        return this.templates['spatial-depth-voyage'];
+      }
       if (r.includes('cyber-architect') || r.includes('sprawl') || r.includes('sentient') || r.includes('ava chen')) {
         return this.templates['cyber-architect-sprawl'];
       }

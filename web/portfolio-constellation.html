@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dr. Elena Rostova — Principal Neural Systems Architect</title>
+  <meta name="description" content="Portfolio of Dr. Elena Rostova: Principal Neural Systems Architect engineering autonomous AI cognitive graphs, WebGPU inference runtimes, and high-dimensional vector memory systems.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-void: #070914;
+      --bg-surface: #0E1222;
+      --bg-card: rgba(14, 18, 34, 0.75);
+      --text-main: #F2F4FB;
+      --text-muted: #9AA3BC;
+      --text-dim: #606880;
+      --gold-accent: #E6C879;
+      --gold-glow: rgba(230, 200, 121, 0.4);
+      --cyan-spark: #7FC4FF;
+      --cyan-glow: rgba(127, 196, 255, 0.35);
+      --border-subtle: rgba(28, 34, 54, 0.85);
+      --border-active: rgba(230, 200, 121, 0.45);
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    /* Fixed Background Constellation WebGL/Canvas */
+    .constellation-fixed-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #constellationCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .radial-depth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 25%, rgba(14, 18, 34, 0.45) 0%, #070914 85%);
+    }
+
+    .viewport-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(127, 196, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(127, 196, 255, 0.025) 1px, transparent 1px);
+      background-size: 64px 64px;
+    }
+
+    /* Masthead Navigation */
+    .masthead-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(7, 9, 20, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(14, 18, 34, 0.8);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    .brand-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gold-accent);
+      box-shadow: 0 0 10px var(--gold-accent);
+      animation: pulse 2s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.75; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-role {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--gold-accent);
+      margin-left: 0.4rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .masthead-nav { padding: 1rem 1.5rem; }
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--gold-accent);
+      text-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    .nav-telemetry-cluster {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+
+    .telemetry-tag {
+      color: var(--text-muted);
+    }
+
+    .telemetry-val {
+      color: var(--gold-accent);
+      font-weight: 700;
+    }
+
+    .btn-shell-gold {
+      display: inline-block;
+      padding: 1px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(230, 200, 121, 0.7) 0%, rgba(127, 196, 255, 0.4) 100%);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-shell-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(230, 200, 121, 0.35);
+    }
+
+    .btn-shell-inner {
+      display: block;
+      background: rgba(14, 18, 34, 0.92);
+      color: var(--gold-accent);
+      padding: 0.5rem 1.3rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-shell-gold:hover .btn-shell-inner {
+      background: var(--gold-accent);
+      color: var(--bg-void);
+    }
+
+    /* Page Content Container */
+    .page-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* 01. HERO STAGE */
+    .hero-section {
+      min-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 0 3rem;
+    }
+
+    .hero-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: rgba(14, 18, 34, 0.75);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 0.45rem 1.1rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gold-accent);
+      margin-bottom: 1.8rem;
+      width: fit-content;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-status-pill span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gold-accent);
+      box-shadow: 0 0 8px var(--gold-accent);
+      animation: pulse 1.5s infinite;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 300;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      margin-bottom: 1.4rem;
+      max-width: 900px;
+    }
+
+    .hero-title strong {
+      font-weight: 700;
+      background: linear-gradient(135deg, #FFFFFF 30%, var(--gold-accent) 70%, var(--cyan-spark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 1.8vw, 1.22rem);
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.2rem;
+      align-items: center;
+      margin-bottom: 3rem;
+    }
+
+    .btn-solid-gold {
+      background: var(--gold-accent);
+      color: #070914;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 20px var(--gold-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-solid-gold:hover {
+      background: #F5D98B;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 30px var(--gold-glow);
+    }
+
+    .btn-glass-subtle {
+      background: rgba(14, 18, 34, 0.75);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 0.85rem 1.8rem;
+      border-radius: 9999px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-glass-subtle:hover {
+      border-color: var(--gold-accent);
+      color: var(--gold-accent);
+      transform: translateY(-2px);
+    }
+
+    /* 02. PRODUCTION TELEMETRY STRIP */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 6rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 800px) {
+      .telemetry-strip {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 1.25rem;
+      }
+    }
+
+    .metric-card .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.35rem;
+    }
+
+    .metric-card .metric-value {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold-accent);
+      line-height: 1.1;
+    }
+
+    .metric-card .metric-subtext {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION SHARED STYLES */
+    .section-container {
+      padding: 5rem 0;
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--gold-accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-tag::before {
+      content: '✦';
+      color: var(--gold-accent);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.2vw, 2.6rem);
+      font-weight: 300;
+      line-height: 1.2;
+      color: #FFFFFF;
+    }
+
+    .section-title strong {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      max-width: 620px;
+      margin-top: 0.8rem;
+      font-size: 0.98rem;
+    }
+
+    /* 03. MISSION & COGNITIVE MANIFESTO */
+    .manifesto-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 3rem;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 3rem;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 850px) {
+      .manifesto-card { grid-template-columns: 1fr; padding: 2rem; }
+    }
+
+    .manifesto-body p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .manifesto-body p strong {
+      color: var(--text-main);
+    }
+
+    .manifesto-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .pillar-box {
+      background: rgba(7, 9, 20, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .pillar-box:hover {
+      border-color: var(--gold-accent);
+    }
+
+    .pillar-box h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.35rem;
+    }
+
+    .pillar-box p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* 04. PROJECTS VAULT */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2rem;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 2.2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .project-card:hover {
+      border-color: var(--gold-accent);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 25px var(--gold-glow);
+    }
+
+    .project-category {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--gold-accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 0.85rem;
+    }
+
+    .project-summary {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .tag-chip {
+      background: rgba(7, 9, 20, 0.8);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.25rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--cyan-spark);
+    }
+
+    .project-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .project-link {
+      color: var(--gold-accent);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: gap 0.2s ease;
+    }
+
+    .project-link:hover {
+      gap: 0.7rem;
+    }
+
+    /* 05. SKILLS MATRIX */
+    .skills-cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .cluster-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .cluster-card:hover {
+      border-color: var(--gold-accent);
+    }
+
+    .cluster-title {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--gold-accent);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .skill-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .skill-bar {
+      width: 70px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .skill-fill {
+      height: 100%;
+      background: var(--gold-accent);
+      border-radius: 2px;
+    }
+
+    /* 06. EXPERIENCE TIMELINE */
+    .timeline-wrapper {
+      position: relative;
+      padding-left: 2.5rem;
+    }
+
+    .timeline-wrapper::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold-accent) 0%, rgba(230, 200, 121, 0.1) 100%);
+    }
+
+    .timeline-entry {
+      position: relative;
+      margin-bottom: 3rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .timeline-entry:hover {
+      border-color: var(--gold-accent);
+    }
+
+    .timeline-entry::before {
+      content: '';
+      position: absolute;
+      left: -2.85rem;
+      top: 2rem;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gold-accent);
+      box-shadow: 0 0 10px var(--gold-accent);
+    }
+
+    .timeline-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .timeline-period {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--gold-accent);
+      background: rgba(230, 200, 121, 0.1);
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+    }
+
+    .timeline-company {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--cyan-spark);
+      margin-bottom: 1rem;
+    }
+
+    .timeline-desc {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
+    /* 07. CONTACT BEACON */
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 3.5rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+    }
+
+    .contact-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 400;
+      color: #FFFFFF;
+      margin-bottom: 1rem;
+    }
+
+    .contact-subtitle {
+      color: var(--text-muted);
+      font-size: 1rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .contact-links-row {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* FOOTER */
+    .footer-bar {
+      margin-top: 6rem;
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bar a {
+      color: var(--gold-accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background WebGL/Canvas Synaptic Constellation Engine -->
+  <div class="constellation-fixed-layer">
+    <canvas id="constellationCanvas"></canvas>
+  </div>
+  <div class="radial-depth-overlay"></div>
+  <div class="viewport-grid"></div>
+
+  <!-- Global Masthead Navigation -->
+  <header class="masthead-nav">
+    <a href="#" class="brand-mark">
+      <div class="brand-icon">
+        <span class="brand-pulse-dot"></span>
+      </div>
+      <div>
+        <span class="brand-name">Dr. Elena Rostova</span>
+        <span class="brand-role">Neural Systems</span>
+      </div>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#mission">Mission</a></li>
+      <li><a href="#projects">Vault</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#experience">Timeline</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+
+    <div class="nav-telemetry-cluster">
+      <div class="telemetry-tag">ENGINE: <span class="telemetry-val">SYNAPTIC 3D</span></div>
+      <a href="threeui-showcase.html" class="btn-shell-gold">
+        <span class="btn-shell-inner">ThreeUI Suite ↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <div class="page-wrapper">
+
+    <!-- 01. HERO STAGE -->
+    <section class="hero-section" id="hero">
+      <div class="hero-status-pill">
+        <span></span> Open for Principal AI Architecture & Advisory
+      </div>
+
+      <h1 class="hero-title">
+        Engineering high-dimensional<br>
+        <strong>neural cognitive graphs</strong> &amp; spatial memory
+      </h1>
+
+      <p class="hero-subtitle">
+        Principal Neural Systems Architect specializing in decentralized WebGPU cognitive networks, zero-latency vector state synchronization, and bio-inspired graph intelligence across 100,000+ distributed nodes.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#projects" class="btn-solid-gold">Explore Systems Vault ↓</a>
+        <a href="#mission" class="btn-glass-subtle">Architecture Manifesto</a>
+        <a href="#contact" class="btn-glass-subtle">Transmission Beacon</a>
+      </div>
+    </section>
+
+    <!-- 02. PRODUCTION TELEMETRY STRIP -->
+    <section class="telemetry-strip">
+      <div class="metric-card">
+        <div class="metric-label">Inference Velocity</div>
+        <div class="metric-value">1.8M</div>
+        <div class="metric-subtext">Embeddings / sec WebGPU</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Graph Traverse P99</div>
+        <div class="metric-value">&lt; 0.6ms</div>
+        <div class="metric-subtext">HNSW Vector Lattice</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Active Nodes</div>
+        <div class="metric-value">128K</div>
+        <div class="metric-subtext">Decentralized Mesh</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Patents Granted</div>
+        <div class="metric-value">07</div>
+        <div class="metric-subtext">Cognitive State Sync</div>
+      </div>
+    </section>
+
+    <!-- 03. MISSION & COGNITIVE MANIFESTO -->
+    <section class="section-container" id="mission">
+      <div class="section-header">
+        <div class="section-tag">Architectural Vision</div>
+        <h2 class="section-title">Cognitive systems require <strong>volumetric topology</strong></h2>
+        <p class="section-desc">Moving beyond flat transformer context windows toward persistent, interconnected semantic memory webs that learn dynamically.</p>
+      </div>
+
+      <div class="manifesto-card">
+        <div class="manifesto-body">
+          <p>
+            Traditional artificial intelligence remains constrained by brute-force token ingestion. My research focuses on <strong>synaptic topology</strong>: continuous mathematical surfaces where memory items exist as energetic nodes with physical spatial relationships.
+          </p>
+          <p>
+            By combining WebGPU parallel compute shaders with asynchronous gossip protocols, we achieve real-time associative recall across billions of parameters with zero server round-trip latency.
+          </p>
+        </div>
+        <div class="manifesto-pillars">
+          <div class="pillar-box">
+            <h3>Volumetric Memory Graphs</h3>
+            <p>Persistent 3D vector embeddings connected through dynamic quantum linkages that tighten with semantic reinforcement.</p>
+          </div>
+          <div class="pillar-box">
+            <h3>Sub-Millisecond WebGPU Runtimes</h3>
+            <p>Native browser inference pipelines bypassing heavy frameworks to deliver direct hardware acceleration.</p>
+          </div>
+          <div class="pillar-box">
+            <h3>Decentralized Topology</h3>
+            <p>Zero-coordinator cognitive meshes capable of self-healing and localized memory deduplication.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. PROJECTS VAULT -->
+    <section class="section-container" id="projects">
+      <div class="section-header">
+        <div class="section-tag">Verified Artifacts</div>
+        <h2 class="section-title">Autonomous <strong>Neural Production Systems</strong></h2>
+        <p class="section-desc">Selected open-source engines and enterprise architectures deployed across production clusters.</p>
+      </div>
+
+      <div class="projects-grid">
+        <article class="project-card">
+          <div>
+            <div class="project-category">Core Engine • Rust / WebGPU</div>
+            <h3 class="project-title">AetherSynapse Graph Runtime</h3>
+            <p class="project-summary">
+              Distributed vector graph engine rendering 100,000 active cognitive nodes at 60 FPS in WebGPU while continuously evaluating semantic distance matrices.
+            </p>
+            <div class="project-tags">
+              <span class="tag-chip">Rust WASM</span>
+              <span class="tag-chip">WebGPU</span>
+              <span class="tag-chip">HNSW</span>
+              <span class="tag-chip">Three.js</span>
+            </div>
+          </div>
+          <div class="project-actions">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">V3.4 PRODUCTION</span>
+            <a href="https://github.com" target="_blank" class="project-link">Inspect Code ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div>
+            <div class="project-category">Inference Pipeline • C++ / CUDA</div>
+            <h3 class="project-title">NeuroLoom Latent Synthesizer</h3>
+            <p class="project-summary">
+              Ultra-low latency streaming inference harness for multi-modal embedding models with zero memory allocation inside the critical inference path.
+            </p>
+            <div class="project-tags">
+              <span class="tag-chip">C++20</span>
+              <span class="tag-chip">CUDA</span>
+              <span class="tag-chip">TensorRT</span>
+              <span class="tag-chip">Zero-GC</span>
+            </div>
+          </div>
+          <div class="project-actions">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">P99.9 &lt; 0.8MS</span>
+            <a href="https://github.com" target="_blank" class="project-link">View Benchmarks ↗</a>
+          </div>
+        </article>
+
+        <article class="project-card">
+          <div>
+            <div class="project-category">Telemetry Surface • TypeScript</div>
+            <h3 class="project-title">Synaptic HUD Visualizer</h3>
+            <p class="project-summary">
+              Real-time browser telemetry monitoring GPU warp divergence, memory bandwidth pressure, and cluster node synchronization status in real-time.
+            </p>
+            <div class="project-tags">
+              <span class="tag-chip">WebGL</span>
+              <span class="tag-chip">WebSockets</span>
+              <span class="tag-chip">Canvas 2D</span>
+              <span class="tag-chip">OpenTelemetry</span>
+            </div>
+          </div>
+          <div class="project-actions">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">LIVE METRICS</span>
+            <a href="https://github.com" target="_blank" class="project-link">Launch Console ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 05. SKILLS MATRIX -->
+    <section class="section-container" id="skills">
+      <div class="section-header">
+        <div class="section-tag">Core Competencies</div>
+        <h2 class="section-title">Systems &amp; <strong>Algorithmic Mastery</strong></h2>
+        <p class="section-desc">Hardware-level systems programming paired with neural mathematical theory.</p>
+      </div>
+
+      <div class="skills-cluster-grid">
+        <div class="cluster-card">
+          <h3 class="cluster-title">Spatial &amp; 3D Graphics</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span>WebGPU / WGSL</span><div class="skill-bar"><div class="skill-fill" style="width: 98%;"></div></div></li>
+            <li class="skill-item"><span>Three.js / WebGL</span><div class="skill-bar"><div class="skill-fill" style="width: 95%;"></div></div></li>
+            <li class="skill-item"><span>Compute Shaders</span><div class="skill-bar"><div class="skill-fill" style="width: 92%;"></div></div></li>
+            <li class="skill-item"><span>GLSL Raymarching</span><div class="skill-bar"><div class="skill-fill" style="width: 90%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="cluster-card">
+          <h3 class="cluster-title">Systems Engineering</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span>Rust &amp; Memory Safety</span><div class="skill-bar"><div class="skill-fill" style="width: 96%;"></div></div></li>
+            <li class="skill-item"><span>C++20 / SIMD</span><div class="skill-bar"><div class="skill-fill" style="width: 92%;"></div></div></li>
+            <li class="skill-item"><span>CUDA Parallelism</span><div class="skill-bar"><div class="skill-fill" style="width: 88%;"></div></div></li>
+            <li class="skill-item"><span>Zero-Copy I/O</span><div class="skill-bar"><div class="skill-fill" style="width: 94%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="cluster-card">
+          <h3 class="cluster-title">Cognitive AI Theory</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span>High-Dim Vector Indexing</span><div class="skill-bar"><div class="skill-fill" style="width: 97%;"></div></div></li>
+            <li class="skill-item"><span>Graph Neural Nets</span><div class="skill-bar"><div class="skill-fill" style="width: 93%;"></div></div></li>
+            <li class="skill-item"><span>Transformer Quantization</span><div class="skill-bar"><div class="skill-fill" style="width: 91%;"></div></div></li>
+            <li class="skill-item"><span>Embedding Distillation</span><div class="skill-bar"><div class="skill-fill" style="width: 89%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="cluster-card">
+          <h3 class="cluster-title">Distributed Systems</h3>
+          <ul class="skill-list">
+            <li class="skill-item"><span>Decentralized Gossip</span><div class="skill-bar"><div class="skill-fill" style="width: 94%;"></div></div></li>
+            <li class="skill-item"><span>CRDT State Replication</span><div class="skill-bar"><div class="skill-fill" style="width: 92%;"></div></div></li>
+            <li class="skill-item"><span>gRPC &amp; Protobuf</span><div class="skill-bar"><div class="skill-fill" style="width: 95%;"></div></div></li>
+            <li class="skill-item"><span>Cluster Orchestration</span><div class="skill-bar"><div class="skill-fill" style="width: 88%;"></div></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. EXPERIENCE TIMELINE -->
+    <section class="section-container" id="experience">
+      <div class="section-header">
+        <div class="section-tag">Career Provenance</div>
+        <h2 class="section-title">Leadership &amp; <strong>Engineering History</strong></h2>
+      </div>
+
+      <div class="timeline-wrapper">
+        <div class="timeline-entry">
+          <div class="timeline-meta">
+            <h3 class="timeline-role">Principal Neural Systems Architect</h3>
+            <span class="timeline-period">2023 — PRESENT</span>
+          </div>
+          <div class="timeline-company">Cognitive Lattices Inc. • San Francisco &amp; Remote</div>
+          <p class="timeline-desc">
+            Directing core research on next-generation WebGPU vector spatial runtimes. Architected high-density embedding storage supporting 1.8M queries/sec at &lt; 0.6ms P99 latency across globally distributed inference clusters.
+          </p>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-meta">
+            <h3 class="timeline-role">Senior Staff Graphics &amp; Compute Engineer</h3>
+            <span class="timeline-period">2020 — 2023</span>
+          </div>
+          <div class="timeline-company">Nexus Holographic Runtimes • Zurich</div>
+          <p class="timeline-desc">
+            Engineered the core WGSL compute shader kernel powering real-time spatial memory maps on consumer mobile devices. Reduced memory allocation churn to zero and authored 4 key patents in distributed vector replication.
+          </p>
+        </div>
+
+        <div class="timeline-entry">
+          <div class="timeline-meta">
+            <h3 class="timeline-role">Lead Research Scientist</h3>
+            <span class="timeline-period">2017 — 2020</span>
+          </div>
+          <div class="timeline-company">Max Planck Institute for Intelligent Systems • Tübingen</div>
+          <p class="timeline-desc">
+            Investigated high-dimensional graph neural networks and biological topological clustering. Published 6 peer-reviewed papers in NeurIPS, ICML, and CVPR on geometric deep learning.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07. CONTACT BEACON -->
+    <section class="section-container" id="contact">
+      <div class="contact-card">
+        <div class="section-tag" style="justify-content: center;">Establish Connection</div>
+        <h2 class="contact-title">Initiate Transmission</h2>
+        <p class="contact-subtitle">
+          Available for select principal architecture contracts, high-stakes system audits, and advisory roles in spatial AI.
+        </p>
+
+        <div class="contact-links-row">
+          <a href="mailto:elena.rostova@synaptic.dev" class="btn-solid-gold">Send Encrypted Mail ↗</a>
+          <a href="https://github.com" target="_blank" class="btn-glass-subtle">GitHub Repository</a>
+          <a href="https://linkedin.com" target="_blank" class="btn-glass-subtle">Academic Dossier</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-bar">
+      <div>
+        <span>Dr. Elena Rostova</span> • Neural Systems Architecture
+      </div>
+      <div>
+        SYNAPTIC NODE ENGINE // 60 FPS SECURE
+      </div>
+      <div>
+        <a href="#hero">Return to Zenith ↑</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // THREEUI SYNAPTIC CONSTELLATION LIVING PARTICLE NETWORK
+    // Official DesignCode / MengTo implementation (Pure Vanilla JS)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('constellationCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    const MAX_NODES = isTouch ? 40 : 85;
+    const LINK_DISTANCE = isTouch ? 110 : 150;
+
+    let nodes = [];
+    const pointer = { x: -1000, y: -1000 };
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize, { passive: true });
+
+    function initNodes() {
+      nodes = [];
+      for (let i = 0; i < MAX_NODES; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.35,
+          vy: (Math.random() - 0.5) * 0.35,
+          radius: Math.random() * 2.0 + 1.2
+        });
+      }
+    }
+    initNodes();
+
+    // Pointer Gravity Tracker
+    window.addEventListener('mousemove', e => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        pointer.x = e.touches[0].clientX;
+        pointer.y = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      pointer.x = -1000;
+      pointer.y = -1000;
+    });
+
+    function dist(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function renderLoop() {
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw Synaptic Links
+      ctx.strokeStyle = '#E6C879';
+      ctx.lineWidth = 0.8;
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const d = dist(nodes[i], nodes[j]);
+          if (d < LINK_DISTANCE) {
+            const alpha = (1 - d / LINK_DISTANCE);
+            ctx.globalAlpha = alpha * 0.38;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // Draw Nodes & Update Dynamics
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        node.x += node.vx;
+        node.y += node.vy;
+
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+
+        // Pointer Gravity Attraction
+        const pd = dist(node, pointer);
+        if (pd < 200 && pd > 0) {
+          node.x -= (node.x - pointer.x) * 0.007;
+          node.y -= (node.y - pointer.y) * 0.007;
+        }
+
+        const pulse = 0.75 + Math.sin(Date.now() * 0.002 + node.x * 0.01) * 0.25;
+
+        // Aura
+        ctx.fillStyle = '#E6C879';
+        ctx.globalAlpha = pulse * 0.25;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius * 2.6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Core
+        ctx.globalAlpha = pulse * 0.85;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderLoop);
+    }
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>

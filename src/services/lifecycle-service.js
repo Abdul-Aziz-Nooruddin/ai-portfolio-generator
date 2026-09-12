@@ -137,8 +137,8 @@ class LifecycleService {
       const user = item.users || (item.user_id ? await this.db.getUserById(item.user_id) : null);
       const userEmail = user?.email || item.extracted_data?.email;
       const userName = item.extracted_data?.name || 'there';
-      const siteUrl = item.live_url || `${process.env.HOST_URL || 'http://localhost:3000'}/p/${item.id}`;
-      const retryUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/payment/retry?userId=${item.user_id}`;
+      const siteUrl = item.live_url || `${process.env.HOST_URL || 'http://localhost:5050'}/p/${item.id}`;
+      const retryUrl = `${process.env.HOST_URL || 'http://localhost:5050'}/payment/retry?userId=${item.user_id}`;
 
       // Check for 5-day expiration
       if (elapsed >= FIVE_DAYS_MS) {
@@ -203,7 +203,7 @@ class LifecycleService {
       const elapsedDays = (now - createdAt) / (24 * 60 * 60 * 1000);
       const userEmail = user.email;
       const userName = user.name || 'there';
-      const subscribeUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/subscribe?userId=${user.id}`;
+      const subscribeUrl = `${process.env.HOST_URL || 'http://localhost:5050'}/subscribe?userId=${user.id}`;
 
       if (!userEmail) continue;
 

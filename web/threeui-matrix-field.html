@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ThreeUI // Quantum Matrix State</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;600;700&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #050505;
+      color: #FFFFFF;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      position: relative;
+      font-family: 'Space Grotesk', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* WebGL Background Canvas */
+    #glcanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      display: block;
+    }
+
+    /* Structural Framing Lines */
+    .framing {
+      position: absolute;
+      inset: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .corner-mark {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      background: #050505;
+    }
+    .corner-tl { top: -4px; left: -4px; }
+    .corner-tr { top: -4px; right: -4px; }
+    .corner-bl { bottom: -4px; left: -4px; }
+    .corner-br { bottom: -4px; right: -4px; }
+
+    /* Top Masthead Navigation */
+    .top-nav {
+      position: absolute;
+      top: 2rem;
+      left: 2.5rem;
+      right: 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 30;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #8E96A8;
+    }
+
+    .top-nav a {
+      color: #5DCDE0;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .top-nav a:hover {
+      color: #FFFFFF;
+    }
+
+    /* Center Content Overlay */
+    .content-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .dashboard-center {
+      margin-top: auto;
+      margin-bottom: auto;
+      max-width: 32rem;
+      pointer-events: auto;
+    }
+
+    .telemetry-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: #5DCDE0;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .telemetry-tag::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #5DCDE0;
+      box-shadow: 0 0 8px #5DCDE0;
+    }
+
+    .matrix-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      color: #FFFFFF;
+      margin-bottom: 1rem;
+    }
+
+    .matrix-title span {
+      background: linear-gradient(135deg, #5DCDE0 0%, #D352C4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .matrix-desc {
+      color: #9AA3BC;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin-bottom: 2rem;
+      font-weight: 300;
+    }
+
+    .action-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-action {
+      background: rgba(93, 205, 224, 0.12);
+      border: 1px solid rgba(93, 205, 224, 0.4);
+      color: #5DCDE0;
+      padding: 0.65rem 1.4rem;
+      border-radius: 6px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      background: #5DCDE0;
+      color: #050505;
+      box-shadow: 0 0 20px rgba(93, 205, 224, 0.5);
+    }
+
+    .bottom-hint {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.72rem;
+      color: #64748B;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- WebGL Matrix Background Canvas -->
+  <canvas id="glcanvas"></canvas>
+
+  <!-- Framing Grid -->
+  <div class="framing">
+    <div class="corner-mark corner-tl"></div>
+    <div class="corner-mark corner-tr"></div>
+    <div class="corner-mark corner-bl"></div>
+    <div class="corner-mark corner-br"></div>
+  </div>
+
+  <!-- Top Metadata Navigation -->
+  <div class="top-nav">
+    <div>SYSTEM: <strong>MATRIX-09</strong> // ACTIVE</div>
+    <div>PING: <span style="color: #5DCDE0;">0.8ms</span></div>
+    <div><a href="threeui-showcase.html">✦ Showcase Suite ↗</a></div>
+  </div>
+
+  <!-- Center Content -->
+  <div class="content-overlay">
+    <div></div>
+    
+    <div class="dashboard-center">
+      <div class="telemetry-tag">Interactive Lightning WebGL Field</div>
+      <h1 class="matrix-title">QUANTUM<br><span>MATRIX STATE</span></h1>
+      <p class="matrix-desc">
+        Dynamic WebGL procedural lightning shader that recalculates arc vectors and ambient field intensity in response to cursor coordinates.
+      </p>
+      <div class="action-links">
+        <a href="threeui-showcase.html" class="btn-action">← Return to Showcase</a>
+        <a href="threeui-liquid-metal.html" class="btn-action">Liquid Metal ↗</a>
+      </div>
+    </div>
+
+    <div class="bottom-hint">
+      <div>[STATUS: STABLE 60FPS]</div>
+      <div style="color: #5DCDE0;">✦ Move cursor to bend arc vectors</div>
+      <div>[COORDINATES: RUNTIME ACTIVE]</div>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------------------------------------
+    // THREEUI QUANTUM MATRIX WEBGL SHADER ENGINE
+    // MengTo / DesignCode implementation (Pure WebGL)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('glcanvas');
+    const gl = canvas.getContext('webgl');
+
+    if (gl) {
+      const vsSource = `
+        attribute vec4 aVertexPosition;
+        void main() {
+          gl_Position = aVertexPosition;
+        }
+      `;
+
+      const fsSource = `
+        precision highp float;
+        uniform vec2 u_resolution;
+        uniform float u_time;
+        uniform vec2 u_mouse;
+        uniform float u_mouseActive;
+
+        float hash(float n) { return fract(sin(n)*753.5453123); }
+        float noise(float x) {
+          float i = floor(x);
+          float f = fract(x);
+          f = f*f*(3.0-2.0*f);
+          return mix(hash(i), hash(i+1.0), f);
+        }
+
+        vec2 sdLine(vec2 p, vec2 a, vec2 b) {
+          vec2 pa = p - a, ba = b - a;
+          float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
+          return vec2(length(pa - ba * h), h);
+        }
+
+        float lightning(vec2 uv, vec2 a, vec2 b, float t) {
+          vec2 ab = b - a;
+          float len = length(ab);
+          if(len < 0.01) return 0.0;
+          vec2 dir = ab / len;
+          
+          vec2 pa = uv - a;
+          float h = clamp(dot(pa, dir) / len, 0.0, 1.0);
+          float dist = length(pa - dir * (h * len));
+          
+          float env = sin(h * 3.1415);
+          float offset = (noise(h * 25.0 - t * 35.0) - 0.5) * 0.08 * env;
+          offset += (noise(h * 70.0 + t * 50.0) - 0.5) * 0.02 * env;
+          
+          float d = abs(dist + offset);
+          return (0.0002 / (d + 0.0002) + 0.00001 / (d*d + 0.00001)) * env;
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+          uv = uv * 2.0 - 1.0;
+          uv.x *= u_resolution.x / u_resolution.y;
+
+          vec2 mouseUV = u_mouse / u_resolution.xy;
+          mouseUV = mouseUV * 2.0 - 1.0;
+          mouseUV.x *= u_resolution.x / u_resolution.y;
+
+          vec2 center = vec2(-0.4, -0.1);
+          center.x += sin(u_time * 0.4) * 0.03;
+          center.y += cos(u_time * 0.3) * 0.03;
+
+          vec2 dirUp = normalize(vec2(0.15, 1.0));
+          vec2 dirRight = normalize(vec2(1.0, -0.25));
+          vec2 dirDownLeft = normalize(vec2(-0.8, -0.6));
+
+          vec2 l1 = sdLine(uv, center, center + dirUp * 5.0);
+          vec2 l2 = sdLine(uv, center, center + dirRight * 5.0);
+          vec2 l3 = sdLine(uv, center, center + dirDownLeft * 5.0);
+
+          float intensity = 0.006;
+          float glow = intensity / (l1.x + 0.001) +
+                       intensity / (l2.x + 0.001) +
+                       (intensity * 0.4) / (l3.x + 0.001);
+
+          float pulse1 = smoothstep(0.1, 0.0, abs(l1.y - fract(u_time * 0.4))) * 0.03 / (l1.x + 0.001);
+          float pulse2 = smoothstep(0.1, 0.0, abs(l2.y - fract(u_time * 0.5 + 0.3))) * 0.03 / (l2.x + 0.001);
+          float pulse3 = smoothstep(0.1, 0.0, abs(l3.y - fract(u_time * 0.3 + 0.7))) * 0.015 / (l3.x + 0.001);
+          glow += pulse1 + pulse2 + pulse3;
+
+          vec2 p1 = center + dirUp * clamp(dot(mouseUV - center, dirUp), 0.0, 5.0);
+          vec2 p2 = center + dirRight * clamp(dot(mouseUV - center, dirRight), 0.0, 5.0);
+          vec2 p3 = center + dirDownLeft * clamp(dot(mouseUV - center, dirDownLeft), 0.0, 5.0);
+
+          float d1 = length(mouseUV - p1);
+          float d2 = length(mouseUV - p2);
+          float d3 = length(mouseUV - p3);
+
+          vec2 target = p1;
+          float minDist = d1;
+          if(d2 < minDist) { minDist = d2; target = p2; }
+          if(d3 < minDist) { minDist = d3; target = p3; }
+
+          float arc1 = lightning(uv, mouseUV, target, u_time);
+          float arc2 = lightning(uv, mouseUV, center, u_time * 1.2);
+          float totalArc = (arc1 * 0.8 + arc2 * 0.4) * u_mouseActive;
+
+          float mouseGlow = (0.008 / (length(uv - mouseUV) + 0.005)) * u_mouseActive;
+
+          vec3 baseColor = vec3(0.1, 0.65, 0.9);
+          vec3 pulseColor = vec3(0.9, 0.3, 0.85);
+          vec3 arcColor = vec3(0.4, 0.85, 1.0);
+
+          vec3 finalColor = baseColor * glow + pulseColor * (pulse1 + pulse2 + pulse3) * 1.5;
+          finalColor += arcColor * totalArc * 2.0;
+          finalColor += arcColor * mouseGlow;
+
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `;
+
+      function initShaderProgram(gl, vsSource, fsSource) {
+        const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+        const shaderProgram = gl.createProgram();
+        gl.attachShader(shaderProgram, vertexShader);
+        gl.attachShader(shaderProgram, fragmentShader);
+        gl.linkProgram(shaderProgram);
+        return shaderProgram;
+      }
+
+      function loadShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
+      }
+
+      const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+      const programInfo = {
+        program: shaderProgram,
+        attribLocations: {
+          vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
+        },
+        uniformLocations: {
+          resolution: gl.getUniformLocation(shaderProgram, 'u_resolution'),
+          time: gl.getUniformLocation(shaderProgram, 'u_time'),
+          mouse: gl.getUniformLocation(shaderProgram, 'u_mouse'),
+          mouseActive: gl.getUniformLocation(shaderProgram, 'u_mouseActive'),
+        },
+      };
+
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      const positions = [-1.0, 1.0, 1.0, 1.0, -1.0, -1.0, 1.0, -1.0];
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+      let mouse = { x: window.innerWidth * 0.5, y: window.innerHeight * 0.5 };
+      let targetMouse = { ...mouse };
+      let mouseActive = 1.0;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        gl.viewport(0, 0, canvas.width, canvas.height);
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      window.addEventListener('mousemove', (e) => {
+        targetMouse.x = e.clientX;
+        targetMouse.y = canvas.height - e.clientY;
+      });
+
+      window.addEventListener('touchmove', (e) => {
+        if(e.touches.length > 0) {
+          targetMouse.x = e.touches[0].clientX;
+          targetMouse.y = canvas.height - e.touches[0].clientY;
+        }
+      });
+
+      let startTime = performance.now();
+
+      function render() {
+        const currentTime = (performance.now() - startTime) * 0.001;
+
+        mouse.x += (targetMouse.x - mouse.x) * 0.08;
+        mouse.y += (targetMouse.y - mouse.y) * 0.08;
+
+        gl.clearColor(0.02, 0.02, 0.02, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(programInfo.program);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(programInfo.attribLocations.vertexPosition, 2, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(programInfo.attribLocations.vertexPosition);
+
+        gl.uniform2f(programInfo.uniformLocations.resolution, canvas.width, canvas.height);
+        gl.uniform1f(programInfo.uniformLocations.time, currentTime);
+        gl.uniform2f(programInfo.uniformLocations.mouse, mouse.x, mouse.y);
+        gl.uniform1f(programInfo.uniformLocations.mouseActive, mouseActive);
+
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
+  </script>
+</body>
+</html>

@@ -195,18 +195,50 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  // Explicit VIP Subdomain Route: abdulaziz.myfolio.tech or abdulaziz.localhost
-  if (host === 'abdulaziz.myfolio.tech' || host === 'abdulaziz.localhost' || host.startsWith('abdulaziz.')) {
-    let siteId = customDomainService?.resolveHostname(host) || 'abdulaziz';
+  // Explicit VIP Subdomain Route: abdulaziz.myfolio.tech, aziz.myfolio.tech or local equivalents
+  if (
+    host === 'abdulaziz.myfolio.tech' || host === 'abdulaziz.localhost' || host.startsWith('abdulaziz.') ||
+    host === 'aziz.myfolio.tech' || host === 'aziz.localhost' || host.startsWith('aziz.')
+  ) {
+    let siteId = customDomainService?.resolveHostname(host) ||
+      customDomainService?.resolveHostname('abdulaziz.myfolio.tech') ||
+      customDomainService?.resolveHostname('aziz.myfolio.tech') ||
+      'abdulaziz';
+
     let html = await hostingProvider.getSiteHtml(siteId);
-    if (!html) {
+    if (!html && siteId !== 'abdulaziz') {
       html = await hostingProvider.getSiteHtml('abdulaziz');
     }
+    if (!html && siteId !== 'aziz') {
+      html = await hostingProvider.getSiteHtml('aziz');
+    }
+
+    // If still not found, check public/sites for newest generated portfolio
+    if (!html) {
+      try {
+        const sitesDir = path.join(process.cwd(), 'public', 'sites');
+        if (fs.existsSync(sitesDir)) {
+          const candidates = fs.readdirSync(sitesDir).filter(d => 
+            fs.existsSync(path.join(sitesDir, d, 'index.html')) &&
+            (d.startsWith('abdulaziz-') || d.startsWith('aziz-') || d.startsWith('web-'))
+          );
+          if (candidates.length > 0) {
+            candidates.sort((a, b) => {
+              try {
+                return fs.statSync(path.join(sitesDir, b, 'index.html')).mtimeMs - fs.statSync(path.join(sitesDir, a, 'index.html')).mtimeMs;
+              } catch(e) { return 0; }
+            });
+            html = await hostingProvider.getSiteHtml(candidates[0]);
+          }
+        }
+      } catch (e) {}
+    }
+
     // VIP Founder instant synthesis fallback
     if (!html) {
       try {
         const { TemplateRegistry } = require('./templates/template-registry');
-        const stealthTemplate = TemplateRegistry.templates['stealth-node'] || TemplateRegistry.templates['cosmic-astronaut'] || Object.values(TemplateRegistry.templates)[0];
+        const stealthTemplate = TemplateRegistry.templates['threeui-shelf'] || TemplateRegistry.templates['stealth-node'] || Object.values(TemplateRegistry.templates)[0];
         const abdulAzizProfile = {
           name: 'Abdul Aziz Nooruddin',
           title: 'Full-Stack Developer & AI Systems Specialist',
@@ -402,7 +434,7 @@ app.post('/webhook/razorpay', async (req, res) => {
             });
             const user = await dbService.getUserById(userId);
             if (user?.email) {
-              const liveUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/p/${conversation.id}`;
+              const liveUrl = `${process.env.HOST_URL || 'http://localhost:5050'}/p/${conversation.id}`;
               await emailService.sendReactivationConfirmation(user.email, {
                 userId,
                 name: conversation.extracted_data?.name || 'there',
@@ -425,7 +457,7 @@ app.post('/webhook/razorpay', async (req, res) => {
             });
             const user = await dbService.getUserById(userId);
             if (user?.email) {
-              const retryUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/payment/retry?userId=${userId}`;
+              const retryUrl = `${process.env.HOST_URL || 'http://localhost:5050'}/payment/retry?userId=${userId}`;
               await emailService.sendPaymentFailedEmail(user.email, {
                 userId,
                 name: conversation.extracted_data?.name || 'there',
@@ -2642,8 +2674,18 @@ async function handlePermanentSiteDelete(req, res) {
     if (dbService?.client) {
       try {
         await dbService.client.from('sites').delete().eq('provider_site_id', siteId);
+        await dbService.client.from('client_sites').delete().eq('provider_site_id', siteId);
+        await dbService.client.from('client_sites').delete().eq('id', siteId);
       } catch (e) {}
     }
+
+    // 4. Force disk cleanup of public/sites/<siteId>
+    try {
+      const targetSiteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+      if (fs.existsSync(targetSiteDir)) {
+        fs.rmSync(targetSiteDir, { recursive: true, force: true });
+      }
+    } catch (e) {}
 
     return res.json({
       success: true,
@@ -2809,8 +2851,61 @@ app.get('/p/:siteId', async (req, res) => {
       }
     }
 
+    // Check if site metadata exists in public/sites/<siteId>/meta.json and auto-recover on the fly
+    if (!html && (siteId.startsWith('web-') || siteId.includes('-'))) {
+      const metaPath = path.join(sitesBaseDir, siteId, 'meta.json');
+      const profPath = path.join(sitesBaseDir, siteId, 'profile.json');
+      if (fs.existsSync(metaPath) || fs.existsSync(profPath)) {
+        try {
+          let meta = {};
+          let prof = {};
+          if (fs.existsSync(metaPath)) {
+            try { meta = JSON.parse(fs.readFileSync(metaPath, 'utf8')); } catch (e) {}
+          }
+          if (fs.existsSync(profPath)) {
+            try { prof = JSON.parse(fs.readFileSync(profPath, 'utf8')); } catch (e) {}
+          }
+          const { TemplateRegistry } = require('./templates/template-registry');
+          const uKey = meta.universeKey || 'threeui-shelf';
+          const template = TemplateRegistry.templates[uKey] || TemplateRegistry.templates['threeui-shelf'] || Object.values(TemplateRegistry.templates)[0];
+          if (template) {
+            const candidateProfile = {
+              name: meta.developerName || prof.name || 'Abdul Aziz Nooruddin',
+              title: meta.developerRole || prof.title || 'AI Systems Specialist & Machine Learning Researcher',
+              role: meta.developerRole || prof.role || 'AI Systems Specialist',
+              bio: prof.bio || 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
+              about: prof.about || 'Lead architect of MyFolio. Full-stack engineer specializing in modern web platforms, 3D spatial computing, and AI-driven automation systems.',
+              skills: prof.skills || ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker'],
+              projects: prof.projects || [
+                {
+                  title: 'MyFolio Platform',
+                  name: 'MyFolio Platform',
+                  description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
+                  tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+                  url: 'https://myfolio.tech'
+                }
+              ],
+              experience: prof.experience || [],
+              contact: prof.contact || { email: meta.userEmail || 'abdulaziznoor9876@gmail.com', github: 'https://github.com/Abdul-Aziz-Nooruddin' },
+              social: prof.social || { github: 'https://github.com/Abdul-Aziz-Nooruddin' }
+            };
+            const rendered = template.render(candidateProfile, {});
+            const generatedHtml = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+            if (generatedHtml) {
+              const targetDir = path.join(sitesBaseDir, siteId);
+              fs.mkdirSync(targetDir, { recursive: true });
+              fs.writeFileSync(path.join(targetDir, 'index.html'), generatedHtml, 'utf8');
+              html = generatedHtml;
+            }
+          }
+        } catch (recoverErr) {
+          console.warn('[RECOVERY] Auto-recovery notice for site:', siteId, recoverErr.message);
+        }
+      }
+    }
+
     // If it is a web preview site ID that was auto-purged after the 24-hour window, render friendly expired page
-    if (siteId.startsWith('web-') || siteId.includes('-')) {
+    if (!html && (siteId.startsWith('web-') || siteId.includes('-'))) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.status(404).send(`<!DOCTYPE html>
 <html lang="en">
@@ -2973,17 +3068,20 @@ app.get('/p/:siteId', async (req, res) => {
 
   // html is already populated from hostingProvider.getSiteHtml(siteId) above
 
-  // Record real live visitor telemetry
+  // Record real live visitor telemetry asynchronously (fire-and-forget, never block render)
   try {
     const ip = req.ip || req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1';
     const visitorHash = crypto.createHash('sha256').update(ip + (req.headers['user-agent'] || '')).digest('hex').substring(0, 16);
-    await dbService.recordAnalyticsEvent(siteId, 'page_view', visitorHash, req.headers['referer'] || null);
+    dbService.recordAnalyticsEvent(siteId, 'page_view', visitorHash, req.headers['referer'] || null).catch(() => {});
   } catch (e) {}
 
-  // Check if site is paid / active or VIP Founder
+  // Check if site is paid / active or VIP Founder with strict 400ms timeout
   let isPaid = siteId === 'abdulaziz' || req.user?.email === 'abdulaziznoor9876@gmail.com';
   try {
-    const { data: siteRecord } = await dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
+    const siteQueryPromise = dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
+    const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 400));
+    const result = await Promise.race([siteQueryPromise, timeoutPromise]);
+    const siteRecord = result?.data;
     if (siteRecord && (siteRecord.status === 'active' || siteRecord.status === 'paid')) {
       isPaid = true;
     }
@@ -3025,7 +3123,7 @@ app.get('/p/:siteId', async (req, res) => {
     <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 18px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
       <div style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
         <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
-        <span>🔒 <strong>Preview Mode</strong> (24-Hour Timer Active) • Created with @${botUsername}</span>
+        <span>🔒 <strong>Preview Mode</strong> (24-Hour Timer Active) • Created with MyFolio 3D</span>
       </div>
       <a href="/subscribe?siteId=${siteId}" style="background: #22c55e; color: #000000; font-weight: 800; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
         💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔

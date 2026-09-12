@@ -27,6 +27,7 @@ build/
 # Temporary
 tmp/
 temp/
+scratch/
 public/sites/
 .design_memory.json
 web/assets/animated-floating-astronaut-in-space-suit-loop/

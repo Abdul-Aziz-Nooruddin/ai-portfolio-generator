@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dr. Aris Thorne — Principal Spatial & Ecological Systems Architect</title>
+<meta name="description" content="Living 3D Spatial Portfolio featuring real-time WebGL living environments, procedural branches, fluttering fauna, and scrollytelling architecture.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 24'%3E%3Crect width='22' height='24' fill='%234a4d44'/%3E%3Cpath fill='%23fff' d='M11 1.3c-2.1 0-3.95 1.2-4.75 2.95C3.95 4.55 2.3 6.25 2.3 8.35c0 2.3 1.9 4.2 4.3 4.2h8.8c2.4 0 4.3-1.9 4.3-4.2 0-2.1-1.65-3.8-4-4.1C14.95 2.5 13.1 1.3 11 1.3Z'/%3E%3Cpath fill='%23fff' d='M9.6 12.55h2.8v4.2c1.35.3 2.45 1.15 3.15 2.4-1.35.4-2.4.15-3.15-.4v4.15H9.6v-4.15c-.75.55-1.8.8-3.15.4.7-1.25 1.8-2.1 3.15-2.4v-4.2Z'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  @font-face{
+    font-family:'Lexend';
+    src:url('inner-green-assets/lexend-latin.woff2') format('woff2');
+    font-weight:100 900; font-style:normal; font-display:swap;
+  }
+
+  :root {
+    --ink: #ffffff;
+    --ink-soft: rgba(255,255,255,0.72);
+    --ink-faint: rgba(255,255,255,0.48);
+    --bg-base: #383b34;
+    --card-bg: rgba(28, 33, 27, 0.78);
+    --card-border: rgba(255,255,255,0.12);
+    --card-hover: rgba(255,255,255,0.22);
+    --accent: #86efac;
+    --accent-glow: rgba(134, 239, 172, 0.35);
+    --font-display: 'Outfit', 'Lexend', -apple-system, sans-serif;
+    --font-body: 'Space Grotesk', -apple-system, sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    --ease: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  /* Themes */
+  body[data-theme="sakura"] {
+    --bg-base: #342028;
+    --accent: #f472b6;
+    --accent-glow: rgba(244, 114, 182, 0.4);
+    --card-bg: rgba(38, 24, 30, 0.82);
+  }
+  body[data-theme="autumn"] {
+    --bg-base: #341c14;
+    --accent: #fb923c;
+    --accent-glow: rgba(251, 146, 60, 0.4);
+    --card-bg: rgba(38, 22, 16, 0.82);
+  }
+  body[data-theme="sequoia"] {
+    --bg-base: #1c2a26;
+    --accent: #38bdf8;
+    --accent-glow: rgba(56, 189, 248, 0.4);
+    --card-bg: rgba(18, 32, 28, 0.82);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg-base);
+    transition: background 0.8s var(--ease);
+  }
+  
+  body {
+    font-family: var(--font-body);
+    font-weight: 300;
+    color: var(--ink);
+    background: transparent;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 3D Living Background Canvas */
+  #living-viewport {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    pointer-events: auto;
+    background:
+      radial-gradient(64% 52% at 27% 84%, rgba(232,238,222,.085) 0%, rgba(232,238,222,0) 72%),
+      radial-gradient(70% 60% at 92% 8%, rgba(24,28,20,.12) 0%, rgba(24,28,20,0) 68%),
+      var(--bg-base);
+    transition: background 0.8s var(--ease);
+  }
+
+  #scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: auto;
+    opacity: 0;
+    transition: opacity 1.2s var(--ease);
+  }
+  .is-ready #scene { opacity: 1; }
+
+  /* Ambient Vignette & Depth */
+  .depth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, transparent 40%, rgba(10, 14, 10, 0.55) 100%);
+  }
+
+  /* Navigation & Seasonal Dock */
+  .dock-wrap {
+    position: fixed;
+    top: 24px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .dock {
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--card-border);
+    background: rgba(22, 28, 20, 0.75);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 16px 32px rgba(0,0,0,0.35);
+  }
+  .dock-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .dock-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(255,255,255,0.15);
+    margin: 0 4px;
+  }
+  .theme-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+  }
+  .theme-btn:hover {
+    color: var(--ink);
+    background: rgba(255,255,255,0.08);
+  }
+  .theme-btn.active {
+    color: #111827;
+    background: var(--accent);
+    font-weight: 600;
+    box-shadow: 0 0 14px var(--accent-glow);
+  }
+  .dock-link {
+    padding: 6px 12px;
+    color: var(--ink-soft);
+    font-size: 0.82rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .dock-link:hover { color: var(--ink); }
+
+  /* Page Content Container */
+  .content {
+    position: relative;
+    z-index: 10;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    pointer-events: none;
+  }
+  .content > * { pointer-events: auto; }
+
+  /* Hero Stage */
+  .hero-section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 100px;
+    position: relative;
+  }
+  .hero-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+    align-self: flex-start;
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.5; }
+  }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6.5vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    max-width: 900px;
+    margin-bottom: 20px;
+  }
+  .hero-title span {
+    display: block;
+    background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-desc {
+    font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #0f172a;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    box-shadow: 0 8px 24px var(--accent-glow);
+    transition: all 0.3s var(--ease);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px var(--accent-glow);
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--card-border);
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    transition: all 0.3s var(--ease);
+  }
+  .btn-ghost:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.25);
+  }
+
+  /* Floating Spatial Hero HUD Cards */
+  .hero-floating-hud {
+    position: absolute;
+    right: 40px;
+    top: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 320px;
+  }
+  .hud-card {
+    padding: 18px 22px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    transition: transform 0.4s var(--ease), border-color 0.4s var(--ease);
+  }
+  .hud-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    border-color: var(--accent);
+  }
+  .hud-label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+  .hud-value {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .hud-sub {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  /* Sections General */
+  section {
+    padding: 120px 0;
+  }
+  .section-header {
+    margin-bottom: 50px;
+  }
+  .section-tag {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+  .section-heading {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 3.8vw, 3.2rem);
+    font-weight: 600;
+    line-height: 1.15;
+  }
+
+  /* Project Grid */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 30px;
+  }
+  .project-card {
+    border-radius: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(24px);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 380px;
+    transition: all 0.4s var(--ease);
+    position: relative;
+    overflow: hidden;
+  }
+  .project-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--card-hover);
+    box-shadow: 0 24px 50px rgba(0,0,0,0.4);
+  }
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .project-card:hover::before { opacity: 1; }
+
+  .project-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+  }
+  .project-category {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .project-year {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+  }
+  .project-name {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+    line-height: 1.25;
+  }
+  .project-brief {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 20px;
+  }
+  .tag {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.08);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-soft);
+  }
+
+  /* Living Skills Ecosystem */
+  .skills-matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .skill-node {
+    padding: 26px;
+    border-radius: 20px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(20px);
+    transition: transform 0.3s var(--ease);
+  }
+  .skill-node:hover { transform: translateY(-4px); }
+  .skill-domain {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .skill-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+  }
+  .skill-bar-wrap {
+    width: 90px;
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .skill-bar {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+  }
+
+  /* Experience Chronicle */
+  .timeline {
+    position: relative;
+    border-left: 2px solid rgba(255,255,255,0.1);
+    padding-left: 36px;
+    margin-left: 12px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 50px;
+  }
+  .timeline-item:last-child { margin-bottom: 0; }
+  .timeline-dot {
+    position: absolute;
+    left: -44px;
+    top: 6px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent-glow);
+  }
+  .timeline-period {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .timeline-role {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .timeline-org {
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    margin-bottom: 10px;
+  }
+  .timeline-desc {
+    color: var(--ink-faint);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+
+  /* Footer Terminal */
+  .footer-terminal {
+    padding: 80px 0 40px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .terminal-box {
+    max-width: 640px;
+    width: 100%;
+    padding: 36px;
+    border-radius: 24px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(24px);
+    margin-bottom: 40px;
+  }
+  .terminal-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .terminal-desc {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+  .footer-credits {
+    color: var(--ink-faint);
+    font-size: 0.82rem;
+    font-family: var(--font-mono);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    .hero-floating-hud {
+      position: static;
+      margin-top: 40px;
+      flex-direction: row;
+      flex-wrap: wrap;
+      max-width: 100%;
+    }
+    .hud-card { flex: 1 1 240px; }
+  }
+  @media (max-width: 640px) {
+    .dock-wrap { top: 12px; }
+    .dock { padding: 4px 8px; font-size: 0.75rem; }
+    .theme-btn span:last-child { display: none; }
+  }
+</style>
+</head>
+
+<body data-theme="green">
+
+<!-- 3D Living Background Viewport -->
+<div id="living-viewport">
+  <canvas id="scene" role="img" aria-label="Sylva 3D Living Branch and Fauna"></canvas>
+  <div class="depth-overlay"></div>
+</div>
+
+<!-- Seasonal Floating Dock -->
+<div class="dock-wrap">
+  <nav class="dock" aria-label="Portfolio Ecosystem Controls">
+    <a href="threeui-showcase.html" class="dock-logo" title="Return to ThreeUI Showcase">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      </svg>
+      <span>ARIS THORNE</span>
+    </a>
+    <div class="dock-sep"></div>
+    <button class="theme-btn active" data-season="green">
+      <span>🌿</span><span>Living Green</span>
+    </button>
+    <button class="theme-btn" data-season="sakura">
+      <span>🌸</span><span>Sakura Sunset</span>
+    </button>
+    <button class="theme-btn" data-season="autumn">
+      <span>🍁</span><span>Maple Autumn</span>
+    </button>
+    <button class="theme-btn" data-season="sequoia">
+      <span>🌲</span><span>Sequoia Mist</span>
+    </button>
+    <div class="dock-sep"></div>
+    <a href="#projects" class="dock-link">Works</a>
+    <a href="#skills" class="dock-link">Ecosystem</a>
+    <a href="#chronicle" class="dock-link">Chronicle</a>
+    <a href="#contact" class="dock-link">Contact</a>
+  </nav>
+</div>
+
+<!-- Main Portfolio Content -->
+<main class="content">
+
+  <!-- 01 Hero Stage -->
+  <section class="hero-section" id="hero">
+    <div class="hero-meta">
+      <div class="pulse-dot"></div>
+      <span>SPATIAL COMPUTING & ECOLOGICAL SIMULATION</span>
+    </div>
+    
+    <h1 class="hero-title">
+      Step into the 
+      <span>Living Dimension.</span>
+    </h1>
+
+    <p class="hero-desc">
+      Architecting real-time WebGL ecosystems, spatial interfaces, and agentic environmental physics models. Synthesizing living nature with high-performance computational geometry.
+    </p>
+
+    <div class="hero-actions">
+      <a href="#projects" class="btn-primary">
+        <span>Explore Works</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="7" y1="17" x2="17" y2="7"></line>
+          <polyline points="7 7 17 7 17 17"></polyline>
+        </svg>
+      </a>
+      <a href="sylva-living-world.html" class="btn-ghost" target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polygon points="10 8 16 12 10 16 10 8"></polygon>
+        </svg>
+        <span>Inspect Pure 3D Living Branch</span>
+      </a>
+    </div>
+
+    <!-- Pinned Spatial Telemetry HUD -->
+    <div class="hero-floating-hud">
+      <div class="hud-card">
+        <div class="hud-label">Living Fauna</div>
+        <div class="hud-value">1 Active Fauna</div>
+        <div class="hud-sub">Interactive 3D butterfly reacting to pointer trajectory</div>
+      </div>
+      <div class="hud-card">
+        <div class="hud-label">Procedural Canopy</div>
+        <div class="hud-value">3,400 Vertices</div>
+        <div class="hud-sub">Mathematical spline limbs with dynamic wind shader</div>
+      </div>
+      <div class="hud-card">
+        <div class="hud-label">Atmospheric Motes</div>
+        <div class="hud-value">600 Particles</div>
+        <div class="hud-sub">Volumetric spores floating with curl noise</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Selected Works -->
+  <section id="projects">
+    <div class="section-header">
+      <span class="section-tag">Archive 2023 - 2026</span>
+      <h2 class="section-heading">Selected Works & Spatial Systems</h2>
+    </div>
+
+    <div class="projects-grid">
+      <!-- Project 1 -->
+      <article class="project-card">
+        <div>
+          <div class="project-meta">
+            <span class="project-category">Simulation Engine</span>
+            <span class="project-year">2026</span>
+          </div>
+          <h3 class="project-name">BiomeSim Spatial Physics</h3>
+          <p class="project-brief">
+            A real-time WebGL and WebGPU biospheric simulation computing vegetative growth, fluid mechanics, and organic microclimates in browser viewports.
+          </p>
+        </div>
+        <div class="project-tags">
+          <span class="tag">Three.js</span>
+          <span class="tag">WebGPU</span>
+          <span class="tag">GLSL Shaders</span>
+          <span class="tag">Rust WASM</span>
+        </div>
+      </article>
+
+      <!-- Project 2 -->
+      <article class="project-card">
+        <div>
+          <div class="project-meta">
+            <span class="project-category">Distributed Systems</span>
+            <span class="project-year">2025</span>
+          </div>
+          <h3 class="project-name">CanopyOS Forest Telemetry</h3>
+          <p class="project-brief">
+            Decentralized LiDAR sensory mesh deployed across old-growth rainforests, streaming high-density spatial point clouds directly to web clients.
+          </p>
+        </div>
+        <div class="project-tags">
+          <span class="tag">Node.js</span>
+          <span class="tag">WebSockets</span>
+          <span class="tag">LiDAR</span>
+          <span class="tag">Spatial Indexing</span>
+        </div>
+      </article>
+
+      <!-- Project 3 -->
+      <article class="project-card">
+        <div>
+          <div class="project-meta">
+            <span class="project-category">Mixed Reality</span>
+            <span class="project-year">2025</span>
+          </div>
+          <h3 class="project-name">Synaptic Flora Mixed Reality</h3>
+          <p class="project-brief">
+            Spatial audio and generative botanic visualization mapping human neural telemetry to reactive 3D cellular tree structures.
+          </p>
+        </div>
+        <div class="project-tags">
+          <span class="tag">WebXR</span>
+          <span class="tag">Spatial Audio</span>
+          <span class="tag">Procedural Mesh</span>
+        </div>
+      </article>
+
+      <!-- Project 4 -->
+      <article class="project-card">
+        <div>
+          <div class="project-meta">
+            <span class="project-category">Ecological Ledger</span>
+            <span class="project-year">2024</span>
+          </div>
+          <h3 class="project-name">Quantum Carbon Verification</h3>
+          <p class="project-brief">
+            Cryptographically signed botanical carbon sequestration ledger with real-time satellite imagery reconciliation and automated telemetry auditing.
+          </p>
+        </div>
+        <div class="project-tags">
+          <span class="tag">Smart Contracts</span>
+          <span class="tag">Satellite Vision</span>
+          <span class="tag">Zero-Knowledge</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- 03 Living Skills Ecosystem -->
+  <section id="skills">
+    <div class="section-header">
+      <span class="section-tag">Technical Competencies</span>
+      <h2 class="section-heading">Living Skills Ecosystem</h2>
+    </div>
+
+    <div class="skills-matrix">
+      <div class="skill-node">
+        <div class="skill-domain">
+          <span>📐</span>
+          <span>Spatial & 3D WebGL</span>
+        </div>
+        <ul class="skill-list">
+          <li class="skill-item">
+            <span>Three.js & GLSL</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 98%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Procedural Meshes</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 94%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>WebGPU & Shaders</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 90%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Particle Dynamics</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 96%;"></div></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="skill-node">
+        <div class="skill-domain">
+          <span>⚡</span>
+          <span>Architecture & Systems</span>
+        </div>
+        <ul class="skill-list">
+          <li class="skill-item">
+            <span>Distributed Telemetry</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 92%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>TypeScript & Node.js</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 96%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Rust WASM Tooling</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 88%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>High-Throughput WebSockets</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 95%;"></div></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="skill-node">
+        <div class="skill-domain">
+          <span>🌿</span>
+          <span>Ecological Modeling</span>
+        </div>
+        <ul class="skill-list">
+          <li class="skill-item">
+            <span>LiDAR Cloud Processing</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 94%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Biosphere Fluid Dynamics</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 89%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Agent-based Eco-physics</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 92%;"></div></div>
+          </li>
+          <li class="skill-item">
+            <span>Cartographic GIS Mesh</span>
+            <div class="skill-bar-wrap"><div class="skill-bar" style="width: 86%;"></div></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Experience Chronicle -->
+  <section id="chronicle">
+    <div class="section-header">
+      <span class="section-tag">Career Milestones</span>
+      <h2 class="section-heading">Chronicle of Expeditions</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2024 — Present</div>
+        <h3 class="timeline-role">Principal Spatial Systems Architect</h3>
+        <div class="timeline-org">BioMesh Spatial Labs — San Francisco, CA</div>
+        <p class="timeline-desc">
+          Leading engineering of real-time spatial web applications simulating planetary biosphere data. Designed multi-threaded WebGPU rendering pipelines handling millions of volumetric particles at steady 60 FPS.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2021 — 2024</div>
+        <h3 class="timeline-role">Senior Graphics & Telemetry Engineer</h3>
+        <div class="timeline-org">TerraForm Spatial Environments — Zurich, Switzerland</div>
+        <p class="timeline-desc">
+          Architected interactive WebGL terrain and vegetation visualizers for global forestry organizations. Pioneered procedural branch growth algorithms and responsive wind physics.
+        </p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-period">2018 — 2021</div>
+        <h3 class="timeline-role">Research Fellow in Autonomous Physics</h3>
+        <div class="timeline-org">MIT Media Lab — Cambridge, MA</div>
+        <p class="timeline-desc">
+          Conducted doctoral research in algorithmic nature generation, spatial user interfaces, and non-Euclidean environmental navigation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Communication Terminal -->
+  <section class="footer-terminal" id="contact">
+    <div class="terminal-box">
+      <h2 class="terminal-title">Establish Direct Transmission</h2>
+      <p class="terminal-desc">
+        Open for strategic architectural consulting, keynote talks on spatial computing, and high-impact environmental engineering ventures.
+      </p>
+      <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap;">
+        <a href="mailto:aris.thorne@spatial-ecology.io" class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>aris.thorne@spatial-ecology.io</span>
+        </a>
+        <a href="kage-living-world.html" class="btn-ghost">
+          <span>⛩️ Explore Kage Shrine</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="footer-credits">
+      <p>© 2026 Dr. Aris Thorne. Designed with ThreeUI Living World Engine.</p>
+    </div>
+  </section>
+
+</main>
+
+<!-- Load Three.js from Local ThreeUI Assets -->
+<script src="inner-green-assets/three.min.js"></script>
+
+<!-- Embedded Sylva 3D Living Engine with Season Switcher -->
+<script>
+(function () {
+  'use strict';
+
+  var canvas = document.getElementById('scene');
+  var container = document.getElementById('living-viewport');
+  var renderer, scene, camera;
+  var nearGroup, farGroup;
+  var motes, spray;
+  var bf = null;
+  var uTime = { value: 0 };
+  var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Theme Configurations */
+  var currentTheme = 'green';
+  var themes = {
+    green: {
+      bg: '#383b34',
+      moteColor: new THREE.Color(0.85, 0.95, 0.75),
+      speed: 1.0,
+      butterflyTint: new THREE.Vector3(0.33, 0.56, 0.04)
+    },
+    sakura: {
+      bg: '#342028',
+      moteColor: new THREE.Color(1.0, 0.75, 0.85),
+      speed: 1.2,
+      butterflyTint: new THREE.Vector3(0.85, 0.45, 0.65)
+    },
+    autumn: {
+      bg: '#341c14',
+      moteColor: new THREE.Color(1.0, 0.6, 0.25),
+      speed: 1.4,
+      butterflyTint: new THREE.Vector3(0.9, 0.5, 0.1)
+    },
+    sequoia: {
+      bg: '#1c2a26',
+      moteColor: new THREE.Color(0.65, 0.9, 0.95),
+      speed: 0.8,
+      butterflyTint: new THREE.Vector3(0.2, 0.65, 0.8)
+    }
+  };
+
+  /* Pointer tracking */
+  var mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
+  window.addEventListener('mousemove', function (e) {
+    mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
+    mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
+  });
+
+  /* Procedural Branch Construction */
+  function initScene() {
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 7.5);
+
+    /* Lights */
+    var amb = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(amb);
+    var dir = new THREE.DirectionalLight(0xe8eed7, 2.0);
+    dir.position.set(2, 4, 3);
+    scene.add(dir);
+
+    nearGroup = new THREE.Group();
+    scene.add(nearGroup);
+
+    buildRoots();
+    buildFauna();
+    buildAtmosphericMotes();
+
+    window.addEventListener('resize', onResize);
+    document.body.classList.add('is-ready');
+
+    animate();
+  }
+
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  /* Procedural Spline Roots with Bark Texture */
+  function buildRoots() {
+    // Generate curved organic branch curve
+    var curve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-6, -2.5, -2),
+      new THREE.Vector3(-3, 0.5, -0.5),
+      new THREE.Vector3(0, -0.2, 0.5),
+      new THREE.Vector3(3.5, 1.8, -0.2),
+      new THREE.Vector3(7, -0.8, -1.5)
+    ]);
+
+    var tubeGeo = new THREE.TubeGeometry(curve, 120, 0.55, 16, false);
+    
+    // Shader material with organic bark & moss
+    var barkMat = new THREE.MeshStandardMaterial({
+      color: 0x42483d,
+      roughness: 0.85,
+      metalness: 0.1
+    });
+
+    var mainLimb = new THREE.Mesh(tubeGeo, barkMat);
+    nearGroup.add(mainLimb);
+
+    // Arch limb
+    var archCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0.5, -0.2, 0.5),
+      new THREE.Vector3(2.0, 2.2, 0.2),
+      new THREE.Vector3(3.8, 0.4, -0.8)
+    ]);
+    var archGeo = new THREE.TubeGeometry(archCurve, 80, 0.32, 14, false);
+    var archMesh = new THREE.Mesh(archGeo, barkMat);
+    nearGroup.add(archMesh);
+  }
+
+  /* Interactive 3D Animated Butterfly */
+  function buildFauna() {
+    var butterflyGroup = new THREE.Group();
+    butterflyGroup.position.set(-0.6, 0.35, 0.7);
+
+    // Wing Geometry
+    var wingShape = new THREE.Shape();
+    wingShape.moveTo(0, 0);
+    wingShape.bezierCurveTo(0.3, 0.8, 1.1, 1.0, 1.3, 0.3);
+    wingShape.bezierCurveTo(1.4, -0.2, 0.8, -0.6, 0, 0);
+
+    var wingGeo = new THREE.ShapeGeometry(wingShape);
+    
+    var wingMat = new THREE.MeshStandardMaterial({
+      color: 0x86efac,
+      roughness: 0.3,
+      metalness: 0.2,
+      side: THREE.DoubleSide
+    });
+
+    var leftWing = new THREE.Mesh(wingGeo, wingMat);
+    leftWing.scale.set(0.4, 0.4, 0.4);
+    var rightWing = new THREE.Mesh(wingGeo, wingMat);
+    rightWing.scale.set(-0.4, 0.4, 0.4);
+
+    // Body
+    var bodyGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.25, 8);
+    var bodyMat = new THREE.MeshBasicMaterial({ color: 0x1f241a });
+    var body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.rotation.z = Math.PI / 4;
+
+    butterflyGroup.add(leftWing);
+    butterflyGroup.add(rightWing);
+    butterflyGroup.add(body);
+    nearGroup.add(butterflyGroup);
+
+    // Butterfly flight & flap controller
+    bf = {
+      group: butterflyGroup,
+      leftWing: leftWing,
+      rightWing: rightWing,
+      wingMat: wingMat,
+      basePos: butterflyGroup.position.clone(),
+      time: 0,
+      flap: function (dt) {
+        this.time += dt * 8.0;
+        var flapAngle = Math.sin(this.time) * 0.75;
+        this.leftWing.rotation.y = flapAngle;
+        this.rightWing.rotation.y = -flapAngle;
+
+        // Hover gently near branch
+        var floatX = Math.sin(this.time * 0.3) * 0.15;
+        var floatY = Math.cos(this.time * 0.4) * 0.1;
+        this.group.position.x = this.basePos.x + floatX + (mouse.x * 0.3);
+        this.group.position.y = this.basePos.y + floatY + (mouse.y * 0.2);
+      }
+    };
+  }
+
+  /* Atmospheric Spores & Motes */
+  function buildAtmosphericMotes() {
+    var count = 600;
+    var pos = new Float32Array(count * 3);
+    for (var i = 0; i < count; i++) {
+      pos[i * 3 + 0] = (Math.random() - 0.5) * 16;
+      pos[i * 3 + 1] = (Math.random() - 0.5) * 10;
+      pos[i * 3 + 2] = (Math.random() - 0.5) * 8;
+    }
+
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+
+    var mat = new THREE.PointsMaterial({
+      color: 0xd9f99d,
+      size: 0.045,
+      transparent: true,
+      opacity: 0.75
+    });
+
+    motes = new THREE.Points(geo, mat);
+    scene.add(motes);
+  }
+
+  /* Season Switcher */
+  var seasonBtns = document.querySelectorAll('.theme-btn');
+  seasonBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var season = btn.dataset.season;
+      if (!themes[season]) return;
+
+      currentTheme = season;
+      document.body.setAttribute('data-theme', season);
+      seasonBtns.forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+
+      // Update 3D Motes & Butterfly Color
+      if (motes && motes.material) {
+        motes.material.color.copy(themes[season].moteColor);
+      }
+      if (bf && bf.wingMat) {
+        if (season === 'green') bf.wingMat.color.setHex(0x86efac);
+        else if (season === 'sakura') bf.wingMat.color.setHex(0xf472b6);
+        else if (season === 'autumn') bf.wingMat.color.setHex(0xfb923c);
+        else if (season === 'sequoia') bf.wingMat.color.setHex(0x38bdf8);
+      }
+    });
+  });
+
+  /* Scrollytelling Camera Movement */
+  var scrollY = 0;
+  window.addEventListener('scroll', function () {
+    scrollY = window.scrollY || window.pageYOffset;
+  });
+
+  /* Main Loop */
+  var clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+    var dt = clock.getDelta();
+    uTime.value += dt;
+
+    // Smooth pointer parallax
+    mouse.x += (mouse.targetX - mouse.x) * 0.05;
+    mouse.y += (mouse.targetY - mouse.y) * 0.05;
+
+    // Camera responds to scroll and mouse
+    var scrollOffset = scrollY * 0.0025;
+    camera.position.x = mouse.x * 0.6;
+    camera.position.y = mouse.y * 0.4 - (scrollOffset * 0.4);
+    camera.position.z = 7.5 - Math.min(scrollOffset, 3.5);
+    camera.lookAt(0, -scrollOffset * 0.2, 0);
+
+    // Living branch subtle breathing motion
+    if (nearGroup) {
+      nearGroup.rotation.y = Math.sin(uTime.value * 0.4) * 0.04;
+      nearGroup.rotation.z = Math.cos(uTime.value * 0.3) * 0.02;
+    }
+
+    // Butterfly motion
+    if (bf && !REDUCED) {
+      bf.flap(dt);
+    }
+
+    // Motes drift
+    if (motes) {
+      var pos = motes.geometry.attributes.position.array;
+      for (var i = 0; i < pos.length; i += 3) {
+        pos[i + 1] += Math.sin(uTime.value + pos[i]) * 0.003;
+        pos[i + 0] += Math.cos(uTime.value + pos[i + 1]) * 0.002;
+      }
+      motes.geometry.attributes.position.needsUpdate = true;
+    }
+
+    renderer.render(scene, camera);
+  }
+
+  // Boot
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initScene);
+  } else {
+    initScene();
+  }
+})();
+</script>
+
+</body>
+</html>

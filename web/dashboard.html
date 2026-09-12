@@ -801,7 +801,10 @@
                   Portfolios generated on your phone, laptop, or desktop are automatically synced to your account.
                 </p>
               </div>
-              <div style="display: flex; gap: 0.6rem; align-items: center;">
+              <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+                <button class="btn-card-action" onclick="cleanDuplicatePortfolios()" style="padding: 0.5rem 0.9rem; font-size: 0.82rem; border-color: #CBD5E1; color: #475569;" title="Keep only the latest version of each unique template">
+                  🧹 Clean Duplicates
+                </button>
                 <button class="btn-card-action" onclick="refreshUserPortfolios()" style="padding: 0.5rem 0.9rem; font-size: 0.82rem;" title="Refresh Cloud Sync">
                   🔄 Sync Now
                 </button>
@@ -1358,6 +1361,20 @@
       }
     }
 
+    const UNIVERSE_THUMBS = {
+      'threeui-shelf': '/assets/3d/threeui_shelf_3d.jpg',
+      'threeui-sylva': '/assets/3d/threeui_sylva_3d.jpg',
+      'threeui-kage': '/assets/3d/threeui_kage_3d.jpg',
+      'threeui-constellation': '/assets/3d/threeui_constellation_3d.jpg',
+      'threeui-liquid-metal': '/assets/3d/threeui_liquid_metal_3d.jpg',
+      'threeui-matrix': '/assets/3d/threeui_matrix_3d.jpg',
+      'threeui-sketchbook': '/assets/3d/threeui_sketchbook_3d.jpg',
+      'threeui-landscape': '/assets/3d/threeui_landscape_3d.jpg',
+      'spatial-depth-voyage': '/assets/3d/spatial_depth_voyage_3d.jpg',
+      'cyber-architect-sprawl': '/assets/3d/matrix_lightning_3d.jpg',
+      'stealth-node': '/assets/designs/stealth-node/stealth_matrix_3d_nobg.png'
+    };
+
     function renderSyncedPortfolios(portfolios) {
       const grid = document.getElementById('syncedPortfoliosGrid');
       if (!grid) return;
@@ -1381,56 +1398,68 @@
       const userEmail = (currentUser?.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
       const defaultHandle = currentUser?.username || 'abdulaziz';
+      const activeVipSite = localStorage.getItem('myfolio_active_vip_site') || '';
 
       grid.innerHTML = portfolios.map((p, idx) => {
         const sid = p.siteId || `site-${idx}`;
         const name = p.developerName || 'Developer';
         const role = p.developerRole || 'Software Engineer';
-        const universe = p.universeKey || 'cyber-architect-sprawl';
+        const universe = p.universeKey || 'threeui-shelf';
         const timeStr = formatTimeAgoDashboard(p.timestamp || Date.now());
         const handle = p.handle || defaultHandle;
         const subdomain = p.subdomain || `${handle}.myfolio.tech`;
-
-        const liveHref = isVip
-          ? ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? `/${handle}` : `https://${subdomain}`)
-          : `/p/${sid}`;
-
+        const thumbSrc = UNIVERSE_THUMBS[universe] || '/assets/3d/threeui_shelf_3d.jpg';
         const directVersionHref = `/p/${sid}`;
+        const isCurrentActiveLive = isVip && (sid === activeVipSite || sid === currentSiteId);
 
         return `
-          <div class="synced-portfolio-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-              <span class="synced-badge-pill" style="background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0;">
+          <div class="synced-portfolio-card" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="position: relative; height: 110px; border-radius: 12px; overflow: hidden; background: #0F172A;">
+              <img src="${thumbSrc}" alt="${escapeHtml(universe)}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;" onerror="this.src='/assets/3d/threeui_shelf_3d.jpg'">
+              <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.85) 0%, transparent 60%);"></div>
+              <span style="position: absolute; bottom: 8px; left: 10px; font-size: 0.72rem; font-weight: 700; color: #FFFFFF; font-family: var(--font-mono); letter-spacing: 0.04em;">
                 🎨 ${escapeHtml(universe.toUpperCase())}
               </span>
-              <span style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--font-mono);">
+              <span style="position: absolute; top: 8px; right: 8px; font-size: 0.72rem; color: #E2E8F0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 2px 8px; border-radius: 6px; font-family: var(--font-mono);">
                 ${timeStr}
               </span>
             </div>
 
             <div>
-              <div style="font-weight: 800; font-size: 1.05rem; color: #0F172A; line-height: 1.3;">
+              <div style="font-weight: 800; font-size: 1.02rem; color: #0F172A; line-height: 1.3;">
                 ${escapeHtml(name)}
               </div>
-              <div style="font-size: 0.84rem; color: var(--text-muted); margin-top: 2px; font-weight: 500;">
+              <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; font-weight: 500;">
                 ${escapeHtml(role)}
               </div>
             </div>
 
-            <div style="font-size: 0.8rem; font-family: var(--font-mono); color: #3B33D1; background: #EEF2FF; padding: 0.4rem 0.65rem; border-radius: 8px; word-break: break-all;">
-              🔗 ${escapeHtml(directVersionHref)}
+            <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+              <div style="font-size: 0.78rem; font-family: var(--font-mono); color: #3B33D1; background: #EEF2FF; padding: 0.35rem 0.55rem; border-radius: 6px; word-break: break-all; flex: 1;">
+                🔗 ${escapeHtml(directVersionHref)}
+              </div>
+              ${isCurrentActiveLive ? `
+                <span style="font-size: 0.7rem; font-weight: 700; color: #059669; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 0.25rem 0.5rem; border-radius: 6px; white-space: nowrap;">
+                  👑 Active Live Domain
+                </span>
+              ` : ''}
             </div>
 
-            <div style="display: flex; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; flex-wrap: wrap;">
-              <a href="${liveHref}" target="_blank" class="btn-primary" style="flex: 1; justify-content: center; text-decoration: none; padding: 0.5rem 0.75rem; font-size: 0.8rem;">
-                🚀 Open Live ↗
+            <div style="display: flex; gap: 0.45rem; margin-top: auto; padding-top: 0.4rem; flex-wrap: wrap;">
+              <a href="${directVersionHref}" target="_blank" class="btn-primary" style="flex: 1; min-width: 140px; justify-content: center; text-decoration: none; padding: 0.5rem 0.75rem; font-size: 0.8rem; font-weight: 700;">
+                🚀 View Portfolio ↗
               </a>
-              <button class="btn-card-action" onclick="copySiteLink('${directVersionHref}')" style="padding: 0.5rem 0.75rem; font-size: 0.8rem;" title="Copy direct link">
+              ${isVip && !isCurrentActiveLive ? `
+                <button class="btn-card-action" onclick="setActiveVipDomain('${sid}', '${universe}', '${escapeHtml(name).replace(/'/g, "\\'")}', '${escapeHtml(role).replace(/'/g, "\\'")}')" style="padding: 0.5rem 0.65rem; font-size: 0.75rem; border-color: #C4B5FD; color: #7C3AED; font-weight: 600;" title="Make this portfolio live on ${escapeHtml(subdomain)}">
+                  👑 Set Live
+                </button>
+              ` : ''}
+              <button class="btn-card-action" onclick="copySiteLink('${directVersionHref}')" style="padding: 0.5rem 0.65rem; font-size: 0.8rem;" title="Copy direct link">
                 📋
               </button>
-              <a href="/studio.html" class="btn-card-action" style="padding: 0.5rem 0.75rem; font-size: 0.8rem; text-decoration: none;" title="Edit in Studio">
-                ⚡
-              </a>
+              <button class="btn-card-action" onclick="deleteSyncedPortfolio('${sid}', event)" style="padding: 0.5rem 0.65rem; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.35); color: #EF4444;" title="Permanently delete this version">
+                🗑️
+              </button>
             </div>
           </div>
         `;
@@ -1457,6 +1486,118 @@
       showToast('✅ Portfolios synchronized!');
     }
 
+    async function setActiveVipDomain(siteId, universeKey, name, role) {
+      try {
+        showToast('👑 Updating active live domain...');
+        const res = await fetch('/api/vip/set-active-site', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            siteId,
+            universeKey,
+            developerName: name,
+            developerRole: role,
+            email: currentUser?.email
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to update live domain');
+        localStorage.setItem('myfolio_active_vip_site', siteId);
+        showToast(`✅ Live domain updated to ${siteId}!`);
+        setTimeout(() => window.location.reload(), 1000);
+      } catch (err) {
+        alert('Could not update live domain: ' + err.message);
+      }
+    }
+
+    async function deleteSyncedPortfolio(siteId, event) {
+      if (event) event.stopPropagation();
+      if (!confirm(`Are you sure you want to delete portfolio ${siteId} permanently?`)) return;
+      try {
+        showToast('🗑️ Deleting portfolio...');
+        await fetch(`/api/sites/${encodeURIComponent(siteId)}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+
+        // Clean local storage caches
+        try {
+          const p1 = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]').filter(p => p.siteId !== siteId);
+          localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(p1));
+          if (currentUser && currentUser.email) {
+            const userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
+            const p2 = JSON.parse(localStorage.getItem(userKey) || '[]').filter(p => p.siteId !== siteId);
+            localStorage.setItem(userKey, JSON.stringify(p2));
+          }
+          if (localStorage.getItem('myfolio_active_vip_site') === siteId) {
+            localStorage.removeItem('myfolio_active_vip_site');
+          }
+        } catch(e) {}
+
+        showToast('✅ Portfolio permanently deleted.');
+        await loadCrossDevicePortfolios();
+      } catch (err) {
+        alert('Delete failed: ' + err.message);
+      }
+    }
+
+    async function cleanDuplicatePortfolios() {
+      if (!confirm('Clean duplicate portfolios?\n\nThis will keep the newest version of each unique 3D universe/template and remove redundant duplicate test builds.')) return;
+      try {
+        showToast('🧹 Cleaning duplicate portfolios...');
+        let localProjects = [];
+        try {
+          localProjects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
+        } catch(e) {}
+
+        let userKey = null;
+        let userHist = [];
+        if (currentUser && currentUser.email) {
+          userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
+          try {
+            userHist = JSON.parse(localStorage.getItem(userKey) || '[]');
+          } catch(e) {}
+        }
+
+        const all = [...userHist, ...localProjects];
+        const seenUniverses = new Set();
+        const kept = [];
+        const toDelete = [];
+
+        // Sort newest first
+        all.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        for (const item of all) {
+          if (!item || !item.siteId) continue;
+          const uKey = item.universeKey || 'default';
+          if (!seenUniverses.has(uKey)) {
+            seenUniverses.add(uKey);
+            kept.push(item);
+          } else {
+            toDelete.push(item.siteId);
+          }
+        }
+
+        localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(kept));
+        if (userKey) {
+          localStorage.setItem(userKey, JSON.stringify(kept));
+        }
+
+        for (const sid of toDelete) {
+          fetch(`/api/sites/${encodeURIComponent(sid)}`, {
+            method: 'DELETE',
+            credentials: 'include'
+          }).catch(() => {});
+        }
+
+        showToast(`✅ Cleaned up ${toDelete.length} duplicate portfolios!`);
+        setTimeout(() => window.location.reload(), 1000);
+      } catch (err) {
+        alert('Cleanup failed: ' + err.message);
+      }
+    }
+
     // Global window exports for HTML onclick handlers
     window.copyPortfolioUrl = copyPortfolioUrl;
     window.revokeAllSessions = revokeAllSessions;
@@ -1465,6 +1606,9 @@
     window.closeDeleteModal = closeDeleteModal;
     window.refreshUserPortfolios = refreshUserPortfolios;
     window.copySiteLink = copySiteLink;
+    window.setActiveVipDomain = setActiveVipDomain;
+    window.deleteSyncedPortfolio = deleteSyncedPortfolio;
+    window.cleanDuplicatePortfolios = cleanDuplicatePortfolios;
 
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof initUniversalSidebar === 'function') {

@@ -1,0 +1,2058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alexander Vex — Creative Technologist & 3D Web Architect</title>
+  
+  <!-- Distinct Typographic Identity (Zero Generic System Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;0,900;1,600;1,700&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <!-- Motion & 3D Plugin Stack: Lenis + GSAP + ScrollTrigger + Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Open-Props Design Tokens Engine -->
+  <link rel="stylesheet" href="assets/vendor/open-props.min.css">
+  <!-- Actual Installed GitHub Repos: ruucm/shadergradient + pmndrs/react-three-fiber -->
+  <script src="assets/vendor/shadergradient-bundle.js"></script>
+  <!-- Actual Installed GitHub Repo: eamonliu/liquid-glass-js (real SVG displacement & optical refraction) -->
+  <script src="assets/vendor/liquid-glass.umd.min.js"></script>
+
+  <style>
+    :root {
+      --bg-void: #F4F3EF;                 /* Warm Museum Canvas */
+      --bg-surface: #FAF9F6;              /* Crisp Paper White */
+      --bg-surface-elevated: #ECEAE4;     /* Muted Archival Linen */
+      --accent-vermilion: #FF3B30;        /* Swiss Editorial Vermilion Red */
+      --accent-vermilion-subtle: rgba(255, 59, 48, 0.08);
+      --accent-editorial-black: #0A0A0A;  /* Pitch Ink Black */
+      --border-subtle: rgba(10, 10, 10, 0.12); /* Hairline Architectural Rule */
+      --border-bright: rgba(10, 10, 10, 0.32);
+      --border-vermilion: rgba(255, 59, 48, 0.4);
+      --text-primary: #0A0A0A;            /* Pitch Ink Black */
+      --text-secondary: #3E3E3E;          /* Editorial Charcoal */
+      --text-muted: #737373;              /* Archival Stone */
+      --font-masthead: 'Playfair Display', Georgia, serif;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'Space Grotesk', -apple-system, sans-serif;
+      --font-mono: 'Space Mono', 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-void);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      selection-background-color: var(--accent-vermilion);
+      selection-color: #FFFFFF;
+    }
+
+    /* Lenis Smooth Scroll Rules */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    /* Background Canvas: Pristine Warm Museum Linen (ruucm/shadergradient available via API) */
+    #shadergradient-root {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      display: none;
+    }
+
+    /* Content Overlay Container */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    /* Top Navigation Beacon - Museum Monograph Architecture */
+    .nav-beacon {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 8px 24px;
+      background: rgba(244, 243, 239, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      white-space: nowrap;
+      max-width: 92vw;
+    }
+
+    .brand-mark {
+      font-family: var(--font-masthead);
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent-vermilion);
+      box-shadow: 0 0 8px rgba(255, 59, 48, 0.5);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); box-shadow: 0 0 12px rgba(255, 59, 48, 0.7); }
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-decoration: none;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      transition: all 0.25s ease;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-vermilion);
+    }
+
+    .nav-cta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 6px 16px;
+      background: var(--accent-editorial-black);
+      color: #FAF9F6;
+      border: 1px solid var(--accent-editorial-black);
+      border-radius: 999px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-vermilion);
+      border-color: var(--accent-vermilion);
+      color: #FFFFFF;
+      box-shadow: 0 4px 18px rgba(255, 59, 48, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* SECTION 1: Pinned Scrollytelling Hero (Asymmetric Editorial Architecture) */
+    .hero-pinned-track {
+      position: relative;
+      width: 100%;
+      height: 300vh;
+    }
+
+    .hero-pinned-stage {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      perspective: 1200px;
+      padding: 90px 48px 24px;
+      box-sizing: border-box;
+    }
+
+    .hero-split-grid {
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      align-items: center;
+      width: 100%;
+      max-width: 1340px;
+      margin: auto;
+      gap: 52px;
+      z-index: 10;
+    }
+
+    .hero-editorial-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      position: relative;
+      min-height: 480px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .hero-narrative-beat {
+      width: 100%;
+    }
+
+    .beat-intro {
+      position: relative;
+      z-index: 2;
+    }
+
+    .beat-telemetry {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .telemetry-beat-heading {
+      font-family: var(--font-masthead);
+      font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -1px;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+    }
+
+    .telemetry-beat-heading .vermilion-word {
+      color: var(--accent-vermilion);
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .telemetry-beat-desc {
+      font-family: var(--font-body);
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 24px;
+    }
+
+    /* Docked Metrics Matrix inside Beat 2 */
+    .hero-metrics-matrix {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .hero-metric-tile {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 16px 14px;
+      text-align: left;
+      box-shadow: 0 4px 14px rgba(10, 10, 10, 0.03);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .hero-metric-tile:hover {
+      border-color: var(--accent-vermilion);
+      transform: translateY(-2px);
+    }
+
+    .metric-tile-val {
+      font-family: var(--font-masthead);
+      font-size: 1.85rem;
+      font-weight: 800;
+      color: var(--accent-editorial-black);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+
+    .metric-tile-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .hero-dossier-stamp {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 2px;
+      color: var(--accent-vermilion);
+      background: var(--accent-vermilion-subtle);
+      border: 1px solid var(--border-vermilion);
+      padding: 5px 14px;
+      border-radius: 2px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .pulse-dot-vermilion {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-vermilion);
+      box-shadow: 0 0 8px rgba(255, 59, 48, 0.6);
+      animation: statusPulse 2s infinite ease-in-out;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .hero-editorial-title {
+      font-family: var(--font-masthead);
+      font-size: clamp(2.4rem, 4.8vw, 4.3rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1.2px;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .hero-editorial-title .vermilion-word {
+      color: var(--accent-vermilion);
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    .hero-editorial-bio {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.65;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+
+    .hero-action-cluster {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .btn-tactile-primary {
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 13px 26px;
+      background: var(--accent-editorial-black);
+      color: #FAF9F6;
+      border: 1px solid var(--accent-editorial-black);
+      border-radius: 4px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-tactile-primary:hover {
+      background: var(--accent-vermilion);
+      border-color: var(--accent-vermilion);
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 59, 48, 0.35);
+    }
+
+    .btn-tactile-link {
+      font-family: var(--font-mono);
+      font-size: 0.86rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      transition: color 0.2s ease, transform 0.2s ease;
+      font-weight: 700;
+    }
+    .btn-tactile-link:hover {
+      color: var(--accent-vermilion);
+      transform: translateX(3px);
+    }
+
+    /* Museum Archival Optical Loupe (eamonliu/liquid-glass-js) */
+    .lqg-glass {
+      border: 1px solid rgba(10, 10, 10, 0.25) !important;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 0 1px rgba(0, 0, 0, 0.2) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
+      border-radius: 8px !important;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .lqg-glass:hover {
+      border-color: var(--accent-vermilion) !important;
+      box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18) !important;
+    }
+    .lqg-glass::before {
+      content: "✦ ARCHIVAL LOUPE // liquid-glass-js";
+      position: absolute;
+      top: -22px;
+      left: 0;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 1.5px;
+      color: var(--accent-vermilion);
+      pointer-events: none;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+
+    .hero-telemetry-strip {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    .hero-visual-col {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    .hero-3d-focal-wrap {
+      position: relative;
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1400px;
+      transform-style: preserve-3d;
+      animation: spatialFloat3D 6s ease-in-out infinite;
+      z-index: 8;
+    }
+
+    .hero-3d-tilt-stage {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transform-style: preserve-3d;
+      perspective: 1200px;
+    }
+
+    .hero-3d-focal-img {
+      width: clamp(240px, 28vw, 380px);
+      height: auto;
+      max-height: 52vh;
+      object-fit: contain;
+      filter: drop-shadow(0 25px 45px rgba(10, 10, 10, 0.18)) drop-shadow(0 6px 12px rgba(10, 10, 10, 0.08));
+      cursor: grab;
+      user-select: none;
+      -webkit-user-drag: none;
+      transition: filter 0.3s ease;
+    }
+
+    .hero-3d-glow-orb {
+      position: absolute;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(10, 10, 10, 0.04) 0%, transparent 70%);
+      filter: blur(40px);
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 50%;
+    }
+
+    @keyframes spatialFloat3D {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(1deg); }
+    }
+
+    .btn-secondary {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      padding: 14px 26px;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      letter-spacing: 1px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-surface-elevated);
+      border-color: var(--accent-vermilion);
+      color: var(--accent-vermilion);
+    }
+
+
+    /* SECTION 2: Bento Projects Matrix with 3D Artifact Inspector */
+    .section-container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 120px 24px;
+    }
+
+    .section-header {
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-vermilion);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.15;
+    }
+
+    .projects-bento {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+
+    .bento-card {
+      position: relative;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 36px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .bento-card:hover {
+      border-color: rgba(10, 10, 10, 0.35);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.09);
+      transform: translateY(-4px);
+    }
+
+    /* Museum Archival Surface Engine */
+    .liquid-glass-surface {
+      position: relative;
+      background: var(--bg-surface) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      box-shadow: 0 8px 32px rgba(10, 10, 10, 0.06), inset 0 0 0 1px rgba(10, 10, 10, 0.08) !important;
+      border: 1px solid var(--border-subtle) !important;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .liquid-glass-surface:hover {
+      border-color: var(--accent-vermilion) !important;
+      box-shadow: 0 16px 40px rgba(10, 10, 10, 0.12), inset 0 0 0 1px var(--accent-vermilion) !important;
+    }
+
+    .bento-3d-visual {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 4px;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .bento-3d-img {
+      max-height: 160px;
+      max-width: 80%;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 24px rgba(10, 10, 10, 0.12));
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .bento-card:hover .bento-3d-img {
+      transform: scale(1.05) translateY(-4px);
+      filter: drop-shadow(0 18px 30px rgba(10, 10, 10, 0.18));
+    }
+
+    .bento-span-8 { grid-column: span 8; }
+    .bento-span-4 { grid-column: span 4; }
+    .bento-span-6 { grid-column: span 6; }
+    .bento-span-12 { grid-column: span 12; }
+
+    @media (max-width: 900px) {
+      .bento-span-8, .bento-span-4, .bento-span-6 {
+        grid-column: span 12;
+      }
+    }
+
+    .card-category {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--accent-vermilion);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .card-title {
+      font-family: var(--font-masthead);
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .card-desc {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .tech-stack-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .tech-chip {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      padding: 4px 10px;
+      background: rgba(10, 10, 10, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      color: var(--text-secondary);
+    }
+
+    .card-footer-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .inspect-artifact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      padding: 8px 16px;
+      background: var(--bg-surface-elevated);
+      color: var(--text-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 2px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.25s ease;
+    }
+
+    .inspect-artifact-btn:hover {
+      background: var(--accent-editorial-black);
+      color: #FAF9F6;
+      border-color: var(--accent-editorial-black);
+    }
+
+    .project-ext-link {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-weight: 700;
+      transition: color 0.2s ease;
+    }
+
+    .project-ext-link:hover {
+      color: var(--accent-vermilion);
+    }
+
+    /* SECTION 3: Dynamic Synaptic Skills Matrix */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .skill-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(10, 10, 10, 0.04);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .skill-card:hover {
+      border-color: var(--accent-vermilion);
+      box-shadow: 0 8px 24px rgba(10, 10, 10, 0.08);
+    }
+
+    .skill-name-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .skill-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .skill-pct {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent-vermilion);
+      font-weight: 700;
+    }
+
+    .skill-bar-track {
+      width: 100%;
+      height: 4px;
+      background: var(--bg-surface-elevated);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      background: var(--accent-editorial-black);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* SECTION 4: Experience Timeline */
+    .timeline-stream {
+      position: relative;
+      border-left: 1px solid var(--border-subtle);
+      padding-left: 32px;
+      margin-left: 12px;
+    }
+
+    .timeline-node {
+      position: relative;
+      margin-bottom: 48px;
+    }
+
+    .timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -39px;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 2px solid var(--accent-vermilion);
+      box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+    }
+
+    .timeline-period {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-vermilion);
+      letter-spacing: 1.5px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .timeline-role {
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .timeline-org {
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .timeline-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* SECTION 5: Contact Terminal */
+    .contact-terminal {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      box-shadow: 0 4px 20px rgba(10, 10, 10, 0.04);
+    }
+
+    @media (max-width: 800px) {
+      .contact-terminal {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .terminal-header {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-vermilion);
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      font-weight: 700;
+    }
+
+    .contact-info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .contact-item-label {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .contact-item-value {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: var(--text-primary);
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-input, .form-textarea {
+      background: var(--bg-void);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 12px 16px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--accent-vermilion);
+      box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+    }
+
+    .btn-primary {
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      font-weight: 600;
+      padding: 13px 26px;
+      background: var(--accent-editorial-black);
+      color: #FAF9F6;
+      border: 1px solid var(--accent-editorial-black);
+      border-radius: 4px;
+      text-decoration: none;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+      transition: all 0.25s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-vermilion);
+      border-color: var(--accent-vermilion);
+      color: #FFFFFF;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 59, 48, 0.35);
+    }
+
+    /* 3D ARTIFACT MODAL (img2threejs concept) */
+    .artifact-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(10, 10, 10, 0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .artifact-modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .artifact-modal-box {
+      width: 90vw;
+      max-width: 900px;
+      height: 80vh;
+      max-height: 650px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-bright);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 30px 80px rgba(10, 10, 10, 0.35);
+    }
+
+    .modal-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface-elevated);
+    }
+
+    .modal-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-title {
+      font-family: var(--font-masthead);
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+      color: var(--accent-editorial-black);
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--accent-vermilion);
+    }
+
+    .modal-viewport {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      cursor: grab;
+    }
+
+    .modal-viewport:active {
+      cursor: grabbing;
+    }
+
+    .modal-controls-overlay {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      background: var(--bg-surface);
+      padding: 8px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      backdrop-filter: blur(10px);
+      pointer-events: auto;
+      box-shadow: 0 4px 20px rgba(10, 10, 10, 0.08);
+    }
+
+    .modal-ctrl-btn {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .modal-ctrl-btn.active, .modal-ctrl-btn:hover {
+      background: var(--accent-editorial-black);
+      color: #FAF9F6;
+      border-color: var(--accent-editorial-black);
+    }
+
+    /* Comprehensive Mobile Engine (Phone Dimensions <= 768px) */
+    @media (max-width: 768px) {
+      .nav-beacon {
+        top: 12px;
+        width: calc(100% - 28px);
+        max-width: 420px;
+        justify-content: space-between;
+        padding: 7px 16px;
+        gap: 8px;
+      }
+      .nav-links {
+        display: none; /* Clean mobile app header */
+      }
+      .brand-mark {
+        font-size: 0.74rem;
+        letter-spacing: 1px;
+      }
+      .nav-cta {
+        font-size: 0.7rem;
+        padding: 4px 12px;
+      }
+
+      .hero-pinned-stage {
+        height: 100vh;
+        height: 100dvh;
+        max-height: 100dvh;
+        padding: 68px 16px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+
+      .hero-split-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .hero-editorial-col {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+        min-height: 380px;
+        position: relative;
+        justify-content: center;
+      }
+
+      .hero-dossier-stamp {
+        font-size: 0.68rem;
+        letter-spacing: 1.5px;
+        padding: 4px 12px;
+        margin-bottom: 8px;
+      }
+
+      .hero-editorial-title {
+        font-size: clamp(1.4rem, 5.8vw, 1.85rem);
+        font-weight: 800;
+        line-height: 1.12;
+        max-width: 340px;
+        margin: 0 auto 6px;
+        text-align: center;
+      }
+
+      .hero-3d-focal-wrap {
+        margin: 4px auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-height: 31vh;
+        flex: 1;
+        min-height: 0;
+      }
+
+      .hero-3d-focal-img {
+        width: clamp(160px, 46vw, 220px);
+        height: auto;
+        max-height: 29vh;
+        object-fit: contain;
+      }
+
+      .hero-3d-glow-orb {
+        width: 240px;
+        height: 240px;
+        filter: blur(40px);
+      }
+
+      .hero-editorial-bio {
+        font-size: 0.82rem;
+        line-height: 1.42;
+        max-width: 320px;
+        margin: 0 auto 10px;
+        text-align: center;
+        color: var(--text-secondary);
+      }
+
+      .hero-action-cluster {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: 320px;
+        gap: 8px;
+        margin: 0 auto 8px;
+        justify-content: center;
+      }
+
+      .btn-tactile-primary,
+      .btn-tactile-link {
+        flex: 1;
+        padding: 10px 12px;
+        font-size: 0.78rem;
+        text-align: center;
+        justify-content: center;
+      }
+
+      .hero-telemetry-strip {
+        font-size: 0.64rem;
+        letter-spacing: 0.5px;
+        justify-content: center;
+        gap: 8px;
+      }
+
+      .hero-actions .btn-primary,
+      .hero-actions .btn-secondary {
+        flex: 1;
+        padding: 11px 12px;
+        font-size: 0.78rem;
+        text-align: center;
+        border-radius: 8px;
+        white-space: nowrap;
+      }
+
+      .mobile-scroll-hint {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        letter-spacing: 2px;
+        color: var(--accent-vermilion);
+        opacity: 0.8;
+        animation: pulseSubtle 2s infinite ease-in-out;
+        margin-top: 4px;
+        font-weight: 700;
+      }
+
+      .hint-chevron {
+        font-size: 0.85rem;
+        animation: bounceDown 1.5s infinite;
+      }
+
+      @keyframes bounceDown {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(4px); }
+      }
+
+      @keyframes pulseSubtle {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+      }
+
+      /* Mobile Narrative Beats & Metrics Matrix */
+      .beat-telemetry {
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        text-align: center;
+      }
+      .telemetry-beat-heading {
+        font-size: clamp(1.35rem, 5.5vw, 1.75rem);
+        max-width: 340px;
+        margin: 0 auto 8px;
+        text-align: center;
+      }
+      .telemetry-beat-desc {
+        font-size: 0.82rem;
+        line-height: 1.42;
+        max-width: 320px;
+        margin: 0 auto 12px;
+        text-align: center;
+      }
+      .hero-metrics-matrix {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        max-width: 340px;
+        margin: 0 auto;
+      }
+      .hero-metric-tile {
+        padding: 8px 6px;
+        text-align: center;
+      }
+      .metric-tile-val {
+        font-size: 1.15rem;
+      }
+      .metric-tile-lbl {
+        font-size: 0.58rem;
+        letter-spacing: 0.8px;
+      }
+
+      /* Mobile Sections & Bento */
+      .section-container {
+        padding: 50px 16px;
+      }
+      .section-heading {
+        font-size: 1.45rem;
+      }
+      .bento-card {
+        padding: 20px 16px;
+      }
+      .bento-3d-img {
+        max-height: 120px;
+      }
+      .card-title {
+        font-size: 1.25rem;
+      }
+      .card-desc {
+        font-size: 0.86rem;
+      }
+      .contact-terminal {
+        padding: 22px 16px;
+        gap: 22px;
+      }
+      .contact-item-value {
+        font-size: 1rem;
+      }
+      .artifact-modal-box {
+        width: 95vw;
+        height: 84vh;
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ruucm/shadergradient + pmndrs/react-three-fiber Living 3D Procedural Mesh Background -->
+  <div id="shadergradient-root"></div>
+
+  <!-- Top Navigation Beacon -->
+  <header class="nav-beacon">
+    <div class="brand-mark">
+      <span class="pulse-dot"></span>
+      <span>ALEXANDER VEX</span>
+    </div>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="#flythrough">About</a></li>
+        <li><a href="#artifacts">Projects</a></li>
+        <li><a href="#synapses">Skills</a></li>
+        <li><a href="#trajectory">Experience</a></li>
+        <li><a href="#beacon">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="#beacon" class="nav-cta">Contact Me</a>
+  </header>
+
+  <div class="content-wrapper">
+
+    <!-- SECTION 1: Asymmetric Editorial Hero Stage (open-design architectural system) -->
+    <section id="flythrough" class="hero-pinned-track">
+      <div class="hero-pinned-stage">
+        <div class="hero-split-grid">
+          <!-- Left Column: Editorial Masthead & Candidacy Dossier -->
+          <div class="hero-editorial-col">
+            <!-- Beat 1: Intro Dossier -->
+            <div class="hero-narrative-beat beat-intro">
+              <div class="hero-dossier-stamp">
+                <span class="pulse-dot-vermilion"></span>
+                MONOGRAPH № 04 // SPATIAL ARCHITECTURE & CODE
+              </div>
+              <h1 class="hero-editorial-title">
+                CRAFTING <span class="vermilion-word">SPATIAL</span> RUNTIMES & ARCHITECTURAL SYSTEMS.
+              </h1>
+              <p class="hero-editorial-bio">
+                Creative engineer specializing in real-time WebGL, procedural geometry, and spatial interactive systems engineered with museum-grade typographic rigor and sub-millisecond precision.
+              </p>
+              <div class="hero-action-cluster">
+                <a href="#artifacts" class="btn-tactile-primary">
+                  <span>View Selected Works</span>
+                  <span>→</span>
+                </a>
+                <a href="#beacon" class="btn-tactile-link">
+                  <span>Get In Touch ↗</span>
+                </a>
+              </div>
+              <div class="hero-telemetry-strip">
+                <span>LOC // ZURICH & REMOTE</span>
+                <span>•</span>
+                <span>CATALOG: 2026.04</span>
+                <span>•</span>
+                <span>STATUS: AVAILABLE FOR SPECIAL COMMISSIONS</span>
+              </div>
+            </div>
+
+            <!-- Beat 2: Chapter 01 Telemetry & Scale (Revealed smoothly on scroll) -->
+            <div class="hero-narrative-beat beat-telemetry">
+              <div class="hero-dossier-stamp">
+                <span class="pulse-dot-vermilion"></span>
+                CHAPTER 01 // ARCHITECTURAL TELEMETRY & SCALE
+              </div>
+              <h2 class="telemetry-beat-heading">
+                ENGINEERED FOR <span class="vermilion-word">SUB-MILLISECOND</span> LATENCY.
+              </h2>
+              <p class="telemetry-beat-desc">
+                High-concurrency WebGL pipelines, deterministic geometry compilation, and low-overhead spatial shaders built for uncompromising visual precision and fluid 120 FPS interaction.
+              </p>
+              <div class="hero-metrics-matrix">
+                <div class="hero-metric-tile">
+                  <div class="metric-tile-val">100K+</div>
+                  <div class="metric-tile-lbl">Concurrent WebGL Nodes</div>
+                </div>
+                <div class="hero-metric-tile">
+                  <div class="metric-tile-val">&lt; 2.4ms</div>
+                  <div class="metric-tile-lbl">Frame Render Latency</div>
+                </div>
+                <div class="hero-metric-tile">
+                  <div class="metric-tile-val">99.98%</div>
+                  <div class="metric-tile-lbl">Procedural Uptime</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: 3D Live Focal Spatial Entity -->
+          <div class="hero-visual-col">
+            <div class="hero-3d-focal-wrap" id="heroFocalWrap">
+              <div class="hero-3d-tilt-stage" id="heroFocalTilt">
+                <img src="assets/designs/cyber/editorial_sculpture_clean_nobg.png" class="hero-3d-focal-img" id="heroFocalImg" alt="3D Architectural Marble and Bronze Sculpture">
+                <div class="hero-3d-glow-orb"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: Project Bento Matrix with 3D Artifact Inspector (img2threejs concept) -->
+    <section id="artifacts" class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Selected Works</span>
+        <h2 class="section-heading">Featured 3D Systems & Interactive Applications</h2>
+      </div>
+
+      <div class="projects-bento">
+        <!-- Bento Card 1: Quantum Core Engine (Span 8) -->
+        <article class="bento-card bento-span-8" data-artifact-id="quantum-core">
+          <div class="bento-3d-visual">
+            <img src="assets/designs/cyber/hero_hand_nobg.png" class="bento-3d-img" alt="3D Quantum Core">
+          </div>
+          <div class="card-category">Interactive 3D Engine • WebGL</div>
+          <h3 class="card-title">Aetherial Quantum Core</h3>
+          <p class="card-desc">
+            Decentralized real-time WebGPU spatial rendering engine running dynamic volumetric particle swarms with distance-threshold raymarching and adaptive LOD management.
+          </p>
+          <div class="tech-stack-row">
+            <span class="tech-chip">Three.js</span>
+            <span class="tech-chip">WebGPU</span>
+            <span class="tech-chip">GLSL Shaders</span>
+            <span class="tech-chip">Rust WASM</span>
+          </div>
+          <div class="card-footer-actions">
+            <button class="inspect-artifact-btn" onclick="openArtifactModal('Aetherial Quantum Core', 'torus-knot')">
+              <span>✦ Inspect 3D Model</span>
+            </button>
+            <button class="inspect-artifact-btn" id="toggleLensBtn" onclick="togglePhysicalLens(this)">
+              <span>✦ Liquid Glass Loupe</span>
+            </button>
+            <a href="#" class="project-ext-link">Live Project ↗</a>
+          </div>
+        </article>
+
+        <!-- Bento Card 2: Neural Telemetry HUD (Span 4) -->
+        <article class="bento-card bento-span-4" data-artifact-id="neural-hud">
+          <div class="bento-3d-visual">
+            <img src="assets/designs/cyber/project_ai_core_nobg.png" class="bento-3d-img" alt="3D Synapse HUD">
+          </div>
+          <div class="card-category">Distributed Systems</div>
+          <h3 class="card-title">Synapse HUD</h3>
+          <p class="card-desc">
+            Sub-millisecond telemetry visualizer streaming live GPU metrics across distributed cognitive nodes.
+          </p>
+          <div class="tech-stack-row">
+            <span class="tech-chip">WebSockets</span>
+            <span class="tech-chip">React</span>
+            <span class="tech-chip">Canvas 2D</span>
+          </div>
+          <div class="card-footer-actions">
+            <button class="inspect-artifact-btn" onclick="openArtifactModal('Synapse HUD System', 'icosahedron')">
+              <span>✦ Inspect 3D Model</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Bento Card 3: Cybernetic Hex Mesh (Span 4) -->
+        <article class="bento-card bento-span-4" data-artifact-id="hex-mesh">
+          <div class="bento-3d-visual">
+            <img src="assets/designs/cyber/cyber_eye_nobg.png" class="bento-3d-img" alt="3D Hexa Mesh">
+          </div>
+          <div class="card-category">Spatial Math</div>
+          <h3 class="card-title">Hexa-Mesh Crypt</h3>
+          <p class="card-desc">
+            Parametric tessellation runtime generating dynamic geodesic domes and interactive wireframes.
+          </p>
+          <div class="tech-stack-row">
+            <span class="tech-chip">WebGL</span>
+            <span class="tech-chip">Math3D</span>
+            <span class="tech-chip">TypeScript</span>
+          </div>
+          <div class="card-footer-actions">
+            <button class="inspect-artifact-btn" onclick="openArtifactModal('Hexa-Mesh Crypt', 'octahedron')">
+              <span>✦ Inspect 3D Model</span>
+            </button>
+          </div>
+        </article>
+
+        <!-- Bento Card 4: Holographic Bio-Interface (Span 8) -->
+        <article class="bento-card bento-span-8" data-artifact-id="bio-interface">
+          <div class="bento-3d-visual">
+            <img src="assets/designs/cyber/circuit_board_nobg.png" class="bento-3d-img" alt="3D Holosphere Surface">
+          </div>
+          <div class="card-category">Human-Machine Interface</div>
+          <h3 class="card-title">Holosphere Cognitive Surface</h3>
+          <p class="card-desc">
+            Spatial gesture-controlled interface with tactile inertia feedback, spring physics, and adaptive dark-mode glassmorphic lighting.
+          </p>
+          <div class="tech-stack-row">
+            <span class="tech-chip">Lenis</span>
+            <span class="tech-chip">GSAP</span>
+            <span class="tech-chip">Three.js</span>
+            <span class="tech-chip">CSS Houdini</span>
+          </div>
+          <div class="card-footer-actions">
+            <button class="inspect-artifact-btn" onclick="openArtifactModal('Holosphere Surface', 'dodecahedron')">
+              <span>✦ Inspect 3D Model</span>
+            </button>
+            <a href="#" class="project-ext-link">Case Study ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- SECTION 3: Skills Matrix -->
+    <section id="synapses" class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Technical Stack</span>
+        <h2 class="section-heading">Core Tools, Frameworks & Shaders</h2>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-name-row">
+            <span class="skill-title">Three.js / WebGL / WebGPU</span>
+            <span class="skill-pct">98%</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" data-width="98%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name-row">
+            <span class="skill-title">GLSL Custom Shaders</span>
+            <span class="skill-pct">94%</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" data-width="94%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name-row">
+            <span class="skill-title">GSAP & Lenis Motion</span>
+            <span class="skill-pct">96%</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" data-width="96%"></div></div>
+        </div>
+        <div class="skill-card">
+          <div class="skill-name-row">
+            <span class="skill-title">TypeScript / Node.js Engine</span>
+            <span class="skill-pct">92%</span>
+          </div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" data-width="92%"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: Experience Timeline -->
+    <section id="trajectory" class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Experience</span>
+        <h2 class="section-heading">Work History & Engineering Leadership</h2>
+      </div>
+
+      <div class="timeline-stream">
+        <div class="timeline-node">
+          <div class="timeline-period">2024 — PRESENT</div>
+          <h3 class="timeline-role">Principal Spatial Architect</h3>
+          <div class="timeline-org">Aether Labs • San Francisco, CA (Remote)</div>
+          <p class="timeline-desc">
+            Directing core development of in-browser WebGL/WebGPU spatial runtimes serving 1M+ active sessions daily with zero frame drops.
+          </p>
+        </div>
+
+        <div class="timeline-node">
+          <div class="timeline-period">2022 — 2024</div>
+          <h3 class="timeline-role">Lead Creative Technologist</h3>
+          <div class="timeline-org">Nexus Interactive Studio • New York, NY</div>
+          <p class="timeline-desc">
+            Engineered award-winning 3D scrollytelling web experiences for luxury brands and tech enterprises, utilizing procedural shaders and physics-driven motion.
+          </p>
+        </div>
+
+        <div class="timeline-node">
+          <div class="timeline-period">2020 — 2022</div>
+          <h3 class="timeline-role">Full-Stack Graphics Engineer</h3>
+          <div class="timeline-org">Cognitive Matrix Inc. • London, UK</div>
+          <p class="timeline-desc">
+            Built distributed WebSocket telemetry dashboards and GPU particle fields for real-time AI inference visualization.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: Contact Section -->
+    <section id="beacon" class="section-container">
+      <div class="section-header">
+        <span class="section-tag">Contact</span>
+        <h2 class="section-heading">Let's Build Something Extraordinary Together</h2>
+      </div>
+
+      <div class="contact-terminal">
+        <div>
+          <div class="terminal-header">Direct Inquiries & Coordinates</div>
+          <div class="contact-info-list">
+            <div>
+              <div class="contact-item-label">Email Address</div>
+              <div class="contact-item-value">alexander.vex@studio.dev</div>
+            </div>
+            <div>
+              <div class="contact-item-label">Location</div>
+              <div class="contact-item-value">San Francisco, CA • Open to Global Remote</div>
+            </div>
+            <div>
+              <div class="contact-item-label">Availability</div>
+              <div class="contact-item-value" style="color: var(--accent-vermilion); font-weight: 700;">✦ Open for Select Collaborations</div>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you! Your message has been sent successfully.');">
+          <input type="text" class="form-input" placeholder="Your Name" required>
+          <input type="email" class="form-input" placeholder="Your Email Address" required>
+          <textarea class="form-textarea" rows="4" placeholder="How can we collaborate?..." required></textarea>
+          <button type="submit" class="btn-primary">Send Message ↗</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+      <p>Designed & engineered by Alexander Vex • Powered by MyFolio Platform</p>
+    </footer>
+
+  </div>
+
+  <!-- 3D ARTIFACT INSPECTOR MODAL (img2threejs Concept) -->
+  <div id="artifact-modal" class="artifact-modal-overlay">
+    <div class="artifact-modal-box">
+      <div class="modal-bar">
+        <div class="modal-title-wrap">
+          <span class="pulse-dot"></span>
+          <span id="modal-artifact-name" class="modal-title">ARTIFACT INSPECTOR</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeArtifactModal()">✕</button>
+      </div>
+      <div id="modal-viewport" class="modal-viewport">
+        <!-- Interactive 3D Model Rendered Here -->
+        <div class="modal-controls-overlay">
+          <button class="modal-ctrl-btn active" id="btn-mode-wire" onclick="setArtifactMode('wire')">Wireframe</button>
+          <button class="modal-ctrl-btn" id="btn-mode-solid" onclick="setArtifactMode('solid')">Solid Glow</button>
+          <button class="modal-ctrl-btn" id="btn-mode-points" onclick="setArtifactMode('points')">Particles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrollytelling, Three.js & Motion Orchestration Script -->
+  <script>
+    /* =========================================================================
+       1. UNIVERSAL SMOOTH INERTIAL SCROLLING (Lenis + GSAP Ticker Synchronized)
+       ========================================================================= */
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.0,
+      touchMultiplier: 2.0
+    });
+
+    // Synchronize Lenis with GSAP ScrollTrigger
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0);
+
+    /* =========================================================================
+       2. REAL GITHUB REPO INTEGRATION: ruucm/shadergradient + pmndrs/react-three-fiber
+       ========================================================================= */
+    const sgRoot = document.getElementById('shadergradient-root');
+    if (window.ShaderGradientMount && sgRoot) {
+      window.ShaderGradientMount.renderTo(sgRoot, {
+        speed: 0.1,
+        strength: 0.7,
+        density: 1.0,
+        frequency: 2.2,
+        amplitude: 1.2,
+        color1: '#F4F3EF', // warm museum linen
+        color2: '#ECEAE4', // raw canvas
+        color3: '#E2DFD6'  // archival stone
+      });
+      console.log('✅ Real ruucm/shadergradient + @react-three/fiber running as warm museum linen wave.');
+    }
+
+    // Mouse Tracking for Reactive 3D Perspective Tilt
+    let mouseX = 0, mouseY = 0;
+    const focalTilt = document.getElementById('heroFocalTilt');
+
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+      // Real-time 3D Perspective Tilt on the dedicated tilt layer
+      if (focalTilt) {
+        gsap.to(focalTilt, {
+          rotateY: mouseX * 22,
+          rotateX: -mouseY * 20,
+          transformPerspective: 1200,
+          duration: 0.5,
+          ease: 'power2.out'
+        });
+      }
+    });
+
+    // Touch Tracking for Reactive 3D Perspective Tilt on Mobile
+    window.addEventListener('touchmove', (e) => {
+      if (e.touches && e.touches[0]) {
+        mouseX = (e.touches[0].clientX / window.innerWidth - 0.5) * 2;
+        mouseY = (e.touches[0].clientY / window.innerHeight - 0.5) * 2;
+        if (focalTilt) {
+          gsap.to(focalTilt, {
+            rotateY: mouseX * 20,
+            rotateX: -mouseY * 18,
+            transformPerspective: 1000,
+            duration: 0.4,
+            ease: 'power2.out'
+          });
+        }
+      }
+    }, { passive: true });
+
+    /* =========================================================================
+       2B. REAL GITHUB REPO INTEGRATION: eamonliu/liquid-glass-js Optical Refraction
+       ========================================================================= */
+    let globalGlassLens = null;
+    let lensIsVisible = false;
+
+    if (window.LiquidGlass) {
+      try {
+        const glassScene = document.querySelector('.projects-bento') || document.body;
+        const isMob = window.innerWidth <= 768;
+        const lensW = isMob ? 250 : 340;
+        const lensH = isMob ? 110 : 150;
+
+        // Instantiate real LiquidGlass lens with optical displacement & chromatic aberration
+        globalGlassLens = new LiquidGlass({
+          background: glassScene,
+          width: lensW,
+          height: lensH,
+          x: 48,
+          y: 200,
+          radius: 16,
+          scale: 38,
+          chroma: 0.12,
+          depth: 26,
+          curvature: 2.0,
+          specAngle: 125,
+          draggable: true
+        });
+
+        // Start hidden so the hero stage remains pristine and uncluttered
+        const glassEl = document.querySelector('.lqg-glass');
+        const lensEl = document.querySelector('.lqg-lens');
+        if (glassEl && lensEl) {
+          glassEl.style.display = 'none';
+          lensEl.style.display = 'none';
+        }
+        console.log('✅ Real eamonliu/liquid-glass-js physical refraction lens ready for artifact inspection.');
+      } catch (err) {
+        console.warn('[LiquidGlass] Initialization notice:', err);
+      }
+    }
+
+    function togglePhysicalLens(btnEl) {
+      const glassEl = document.querySelector('.lqg-glass');
+      const lensEl = document.querySelector('.lqg-lens');
+      if (glassEl && lensEl && globalGlassLens) {
+        lensIsVisible = !lensIsVisible;
+        if (lensIsVisible) {
+          const targetCard = document.querySelector('.bento-span-8');
+          if (targetCard) {
+            const rect = targetCard.getBoundingClientRect();
+            globalGlassLens.moveTo(Math.max(20, rect.left + 24), Math.max(20, rect.top + 60));
+          }
+          glassEl.style.display = 'block';
+          lensEl.style.display = 'block';
+          if (btnEl) btnEl.innerHTML = '<span>✕ Close Loupe</span>';
+        } else {
+          glassEl.style.display = 'none';
+          lensEl.style.display = 'none';
+          if (btnEl) btnEl.innerHTML = '<span>✦ Liquid Glass Loupe</span>';
+        }
+      }
+    }
+    window.togglePhysicalLens = togglePhysicalLens;
+
+    /* =========================================================================
+       3. GSAP SCROLLTELLING FLYTHROUGH TIMELINE (Bidirectional Text & 3D Flythrough)
+       ========================================================================= */
+    // Initial Entrance Reveal
+    gsap.from(['.hero-editorial-col', '#heroFocalWrap'], {
+      opacity: 0,
+      y: 28,
+      stagger: 0.12,
+      duration: 1.0,
+      ease: 'power3.out'
+    });
+
+    // Scrollytelling Flythrough pinned along 300vh
+    const flythroughTl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '.hero-pinned-track',
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        pin: '.hero-pinned-stage',
+        anticipatePin: 1
+      }
+    });
+
+    const isMobile = window.innerWidth <= 768;
+
+    flythroughTl
+      // 3D LIVE SCULPTURE DYNAMICS: Rotates with perspective and scales up gracefully
+      .fromTo('#heroFocalImg',
+        { scale: 1, rotateY: 0, rotateX: 0, y: 0, opacity: 1 },
+        {
+          scale: isMobile ? 1.15 : 1.35,
+          rotateY: isMobile ? 14 : 26,
+          rotateX: isMobile ? -6 : -10,
+          y: isMobile ? -15 : -30,
+          opacity: 1,
+          duration: 1,
+          ease: 'none'
+        },
+        0
+      )
+      // BEAT 1 (Intro Dossier): Rests 0 -> 0.12, then cleanly fades out by 0.24
+      .to('.beat-intro', {
+        opacity: 0,
+        y: isMobile ? -25 : -40,
+        pointerEvents: 'none',
+        duration: 0.12,
+        ease: 'power2.in'
+      }, 0.12)
+      // BEAT 2 (Architectural Telemetry & Metrics): Enters cleanly right as Beat 1 finishes (0.24 -> 0.36)
+      .fromTo('.beat-telemetry',
+        { opacity: 0, y: isMobile ? 25 : 40, pointerEvents: 'none' },
+        { opacity: 1, y: 0, pointerEvents: 'auto', duration: 0.12, ease: 'power2.out' },
+        0.24
+      )
+      // Beat 2 remains 100% visible, crisp, and authoritative throughout mid-scroll (0.36 to 0.80)!
+      // No ghosting, no empty void, no detached bottom cards.
+      //
+      // At 0.80 -> 0.96, Beat 2 and the 3D sculpture ascend together into Section 2
+      .to('.beat-telemetry', {
+        opacity: 0,
+        y: isMobile ? -30 : -50,
+        pointerEvents: 'none',
+        duration: 0.16,
+        ease: 'power2.in'
+      }, 0.80)
+      .to('#heroFocalImg', {
+        scale: isMobile ? 1.35 : 1.7,
+        opacity: 0,
+        y: isMobile ? -60 : -120,
+        duration: 0.16,
+        ease: 'power2.in'
+      }, 0.80);
+
+    // Skills Matrix Bar Fill Animation
+    ScrollTrigger.create({
+      trigger: '#synapses',
+      start: 'top 75%',
+      onEnter: () => {
+        document.querySelectorAll('.skill-bar-fill').forEach(bar => {
+          bar.style.width = bar.getAttribute('data-width');
+        });
+      }
+    });
+
+    /* =========================================================================
+       4. INTERACTIVE 3D ARTIFACT INSPECTOR (img2threejs procedural 3D model)
+       ========================================================================= */
+    const modal = document.getElementById('artifact-modal');
+    const modalViewport = document.getElementById('modal-viewport');
+    const modalTitle = document.getElementById('modal-artifact-name');
+    let modalRenderer, modalScene, modalCamera, modalMesh, modalPoints, modalWireMesh;
+    let isModalOpen = false;
+    let modalClock = new THREE.Clock();
+    let currentMode = 'wire';
+
+    function initModal3D() {
+      modalScene = new THREE.Scene();
+      modalCamera = new THREE.PerspectiveCamera(50, modalViewport.clientWidth / modalViewport.clientHeight, 0.1, 100);
+      modalCamera.position.set(0, 0, 7);
+
+      modalRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+      modalRenderer.setSize(modalViewport.clientWidth, modalViewport.clientHeight);
+      modalRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      modalViewport.appendChild(modalRenderer.domElement);
+
+      // Ambient & Point Lighting (Warm Architectural Studio Rig)
+      const ambLight = new THREE.AmbientLight(0xffffff, 0.85);
+      modalScene.add(ambLight);
+
+      const pLight1 = new THREE.PointLight(0xFF3B30, 2.2, 25);
+      pLight1.position.set(5, 5, 5);
+      modalScene.add(pLight1);
+
+      const pLight2 = new THREE.PointLight(0xD97706, 1.8, 25);
+      pLight2.position.set(-5, -5, 5);
+      modalScene.add(pLight2);
+
+      // Orbit Drag Controls
+      let isDragging = false;
+      let prevMouse = { x: 0, y: 0 };
+
+      modalViewport.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        prevMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging || !modalMesh) return;
+        const deltaX = e.clientX - prevMouse.x;
+        const deltaY = e.clientY - prevMouse.y;
+
+        modalMesh.rotation.y += deltaX * 0.01;
+        modalMesh.rotation.x += deltaY * 0.01;
+        if (modalPoints) {
+          modalPoints.rotation.y = modalMesh.rotation.y;
+          modalPoints.rotation.x = modalMesh.rotation.x;
+        }
+
+        prevMouse = { x: e.clientX, y: e.clientY };
+      });
+
+      window.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+
+      function renderModal() {
+        if (isModalOpen) {
+          requestAnimationFrame(renderModal);
+          const elapsed = modalClock.getElapsedTime();
+          if (!isDragging && modalMesh) {
+            modalMesh.rotation.y += 0.008;
+            modalMesh.rotation.x += 0.004;
+            if (modalPoints) {
+              modalPoints.rotation.y = modalMesh.rotation.y;
+              modalPoints.rotation.x = modalMesh.rotation.x;
+            }
+          }
+          modalRenderer.render(modalScene, modalCamera);
+        }
+      }
+      renderModal();
+    }
+
+    function createArtifactGeometry(type) {
+      if (modalMesh) modalScene.remove(modalMesh);
+      if (modalPoints) modalScene.remove(modalPoints);
+
+      let geo;
+      switch (type) {
+        case 'torus-knot':
+          geo = new THREE.TorusKnotGeometry(1.8, 0.5, 128, 32);
+          break;
+        case 'icosahedron':
+          geo = new THREE.IcosahedronGeometry(2.2, 1);
+          break;
+        case 'octahedron':
+          geo = new THREE.OctahedronGeometry(2.3, 2);
+          break;
+        case 'dodecahedron':
+        default:
+          geo = new THREE.DodecahedronGeometry(2.2, 1);
+          break;
+      }
+
+      // Museum Carrara & Warm Bronze Material
+      const solidMat = new THREE.MeshStandardMaterial({
+        color: 0xFAF9F6,
+        roughness: 0.35,
+        metalness: 0.25
+      });
+
+      // Architectural Monograph Wireframe Material
+      const wireMat = new THREE.MeshBasicMaterial({
+        color: 0x0A0A0A,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.85
+      });
+
+      // Vermilion Precision Coordinate Points
+      const pointsMat = new THREE.PointsMaterial({
+        color: 0xFF3B30,
+        size: 0.08,
+        transparent: true,
+        opacity: 0.95
+      });
+
+      modalMesh = new THREE.Mesh(geo, currentMode === 'solid' ? solidMat : wireMat);
+      modalPoints = new THREE.Points(geo, pointsMat);
+
+      if (currentMode === 'points') {
+        modalScene.add(modalPoints);
+      } else {
+        modalScene.add(modalMesh);
+      }
+    }
+
+    function openArtifactModal(name, geoType) {
+      modalTitle.textContent = name + ' — Interactive 3D Model';
+      modal.classList.add('active');
+      isModalOpen = true;
+
+      if (!modalRenderer) {
+        initModal3D();
+      } else {
+        modalCamera.aspect = modalViewport.clientWidth / modalViewport.clientHeight;
+        modalCamera.updateProjectionMatrix();
+        modalRenderer.setSize(modalViewport.clientWidth, modalViewport.clientHeight);
+      }
+
+      createArtifactGeometry(geoType);
+      lenis.stop(); // Pause background scrolling while inspecting
+    }
+
+    function closeArtifactModal() {
+      modal.classList.remove('active');
+      isModalOpen = false;
+      lenis.start(); // Resume smooth scrolling
+    }
+
+    function setArtifactMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.modal-ctrl-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById('btn-mode-' + mode).classList.add('active');
+
+      if (modalMesh) {
+        if (mode === 'points') {
+          modalScene.remove(modalMesh);
+          modalScene.add(modalPoints);
+        } else {
+          modalScene.remove(modalPoints);
+          modalScene.add(modalMesh);
+          modalMesh.material.wireframe = (mode === 'wire');
+          if (mode === 'solid') {
+            modalMesh.material.emissiveIntensity = 0.4;
+          }
+        }
+      }
+    }
+
+    // Close modal on Escape key or outside click
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isModalOpen) closeArtifactModal();
+    });
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeArtifactModal();
+    });
+  </script>
+</body>
+</html>

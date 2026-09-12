@@ -781,7 +781,7 @@ Reply:
         try {
           const user = await this.db.getUserById(user_id);
           if (user && user.email_marketing_opt_in) {
-            const subscribeUrl = `${process.env.HOST_URL || 'http://localhost:3000'}/subscribe?userId=${user_id}`;
+            const subscribeUrl = `${process.env.HOST_URL || 'http://localhost:5050'}/subscribe?userId=${user_id}`;
             await this.emailService.sendConversionEmail1(extracted_data.email, {
               userId: user_id,
               name: extracted_data.name || 'there',

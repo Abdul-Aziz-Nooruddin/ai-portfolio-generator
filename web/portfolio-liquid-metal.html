@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Julian Vance — Principal Design Technologist & Shader Engineer</title>
+  <meta name="description" content="Portfolio of Julian Vance: Principal Design Technologist & Shader Engineer crafting spectral dispersion WebGL interfaces, liquid metallic surfaces, and tactile computational products.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400;1,600&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-base: #060709;
+      --bg-surface: #0E1015;
+      --bg-card: rgba(16, 19, 26, 0.85);
+      --text-main: #F4F4F6;
+      --text-muted: #9EABB8;
+      --text-dim: #5C6775;
+      --chrome-highlight: #E2E8F0;
+      --spectral-amber: #F59E0B;
+      --spectral-violet: #A855F7;
+      --spectral-cyan: #06B6D4;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-active: rgba(245, 158, 11, 0.45);
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-editorial: 'Instrument Serif', Georgia, serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 15%, #151821 0%, #08090C 55%, #040406 100%) #040406;
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Fixed Background Atmospheric Radial Mesh */
+    .ambient-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: 
+        radial-gradient(ellipse at 80% 20%, rgba(168, 85, 247, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 70%, rgba(6, 182, 212, 0.05) 0%, transparent 60%);
+    }
+
+    /* Masthead Navigation */
+    .masthead-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(6, 7, 9, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1.2rem 3.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .masthead-nav { padding: 1rem 1.5rem; }
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+    }
+
+    .brand-spec {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--spectral-amber);
+      margin-left: 0.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.2rem;
+      list-style: none;
+    }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-cta-pill {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-main);
+      text-decoration: none;
+      padding: 0.45rem 1.25rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.04);
+      transition: all 0.2s ease;
+    }
+
+    .nav-cta-pill:hover {
+      border-color: var(--spectral-amber);
+      color: var(--spectral-amber);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    /* Page Wrapper */
+    .page-container {
+      position: relative;
+      z-index: 10;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* 01. HERO STAGE */
+    .hero-stage {
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 0 4rem;
+    }
+
+    .hero-curation-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--spectral-amber);
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      padding: 0.4rem 1.1rem;
+      border-radius: 9999px;
+      margin-bottom: 2rem;
+    }
+
+    .hero-heading {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 5.5vw, 4.6rem);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: #FFFFFF;
+      max-width: 960px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-heading em {
+      font-family: var(--font-editorial);
+      font-style: italic;
+      font-size: 1.1em;
+      color: var(--chrome-highlight);
+      background: linear-gradient(135deg, #FFFFFF 20%, #F59E0B 65%, #A855F7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtext {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    /* -------------------------------------------------------------
+       THREEUI LIQUID METAL BUTTON STAGE
+       Interactive GLSL Dispersion Shader inside Hero
+    ------------------------------------------------------------- */
+    .liquid-metal-hero-box {
+      position: relative;
+      margin-bottom: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stage {
+      --h: 56px;
+      --u: calc(var(--h) / 516);
+      --bw: calc(1407 * var(--u));
+      --bh: var(--h);
+      --pad: calc(900 * var(--u));
+      position: relative;
+      width: calc(var(--bw) + 2 * var(--pad));
+      height: calc(var(--bh) + 2 * var(--pad));
+      display: grid;
+      place-items: center;
+      touch-action: manipulation;
+    }
+
+    .plate {
+      position: absolute;
+      width: var(--bw);
+      height: var(--bh);
+      border-radius: 999px;
+      background: #0b0c0e;
+      box-shadow:
+        0 calc(var(--h) * 0.10) calc(var(--h) * 0.22) rgba(0,0,0,.72),
+        0 calc(var(--h) * 0.30) calc(var(--h) * 0.66) rgba(0,0,0,.62),
+        0 calc(var(--h) * 0.62) calc(var(--h) * 1.30) rgba(0,0,0,.42);
+      transition: box-shadow .38s cubic-bezier(.22,.61,.36,1), background .38s cubic-bezier(.22,.61,.36,1);
+    }
+
+    body.hot .plate {
+      background: #08090a;
+      box-shadow:
+        0 calc(var(--h) * 0.12) calc(var(--h) * 0.26) rgba(0,0,0,.80),
+        0 calc(var(--h) * 0.40) calc(var(--h) * 0.86) rgba(0,0,0,.72),
+        0 calc(var(--h) * 0.86) calc(var(--h) * 1.80) rgba(0,0,0,.55);
+    }
+
+    #fx {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .metal-btn {
+      position: relative;
+      width: var(--bw);
+      height: var(--bh);
+      border: 0;
+      background: none;
+      padding: 0;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: calc(88 * var(--u));
+      color: #fff;
+      font-family: inherit;
+      font-weight: 500;
+      font-size: calc(185 * var(--u));
+      line-height: 1;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      outline: none;
+      text-transform: uppercase;
+    }
+
+    .metal-btn .ico {
+      width: calc(115 * var(--u));
+      height: calc(115 * var(--u));
+      display: block;
+      flex: none;
+    }
+
+    .metal-btn .lbl {
+      display: block;
+      transform: translateY(calc(2 * var(--u)));
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+    }
+
+    .metal-hint {
+      margin-top: 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .metal-hint span {
+      color: var(--spectral-amber);
+    }
+
+    /* 02. PRODUCTION TELEMETRY STRIP */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.8rem 2.2rem;
+      margin-bottom: 6rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 800px) {
+      .telemetry-strip { grid-template-columns: repeat(2, 1fr); padding: 1.25rem; }
+    }
+
+    .metric-item .metric-label {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.35rem;
+    }
+
+    .metric-item .metric-val {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      line-height: 1.1;
+    }
+
+    .metric-item .metric-sub {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      margin-top: 0.25rem;
+    }
+
+    /* SECTION STYLES */
+    .section-wrap {
+      padding: 5rem 0;
+    }
+
+    .section-header {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--spectral-amber);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .section-tag::before {
+      content: '✦';
+      color: var(--spectral-amber);
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.9rem, 3.4vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.2;
+      color: #FFFFFF;
+    }
+
+    .section-title em {
+      font-family: var(--font-editorial);
+      font-style: italic;
+    }
+
+    /* 03. PHILOSOPHY MANIFESTO */
+    .manifesto-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 3.5rem;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 3.5rem;
+    }
+
+    @media (max-width: 850px) {
+      .manifesto-box { grid-template-columns: 1fr; padding: 2rem; }
+    }
+
+    .manifesto-text p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      line-height: 1.85;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    .manifesto-text p strong {
+      color: #FFFFFF;
+      font-weight: 600;
+    }
+
+    .manifesto-aside {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .credo-card {
+      background: rgba(8, 9, 12, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.3rem 1.6rem;
+    }
+
+    .credo-card h4 {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      color: #FFFFFF;
+      margin-bottom: 0.35rem;
+    }
+
+    .credo-card p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* 04. PROJECTS VAULT */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2rem;
+    }
+
+    .gallery-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 2.4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .gallery-card:hover {
+      border-color: rgba(245, 158, 11, 0.5);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.15);
+    }
+
+    .gallery-cat {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--spectral-amber);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+
+    .gallery-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #FFFFFF;
+      margin-bottom: 0.8rem;
+    }
+
+    .gallery-desc {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    .gallery-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.8rem;
+    }
+
+    .gallery-tag {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 0.25rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--chrome-highlight);
+    }
+
+    .gallery-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .gallery-link {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--spectral-amber);
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: gap 0.2s ease;
+    }
+
+    .gallery-link:hover {
+      gap: 0.65rem;
+    }
+
+    /* 05. SKILLS MATRIX */
+    .tooling-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.75rem;
+    }
+
+    .tool-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 1.8rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .tool-box:hover {
+      border-color: var(--spectral-amber);
+    }
+
+    .tool-heading {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      color: #FFFFFF;
+      margin-bottom: 1.2rem;
+    }
+
+    .tool-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .tool-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .tool-meter {
+      width: 65px;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .tool-meter-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--spectral-amber), var(--spectral-violet));
+    }
+
+    /* 06. TIMELINE */
+    .timeline-container {
+      position: relative;
+      padding-left: 2.5rem;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--spectral-amber) 0%, rgba(255, 255, 255, 0.05) 100%);
+    }
+
+    .timeline-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      transition: border-color 0.2s ease;
+    }
+
+    .timeline-card:hover {
+      border-color: var(--spectral-amber);
+    }
+
+    .timeline-card::before {
+      content: '';
+      position: absolute;
+      left: -2.85rem;
+      top: 2.2rem;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--spectral-amber);
+      box-shadow: 0 0 10px var(--spectral-amber);
+    }
+
+    .timeline-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .timeline-title {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      color: #FFFFFF;
+    }
+
+    .timeline-dates {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--spectral-amber);
+      background: rgba(245, 158, 11, 0.08);
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+    }
+
+    .timeline-org {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    .timeline-copy {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* 07. CONTACT SALON */
+    .contact-salon {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 4rem;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+
+    .contact-head {
+      font-family: var(--font-display);
+      font-size: 2.4rem;
+      color: #FFFFFF;
+      margin-bottom: 1rem;
+    }
+
+    .contact-copy {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .contact-actions {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-amber-solid {
+      background: var(--spectral-amber);
+      color: #040406;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.85rem 2.2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-amber-solid:hover {
+      background: #FBBF24;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5);
+    }
+
+    .btn-outline-glass {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.85rem 2rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-glass:hover {
+      border-color: var(--chrome-highlight);
+      transform: translateY(-2px);
+    }
+
+    /* FOOTER */
+    .footer-salon {
+      margin-top: 6rem;
+      padding: 2.5rem 0;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-salon a {
+      color: var(--spectral-amber);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Mesh Background -->
+  <div class="ambient-mesh"></div>
+
+  <!-- Global Masthead Navigation -->
+  <header class="masthead-nav">
+    <a href="#" class="brand-mark">
+      <span class="brand-title">Julian Vance</span>
+      <span class="brand-spec">Design Technologist</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#philosophy">Manifesto</a></li>
+      <li><a href="#works">Works</a></li>
+      <li><a href="#tooling">Craft</a></li>
+      <li><a href="#provenance">Timeline</a></li>
+      <li><a href="#inquiry">Inquiry</a></li>
+    </ul>
+
+    <div>
+      <a href="threeui-showcase.html" class="nav-cta-pill">✦ ThreeUI Suite ↗</a>
+    </div>
+  </header>
+
+  <!-- Page Content -->
+  <main class="page-container">
+
+    <!-- 01. HERO STAGE -->
+    <section class="hero-stage">
+      <div class="hero-curation-pill">
+        ✦ Computational Design &amp; Spectral Shaders
+      </div>
+
+      <h1 class="hero-heading">
+        Sculpting <em>fluid metallic interfaces</em><br>
+        &amp; optical dispersion dynamics
+      </h1>
+
+      <p class="hero-subtext">
+        Principal Design Technologist pairing rigorous mathematical GLSL shaders with luxury editorial typography. Engineering weightless tactile surfaces that respond to human touch with physical optical fidelity.
+      </p>
+
+      <!-- Active ThreeUI Liquid Metal Dispersion Button -->
+      <div class="liquid-metal-hero-box">
+        <div class="stage" id="stage">
+          <div class="plate" aria-hidden="true"></div>
+          <canvas id="fx"></canvas>
+
+          <button class="metal-btn" id="btn" type="button">
+            <svg class="ico" viewBox="0 0 115 115" aria-hidden="true">
+              <g stroke="currentColor" stroke-width="17" stroke-linecap="round">
+                <path d="M57.5 8.5 V106.5"/>
+                <path d="M8.5 57.5 H106.5"/>
+              </g>
+            </svg>
+            <span class="lbl">Inspect Shader ✦</span>
+          </button>
+        </div>
+        <div class="metal-hint">
+          <span>✦</span> Hover, drag, or tap to deform liquid metal dispersion field
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. PRODUCTION TELEMETRY STRIP -->
+    <section class="telemetry-strip">
+      <div class="metric-item">
+        <div class="metric-label">Frame Budget</div>
+        <div class="metric-val">120 FPS</div>
+        <div class="metric-sub">Zero CPU Allocation Churn</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Dispersion Passes</div>
+        <div class="metric-val">03 Band</div>
+        <div class="metric-sub">Spectral Plateau Fringing</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Design Patents</div>
+        <div class="metric-val">05 Filed</div>
+        <div class="metric-sub">Haptic Shader Physics</div>
+      </div>
+      <div class="metric-item">
+        <div class="metric-label">Museum Shows</div>
+        <div class="metric-val">08 Global</div>
+        <div class="metric-sub">Computational Art Curation</div>
+      </div>
+    </section>
+
+    <!-- 03. PHILOSOPHY MANIFESTO -->
+    <section class="section-wrap" id="philosophy">
+      <div class="section-header">
+        <div class="section-tag">Aesthetic Engineering</div>
+        <h2 class="section-title">Interfaces as <em>physical optical materials</em></h2>
+      </div>
+
+      <div class="manifesto-box">
+        <div class="manifesto-text">
+          <p>
+            Software has spent thirty years emulating dry paper and flat plastic. My work treats pixels as <strong>laminar optical fluids</strong>: surfaces governed by wave dispersion, surface tension, and spectral index refraction.
+          </p>
+          <p>
+            When a user interacts with a control, the response should not be an arbitrary linear opacity transition. It should radiate, ripple, and refract ambient light like obsidian stone washed in liquid chrome.
+          </p>
+        </div>
+
+        <div class="manifesto-aside">
+          <div class="credo-card">
+            <h4>Laminar Wave Dispersion</h4>
+            <p>Evaluating parallel scalar field equations to maintain pristine laminar flow without turbulent noise artifacts.</p>
+          </div>
+          <div class="credo-card">
+            <h4>Sub-Pixel Chromatic Fringing</h4>
+            <p>Decomposing highlights across red, green, and blue wavelengths to emulate authentic optical prism dispersion.</p>
+          </div>
+          <div class="credo-card">
+            <h4>Zero-Latency Haptic Ripple</h4>
+            <p>Instantaneous multi-point ripple propagation mapped directly to hardware trackpad and touchscreen inputs.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. PROJECTS VAULT -->
+    <section class="section-wrap" id="works">
+      <div class="section-header">
+        <div class="section-tag">Curated Artifacts</div>
+        <h2 class="section-title">Computational Works &amp; <em>Shader Instruments</em></h2>
+      </div>
+
+      <div class="gallery-grid">
+        <article class="gallery-card">
+          <div>
+            <div class="gallery-cat">WebGL Shader Instrument</div>
+            <h3 class="gallery-title">Aura Liquid Metal Runtimes</h3>
+            <p class="gallery-desc">
+              High-performance dispersion shader engine engineered for DesignCode's ThreeUI library, generating rainbow spectral fringe highlights along parallel laminar scalar fields.
+            </p>
+            <div class="gallery-tags">
+              <span class="gallery-tag">WebGL 2.0</span>
+              <span class="gallery-tag">GLSL ES 300</span>
+              <span class="gallery-tag">Dispersion Math</span>
+              <span class="gallery-tag">ThreeUI</span>
+            </div>
+          </div>
+          <div class="gallery-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">CORE SHADER</span>
+            <a href="threeui-liquid-metal.html" target="_blank" class="gallery-link">Launch Solo Shader ↗</a>
+          </div>
+        </article>
+
+        <article class="gallery-card">
+          <div>
+            <div class="gallery-cat">Spatial Design System</div>
+            <h3 class="gallery-title">Obsidian Luxury Glass Design System</h3>
+            <p class="gallery-desc">
+              Comprehensive multi-platform UI system built for high-end automotive and chrono-luxury interfaces, featuring authentic physical specular reflections and frosted depth glass.
+            </p>
+            <div class="gallery-tags">
+              <span class="gallery-tag">Design Systems</span>
+              <span class="gallery-tag">Figma Tokens</span>
+              <span class="gallery-tag">WebGPU</span>
+              <span class="gallery-tag">Open Props</span>
+            </div>
+          </div>
+          <div class="gallery-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">AUTOMOTIVE & CHRONO</span>
+            <a href="https://github.com" target="_blank" class="gallery-link">Inspect Spec ↗</a>
+          </div>
+        </article>
+
+        <article class="gallery-card">
+          <div>
+            <div class="gallery-cat">Generative Typography</div>
+            <h3 class="gallery-title">Kinetic Monograph Masthead</h3>
+            <p class="gallery-desc">
+              Editorial scrollytelling framework synchronizing variable font weights and optical axis deformations directly to inertial scroll velocity.
+            </p>
+            <div class="gallery-tags">
+              <span class="gallery-tag">Variable Fonts</span>
+              <span class="gallery-tag">GSAP ScrollTrigger</span>
+              <span class="gallery-tag">Lenis</span>
+              <span class="gallery-tag">WebGL Post-FX</span>
+            </div>
+          </div>
+          <div class="gallery-footer">
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">MUSEUM CURATION</span>
+            <a href="https://github.com" target="_blank" class="gallery-link">View Exhibition ↗</a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- 05. SKILLS MATRIX -->
+    <section class="section-wrap" id="tooling">
+      <div class="section-header">
+        <div class="section-tag">Craft &amp; Repertoire</div>
+        <h2 class="section-title">Technical Mastery &amp; <em>Shader Science</em></h2>
+      </div>
+
+      <div class="tooling-grid">
+        <div class="tool-box">
+          <h3 class="tool-heading">Creative Shaders</h3>
+          <ul class="tool-list">
+            <li class="tool-item"><span>GLSL / HLSL</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 98%;"></div></div></li>
+            <li class="tool-item"><span>WGSL Compute</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 92%;"></div></div></li>
+            <li class="tool-item"><span>Raymarching &amp; SDFs</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 95%;"></div></div></li>
+            <li class="tool-item"><span>Post-Processing Passes</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 96%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="tool-box">
+          <h3 class="tool-heading">Frontend Architecture</h3>
+          <ul class="tool-list">
+            <li class="tool-item"><span>Vanilla WebGL / Three.js</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 97%;"></div></div></li>
+            <li class="tool-item"><span>React Three Fiber</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 94%;"></div></div></li>
+            <li class="tool-item"><span>Hardware Composite Optim</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 96%;"></div></div></li>
+            <li class="tool-item"><span>Lenis Inertia Motion</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 95%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="tool-box">
+          <h3 class="tool-heading">Editorial Design</h3>
+          <ul class="tool-list">
+            <li class="tool-item"><span>Micro-Typography</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 98%;"></div></div></li>
+            <li class="tool-item"><span>Color Contrast Physics</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 95%;"></div></div></li>
+            <li class="tool-item"><span>Spatial Layout Systems</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 94%;"></div></div></li>
+            <li class="tool-item"><span>Art Direction &amp; Curation</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 97%;"></div></div></li>
+          </ul>
+        </div>
+
+        <div class="tool-box">
+          <h3 class="tool-heading">Creative Leadership</h3>
+          <ul class="tool-list">
+            <li class="tool-item"><span>Cross-Discipline Directing</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 95%;"></div></div></li>
+            <li class="tool-item"><span>Design System Governance</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 92%;"></div></div></li>
+            <li class="tool-item"><span>Product Prototyping</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 96%;"></div></div></li>
+            <li class="tool-item"><span>Museum Exhibition Tech</span><div class="tool-meter"><div class="tool-meter-fill" style="width: 90%;"></div></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. TIMELINE -->
+    <section class="section-wrap" id="provenance">
+      <div class="section-header">
+        <div class="section-tag">Career Provenance</div>
+        <h2 class="section-title">Leadership &amp; <em>Exhibition History</em></h2>
+      </div>
+
+      <div class="timeline-container">
+        <div class="timeline-card">
+          <div class="timeline-head">
+            <h3 class="timeline-title">Principal Design Technologist</h3>
+            <span class="timeline-dates">2022 — PRESENT</span>
+          </div>
+          <div class="timeline-org">Aura Computational Studio • London &amp; Zurich</div>
+          <p class="timeline-copy">
+            Leading research and implementation of next-generation procedural shader surfaces for automotive, luxury horology, and high-frequency creative tools. Engineered the ThreeUI Liquid Metal dispersion shader suite adopted by thousands of developers.
+          </p>
+        </div>
+
+        <div class="timeline-card">
+          <div class="timeline-head">
+            <h3 class="timeline-title">Staff Shader &amp; Interaction Designer</h3>
+            <span class="timeline-dates">2019 — 2022</span>
+          </div>
+          <div class="timeline-org">Vance Spatial Systems • Berlin</div>
+          <p class="timeline-copy">
+            Directed the design and shader pipeline for interactive WebGL museum installations across Venice, Basel, and Tokyo. Authored key patents in physical ripple haptics and real-time dispersion rendering.
+          </p>
+        </div>
+
+        <div class="timeline-card">
+          <div class="timeline-head">
+            <h3 class="timeline-title">Senior Creative Technologist</h3>
+            <span class="timeline-dates">2016 — 2019</span>
+          </div>
+          <div class="timeline-org">Atelier Kinetic • Paris</div>
+          <p class="timeline-copy">
+            Designed bespoke generative typography and high-fashion digital monographs. Collaborated with haute horlogerie maisons to translate microscopic gear dynamics into weightless interactive surfaces.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 07. INQUIRY SALON -->
+    <section class="section-wrap" id="inquiry">
+      <div class="contact-salon">
+        <div class="section-tag" style="justify-content: center;">Consultation Salon</div>
+        <h2 class="contact-head">Initiate an Aesthetic Dialogue</h2>
+        <p class="contact-copy">
+          Accepting select advisory engagements, executive creative technology direction, and bespoke shader commissions.
+        </p>
+
+        <div class="contact-actions">
+          <a href="mailto:julian.vance@aura-studio.dev" class="btn-amber-solid">Establish Contact ↗</a>
+          <a href="https://github.com" target="_blank" class="btn-outline-glass">GitHub Portfolio</a>
+          <a href="threeui-showcase.html" class="btn-outline-glass">ThreeUI Component Suite</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer-salon">
+      <div>
+        <span>Julian Vance</span> • Principal Design Technologist
+      </div>
+      <div>
+        THREEUI LIQUID METAL DISPERSION ENGINE
+      </div>
+      <div>
+        <a href="#stage">Return to Zenith ↑</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- =============================================================
+       THREEUI LIQUID METAL SHADER ENGINE (AUTHENTIC GLSL PIPELINE)
+  ============================================================= -->
+  <script>
+  (() => {
+    const VERT = `#version 300 es
+    in vec2 position; void main(){ gl_Position = vec4(position,0.,1.); }`;
+
+    const COMMON = `
+    uniform vec2 uRes;
+    uniform vec2 uButtonSize;
+    uniform float uRadius;
+    uniform float uBorder;
+    uniform float uPad;
+    uniform float uTime;
+    uniform float uHover;
+    uniform float uPress;
+    uniform vec2 uPtr;
+    uniform vec2 uPtrSpeed;
+    uniform vec4 uRipple0;
+    uniform vec4 uRipple1;
+    uniform vec4 uRipple2;
+
+    float sdPill(vec2 p, vec2 b, float r){
+      vec2 d = abs(p) - b + vec2(r);
+      return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - r;
+    }
+    `;
+
+    const FRAG_MAP = `#version 300 es
+    precision highp float;
+    out vec4 fragColor;
+    ${COMMON}
+
+    uniform float uScale;
+    uniform float uSquish;
+    uniform float uSpeed;
+    uniform float uBias;
+    uniform float uDistort;
+    uniform float uWobble;
+    uniform float uEdgeRamp;
+    uniform float uWellDepth;
+    uniform float uWellRadius;
+    uniform float uDipDepth;
+    uniform float uDipRadius;
+    uniform float uRipFreq;
+    uniform float uRipSpeed;
+    uniform float uRipDecay;
+
+    float ripple(vec4 r, vec2 p){
+      if(r.z < 0.0) return 0.0;
+      float d = length(p - r.xy);
+      float t = r.z;
+      float phase = d * uRipFreq - t * uRipSpeed;
+      float amp = r.w * exp(-t * uRipDecay) * smoothstep(0.0, 40.0, d);
+      return sin(phase) * amp;
+    }
+
+    void main(){
+      vec2 p = gl_FragCoord.xy - uRes * 0.5;
+      vec2 h = uButtonSize * 0.5;
+      float r = uRadius;
+
+      float d = sdPill(p, h, r);
+      float edgeDist = -d;
+
+      vec2 uv = p / uButtonSize.y;
+      uv.y *= uSquish;
+
+      float baseV = sin(uv.x * uScale + uTime * uSpeed) * cos(uv.y * uScale + uTime * uSpeed * 0.7);
+      float rip = ripple(uRipple0, p) + ripple(uRipple1, p) + ripple(uRipple2, p);
+
+      float ptrDist = length(p - uPtr);
+      float well = exp(-ptrDist / max(1.0, uWellRadius)) * uWellDepth * uHover;
+
+      float v = baseV * uDistort + rip + well + uBias;
+      fragColor = vec4(v, edgeDist, 0.0, 1.0);
+    }
+    `;
+
+    const FRAG_COMP = `#version 300 es
+    precision highp float;
+    out vec4 fragColor;
+    ${COMMON}
+
+    uniform sampler2D uMap;
+    uniform float uGlowIn;
+    uniform float uOccl;
+    uniform float uDim;
+    uniform float uPunch;
+
+    vec3 spectrum(float t){
+      return vec3(
+        smoothstep(0.15, 0.85, sin(t * 6.28318 + 0.0) * 0.5 + 0.5),
+        smoothstep(0.15, 0.85, sin(t * 6.28318 + 2.094) * 0.5 + 0.5),
+        smoothstep(0.15, 0.85, sin(t * 6.28318 + 4.188) * 0.5 + 0.5)
+      );
+    }
+
+    void main(){
+      vec2 uv = gl_FragCoord.xy / uRes;
+      vec4 map = texture(uMap, uv);
+      float v = map.r;
+      float edgeDist = map.g;
+
+      float edgeAlpha = smoothstep(-1.0, 1.0, edgeDist);
+      if(edgeAlpha <= 0.0) discard;
+
+      vec3 col = spectrum(v * 0.6 + uTime * 0.1);
+      col = mix(col, vec3(1.0), smoothstep(0.7, 0.95, v) * uPunch);
+
+      float rim = smoothstep(uBorder, 0.0, edgeDist);
+      col += vec3(0.9, 0.95, 1.0) * rim * uGlowIn;
+
+      fragColor = vec4(col * (1.0 - uDim), edgeAlpha);
+    }
+    `;
+
+    const canvas = document.getElementById('fx');
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl2', { alpha: true, antialias: true });
+    if (!gl) return;
+
+    function compileShader(src, type) {
+      const s = gl.createShader(type);
+      gl.shaderSource(s, src);
+      gl.compileShader(s);
+      return s;
+    }
+
+    function createProg(vs, fs) {
+      const p = gl.createProgram();
+      gl.attachShader(p, compileShader(vs, gl.VERTEX_SHADER));
+      gl.attachShader(p, compileShader(fs, gl.FRAGMENT_SHADER));
+      gl.linkProgram(p);
+      return p;
+    }
+
+    const pMap = createProg(VERT, FRAG_MAP);
+    const pComp = createProg(VERT, FRAG_COMP);
+
+    const quad = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+
+    let mapTex = gl.createTexture();
+    let mapFbo = gl.createFramebuffer();
+
+    let width = 0, height = 0;
+    function resize() {
+      const stage = document.getElementById('stage');
+      const rect = stage.getBoundingClientRect();
+      width = canvas.width = Math.round(rect.width * window.devicePixelRatio);
+      height = canvas.height = Math.round(rect.height * window.devicePixelRatio);
+
+      gl.bindTexture(gl.TEXTURE_2D, mapTex);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F || gl.RGBA, width, height, 0, gl.RGBA, gl.FLOAT, null);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      gl.bindFramebuffer(gl.FRAMEBUFFER, mapFbo);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, mapTex, 0);
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let hover = 0.75, hoverTarget = 0.75;
+    let press = 0.0, pressTarget = 0.0;
+    let ptr = { x: 0, y: 0 };
+    let ripples = [{ x: 0, y: 0, t: -99, w: 0 }, { x: 0, y: 0, t: -99, w: 0 }, { x: 0, y: 0, t: -99, w: 0 }];
+    let ripIdx = 0;
+
+    function addRipple(x, y) {
+      ripples[ripIdx] = { x, y, t: 0, w: 1.0 };
+      ripIdx = (ripIdx + 1) % 3;
+    }
+
+    const btn = document.getElementById('btn');
+    btn.addEventListener('pointerenter', () => { hoverTarget = 1.0; document.body.classList.add('hot'); });
+    btn.addEventListener('pointerleave', () => { hoverTarget = 0.75; document.body.classList.remove('hot'); });
+    btn.addEventListener('pointerdown', e => {
+      pressTarget = 1.0;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX - rect.left - rect.width * 0.5) * window.devicePixelRatio;
+      const y = (rect.height * 0.5 - (e.clientY - rect.top)) * window.devicePixelRatio;
+      addRipple(x, y);
+    });
+    window.addEventListener('pointerup', () => { pressTarget = 0.0; });
+
+    let lastT = performance.now();
+    addRipple(0, 0);
+
+    function frame(now) {
+      const dt = (now - lastT) * 0.001;
+      lastT = now;
+
+      hover += (hoverTarget - hover) * 0.1;
+      press += (pressTarget - press) * 0.2;
+
+      for (let r of ripples) {
+        if (r.t >= 0) r.t += dt;
+      }
+
+      // Pass 1: Render Map
+      gl.bindFramebuffer(gl.FRAMEBUFFER, mapFbo);
+      gl.viewport(0, 0, width, height);
+      gl.useProgram(pMap);
+
+      gl.uniform2f(gl.getUniformLocation(pMap, 'uRes'), width, height);
+      gl.uniform2f(gl.getUniformLocation(pMap, 'uButtonSize'), 280 * window.devicePixelRatio, 56 * window.devicePixelRatio);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uRadius'), 28 * window.devicePixelRatio);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uTime'), now * 0.001);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uHover'), hover);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uPress'), press);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uScale'), 3.2);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uSquish'), 0.85);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uSpeed'), 1.4);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uBias'), 0.15);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uDistort'), 0.65);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uWellDepth'), 0.5);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uWellRadius'), 80.0 * window.devicePixelRatio);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uRipFreq'), 0.12);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uRipSpeed'), 180.0);
+      gl.uniform1f(gl.getUniformLocation(pMap, 'uRipDecay'), 3.0);
+
+      gl.uniform4f(gl.getUniformLocation(pMap, 'uRipple0'), ripples[0].x, ripples[0].y, ripples[0].t, ripples[0].w);
+      gl.uniform4f(gl.getUniformLocation(pMap, 'uRipple1'), ripples[1].x, ripples[1].y, ripples[1].t, ripples[1].w);
+      gl.uniform4f(gl.getUniformLocation(pMap, 'uRipple2'), ripples[2].x, ripples[2].y, ripples[2].t, ripples[2].w);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(0);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      // Pass 2: Composite Final Dispersion to Screen
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, width, height);
+      gl.useProgram(pComp);
+
+      gl.uniform2f(gl.getUniformLocation(pComp, 'uRes'), width, height);
+      gl.uniform1f(gl.getUniformLocation(pComp, 'uTime'), now * 0.001);
+      gl.uniform1f(gl.getUniformLocation(pComp, 'uBorder'), 2.0 * window.devicePixelRatio);
+      gl.uniform1f(gl.getUniformLocation(pComp, 'uGlowIn'), 0.7);
+      gl.uniform1f(gl.getUniformLocation(pComp, 'uPunch'), 0.85);
+      gl.uniform1f(gl.getUniformLocation(pComp, 'uDim'), 0.0);
+
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, mapTex);
+      gl.uniform1i(gl.getUniformLocation(pComp, 'uMap'), 0);
+
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+  </script>
+</body>
+</html>

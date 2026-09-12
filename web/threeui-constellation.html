@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumira - ThreeUI Synaptic Constellation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-void: #070914;
+      --bg-surface: #0E1222;
+      --text-main: #F2F4FB;
+      --text-muted: #9AA3BC;
+      --gold-accent: #E6C879;
+      --cyan-spark: #7FC4FF;
+      --border-subtle: #1C2236;
+    }
+
+    body {
+      background-color: var(--bg-void);
+      color: var(--text-main);
+      font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Depth Glow & Radial Field */
+    .radial-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at center, #0E1222 0%, #070914 100%);
+    }
+
+    .canvas-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    #constellationCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .depth-gradient {
+      position: fixed;
+      inset: 0;
+      z-index: 2;
+      pointer-events: none;
+      background: linear-gradient(to bottom, transparent, rgba(14, 18, 34, 0.4) 50%, #070914 100%);
+      opacity: 0.85;
+    }
+
+    /* Masthead Navigation */
+    .masthead {
+      position: relative;
+      z-index: 20;
+      background: rgba(14, 18, 34, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-subtle);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .masthead-inner {
+      max-width: 90rem;
+      margin: 0 auto;
+      padding: 1.25rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 2rem;
+      height: 2rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(14, 18, 34, 0.6);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .brand-icon-dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: var(--gold-accent);
+      box-shadow: 0 0 12px rgba(230, 200, 121, 0.8);
+      animation: pulseDot 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    .brand-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 300;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu { display: none; }
+    }
+
+    .nav-menu a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      transition: color 0.2s ease, text-shadow 0.2s ease;
+    }
+
+    .nav-menu a:hover {
+      color: var(--text-main);
+      text-shadow: 0 0 10px rgba(127, 196, 255, 0.5);
+    }
+
+    .btn-shell-gold {
+      display: inline-block;
+      padding: 1px;
+      border-radius: 9999px;
+      background: linear-gradient(135deg, rgba(230, 200, 121, 0.5) 0%, transparent 100%);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+
+    .btn-shell-gold:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-shell-inner {
+      display: block;
+      background: rgba(14, 18, 34, 0.9);
+      color: var(--gold-accent);
+      padding: 0.65rem 1.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .btn-shell-gold:hover .btn-shell-inner {
+      background: var(--gold-accent);
+      color: var(--bg-void);
+    }
+
+    /* Main Content */
+    .hero-main {
+      flex: 1;
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 5rem 1.5rem 6rem;
+      text-align: center;
+      max-width: 68rem;
+      margin: 0 auto;
+    }
+
+    /* Trust Pill */
+    .trust-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(14, 18, 34, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 0.5rem 1.25rem 0.5rem 0.6rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .avatar-stack {
+      display: flex;
+      margin-right: 0.25rem;
+    }
+
+    .avatar-stack span {
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      border: 2px solid var(--border-subtle);
+      margin-left: -0.5rem;
+      background: #1C2236;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--gold-accent);
+    }
+
+    .avatar-stack span:first-child {
+      margin-left: 0;
+      background: #252D48;
+    }
+
+    .trust-text {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+
+    .trust-stars {
+      color: var(--gold-accent);
+      font-size: 0.85rem;
+    }
+
+    /* Display Typography */
+    .hero-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      font-weight: 200;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      margin-bottom: 1.75rem;
+    }
+
+    .hero-heading strong {
+      font-weight: 600;
+      color: #FFFFFF;
+    }
+
+    .hero-subheading {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 44rem;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+      font-weight: 300;
+    }
+
+    /* Action Row */
+    .action-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.25rem;
+      width: 100%;
+    }
+
+    .btn-primary-solid {
+      background: var(--gold-accent);
+      color: #070914;
+      padding: 1rem 2.5rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(230, 200, 121, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary-solid:hover {
+      background: #F2D58E;
+      transform: translateY(-2px);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 35px rgba(230, 200, 121, 0.55);
+    }
+
+    .btn-glass-subtle {
+      background: rgba(14, 18, 34, 0.75);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 1rem 2.2rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-glass-subtle:hover {
+      border-color: var(--cyan-spark);
+      color: var(--cyan-spark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Interactive Instruction Badge */
+    .interaction-badge {
+      margin-top: 3.5rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--cyan-spark);
+      background: rgba(127, 196, 255, 0.08);
+      border: 1px solid rgba(127, 196, 255, 0.25);
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .interaction-badge span {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--cyan-spark);
+      box-shadow: 0 0 8px var(--cyan-spark);
+      animation: pulseDot 1.5s infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Layer 0: Radial Background -->
+  <div class="radial-bg"></div>
+
+  <!-- Layer 1: Living Synaptic Constellation WebGL/Canvas -->
+  <div class="canvas-container">
+    <canvas id="constellationCanvas"></canvas>
+  </div>
+
+  <!-- Layer 2: Atmospheric Depth Gradient -->
+  <div class="depth-gradient"></div>
+
+  <!-- Layer 3: Masthead Navigation -->
+  <header class="masthead">
+    <div class="masthead-inner">
+      <a href="threeui-showcase.html" class="brand">
+        <div class="brand-icon">
+          <div class="brand-icon-dot"></div>
+        </div>
+        <span class="brand-name">Lumira // ThreeUI</span>
+      </a>
+
+      <nav>
+        <ul class="nav-menu">
+          <li><a href="threeui-showcase.html">✦ ThreeUI Suite</a></li>
+          <li><a href="threeui-liquid-metal.html">Liquid Metal</a></li>
+          <li><a href="apple-scrollytelling-demo.html">Apple Scrollytelling</a></li>
+        </ul>
+      </nav>
+
+      <a href="threeui-showcase.html" class="btn-shell-gold">
+        <span class="btn-shell-inner">Showcase Suite ↗</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Layer 4: Main Content -->
+  <main class="hero-main">
+    <div class="trust-pill">
+      <div class="avatar-stack">
+        <span>01</span>
+        <span>02</span>
+        <span>03</span>
+      </div>
+      <div class="trust-text">
+        <span class="trust-stars">★★★★★</span>
+        <span>ThreeUI Synaptic Constellation Engine</span>
+      </div>
+    </div>
+
+    <h1 class="hero-heading">
+      Uncover hidden patterns<br>with <strong>synaptic analytics</strong>
+    </h1>
+
+    <p class="hero-subheading">
+      Synthesizes multi-dimensional data networks into dynamic interconnected node topologies with pointer gravitational attraction and distance-threshold quantum linkages.
+    </p>
+
+    <div class="action-row">
+      <a href="threeui-liquid-metal.html" class="btn-primary-solid">Explore Liquid Metal ↗</a>
+      <a href="apple-scrollytelling-demo.html" class="btn-glass-subtle">
+        Scrollytelling Demo <span>→</span>
+      </a>
+    </div>
+
+    <div class="interaction-badge">
+      <span></span> Move cursor or touch screen to warp synaptic field
+    </div>
+  </main>
+
+  <script>
+    // -------------------------------------------------------------
+    // THREEUI SYNAPTIC CONSTELLATION LIVING PARTICLE NETWORK
+    // Official DesignCode / MengTo implementation (Pure Vanilla JS)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('constellationCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+
+    const isTouch = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+    const MAX_NODES = isTouch ? 45 : 95;
+    const LINK_DISTANCE = 160;
+
+    let nodes = [];
+    const pointer = { x: -1000, y: -1000 };
+
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize, { passive: true });
+
+    function initNodes() {
+      nodes = [];
+      for (let i = 0; i < MAX_NODES; i++) {
+        nodes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 2.2 + 1.2
+        });
+      }
+    }
+    initNodes();
+
+    // Pointer Gravity Tracker
+    window.addEventListener('mousemove', e => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+    }, { passive: true });
+
+    window.addEventListener('touchmove', e => {
+      if (e.touches.length > 0) {
+        pointer.x = e.touches[0].clientX;
+        pointer.y = e.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    window.addEventListener('mouseleave', () => {
+      pointer.x = -1000;
+      pointer.y = -1000;
+    });
+
+    window.addEventListener('touchend', () => {
+      pointer.x = -1000;
+      pointer.y = -1000;
+    });
+
+    function dist(a, b) {
+      return Math.hypot(a.x - b.x, a.y - b.y);
+    }
+
+    function renderLoop() {
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Draw Synaptic Linkage Lines
+      ctx.strokeStyle = '#E6C879';
+      ctx.lineWidth = 0.85;
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const d = dist(nodes[i], nodes[j]);
+          if (d < LINK_DISTANCE) {
+            const alpha = (1 - d / LINK_DISTANCE);
+            ctx.globalAlpha = alpha * 0.45;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // 2. Animate and Draw Nodes
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        node.x += node.vx;
+        node.y += node.vy;
+
+        // Bounce off canvas boundaries
+        if (node.x < 0 || node.x > width) node.vx *= -1;
+        if (node.y < 0 || node.y > height) node.vy *= -1;
+
+        // Pointer Gravity Attraction
+        const pd = dist(node, pointer);
+        if (pd < 220 && pd > 0) {
+          node.x -= (node.x - pointer.x) * 0.008;
+          node.y -= (node.y - pointer.y) * 0.008;
+        }
+
+        // Draw Gold Core + Soft Radiant Aura
+        const pulse = 0.75 + Math.sin(Date.now() * 0.002 + node.x * 0.01) * 0.25;
+        
+        // Aura
+        ctx.fillStyle = '#E6C879';
+        ctx.globalAlpha = pulse * 0.25;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius * 2.8, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Core
+        ctx.globalAlpha = pulse * 0.9;
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      requestAnimationFrame(renderLoop);
+    }
+    requestAnimationFrame(renderLoop);
+  </script>
+</body>
+</html>

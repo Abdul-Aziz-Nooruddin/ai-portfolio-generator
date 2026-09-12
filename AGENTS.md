@@ -41,6 +41,7 @@ You MUST strictly consult and apply the following three authoritative design and
      - **`three` & `@react-three/fiber` / `@react-three/drei`**: High-performance spatial 3D viewports, WebGL/WebGPU particles, and interactive 3D model loaders.
      - **`postprocessing` & `@react-three/postprocessing`**: Cinematic shader passes including selective bloom on glowing runes/neon, vignette, and chromatic aberration.
      - **`@theatre/core` & `@theatre/r3f`**: Scrollytelling choreography binding camera fly-throughs, lighting changes, and 3D rotations to user scroll progress.
+     - **`ThreeUI (@designcodeio/threeui)`**: MengTo's WebGL & Three.js UI shader library (`https://github.com/MengTo/threeui`). Features production-ready Liquid Metal chromatic shader buttons, Synaptic Constellation living node linkages, Holographic Spark Badges, and 3D Warp Portal background fields.
    - Always implement reduced-motion fallbacks (`prefers-reduced-motion: reduce`) by disabling Lenis smooth wheel and zeroing out rotational transforms.
 
 7. **Always-On Engineering Principle: Ponytail (Lazy Senior Dev Mode)**:
@@ -55,6 +56,11 @@ You MUST strictly consult and apply the following three authoritative design and
    - **Root Cause Fixes**: Fix the shared root function once across all callers rather than patching surface symptoms.
    - **No Unrequested Abstractions**: No factories for one product, no interfaces for one implementation, no boilerplate nobody asked for. Shortest working diff wins.
    - **Leave a Check**: Non-trivial logic must leave ONE runnable check behind (self-check assert or small test file).
+
+8. **Strict Port Constraint (STRICT ZERO PORT 3000 POLICY)**:
+   - Under **NO circumstances** should port 3000 ever be used, bound, tested, configured, or suggested in commands, URLs, terminal outputs, or documentation.
+   - Port 3000 is strictly reserved for another external project.
+   - Always respect the `.env` configuration (`PORT=5050`), or dynamic fallback ports (`5051+`, `10000+`).
 
 ## Standard Operating Procedure for Template Additions
 
@@ -271,6 +277,27 @@ Antigravity models must draw from this standardized catalog when generating, mat
 - **Color Palette**: Warm Sand `#F7F4EB`, Pine Bark `#3E2723`, Sage Leaf `#558B2F`, Sun Amber `#FF8F00`.
 - **Typography**: Display `Playfair Display`, Body `Plus Jakarta Sans`, Mono `Courier Prime`.
 - **Recommended For**: Herbalists, Botanical Researchers, Traditional Craft Makers.
+
+### 27. ThreeUI Synaptic Constellation (`threeui-constellation`)
+- **Aesthetic DNA**: High-density volumetric neural constellation, living particle nodes with pointer gravitational attraction and distance-threshold quantum linkages.
+- **Color Palette**: Celestial Void `#070914`, Celestial Gold `#E6C879`, Starlight Cyan `#7FC4FF`, Surface Slate `#0E1222`.
+- **Typography**: Display `Outfit`, Body `Space Grotesk`, Mono `Space Mono`.
+- **Key Features**: ThreeUI Synaptic Constellation living particle network, status indicator, interactive project vault, cognitive capability tree, zero lag.
+- **Recommended For**: Neural Systems Architects, AI Research Scientists, Distributed Systems Engineers, Quantum Computing Researchers.
+
+### 28. ThreeUI Liquid Metal Dispersion (`threeui-liquid-metal`)
+- **Aesthetic DNA**: Computational luxury editorial, laminar liquid metal dispersion GLSL shader with rainbow spectral plateau fringing and multi-pass ripple wave dynamics.
+- **Color Palette**: Obsidian Luxury `#060709`, Liquid Chrome `#E2E8F0`, Horizon Amber `#F59E0B`, Spectral Violet `#A855F7`.
+- **Typography**: Display `Playfair Display`, Body `Instrument Serif` & `Inter`, Mono `Share Tech Mono`.
+- **Key Features**: ThreeUI Liquid Metal dispersion button stage with real-time GLSL evaluation, ambient chrome pool, curated artifact vault.
+- **Recommended For**: Principal Design Technologists, Creative Directors, Shader Engineers, Luxury Brand Technologists.
+
+### 29. ThreeUI Quantum Matrix (`threeui-matrix`)
+- **Aesthetic DNA**: High-frequency cryptographic protocol substrate, WebGL procedural lightning shader with reactive electrical arc vectors, coordinate telemetry, and sub-millisecond state runtimes.
+- **Color Palette**: Carbon Substrate `#040507`, Electric Cyan `#5DCDE0`, Radiant Magenta `#D352C4`, Matrix Mint `#22C55E`.
+- **Typography**: Display `Orbitron` & `Chakra Petch`, Body `IBM Plex Sans`, Mono `JetBrains Mono`.
+- **Key Features**: ThreeUI Quantum Matrix WebGL procedural lightning shader, real-time coordinate tracking, zero-GC memory architecture manifesto, verified systems registry.
+- **Recommended For**: Distributed Systems Architects, Protocol Engineers, Cryptographers, Web3 Core Developers.
 
 ---
 
