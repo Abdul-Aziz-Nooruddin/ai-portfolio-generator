@@ -54,8 +54,14 @@
     frames.push(img);
   }
 
-  // 2. Aspect-Ratio Cover Frame Renderer (High GPU Scanout)
-  function renderFrame(index, force = false) {
+  // 2. Aspect-Ratio Cover Frame Renderer (High GPU Scanout with Autonomous Drift & Parallax)
+  let idleDriftX = 0;
+  let idleDriftY = 0;
+  let idleScale = 1.025;
+  let prevShiftX = 0;
+  let prevShiftY = 0;
+
+  function renderFrame(index, force = false, offsetX = 0, offsetY = 0, zoom = 1.025) {
     if (index === activeFrameIdx && !force) return;
 
     const img = frames[index];
@@ -71,17 +77,20 @@
     const imgAspect = imgW / imgH;
     const canvasAspect = width / height;
 
-    let drawW, drawH;
+    let baseW, baseH;
     if (canvasAspect > imgAspect) {
-      drawW = width;
-      drawH = drawW / imgAspect;
+      baseW = width;
+      baseH = baseW / imgAspect;
     } else {
-      drawH = height;
-      drawW = drawH * imgAspect;
+      baseH = height;
+      baseW = baseH * imgAspect;
     }
 
-    const drawX = (width - drawW) * 0.5;
-    const drawY = (height - drawH) * 0.5;
+    const drawW = baseW * zoom;
+    const drawH = baseH * zoom;
+
+    const drawX = (width - drawW) * 0.5 + offsetX;
+    const drawY = (height - drawH) * 0.5 + offsetY;
 
     seqCtx.drawImage(imgToDraw, drawX, drawY, drawW, drawH);
     isCanvasReady = true;
@@ -221,8 +230,10 @@
   window.addEventListener('scroll', updateScrollProgress, { passive: true });
   updateScrollProgress();
 
-  // 6. Master 60fps Animation Loop with Silky Lerp Scrubbing
+  // 6. Master 60fps Animation Loop with Silky Lerp Scrubbing & Autonomous Idle Drift
   function tick() {
+    const now = performance.now();
+
     // Mouse Parallax Smoothing
     mouseParallaxX += (mouseX * 15 - mouseParallaxX) * 0.08;
     mouseParallaxY += (mouseY * 15 - mouseParallaxY) * 0.08;
@@ -234,9 +245,30 @@
       currentProgress = targetProgress;
     }
 
+    // Autonomous Idle Camera Drift & Volumetric Breathing (Active near hero stage when idle)
+    const driftClock = now * 0.0008;
+    const isHeroActive = currentProgress < 0.28;
+    const targetDriftX = (!isReducedMotion && isHeroActive) ? Math.sin(driftClock * 0.75) * 12 : 0;
+    const targetDriftY = (!isReducedMotion && isHeroActive) ? Math.cos(driftClock * 0.55) * 8 : 0;
+    const targetZoom = (!isReducedMotion && isHeroActive) ? (1.035 + Math.sin(driftClock * 0.45) * 0.012) : 1.025;
+
+    idleDriftX += (targetDriftX - idleDriftX) * 0.04;
+    idleDriftY += (targetDriftY - idleDriftY) * 0.04;
+    idleScale += (targetZoom - idleScale) * 0.04;
+
+    const totalOffsetX = idleDriftX + mouseParallaxX;
+    const totalOffsetY = idleDriftY + mouseParallaxY;
+
     // Scrub Frame across 80 Frames
     const targetIdx = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(currentProgress * (TOTAL_FRAMES - 1))));
-    renderFrame(targetIdx);
+    
+    // Smoothly redraw when frame changes or camera autonomously drifts
+    const offsetMoved = Math.abs(totalOffsetX - prevShiftX) > 0.05 || Math.abs(totalOffsetY - prevShiftY) > 0.05;
+    if (targetIdx !== activeFrameIdx || offsetMoved || !isCanvasReady) {
+      prevShiftX = totalOffsetX;
+      prevShiftY = totalOffsetY;
+      renderFrame(targetIdx, true, totalOffsetX, totalOffsetY, idleScale);
+    }
 
     // Update Telemetry HUD
     const pct = (currentProgress * 100).toFixed(1);
@@ -339,6 +371,38 @@
         starCtx.restore();
       }
       starCtx.globalAlpha = 1.0;
+
+      // Autonomous Celestial Sparks & Meteors (Fires hands-free even when idle)
+      if (!isReducedMotion) {
+        // Ambient stardust blossom every ~2.5 seconds
+        if (Math.random() < 0.022 && sparks.length < 50) {
+          const sx = Math.random() * (width || window.innerWidth);
+          const sy = Math.random() * ((height || window.innerHeight) * 0.75);
+          spawnSpark(sx, sy, Math.random() > 0.65 ? 2 : 1, false);
+        }
+
+        // High-speed diagonal shooting star across upper atmosphere every ~5-8 seconds
+        if (Math.random() < 0.005 && sparks.length < 50) {
+          const meteorOriginX = Math.random() * (width * 0.65);
+          const meteorOriginY = Math.random() * (height * 0.3);
+          const meteorSpeed = 3.6 + Math.random() * 2.2;
+          const meteorAngle = Math.PI * 0.22 + (Math.random() - 0.5) * 0.15;
+          const meteorColor = particleColors[Math.floor(Math.random() * particleColors.length)];
+
+          for (let m = 0; m < 5; m++) {
+            sparks.push({
+              x: meteorOriginX - m * 6 * Math.cos(meteorAngle),
+              y: meteorOriginY - m * 6 * Math.sin(meteorAngle),
+              vx: Math.cos(meteorAngle) * meteorSpeed,
+              vy: Math.sin(meteorAngle) * meteorSpeed,
+              size: Math.max(0.6, 2.4 - m * 0.35),
+              alpha: 1.0 - m * 0.12,
+              decay: 0.024 + Math.random() * 0.012,
+              color: meteorColor
+            });
+          }
+        }
+      }
     }
 
     requestAnimationFrame(tick);
