@@ -1,29 +1,21 @@
 /**
- * MyFolio Studio — Apple-Style Scrollytelling Engine & Celestial Particle Atmosphere
- * 80-Frame Hardware-Accelerated Canvas Scrubbing • Celestial Sanctuary to Crystalline Realm
- * Ultra-smooth Lerp Interpolation • Dynamic Atmospheric Stardust • Live Telemetry HUD
+ * MyFolio Studio — Spatial Master Real-Time Universe Engine & Celestial Atmosphere
+ * Ultra-High-Definition Master Visuals (2752x1536 Retina) • Zero-Gravity Drift
+ * Dynamic Mouse Parallax & Deep Scroll Gliding • Volumetric Stardust & Interactive Sparks
  */
-(function initCelestialScrollyEngine() {
+(function initCelestialMasterEngine() {
   const sequenceCanvas = document.getElementById('chronoSequenceCanvas');
   const stardustCanvas = document.getElementById('chronoStardustCanvas');
   if (!sequenceCanvas) return;
 
-  // alpha: false eliminates compositing overhead for 60fps / 120fps GPU fill rate
+  // High fill-rate GPU contexts
   const seqCtx = sequenceCanvas.getContext('2d', { alpha: false });
   const starCtx = stardustCanvas ? stardustCanvas.getContext('2d', { alpha: true }) : null;
 
-  const TOTAL_FRAMES = 80;
-  const frames = [];
-  let loadedFrames = 0;
-  let activeFrameIdx = -1;
-  let isCanvasReady = false;
-
-  // Telemetry HUD Elements
-  const scrollHudProgress = document.getElementById('chronoHudProgress');
-  const scrollHudPhase = document.getElementById('chronoHudPhase');
-  const scrollIndicator = document.getElementById('chronoScrollIndicator');
+  // DOM Overlay Elements
   const contentLayer = document.getElementById('chronoHeroContent');
   const heroStage = document.getElementById('chronoHeroStage');
+  const scrollIndicator = document.getElementById('chronoScrollIndicator');
 
   let width = 0;
   let height = 0;
@@ -38,43 +30,34 @@
   window.stopAstronautWave = function () {};
   window.triggerAstronautWave = function () {};
 
-  // 1. High-Performance Frame Preloader with Progressive Off-Thread Decoding
-  for (let i = 1; i <= TOTAL_FRAMES; i++) {
-    const img = new Image();
-    const pad = String(i).padStart(3, '0');
-    img.src = `/assets/scrolly-floating-islands-v3/frame_${pad}.jpg`;
-    img.onload = () => {
-      loadedFrames++;
-      if ('decode' in img) {
-        img.decode().catch(() => {});
-      }
-      if (i === 1 && activeFrameIdx === -1) {
-        renderFrame(0, true);
-      }
-    };
-    frames.push(img);
-  }
+  // 1. High-Resolution Master Artwork Loader
+  const masterImage = new Image();
+  let isMasterLoaded = false;
+  masterImage.src = '/assets/celestial-master-retina.jpg';
 
-  // 2. Aspect-Ratio Cover Frame Renderer (High GPU Scanout with Autonomous Drift & Parallax)
+  masterImage.onload = () => {
+    isMasterLoaded = true;
+    if ('decode' in masterImage) {
+      masterImage.decode().catch(() => {}).then(() => {
+        renderBackground();
+      });
+    } else {
+      renderBackground();
+    }
+  };
+
+  // 2. Spatial Camera State & Drift Vectors
   let idleDriftX = 0;
   let idleDriftY = 0;
-  let idleScale = 1.025;
-  let prevShiftX = 0;
-  let prevShiftY = 0;
+  let idleScale = 1.04;
+  let mouseParallaxX = 0;
+  let mouseParallaxY = 0;
 
-  function renderFrame(index, force = false, offsetX = 0, offsetY = 0, zoom = 1.025) {
-    if (index === activeFrameIdx && !force) return;
+  function renderBackground(offsetX = 0, offsetY = 0, zoom = 1.04) {
+    if (!isMasterLoaded || !width || !height) return;
 
-    const img = frames[index];
-    const imgToDraw = (img && img.complete && img.naturalWidth > 0) 
-      ? img 
-      : (frames[0] && frames[0].complete && frames[0].naturalWidth > 0 ? frames[0] : null);
-
-    if (!imgToDraw || !width || !height) return;
-    activeFrameIdx = index;
-
-    const imgW = imgToDraw.naturalWidth;
-    const imgH = imgToDraw.naturalHeight;
+    const imgW = masterImage.naturalWidth || 2752;
+    const imgH = masterImage.naturalHeight || 1536;
     const imgAspect = imgW / imgH;
     const canvasAspect = width / height;
 
@@ -93,13 +76,11 @@
     const drawX = (width - drawW) * 0.5 + offsetX;
     const drawY = (height - drawH) * 0.5 + offsetY;
 
-    // Scale canvas context to device pixel ratio for native Retina rendering
     seqCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
     seqCtx.imageSmoothingQuality = 'high';
     seqCtx.imageSmoothingEnabled = true;
 
-    seqCtx.drawImage(imgToDraw, drawX, drawY, drawW, drawH);
-    isCanvasReady = true;
+    seqCtx.drawImage(masterImage, drawX, drawY, drawW, drawH);
   }
 
   // 3. Dynamic Resize Handler
@@ -110,7 +91,6 @@
     const curW = window.innerWidth;
     const curH = window.innerHeight;
 
-    // On mobile touch devices, ignore small height fluctuations caused by address bar collapse
     if (isTouchDevice && lastResizeW === curW && Math.abs(lastResizeH - curH) < 140) {
       return;
     }
@@ -121,7 +101,7 @@
     width = curW;
     height = curH;
     dpr = Math.min(window.devicePixelRatio || 1, 2);
-    
+
     sequenceCanvas.width = Math.round(width * dpr);
     sequenceCanvas.height = Math.round(height * dpr);
     sequenceCanvas.style.width = width + 'px';
@@ -142,25 +122,21 @@
       }
     }
 
-    if (activeFrameIdx >= 0) {
-      renderFrame(activeFrameIdx, true);
-    } else if (frames[0] && frames[0].complete) {
-      renderFrame(0, true);
-    }
+    renderBackground(idleDriftX + mouseParallaxX, idleDriftY + mouseParallaxY, idleScale);
   }
 
   window.addEventListener('resize', resizeCanvases, { passive: true });
   resizeCanvases();
 
-  // 4. Enhanced Volumetric Celestial Particles & Interactive Cursor Sparks
-  const PARTICLE_COUNT = 85;
+  // 4. Volumetric Stardust Particles & Interactive Cursor Sparks
+  const PARTICLE_COUNT = 90;
   const particles = [];
   const particleColors = [
-    'rgba(245, 166, 35, 0.85)',   // Celestial Solar Gold
-    'rgba(56, 189, 248, 0.90)',   // Bioluminescent Cyan
-    'rgba(0, 240, 255, 0.95)',    // Electric Neon Aqua
-    'rgba(255, 255, 255, 0.90)',  // Diamond White
-    'rgba(192, 132, 252, 0.75)'   // Crystalline Violet
+    'rgba(245, 166, 35, 0.90)',   // Celestial Solar Gold
+    'rgba(56, 189, 248, 0.92)',   // Bioluminescent Cyan
+    'rgba(0, 240, 255, 0.95)',    // Electric Aqua
+    'rgba(255, 255, 255, 0.95)',  // Diamond White
+    'rgba(192, 132, 252, 0.80)'   // Crystalline Violet
   ];
 
   for (let p = 0; p < PARTICLE_COUNT; p++) {
@@ -185,8 +161,6 @@
   let lastSparkY = -100;
   let mouseX = 0;
   let mouseY = 0;
-  let mouseParallaxX = 0;
-  let mouseParallaxY = 0;
 
   function spawnSpark(x, y, count = 1, isBurst = false) {
     if (isReducedMotion) return;
@@ -213,7 +187,6 @@
     mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
     mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
 
-    // Emit trailing stardust sparks on cursor move
     const dist = Math.hypot(e.clientX - lastSparkX, e.clientY - lastSparkY);
     if (dist > 18) {
       lastSparkX = e.clientX;
@@ -226,13 +199,12 @@
     spawnSpark(e.clientX, e.clientY, 14, true);
   }, { passive: true });
 
-  // 5. Scroll Progression Calculation
+  // 5. Scroll Progression Calculation & Hero Fade
   function updateScrollProgress() {
     const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     targetProgress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
 
-    // Hero Content Fade & Subtle Parallax
     if (contentLayer && heroStage) {
       const heroH = heroStage.offsetHeight || window.innerHeight;
       const heroRatio = Math.min(scrollY / (heroH * 0.75), 1);
@@ -249,71 +221,47 @@
   window.addEventListener('scroll', updateScrollProgress, { passive: true });
   updateScrollProgress();
 
-  // 6. Master 60fps Animation Loop with Silky Lerp Scrubbing & Autonomous Idle Drift
+  // 6. Master 60fps Animation Loop with Silky Spatial Lerp & Autonomous Levitation
   function tick() {
     const now = performance.now();
 
-    // Mouse Parallax Smoothing
-    mouseParallaxX += (mouseX * 15 - mouseParallaxX) * 0.08;
-    mouseParallaxY += (mouseY * 15 - mouseParallaxY) * 0.08;
+    // Smooth Mouse Parallax
+    mouseParallaxX += (mouseX * 18 - mouseParallaxX) * 0.06;
+    mouseParallaxY += (mouseY * 18 - mouseParallaxY) * 0.06;
 
-    // Progress Interpolation
-    const lerpFactor = isReducedMotion ? 1 : 0.22;
+    // Smooth Scroll Progress Lerp
+    const lerpFactor = isReducedMotion ? 1 : 0.08;
     currentProgress += (targetProgress - currentProgress) * lerpFactor;
     if (Math.abs(targetProgress - currentProgress) < 0.0001) {
       currentProgress = targetProgress;
     }
 
-    // Autonomous Idle Camera Drift & Volumetric Breathing (Active near hero stage when idle)
-    const driftClock = now * 0.0008;
-    const isHeroActive = currentProgress < 0.28;
-    const targetDriftX = (!isReducedMotion && isHeroActive) ? Math.sin(driftClock * 0.75) * 12 : 0;
-    const targetDriftY = (!isReducedMotion && isHeroActive) ? Math.cos(driftClock * 0.55) * 8 : 0;
-    const targetZoom = (!isReducedMotion && isHeroActive) ? (1.035 + Math.sin(driftClock * 0.45) * 0.012) : 1.025;
+    // Autonomous Zero-Gravity Levitation & Breathing
+    const driftClock = now * 0.00065;
+    const targetDriftX = !isReducedMotion ? Math.sin(driftClock * 0.75) * 14 : 0;
+    const targetDriftY = !isReducedMotion ? Math.cos(driftClock * 0.55) * 10 : 0;
+    const targetZoom = !isReducedMotion ? (1.04 + Math.sin(driftClock * 0.45) * 0.015 + currentProgress * 0.09) : 1.04;
 
     idleDriftX += (targetDriftX - idleDriftX) * 0.04;
     idleDriftY += (targetDriftY - idleDriftY) * 0.04;
     idleScale += (targetZoom - idleScale) * 0.04;
 
+    // Scroll vertical gliding translation
+    const scrollOffsetY = currentProgress * (height * 0.12);
+
     const totalOffsetX = idleDriftX + mouseParallaxX;
-    const totalOffsetY = idleDriftY + mouseParallaxY;
+    const totalOffsetY = idleDriftY + mouseParallaxY - scrollOffsetY;
 
-    // Scrub Frame across 80 Frames
-    const targetIdx = Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.floor(currentProgress * (TOTAL_FRAMES - 1))));
-    
-    // Smoothly redraw when frame changes or camera autonomously drifts
-    const offsetMoved = Math.abs(totalOffsetX - prevShiftX) > 0.05 || Math.abs(totalOffsetY - prevShiftY) > 0.05;
-    if (targetIdx !== activeFrameIdx || offsetMoved || !isCanvasReady) {
-      prevShiftX = totalOffsetX;
-      prevShiftY = totalOffsetY;
-      renderFrame(targetIdx, true, totalOffsetX, totalOffsetY, idleScale);
-    }
+    renderBackground(totalOffsetX, totalOffsetY, idleScale);
 
-    // Update Telemetry HUD
-    const pct = (currentProgress * 100).toFixed(1);
-    if (scrollHudProgress) {
-      scrollHudProgress.style.width = `${pct}%`;
-    }
-    if (scrollHudPhase) {
-      let phaseName = 'CELESTIAL SANCTUARY';
-      if (currentProgress < 0.38) {
-        phaseName = 'CELESTIAL SANCTUARY';
-      } else if (currentProgress < 0.68) {
-        phaseName = 'CLOUD OCEAN DESCENT';
-      } else {
-        phaseName = 'CRYSTALLINE REALM';
-      }
-      scrollHudPhase.textContent = `${phaseName} // ${Math.round(pct)}%`;
-    }
-
-    // Render Atmospheric Floating Particles & Constellation Web
+    // 7. Render Floating Stardust & Constellations
     if (starCtx && width && height) {
       starCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       starCtx.clearRect(0, 0, width, height);
 
       const scrollVelocityShift = (targetProgress - currentProgress) * 80;
 
-      // Draw Living Constellation Links between nearby stars
+      // Draw Living Constellation Links
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         for (let j = i + 1; j < PARTICLE_COUNT; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -332,11 +280,10 @@
         }
       }
 
-      // Draw Floating Stardust Particles with Interactive Mouse Deflection
+      // Draw Floating Stardust with Mouse Repulsion
       for (let i = 0; i < PARTICLE_COUNT; i++) {
         const pt = particles[i];
 
-        // Mouse gentle repulsion/attraction field
         if (rawMouseX > 0 && rawMouseY > 0) {
           const mdx = pt.x - rawMouseX;
           const mdy = pt.y - rawMouseY;
@@ -352,7 +299,6 @@
         pt.y += pt.vy - scrollVelocityShift * 0.1;
         pt.twinklePhase += pt.twinkleSpeed;
 
-        // Wrap around viewport edges
         if (pt.y < -10) pt.y = height + 10;
         if (pt.y > height + 10) pt.y = -10;
         if (pt.x < -10) pt.x = width + 10;
@@ -367,7 +313,7 @@
         starCtx.fill();
       }
 
-      // Draw Interactive Trailing Sparks with Radiant Bloom Glow
+      // Draw Trailing Sparks
       for (let s = sparks.length - 1; s >= 0; s--) {
         const sp = sparks[s];
         sp.x += sp.vx;
@@ -392,36 +338,11 @@
       }
       starCtx.globalAlpha = 1.0;
 
-      // Autonomous Celestial Sparks & Meteors (Fires hands-free even when idle)
-      if (!isReducedMotion) {
-        // Ambient stardust blossom every ~2.5 seconds
-        if (Math.random() < 0.022 && sparks.length < 50) {
-          const sx = Math.random() * (width || window.innerWidth);
-          const sy = Math.random() * ((height || window.innerHeight) * 0.75);
-          spawnSpark(sx, sy, Math.random() > 0.65 ? 2 : 1, false);
-        }
-
-        // High-speed diagonal shooting star across upper atmosphere every ~5-8 seconds
-        if (Math.random() < 0.005 && sparks.length < 50) {
-          const meteorOriginX = Math.random() * (width * 0.65);
-          const meteorOriginY = Math.random() * (height * 0.3);
-          const meteorSpeed = 3.6 + Math.random() * 2.2;
-          const meteorAngle = Math.PI * 0.22 + (Math.random() - 0.5) * 0.15;
-          const meteorColor = particleColors[Math.floor(Math.random() * particleColors.length)];
-
-          for (let m = 0; m < 5; m++) {
-            sparks.push({
-              x: meteorOriginX - m * 6 * Math.cos(meteorAngle),
-              y: meteorOriginY - m * 6 * Math.sin(meteorAngle),
-              vx: Math.cos(meteorAngle) * meteorSpeed,
-              vy: Math.sin(meteorAngle) * meteorSpeed,
-              size: Math.max(0.6, 2.4 - m * 0.35),
-              alpha: 1.0 - m * 0.12,
-              decay: 0.024 + Math.random() * 0.012,
-              color: meteorColor
-            });
-          }
-        }
+      // Ambient Stardust Blossom
+      if (!isReducedMotion && Math.random() < 0.022 && sparks.length < 50) {
+        const sx = Math.random() * (width || window.innerWidth);
+        const sy = Math.random() * ((height || window.innerHeight) * 0.75);
+        spawnSpark(sx, sy, 2, false);
       }
     }
 
@@ -429,11 +350,4 @@
   }
 
   requestAnimationFrame(tick);
-
-  // Expose global debug / control handle
-  window.__celestialScrollyEngine = {
-    getProgress: () => currentProgress,
-    getLoadedFrames: () => loadedFrames,
-    totalFrames: TOTAL_FRAMES
-  };
 })();
