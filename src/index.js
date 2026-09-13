@@ -511,12 +511,23 @@ app.post(
   }
 );
 
-// Template Catalog Endpoint: Exposes all 5 visual portfolio templates
+// Template Catalog Endpoint: Exposes visual portfolio templates present in Web Studio
 app.get('/api/web/templates', (req, res) => {
+  const { TemplateRegistry } = require('./templates/template-registry');
+  const studioTemplates = TemplateRegistry.getStudioTemplates();
+  res.json({
+    success: true,
+    count: studioTemplates.length,
+    templates: studioTemplates
+  });
+});
+
+// Dynamic Template Count Endpoint: Fast count of templates present in Web Studio
+app.get('/api/templates/count', (req, res) => {
   const { TemplateRegistry } = require('./templates/template-registry');
   res.json({
     success: true,
-    templates: TemplateRegistry.getAllTemplates()
+    count: TemplateRegistry.getStudioTemplateCount()
   });
 });
 
@@ -848,9 +859,10 @@ app.post('/api/portfolio/:siteId/export', async (req, res) => {
   }
 });
 
-// 9. Demo & Sample Portfolios Endpoint
+// 9. Demo & Sample Portfolios Endpoint: Synced with templates present in Web Studio
 app.get('/api/demo/samples', (req, res) => {
-  const templates = TemplateRegistry.getAllTemplates();
+  const { TemplateRegistry } = require('./templates/template-registry');
+  const templates = TemplateRegistry.getStudioTemplates();
   const samples = templates.map(t => ({
     id: t.id,
     name: t.name,
@@ -860,7 +872,7 @@ app.get('/api/demo/samples', (req, res) => {
     techStack: t.recommendedFor,
     previewUrl: `/p/${t.id}`
   }));
-  res.json({ success: true, samples });
+  res.json({ success: true, count: samples.length, samples });
 });
 
 // 10. Admin Observability & Health Telemetry Endpoints

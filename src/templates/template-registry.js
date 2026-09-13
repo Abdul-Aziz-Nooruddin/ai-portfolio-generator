@@ -90,6 +90,44 @@ class TemplateRegistry {
     return this.templates[id] || this.templates[this.defaultTemplateId];
   }
 
+  // Active curated visual templates present in Web Studio
+  static studioTemplateIds = [
+    'threeui-shelf',
+    'threeui-sylva',
+    'threeui-kage',
+    'threeui-constellation',
+    'threeui-liquid-metal',
+    'threeui-matrix',
+    'threeui-sketchbook',
+    'threeui-landscape',
+    'spatial-depth-voyage'
+  ];
+
+  /**
+   * Get active templates curated for the Web Studio
+   */
+  static getStudioTemplates() {
+    return this.studioTemplateIds
+      .map(id => this.templates[id])
+      .filter(Boolean)
+      .map(t => ({
+        id: t.id,
+        name: t.name,
+        category: t.category,
+        description: t.description,
+        thumbnail: t.thumbnail,
+        palette: t.palette,
+        recommendedFor: t.recommendedFor
+      }));
+  }
+
+  /**
+   * Get count of active Web Studio templates
+   */
+  static getStudioTemplateCount() {
+    return this.studioTemplateIds.filter(id => Boolean(this.templates[id])).length;
+  }
+
   /**
    * Get all registered templates with metadata
    */

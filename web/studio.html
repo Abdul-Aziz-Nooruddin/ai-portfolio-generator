@@ -1733,9 +1733,12 @@
 
         <!-- 4. 3D Visual Universe Selection -->
         <div class="ingest-panel-box">
-          <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;margin:0 0 4px 0;">
-            Choose Your 3D WebGL Visual Universe
-          </h3>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
+            <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;margin:0;">
+              Choose Your 3D WebGL Visual Universe
+            </h3>
+            <span class="badge-universe-count" id="studioUniverseBadgeCount">9 Universes</span>
+          </div>
           <p style="font-size:0.85rem;color:var(--text-muted);margin:0 0 16px 0;">
             Select which bespoke design architecture to render your portfolio with.
           </p>
@@ -3430,6 +3433,13 @@
       updateAllowanceUI();
       checkUserVipStatus();
       renderGeneratedHistoryUI();
+
+      // Sync active visual universe count badge dynamically
+      const studioCards = document.querySelectorAll('.universe-choice-card');
+      const studioBadge = document.getElementById('studioUniverseBadgeCount');
+      if (studioBadge && studioCards.length) {
+        studioBadge.textContent = `${studioCards.length} Universes`;
+      }
 
       let userGhKey = null;
       try {

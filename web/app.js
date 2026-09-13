@@ -1397,10 +1397,41 @@ window.setupDragAndDropZones = setupDragAndDropZones;
 window.processResumeFile = processResumeFile;
 window.processOptionalPhoto = processOptionalPhoto;
 
+async function syncDynamicUniverseCounts() {
+  try {
+    const res = await fetch('/api/web/templates');
+    if (!res.ok) return;
+    const data = await res.json();
+    const count = data?.count || (Array.isArray(data?.templates) ? data.templates.length : null);
+    if (typeof count === 'number' && count > 0) {
+      document.querySelectorAll('.dynamic-universe-count').forEach(el => {
+        el.textContent = count;
+      });
+      const heroBtn = document.getElementById('heroUniversesCountBtn');
+      if (heroBtn) {
+        heroBtn.innerHTML = `Explore <span class="dynamic-universe-count">${count}</span> living universes`;
+      }
+      const bentoBtn = document.getElementById('bentoUniversesCountBtn');
+      if (bentoBtn) {
+        bentoBtn.innerHTML = `Browse all <span class="dynamic-universe-count">${count}</span> living universes`;
+      }
+      const studioBadge = document.getElementById('studioUniverseBadgeCount');
+      if (studioBadge) {
+        studioBadge.textContent = `${count} Universes`;
+      }
+    }
+  } catch (e) {
+    // Keep initial fallback counts
+  }
+}
+
+window.syncDynamicUniverseCounts = syncDynamicUniverseCounts;
+
 // Hydrate on page load
 window.addEventListener('DOMContentLoaded', () => {
   checkUserAuth();
   restorePersistedDraft();
   restorePersistedSession();
   setupDragAndDropZones();
+  syncDynamicUniverseCounts();
 });
