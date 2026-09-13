@@ -35,3 +35,6 @@ This rule governs all UI/UX structure, hierarchy, accessibility, and micro-inter
   - Game Developers & Worldbuilders: `MedievalSharp` + `Cinzel` + `Cormorant Garamond`
 - **Exhaustive Cycles**: Consecutive portfolio generations must rotate across these distinct typography archetypes with zero repetition until all are exhausted.
 
+## 5. Strict Zero Fake Telemetry & Debug Text Rule
+- **NEVER WRITE FAKE TELEMETRY HEADERS**: Under NO circumstances should fake developer telemetry banners, artificial 'LIVE TELEMETRY // ...', fake 'FPS: 60', 'WebGL 2.0', status dots, or developer debug labels be added to cards, hero showcases, or portfolio artifacts.
+- Keep cards, previews, and viewports clean, sleek, and focused on real content, visual depth, and natural interactions without fake tech-jargon headers or artificial metrics.

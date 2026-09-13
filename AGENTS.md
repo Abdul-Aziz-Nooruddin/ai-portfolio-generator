@@ -31,7 +31,7 @@ You MUST strictly consult and apply the following three authoritative design and
 5. **Architectural Decisions for Unmentioned Features**:
    - Apply `/agy-customizations` to ensure all new templates, components, and rules are immediately codified in `AGENTS.md` and `.agents/rules/`.
    - Never leak dummy/hardcoded fallback data into generated portfolios.
-   - Automatically provide interactive micro-affordances: card lift on hover, interactive sonar/detail modals, live telemetry counters, audio toggle triggers, and downloadable resume dossiers.
+   - Automatically provide interactive micro-affordances: card lift on hover, interactive sonar/detail modals, audio toggle triggers, and downloadable resume dossiers.
 
 6. **Mandatory 3D, Motion & Scrollytelling Plugin Suite**:
    - Every template generation and render MUST incorporate the authoritative plugin stack:
@@ -61,6 +61,10 @@ You MUST strictly consult and apply the following three authoritative design and
    - Under **NO circumstances** should port 3000 ever be used, bound, tested, configured, or suggested in commands, URLs, terminal outputs, or documentation.
    - Port 3000 is strictly reserved for another external project.
    - Always respect the `.env` configuration (`PORT=5050`), or dynamic fallback ports (`5051+`, `10000+`).
+
+9. **Strict Zero Fake Telemetry / Tech Debug Text Rule (NEVER WRITE FAKE TELEMETRY HEADERS)**:
+   - Under **NO circumstances** should fake developer telemetry banners, artificial 'LIVE TELEMETRY // ...', fake 'FPS: 60', 'WebGL 2.0', status dots, or developer debug labels be added to cards, hero showcases, or portfolio artifacts.
+   - Keep cards and viewports clean, sleek, and focused on real content, visual depth, and natural interactions without fake tech-jargon headers or artificial metrics.
 
 ## Standard Operating Procedure for Template Additions
 

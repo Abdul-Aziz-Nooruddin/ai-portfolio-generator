@@ -569,58 +569,6 @@
       box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
     }
 
-    .hero-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 20px;
-      background: rgba(255, 255, 255, 0.03);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-    .live-telemetry-badge {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-mono, monospace);
-      font-size: 0.74rem;
-      font-weight: 600;
-      color: #10B981;
-      letter-spacing: 0.04em;
-    }
-
-    .live-status-dot {
-      position: relative;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10B981;
-      box-shadow: 0 0 8px #10B981;
-    }
-
-    .live-status-dot::after {
-      content: '';
-      position: absolute;
-      inset: -4px;
-      border-radius: 50%;
-      border: 1px solid #10B981;
-      animation: radarRing 2.2s infinite cubic-bezier(0.16, 1, 0.3, 1);
-      opacity: 0;
-    }
-
-    @keyframes radarRing {
-      0% { transform: scale(0.6); opacity: 1; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-
-    .telemetry-stats {
-      display: flex;
-      gap: 12px;
-      font-family: var(--font-mono, monospace);
-      font-size: 0.7rem;
-      color: #64748B;
-    }
-
     .hero-card-sheen {
       position: absolute;
       top: 0;
@@ -3925,16 +3873,6 @@
             <!-- Column 2: Interactive 3D Perspective Card (Complete Shelf 3D) -->
             <div class="hero-preview-col">
               <div class="hero-interactive-card idle-floating" id="heroInteractiveCard" onclick="window.location.href='/complete-shelf-3d'">
-                <div class="hero-card-header">
-                  <div class="live-telemetry-badge">
-                    <span class="live-status-dot"></span>
-                    <span>LIVE TELEMETRY // 3D Hardcover Physics</span>
-                  </div>
-                  <div class="telemetry-stats">
-                    <span>FPS: 60</span>
-                    <span>WebGL 2.0</span>
-                  </div>
-                </div>
                 <div class="hero-card-viewport">
                   <div class="hero-card-sheen"></div>
                   <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="eager">
