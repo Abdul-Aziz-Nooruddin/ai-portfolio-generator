@@ -3102,74 +3102,161 @@
       }
     }
 
-    /* Live Spatial Telemetry Corner HUD Pill */
-    .spatial-telemetry-pill {
+    /* Pure Visual Celestial Beacon / Cosmic Gyroscope (Zero Text) */
+    .celestial-gyroscope-beacon {
       position: fixed;
-      bottom: 24px;
-      right: 28px;
-      z-index: 85;
-      display: inline-flex;
+      bottom: 28px;
+      right: 32px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, rgba(15, 23, 42, 0.94), rgba(5, 7, 13, 0.98));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75), 0 0 24px rgba(56, 189, 248, 0.22);
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 8px 18px;
-      border-radius: 9999px;
-      background: rgba(8, 12, 22, 0.88);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(56, 189, 248, 0.32);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 16px rgba(56, 189, 248, 0.16);
-      font-family: var(--font-mono, 'Space Mono', monospace);
-      font-size: 0.72rem;
-      letter-spacing: 0.08em;
-      color: #E2E8F0;
+      z-index: 85;
       pointer-events: auto;
-      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+      cursor: pointer;
+      perspective: 800px;
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
     }
 
-    .spatial-telemetry-pill:hover {
-      border-color: rgba(245, 166, 35, 0.65);
-      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.75), 0 0 24px rgba(245, 166, 35, 0.28);
-      transform: translateY(-2px);
+    .celestial-gyroscope-beacon:hover {
+      transform: scale(1.1) translateY(-2px);
+      border-color: rgba(245, 166, 35, 0.75);
+      box-shadow: 0 14px 40px rgba(0, 0, 0, 0.85), 0 0 32px rgba(245, 166, 35, 0.35), 0 0 18px rgba(56, 189, 248, 0.3);
     }
 
-    .telemetry-live-dot {
-      width: 7px;
-      height: 7px;
+    .celestial-gyroscope-beacon:hover .gyro-ring-outer {
+      animation-duration: 4s;
+    }
+
+    .celestial-gyroscope-beacon:hover .gyro-ring-middle {
+      animation-duration: 3s;
+    }
+
+    .celestial-gyroscope-beacon:hover .gyro-ring-inner {
+      animation-duration: 2s;
+    }
+
+    .celestial-gyroscope-beacon:hover .gyro-core-pulsar {
+      transform: scale(1.25);
+      box-shadow: 0 0 16px #38BDF8, 0 0 28px #F5A623;
+    }
+
+    /* Ambient Radiance Aura */
+    .gyro-ambient-aura {
+      position: absolute;
+      inset: -12px;
       border-radius: 50%;
-      background: #10B981;
-      box-shadow: 0 0 8px #10B981, 0 0 14px #10B981;
-      animation: telemetryDotPulse 2.2s infinite ease-in-out;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(245, 166, 35, 0.12) 45%, transparent 70%);
+      pointer-events: none;
+      animation: gyroAuraPulse 3.6s ease-in-out infinite alternate;
     }
 
-    @keyframes telemetryDotPulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.85); }
+    /* Concentric 3D Gyro Rings */
+    .gyro-ring-outer {
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: #38BDF8;
+      border-bottom-color: rgba(56, 189, 248, 0.25);
+      transform-style: preserve-3d;
+      animation: gyroSpinOuter 9s linear infinite;
     }
 
-    .telemetry-text-title {
-      font-weight: 600;
-      color: #F8FAFC;
+    .gyro-ring-middle {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-left-color: #F5A623;
+      border-right-color: rgba(245, 166, 35, 0.3);
+      transform-style: preserve-3d;
+      animation: gyroSpinMiddle 6.5s linear infinite reverse;
     }
 
-    .telemetry-divider {
-      color: rgba(255, 255, 255, 0.25);
+    .gyro-ring-inner {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: #A855F7;
+      border-left-color: rgba(168, 85, 247, 0.4);
+      transform-style: preserve-3d;
+      animation: gyroSpinInner 4.2s linear infinite;
     }
 
-    .telemetry-text-stat {
-      color: #38BDF8;
-      font-weight: 500;
+    /* Core Pulsar Star */
+    .gyro-core-pulsar {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      box-shadow: 0 0 10px #38BDF8, 0 0 18px #F5A623, 0 0 26px #A855F7;
+      position: relative;
+      z-index: 2;
+      animation: gyroPulsarPulse 2.4s ease-in-out infinite;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .telemetry-text-mode {
-      color: #F5A623;
-      font-size: 0.68rem;
+    /* Orbiting Micro-Spark Dot */
+    .gyro-spark-dot {
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 3.5px;
+      height: 3.5px;
+      border-radius: 50%;
+      background: #F5A623;
+      box-shadow: 0 0 6px #F5A623, 0 0 10px #F5A623;
+    }
+
+    @keyframes gyroSpinOuter {
+      0% { transform: rotateX(65deg) rotateY(15deg) rotateZ(0deg); }
+      100% { transform: rotateX(65deg) rotateY(15deg) rotateZ(360deg); }
+    }
+
+    @keyframes gyroSpinMiddle {
+      0% { transform: rotateX(35deg) rotateY(60deg) rotateZ(0deg); }
+      100% { transform: rotateX(35deg) rotateY(60deg) rotateZ(360deg); }
+    }
+
+    @keyframes gyroSpinInner {
+      0% { transform: rotateX(75deg) rotateY(-45deg) rotateZ(0deg); }
+      100% { transform: rotateX(75deg) rotateY(-45deg) rotateZ(360deg); }
+    }
+
+    @keyframes gyroPulsarPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.35); opacity: 1; box-shadow: 0 0 14px #38BDF8, 0 0 24px #F5A623, 0 0 34px #A855F7; }
+    }
+
+    @keyframes gyroAuraPulse {
+      0% { opacity: 0.45; transform: scale(0.92); }
+      100% { opacity: 0.85; transform: scale(1.08); }
     }
 
     @media (max-width: 768px) {
-      .spatial-telemetry-pill {
-        display: none !important;
+      .celestial-gyroscope-beacon {
+        bottom: 84px;
+        right: 18px;
+        width: 44px;
+        height: 44px;
       }
+      .gyro-ring-outer { width: 34px; height: 34px; }
+      .gyro-ring-middle { width: 24px; height: 24px; }
+      .gyro-ring-inner { width: 15px; height: 15px; }
+      .gyro-core-pulsar { width: 6px; height: 6px; }
     }
   </style>
 </head>
@@ -4095,14 +4182,15 @@
     </div>
   </div>
 
-  <!-- 7. Live Spatial Scrolly Telemetry HUD Pill -->
-  <div class="spatial-telemetry-pill" id="spatialTelemetryPill" title="MyFolio Spatial Scrollytelling Engine">
-    <span class="telemetry-live-dot"></span>
-    <span class="telemetry-text-title">CELESTIAL REALM</span>
-    <span class="telemetry-divider">/</span>
-    <span class="telemetry-text-stat">60 FPS</span>
-    <span class="telemetry-divider">•</span>
-    <span class="telemetry-text-mode">3D SPATIAL</span>
+  <!-- 7. Pure Visual Celestial Cosmic Gyroscope Beacon (Zero Text) -->
+  <div class="celestial-gyroscope-beacon" id="celestialGyroBeacon" aria-hidden="true">
+    <div class="gyro-ambient-aura"></div>
+    <div class="gyro-ring-outer">
+      <span class="gyro-spark-dot"></span>
+    </div>
+    <div class="gyro-ring-middle"></div>
+    <div class="gyro-ring-inner"></div>
+    <div class="gyro-core-pulsar"></div>
   </div>
 </body>
 </html>
