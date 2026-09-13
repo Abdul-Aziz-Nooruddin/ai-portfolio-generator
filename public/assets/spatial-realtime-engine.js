@@ -27,6 +27,7 @@
 
   let width = 0;
   let height = 0;
+  let dpr = Math.min(window.devicePixelRatio || 1, 2);
   let targetProgress = 0;
   let currentProgress = 0;
   const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
@@ -92,6 +93,11 @@
     const drawX = (width - drawW) * 0.5 + offsetX;
     const drawY = (height - drawH) * 0.5 + offsetY;
 
+    // Scale canvas context to device pixel ratio for native Retina rendering
+    seqCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    seqCtx.imageSmoothingQuality = 'high';
+    seqCtx.imageSmoothingEnabled = true;
+
     seqCtx.drawImage(imgToDraw, drawX, drawY, drawW, drawH);
     isCanvasReady = true;
   }
@@ -114,13 +120,26 @@
 
     width = curW;
     height = curH;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
     
-    sequenceCanvas.width = width;
-    sequenceCanvas.height = height;
+    sequenceCanvas.width = Math.round(width * dpr);
+    sequenceCanvas.height = Math.round(height * dpr);
+    sequenceCanvas.style.width = width + 'px';
+    sequenceCanvas.style.height = height + 'px';
+
+    seqCtx.imageSmoothingQuality = 'high';
+    seqCtx.imageSmoothingEnabled = true;
 
     if (stardustCanvas) {
-      stardustCanvas.width = width;
-      stardustCanvas.height = height;
+      stardustCanvas.width = Math.round(width * dpr);
+      stardustCanvas.height = Math.round(height * dpr);
+      stardustCanvas.style.width = width + 'px';
+      stardustCanvas.style.height = height + 'px';
+      if (starCtx) {
+        starCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        starCtx.imageSmoothingQuality = 'high';
+        starCtx.imageSmoothingEnabled = true;
+      }
     }
 
     if (activeFrameIdx >= 0) {
@@ -289,6 +308,7 @@
 
     // Render Atmospheric Floating Particles & Constellation Web
     if (starCtx && width && height) {
+      starCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       starCtx.clearRect(0, 0, width, height);
 
       const scrollVelocityShift = (targetProgress - currentProgress) * 80;
