@@ -2468,15 +2468,399 @@
       align-items: center;
     }
 
-    .nav-brand-text,
-    [data-theme="light"] .nav-brand-text,
-    [data-theme="dark"] .nav-brand-text {
+    /* ==========================================================================
+       MYFOLIO KINETIC LOGO ASSEMBLY ENGINE (3D Spatial Letters Convergence)
+       ========================================================================== */
+    .myfolio-logo-assembly {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      perspective: 1200px;
+      padding: 4px 6px;
+      border-radius: 12px;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .myfolio-logo-assembly:hover {
+      transform: translateY(-1px);
+    }
+
+    /* 3D Emblem Container & Holographic Aura */
+    .logo-emblem-wrap {
+      position: relative;
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(15, 23, 42, 0.9) 70%);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 16px rgba(56, 189, 248, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease, border-color 0.4s ease;
+      animation: logoEmblemFloat 4.2s ease-in-out infinite alternate;
+    }
+
+    .myfolio-logo-assembly:hover .logo-emblem-wrap {
+      transform: scale(1.1) rotate(6deg);
+      border-color: rgba(245, 166, 35, 0.8);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.75), 0 0 24px rgba(245, 166, 35, 0.4);
+    }
+
+    .logo-emblem-img {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .emblem-energy-ring {
+      position: absolute;
+      inset: -5px;
+      border-radius: 14px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      pointer-events: none;
+      opacity: 0;
+      animation: emblemEnergyRingBurst 1.8s 0.8s ease-out forwards;
+    }
+
+    @keyframes emblemEnergyRingBurst {
+      0% { transform: scale(0.65); opacity: 0; }
+      50% { opacity: 0.85; border-color: #F5A623; }
+      100% { transform: scale(1.45); opacity: 0; border-color: #38BDF8; }
+    }
+
+    @keyframes logoEmblemFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-2.5px) rotate(-2deg); }
+    }
+
+    /* Kinetic Letters Cluster */
+    .logo-letters-cluster {
+      display: inline-flex;
+      align-items: baseline;
+      position: relative;
+      overflow: hidden;
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-family: 'Orbitron', var(--font-display), sans-serif !important;
+      font-weight: 800 !important;
+      font-size: 1.12rem !important;
+      letter-spacing: 0.04em !important;
       color: #FFFFFF !important;
-      font-family: var(--font-display) !important;
-      font-weight: 700 !important;
-      font-size: 1.05rem !important;
-      letter-spacing: 0.05em !important;
-      text-shadow: 0 0 16px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0, 0, 0, 0.9) !important;
+      perspective: 1000px;
+    }
+
+    /* Individual Kinetic Characters */
+    .logo-char {
+      display: inline-block;
+      position: relative;
+      transform-style: preserve-3d;
+      will-change: transform, opacity, filter;
+      color: #F8FAFC !important;
+      text-shadow: 0 0 14px rgba(255, 255, 255, 0.35), 0 2px 4px rgba(0, 0, 0, 0.9);
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), text-shadow 0.25s ease, color 0.25s ease;
+    }
+
+    /* Trajectory 0: 'M' swoops from top-left high orbit */
+    .char-m {
+      color: #38BDF8 !important;
+      text-shadow: 0 0 16px rgba(56, 189, 248, 0.8), 0 0 26px rgba(56, 189, 248, 0.45), 0 2px 4px rgba(0, 0, 0, 0.9);
+      animation: combineLetterM 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Trajectory 1: 'y' lifts from lower-left */
+    .char-y {
+      animation: combineLetterY 1.2s 0.06s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Trajectory 2: 'F' drops from direct zenith with solar flare */
+    .char-f {
+      color: #F5A623 !important;
+      text-shadow: 0 0 16px rgba(245, 166, 35, 0.85), 0 0 26px rgba(245, 166, 35, 0.45), 0 2px 4px rgba(0, 0, 0, 0.9);
+      animation: combineLetterF 1.25s 0.12s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Trajectory 3: 'o' rolls in from bottom */
+    .char-o1 {
+      animation: combineLetterO1 1.2s 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Trajectory 4: 'l' descends like a light beam */
+    .char-l {
+      animation: combineLetterL 1.25s 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Trajectory 5: 'i' enters with floating starburst tittle */
+    .char-i {
+      position: relative;
+      animation: combineLetterI 1.2s 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .char-i-stem {
+      display: inline-block;
+    }
+
+    .char-i-dot {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      color: #38BDF8;
+      line-height: 1;
+      text-shadow: 0 0 8px #38BDF8, 0 0 16px #F5A623;
+      animation: dotMeteorDrop 1.35s 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      pointer-events: none;
+    }
+
+    /* Trajectory 6: 'o' spirals in from right flank */
+    .char-o2 {
+      animation: combineLetterO2 1.3s 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Keyframes for Assembly Convergence */
+    @keyframes combineLetterM {
+      0% {
+        opacity: 0;
+        transform: translate3d(-55px, -35px, 80px) rotate(-45deg) rotateY(-35deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(3px, 1px, 0) rotate(2deg) scale(1.1);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes combineLetterY {
+      0% {
+        opacity: 0;
+        transform: translate3d(-35px, 45px, -60px) rotate(50deg) rotateX(45deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(-2px, -1px, 0) rotate(-2deg) scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes combineLetterF {
+      0% {
+        opacity: 0;
+        transform: translate3d(0px, -65px, 100px) rotateX(70deg) scale(0.15);
+        filter: blur(14px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(0, 2px, 0) rotate(0deg) scale(1.12);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes combineLetterO1 {
+      0% {
+        opacity: 0;
+        transform: translate3d(30px, 45px, -50px) rotate(-45deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(2px, -1px, 0) rotate(3deg) scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes combineLetterL {
+      0% {
+        opacity: 0;
+        transform: translate3d(-20px, -55px, 60px) rotate(-40deg) rotateX(-45deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(0, 1px, 0) rotate(1deg) scale(1.09);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes combineLetterI {
+      0% {
+        opacity: 0;
+        transform: translate3d(40px, -45px, 70px) rotate(50deg) rotateZ(-30deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(-1px, 1px, 0) rotate(-2deg) scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes dotMeteorDrop {
+      0% {
+        opacity: 0;
+        transform: translate3d(-50%, -40px, 50px) scale(0);
+      }
+      60% {
+        opacity: 1;
+        transform: translate3d(-50%, 3px, 0) scale(1.5);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(-50%, 0, 0) scale(1);
+      }
+    }
+
+    @keyframes combineLetterO2 {
+      0% {
+        opacity: 0;
+        transform: translate3d(65px, 35px, -60px) rotate(-55deg) scale(0.2);
+        filter: blur(12px);
+      }
+      65% {
+        opacity: 1;
+        filter: blur(1px);
+      }
+      85% {
+        transform: translate3d(-2px, 0, 0) rotate(2deg) scale(1.08);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    /* Fusion Shimmer Light Beam (Sweeps across wordmark upon assembly) */
+    .logo-fusion-shimmer {
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 70%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.85) 45%, rgba(56, 189, 248, 0.7) 70%, transparent 100%);
+      pointer-events: none;
+      transform: skewX(-25deg);
+      mix-blend-mode: overlay;
+      opacity: 0;
+      animation: logoFusionShimmerPass 1.4s 1.1s ease-out forwards;
+    }
+
+    @keyframes logoFusionShimmerPass {
+      0% { left: -120%; opacity: 0; }
+      20% { opacity: 0.95; }
+      80% { opacity: 0.95; }
+      100% { left: 220%; opacity: 0; }
+    }
+
+    /* Interactive Hover Kinetics */
+    .myfolio-logo-assembly:hover .char-m { transform: translate3d(-2px, -2px, 10px) rotate(-3deg); filter: drop-shadow(0 0 10px #38BDF8); }
+    .myfolio-logo-assembly:hover .char-y { transform: translate3d(-1px, 1px, 5px) rotate(2deg); }
+    .myfolio-logo-assembly:hover .char-f { transform: translate3d(0px, -3px, 15px); filter: drop-shadow(0 0 12px #F5A623); }
+    .myfolio-logo-assembly:hover .char-o1 { transform: translate3d(1px, 1px, 5px) rotate(-2deg); }
+    .myfolio-logo-assembly:hover .char-l { transform: translate3d(0px, -2px, 10px); }
+    .myfolio-logo-assembly:hover .char-i { transform: translate3d(1px, -2px, 10px); }
+    .myfolio-logo-assembly:hover .char-i-dot { transform: translate3d(-50%, -4px, 0) scale(1.35); text-shadow: 0 0 12px #38BDF8, 0 0 20px #F5A623; color: #F5A623; }
+    .myfolio-logo-assembly:hover .char-o2 { transform: translate3d(2px, -1px, 10px) rotate(3deg); }
+
+    /* Class used by JavaScript to re-trigger assembly on click / replay */
+    .myfolio-logo-assembly.re-assembling .char-m { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-y { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-f { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-o1 { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-l { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-i { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-i-dot { animation: none; }
+    .myfolio-logo-assembly.re-assembling .char-o2 { animation: none; }
+    .myfolio-logo-assembly.re-assembling .emblem-energy-ring { animation: none; }
+    .myfolio-logo-assembly.re-assembling .logo-fusion-shimmer { animation: none; }
+
+    /* Hero Badge Logo Mini Cluster */
+    .hero-badge-logo-cluster {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 1px;
+      font-family: 'Orbitron', var(--font-display), sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      color: #FFFFFF;
+    }
+
+    .mini-logo-char {
+      display: inline-block;
+      animation: miniCharAssemble 0.8s var(--c-delay, 0s) cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    @keyframes miniCharAssemble {
+      0% { opacity: 0; transform: translateY(-8px) scale(0.6); filter: blur(4px); }
+      100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+    }
+
+    @media (max-width: 768px) {
+      .logo-emblem-wrap {
+        width: 30px;
+        height: 30px;
+      }
+      .logo-emblem-img {
+        width: 28px;
+        height: 28px;
+      }
+      .logo-letters-cluster {
+        font-size: 0.96rem !important;
+      }
     }
 
     .desktop-only {
@@ -3285,12 +3669,27 @@
         <!-- Top Nav Header -->
         <nav class="reference-top-nav">
           <div class="nav-brand-container">
-            <a href="/" class="nav-brand" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-              <picture>
-                <source srcset="/assets/logo-3d.webp" type="image/webp">
-                <img src="/assets/logo-3d.jpg" alt="MyFolio logo" loading="lazy" decoding="async" style="width: 30px; height: 30px; border-radius: 8px; object-fit: cover; border: 1px solid var(--nebula-mid);">
-              </picture>
-              <span class="nav-brand-text" style="font-family: var(--font-display); font-weight: 600; font-size: 0.95rem; letter-spacing: -0.01em; color: var(--starlight);">MyFolio</span>
+            <a href="/" class="nav-brand myfolio-logo-assembly" id="navBrandLogo" aria-label="MyFolio Home" onclick="replayLogoAssembly(this, event)">
+              <div class="logo-emblem-wrap" title="MyFolio 3D Emblem">
+                <picture>
+                  <source srcset="/assets/logo-3d.webp" type="image/webp">
+                  <img src="/assets/logo-3d.jpg" alt="MyFolio logo" class="logo-emblem-img">
+                </picture>
+                <div class="emblem-energy-ring"></div>
+              </div>
+              <span class="nav-brand-text logo-letters-cluster" aria-label="MyFolio">
+                <span class="logo-char char-m" data-char="M">M</span>
+                <span class="logo-char char-y" data-char="y">y</span>
+                <span class="logo-char char-f" data-char="F">F</span>
+                <span class="logo-char char-o1" data-char="o">o</span>
+                <span class="logo-char char-l" data-char="l">l</span>
+                <span class="logo-char char-i" data-char="i">
+                  <span class="char-i-stem">ı</span>
+                  <span class="char-i-dot">✦</span>
+                </span>
+                <span class="logo-char char-o2" data-char="o">o</span>
+                <span class="logo-fusion-shimmer"></span>
+              </span>
             </a>
           </div>
 
@@ -3350,9 +3749,24 @@
           <div class="mobile-drawer-backdrop" onclick="toggleMobileNav(false)"></div>
           <div class="mobile-drawer-content">
             <div class="mobile-drawer-header">
-              <div class="nav-brand" style="display: flex; align-items: center; gap: 10px;">
-                <img src="/assets/logo-3d.jpg" alt="MyFolio logo" style="width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--nebula-mid);">
-                <span class="nav-brand-text" style="font-size: 0.95rem; font-family: var(--font-display); color: var(--starlight);">MyFolio</span>
+              <div class="nav-brand myfolio-logo-assembly" id="mobileDrawerLogo" onclick="replayLogoAssembly(this, event)">
+                <div class="logo-emblem-wrap">
+                  <img src="/assets/logo-3d.jpg" alt="MyFolio logo" class="logo-emblem-img">
+                  <div class="emblem-energy-ring"></div>
+                </div>
+                <span class="nav-brand-text logo-letters-cluster" aria-label="MyFolio">
+                  <span class="logo-char char-m" data-char="M">M</span>
+                  <span class="logo-char char-y" data-char="y">y</span>
+                  <span class="logo-char char-f" data-char="F">F</span>
+                  <span class="logo-char char-o1" data-char="o">o</span>
+                  <span class="logo-char char-l" data-char="l">l</span>
+                  <span class="logo-char char-i" data-char="i">
+                    <span class="char-i-stem">ı</span>
+                    <span class="char-i-dot">✦</span>
+                  </span>
+                  <span class="logo-char char-o2" data-char="o">o</span>
+                  <span class="logo-fusion-shimmer"></span>
+                </span>
               </div>
               <button type="button" class="mobile-drawer-close" onclick="toggleMobileNav(false)" aria-label="Close Menu">✕</button>
             </div>
@@ -3397,8 +3811,18 @@
           <div class="hero-command-container">
             <!-- Column 1: Command Center & Synthesis Console -->
             <div class="hero-command-content" id="chronoHeroContent">
-              <div class="hero-badge-pill">
+              <div class="hero-badge-pill" onclick="replayAllLogoAnimations()" style="cursor: pointer;" title="Click to replay MyFolio Logo Assembly">
                 <span class="pulse-dot"></span>
+                <span class="hero-badge-logo-cluster" aria-label="MyFolio">
+                  <span class="mini-logo-char" style="--c-delay: 0s;">M</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.05s;">y</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.1s; color: #F5A623;">F</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.15s;">o</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.2s;">l</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.25s; color: #38BDF8;">i</span>
+                  <span class="mini-logo-char" style="--c-delay: 0.3s;">o</span>
+                </span>
+                <span class="hero-badge-divider" style="opacity: 0.35; margin: 0 4px;">•</span>
                 <span>Instant 3D WebGL Portfolio Engine</span>
               </div>
 
@@ -4166,6 +4590,50 @@
         card.style.transform = '';
         card.classList.add('idle-floating');
       });
+    })();
+  </script>
+
+  <!-- Kinetic MyFolio Logo Assembly Controller -->
+  <script>
+    function replayLogoAssembly(el, event) {
+      const target = el || document.getElementById('navBrandLogo');
+      if (!target) return;
+      target.classList.add('re-assembling');
+      void target.offsetWidth;
+      target.classList.remove('re-assembling');
+    }
+
+    function replayAllLogoAnimations() {
+      document.querySelectorAll('.myfolio-logo-assembly').forEach(el => {
+        el.classList.add('re-assembling');
+        void el.offsetWidth;
+        el.classList.remove('re-assembling');
+      });
+      const heroChars = document.querySelectorAll('.mini-logo-char');
+      heroChars.forEach((c, i) => {
+        c.style.animation = 'none';
+        void c.offsetWidth;
+        c.style.animation = `miniCharAssemble 0.8s ${i * 0.05}s cubic-bezier(0.16, 1, 0.3, 1) both`;
+      });
+    }
+
+    // Smooth hover / interaction listeners
+    (function initLogoAssemblyKinetics() {
+      function bindHover() {
+        const brandLogos = document.querySelectorAll('.myfolio-logo-assembly');
+        brandLogos.forEach(logo => {
+          logo.addEventListener('mouseenter', () => {
+            logo.classList.add('re-assembling');
+            void logo.offsetWidth;
+            logo.classList.remove('re-assembling');
+          });
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bindHover);
+      } else {
+        bindHover();
+      }
     })();
   </script>
 
