@@ -548,13 +548,13 @@
       position: relative;
       width: 100%;
       max-width: 520px;
-      background: rgba(13, 18, 30, 0.78);
+      background: rgba(12, 19, 34, 0.82);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(186, 230, 253, 0.2);
       border-radius: 24px;
       overflow: hidden;
-      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65), 0 0 35px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(56, 189, 248, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.2);
       transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
       cursor: pointer;
       transform-style: preserve-3d;
@@ -566,7 +566,8 @@
     }
 
     .hero-interactive-card:hover {
-      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 45px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      box-shadow: 0 35px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(56, 189, 248, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      border-color: rgba(186, 230, 253, 0.45);
     }
 
     .hero-card-sheen {
@@ -1997,23 +1998,23 @@
     }
 
     .universe-bento-card {
-      background: rgba(13, 18, 30, 0.76);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(12, 19, 34, 0.78);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(186, 230, 253, 0.16);
       border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45), 0 0 25px rgba(56, 189, 248, 0.08);
       cursor: pointer;
     }
 
     .universe-bento-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(56, 189, 248, 0.18);
+      border-color: rgba(186, 230, 253, 0.45);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 35px rgba(56, 189, 248, 0.22);
     }
 
     .bento-card-media {
@@ -3870,20 +3871,20 @@
               </div>
             </div>
 
-            <!-- Column 2: Interactive 3D Perspective Card (Complete Shelf 3D) -->
+            <!-- Column 2: Interactive 3D Perspective Card (Celestial Crystalline Sanctuary) -->
             <div class="hero-preview-col">
               <div class="hero-interactive-card idle-floating" id="heroInteractiveCard" onclick="window.location.href='/complete-shelf-3d'">
                 <div class="hero-card-viewport">
                   <div class="hero-card-sheen"></div>
-                  <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="eager">
+                  <img src="/assets/3d/celestial_sanctuary_3d.jpg" alt="Celestial Crystalline Sanctuary" loading="eager">
                   <div class="hero-card-overlay">
                     <div class="hero-overlay-tags">
-                      <span class="tag-pill">3D Library</span>
-                      <span class="tag-pill">Physics Tilt</span>
-                      <span class="tag-pill">Interactive Volumes</span>
+                      <span class="tag-pill">3D Floating Realm</span>
+                      <span class="tag-pill">Hydraulic Cascades</span>
+                      <span class="tag-pill">Zero-Gravity Space</span>
                     </div>
-                    <h3 class="hero-overlay-title">Complete Shelf 3D</h3>
-                    <p class="hero-overlay-desc">Pull volumes forward, turn physical pages, and inspect project archives in real-time space.</p>
+                    <h3 class="hero-overlay-title">Celestial Crystalline Sanctuary</h3>
+                    <p class="hero-overlay-desc">Explore floating island archipelagoes with real-time hydraulic cascades, zero-gravity levitation, and spatial stardust physics.</p>
                     <div class="hero-overlay-actions">
                       <a href="/complete-shelf-3d" class="btn-solar-primary" style="padding: 7px 16px; font-size: 0.8rem; text-decoration: none;" onclick="event.stopPropagation()">
                         <span>👁️ Live Demo ↗</span>
@@ -3964,15 +3965,15 @@
 
             <!-- 12-Column Bento Grid -->
             <div class="universes-bento-grid">
-              <!-- Bento Card 1: Complete Shelf 3D (7-col) -->
+              <!-- Bento Card 1: Celestial Crystalline Sanctuary (7-col) -->
               <div class="universe-bento-card bento-hero-shelf interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/complete-shelf-3d'">
                 <div class="bento-card-media">
-                  <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="lazy">
+                  <img src="/assets/3d/celestial_sanctuary_3d.jpg" alt="Celestial Crystalline Sanctuary" loading="lazy">
                 </div>
                 <div class="bento-card-content">
-                  <span class="bento-card-tag">3D Interactive Library • Physics Engine</span>
-                  <h3 class="bento-card-title">Complete Shelf 3D</h3>
-                  <p class="bento-card-desc">Interactive mahogany library with real-time 3D hardcover tilts, gold foil embossing, and tactile book spine physics.</p>
+                  <span class="bento-card-tag">Floating Island Biome • Hydraulic Physics</span>
+                  <h3 class="bento-card-title">Celestial Crystalline Sanctuary</h3>
+                  <p class="bento-card-desc">Majestic levitating island archipelago with real-time crystalline water cascades, ancient stone colonnades, and procedural stardust physics.</p>
                   <div class="bento-card-footer">
                     <a href="/complete-shelf-3d" class="btn-solar-primary" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;" onclick="event.stopPropagation()">
                       <span>👁️ Live Demo ↗</span>
@@ -3984,15 +3985,15 @@
                 </div>
               </div>
 
-              <!-- Bento Card 2: Pure Sylva Living World (5-col) -->
+              <!-- Bento Card 2: Terraced Biosphere Conservatory (5-col) -->
               <div class="universe-bento-card bento-hero-sylva interactive-target reveal-on-scroll delay-2" onclick="window.location.href='/sylva-living-world'">
                 <div class="bento-card-media">
-                  <img src="/assets/3d/threeui_sylva_3d.jpg" alt="Pure Sylva Living World" loading="lazy">
+                  <img src="/assets/3d/celestial_biosphere_3d.jpg" alt="Terraced Biosphere Conservatory" loading="lazy">
                 </div>
                 <div class="bento-card-content">
-                  <span class="bento-card-tag">Living Biome • 4 Seasonal Weather Shaders</span>
-                  <h3 class="bento-card-title">Pure Sylva Living World</h3>
-                  <p class="bento-card-desc">Living moss-covered bough with fluttering iridescent butterfly flight dynamics and 4 seasonal dynamic shaders.</p>
+                  <span class="bento-card-tag">Living Biome • Multi-Tiered Aqueducts</span>
+                  <h3 class="bento-card-title">Terraced Biosphere Conservatory</h3>
+                  <p class="bento-card-desc">Multi-tiered stepped aqueducts, crystal-clear turquoise pools, grand curved stone staircases, and a luminous glass conservatory dome.</p>
                   <div class="bento-card-footer">
                     <a href="/sylva-living-world" class="btn-solar-primary" style="padding: 6px 14px; font-size: 0.78rem; text-decoration: none;" onclick="event.stopPropagation()">
                       <span>👁️ Live Demo ↗</span>
@@ -4004,14 +4005,14 @@
                 </div>
               </div>
 
-              <!-- Bento Card 3: Kage Shrine 3D (3-col) -->
+              <!-- Bento Card 3: Celestial Astrolabe Observatory (3-col) -->
               <div class="universe-bento-card bento-compact-card interactive-target reveal-on-scroll delay-1" onclick="window.location.href='/kage-living-world'">
                 <div class="bento-card-media">
-                  <img src="/assets/3d/threeui_kage_3d.jpg" alt="Kage Shrine 3D" loading="lazy">
+                  <img src="/assets/3d/celestial_observatory_3d.jpg" alt="Celestial Astrolabe Observatory" loading="lazy">
                 </div>
                 <div class="bento-card-content">
-                  <span class="bento-card-tag">Kyoto Pagoda • Night Moon</span>
-                  <h4 class="bento-card-title">Kage Shrine 3D</h4>
+                  <span class="bento-card-tag">Astronomical Rings • Crystalline Crag</span>
+                  <h4 class="bento-card-title">Celestial Astrolabe Observatory</h4>
                   <div class="bento-card-footer">
                     <a href="/studio?template=threeui-kage" style="color: #38BDF8; font-size: 0.75rem; text-decoration: none; font-weight: 600;" onclick="event.stopPropagation()">⚡ Use in Studio ➔</a>
                   </div>
