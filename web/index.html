@@ -201,32 +201,37 @@
     }
 
     /* ============================================================
-       3. NAVIGATION BAR & BRAND HEADER
+       3. NAVIGATION BAR & BRAND HEADER (Floating Pill Standard)
        ============================================================ */
     .chrono-nav {
       position: fixed;
-      top: 0;
+      top: 14px;
       left: 0;
       right: 0;
       z-index: 1000;
-      height: 72px;
       display: flex;
       align-items: center;
-      padding: 0 32px;
-      background: rgba(5, 8, 23, 0.65);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-bottom: 1px solid rgba(186, 230, 253, 0.12);
-      transition: background 0.3s ease, border-color 0.3s ease;
+      justify-content: center;
+      padding: 0 20px;
+      pointer-events: none;
+      transition: all 0.3s ease;
     }
 
     .nav-container {
-      max-width: 1360px;
+      max-width: 1240px;
       width: 100%;
       margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      pointer-events: auto;
+      background: rgba(7, 13, 33, 0.76);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      padding: 7px 18px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.12);
     }
 
     .nav-brand-anchor {
@@ -462,6 +467,301 @@
       color: var(--stardust);
       max-width: 680px;
       margin-bottom: 36px;
+    }
+
+    /* ============================================================
+       REACTIVE 3D STAGE & FRAMED BEZEL CANVAS (Reference Video Style)
+       ============================================================ */
+    .wildcrumb-stage-frame {
+      max-width: 1440px;
+      margin: 10px auto 48px;
+      border-radius: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: radial-gradient(circle at 50% 36%, #1c3668 0%, #0d1e40 52%, #050c1e 100%);
+      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(56, 189, 248, 0.18);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wildcrumb-hero-stage {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 85px 20px 35px;
+      text-align: center;
+      overflow: hidden;
+      gap: 12px;
+    }
+
+    .stage-masthead-top {
+      position: relative;
+      z-index: 2;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .stage-giant-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.2rem, 7vw, 6.2rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: #FFFFFF;
+      text-shadow: 0 12px 45px rgba(0, 0, 0, 0.7);
+      margin-bottom: 8px;
+    }
+
+    .stage-giant-subtitle {
+      font-family: var(--font-body);
+      font-size: clamp(1.0rem, 1.6vw, 1.2rem);
+      color: #BAE6FD;
+      max-width: 620px;
+      margin: 0 auto;
+      line-height: 1.55;
+    }
+
+    .reactive-core-viewport {
+      position: relative;
+      width: 100%;
+      max-width: 900px;
+      height: 410px;
+      margin: -10px auto 5px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+    }
+
+    .reactive-core-3d-wrapper {
+      position: relative;
+      width: 360px;
+      height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .reactive-core-asset {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 30px 65px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 45px rgba(56, 189, 248, 0.45));
+      transform-origin: center center;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* Ambient soft ground shadow */
+    .reactive-core-3d-wrapper::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 320px;
+      height: 45px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%);
+      border-radius: 50%;
+      filter: blur(14px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* 4 Telemetry Hotspot Badges */
+    .stage-callout-pill {
+      position: absolute;
+      z-index: 20;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 18px 9px 12px;
+      border-radius: 999px;
+      background: rgba(11, 20, 50, 0.82);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #FFFFFF;
+      font-family: var(--font-heading);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.18);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .stage-callout-pill:hover {
+      transform: scale(1.06) translateY(-2px);
+      border-color: rgba(56, 189, 248, 0.7);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.4);
+      background: rgba(15, 30, 75, 0.95);
+    }
+
+    .callout-icon-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: #04091A;
+      border: 1px solid rgba(56, 189, 248, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      color: var(--cyan-core);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
+      flex-shrink: 0;
+    }
+
+    /* Quadrant positions */
+    .callout-top-left {
+      top: 18%;
+      left: 2%;
+    }
+
+    .callout-bottom-left {
+      bottom: 18%;
+      left: 4%;
+    }
+
+    .callout-top-right {
+      top: 18%;
+      right: 2%;
+      flex-direction: row-reverse;
+      padding: 9px 12px 9px 18px;
+    }
+
+    .callout-bottom-right {
+      bottom: 18%;
+      right: 4%;
+      flex-direction: row-reverse;
+      padding: 9px 12px 9px 18px;
+    }
+
+    .stage-difference-section {
+      position: relative;
+      z-index: 2;
+      padding: 90px 24px 85px;
+      text-align: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(4, 9, 26, 0.65);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+    }
+
+    .stage-difference-title {
+      font-family: var(--font-heading);
+      font-size: clamp(3.2rem, 7vw, 6.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #FFFFFF;
+      text-shadow: 0 12px 45px rgba(0, 0, 0, 0.7);
+      margin-bottom: 16px;
+    }
+
+    .stage-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Bottom Terrain Framing in corners */
+    .stage-terrain-left {
+      position: absolute;
+      bottom: -15px;
+      left: -20px;
+      width: 300px;
+      height: 200px;
+      background: radial-gradient(circle at 0% 100%, rgba(13, 30, 74, 0.95) 0%, transparent 70%);
+      border-radius: 0 220px 0 0;
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(6px);
+    }
+
+    .stage-terrain-right {
+      position: absolute;
+      bottom: -15px;
+      right: -20px;
+      width: 300px;
+      height: 200px;
+      background: radial-gradient(circle at 100% 100%, rgba(13, 30, 74, 0.95) 0%, transparent 70%);
+      border-radius: 220px 0 0 0;
+      pointer-events: none;
+      z-index: 1;
+      filter: blur(6px);
+    }
+
+    @media (max-width: 960px) {
+      .wildcrumb-stage-frame {
+        margin: 10px 8px 30px;
+        border-radius: 20px;
+      }
+      .reactive-core-viewport {
+        height: 420px;
+      }
+      .reactive-core-3d-wrapper {
+        width: 340px;
+        height: 340px;
+      }
+      .stage-callout-pill {
+        font-size: 0.8rem;
+        padding: 6px 14px 6px 10px;
+      }
+      .callout-icon-badge {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+      }
+      .callout-top-left { top: 6%; left: 1%; }
+      .callout-bottom-left { bottom: 6%; left: 1%; }
+      .callout-top-right { top: 6%; right: 1%; }
+      .callout-bottom-right { bottom: 6%; right: 1%; }
+    }
+
+    @media (max-width: 900px) {
+      .wildcrumb-stage-frame {
+        margin: 10px 8px 30px;
+        border-radius: 20px;
+      }
+      .reactive-core-viewport {
+        height: 380px;
+      }
+      .stage-callout-pill {
+        font-size: 0.78rem;
+        padding: 6px 12px 6px 8px;
+      }
+      .callout-icon-badge {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+      .callout-top-left { top: 8%; left: 2%; }
+      .callout-bottom-left { bottom: 10%; left: 2%; }
+      .callout-top-right { top: 8%; right: 2%; }
+      .callout-bottom-right { bottom: 10%; right: 2%; }
+    }
+
+    @media (max-width: 600px) {
+      .stage-callout-pill {
+        position: static;
+        margin: 4px;
+      }
+      .reactive-callouts-mobile-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+      }
     }
 
     /* ============================================================
@@ -1240,64 +1540,109 @@
   <main class="journey-scroll-wrapper">
 
     <!-- ============================================================
-         01 — HERO (0% - 15% Scroll)
+         01 — HERO & 3D REACTIVE CORE STAGE (Reference Video Standard)
          ============================================================ -->
-    <section class="journey-section" id="sectionHero">
-      <div class="journey-container">
-        <div class="hero-layout-grid">
-          <div class="hero-content-col">
-            <div class="section-tag-pill">
-              <span>✦</span> AI 3D PORTFOLIO GENERATOR
-            </div>
-            <h1 class="section-masthead-title">
-              Your resume, rendered as a world.
-            </h1>
-            <p class="section-lead-copy">
-              Turn your GitHub, resume, and experience into an interactive portfolio designed around your story. Step beyond flat documents into a living 3D universe.
-            </p>
-            <div class="hero-cta-cluster">
-              <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
-                <span>Build my portfolio</span>
-                <span>➔</span>
-              </button>
-              <a href="/complete-shelf-3d" class="btn-solar-outline">
-                <span>👁️ Explore an example</span>
-              </a>
-            </div>
-            <div class="hero-trust-indicators">
-              <div class="trust-indicator-pill">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Instant setup under 60s</span>
-              </div>
-              <div class="trust-indicator-pill">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Free 24-hour live CDN preview</span>
-              </div>
-              <div class="trust-indicator-pill">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Clean static export included</span>
-              </div>
-            </div>
+    <section class="wildcrumb-stage-frame" id="sectionHero">
+      <div class="wildcrumb-hero-stage">
+        
+        <!-- Subtle Natural Depth Horizon Silhouettes in Corners -->
+        <div class="stage-terrain-left" aria-hidden="true"></div>
+        <div class="stage-terrain-right" aria-hidden="true"></div>
+
+        <!-- STAGE 1: Giant Top Masthead ("Taste the Sky" equivalent) -->
+        <div class="stage-masthead-top">
+          <div class="section-tag-pill" style="margin-bottom: 14px;">
+            <span>✦</span> AUTONOMOUS 3D SPATIAL ENGINE
+          </div>
+          <h1 class="stage-giant-title">
+            Turn Code Into Worlds
+          </h1>
+          <p class="stage-giant-subtitle">
+            Beyond flat resumes and generic templates. An interactive, ultra-high-definition universe rendered directly from your engineering DNA.
+          </p>
+        </div>
+
+        <!-- STAGE 2: Centered 3D Viewport with Reactive World Core Asset & 4 Telemetry Hotspots -->
+        <div class="reactive-core-viewport" id="reactiveCoreViewport">
+          <div class="reactive-core-3d-wrapper" id="reactiveCore3DWrapper">
+            <img src="/assets/3d/quantum_world_core_3d_nobg.png" id="reactiveCoreAsset" class="reactive-core-asset" alt="MyFolio Ultra-HD 3D World Core" draggable="false" />
           </div>
 
-          <!-- Interactive Hero Floating 3D Card (Complete Shelf 3D) -->
-          <div class="hero-spatial-col">
-            <div class="hero-spatial-card" onclick="window.location.href='/complete-shelf-3d'">
-              <div class="hero-spatial-media">
-                <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="eager">
-              </div>
-              <div class="hero-spatial-body">
-                <div class="hero-spatial-tags">
-                  <span class="spatial-tag">3D Library</span>
-                  <span class="spatial-tag">Physics Tilt</span>
-                  <span class="spatial-tag">Interactive Volumes</span>
-                </div>
-                <h3 class="hero-spatial-title">Complete Shelf 3D</h3>
-                <p class="hero-spatial-desc">Pull volumes forward, turn physical pages, and inspect project archives in real-time space.</p>
-              </div>
-            </div>
+          <!-- Hotspot 1: Top-Left -->
+          <div class="stage-callout-pill callout-top-left" onclick="showHotspotModal('engine')" title="Inspect Autonomous Engine">
+            <span>Autonomous World Engine</span>
+            <div class="callout-icon-badge">⚡</div>
+          </div>
+
+          <!-- Hotspot 2: Bottom-Left -->
+          <div class="stage-callout-pill callout-bottom-left" onclick="showHotspotModal('physics')" title="Inspect 3D Physics">
+            <span>Apple-Grade 3D Motion</span>
+            <div class="callout-icon-badge">🌐</div>
+          </div>
+
+          <!-- Hotspot 3: Top-Right -->
+          <div class="stage-callout-pill callout-top-right" onclick="showHotspotModal('telemetry')" title="Inspect Live Telemetry">
+            <div class="callout-icon-badge">💎</div>
+            <span>Live GitHub Telemetry</span>
+          </div>
+
+          <!-- Hotspot 4: Bottom-Right -->
+          <div class="stage-callout-pill callout-bottom-right" onclick="showHotspotModal('shaders')" title="Inspect Procedural PBR">
+            <div class="callout-icon-badge">✦</div>
+            <span>Procedural PBR Shaders</span>
           </div>
         </div>
+
+        <!-- Hero Action Row & Trust Indicators -->
+        <div class="stage-action-row" style="margin-top: 8px; z-index: 20;">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Build my portfolio</span>
+            <span>➔</span>
+          </button>
+          <a href="/complete-shelf-3d" class="btn-solar-outline">
+            <span>👁️ Explore Complete Shelf 3D</span>
+          </a>
+          <a href="/studio" class="btn-solar-outline">
+            <span>⚙️ Open Studio</span>
+          </a>
+        </div>
+
+        <div class="hero-trust-indicators" style="justify-content: center; margin-top: 12px; z-index: 20;">
+          <div class="trust-indicator-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Instant setup under 60s</span>
+          </div>
+          <div class="trust-indicator-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Free 24-hour live CDN preview</span>
+          </div>
+          <div class="trust-indicator-pill">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <span>Clean static export included</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- STAGE 2: "The Difference" (Scrolls smoothly into view) -->
+      <div class="stage-difference-section" id="sectionDifference">
+        <div class="section-tag-pill" style="margin-bottom: 14px;">✦ ARCHITECTURAL MATRIX</div>
+        <h2 class="stage-difference-title">The Difference</h2>
+        <p class="section-lead-copy" style="margin: 0 auto 32px; text-align: center;">
+          Ordinary tools generate generic card grids. MyFolio orchestrates living WebGL universes powered by spatial physics and authentic engineering evidence.
+        </p>
+
+        <div class="stage-action-row">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Synthesize My Universe</span>
+            <span>➔</span>
+          </button>
+          <a href="#sectionProblem" class="btn-solar-outline">
+            <span>Explore The Problem ↓</span>
+          </a>
+        </div>
+      </div>
+
       </div>
     </section>
 
@@ -1854,8 +2199,64 @@
   <!-- Client Application Engine & Camera Engine -->
   <script src="/app.js" defer></script>
   <script src="/assets/spatial-master-journey.js?v=20260913_cinematic_redesign" defer></script>
+  <script src="/assets/reactive-core-engine.js?v=20260913_reactive_standard" defer></script>
+
+  <!-- Hotspot Interactive Details Modal -->
+  <div id="hotspotModalOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(3,6,18,0.85); backdrop-filter:blur(24px); align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)closeHotspotModal()">
+    <div style="background:linear-gradient(135deg, #091332 0%, #060B1E 100%); border:1px solid rgba(56,189,248,0.35); border-radius:24px; max-width:520px; width:100%; padding:32px; box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(56,189,248,0.25); position:relative;">
+      <button type="button" onclick="closeHotspotModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#94A3B8; font-size:1.5rem; cursor:pointer;" aria-label="Close modal">×</button>
+      <div id="hotspotModalIcon" style="width:48px; height:48px; border-radius:12px; background:#04091A; border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:#38BDF8; margin-bottom:16px;">⚡</div>
+      <h3 id="hotspotModalTitle" style="font-family:var(--font-heading); font-size:1.4rem; font-weight:700; color:#FFFFFF; margin-bottom:10px;">Autonomous World Engine</h3>
+      <p id="hotspotModalDesc" style="font-family:var(--font-body); font-size:0.95rem; color:#BAE6FD; line-height:1.6; margin-bottom:24px;">Automatically analyzes candidate repos, commit cadence, and architectural depth to map your unique archetype into living 3D environments.</p>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn-solar-primary" onclick="closeHotspotModal(); openAuthModal('signup');">
+          <span>Build My Portfolio ➔</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <script>
+    const hotspotData = {
+      engine: {
+        icon: '⚡',
+        title: 'Autonomous World Engine',
+        desc: 'Transforms raw code commits, pull requests, and resume PDFs into a rich multi-dimensional space without requiring manual 3D modeling or design skills.'
+      },
+      physics: {
+        icon: '🌐',
+        title: 'Apple-Grade 3D Physics',
+        desc: 'Hardware-accelerated inertia scrolling, 3-axis gyro rotation, and reactive mouse parallax driven by smooth cubic-bezier easing and WebGL 60 FPS loops.'
+      },
+      telemetry: {
+        icon: '💎',
+        title: 'Live GitHub Telemetry',
+        desc: 'Direct repository synchronization pulling authentic language distribution, commit streaks, top stars, and production milestones directly into the 3D world.'
+      },
+      shaders: {
+        icon: '✦',
+        title: 'Procedural PBR Shaders',
+        desc: 'Cinematic physically-based rendering featuring subsurface scattering, metallic chromatic dispersion, ambient occlusion, and dynamic starlight blooms.'
+      }
+    };
+
+    function showHotspotModal(key) {
+      const data = hotspotData[key];
+      if (!data) return;
+      if (window.__MyFolioReactiveCore && window.__MyFolioReactiveCore.triggerPulse) {
+        window.__MyFolioReactiveCore.triggerPulse();
+      }
+      document.getElementById('hotspotModalIcon').textContent = data.icon;
+      document.getElementById('hotspotModalTitle').textContent = data.title;
+      document.getElementById('hotspotModalDesc').textContent = data.desc;
+      const modal = document.getElementById('hotspotModalOverlay');
+      modal.style.display = 'flex';
+    }
+
+    function closeHotspotModal() {
+      document.getElementById('hotspotModalOverlay').style.display = 'none';
+    }
+
     // Initialize Auth Dock state on page load
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof checkUserAuth === 'function') {

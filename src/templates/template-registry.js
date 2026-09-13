@@ -38,9 +38,13 @@ const { ThreeUISylvaTemplate } = require('./threeui-sylva');
 const { ThreeUIKageTemplate } = require('./threeui-kage');
 const { ThreeUISketchbookTemplate } = require('./threeui-sketchbook');
 const { ThreeUILandscapeTemplate } = require('./threeui-landscape');
+const { Mesh3DTerminalConsoleTemplate } = require('./mesh3d-terminal-console');
+const { PalmoPureWeb3Template } = require('./palmo-pure-web3');
 
 class TemplateRegistry {
   static templates = {
+    'palmo-pure-web3': PalmoPureWeb3Template,
+    'mesh3d-terminal-console': Mesh3DTerminalConsoleTemplate,
     'threeui-shelf': ThreeUIShelfTemplate,
     'threeui-sylva': ThreeUISylvaTemplate,
     'threeui-kage': ThreeUIKageTemplate,

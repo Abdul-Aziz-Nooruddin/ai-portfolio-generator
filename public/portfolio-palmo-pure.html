@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abdul Aziz Nooruddin — Pure Web3 & Smart Contracts</title>
+  <meta name="description" content="Abdul Aziz Nooruddin — Smart Contract Developer &amp; AI Student. AI Student &amp; Smart Contract Developer | Building real-world Web3 products | Blockchain • DeFi • RegTech 🇮🇳">
+
+  <!-- Exact Palmo Google Fonts: Khand (Display) + Patrick Hand (Stickers) + Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Khand:wght@500;600;700&family=Patrick+Hand&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Core 3D & Animation Engines: Three.js + GSAP + ScrollTrigger + Lenis -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+
+  <style>
+    :root {
+      --bg-cream: #FAF6F0;
+      --bg-milk: #F8F8F0;
+      --sand-gold: #EDE5A8;
+      --sun-gold: #FFE386;
+      --husk-brown: #463721;
+      --husk-earth: #946C3C;
+      --leaf-olive: #606112;
+      --coral-accent: #CB533B;
+      --dark-obsidian: #1A140D;
+
+      --font-khand: 'Khand', sans-serif;
+      --font-hand: 'Patrick Hand', cursive;
+      --font-inter: 'Inter', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+
+    html, body {
+      background-color: var(--bg-cream);
+      color: var(--husk-brown);
+      font-family: var(--font-inter);
+      overflow-x: hidden;
+      line-height: 1.5;
+      position: relative;
+    }
+
+    /* Fixed Full-Screen 3D WebGL Canvas */
+    #spatial3DViewport {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Tropical Sunlight Caustics & Palm Shadow Background */
+    .ambient-sunlight {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background: 
+        radial-gradient(circle at 80% 10%, rgba(255, 227, 134, 0.45) 0%, transparent 60%),
+        radial-gradient(circle at 10% 40%, rgba(237, 229, 168, 0.5) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(255, 227, 134, 0.35) 0%, transparent 60%);
+    }
+
+    /* Interactive Splash / Slicing Canvas */
+    #particleCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 99;
+    }
+
+    /* Top Floating Capsule Navigation (Palmo Header) */
+    .palmo-nav-wrapper {
+      position: fixed;
+      top: 1.25rem;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      z-index: 100;
+      padding: 0 1.5rem;
+    }
+
+    .palmo-nav-bar {
+      background: rgba(250, 246, 240, 0.9);
+      backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(70, 55, 33, 0.15);
+      border-radius: 9999px;
+      padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      box-shadow: 0 10px 30px rgba(70, 55, 33, 0.08);
+      max-width: 960px;
+      width: 100%;
+      justify-content: space-between;
+      transition: transform 0.3s ease;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      text-decoration: none;
+      color: var(--husk-brown);
+    }
+
+    .brand-logo-text {
+      font-family: var(--font-khand);
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-family: var(--font-hand);
+      font-size: 1.1rem;
+      color: var(--husk-earth);
+      transform: rotate(-2deg);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .nav-links a {
+      font-family: var(--font-khand);
+      font-size: 1.15rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: var(--husk-brown);
+      transition: color 0.15s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--coral-accent);
+    }
+
+    .nav-cta-btn {
+      background: var(--coral-accent);
+      color: #ffffff;
+      font-family: var(--font-khand);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 0.55rem 1.4rem;
+      border-radius: 9999px;
+      text-decoration: none;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(203, 83, 59, 0.35);
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+    }
+
+    /* Main Container */
+    .page-wrapper {
+      position: relative;
+      z-index: 10;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 7.5rem 1.5rem 4rem 1.5rem;
+    }
+
+    /* HERO STAGE */
+    .hero-stage {
+      position: relative;
+      padding: 3rem 0 6rem 0;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 85vh;
+      justify-content: center;
+    }
+
+    /* Floating Handwritten Stickers (Palmo signature) */
+    .sticker-badge {
+      font-family: var(--font-hand);
+      position: absolute;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--sun-gold);
+      color: var(--husk-brown);
+      border: 1.5px solid var(--husk-brown);
+      padding: 0.45rem 1.1rem;
+      border-radius: 9999px;
+      font-size: 1.25rem;
+      box-shadow: 4px 4px 0 var(--husk-brown);
+      z-index: 20;
+      user-select: none;
+      will-change: transform;
+    }
+
+    .sticker-1 {
+      top: 12%;
+      left: 6%;
+      transform: rotate(-8deg);
+    }
+
+    .sticker-2 {
+      top: 16%;
+      right: 8%;
+      transform: rotate(6deg);
+      background: var(--sand-gold);
+    }
+
+    .sticker-3 {
+      bottom: 24%;
+      left: 8%;
+      transform: rotate(5deg);
+      background: #ffffff;
+    }
+
+    .sticker-4 {
+      bottom: 20%;
+      right: 10%;
+      transform: rotate(-6deg);
+      background: var(--sun-gold);
+    }
+
+    @media (max-width: 900px) {
+      .sticker-1, .sticker-2, .sticker-3, .sticker-4 {
+        position: static;
+        margin: 0.5rem;
+        display: inline-flex;
+      }
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-hand);
+      font-size: 1.65rem;
+      color: var(--husk-earth);
+      margin-bottom: 0.5rem;
+      transform: rotate(-1deg);
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .hero-headline {
+      font-family: var(--font-khand);
+      font-size: clamp(4rem, 11vw, 9rem);
+      font-weight: 700;
+      line-height: 0.88;
+      text-transform: uppercase;
+      letter-spacing: -0.01em;
+      color: var(--husk-brown);
+      max-width: 1100px;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+
+    .hero-headline span.highlight {
+      color: var(--coral-accent);
+      display: inline-block;
+      position: relative;
+    }
+
+    .hero-headline span.highlight::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 8%;
+      width: 100%;
+      height: 14px;
+      background: var(--sun-gold);
+      z-index: -1;
+      border-radius: 4px;
+    }
+
+    .hero-bio-lead {
+      max-width: 720px;
+      margin: 1.5rem auto 0 auto;
+      font-size: 1.35rem;
+      color: var(--husk-earth);
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    /* Hero 3D Spacer Height */
+    .hero-3d-stage-spacer {
+      width: 100%;
+      height: 380px;
+      margin: 1rem 0;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .scroll-indicator-pill {
+      background: rgba(250, 246, 240, 0.9);
+      border: 1.5px solid var(--husk-brown);
+      border-radius: 9999px;
+      padding: 0.45rem 1.15rem;
+      font-family: var(--font-khand);
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--husk-brown);
+      box-shadow: 2px 2px 0 var(--husk-brown);
+      animation: bouncePrompt 2s infinite ease-in-out;
+      z-index: 10;
+    }
+
+    @keyframes bouncePrompt {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    /* Credentials Ribbon Bar */
+    .credentials-ribbon {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    .ribbon-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--sand-gold);
+      border: 1.5px solid var(--husk-brown);
+      padding: 0.65rem 1.5rem;
+      border-radius: 9999px;
+      font-family: var(--font-khand);
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      box-shadow: 3px 3px 0 var(--husk-brown);
+      transition: transform 0.2s ease;
+    }
+
+    .ribbon-item:hover {
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    /* SECTION 2: EXPLORE ALL REPOSITORIES (Palmo "Explore all flavours") */
+    .showcase-section {
+      margin-top: 6rem;
+      padding-top: 5rem;
+      border-top: 2px dashed rgba(70, 55, 33, 0.2);
+      position: relative;
+    }
+
+    .section-headline-group {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-badge-pill {
+      font-family: var(--font-hand);
+      font-size: 1.45rem;
+      color: var(--coral-accent);
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    .section-headline {
+      font-family: var(--font-khand);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.95;
+      color: var(--husk-brown);
+    }
+
+    /* Grid of Verified Project Artifacts */
+    .flavours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 2.25rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .flavour-card {
+      background: #ffffff;
+      border: 2px solid var(--husk-brown);
+      border-radius: 28px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 6px 6px 0 var(--husk-brown);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      will-change: transform, opacity;
+    }
+
+    .flavour-card:hover {
+      transform: translate(-6px, -6px);
+      box-shadow: 12px 12px 0 var(--husk-brown);
+    }
+
+    .flavour-card-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .flavour-index {
+      font-family: var(--font-khand);
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--husk-earth);
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .flavour-title {
+      font-family: var(--font-khand);
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      color: var(--husk-brown);
+      margin-bottom: 0.85rem;
+    }
+
+    .flavour-badge-tag {
+      display: inline-block;
+      font-family: var(--font-hand);
+      font-size: 1.15rem;
+      background: var(--sand-gold);
+      border: 1px solid var(--husk-brown);
+      padding: 0.25rem 0.85rem;
+      border-radius: 9999px;
+      margin-bottom: 1.2rem;
+    }
+
+    .flavour-desc {
+      font-size: 1.05rem;
+      color: var(--husk-brown);
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+    }
+
+    .flavour-tech-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .tech-pill {
+      font-family: var(--font-khand);
+      font-size: 1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      background: var(--bg-cream);
+      border: 1px solid rgba(70, 55, 33, 0.2);
+      border-radius: 6px;
+      color: var(--husk-brown);
+    }
+
+    .flavour-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .btn-flavour-primary {
+      flex: 1;
+      background: var(--husk-brown);
+      color: #ffffff;
+      font-family: var(--font-khand);
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1rem;
+      border-radius: 14px;
+      text-align: center;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.15s;
+    }
+
+    .btn-flavour-primary:hover {
+      background: var(--coral-accent);
+      transform: translateY(-2px);
+    }
+
+    .btn-flavour-secondary {
+      background: transparent;
+      color: var(--husk-brown);
+      border: 1.5px solid var(--husk-brown);
+      font-family: var(--font-khand);
+      font-size: 1.2rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.75rem 1.25rem;
+      border-radius: 14px;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-flavour-secondary:hover {
+      background: var(--sand-gold);
+    }
+
+    /* NUTRITIONAL FACTS (Palmo Signature Detail) */
+    .nutrition-section {
+      margin-top: 7rem;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 3.5rem;
+      align-items: center;
+      background: var(--sun-gold);
+      border: 2.5px solid var(--husk-brown);
+      border-radius: 36px;
+      padding: 4rem;
+      box-shadow: 10px 10px 0 var(--husk-brown);
+      position: relative;
+      z-index: 10;
+    }
+
+    @media (max-width: 960px) {
+      .nutrition-section {
+        grid-template-columns: 1fr;
+        padding: 2.5rem 1.75rem;
+      }
+    }
+
+    .nutrition-content h2 {
+      font-family: var(--font-khand);
+      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 0.92;
+      color: var(--husk-brown);
+      margin-bottom: 1.25rem;
+    }
+
+    .nutrition-content p {
+      font-size: 1.15rem;
+      line-height: 1.65;
+      color: var(--husk-brown);
+      margin-bottom: 1.5rem;
+    }
+
+    .nutrition-card {
+      background: #ffffff;
+      border: 3.5px solid #000000;
+      border-radius: 18px;
+      padding: 1.75rem;
+      font-family: var(--font-inter);
+      color: #000000;
+      max-width: 440px;
+      margin: 0 auto;
+      width: 100%;
+      box-shadow: 6px 6px 0 #000000;
+    }
+
+    .nut-title {
+      font-family: var(--font-khand);
+      font-size: 3.2rem;
+      font-weight: 700;
+      line-height: 0.88;
+      border-bottom: 12px solid #000000;
+      padding-bottom: 0.4rem;
+      text-transform: uppercase;
+    }
+
+    .nut-sub {
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.5rem 0;
+      border-bottom: 1.5px solid #000000;
+    }
+
+    .nut-serving {
+      font-size: 1.05rem;
+      font-weight: 700;
+      padding: 0.5rem 0;
+      border-bottom: 6px solid #000000;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .nut-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #dcdcdc;
+      font-size: 0.98rem;
+    }
+
+    .nut-row.bold {
+      font-weight: 700;
+      border-bottom: 2.5px solid #000000;
+    }
+
+    /* REVIEWS SECTION ("Sippers Say !" -> "Collaborators Say !") */
+    .reviews-section {
+      margin-top: 7rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin-top: 3.5rem;
+    }
+
+    .review-card {
+      background: #ffffff;
+      border: 2px solid var(--husk-brown);
+      border-radius: 24px;
+      padding: 2.25rem;
+      text-align: left;
+      box-shadow: 5px 5px 0 var(--husk-brown);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .review-stars {
+      font-size: 1.35rem;
+      color: var(--coral-accent);
+      margin-bottom: 0.75rem;
+    }
+
+    .review-quote {
+      font-family: var(--font-khand);
+      font-size: 1.85rem;
+      font-weight: 700;
+      line-height: 1.05;
+      text-transform: uppercase;
+      color: var(--husk-brown);
+      margin-bottom: 0.75rem;
+    }
+
+    .review-body {
+      font-size: 1.05rem;
+      color: var(--husk-earth);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .review-author {
+      font-family: var(--font-hand);
+      font-size: 1.3rem;
+      color: var(--husk-brown);
+    }
+
+    /* CLEAN FOOTER */
+    .palmo-footer {
+      margin-top: 8rem;
+      background: var(--husk-brown);
+      color: var(--bg-cream);
+      border-radius: 40px 40px 0 0;
+      padding: 6rem 2rem 3.5rem 2rem;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+
+    .footer-huge-title {
+      font-family: var(--font-khand);
+      font-size: clamp(3.8rem, 13vw, 10rem);
+      font-weight: 700;
+      line-height: 0.85;
+      text-transform: uppercase;
+      color: var(--sun-gold);
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-sub {
+      font-family: var(--font-hand);
+      font-size: 2rem;
+      color: var(--sand-gold);
+      margin-bottom: 3.5rem;
+    }
+
+    .footer-links-row {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .footer-links-row a {
+      font-family: var(--font-khand);
+      font-size: 1.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--bg-cream);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer-links-row a:hover {
+      color: var(--sun-gold);
+    }
+
+    .footer-bottom-line {
+      font-family: var(--font-inter);
+      font-size: 0.95rem;
+      color: rgba(250, 246, 240, 0.7);
+      border-top: 1px solid rgba(250, 246, 240, 0.15);
+      padding-top: 2.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Tropical Sunlight Caustics -->
+  <div class="ambient-sunlight"></div>
+
+  <!-- FIXED 3D VIEWPORT CANVAS (Flies and moves with scroll) -->
+  <canvas id="spatial3DViewport"></canvas>
+
+  <!-- Interactive Particle Splashes -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Top Floating Capsule Navigation -->
+  <div class="palmo-nav-wrapper">
+    <nav class="palmo-nav-bar">
+      <a href="#" class="brand-group">
+        <span class="brand-logo-text">Abdul Aziz Nooruddin</span>
+        <span class="brand-sub">pure web3</span>
+      </a>
+
+      <div class="nav-links">
+        <a href="#projects">Repositories</a>
+        <a href="#nutrition">Code Nutrition</a>
+        <a href="#reviews">Reviews</a>
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </div>
+
+      <a href="mailto:Abdul-Aziz-Nooruddin@users.noreply.github.com" class="nav-cta-btn">
+        <span>LET'S TALK ↗</span>
+      </a>
+    </nav>
+  </div>
+
+  <main class="page-wrapper">
+
+    <!-- HERO STAGE (Palmo "Paradise in every sip.") -->
+    <section class="hero-stage">
+      
+      <!-- Handwritten Stickers (Palmo Style) -->
+      <div class="sticker-badge sticker-1">
+        <span>✦</span> 100% RAW BLOCKCHAIN CODE
+      </div>
+      <div class="sticker-badge sticker-2">
+        <span>🎓</span> AI & BLOCKCHAIN STUDENT
+      </div>
+      <div class="sticker-badge sticker-3">
+        <span>⚡</span> 5 SHIPPED REPOSITORIES
+      </div>
+      <div class="sticker-badge sticker-4">
+        <span>🛡️</span> DPDP ACT 2023 ESCROW
+      </div>
+
+      <p class="hero-eyebrow">The Real Source of Every Verified Block</p>
+      
+      <h1 class="hero-headline">
+        PARADISE IN <br>
+        <span class="highlight">EVERY BLOCK.</span>
+      </h1>
+
+      <p class="hero-bio-lead">
+        AI Student &amp; Smart Contract Developer | Building real-world Web3 products | Blockchain • DeFi • RegTech 🇮🇳 — Specializing in decentralized protocols, escrow settlement systems on Algorand, and high-impact digital experiences.
+      </p>
+
+      <!-- 3D Bottle Target Stage Area in Hero -->
+      <div class="hero-3d-stage-spacer">
+        <div class="scroll-indicator-pill">SCROLL TO EXPLORE 3D CANISTER ↓</div>
+      </div>
+
+      <!-- Credentials Ribbon Bar -->
+      <div class="credentials-ribbon">
+        <div class="ribbon-item">
+          <span>🎓</span> AI & CS STUDENT
+        </div>
+        <div class="ribbon-item" style="background: var(--sun-gold);">
+          <span>⚡</span> ALGORAND & POLYGON
+        </div>
+        <div class="ribbon-item" style="background: #ffffff;">
+          <span>🛡️</span> 5 VERIFIED REPOS
+        </div>
+        <div class="ribbon-item" style="background: var(--sand-gold);">
+          <span>🇮🇳</span> HYDERABAD & REMOTE WEB3
+        </div>
+      </div>
+
+    </section>
+
+    <!-- SECTION 2: EXPLORE ALL REPOSITORIES (Palmo "Explore all flavours") -->
+    <section class="showcase-section" id="projects">
+      <div class="section-headline-group">
+        <span class="section-badge-pill">Hand-Crafted & Verified on GitHub</span>
+        <h2 class="section-headline">EXPLORE ALL REPOSITORIES</h2>
+      </div>
+
+      <div class="flavours-grid">
+        
+          <div class="flavour-card">
+            <div class="flavour-card-header">
+              <div class="flavour-index">FLAVOUR 01</div>
+              <h3 class="flavour-title">ConsentChain Algorand</h3>
+              <div class="flavour-badge-tag">✦ OPEN SOURCE</div>
+              <p class="flavour-desc">A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.</p>
+            </div>
+
+            <div>
+              <div class="flavour-tech-list">
+                <span class="tech-pill">Algorand</span><span class="tech-pill">TypeScript</span><span class="tech-pill">Smart Contracts</span><span class="tech-pill">Blockchain</span>
+              </div>
+
+              <div class="flavour-actions">
+                <a href="https://consent-chain-algorand.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-flavour-primary">LAUNCH LIVE ↗</a>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand" target="_blank" rel="noopener noreferrer" class="btn-flavour-secondary">GITHUB ↗</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flavour-card">
+            <div class="flavour-card-header">
+              <div class="flavour-index">FLAVOUR 02</div>
+              <h3 class="flavour-title">Ai Portfolio Generator</h3>
+              <div class="flavour-badge-tag">✦ OPEN SOURCE</div>
+              <p class="flavour-desc">Turn your GitHub repositories &amp; resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.</p>
+            </div>
+
+            <div>
+              <div class="flavour-tech-list">
+                <span class="tech-pill">HTML</span><span class="tech-pill">JavaScript</span><span class="tech-pill">WebGL</span><span class="tech-pill">Three.js</span><span class="tech-pill">Node.js</span>
+              </div>
+
+              <div class="flavour-actions">
+                <a href="https://myfolio.tech" target="_blank" rel="noopener noreferrer" class="btn-flavour-primary">LAUNCH LIVE ↗</a>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator" target="_blank" rel="noopener noreferrer" class="btn-flavour-secondary">GITHUB ↗</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flavour-card">
+            <div class="flavour-card-header">
+              <div class="flavour-index">FLAVOUR 03</div>
+              <h3 class="flavour-title">Portfolio</h3>
+              <div class="flavour-badge-tag">✦ OPEN SOURCE</div>
+              <p class="flavour-desc">Personal portfolio featuring glassmorphism design, particle animations, and showcases decentralized applications deployed across Polygon &amp; Algorand.</p>
+            </div>
+
+            <div>
+              <div class="flavour-tech-list">
+                <span class="tech-pill">TypeScript</span><span class="tech-pill">CSS</span><span class="tech-pill">HTML</span><span class="tech-pill">Polygon</span><span class="tech-pill">Algorand</span>
+              </div>
+
+              <div class="flavour-actions">
+                <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-flavour-primary">LAUNCH LIVE ↗</a>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/portfolio" target="_blank" rel="noopener noreferrer" class="btn-flavour-secondary">GITHUB ↗</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flavour-card">
+            <div class="flavour-card-header">
+              <div class="flavour-index">FLAVOUR 04</div>
+              <h3 class="flavour-title">Pass A Note</h3>
+              <div class="flavour-badge-tag">✦ OPEN SOURCE</div>
+              <p class="flavour-desc">High-performance interactive communication tool engineered for seamless zero-latency peer data transfer.</p>
+            </div>
+
+            <div>
+              <div class="flavour-tech-list">
+                <span class="tech-pill">HTML</span><span class="tech-pill">JavaScript</span><span class="tech-pill">CSS</span>
+              </div>
+
+              <div class="flavour-actions">
+                <a href="https://pass-a-note-iota.vercel.app" target="_blank" rel="noopener noreferrer" class="btn-flavour-primary">LAUNCH LIVE ↗</a>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/pass-a-note" target="_blank" rel="noopener noreferrer" class="btn-flavour-secondary">GITHUB ↗</a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="flavour-card">
+            <div class="flavour-card-header">
+              <div class="flavour-index">FLAVOUR 05</div>
+              <h3 class="flavour-title">Lms User Management</h3>
+              <div class="flavour-badge-tag">✦ OPEN SOURCE</div>
+              <p class="flavour-desc">Enterprise-grade role-based access control and user management system engineered with strict security guarantees.</p>
+            </div>
+
+            <div>
+              <div class="flavour-tech-list">
+                <span class="tech-pill">JavaScript</span><span class="tech-pill">Node.js</span><span class="tech-pill">Express</span>
+              </div>
+
+              <div class="flavour-actions">
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/lms-user-management" target="_blank" rel="noopener noreferrer" class="btn-flavour-primary">LAUNCH LIVE ↗</a>
+                <a href="https://github.com/Abdul-Aziz-Nooruddin/lms-user-management" target="_blank" rel="noopener noreferrer" class="btn-flavour-secondary">GITHUB ↗</a>
+              </div>
+            </div>
+          </div>
+          
+      </div>
+    </section>
+
+    <!-- NUTRITION FACTS SECTION (Palmo Signature Detail) -->
+    <section class="nutrition-section" id="nutrition">
+      <div class="nutrition-content">
+        <h2>YOU DESERVE THE BEST FOR YOUR WEB3 PROTOCOL.</h2>
+        <p>
+          Just like pure coconut water with zero concentrates, your smart contracts deserve 100% authentic logic with zero hallucination, gas-efficient routines, and rock-solid state management.
+        </p>
+        <p>
+          Every line of code is cold-pressed, rigorously tested, and deployed to live mainnets and testnets.
+        </p>
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer" class="nav-cta-btn" style="display: inline-flex;">
+          INSPECT SOURCE ON GITHUB ↗
+        </a>
+      </div>
+
+      <!-- Food-Grade Code Nutrition Panel -->
+      <div class="nutrition-card">
+        <div class="nut-title">CODE NUTRITION</div>
+        <div class="nut-sub">Serving Size: 1 Verified Block (Continuous)</div>
+        <div class="nut-serving">
+          <span>Amount Per Pull Request</span>
+          <span>100% PURE</span>
+        </div>
+        
+        <div class="nut-row bold">
+          <span>Total Logic</span>
+          <span>100% DV</span>
+        </div>
+        <div class="nut-row" style="padding-left: 1.2rem;">
+          <span>Smart Contracts (Algorand / Polygon)</span>
+          <span>50%</span>
+        </div>
+        <div class="nut-row" style="padding-left: 1.2rem;">
+          <span>Full-Stack UI / WebGL / Three.js</span>
+          <span>35%</span>
+        </div>
+        <div class="nut-row" style="padding-left: 1.2rem;">
+          <span>Automated Compliance (DPDP Act)</span>
+          <span>15%</span>
+        </div>
+        <div class="nut-row bold">
+          <span>Zero Hallucination</span>
+          <span>0g (0% DV)</span>
+        </div>
+        <div class="nut-row bold">
+          <span>Open Source Integrity</span>
+          <span>100% DV</span>
+        </div>
+        <div class="nut-row">
+          <span>Active Repositories</span>
+          <span>5 Verified</span>
+        </div>
+        <div class="nut-row">
+          <span>Real-World Impact</span>
+          <span>High Yield</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS ("Sippers Say !" -> "Collaborators Say !") -->
+    <section class="reviews-section" id="reviews">
+      <span class="section-badge-pill">Community & Feedback</span>
+      <h2 class="section-headline">COLLABORATORS SAY !</h2>
+
+      <div class="reviews-grid">
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-quote">"UNREAL ATTENTION TO DETAIL."</div>
+          <p class="review-body">
+            Abdul Aziz took our decentralized consent vision and translated it into a compliant Algorand micro-payment architecture faster than anticipated.
+          </p>
+          <div class="review-author">— Web3 Protocol Peer</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-quote">"CLEANEST CODE IN THE BOX."</div>
+          <p class="review-body">
+            From the mathematical precision of the smart contracts to the smooth WebGL front-end, everything feels cohesive, tactile, and production-ready.
+          </p>
+          <div class="review-author">— Open Source Contributor</div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-stars">★★★★★</div>
+          <div class="review-quote">"FINISHED AHEAD OF DEADLINE."</div>
+          <p class="review-body">
+            Genuine builder who actually ships code instead of endless talk. The GitHub track record speaks for itself.
+          </p>
+          <div class="review-author">— Tech Community Lead</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PALMO FOOTER -->
+    <footer class="palmo-footer">
+      <div class="footer-huge-title">KEEP BUILDING..</div>
+      <div class="footer-sub">Pure Code. 100% Decentralized. Naturally Hydrated.</div>
+
+      <div class="footer-links-row">
+        <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+        <a href="mailto:Abdul-Aziz-Nooruddin@users.noreply.github.com">Send Direct Email</a>
+        <a href="https://myfolio.tech" target="_blank" rel="noopener noreferrer">MyFolio Platform</a>
+      </div>
+
+      <div class="footer-bottom-line">
+        © 2026 Abdul Aziz Nooruddin. All rights reserved.
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- 3D SCROLLYTELLING & GSAP MOTION ENGINE -->
+  <script>
+    (function() {
+      // 1. INITIALIZE LENIS SMOOTH INERTIA SCROLLING
+      let lenis = null;
+      if (window.Lenis) {
+        lenis = new Lenis({
+          duration: 1.2,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+          orientation: 'vertical',
+          gestureOrientation: 'vertical',
+          smoothWheel: true,
+          wheelMultiplier: 1.0
+        });
+
+        function raf(time) {
+          lenis.raf(time);
+          requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+      }
+
+      // Sync GSAP ScrollTrigger with Lenis
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        if (lenis) {
+          lenis.on('scroll', ScrollTrigger.update);
+          gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+          });
+          gsap.ticker.lagSmoothing(0);
+        }
+      }
+
+      // 2. THREE.JS 3D ROTATING & FLYING CANISTER STAGE
+      const canvas3D = document.getElementById('spatial3DViewport');
+      let canisterGroup = null;
+
+      if (window.THREE && canvas3D) {
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(38, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 0, 7.5);
+
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas3D, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        // Tropical Lighting
+        const ambientLight = new THREE.AmbientLight(0xfff7e6, 1.4);
+        scene.add(ambientLight);
+
+        const keyLight = new THREE.DirectionalLight(0xffe386, 2.2);
+        keyLight.position.set(5, 8, 6);
+        scene.add(keyLight);
+
+        const fillLight = new THREE.DirectionalLight(0xede5a8, 1.2);
+        fillLight.position.set(-6, -3, 3);
+        scene.add(fillLight);
+
+        // Canister Model Assembly
+        canisterGroup = new THREE.Group();
+        scene.add(canisterGroup);
+
+        // Initial Hero Placement
+        canisterGroup.position.set(0, -0.4, 0);
+        canisterGroup.rotation.set(0.15, 0.4, -0.05);
+
+        // Cylinder Porcelain Body
+        const bodyGeo = new THREE.CylinderGeometry(1.15, 1.15, 3.4, 64);
+        const bodyMat = new THREE.MeshStandardMaterial({
+          color: 0xfffcf5,
+          roughness: 0.12,
+          metalness: 0.18,
+        });
+        const canisterBody = new THREE.Mesh(bodyGeo, bodyMat);
+        canisterGroup.add(canisterBody);
+
+        // Gold Rim & Metallic Caps
+        const goldMat = new THREE.MeshStandardMaterial({
+          color: 0xd4af37,
+          roughness: 0.22,
+          metalness: 0.88,
+        });
+
+        const capGeo = new THREE.CylinderGeometry(0.85, 1.15, 0.42, 64);
+        const cap = new THREE.Mesh(capGeo, goldMat);
+        cap.position.y = 1.9;
+        canisterGroup.add(cap);
+
+        const baseRingGeo = new THREE.CylinderGeometry(1.18, 1.18, 0.16, 64);
+        const baseRing = new THREE.Mesh(baseRingGeo, goldMat);
+        baseRing.position.y = -1.7;
+        canisterGroup.add(baseRing);
+
+        // Coral Accent Ring
+        const ringGeo = new THREE.TorusGeometry(1.19, 0.045, 16, 64);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0xcb533b, roughness: 0.35 });
+        const logoRing = new THREE.Mesh(ringGeo, ringMat);
+        logoRing.rotation.x = Math.PI / 2;
+        logoRing.position.y = 0.2;
+        canisterGroup.add(logoRing);
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Continuous Gentle Float
+        let clock = new THREE.Clock();
+        function renderScene() {
+          requestAnimationFrame(renderScene);
+          const t = clock.getElapsedTime();
+          canisterGroup.rotation.y += 0.003;
+          renderer.render(scene, camera);
+        }
+        renderScene();
+      }
+
+      // 3. GSAP SCROLLTRIGGER TIMELINE CHOREOGRAPHY
+      if (window.gsap && window.ScrollTrigger && canisterGroup) {
+
+        // A. Hero Entrance Stagger
+        const heroTl = gsap.timeline({ defaults: { ease: 'power3.out', duration: 1.0 } });
+        heroTl
+          .to('.hero-eyebrow', { opacity: 1, y: 0, delay: 0.2 })
+          .to('.hero-headline', { opacity: 1, y: 0 }, '-=0.7')
+          .to('.hero-bio-lead', { opacity: 1, y: 0 }, '-=0.6')
+          .to('.credentials-ribbon', { opacity: 1, y: 0 }, '-=0.5');
+
+        // B. 3D Canister Master Scroll Progress Timeline
+        // Flight path: Center (Hero) -> Right (Projects) -> Left (Nutrition) -> Top Horizon (Footer)
+        const scrollTl = gsap.timeline({
+          scrollTrigger: {
+            trigger: '.page-wrapper',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 1.2
+          }
+        });
+
+        scrollTl
+          // Milestone 1: Glide to right side as Repositories section approaches
+          .to(canisterGroup.position, { x: 2.6, y: -0.2, z: 0.8, ease: 'power2.inOut' }, 0)
+          .to(canisterGroup.rotation, { x: 0.25, z: -0.3, ease: 'power2.inOut' }, 0)
+
+          // Milestone 2: Swoop across to left side next to Nutrition Facts
+          .to(canisterGroup.position, { x: -2.4, y: 0.1, z: 1.2, ease: 'power2.inOut' }, 0.5)
+          .to(canisterGroup.rotation, { x: -0.15, z: 0.25, ease: 'power2.inOut' }, 0.5)
+
+          // Milestone 3: Float gracefully upward toward sunset horizon
+          .to(canisterGroup.position, { x: 0, y: 3.8, z: -2.5, ease: 'power2.inOut' }, 0.85)
+          .to(canisterGroup.rotation, { x: 0.4, z: 0, ease: 'power2.inOut' }, 0.85);
+
+        // C. Parallax Floating Stickers
+        gsap.to('.sticker-1', {
+          y: -140,
+          rotation: -20,
+          scrollTrigger: { trigger: '.hero-stage', start: 'top top', end: 'bottom top', scrub: 1 }
+        });
+        gsap.to('.sticker-2', {
+          y: -180,
+          rotation: 18,
+          scrollTrigger: { trigger: '.hero-stage', start: 'top top', end: 'bottom top', scrub: 1.2 }
+        });
+        gsap.to('.sticker-3', {
+          y: -120,
+          rotation: 15,
+          scrollTrigger: { trigger: '.hero-stage', start: 'top top', end: 'bottom top', scrub: 0.8 }
+        });
+        gsap.to('.sticker-4', {
+          y: -160,
+          rotation: -18,
+          scrollTrigger: { trigger: '.hero-stage', start: 'top top', end: 'bottom top', scrub: 1.1 }
+        });
+
+        // D. Project Cards Stagger Entrance
+        gsap.from('.flavour-card', {
+          opacity: 0,
+          y: 70,
+          stagger: 0.18,
+          duration: 0.9,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.flavours-grid',
+            start: 'top 80%',
+            toggleActions: 'play none none reverse'
+          }
+        });
+
+        // E. Nutrition Section Reveal
+        gsap.from('.nutrition-card', {
+          scale: 0.92,
+          opacity: 0,
+          duration: 1.0,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.nutrition-section',
+            start: 'top 75%'
+          }
+        });
+
+        // F. Reviews Stagger
+        gsap.from('.review-card', {
+          opacity: 0,
+          y: 50,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: '.reviews-grid',
+            start: 'top 80%'
+          }
+        });
+
+      }
+
+      // 4. INTERACTIVE COCONUT SPLASH PARTICLE CANVAS
+      const pCanvas = document.getElementById('particleCanvas');
+      if (pCanvas) {
+        const ctx = pCanvas.getContext('2d');
+        let width = pCanvas.width = window.innerWidth;
+        let height = pCanvas.height = window.innerHeight;
+        let particles = [];
+
+        window.addEventListener('resize', () => {
+          width = pCanvas.width = window.innerWidth;
+          height = pCanvas.height = window.innerHeight;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (Math.random() < 0.4) {
+            particles.push({
+              x: e.clientX,
+              y: e.clientY,
+              size: Math.random() * 7 + 3,
+              alpha: 0.85,
+              color: Math.random() > 0.5 ? '#FFE386' : '#FAF6F0',
+              vx: (Math.random() - 0.5) * 2,
+              vy: Math.random() * 2 + 1
+            });
+          }
+        });
+
+        function renderParticles() {
+          ctx.clearRect(0, 0, width, height);
+          for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha -= 0.018;
+            p.size *= 0.98;
+
+            if (p.alpha <= 0) {
+              particles.splice(i, 1);
+              i--;
+              continue;
+            }
+
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+          requestAnimationFrame(renderParticles);
+        }
+        renderParticles();
+      }
+
+    })();
+  </script>
+</body>
+</html>

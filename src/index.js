@@ -2380,6 +2380,14 @@ app.get(['/thank-you', '/success'], (req, res) => {
   res.sendFile(path.join(webDir, 'thank-you.html'));
 });
 
+app.get(['/abdul-aziz', '/palmo', '/palmo-pure'], (req, res) => {
+  res.sendFile(path.join(webDir, 'portfolio-palmo-pure.html'));
+});
+
+app.get(['/mesh3d-terminal', '/terminal'], (req, res) => {
+  res.sendFile(path.join(webDir, 'portfolio-mesh3d-terminal.html'));
+});
+
 // Direct Portfolio Web Hosting Route
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
 

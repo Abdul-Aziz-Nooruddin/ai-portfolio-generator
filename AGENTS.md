@@ -66,6 +66,14 @@ You MUST strictly consult and apply the following three authoritative design and
    - Under **NO circumstances** should fake developer telemetry banners, artificial 'LIVE TELEMETRY // ...', fake 'FPS: 60', 'WebGL 2.0', status dots, or developer debug labels be added to cards, hero showcases, or portfolio artifacts.
    - Keep cards and viewports clean, sleek, and focused on real content, visual depth, and natural interactions without fake tech-jargon headers or artificial metrics.
 
+10. **AI Portfolio Identity & Content Engine (Strict Zero Predefined Template Filling Rule)**:
+    - **Never fill a predefined template**: Understand WHO the user is first. Build the User Identity Model (role, career stage, technical discipline, positioning) and determine their central story from real evidence.
+    - **Strict Zero Fabricated Information**: Never invent employers, metrics, clients, awards, testimonials, or claims. If evidence does not exist, omit the section.
+    - **Dynamic Section Architecture**: Select sections based on relevance and proof (Relevance, Evidence, Audience Value, Differentiation). Remove empty or redundant sections.
+    - **Content Hierarchy**: Structure into Primary (must-see core evidence), Secondary (supporting credentials), and Supporting (deep dives).
+    - **Project Intelligence**: Treat projects as authentic technical case studies (problem, solution, architecture, technical challenge, live demo link) rather than generic thumbnail cards.
+    - **Content-First Pipeline**: Follow the strict order: `CONTENT → IDENTITY → STORY → HIERARCHY → SECTION STRUCTURE → VISUAL REPRESENTATION → 3D EXPERIENCE`. MyFolio generates personalized digital worlds around real people, never cookie-cutter templates.
+
 ## Standard Operating Procedure for Template Additions
 
 For **ANY** future template addition or redesign, you MUST strictly follow this mandatory pipeline:
