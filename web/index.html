@@ -287,9 +287,28 @@
       --font-mono: 'Share Tech Mono', 'Space Mono', monospace;
     }
 
+    html, body {
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      position: relative;
+    }
 
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
 
+    h1, h2, h3, h4, h5, h6, p, span, a {
+      overflow-wrap: break-word;
+      word-break: normal;
+    }
 
+    section.landing-section,
+    section.universes-showcase-section,
+    .chrono-scroll-beat {
+      scroll-margin-top: 72px !important;
+      max-width: 100vw;
+      overflow-x: hidden;
+    }
 
     /* ====================================================
        APPLE-STYLE FULL-PAGE 3D SEQUENCE SPATIAL SYSTEM
@@ -1257,6 +1276,7 @@
       gap: 20px;
       position: relative;
       margin-top: 32px;
+      width: 100%;
     }
 
     .connected-step-card {
@@ -1266,7 +1286,10 @@
       border-radius: 14px;
       padding: 24px 20px;
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       transition: transform 0.2s ease, border-color 0.2s ease;
+      box-sizing: border-box;
+      min-width: 0;
     }
 
     .connected-step-card:hover {
@@ -1314,6 +1337,32 @@
       font-size: 13px;
       color: var(--stardust);
       line-height: 1.55;
+    }
+
+    @media (max-width: 860px) {
+      .connected-steps-container {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+        margin-top: 18px !important;
+      }
+      .connected-step-card {
+        padding: 16px 18px !important;
+        border-radius: 14px !important;
+      }
+      .step-num-badge {
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 11px !important;
+        margin-bottom: 8px !important;
+      }
+      .step-title {
+        font-size: 16px !important;
+        margin-bottom: 4px !important;
+      }
+      .step-desc {
+        font-size: 12.5px !important;
+        line-height: 1.48 !important;
+      }
     }
 
     /* Asymmetrical Universes Gallery */
@@ -2087,6 +2136,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 8px;
       padding-top: 10px;
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
@@ -2103,7 +2153,7 @@
     @media (max-width: 1100px) {
       .hero-command-container {
         grid-template-columns: 1fr;
-        gap: 40px;
+        gap: 32px;
       }
       .hero-command-content {
         align-items: center;
@@ -2126,9 +2176,56 @@
       }
     }
 
-    @media (max-width: 640px) {
+    @media (max-width: 860px) {
+      .universes-bento-grid {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 16px !important;
+        width: 100% !important;
+      }
+      .bento-hero-shelf,
+      .bento-hero-sylva,
       .bento-compact-card {
-        grid-column: span 12;
+        grid-column: auto !important;
+        width: 100% !important;
+      }
+      .universe-bento-card {
+        border-radius: 16px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      .bento-card-media {
+        aspect-ratio: 16 / 9.5 !important;
+      }
+      .bento-card-content {
+        padding: 14px 16px !important;
+        gap: 4px !important;
+      }
+      .bento-card-title {
+        font-size: 1.12rem !important;
+      }
+      .bento-card-desc {
+        font-size: 0.8rem !important;
+        line-height: 1.45 !important;
+        margin-bottom: 8px !important;
+      }
+      .bento-card-footer {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        padding-top: 10px !important;
+      }
+      .bento-card-footer .btn-solar-primary {
+        width: auto !important;
+        flex: 0 0 auto !important;
+        padding: 6px 14px !important;
+        font-size: 0.76rem !important;
+      }
+      .bento-card-footer a:last-child {
+        font-size: 0.76rem !important;
+        white-space: nowrap !important;
       }
     }
 
@@ -2843,16 +2940,39 @@
         -webkit-backdrop-filter: blur(20px) !important;
       }
       .section-title-large {
-        font-size: clamp(1.65rem, 6.5vw, 2.3rem) !important;
+        font-size: clamp(1.22rem, 5.0vw, 1.55rem) !important;
         text-align: center !important;
-        line-height: 1.2 !important;
+        line-height: 1.22 !important;
+        letter-spacing: -0.015em !important;
         max-width: 100% !important;
+        margin-bottom: 8px !important;
       }
       .section-lead-text {
-        font-size: 0.92rem !important;
+        font-size: 0.84rem !important;
+        line-height: 1.46 !important;
         text-align: center !important;
+        max-width: 38ch !important;
+        margin: 0 auto 16px !important;
+      }
+
+      .landing-section {
+        padding: 36px 16px !important;
+      }
+      .universes-showcase-section {
+        padding: 36px 16px 44px !important;
+      }
+      .landing-container {
+        padding: 0 12px !important;
         max-width: 100% !important;
-        margin: 0 auto 28px !important;
+      }
+      .section-heading-centered {
+        margin: 0 auto 18px auto !important;
+        max-width: 100% !important;
+      }
+      .section-tag-badge {
+        margin-bottom: 6px !important;
+        padding: 4px 12px !important;
+        font-size: 10px !important;
       }
 
       /* Universes Cluster Responsive Stack */
@@ -2886,17 +3006,28 @@
       }
       .launch-actions-cluster .btn-solar-primary,
       .launch-actions-cluster .btn-solar-outline,
-      .btn-solar-primary,
-      .btn-solar-outline {
+      .chrono-cta-row .btn-solar-primary,
+      .chrono-cta-row .btn-solar-outline,
+      .console-input-row .btn-solar-primary {
         width: 100% !important;
         max-width: 100% !important;
         box-sizing: border-box !important;
-        padding: 14px 18px !important;
+        padding: 12px 18px !important;
         font-size: 0.88rem !important;
         white-space: normal !important;
         text-align: center !important;
         justify-content: center !important;
         word-break: break-word !important;
+      }
+
+      .bento-card-footer .btn-solar-primary,
+      .hero-overlay-actions .btn-solar-primary,
+      .hero-overlay-actions .btn-solar-outline {
+        width: auto !important;
+        flex: 0 0 auto !important;
+        padding: 6px 14px !important;
+        font-size: 0.76rem !important;
+        white-space: nowrap !important;
       }
 
       .launch-trust-bar {
