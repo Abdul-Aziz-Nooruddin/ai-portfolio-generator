@@ -536,6 +536,10 @@ class DatabaseService {
   // ==========================================
 
   async getConversation(userId) {
+    if (!userId || typeof userId !== 'string') return null;
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId);
+    if (!isUuid) return null;
+
     const { data, error } = await this.client
       .from('conversations')
       .select('*')
@@ -1007,16 +1011,20 @@ class DatabaseService {
 
   async getUserDashboardData(userId) {
     try {
+      const isUuid = (str) => typeof str === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str);
       const user = await this.getUserById(userId);
-      let conversation = await this.getConversation(userId);
+      let conversation = isUuid(userId) ? await this.getConversation(userId) : null;
       
-      // Also look up conversation by phone number
-      if (!conversation?.id && user?.phone_number) {
-        conversation = await this.getConversation(user.phone_number);
+      // Also look up conversation by user.id if not found
+      if (!conversation?.id && user?.id && isUuid(user.id)) {
+        conversation = await this.getConversation(user.id);
       }
 
+      const userEmail = (user?.email || '').toLowerCase().trim();
+      const isVipFounder = userEmail === 'abdulaziznoor9876@gmail.com';
+
       // Check if user has sites in public/sites or sites table
-      let siteId = conversation?.id || null;
+      let siteId = isVipFounder ? 'abdulaziz' : (conversation?.id || null);
       let hasSite = false;
 
       const fs = require('fs');
@@ -1028,7 +1036,7 @@ class DatabaseService {
       }
 
       // Fallback: check sites table
-      if (!hasSite && user?.id) {
+      if (!hasSite && user?.id && isUuid(user.id)) {
         try {
           const { data: siteRecord } = await this.client
             .from('sites')
@@ -1049,7 +1057,7 @@ class DatabaseService {
 
       // Fallback: check candidate directory names
       if (!hasSite && user) {
-        const candidateNames = [user.username, user.name?.toLowerCase().replace(/\s+/g, '-'), user.id].filter(Boolean);
+        const candidateNames = [isVipFounder ? 'abdulaziz' : null, user.username, user.name?.toLowerCase().replace(/\s+/g, '-'), user.id].filter(Boolean);
         for (const cand of candidateNames) {
           if (fs.existsSync(path.join(sitesBaseDir, cand, 'index.html'))) {
             siteId = cand;
@@ -1064,15 +1072,17 @@ class DatabaseService {
         analytics = await this.getSiteAnalytics(siteId);
       }
 
-      const isPro = user?.role === 'pro' || user?.role === 'admin' || user?.subscription_status === 'active' || conversation?.status === 'paid';
-      const planName = isPro ? 'Pro Builder (₹149/mo)' : 'Free Starter Tier';
-      const planDetails = isPro
-        ? 'Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.'
-        : 'Includes 100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.';
-      const buildsLimit = isPro ? 'Unlimited' : 3;
+      const isPro = isVipFounder || user?.role === 'pro' || user?.role === 'admin' || user?.subscription_status === 'active' || conversation?.status === 'paid';
+      const planName = isVipFounder ? 'VIP Founder / Master Edition' : (isPro ? 'Pro Builder (₹149/mo)' : 'Free Starter Tier');
+      const planDetails = isVipFounder
+        ? 'Includes VIP custom domain mapping (abdulaziz.myfolio.tech), zero watermarks, edge CDN distribution, and recruiter analytics tracking.'
+        : (isPro
+          ? 'Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.'
+          : 'Includes 100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.');
+      const buildsLimit = (isPro || isVipFounder) ? 'Unlimited' : 3;
       const buildsUsed = conversation?.extracted_data?._regens_used || 0;
-      const buildsRemaining = isPro ? 'Unlimited' : Math.max(0, 3 - buildsUsed);
-      const buildsLabel = isPro ? 'Unlimited Builds Active' : `${buildsRemaining} / 3 Builds Remaining`;
+      const buildsRemaining = (isPro || isVipFounder) ? 'Unlimited' : Math.max(0, 3 - buildsUsed);
+      const buildsLabel = (isPro || isVipFounder) ? 'Unlimited Builds Active' : `${buildsRemaining} / 3 Builds Remaining`;
 
       return {
         user,

@@ -17,7 +17,8 @@ class SecurityMiddleware {
         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
         "font-src 'self' https://fonts.gstatic.com data:",
         "img-src 'self' data: https: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.google.co.in",
-        "frame-src 'self' https://sketchfab.com https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com",
+        "frame-src 'self' https://myfolio.tech https://*.myfolio.tech https://sketchfab.com https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com http://localhost:* http://127.0.0.1:*",
+        "frame-ancestors 'self' https://myfolio.tech https://*.myfolio.tech http://localhost:* http://127.0.0.1:*",
         "connect-src 'self' blob: data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com",
         "object-src 'none'",
         "base-uri 'self'",
@@ -26,7 +27,18 @@ class SecurityMiddleware {
 
       res.setHeader('Content-Security-Policy', csp);
       res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+
+      // Do not set restrictive X-Frame-Options on preview, embed, or portfolio routes so CSP frame-ancestors governs embedding
+      const isPortfolioRoute = req.path.startsWith('/p/') ||
+                               req.path.startsWith('/sites/') ||
+                               req.path === '/abdulaziz' ||
+                               req.path === '/aziz' ||
+                               req.path.startsWith('/preview') ||
+                               req.query?.embed === 'true';
+      if (!isPortfolioRoute) {
+        res.setHeader('X-Frame-Options', 'SAMEORIGIN');
+      }
+
       res.setHeader('X-XSS-Protection', '1; mode=block');
       res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
       res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');

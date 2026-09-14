@@ -2,7 +2,27 @@
   "abdulaziz.myfolio.tech": {
     "domain": "abdulaziz.myfolio.tech",
     "handle": "abdulaziz",
-    "siteId": "abdulaziz-test-1789370982285",
+    "siteId": "abdulaziz-test-1789374624835",
+    "universeKey": "threeui-landscape",
+    "userId": "abdulaziz_founder",
+    "type": "subdomain",
+    "status": "active",
+    "updatedAt": "2026-09-14T08:30:24.836Z"
+  },
+  "noor.myfolio.tech": {
+    "domain": "noor.myfolio.tech",
+    "handle": "abdulaziz",
+    "siteId": "abdulaziz",
+    "universeKey": "threeui-landscape",
+    "userId": "abdulaziz_founder",
+    "type": "subdomain",
+    "status": "active",
+    "updatedAt": "2026-09-14T07:29:42.285Z"
+  },
+  "noor.localhost": {
+    "domain": "noor.localhost",
+    "handle": "abdulaziz",
+    "siteId": "abdulaziz",
     "universeKey": "threeui-landscape",
     "userId": "abdulaziz_founder",
     "type": "subdomain",

@@ -195,14 +195,16 @@ app.use(async (req, res, next) => {
     return next();
   }
 
-  // Explicit VIP Subdomain Route: abdulaziz.myfolio.tech, aziz.myfolio.tech or local equivalents
+  // Explicit VIP Subdomain Route: abdulaziz.myfolio.tech, aziz.myfolio.tech, noor.myfolio.tech or local equivalents
   if (
     host === 'abdulaziz.myfolio.tech' || host === 'abdulaziz.localhost' || host.startsWith('abdulaziz.') ||
-    host === 'aziz.myfolio.tech' || host === 'aziz.localhost' || host.startsWith('aziz.')
+    host === 'aziz.myfolio.tech' || host === 'aziz.localhost' || host.startsWith('aziz.') ||
+    host === 'noor.myfolio.tech' || host === 'noor.localhost' || host.startsWith('noor.')
   ) {
     let siteId = customDomainService?.resolveHostname(host) ||
       customDomainService?.resolveHostname('abdulaziz.myfolio.tech') ||
       customDomainService?.resolveHostname('aziz.myfolio.tech') ||
+      customDomainService?.resolveHostname('noor.myfolio.tech') ||
       'abdulaziz';
 
     let html = await hostingProvider.getSiteHtml(siteId);
@@ -1904,16 +1906,14 @@ app.get(
   (req, res) => authHandler.googleCallback(req, res)
 );
 
-// 2d. GitHub OAuth 2.0 Redirect & Callback Flow
-app.get(
-  '/api/auth/github',
-  (req, res) => authHandler.githubRedirect(req, res)
-);
+// 2d. GitHub OAuth Discontinued (Authentication strictly via Email & Google OAuth)
+app.get('/api/auth/github', (req, res) => {
+  res.redirect('/auth?error=' + encodeURIComponent('GitHub authentication has been discontinued. Please sign in with Email or Google OAuth.'));
+});
 
-app.get(
-  '/api/auth/github/callback',
-  (req, res) => authHandler.githubCallback(req, res)
-);
+app.get('/api/auth/github/callback', (req, res) => {
+  res.redirect('/auth?error=' + encodeURIComponent('GitHub authentication has been discontinued. Please sign in with Email or Google OAuth.'));
+});
 
 // 2d. Google OAuth 2.0 Identity Services Config & Token Verification
 app.get(
