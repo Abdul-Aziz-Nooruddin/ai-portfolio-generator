@@ -363,6 +363,17 @@
       gap: 8px;
       margin-top: 6px;
       width: 100%;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .universe-select-grid::-webkit-scrollbar {
+      width: 4px;
+    }
+    .universe-select-grid::-webkit-scrollbar-thumb {
+      background: rgba(110, 168, 255, 0.3);
+      border-radius: 4px;
     }
 
     .universe-choice-card {
@@ -382,19 +393,21 @@
 
     .universe-choice-card:hover {
       border-color: rgba(110, 168, 255, 0.5);
+      transform: translateY(-1px);
     }
 
     .universe-choice-card.selected {
       border-color: var(--mf-accent-blue);
-      background: rgba(110, 168, 255, 0.12);
-      box-shadow: 0 0 12px rgba(110, 168, 255, 0.25);
+      background: rgba(110, 168, 255, 0.14);
+      box-shadow: 0 0 14px rgba(110, 168, 255, 0.3);
     }
 
     .universe-choice-thumb {
-      height: 48px;
+      height: 52px;
       border-radius: 4px;
       background-size: cover;
       background-position: center;
+      background-color: #0c1228;
     }
 
     .universe-choice-title {
@@ -404,6 +417,254 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+    }
+
+    /* =======================================================
+       FLUID WATER-FILLING PUBLISH BUTTON
+       ======================================================= */
+    .fluid-publish-btn {
+      position: relative;
+      overflow: hidden;
+      min-width: 195px;
+      height: 38px;
+      background: rgba(14, 23, 58, 0.85);
+      border: 1px solid rgba(110, 168, 255, 0.45);
+      border-radius: var(--mf-radius-md, 8px);
+      box-shadow: 0 4px 18px rgba(110, 168, 255, 0.25);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 10;
+    }
+
+    .fluid-publish-btn:hover:not(:disabled) {
+      border-color: rgba(110, 168, 255, 0.8);
+      box-shadow: 0 6px 24px rgba(110, 168, 255, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .fluid-wave-container {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+      z-index: 1;
+    }
+
+    .fluid-level {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 0%;
+      background: linear-gradient(180deg, rgba(56, 189, 248, 0.85) 0%, rgba(37, 99, 235, 0.95) 60%, rgba(29, 78, 216, 1) 100%);
+      box-shadow: 0 -4px 18px rgba(56, 189, 248, 0.7);
+      transition: height 0.15s ease-out;
+    }
+
+    .fluid-wave {
+      position: absolute;
+      top: -14px;
+      left: 0;
+      width: 250%;
+      height: 20px;
+      background-repeat: repeat-x;
+      background-size: 50% 100%;
+    }
+
+    .fluid-wave-front {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C150,80 350,-30 500,45 C650,120 900,-25 1200,35 L1200,120 L0,120 Z' fill='%2338bdf8' fill-opacity='0.9'/%3E%3C/svg%3E");
+      animation: waveMotionFront 2.4s linear infinite;
+      opacity: 0.95;
+    }
+
+    .fluid-wave-back {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E%3Cpath d='M0,0 C200,60 400,-20 600,40 C800,90 1000,-15 1200,25 L1200,120 L0,120 Z' fill='%231d4ed8' fill-opacity='0.7'/%3E%3C/svg%3E");
+      animation: waveMotionBack 3.6s linear infinite reverse;
+      opacity: 0.75;
+    }
+
+    @keyframes waveMotionFront {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    @keyframes waveMotionBack {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .fluid-publish-btn.fully-filled {
+      border-color: #38bdf8;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6), 0 0 50px rgba(37, 99, 235, 0.4);
+    }
+
+    .fluid-publish-btn.fully-filled .fluid-level {
+      height: 100% !important;
+      background: linear-gradient(180deg, #38bdf8 0%, #2563eb 60%, #1d4ed8 100%);
+    }
+
+    .fluid-publish-btn.fully-filled .fluid-wave {
+      top: -8px;
+      opacity: 0.7;
+      animation-duration: 2s;
+    }
+
+    .fluid-btn-content {
+      position: relative;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 100%;
+      height: 100%;
+      padding: 0 16px;
+      font-family: var(--mf-font-sans);
+      font-size: 13px;
+      font-weight: 600;
+      color: #FFFFFF;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+      white-space: nowrap;
+    }
+
+    .fluid-btn-percent {
+      font-family: var(--mf-font-mono, monospace);
+      font-size: 11.5px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Floating Toast Banner */
+    .studio-toast-banner {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      z-index: 10000;
+      background: rgba(8, 14, 38, 0.94);
+      border: 1px solid rgba(110, 168, 255, 0.4);
+      backdrop-filter: blur(20px);
+      border-radius: 10px;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(110, 168, 255, 0.2);
+      color: #F5F7FF;
+      font-size: 13px;
+      font-weight: 500;
+      transform: translateY(-20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .studio-toast-banner.show {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Modal Toast for Synthesis Complete */
+    .studio-toast-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      background: rgba(4, 6, 18, 0.85);
+      backdrop-filter: blur(14px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .studio-toast-modal.show {
+      display: flex;
+      animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .toast-modal-card {
+      background: linear-gradient(135deg, rgba(14, 22, 54, 0.96) 0%, rgba(6, 10, 26, 0.98) 100%);
+      border: 1px solid rgba(110, 168, 255, 0.45);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), 0 0 35px rgba(110, 168, 255, 0.3);
+      position: relative;
+    }
+
+    .toast-modal-title {
+      font-family: var(--mf-font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toast-modal-sub {
+      font-size: 13px;
+      color: var(--mf-text-secondary);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .toast-url-preview {
+      background: rgba(5, 8, 23, 0.85);
+      border: 1px solid var(--mf-border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      font-family: var(--mf-font-mono);
+      font-size: 13px;
+      color: var(--mf-accent-cyan, #38bdf8);
+    }
+
+    .ai-chat-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      margin-top: 8px;
+    }
+
+    .ai-bubble {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .ai-bubble.user {
+      background: rgba(110, 168, 255, 0.15);
+      border: 1px solid rgba(110, 168, 255, 0.25);
+      color: #F5F7FF;
+      align-self: flex-end;
+    }
+
+    .ai-bubble.agent {
+      background: rgba(8, 14, 38, 0.7);
+      border: 1px solid var(--mf-border);
+      color: var(--mf-text-secondary);
+      align-self: flex-start;
     }
 
     /* Responsive Adaptation */
@@ -454,8 +715,18 @@
       <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyGeneratedUrl()">
         <span>Share</span>
       </button>
-      <button type="submit" form="portfolioGenerationForm" class="mf-btn mf-btn-primary mf-btn-sm" id="btnSubmitGenerate">
-        <span>Publish / Set Live</span> &rarr;
+      <button type="submit" form="portfolioGenerationForm" class="mf-btn mf-btn-primary mf-btn-sm fluid-publish-btn" id="btnSubmitGenerate">
+        <div class="fluid-wave-container" id="fluidWaveContainer">
+          <div class="fluid-level" id="fluidLevel">
+            <div class="fluid-wave fluid-wave-back"></div>
+            <div class="fluid-wave fluid-wave-front"></div>
+          </div>
+        </div>
+        <div class="fluid-btn-content" id="fluidBtnContent">
+          <span class="fluid-btn-icon" id="fluidBtnIcon">⚡</span>
+          <span class="fluid-btn-text" id="fluidBtnText">Publish / Set Live</span>
+          <span class="fluid-btn-percent" id="fluidBtnPercent" style="display:none;">0%</span>
+        </div>
       </button>
     </div>
   </header>
@@ -560,18 +831,25 @@
             <input type="hidden" id="proj1Live" value="https://myfolio.tech">
           </div>
 
-          <!-- Hidden Project 2 & 3 fields preserved for payload -->
-          <input type="hidden" id="proj2Name" value="Algorand Python Smart Contracts">
-          <input type="hidden" id="proj2Tech" value="Python, Algorand, Web3">
-          <input type="hidden" id="proj2Desc" value="Decentralized verifiable ledger logic and algorithmic settlements.">
-          <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
-          <input type="hidden" id="proj2Live" value="">
+          <!-- Featured Project 2 -->
+          <div id="projectCard2" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
+            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-cyan, #38bdf8); margin-bottom:6px;">Featured Case Study 2</div>
+            <input type="text" id="proj2Name" class="mf-input" placeholder="Project Name" value="Algorand Python Smart Contracts" style="margin-bottom:6px;">
+            <input type="text" id="proj2Tech" class="mf-input" placeholder="Technologies" value="Python, Algorand, Web3" style="margin-bottom:6px;">
+            <textarea id="proj2Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Decentralized verifiable ledger logic and algorithmic settlements.</textarea>
+            <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+            <input type="hidden" id="proj2Live" value="">
+          </div>
 
-          <input type="hidden" id="proj3Name" value="Autonomous Edge Agent">
-          <input type="hidden" id="proj3Tech" value="TypeScript, Fastify, AI">
-          <input type="hidden" id="proj3Desc" value="Low-latency reasoning pipelines and streaming telemetry.">
-          <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
-          <input type="hidden" id="proj3Live" value="">
+          <!-- Featured Project 3 -->
+          <div id="projectCard3" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
+            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-gold, #FCD34D); margin-bottom:6px;">Featured Case Study 3</div>
+            <input type="text" id="proj3Name" class="mf-input" placeholder="Project Name" value="Autonomous Edge Agent" style="margin-bottom:6px;">
+            <input type="text" id="proj3Tech" class="mf-input" placeholder="Technologies" value="TypeScript, Fastify, AI" style="margin-bottom:6px;">
+            <textarea id="proj3Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Low-latency reasoning pipelines and streaming telemetry.</textarea>
+            <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+            <input type="hidden" id="proj3Live" value="">
+          </div>
 
           <!-- Other story metadata fields preserved -->
           <input type="hidden" id="manualTagline" value="Creative Systems Engineer">
@@ -597,25 +875,97 @@
               <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_constellation_3d.jpg');"></div>
               <div class="universe-choice-title">Synaptic Constellation</div>
             </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
-              <div class="universe-choice-title">Complete 3D Shelf</div>
-            </div>
             <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-landscape', this)">
               <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_landscape_3d.jpg');"></div>
               <div class="universe-choice-title">3D Landscape &amp; Weather</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
+              <div class="universe-choice-title">Complete 3D Shelf</div>
             </div>
             <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
               <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_liquid_metal_3d.jpg');"></div>
               <div class="universe-choice-title">Liquid Metal Dispersion</div>
             </div>
             <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/matrix_lightning_3d.jpg');"></div>
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_matrix_3d.jpg');"></div>
               <div class="universe-choice-title">Cyber-Architect Sprawl</div>
             </div>
             <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/designs/stealth-node/stealth_matrix_3d_nobg.png');"></div>
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stealth_node_3d.jpg');"></div>
               <div class="universe-choice-title">Stealth Node (Web3)</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('circuit-core', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/circuit_core_3d.jpg');"></div>
+              <div class="universe-choice-title">Circuit Core</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('chrono-obsidian-sanctuary', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/chrono_obsidian_sanctuary_3d.jpg');"></div>
+              <div class="universe-choice-title">Chrono-Obsidian</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('neon-aurora-cyber', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/neon_aurora_cyber_3d.jpg');"></div>
+              <div class="universe-choice-title">Neon Aurora Cyber</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('kinetic-brutalism', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/kinetic_brutalism_3d.jpg');"></div>
+              <div class="universe-choice-title">Kinetic Brutalism</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('stellar-architect', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stellar_architect_3d.jpg');"></div>
+              <div class="universe-choice-title">Stellar Architect</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-cyber-geometry', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_cyber_geometry_3d.jpg');"></div>
+              <div class="universe-choice-title">Cosmic Geometry</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('engineering-archive', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/engineering_archive_3d.jpg');"></div>
+              <div class="universe-choice-title">Engineering Archive</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('system-awakening', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/system_awakening_3d.jpg');"></div>
+              <div class="universe-choice-title">System Awakening</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-astronaut', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_astronaut_3d.jpg');"></div>
+              <div class="universe-choice-title">Cosmic Astronaut</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('bioluminescent-wireframe', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bioluminescent_wireframe_3d.jpg');"></div>
+              <div class="universe-choice-title">Bioluminescent Eco</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-crystal', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cyber_crystal_3d.jpg');"></div>
+              <div class="universe-choice-title">Cyber Crystal</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('botanical-woodcraft', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/botanical_woodcraft_3d.jpg');"></div>
+              <div class="universe-choice-title">Botanical Woodcraft</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('bio-digital-fusion', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bio_digital_fusion_3d.jpg');"></div>
+              <div class="universe-choice-title">Bio-Digital Fusion</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-ascent', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/abyssal_ascent_3d.jpg');"></div>
+              <div class="universe-choice-title">Abyssal Ascent</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sylva', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_sylva_3d.jpg');"></div>
+              <div class="universe-choice-title">ThreeUI Sylva</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-kage', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_kage_3d.jpg');"></div>
+              <div class="universe-choice-title">ThreeUI Kage</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sketchbook', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_sketchbook_3d.jpg');"></div>
+              <div class="universe-choice-title">ThreeUI Sketchbook</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('spatial-depth-voyage', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/spatial_depth_voyage_3d.jpg');"></div>
+              <div class="universe-choice-title">Spatial Depth Voyage</div>
             </div>
           </div>
         </div>
@@ -709,20 +1059,52 @@
         </button>
       </div>
 
-      <!-- Conversational Command Bar -->
-      <div class="ai-command-wrap">
-        <div style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">
-          AI Creative Prompt
+        <!-- Conversational Command Bar -->
+        <div class="ai-command-wrap">
+          <div style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">
+            AI Creative Prompt
+          </div>
+          <textarea id="aiPromptInput" class="ai-command-input" placeholder="Ask AI: 'Why are not all my projects showing?' or 'Make hero more recruiter-focused'"></textarea>
+          <div style="display:flex; justify-content:flex-end;">
+            <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" onclick="sendAiCommand()">
+              Direct &rarr;
+            </button>
+          </div>
+          <div id="aiChatFeed" class="ai-chat-feed"></div>
         </div>
-        <textarea id="aiPromptInput" class="ai-command-input" placeholder="Ask AI: 'Make hero more recruiter-focused' or 'Highlight AI repos'"></textarea>
-        <div style="display:flex; justify-content:flex-end;">
-          <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" onclick="sendAiCommand()">
-            Direct &rarr;
+      </aside>
+    </div>
+
+    <!-- Floating Toast Banner -->
+    <div id="studioToastBanner" class="studio-toast-banner">
+      <span id="toastIcon">✦</span>
+      <span id="toastMessage">Notification message</span>
+    </div>
+
+    <!-- Synthesis Complete Modal Toast -->
+    <div id="studioToastModal" class="studio-toast-modal" onclick="if(event.target===this) dismissStudioToast()">
+      <div class="toast-modal-card">
+        <div class="toast-modal-title">
+          <span>🎉</span>
+          <span>Portfolio Synthesized!</span>
+        </div>
+        <p class="toast-modal-sub">
+          Your bespoke 3D WebGL universe is live and deployed on your verified custom domain.
+        </p>
+        <div class="toast-url-preview">
+          <span id="modalToastUrl">https://abdulaziz.myfolio.tech</span>
+          <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyToastUrl()" title="Copy Link" style="font-size:11.5px; padding:4px 8px;">
+            Copy
           </button>
         </div>
+        <div style="display:flex; justify-content:flex-end; gap:10px;">
+          <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="dismissStudioToast()">Close</button>
+          <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="modalOpenBtn">
+            <span>Open Live Portfolio</span> &nearr;
+          </a>
+        </div>
       </div>
-    </aside>
-  </div>
+    </div>
 
   <script>
     let selectedUniverseKey = 'threeui-constellation';
@@ -797,48 +1179,167 @@
         document.getElementById('photoPreviewContainer').style.display = 'flex';
       };
       reader.readAsDataURL(file);
+    // Toast Notification System (Zero Native Alerts)
+    let toastTimeout = null;
+    function showToast(msg, type = 'info') {
+      const banner = document.getElementById('studioToastBanner');
+      const text = document.getElementById('toastMessage');
+      const icon = document.getElementById('toastIcon');
+      if (!banner || !text) return;
+
+      const icons = {
+        success: '✅',
+        sparkle: '✨',
+        info: '✦',
+        error: '⚠️'
+      };
+      if (icon) icon.textContent = icons[type] || '✦';
+      text.textContent = msg;
+
+      banner.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        banner.classList.remove('show');
+      }, 3500);
+    }
+
+    function showSynthesisModal(liveUrl) {
+      const modal = document.getElementById('studioToastModal');
+      const urlText = document.getElementById('modalToastUrl');
+      const openBtn = document.getElementById('modalOpenBtn');
+      if (urlText) urlText.textContent = liveUrl;
+      if (openBtn) openBtn.href = liveUrl;
+      if (modal) modal.classList.add('show');
+    }
+
+    function dismissStudioToast() {
+      const modal = document.getElementById('studioToastModal');
+      if (modal) modal.classList.remove('show');
+    }
+
+    function copyToastUrl() {
+      const url = document.getElementById('modalToastUrl')?.textContent || 'https://abdulaziz.myfolio.tech';
+      navigator.clipboard.writeText(url);
+      showToast('Copied: ' + url, 'success');
     }
 
     function handleCertFilesSelected(files) {
       if (!files || files.length === 0) return;
       uploadedCertificates.push({ name: files[0].name, size: files[0].size });
-      alert(`Certificate "${files[0].name}" attached.`);
+      showToast(`Certificate "${files[0].name}" attached.`, 'success');
     }
 
     function copyGeneratedUrl() {
       const url = document.getElementById('generatedUrlText').textContent.trim();
       navigator.clipboard.writeText(url);
-      alert('Copied: ' + url);
+      showToast('Copied: ' + url, 'success');
     }
 
     function applyAiSuggestion(action) {
       if (action === 'refine_bio') {
         document.getElementById('manualBio').value = "Full-stack systems architect specializing in high-throughput distributed architectures, autonomous AI agents, and bespoke 3D WebGL spatial applications.";
-        alert('AI refined your narrative bio!');
+        showToast('AI refined your narrative bio!', 'sparkle');
       } else if (action === 'prioritize_projects') {
-        alert('AI prioritized your highest-impact systems projects.');
+        showToast('AI prioritized your highest-impact systems projects.', 'sparkle');
       }
     }
 
     function sendAiCommand() {
-      const val = document.getElementById('aiPromptInput').value.trim();
+      const input = document.getElementById('aiPromptInput');
+      const val = input ? input.value.trim() : '';
       if (!val) return;
-      alert(`AI Creative Director received: "${val}". Applying adjustments to canvas...`);
-      document.getElementById('aiPromptInput').value = '';
+
+      const feed = document.getElementById('aiChatFeed');
+      if (feed) {
+        feed.innerHTML += `<div class="ai-bubble user">${val}</div>`;
+        
+        let reply = "✦ Adjusting spatial camera and emphasizing high-impact projects.";
+        const lower = val.toLowerCase();
+        if (lower.includes('project') || lower.includes('pojet')) {
+          reply = "✦ All 3 featured project case studies are now unlocked in Step 02 on the left. You can customize descriptions, tech stacks, and live links for each.";
+        } else if (lower.includes('recruiter') || lower.includes('hero')) {
+          reply = "✦ Optimizing hero narrative for technical recruiters and systems engineering teams.";
+        }
+
+        setTimeout(() => {
+          feed.innerHTML += `<div class="ai-bubble agent">${reply}</div>`;
+          feed.scrollTop = feed.scrollHeight;
+        }, 400);
+      }
+
+      showToast('AI received instructions', 'sparkle');
+      if (input) input.value = '';
     }
 
-    // Connect to backend generate route
+    // Connect to backend generate route with Fluid Water Filling Animation
+    let progressInterval = null;
+
     async function handleStudioGenerate(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitGenerate');
+      const fluidLevel = document.getElementById('fluidLevel');
+      const fluidBtnText = document.getElementById('fluidBtnText');
+      const fluidBtnPercent = document.getElementById('fluidBtnPercent');
+      const fluidBtnIcon = document.getElementById('fluidBtnIcon');
+
       btn.disabled = true;
-      btn.innerHTML = `<span>Synthesizing...</span>`;
+      btn.classList.remove('fully-filled');
+      if (fluidBtnPercent) fluidBtnPercent.style.display = 'inline-block';
+      if (fluidBtnText) fluidBtnText.textContent = 'Synthesizing...';
+      if (fluidBtnIcon) fluidBtnIcon.textContent = '🌊';
+
+      // Start realistic fluid water-fill rising animation
+      let currentProgress = 5;
+      if (fluidLevel) fluidLevel.style.height = `${currentProgress}%`;
+      if (fluidBtnPercent) fluidBtnPercent.textContent = `${currentProgress}%`;
+
+      if (progressInterval) clearInterval(progressInterval);
+      progressInterval = setInterval(() => {
+        if (currentProgress < 92) {
+          currentProgress += Math.random() * 6 + 2;
+          if (currentProgress > 92) currentProgress = 92;
+          if (fluidLevel) fluidLevel.style.height = `${currentProgress}%`;
+          if (fluidBtnPercent) fluidBtnPercent.textContent = `${Math.round(currentProgress)}%`;
+        }
+      }, 180);
 
       try {
         const ghUser = document.getElementById('ghUsername').value.trim();
         const fullName = document.getElementById('manualFullName').value.trim();
         const manualRole = document.getElementById('manualRole').value.trim();
         const manualBio = document.getElementById('manualBio').value.trim();
+
+        const projects = [];
+        if (document.getElementById('proj1Name')?.value) {
+          projects.push({
+            name: document.getElementById('proj1Name').value,
+            title: document.getElementById('proj1Name').value,
+            description: document.getElementById('proj1Desc').value,
+            tech: document.getElementById('proj1Tech').value,
+            github: document.getElementById('proj1Github').value,
+            live: document.getElementById('proj1Live').value
+          });
+        }
+        if (document.getElementById('proj2Name')?.value) {
+          projects.push({
+            name: document.getElementById('proj2Name').value,
+            title: document.getElementById('proj2Name').value,
+            description: document.getElementById('proj2Desc').value,
+            tech: document.getElementById('proj2Tech').value,
+            github: document.getElementById('proj2Github').value,
+            live: document.getElementById('proj2Live').value
+          });
+        }
+        if (document.getElementById('proj3Name')?.value) {
+          projects.push({
+            name: document.getElementById('proj3Name').value,
+            title: document.getElementById('proj3Name').value,
+            description: document.getElementById('proj3Desc').value,
+            tech: document.getElementById('proj3Tech').value,
+            github: document.getElementById('proj3Github').value,
+            live: document.getElementById('proj3Live').value
+          });
+        }
 
         const payload = {
           username: 'abdulaziz',
@@ -854,16 +1355,7 @@
             fullName,
             title: manualRole,
             bio: manualBio,
-            projects: [
-              {
-                name: document.getElementById('proj1Name').value,
-                title: document.getElementById('proj1Name').value,
-                description: document.getElementById('proj1Desc').value,
-                tech: document.getElementById('proj1Tech').value,
-                github: document.getElementById('proj1Github').value,
-                live: document.getElementById('proj1Live').value
-              }
-            ]
+            projects
           },
           preferences: { theme: selectedUniverseKey }
         };
@@ -878,6 +1370,14 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to generate');
 
+        // Complete fluid fill to 100%
+        clearInterval(progressInterval);
+        if (fluidLevel) fluidLevel.style.height = '100%';
+        if (fluidBtnPercent) fluidBtnPercent.textContent = '100%';
+        btn.classList.add('fully-filled');
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
+        if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
+
         const liveSubdomain = 'https://abdulaziz.myfolio.tech';
         document.getElementById('generatedUrlText').textContent = liveSubdomain;
         document.getElementById('btnOpenGeneratedLive').href = liveSubdomain;
@@ -888,13 +1388,16 @@
           iframe.src = '/abdulaziz?t=' + Date.now();
         }
 
-        if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70 });
-        alert('🎉 Portfolio Synthesized! Subdomain is live at https://abdulaziz.myfolio.tech');
+        if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
+        showSynthesisModal(liveSubdomain);
       } catch (err) {
-        alert('Generation note: ' + err.message);
+        clearInterval(progressInterval);
+        if (fluidLevel) fluidLevel.style.height = '0%';
+        if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
+        if (fluidBtnText) fluidBtnText.textContent = 'Publish / Set Live';
+        showToast('Generation note: ' + err.message, 'error');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>Publish / Set Live &rarr;</span>`;
       }
     }
 
