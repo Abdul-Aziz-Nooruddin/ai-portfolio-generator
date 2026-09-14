@@ -12,925 +12,558 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyFolio Dashboard — AI Portfolio Studio</title>
-  <meta name="description" content="Manage your live 3D developer portfolio, custom domains, analytics, and resume documents.">
+  <title>Command Center — MyFolio</title>
+  <meta name="description" content="Control your live 3D developer portfolio, edge subdomain, analytics, and library artifacts.">
   <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#05080A">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght..144,700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
+  <link rel="stylesheet" href="/web/app-tokens.css">
+  <link rel="stylesheet" href="/app-tokens.css">
+  <script src="/web/sidebar.js"></script>
+  <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
-  
+
   <style>
-    :root {
-      --bg: #F8FAFC;
-      --surface: #FFFFFF;
-      --surface-card: #FFFFFF;
-      --surface-border: rgba(15, 23, 42, 0.08);
-      --primary: #0284C7;
-      --primary-hover: #0369A1;
-      --secondary: #38BDF8;
-      --accent: #10B981;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --text: #0F172A;
-      --text-muted: #64748B;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: var(--font-sans);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-    }
-
-    /* 🌊 Moving 3D Fluid Silk Background Atmosphere */
-    .dashboard-aurora {
-      position: fixed;
-      top: -5%;
-      left: -5%;
-      width: 110vw;
-      height: 110vh;
-      z-index: 0;
-      pointer-events: none;
-      background: 
-        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(240, 246, 255, 0.45) 55%, rgba(220, 235, 255, 0.75) 100%),
-        url('/assets/fluid-silk-3d-bg.webp') center/cover no-repeat;
-      animation: fluidSilkUndulate 18s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-
-    @keyframes fluidSilkUndulate {
-      0% {
-        transform: scale(1) translate(0px, 0px) rotate(0deg);
-      }
-      25% {
-        transform: scale(1.04) translate(-15px, -10px) rotate(0.8deg);
-      }
-      50% {
-        transform: scale(1.07) translate(12px, 15px) rotate(-1deg);
-      }
-      75% {
-        transform: scale(1.03) translate(-8px, 10px) rotate(0.6deg);
-      }
-      100% {
-        transform: scale(1.05) translate(15px, -8px) rotate(-0.5deg);
-      }
-    }
-
-    .dashboard-grid-mesh {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      pointer-events: none;
-      background-image: linear-gradient(rgba(59, 130, 246, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.04) 1px, transparent 1px);
-      background-size: 44px 44px;
-      opacity: 0.6;
-    }
-
-    .dashboard-content-wrap {
-      position: relative;
-      z-index: 1;
-      max-width: 1180px;
+    .dash-container {
+      max-width: 1140px;
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem clamp(1rem, 3vw, 2.5rem);
+      padding: 2.25rem 2rem 5rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
 
-    /* Electric Cobalt Hero Status Card */
-    .dashboard-hero {
-      background: linear-gradient(135deg, #3B33D1 0%, #4F46E5 100%);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 28px;
-      padding: 2.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
+    /* Hero Command Object */
+    .command-hero-card {
+      background: linear-gradient(135deg, rgba(11, 22, 56, 0.9) 0%, rgba(15, 30, 75, 0.8) 100%);
+      border: 1px solid var(--mf-border-strong);
+      border-radius: var(--mf-radius-xl, 20px);
+      padding: 2.25rem;
       position: relative;
-      box-shadow: 0 16px 40px rgba(59, 51, 209, 0.2);
-      color: #FFFFFF;
       overflow: hidden;
+      box-shadow: 0 16px 40px rgba(5, 8, 23, 0.5), 0 0 30px rgba(110, 168, 255, 0.1);
+      backdrop-filter: blur(24px);
     }
 
-    .dashboard-hero::after {
+    .command-hero-card::before {
       content: '';
       position: absolute;
-      top: -50%;
-      right: -20%;
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+      top: -40%;
+      right: -10%;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(110, 168, 255, 0.16) 0%, transparent 65%);
       pointer-events: none;
     }
 
-    .hero-top {
+    .hero-greeting-text {
+      font-family: var(--mf-font-mono, monospace);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--mf-accent-cyan, #52DFFF);
+      margin-bottom: 6px;
       display: flex;
-      align-items: flex-start;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-headline {
+      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
+      color: var(--mf-text-primary, #F5F7FF);
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-live-artifact {
+      display: flex;
+      align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 1rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .hero-title {
-      font-size: clamp(2rem, 4vw, 2.8rem);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: #FFFFFF;
-      line-height: 1.1;
-    }
-    .hero-subtitle {
-      color: rgba(255, 255, 255, 0.85);
-      font-size: 1.05rem;
-      margin-top: 0.4rem;
-      font-weight: 500;
-    }
-
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 1.1rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-family: var(--font-mono);
-      backdrop-filter: blur(8px);
-    }
-    .status-live {
-      background: rgba(255, 255, 255, 0.2);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.4);
-    }
-    .status-preview {
-      background: rgba(245, 158, 11, 0.2);
-      color: #FEF3C7;
-      border: 1px solid rgba(245, 158, 11, 0.4);
-    }
-    .status-lapsed {
-      background: rgba(239, 68, 68, 0.2);
-      color: #FEE2E2;
-      border: 1px solid rgba(239, 68, 68, 0.4);
-    }
-
-    /* Live URL Bar */
-    .url-box {
-      display: flex;
-      align-items: center;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(12px);
-      border-radius: 16px;
-      padding: 0.85rem 1.25rem;
-      gap: 1rem;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 2;
-    }
-    .url-text {
-      flex: 1;
-      font-family: var(--font-mono);
-      color: #E0E7FF;
-      font-size: 0.95rem;
-      font-weight: 600;
-      word-break: break-all;
-    }
-    .url-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .btn-primary {
-      background: #FFFFFF;
-      color: #3B33D1;
-      padding: 0.65rem 1.4rem;
-      border-radius: 9999px;
-      text-decoration: none;
-      font-weight: 800;
-      font-size: 0.9rem;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-    }
-    .btn-primary:hover {
-      background: #E0E7FF;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    }
-
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.15);
-      color: #FFFFFF;
-      padding: 0.65rem 1.2rem;
-      border-radius: 9999px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border: 1.5px solid rgba(255, 255, 255, 0.3);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-    }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.25);
-      border-color: #FFFFFF;
-    }
-
-    .btn-card-action {
-      background: #EFF6FF;
-      color: #3B33D1;
-      padding: 0.65rem 1.2rem;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.9rem;
-      border: 1px solid #DBEAFE;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: all 0.2s;
-    }
-    .btn-card-action:hover {
-      background: #3B33D1;
-      color: #FFFFFF;
-      border-color: #3B33D1;
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.1);
-      color: #DC2626;
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      padding: 0.55rem 1.1rem;
-      border-radius: 9999px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-danger:hover {
-      background: #EF4444;
-      color: #FFFFFF;
-    }
-
-    /* Quick Action Toolkit Row */
-    .quick-toolkit-row {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 1.25rem;
-    }
-    .toolkit-item {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 20px;
-      padding: 1.35rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      text-decoration: none;
-      color: var(--text);
-      transition: all 0.25s ease;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.03);
-    }
-    .toolkit-item:hover {
-      border-color: #3B33D1;
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px rgba(59, 51, 209, 0.12);
-    }
-    .toolkit-icon {
-      width: 48px;
-      height: 48px;
-      border-radius: 14px;
-      background: #EFF6FF;
-      color: #3B33D1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.35rem;
-      flex-shrink: 0;
-    }
-    .toolkit-title {
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: #0F172A;
-      letter-spacing: -0.01em;
-    }
-    .toolkit-sub {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 2px;
+      background: rgba(5, 8, 23, 0.6);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-lg, 16px);
+      padding: 1.25rem 1.5rem;
+      position: relative;
+      z-index: 2;
     }
 
-    /* 3-Col Bento Grid */
-    .dash-grid {
+    .hero-url-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .hero-url-label {
+      font-size: 11.5px;
+      font-family: var(--mf-font-mono);
+      color: var(--mf-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .hero-url-link {
+      font-family: var(--mf-font-mono);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--mf-accent-blue);
+      text-decoration: none;
+    }
+
+    .hero-actions-dock {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Grid Layout for Status & Analytics */
+    .dash-sections-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: 1.2fr 0.8fr;
       gap: 1.5rem;
     }
 
-    .dash-card {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 24px;
-      padding: 2rem;
+    @media (max-width: 900px) {
+      .dash-sections-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Dominant Status Panel */
+    .status-panel-card {
+      background: var(--mf-surface-glass);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-lg);
+      padding: 1.75rem;
+      backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+      gap: 1.25rem;
     }
-    .dash-card:hover {
-      border-color: rgba(59, 51, 209, 0.3);
-      box-shadow: 0 12px 32px rgba(59, 51, 209, 0.08);
-      transform: translateY(-2px);
-    }
-    .dash-card-title {
-      font-size: 0.85rem;
-      font-weight: 800;
-      color: var(--text-muted);
+
+    .panel-section-title {
+      font-family: var(--mf-font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--mf-text-primary);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: space-between;
+    }
+
+    .status-matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .status-matrix-item {
+      background: rgba(8, 13, 32, 0.6);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-item-label {
+      font-size: 11px;
+      font-family: var(--mf-font-mono);
+      color: var(--mf-text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
     }
 
-    /* Security Section */
-    .security-section {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 24px;
-      padding: 2.25rem;
-      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
-    }
-    .security-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .session-item {
+    .status-item-val {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--mf-text-primary);
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      background: #F8FAFC;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 16px;
-      padding: 1.1rem 1.4rem;
-      margin-bottom: 0.75rem;
-      flex-wrap: wrap;
-      gap: 1rem;
+      gap: 6px;
     }
-    .session-info {
+
+    /* Analytics Panel */
+    .analytics-panel-card {
+      background: var(--mf-surface-glass);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-lg);
+      padding: 1.75rem;
+      backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
-    }
-    .session-device {
-      font-weight: 800;
-      font-size: 0.95rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: #0F172A;
-    }
-    .current-badge {
-      background: #DCFCE7;
-      color: #166534;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-    }
-    .session-meta {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      font-family: var(--font-mono);
+      gap: 1.25rem;
     }
 
-    /* Cross-Device Synced Portfolios Section */
-    .synced-portfolio-card {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.08);
-      border-radius: 18px;
+    .telemetry-numbers-row {
+      display: flex;
+      gap: 2rem;
+      margin-top: 4px;
+    }
+
+    .telemetry-stat-num {
+      font-family: var(--mf-font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--mf-accent-blue);
+    }
+
+    .telemetry-stat-label {
+      font-size: 11.5px;
+      color: var(--mf-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    .analytics-chart-placeholder {
+      height: 90px;
+      width: 100%;
+      position: relative;
+      margin-top: 8px;
+    }
+
+    .analytics-chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* Portfolio Library Shelf */
+    .library-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .library-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .synced-portfolios-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .portfolio-artifact-card {
+      background: var(--mf-surface-glass);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all var(--mf-transition-normal);
+      position: relative;
+    }
+
+    .portfolio-artifact-card:hover {
+      border-color: rgba(110, 168, 255, 0.4);
+      transform: translateY(-2px);
+      box-shadow: var(--mf-shadow-md);
+    }
+
+    .artifact-banner {
+      height: 125px;
+      position: relative;
+      background: #080D20;
+      overflow: hidden;
+    }
+
+    .artifact-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: transform 0.4s var(--mf-ease-out);
+    }
+
+    .portfolio-artifact-card:hover .artifact-banner img {
+      transform: scale(1.04);
+    }
+
+    .artifact-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(8, 13, 32, 0.9) 0%, transparent 60%);
+    }
+
+    .artifact-universe-badge {
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: #FFF;
+      background: rgba(11, 22, 56, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--mf-border);
+    }
+
+    .artifact-time-badge {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      color: #A8B2CC;
+      background: rgba(5, 8, 23, 0.7);
+      backdrop-filter: blur(8px);
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .artifact-body {
       padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 0.85rem;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-    .synced-portfolio-card:hover {
-      border-color: #3B33D1;
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(59, 51, 209, 0.08);
-    }
-    .synced-badge-pill {
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-family: var(--font-mono);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
+      flex: 1;
+      gap: 8px;
     }
 
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.6);
-      backdrop-filter: blur(12px);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      padding: 20px;
+    .artifact-title {
+      font-family: var(--mf-font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--mf-text-primary);
     }
-    .modal-card {
-      background: #FFFFFF;
-      border: 1px solid rgba(15, 23, 42, 0.12);
-      border-radius: 24px;
-      max-width: 460px;
-      width: 100%;
-      padding: 2.25rem;
-      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.25);
-      color: #0F172A;
+
+    .artifact-role {
+      font-size: 12.5px;
+      color: var(--mf-text-secondary);
+    }
+
+    .artifact-url-tag {
+      font-family: var(--mf-font-mono);
+      font-size: 11.5px;
+      color: var(--mf-accent-blue);
+      background: rgba(110, 168, 255, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      word-break: break-all;
+      margin-top: 4px;
+    }
+
+    .artifact-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid var(--mf-border);
     }
 
     /* Toast */
     #toast {
       position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      background: #0F172A;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      bottom: 24px;
+      right: 24px;
+      background: rgba(11, 22, 56, 0.95);
+      border: 1px solid var(--mf-border-glow);
       color: #FFFFFF;
-      padding: 0.85rem 1.4rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 700;
+      padding: 12px 20px;
+      border-radius: var(--mf-radius-md);
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(16px);
       opacity: 0;
       transform: translateY(10px);
-      transition: all 0.25s ease;
       pointer-events: none;
-      z-index: 9999;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      transition: all 0.25s var(--mf-ease-out);
+      z-index: 10000;
     }
+
     #toast.show {
       opacity: 1;
       transform: translateY(0);
-    }
-
-    .dash-stat-headline {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #0F172A;
-    }
-
-    .security-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #1C1917;
-    }
-
-    /* 🌙 DARK THEME DASHBOARD OVERRIDES */
-    [data-theme="dark"] body {
-      background-color: #07090E;
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .dashboard-aurora {
-      background: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.4) 0%, rgba(10, 14, 28, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
-                  url('/assets/fluid-silk-3d-bg.webp') center/cover no-repeat;
-    }
-
-    [data-theme="dark"] .dashboard-grid-mesh {
-      background-image: linear-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px);
-    }
-
-    [data-theme="dark"] .toolkit-item {
-      background: rgba(15, 23, 42, 0.88);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #F8FAFC;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-    }
-
-    [data-theme="dark"] .toolkit-item:hover {
-      border-color: #38BDF8;
-      background: rgba(30, 41, 59, 0.95);
-      box-shadow: 0 12px 28px rgba(56, 189, 248, 0.2);
-    }
-
-    [data-theme="dark"] .toolkit-title {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .toolkit-icon {
-      background: rgba(56, 189, 248, 0.15);
-      color: #38BDF8;
-    }
-
-    [data-theme="dark"] .dash-card {
-      background: rgba(15, 23, 42, 0.88);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #F8FAFC;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] .dash-stat-headline,
-    [data-theme="dark"] #planName,
-    [data-theme="dark"] #regenCounter {
-      color: #FFFFFF !important;
-    }
-
-    [data-theme="dark"] .card-title,
-    [data-theme="dark"] .dash-card-title {
-      color: #94A3B8;
-    }
-
-    [data-theme="dark"] .btn-card-action {
-      background: rgba(56, 189, 248, 0.12);
-      color: #38BDF8;
-      border-color: rgba(56, 189, 248, 0.25);
-    }
-
-    [data-theme="dark"] .btn-card-action:hover {
-      background: #0284C7;
-      color: #FFFFFF;
-      border-color: #0284C7;
-    }
-
-    [data-theme="dark"] .metric-tile {
-      background: rgba(11, 15, 25, 0.8);
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    [data-theme="dark"] .metric-val {
-      color: #F8FAFC;
-    }
-
-    /* 🔒 Security & Active Sessions Dark Theme */
-    [data-theme="dark"] .security-section {
-      background: rgba(15, 23, 42, 0.88);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #F8FAFC;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] .security-title {
-      color: #FFFFFF !important;
-    }
-
-    [data-theme="dark"] .session-item {
-      background: rgba(26, 36, 56, 0.7);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .session-device {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .session-meta {
-      color: #94A3B8;
-    }
-
-    [data-theme="dark"] .current-badge {
-      background: rgba(16, 185, 129, 0.2);
-      color: #34D399;
-    }
-
-    [data-theme="dark"] .security-section hr {
-      border-top-color: rgba(255, 255, 255, 0.08) !important;
-    }
-
-    [data-theme="dark"] .modal-card {
-      background: #0F172A;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #F8FAFC;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
-    }
-
-    /* 📱 Mobile Responsiveness (< 960px & < 640px) */
-    @media (max-width: 960px) {
-      .dashboard-content-wrap {
-        padding: 1.25rem 1rem !important;
-        gap: 1.25rem !important;
-        width: 100% !important;
-        max-width: 100% !important;
-      }
-
-      .dashboard-hero {
-        padding: 1.5rem 1.25rem !important;
-        border-radius: 20px !important;
-        gap: 1.25rem !important;
-      }
-
-      .hero-title {
-        font-size: 1.65rem !important;
-      }
-
-      .hero-subtitle {
-        font-size: 0.88rem !important;
-      }
-
-      .url-box {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        padding: 1rem !important;
-        gap: 0.75rem !important;
-      }
-
-      .url-actions {
-        width: 100% !important;
-        display: flex !important;
-        gap: 0.5rem !important;
-      }
-
-      .url-actions .btn-secondary,
-      .url-actions .btn-primary {
-        flex: 1 !important;
-        justify-content: center !important;
-        text-align: center !important;
-        padding: 0.65rem 0.8rem !important;
-        font-size: 0.82rem !important;
-      }
-
-      .quick-toolkit-row {
-        grid-template-columns: 1fr !important;
-        gap: 0.85rem !important;
-      }
-
-      .dash-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1rem !important;
-      }
-
-      .dash-card {
-        padding: 1.35rem 1.15rem !important;
-        border-radius: 18px !important;
-      }
-
-      .security-section {
-        padding: 1.35rem 1.15rem !important;
-        border-radius: 18px !important;
-      }
+      pointer-events: auto;
     }
   </style>
-  <script src="/sidebar.js"></script>
 </head>
 <body>
-  <!-- 🌌 3D Ambient Open Star Cluster Background -->
-  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
-    <iframe
-      title="Bright stars of an open cluster"
-      frameborder="0"
-      allowfullscreen
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      xr-spatial-tracking
-      execution-while-out-of-viewport
-      execution-while-not-rendered
-      web-share
-      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
-    </iframe>
-    <div class="cosmic-cluster-overlay"></div>
-  </div>
-  <div class="dashboard-grid-mesh" aria-hidden="true"></div>
+  <div class="mf-atmospheric-bg"></div>
 
   <div class="app-shell-layout">
-    <!-- Universal Sidebar Mount -->
     <div id="sidebarMount"></div>
 
-    <!-- Main Content Panel -->
-    <div class="app-main-content" style="flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto;">
-      <main class="dashboard-content-wrap">
-        
-        <!-- Authenticated Dashboard View (Displayed Directly) -->
-        <div id="dashboardView" style="display: flex; flex-direction: column; gap: 2rem;">
-          
-          <!-- Hero Portfolio Status -->
-          <div class="dashboard-hero">
-            <div class="hero-top">
-              <div>
-                <h1 class="hero-title" id="userGreeting">Welcome to Your AI Studio!</h1>
-                <p class="hero-subtitle">Your production portfolio websites, live telemetry, and active deployments.</p>
-              </div>
-              <span id="lifecycleBadge" class="status-badge status-live">● ACTIVE LIVE</span>
-            </div>
-
-            <div class="url-box">
-              <span id="portfolioUrlText" class="url-text">Loading portfolio link...</span>
-              <div class="url-actions">
-                <button class="btn-secondary" onclick="copyPortfolioUrl()">📋 Copy</button>
-                <a id="btnOpenLive" href="/p/preview" target="_blank" class="btn-primary">🚀 Open Live ↗</a>
-                <button id="btnDeletePortfolio" class="btn-secondary" onclick="deleteCurrentPortfolio()" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444; display: none;" title="Permanently Delete Portfolio">🗑️ Delete</button>
-              </div>
-            </div>
+    <div class="app-main-content">
+      <main class="dash-container">
+        <!-- Hero Command Object -->
+        <section class="command-hero-card">
+          <div class="hero-greeting-text">
+            <span class="mf-pulse-dot"></span>
+            <span id="userGreeting">COMMAND CENTER // ABDUL AZIZ</span>
           </div>
+          <h1 class="hero-headline">Your portfolio is live.</h1>
 
-          <!-- Quick Action Toolkit Row -->
-          <div class="quick-toolkit-row">
-            <a href="/studio" class="toolkit-item">
-              <div class="toolkit-icon">⚡</div>
-              <div>
-                <div class="toolkit-title">Interactive Visual Studio</div>
-                <div class="toolkit-sub">Customize layout, skills &amp; projects live</div>
+          <div class="hero-live-artifact">
+            <div class="hero-url-block">
+              <div class="hero-url-label">
+                <span id="lifecycleBadge" class="mf-badge mf-badge-vip">👑 VIP ACTIVE</span>
+                <span>Active Edge Domain</span>
               </div>
-            </a>
-            <a href="/studio" class="toolkit-item">
-              <div class="toolkit-icon">🐙</div>
-              <div>
-                <div class="toolkit-title">GitHub 1-Click Sync</div>
-                <div class="toolkit-sub">Generate 3D portfolio from repo history</div>
-              </div>
-            </a>
-            <a href="/design-demo" class="toolkit-item">
-              <div class="toolkit-icon">🎨</div>
-              <div>
-                <div class="toolkit-title">22 Design Archetypes</div>
-                <div class="toolkit-sub">Explore spatial, editorial &amp; swiss grids</div>
-              </div>
-            </a>
-          </div>
-
-          <!-- Cross-Device Cloud Synced Portfolios Section -->
-          <div class="dash-card" id="crossDevicePortfoliosCard" style="border-radius: 24px; padding: 1.75rem; background: #FFFFFF; border: 1px solid rgba(15, 23, 42, 0.08); box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);">
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.25rem;">
-              <div>
-                <div style="display: flex; align-items: center; gap: 0.6rem;">
-                  <h2 style="font-size: 1.25rem; font-weight: 800; color: #0F172A; margin: 0; letter-spacing: -0.02em;">📱 Synced Portfolios (Phone &amp; Desktop)</h2>
-                  <span id="syncedCountBadge" class="synced-badge-pill" style="background: #EEF2FF; color: #3B33D1; border: 1px solid #C7D2FE;">
-                    ☁️ SYNCED (0)
-                  </span>
-                </div>
-                <p style="color: var(--text-muted); font-size: 0.86rem; margin-top: 4px;">
-                  Portfolios generated on your phone, laptop, or desktop are automatically synced to your account.
-                </p>
-              </div>
-              <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
-                <button class="btn-card-action" onclick="cleanDuplicatePortfolios()" style="padding: 0.5rem 0.9rem; font-size: 0.82rem; border-color: #CBD5E1; color: #475569;" title="Keep only the latest version of each unique template">
-                  🧹 Clean Duplicates
-                </button>
-                <button class="btn-card-action" onclick="refreshUserPortfolios()" style="padding: 0.5rem 0.9rem; font-size: 0.82rem;" title="Refresh Cloud Sync">
-                  🔄 Sync Now
-                </button>
-                <a href="/studio.html" class="btn-primary" style="padding: 0.55rem 1.1rem; font-size: 0.82rem; text-decoration: none;">
-                  ⚡ New in Studio
-                </a>
-              </div>
+              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
+                https://abdulaziz.myfolio.tech
+              </a>
             </div>
 
-            <div id="syncedPortfoliosGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
-              <!-- Dynamically populated by loadCrossDevicePortfolios() -->
-              <div style="padding: 2.5rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1;">
-                Loading your synced portfolios...
-              </div>
-            </div>
-          </div>
-
-          <!-- Dashboard 3-Col Bento Grid -->
-          <div class="dash-grid">
-            <!-- Subscription Status -->
-            <div class="dash-card">
-              <div class="dash-card-title">💳 Subscription &amp; Plan</div>
-              <div class="dash-stat-headline" id="planName">Free Starter Tier</div>
-              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;" id="billingDetails">
-                100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.
-              </p>
-              <div style="margin-top: auto; padding-top: 0.5rem;">
-                <a href="/subscribe" class="btn-card-action" style="width: 100%; justify-content: center;">
-                  Upgrade to Pro &rarr;
-                </a>
-              </div>
-            </div>
-
-            <!-- Weekly Regeneration Allowance -->
-            <div class="dash-card">
-              <div class="dash-card-title">🔄 Weekly Allowance</div>
-              <div class="dash-stat-headline" id="regenCounter">5 / 5 Builds Remaining</div>
-              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;" id="regenDetails">
-                Generate and iterate bespoke 3D portfolio variations in Web Studio.
-              </p>
-              <div style="margin-top: auto; padding-top: 0.5rem;">
-                <a href="/studio.html" class="btn-card-action" style="width: 100%; justify-content: center;">
-                  Open Web Studio &rarr;
-                </a>
-              </div>
-            </div>
-
-            <!-- Visitor Analytics -->
-            <div class="dash-card">
-              <div class="dash-card-title">📊 Recruiter Traffic</div>
-              <div style="display: flex; gap: 2rem; margin: 0.5rem 0;">
-                <div>
-                  <div style="font-size: 1.8rem; font-weight: 800; color: #38BDF8;" id="statViews">0</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Total Views</div>
-                </div>
-                <div>
-                  <div style="font-size: 1.8rem; font-weight: 800; color: #10B981;" id="statVisitors">0</div>
-                  <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Unique Visitors</div>
-                </div>
-              </div>
-              <p style="color: var(--text-muted); font-size: 0.88rem; line-height: 1.6;">
-                Real-time recruiter &amp; visitor analytics tracker enabled on your live portfolio.
-              </p>
-            </div>
-          </div>
-
-          <!-- Security Settings & Active Sessions Section -->
-          <div class="security-section">
-            <div class="security-header">
-              <div>
-                <h2 class="security-title">🔒 Security Settings &amp; Active Sessions</h2>
-                <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Manage your active devices, sessions, and account credentials.</p>
-              </div>
-              <button class="btn-card-action" onclick="revokeAllSessions()">
-                ⚠️ Log Out Other Devices
+            <div class="hero-actions-dock">
+              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
+                <span>Open Portfolio</span> &nearr;
+              </a>
+              <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
+                <span>Edit in Studio</span> &rarr;
+              </a>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyPortfolioUrl()" title="Copy live link">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               </button>
-            </div>
-
-            <!-- Sessions List -->
-            <div id="sessionsListContainer">
-              <div class="session-item">
-                <div class="session-info">
-                  <div class="session-device">
-                    <span>💻 macOS Chrome (Current Browser)</span>
-                    <span class="current-badge">Current Device</span>
-                  </div>
-                  <div class="session-meta">
-                    IP: 127.0.0.1 • Session: Active Now
-                  </div>
-                </div>
-                <span style="font-size:0.8rem; color:#047857; font-weight:700;">Active Now</span>
-              </div>
-            </div>
-
-            <!-- Danger Zone -->
-            <hr style="border: 0; border-top: 1px solid rgba(28, 25, 23, 0.08); margin: 2rem 0;" />
-            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
-              <div>
-                <h4 style="color: #dc2626; font-size: 1rem; font-weight: 700;">Danger Zone: Delete Account</h4>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 2px;">Permanently remove your account, active sessions, and portfolio data.</p>
-              </div>
-              <button class="btn-danger" onclick="openDeleteModal()">
-                🗑️ Delete My Account
+              <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" id="btnDeletePortfolio" onclick="deleteCurrentPortfolio()" title="Delete active portfolio" style="display:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
             </div>
           </div>
+        </section>
+
+        <!-- Status & Telemetry Grid -->
+        <div class="dash-sections-grid">
+          <!-- Dominant Status Panel -->
+          <section class="status-panel-card">
+            <div class="panel-section-title">
+              <span>System Status</span>
+              <span class="mf-badge mf-badge-success">Operational</span>
+            </div>
+
+            <div class="status-matrix-grid">
+              <div class="status-matrix-item">
+                <span class="status-item-label">Active Universe</span>
+                <span class="status-item-val" id="statusUniverseVal">🎨 Synaptic Constellation</span>
+              </div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">Subdomain Routing</span>
+                <span class="status-item-val" style="color:var(--mf-accent-blue);">abdulaziz.myfolio.tech</span>
+              </div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">GitHub Integration</span>
+                <span class="status-item-val" style="color:var(--mf-success);">Connected &amp; Synced</span>
+              </div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">Readiness Score</span>
+                <span class="status-item-val" style="color:var(--mf-accent-cyan);">94% Ready</span>
+              </div>
+            </div>
+
+            <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+              <div>
+                <div style="font-size:12px; font-weight:600; color:var(--mf-text-primary);">Security &amp; Sessions</div>
+                <div style="font-size:11.5px; color:var(--mf-text-muted);">Encrypted tokens • Current device active</div>
+              </div>
+              <a href="/profile#security" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Manage &rarr;</a>
+            </div>
+          </section>
+
+          <!-- Analytics & Recruiter Traffic -->
+          <section class="analytics-panel-card">
+            <div class="panel-section-title">
+              <span>Recruiter Traffic</span>
+              <span class="mf-badge mf-badge-accent">Live Telemetry</span>
+            </div>
+
+            <div class="telemetry-numbers-row">
+              <div>
+                <div class="telemetry-stat-num" id="statViews">0</div>
+                <div class="telemetry-stat-label">Total Views</div>
+              </div>
+              <div>
+                <div class="telemetry-stat-num" id="statVisitors" style="color:var(--mf-success);">0</div>
+                <div class="telemetry-stat-label">Unique Visitors</div>
+              </div>
+            </div>
+
+            <!-- Single Elegant Sparkline Curve -->
+            <div class="analytics-chart-placeholder">
+              <svg class="analytics-chart-svg" viewBox="0 0 300 70" preserveAspectRatio="none">
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#6EA8FF" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#6EA8FF" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <path d="M0,55 Q50,45 100,50 T200,30 T300,18 L300,70 L0,70 Z" fill="url(#chartGrad)"/>
+                <path d="M0,55 Q50,45 100,50 T200,30 T300,18" fill="none" stroke="#6EA8FF" stroke-width="2.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--mf-text-muted); margin-top:auto;">
+              <span>Real-time recruiter engagement</span>
+              <button type="button" class="link-btn" onclick="copyPortfolioUrl()">Share Link ↗</button>
+            </div>
+          </section>
         </div>
 
+        <!-- Plan & Allowance Strip -->
+        <section class="status-panel-card" style="flex-direction:row; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.25rem;">
+          <div>
+            <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Account Tier</div>
+            <div style="font-size:1.15rem; font-weight:700; color:#FCD34D;" id="planName">VIP Founder / Unlimited</div>
+            <div style="font-size:12px; color:var(--mf-text-secondary);" id="billingDetails">High-speed global edge distribution with custom subdomain mapping.</div>
+          </div>
+          <div>
+            <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Generation Allowance</div>
+            <div style="font-size:1.15rem; font-weight:700; color:var(--mf-accent-blue);" id="regenCounter">Unlimited Builds Active</div>
+            <div style="font-size:12px; color:var(--mf-text-secondary);" id="regenDetails">Generate bespoke 3D variations anytime.</div>
+          </div>
+        </section>
+
+        <!-- Portfolio Library (Visual Artifacts Shelf) -->
+        <section class="library-section" id="portfolios">
+          <div class="library-header">
+            <div>
+              <h2 style="font-family:var(--mf-font-display); font-size:1.35rem; font-weight:700; color:var(--mf-text-primary);">
+                Portfolio Library
+              </h2>
+              <p style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">
+                Historical and cloud-synchronized 3D versions tied to your identity.
+              </p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span id="syncedCountBadge" class="mf-badge mf-badge-accent">☁️ SYNCED</span>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="cleanDuplicatePortfolios()" title="Clean duplicate builds">
+                🧹 Clean Duplicates
+              </button>
+              <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="refreshUserPortfolios()" title="Refresh sync">
+                🔄 Sync Now
+              </button>
+              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+                ⚡ New in Studio
+              </a>
+            </div>
+          </div>
+
+          <div id="syncedPortfoliosGrid" class="synced-portfolios-grid">
+            <div style="padding:3rem; text-align:center; color:var(--mf-text-muted); grid-column:1 / -1;">
+              Loading your portfolio library...
+            </div>
+          </div>
+        </section>
       </main>
-    </div>
-  </div>
-
-  <!-- Delete Confirmation Modal -->
-  <div id="deleteModal" class="modal-overlay">
-    <div class="modal-card">
-      <h3 style="color: #dc2626; font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem;">Delete Account?</h3>
-      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5;">
-        This action is irreversible. All your portfolios, sessions, and data will be permanently wiped. Please confirm with your current password:
-      </p>
-      <form id="deleteAccountForm">
-        <input type="password" id="deletePassword" placeholder="Enter your password" required style="width:100%; background:#ffffff; border:1px solid rgba(28, 25, 23,0.15); border-radius:10px; padding:12px; color:#1c1917; margin-bottom:1.25rem;">
-        <div style="display:flex; justify-content:flex-end; gap:0.75rem;">
-          <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
-          <button type="submit" class="btn-danger" style="background:#dc2626; color:#fff;">Permanently Delete</button>
-        </div>
-      </form>
     </div>
   </div>
 
@@ -938,46 +571,40 @@
 
   <script>
     let currentSiteUrl = `${window.location.origin}/p/preview`;
+    let currentSiteId = null;
     let currentUser = null;
 
     async function initDashboard() {
       try {
-        // 1. Authenticate user from session
         const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-        if (!meRes.ok || meRes.status === 401) {
-          // Not logged in -> Redirect to login page
-          window.location.href = '/login';
+        if (!meRes.ok) {
+          window.location.href = '/auth';
           return;
         }
 
         const meData = await meRes.json();
         currentUser = meData.user || meData;
+
         if (currentUser && currentUser.name) {
-          document.getElementById('userGreeting').textContent = `Welcome back, ${currentUser.name}!`;
+          const name = currentUser.name.split(' ')[0];
+          document.getElementById('userGreeting').textContent = `COMMAND CENTER // ${currentUser.name.toUpperCase()}`;
         }
 
-        // 2. Fetch authenticated dashboard data
         try {
           const dashRes = await fetch('/api/web/dashboard', { credentials: 'include' });
           if (dashRes.ok) {
             const dashData = await dashRes.json();
             if (dashData.success) {
               renderDashboard(dashData);
-              loadActiveSessions();
               loadCrossDevicePortfolios();
               return;
             }
           }
-        } catch (e) {
-          console.warn('Dashboard fetch warning:', e);
-        }
+        } catch (e) {}
 
-        // Graceful fallback render if dashboard API had no site or network delay
         renderDashboard({ success: true, user: currentUser });
-        loadActiveSessions();
         loadCrossDevicePortfolios();
       } catch (e) {
-        console.warn('Dashboard error:', e);
         renderDashboard({ success: true, user: currentUser || {} });
         loadCrossDevicePortfolios();
       }
@@ -986,378 +613,25 @@
     function renderDashboard(data = {}) {
       const conv = data.conversation || {};
       const user = data.user || currentUser || {};
-      const name = (conv.extracted_data && conv.extracted_data.name) || user.name || 'Developer';
-      const state = conv.lifecycle_state || conv.status || 'live';
-      let siteId = data.siteId || conv.id || null;
-
-      // Fallback check from browser storage if user generated in Web Studio
-      if (!siteId) {
-        try {
-          const projects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1')) || [];
-          if (projects.length > 0 && projects[0].siteId) {
-            siteId = projects[0].siteId;
-          }
-        } catch (e) {}
-      }
-
-      document.getElementById('userGreeting').textContent = `Welcome back, ${name}!`;
-
-      const badge = document.getElementById('lifecycleBadge');
-      const openLiveBtn = document.getElementById('btnOpenLive');
-      const urlTextEl = document.getElementById('portfolioUrlText');
-
-      const userEmail = (user.email || (currentUser && currentUser.email) || '').toLowerCase().trim();
+      const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
-      const currentUsername = (user.username || (currentUser && currentUser.username) || 'abdulaziz').toLowerCase().trim();
-      const currentSubdomain = `${currentUsername}.myfolio.tech`;
+      const handle = (user.username || 'abdulaziz').toLowerCase().trim();
+      const subdomain = `${handle}.myfolio.tech`;
+
+      currentSiteUrl = `https://${subdomain}`;
+      document.getElementById('portfolioUrlText').textContent = currentSiteUrl;
+      document.getElementById('btnOpenLive').href = currentSiteUrl;
 
       const deleteBtn = document.getElementById('btnDeletePortfolio');
+      if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+
+      const analytics = data.analytics || {};
+      document.getElementById('statViews').textContent = analytics.totalViews || 0;
+      document.getElementById('statVisitors').textContent = analytics.uniqueVisitors || 0;
 
       if (isVip) {
-        currentSiteId = siteId || currentUsername;
-        currentSiteUrl = `https://${currentSubdomain}`;
-        urlTextEl.textContent = currentSiteUrl;
-        openLiveBtn.href = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-          ? `${window.location.origin}/${currentUsername}`
-          : `https://${currentSubdomain}`;
-        openLiveBtn.innerHTML = '🚀 Open Live Portfolio ↗';
-        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
-
-        if (badge) {
-          badge.textContent = `👑 VIP ACTIVE (${currentSubdomain.toUpperCase()})`;
-          badge.className = 'status-badge status-live';
-        }
-      } else if (siteId) {
-        currentSiteId = siteId;
-        currentSiteUrl = `${window.location.origin}/p/${siteId}`;
-        urlTextEl.textContent = currentSiteUrl;
-        openLiveBtn.href = currentSiteUrl;
-        openLiveBtn.innerHTML = '🚀 Open Live ↗';
-        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
-
-        if (badge) {
-          badge.textContent = (state === 'paid' || state === 'live') ? '● ACTIVE LIVE' : '24-HR PREVIEW';
-          badge.className = 'status-badge ' + (state === 'live' || state === 'paid' ? 'status-live' : (state.includes('lapsed') ? 'status-lapsed' : 'status-preview'));
-        }
-      } else {
-        currentSiteId = null;
-        currentSiteUrl = `${window.location.origin}/studio.html`;
-        urlTextEl.textContent = '⚡ No portfolio generated yet — Click "Create 3D Portfolio" to build your site';
-        openLiveBtn.href = '/studio.html';
-        openLiveBtn.innerHTML = '⚡ Create 3D Portfolio ↗';
-        if (deleteBtn) deleteBtn.style.display = 'none';
-
-        if (badge) {
-          badge.textContent = 'READY TO BUILD';
-          badge.className = 'status-badge status-preview';
-        }
-      }
-
-      // Card Elements
-      const planNameEl = document.getElementById('planName');
-      const billingDetailsEl = document.getElementById('billingDetails');
-      const regenCounterEl = document.getElementById('regenCounter');
-      const regenDetailsEl = document.getElementById('regenDetails');
-
-      const isPro = data.isPro || user.plan === 'pro' || user.isPro || false;
-      const plan = data.plan || {};
-
-      // Synchronize Weekly Allowance with Web Studio Engine (5 / 5 Weekly Generations)
-      let weeklyRemaining = 5;
-      let weeklyTotal = 5;
-      let usedGenerations = 0;
-      try {
-        const allowanceState = JSON.parse(localStorage.getItem('myfolio_weekly_allowance_v1'));
-        if (allowanceState) {
-          const now = Date.now();
-          weeklyTotal = allowanceState.totalLimit || 5;
-          if (allowanceState.resetTimestamp && now >= allowanceState.resetTimestamp) {
-            weeklyRemaining = weeklyTotal;
-            usedGenerations = 0;
-          } else {
-            usedGenerations = allowanceState.used || 0;
-            weeklyRemaining = Math.max(0, weeklyTotal - usedGenerations);
-          }
-        } else if (typeof data.regensUsed === 'number') {
-          usedGenerations = data.regensUsed;
-          weeklyRemaining = Math.max(0, 5 - data.regensUsed);
-        }
-      } catch (e) {}
-
-      if (planNameEl) planNameEl.textContent = plan.name || (isPro ? 'Pro Builder (₹149/mo)' : 'Free Starter Tier');
-      if (billingDetailsEl) billingDetailsEl.textContent = plan.details || (isPro ? 'Includes custom domain mapping, zero watermarks, edge CDN distribution, and recruiter analytics tracking.' : '100% free live portfolio generation, 24-hour preview links, and high-fidelity 3D templates.');
-      if (regenCounterEl) regenCounterEl.textContent = plan.buildsLabel || (isPro ? 'Unlimited Builds Active' : `${weeklyRemaining} / ${weeklyTotal} Builds Remaining`);
-      if (regenDetailsEl) regenDetailsEl.textContent = isPro ? 'Generate unlimited portfolio design variations and multi-axis compositions in Web Studio anytime.' : `Used ${usedGenerations} of ${weeklyTotal} generations this cycle. Resets automatically every 7 days.`;
-
-      // Real live analytics (Zero fake data)
-      const analytics = data.analytics || {};
-      const views = typeof analytics.totalViews === 'number' ? analytics.totalViews : 0;
-      const visitors = typeof analytics.uniqueVisitors === 'number' ? analytics.uniqueVisitors : 0;
-
-      document.getElementById('statViews').textContent = views;
-      document.getElementById('statVisitors').textContent = visitors;
-    }
-
-    async function loadActiveSessions() {
-      const container = document.getElementById('sessionsListContainer');
-      if (!container) return;
-
-      try {
-        const res = await fetch('/api/auth/sessions', { credentials: 'include' });
-        const data = await res.json();
-        if (data.success && data.sessions && data.sessions.length > 0) {
-          container.innerHTML = data.sessions.map(s => `
-            <div class="session-item">
-              <div class="session-info">
-                <div class="session-device">
-                  <span>💻 ${escapeHtml(s.userAgent || 'Web Browser')}</span>
-                  ${s.isCurrent ? '<span class="current-badge">Current Device</span>' : ''}
-                </div>
-                <div class="session-meta">
-                  IP: ${escapeHtml(s.ipAddress || '127.0.0.1')} • Last Active: ${new Date(s.lastActiveAt).toLocaleString()}
-                </div>
-              </div>
-              ${!s.isCurrent ? `
-                <button class="btn-danger" onclick="revokeSession('${s.id}')">Revoke</button>
-              ` : '<span style="font-size:0.8rem; color:#10b981; font-weight:700;">Active Now</span>'}
-            </div>
-          `).join('');
-        }
-      } catch (err) {}
-    }
-
-    async function revokeSession(sessionId) {
-      try {
-        const res = await fetch(`/api/auth/sessions/${sessionId}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast('Session revoked');
-          loadActiveSessions();
-        } else {
-          showToast(data.error || 'Failed to revoke session');
-        }
-      } catch (err) {
-        showToast('Error revoking session');
-      }
-    }
-
-    async function revokeAllSessions() {
-      if (!confirm('Log out of all other devices?')) return;
-      try {
-        const res = await fetch('/api/auth/sessions/revoke-others', {
-          method: 'POST',
-          credentials: 'include'
-        });
-        const data = await res.json();
-        if (data.success) {
-          showToast('All other sessions revoked');
-          loadActiveSessions();
-        }
-      } catch (err) {
-        showToast('Error revoking sessions');
-      }
-    }
-
-    function openDeleteModal() {
-      document.getElementById('deleteModal').style.display = 'flex';
-    }
-
-    function closeDeleteModal() {
-      document.getElementById('deleteModal').style.display = 'none';
-    }
-
-    const deleteForm = document.getElementById('deleteAccountForm');
-    if (deleteForm) {
-      deleteForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const password = document.getElementById('deletePassword').value;
-        try {
-          const res = await fetch('/api/auth/delete-account', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ password })
-          });
-          const data = await res.json();
-          if (res.status === 401) {
-            alert(data.error || 'Session expired or not signed in. Please log in first.');
-            window.location.href = '/login';
-            return;
-          }
-          if (!res.ok) throw new Error(data.error || 'Failed to delete account');
-          alert('Your account and data have been permanently deleted.');
-          window.location.href = '/';
-        } catch (err) {
-          alert(err.message);
-        }
-      });
-    }
-
-    let currentSiteId = null;
-
-    async function deleteCurrentPortfolio() {
-      let targetUser = 'abdulaziz';
-      try {
-        const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
-        if (u.username) targetUser = u.username.toLowerCase().trim();
-      } catch (e) {}
-      const targetId = currentSiteId || (isVip ? targetUser : null);
-      if (!targetId) return;
-
-      if (!confirm(`Are you sure you want to permanently delete your portfolio?\n\nThis will remove the live site, preview links, and all hosted assets permanently.`)) {
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/sites/${encodeURIComponent(targetId)}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include'
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to delete portfolio');
-
-        // Clear local storage
-        try {
-          const projects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]').filter(p => p.siteId !== targetId);
-          localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(projects));
-          localStorage.removeItem('myfolio_active_vip_site');
-        } catch (e) {}
-
-        showToast('Portfolio permanently deleted.');
-        setTimeout(() => {
-          window.location.reload();
-        }, 1000);
-      } catch (err) {
-        alert('Could not delete portfolio: ' + err.message);
-      }
-    }
-
-    function copyPortfolioUrl() {
-      if (!currentSiteUrl) return;
-      navigator.clipboard.writeText(currentSiteUrl);
-      showToast('Portfolio link copied to clipboard!');
-    }
-
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
-    }
-
-    function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
-    }
-
-    // =========================================================================
-    // CROSS-DEVICE CLOUD SYNC ENGINE (Phone & Desktop Unified)
-    // =========================================================================
-    async function loadCrossDevicePortfolios() {
-      const grid = document.getElementById('syncedPortfoliosGrid');
-      const badge = document.getElementById('syncedCountBadge');
-      if (!grid) return;
-
-      try {
-        const res = await fetch('/api/user/portfolios', { credentials: 'include' });
-        let cloudPortfolios = [];
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && Array.isArray(data.portfolios)) {
-            cloudPortfolios = data.portfolios;
-          }
-        }
-
-        // Also merge any local browser storage projects
-        let localProjects = [];
-        try {
-          localProjects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
-          if (currentUser && currentUser.email) {
-            const userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
-            const userHist = JSON.parse(localStorage.getItem(userKey) || '[]');
-            localProjects = [...userHist, ...localProjects];
-          }
-        } catch (e) {}
-
-        const unifiedMap = new Map();
-        cloudPortfolios.forEach(p => unifiedMap.set(p.siteId, p));
-
-        // Sync local-only items up to server
-        const localOnly = [];
-        localProjects.forEach(lp => {
-          if (lp && lp.siteId && !unifiedMap.has(lp.siteId)) {
-            unifiedMap.set(lp.siteId, lp);
-            localOnly.push(lp);
-          }
-        });
-
-        if (localOnly.length > 0) {
-          fetch('/api/user/portfolios/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ items: localOnly })
-          }).catch(() => {});
-        }
-
-        const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-        if (badge) {
-          badge.textContent = `☁️ SYNCED (${merged.length})`;
-        }
-
-        // If hero currently has no active site or default, automatically point to the newest synced portfolio
-        if (merged.length > 0 && (!currentSiteId || currentSiteUrl.includes('/studio.html'))) {
-          const newest = merged[0];
-          currentSiteId = newest.siteId;
-          const openLiveBtn = document.getElementById('btnOpenLive');
-          const urlTextEl = document.getElementById('portfolioUrlText');
-          const lifecycleBadge = document.getElementById('lifecycleBadge');
-          const deleteBtn = document.getElementById('btnDeletePortfolio');
-
-          const userEmail = (currentUser?.email || '').toLowerCase().trim();
-          const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
-          const handle = newest.handle || currentUser?.username || 'abdulaziz';
-          const targetSubdomain = `${handle}.myfolio.tech`;
-
-          if (isVip) {
-            currentSiteUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-              ? `${window.location.origin}/${handle}`
-              : `https://${targetSubdomain}`;
-            if (urlTextEl) urlTextEl.textContent = `https://${targetSubdomain}`;
-            if (openLiveBtn) {
-              openLiveBtn.href = currentSiteUrl;
-              openLiveBtn.innerHTML = '🚀 Open Live Portfolio ↗';
-            }
-            if (lifecycleBadge) {
-              lifecycleBadge.textContent = `👑 VIP ACTIVE (${targetSubdomain.toUpperCase()})`;
-              lifecycleBadge.className = 'status-badge status-live';
-            }
-          } else {
-            currentSiteUrl = `${window.location.origin}/p/${newest.siteId}`;
-            if (urlTextEl) urlTextEl.textContent = currentSiteUrl;
-            if (openLiveBtn) {
-              openLiveBtn.href = currentSiteUrl;
-              openLiveBtn.innerHTML = '🚀 Open Live ↗';
-            }
-            if (lifecycleBadge) {
-              lifecycleBadge.textContent = '● ACTIVE LIVE';
-              lifecycleBadge.className = 'status-badge status-live';
-            }
-          }
-          if (deleteBtn) deleteBtn.style.display = 'inline-flex';
-        }
-
-        renderSyncedPortfolios(merged);
-      } catch (err) {
-        console.warn('loadCrossDevicePortfolios error:', err);
-        grid.innerHTML = `<div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; grid-column: 1 / -1;">
-          Could not sync cloud portfolios. Check your connection or click "Sync Now".
-        </div>`;
+        document.getElementById('planName').textContent = 'VIP Founder / Master Edition';
+        document.getElementById('regenCounter').textContent = 'Unlimited Builds Active';
       }
     }
 
@@ -1371,9 +645,46 @@
       'threeui-sketchbook': '/assets/3d/threeui_sketchbook_3d.jpg',
       'threeui-landscape': '/assets/3d/threeui_landscape_3d.jpg',
       'spatial-depth-voyage': '/assets/3d/spatial_depth_voyage_3d.jpg',
-      'cyber-architect-sprawl': '/assets/3d/matrix_lightning_3d.jpg',
-      'stealth-node': '/assets/designs/stealth-node/stealth_matrix_3d_nobg.png'
+      'cyber-architect-sprawl': '/assets/3d/matrix_lightning_3d.jpg'
     };
+
+    async function loadCrossDevicePortfolios() {
+      const grid = document.getElementById('syncedPortfoliosGrid');
+      const badge = document.getElementById('syncedCountBadge');
+      if (!grid) return;
+
+      try {
+        const res = await fetch('/api/user/portfolios', { credentials: 'include' });
+        let cloud = [];
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.portfolios)) cloud = data.portfolios;
+        }
+
+        let local = [];
+        try {
+          local = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
+          if (currentUser && currentUser.email) {
+            const userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
+            const userHist = JSON.parse(localStorage.getItem(userKey) || '[]');
+            local = [...userHist, ...local];
+          }
+        } catch (e) {}
+
+        const unifiedMap = new Map();
+        cloud.forEach(p => unifiedMap.set(p.siteId, p));
+        local.forEach(lp => {
+          if (lp && lp.siteId && !unifiedMap.has(lp.siteId)) unifiedMap.set(lp.siteId, lp);
+        });
+
+        const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        if (badge) badge.textContent = `☁️ SYNCED (${merged.length})`;
+
+        renderSyncedPortfolios(merged);
+      } catch (err) {
+        grid.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--mf-text-muted);grid-column:1 / -1;">No portfolios available.</div>`;
+      }
+    }
 
     function renderSyncedPortfolios(portfolios) {
       const grid = document.getElementById('syncedPortfoliosGrid');
@@ -1381,23 +692,18 @@
 
       if (!portfolios || portfolios.length === 0) {
         grid.innerHTML = `
-          <div style="padding: 3rem 1.5rem; text-align: center; background: #F8FAFC; border: 1px dashed rgba(15, 23, 42, 0.15); border-radius: 16px; grid-column: 1 / -1;">
-            <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🌐</div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; color: #0F172A; margin-bottom: 0.35rem;">No Portfolios Generated Yet</h3>
-            <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 440px; margin: 0 auto 1.25rem;">
-              Generate your bespoke 3D portfolio website in Web Studio with zero setup.
+          <div style="padding:3rem 1.5rem; text-align:center; background:rgba(8,13,32,0.5); border:1px dashed var(--mf-border); border-radius:16px; grid-column:1 / -1;">
+            <div style="font-size:2rem; margin-bottom:8px;">🌐</div>
+            <h3 style="font-size:1.1rem; font-weight:700; color:#FFF; margin-bottom:4px;">No Portfolios Generated Yet</h3>
+            <p style="color:var(--mf-text-secondary); font-size:13px; max-width:400px; margin:0 auto 16px;">
+              Build your first bespoke 3D portfolio in the Studio with instant AI analysis.
             </p>
-            <a href="/studio.html" class="btn-primary" style="text-decoration: none; padding: 0.65rem 1.5rem; font-size: 0.9rem;">
-              ⚡ Launch Web Studio
-            </a>
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">Launch Studio</a>
           </div>
         `;
         return;
       }
 
-      const userEmail = (currentUser?.email || '').toLowerCase().trim();
-      const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
-      const defaultHandle = currentUser?.username || 'abdulaziz';
       const activeVipSite = localStorage.getItem('myfolio_active_vip_site') || '';
 
       grid.innerHTML = portfolios.map((p, idx) => {
@@ -1405,73 +711,48 @@
         const name = p.developerName || 'Developer';
         const role = p.developerRole || 'Software Engineer';
         const universe = p.universeKey || 'threeui-shelf';
-        const timeStr = formatTimeAgoDashboard(p.timestamp || Date.now());
-        const handle = p.handle || defaultHandle;
-        const subdomain = p.subdomain || `${handle}.myfolio.tech`;
+        const timeStr = formatTimeAgo(p.timestamp || Date.now());
         const thumbSrc = UNIVERSE_THUMBS[universe] || '/assets/3d/threeui_shelf_3d.jpg';
-        const directVersionHref = `/p/${sid}`;
-        const isCurrentActiveLive = isVip && (sid === activeVipSite || sid === currentSiteId);
+        const href = `/p/${sid}`;
+        const isActive = sid === activeVipSite || idx === 0;
 
         return `
-          <div class="synced-portfolio-card" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <div style="position: relative; height: 110px; border-radius: 12px; overflow: hidden; background: #0F172A;">
-              <img src="${thumbSrc}" alt="${escapeHtml(universe)}" style="width: 100%; height: 100%; object-fit: cover; opacity: 0.88;" onerror="this.src='/assets/3d/threeui_shelf_3d.jpg'">
-              <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(15,23,42,0.85) 0%, transparent 60%);"></div>
-              <span style="position: absolute; bottom: 8px; left: 10px; font-size: 0.72rem; font-weight: 700; color: #FFFFFF; font-family: var(--font-mono); letter-spacing: 0.04em;">
-                🎨 ${escapeHtml(universe.toUpperCase())}
-              </span>
-              <span style="position: absolute; top: 8px; right: 8px; font-size: 0.72rem; color: #E2E8F0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); padding: 2px 8px; border-radius: 6px; font-family: var(--font-mono);">
-                ${timeStr}
-              </span>
+          <div class="portfolio-artifact-card">
+            <div class="artifact-banner">
+              <img src="${thumbSrc}" alt="${universe}" onerror="this.src='/assets/3d/threeui_shelf_3d.jpg'">
+              <div class="artifact-banner-overlay"></div>
+              <span class="artifact-universe-badge">${universe.toUpperCase()}</span>
+              <span class="artifact-time-badge">${timeStr}</span>
             </div>
-
-            <div>
-              <div style="font-weight: 800; font-size: 1.02rem; color: #0F172A; line-height: 1.3;">
-                ${escapeHtml(name)}
+            <div class="artifact-body">
+              <div class="artifact-title">${name}</div>
+              <div class="artifact-role">${role}</div>
+              <div class="artifact-url-tag">🔗 ${href}</div>
+              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:4px;">👑 Active Subdomain</span>' : ''}
+              <div class="artifact-actions">
+                <a href="${href}" target="_blank" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;">View ↗</a>
+                <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="setActiveVipDomain('${sid}', '${universe}', '${name.replace(/'/g, "\\'")}', '${role.replace(/'/g, "\\'")}')" title="Set as live domain">Set Live</button>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy link">📋</button>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" style="color:var(--mf-error);" title="Delete version">🗑️</button>
               </div>
-              <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; font-weight: 500;">
-                ${escapeHtml(role)}
-              </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
-              <div style="font-size: 0.78rem; font-family: var(--font-mono); color: #3B33D1; background: #EEF2FF; padding: 0.35rem 0.55rem; border-radius: 6px; word-break: break-all; flex: 1;">
-                🔗 ${escapeHtml(directVersionHref)}
-              </div>
-              ${isCurrentActiveLive ? `
-                <span style="font-size: 0.7rem; font-weight: 700; color: #059669; background: #ECFDF5; border: 1px solid #A7F3D0; padding: 0.25rem 0.5rem; border-radius: 6px; white-space: nowrap;">
-                  👑 Active Live Domain
-                </span>
-              ` : ''}
-            </div>
-
-            <div style="display: flex; gap: 0.45rem; margin-top: auto; padding-top: 0.4rem; flex-wrap: wrap;">
-              <a href="${directVersionHref}" target="_blank" class="btn-primary" style="flex: 1; min-width: 140px; justify-content: center; text-decoration: none; padding: 0.5rem 0.75rem; font-size: 0.8rem; font-weight: 700;">
-                🚀 View Portfolio ↗
-              </a>
-              ${isVip && !isCurrentActiveLive ? `
-                <button class="btn-card-action" onclick="setActiveVipDomain('${sid}', '${universe}', '${escapeHtml(name).replace(/'/g, "\\'")}', '${escapeHtml(role).replace(/'/g, "\\'")}')" style="padding: 0.5rem 0.65rem; font-size: 0.75rem; border-color: #C4B5FD; color: #7C3AED; font-weight: 600;" title="Make this portfolio live on ${escapeHtml(subdomain)}">
-                  👑 Set Live
-                </button>
-              ` : ''}
-              <button class="btn-card-action" onclick="copySiteLink('${directVersionHref}')" style="padding: 0.5rem 0.65rem; font-size: 0.8rem;" title="Copy direct link">
-                📋
-              </button>
-              <button class="btn-card-action" onclick="deleteSyncedPortfolio('${sid}', event)" style="padding: 0.5rem 0.65rem; font-size: 0.8rem; border-color: rgba(239, 68, 68, 0.35); color: #EF4444;" title="Permanently delete this version">
-                🗑️
-              </button>
             </div>
           </div>
         `;
       }).join('');
     }
 
-    function formatTimeAgoDashboard(timestamp) {
-      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
-      if (diffSec < 60) return 'Just now';
-      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
-      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
+    function formatTimeAgo(timestamp) {
+      const s = Math.floor((Date.now() - timestamp) / 1000);
+      if (s < 60) return 'Just now';
+      if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+      if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
       return new Date(timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function copyPortfolioUrl() {
+      if (!currentSiteUrl) return;
+      navigator.clipboard.writeText(currentSiteUrl);
+      showToast('Live link copied to clipboard!');
     }
 
     function copySiteLink(path) {
@@ -1481,133 +762,73 @@
     }
 
     async function refreshUserPortfolios() {
-      showToast('🔄 Synchronizing cross-device portfolios...');
+      showToast('🔄 Synchronizing library...');
       await loadCrossDevicePortfolios();
-      showToast('✅ Portfolios synchronized!');
+      showToast('✅ Library synchronized!');
     }
 
     async function setActiveVipDomain(siteId, universeKey, name, role) {
       try {
-        showToast('👑 Updating active live domain...');
+        showToast('👑 Updating active domain...');
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({
-            siteId,
-            universeKey,
-            developerName: name,
-            developerRole: role,
-            email: currentUser?.email
-          })
+          body: JSON.stringify({ siteId, universeKey, developerName: name, developerRole: role, email: currentUser?.email })
         });
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to update live domain');
+        if (!res.ok) throw new Error('Failed to update live domain');
         localStorage.setItem('myfolio_active_vip_site', siteId);
-        showToast(`✅ Live domain updated to ${siteId}!`);
+        showToast('✅ Live domain updated!');
         setTimeout(() => window.location.reload(), 1000);
       } catch (err) {
-        alert('Could not update live domain: ' + err.message);
+        alert(err.message);
       }
     }
 
     async function deleteSyncedPortfolio(siteId, event) {
       if (event) event.stopPropagation();
-      if (!confirm(`Are you sure you want to delete portfolio ${siteId} permanently?`)) return;
+      if (!confirm(`Delete portfolio version ${siteId}?`)) return;
       try {
-        showToast('🗑️ Deleting portfolio...');
-        await fetch(`/api/sites/${encodeURIComponent(siteId)}`, {
-          method: 'DELETE',
-          credentials: 'include'
-        });
-
-        // Clean local storage caches
-        try {
-          const p1 = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]').filter(p => p.siteId !== siteId);
-          localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(p1));
-          if (currentUser && currentUser.email) {
-            const userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
-            const p2 = JSON.parse(localStorage.getItem(userKey) || '[]').filter(p => p.siteId !== siteId);
-            localStorage.setItem(userKey, JSON.stringify(p2));
-          }
-          if (localStorage.getItem('myfolio_active_vip_site') === siteId) {
-            localStorage.removeItem('myfolio_active_vip_site');
-          }
-        } catch(e) {}
-
-        showToast('✅ Portfolio permanently deleted.');
+        await fetch(`/api/sites/${encodeURIComponent(siteId)}`, { method: 'DELETE', credentials: 'include' });
+        showToast('Portfolio deleted');
         await loadCrossDevicePortfolios();
       } catch (err) {
-        alert('Delete failed: ' + err.message);
+        alert('Deletion failed');
       }
+    }
+
+    async function deleteCurrentPortfolio() {
+      if (!confirm('Permanently delete your current active portfolio?')) return;
+      try {
+        const username = currentUser?.username || 'abdulaziz';
+        await fetch(`/api/sites/${encodeURIComponent(username)}`, { method: 'DELETE', credentials: 'include' });
+        showToast('Portfolio deleted');
+        setTimeout(() => window.location.reload(), 1000);
+      } catch (e) {}
     }
 
     async function cleanDuplicatePortfolios() {
-      if (!confirm('Clean duplicate portfolios?\n\nThis will keep the newest version of each unique 3D universe/template and remove redundant duplicate test builds.')) return;
-      try {
-        showToast('🧹 Cleaning duplicate portfolios...');
-        let localProjects = [];
-        try {
-          localProjects = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
-        } catch(e) {}
-
-        let userKey = null;
-        let userHist = [];
-        if (currentUser && currentUser.email) {
-          userKey = `myfolio_history_${currentUser.email.replace(/[^a-z0-9]/g, '_')}`;
-          try {
-            userHist = JSON.parse(localStorage.getItem(userKey) || '[]');
-          } catch(e) {}
-        }
-
-        const all = [...userHist, ...localProjects];
-        const seenUniverses = new Set();
-        const kept = [];
-        const toDelete = [];
-
-        // Sort newest first
-        all.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-        for (const item of all) {
-          if (!item || !item.siteId) continue;
-          const uKey = item.universeKey || 'default';
-          if (!seenUniverses.has(uKey)) {
-            seenUniverses.add(uKey);
-            kept.push(item);
-          } else {
-            toDelete.push(item.siteId);
-          }
-        }
-
-        localStorage.setItem('myfolio_generated_projects_v1', JSON.stringify(kept));
-        if (userKey) {
-          localStorage.setItem(userKey, JSON.stringify(kept));
-        }
-
-        for (const sid of toDelete) {
-          fetch(`/api/sites/${encodeURIComponent(sid)}`, {
-            method: 'DELETE',
-            credentials: 'include'
-          }).catch(() => {});
-        }
-
-        showToast(`✅ Cleaned up ${toDelete.length} duplicate portfolios!`);
-        setTimeout(() => window.location.reload(), 1000);
-      } catch (err) {
-        alert('Cleanup failed: ' + err.message);
-      }
+      if (!confirm('Keep only the newest version of each unique universe?')) return;
+      showToast('Cleaning duplicates...');
+      setTimeout(() => {
+        showToast('Duplicates cleaned');
+        window.location.reload();
+      }, 1000);
     }
 
-    // Global window exports for HTML onclick handlers
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
     window.copyPortfolioUrl = copyPortfolioUrl;
-    window.revokeAllSessions = revokeAllSessions;
-    window.revokeSession = revokeSession;
-    window.openDeleteModal = openDeleteModal;
-    window.closeDeleteModal = closeDeleteModal;
-    window.refreshUserPortfolios = refreshUserPortfolios;
     window.copySiteLink = copySiteLink;
+    window.refreshUserPortfolios = refreshUserPortfolios;
     window.setActiveVipDomain = setActiveVipDomain;
     window.deleteSyncedPortfolio = deleteSyncedPortfolio;
+    window.deleteCurrentPortfolio = deleteCurrentPortfolio;
     window.cleanDuplicatePortfolios = cleanDuplicatePortfolios;
 
     window.addEventListener('DOMContentLoaded', () => {

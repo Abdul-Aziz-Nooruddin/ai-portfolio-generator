@@ -12,838 +12,579 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Profile &amp; Settings — MyFolio</title>
-  <meta name="description" content="Manage your developer profile settings, password, sessions, and account details.">
+  <title>Identity &amp; Control Room — MyFolio</title>
+  <meta name="description" content="Manage your developer identity, public portfolio domain, security, and account settings.">
   <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#05080A">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
+  <link rel="stylesheet" href="/web/app-tokens.css">
+  <link rel="stylesheet" href="/app-tokens.css">
+  <script src="/web/sidebar.js"></script>
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 
   <style>
-    :root {
-      --bg-page: #F8FAFC;
-      --card-bg: #FFFFFF;
-      --border-color: #E2E8F0;
-      --text-main: #0F172A;
-      --text-muted: #64748B;
-      --primary: #0284C7;
-      --primary-hover: #0369A1;
-    }
-
-    body {
-      background: #F8FAFC;
-      color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      position: relative;
-    }
-
-    /* 🌊 Moving 3D Fluid Silk Background Container */
-    .fluid-silk-bg-container {
-      position: fixed;
-      top: -5%;
-      left: -5%;
-      width: 110vw;
-      height: 110vh;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.15) 0%, rgba(240, 246, 255, 0.45) 55%, rgba(220, 235, 255, 0.75) 100%),
-                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
-      animation: fluidSilkUndulate 18s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-
-    @keyframes fluidSilkUndulate {
-      0% {
-        transform: scale(1) translate(0px, 0px) rotate(0deg);
-      }
-      25% {
-        transform: scale(1.04) translate(-15px, -10px) rotate(0.8deg);
-      }
-      50% {
-        transform: scale(1.07) translate(12px, 15px) rotate(-1deg);
-      }
-      75% {
-        transform: scale(1.03) translate(-8px, 10px) rotate(0.6deg);
-      }
-      100% {
-        transform: scale(1.05) translate(15px, -8px) rotate(-0.5deg);
-      }
-    }
-
-    .app-shell-layout {
-      display: flex;
-      min-height: 100vh;
+    .profile-stage {
+      max-width: 1060px;
       width: 100%;
-      position: relative;
-      z-index: 1;
-      box-sizing: border-box;
-      overflow-x: hidden;
-    }
-
-    .profile-main-stage {
-      flex: 1;
-      width: 100%;
-      max-width: 1040px;
-      box-sizing: border-box;
-      min-width: 0;
-      padding: 40px 32px 80px;
       margin: 0 auto;
-      position: relative;
-      z-index: 2;
+      padding: 2rem 2rem 5rem;
     }
 
-    .profile-header-card {
-      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
-      color: #FFFFFF;
-      border-radius: 20px;
-      padding: 32px 28px;
+    /* Identity Header Card */
+    .profile-identity-card {
+      background: var(--mf-surface-glass);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-xl, 20px);
+      padding: 2rem 2.25rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      margin-bottom: 2rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 20px;
-      box-shadow: 0 16px 36px rgba(30, 27, 75, 0.18);
-      margin-bottom: 32px;
-      width: 100%;
-      box-sizing: border-box;
-      min-width: 0;
+      gap: 1.5rem;
+      box-shadow: var(--mf-shadow-md);
+      position: relative;
+      overflow: hidden;
     }
 
-    .profile-user-left {
+    .profile-identity-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: 10%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(110, 168, 255, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .identity-main-info {
       display: flex;
       align-items: center;
-      gap: 20px;
-      min-width: 0;
-      max-width: 100%;
-      flex: 1;
+      gap: 1.5rem;
+      position: relative;
+      z-index: 2;
     }
 
-    .profile-avatar-large {
-      width: 76px;
-      height: 76px;
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    .profile-avatar-xl {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #38BDF8, #818CF8);
-      color: #0F172A;
+      background: linear-gradient(135deg, #6EA8FF 0%, #9B7CFF 100%);
+      color: #FFFFFF;
       font-size: 2rem;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(110, 168, 255, 0.35);
+      overflow: hidden;
     }
 
-    .profile-title-block {
-      min-width: 0;
-      flex: 1;
+    .profile-avatar-xl img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
-    .profile-title-block h1 {
-      margin: 0 0 4px 0;
-      font-size: 1.6rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      word-break: break-word;
-      overflow-wrap: break-word;
+    .identity-text-col {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
-    .profile-handle-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.88rem;
-      color: #C7D2FE;
+    .identity-name-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      word-break: break-all;
+      gap: 12px;
     }
 
-    .plan-status-pill {
-      background: rgba(255, 255, 255, 0.15);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 6px 14px;
-      border-radius: 9999px;
-      font-size: 0.8rem;
+    .identity-full-name {
+      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-size: 1.65rem;
       font-weight: 700;
-      color: #E0E7FF;
-      backdrop-filter: blur(8px);
-      white-space: nowrap;
+      letter-spacing: -0.02em;
+      color: var(--mf-text-primary, #F5F7FF);
     }
 
-    .profile-sections-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr));
-      gap: 24px;
-      width: 100%;
-      box-sizing: border-box;
-      min-width: 0;
-    }
-
-    .settings-panel-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
-      width: 100%;
-      box-sizing: border-box;
-      min-width: 0;
-    }
-
-    .panel-header {
+    .identity-meta-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-color);
+      gap: 12px;
+      font-size: 13.5px;
+      color: var(--mf-text-secondary, #A8B2CC);
     }
 
-    .panel-header h2 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 800;
+    .identity-actions-dock {
       display: flex;
       align-items: center;
       gap: 10px;
+      position: relative;
+      z-index: 2;
     }
 
-    .form-field-group {
-      margin-bottom: 18px;
+    /* Tab Navigation Bar */
+    .profile-tabs-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1px solid var(--mf-border);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
     }
 
-    .form-field-group label {
-      display: block;
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-main);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .form-input-control {
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      background: #F8FAFC;
-      border: 1.5px solid #CBD5E1;
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-family: inherit;
-      font-size: 0.92rem;
-      color: #0F172A;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-
-    .form-input-control:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
-      background: #FFFFFF;
-    }
-
-    .btn-save-primary {
-      background: var(--primary);
-      color: #FFFFFF;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.15s;
-    }
-
-    .btn-save-primary:hover {
-      background: var(--primary-hover);
-      transform: translateY(-1px);
-    }
-
-    .btn-danger-outline {
+    .tab-btn {
       background: transparent;
-      border: 1.5px solid #EF4444;
-      color: #EF4444;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      max-width: 100%;
-      white-space: normal;
-    }
-
-    .btn-danger-outline:hover {
-      background: #EF4444;
-      color: #FFFFFF;
-    }
-
-    .connected-account-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 16px;
-      background: #F8FAFC;
-      border: 1px solid var(--border-color);
-      border-radius: 10px;
-      margin-bottom: 12px;
-      gap: 12px;
-      box-sizing: border-box;
-      min-width: 0;
-      flex-wrap: wrap;
-    }
-
-    .account-type-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.92rem;
+      border: none;
+      color: var(--mf-text-secondary, #A8B2CC);
+      font-family: var(--mf-font-sans);
+      font-size: 14px;
       font-weight: 600;
-      min-width: 0;
-    }
-
-    .status-connected-tag {
-      font-size: 0.75rem;
-      font-weight: 700;
-      color: #10B981;
-      background: #ECFDF5;
-      border: 1px solid #A7F3D0;
-      padding: 4px 10px;
-      border-radius: 9999px;
+      padding: 10px 18px;
+      border-radius: var(--mf-radius-md, 12px) var(--mf-radius-md, 12px) 0 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--mf-transition-fast);
+      position: relative;
       white-space: nowrap;
     }
 
-    /* Danger Modal Backdrop */
+    .tab-btn:hover {
+      color: var(--mf-text-primary);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tab-btn.active {
+      color: var(--mf-accent-blue);
+      background: rgba(110, 168, 255, 0.08);
+      border-bottom: 2px solid var(--mf-accent-blue);
+    }
+
+    /* Tab Sections */
+    .tab-content-panel {
+      display: none;
+      animation: tabFadeIn 0.2s var(--mf-ease-out);
+    }
+
+    .tab-content-panel.active {
+      display: block;
+    }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Section Cards */
+    .settings-section-card {
+      background: var(--mf-surface-glass);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-lg, 16px);
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(16px);
+    }
+
+    .section-card-title {
+      font-family: var(--mf-font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--mf-text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-card-desc {
+      font-size: 13px;
+      color: var(--mf-text-secondary);
+      margin-bottom: 1.5rem;
+    }
+
+    /* Connection Rows */
+    .connection-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: rgba(8, 13, 32, 0.6);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-md);
+      margin-bottom: 10px;
+    }
+
+    .connection-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    /* Danger Modal */
     .danger-modal-backdrop {
+      display: none;
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.7);
-      backdrop-filter: blur(6px);
+      background: rgba(5, 8, 23, 0.85);
+      backdrop-filter: blur(16px);
       z-index: 9999;
-      display: none;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       padding: 20px;
-      box-sizing: border-box;
     }
 
     .danger-modal-card {
-      background: #FFFFFF;
-      border-radius: 20px;
       max-width: 440px;
       width: 100%;
-      box-sizing: border-box;
-      padding: 32px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      background: rgba(14, 18, 38, 0.95);
+      border: 1px solid rgba(255, 111, 125, 0.4);
+      border-radius: var(--mf-radius-xl);
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
       position: relative;
     }
 
-    .modal-close-cross-btn {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #F1F5F9;
-      border: 1px solid #E2E8F0;
-      color: #64748B;
-      font-size: 1rem;
-      font-weight: 700;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .modal-close-cross-btn:hover {
-      background: #E2E8F0;
-      color: #0F172A;
-      transform: scale(1.08);
-    }
-
-    /* 🌙 DARK THEME PROFILE OVERRIDES */
-    [data-theme="dark"] body {
-      background: #07090E;
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .fluid-silk-bg-container {
-      background: radial-gradient(circle at 50% 30%, rgba(15, 23, 42, 0.4) 0%, rgba(10, 14, 28, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
-                  url('/assets/fluid-silk-3d-bg.jpg') center/cover no-repeat;
-    }
-
-    [data-theme="dark"] .settings-panel-card {
-      background: rgba(15, 23, 42, 0.88);
-      border-color: rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] .settings-panel-card.danger-zone-card {
-      background: rgba(30, 10, 10, 0.6) !important;
-      border-color: rgba(239, 68, 68, 0.3) !important;
-    }
-
-    [data-theme="dark"] .form-input-control {
-      background: #0B1120;
-      border-color: rgba(255, 255, 255, 0.14);
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .form-input-control:focus {
-      background: #0F172A;
-      border-color: #38BDF8;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.25);
-    }
-
-    [data-theme="dark"] .connected-account-row {
-      background: rgba(11, 15, 25, 0.6);
-      border-color: rgba(255, 255, 255, 0.08);
-    }
-
-    [data-theme="dark"] .connected-account-row span {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .danger-modal-card {
-      background: #0F172A;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #F8FAFC;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
-    }
-
-    /* 🌟 Modern Status & Notification Popup */
-    .status-popup-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      box-sizing: border-box;
-      opacity: 0;
-      transition: opacity 0.2s ease;
-    }
-
-    .status-popup-backdrop.active {
-      display: flex;
-      opacity: 1;
-    }
-
-    .status-popup-card {
-      background: #FFFFFF;
-      border: 1px solid rgba(226, 232, 240, 0.85);
-      border-radius: 24px;
-      max-width: 430px;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 36px 30px 30px;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6);
-      position: relative;
-      text-align: center;
-      transform: scale(0.92) translateY(12px);
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .status-popup-backdrop.active .status-popup-card {
-      transform: scale(1) translateY(0);
-    }
-
-    .status-popup-icon-wrap {
-      width: 64px;
-      height: 64px;
-      margin: 0 auto 18px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-
-    .status-popup-icon-wrap.success {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.25));
-      border: 2px solid #10B981;
-      color: #10B981;
-      box-shadow: 0 0 24px rgba(16, 185, 129, 0.3);
-    }
-
-    .status-popup-icon-wrap.error {
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(244, 63, 94, 0.25));
-      border: 2px solid #EF4444;
-      color: #EF4444;
-      box-shadow: 0 0 24px rgba(239, 68, 68, 0.3);
-    }
-
-    .status-popup-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      margin: 0 0 8px 0;
-      letter-spacing: -0.02em;
-      color: #0F172A;
-    }
-
-    .status-popup-msg {
-      font-size: 0.94rem;
-      color: #64748B;
-      margin: 0 0 24px 0;
-      line-height: 1.55;
-      word-break: break-word;
-    }
-
-    .status-popup-btn {
-      width: 100%;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #0284C7, #2563EB);
-      color: #FFFFFF;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.3);
-    }
-
-    .status-popup-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 26px rgba(2, 132, 199, 0.4);
-    }
-
-    .status-popup-btn:active {
-      transform: translateY(0);
-    }
-
-    [data-theme="dark"] .status-popup-card {
-      background: #0F172A;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #F8FAFC;
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 30px rgba(2, 132, 199, 0.15);
-    }
-
-    [data-theme="dark"] .status-popup-title {
-      color: #FFFFFF;
-    }
-
-    [data-theme="dark"] .status-popup-msg {
-      color: #94A3B8;
-    }
-
-    /* 📱 Responsive Mobile & Tablet Layout */
+    /* Responsive */
     @media (max-width: 768px) {
-      .profile-main-stage {
-        padding: 24px 16px 60px;
+      .profile-stage {
+        padding: 1.25rem 1rem 4rem;
       }
-
-      .profile-header-card {
-        padding: 22px 18px;
-        margin-bottom: 20px;
-        border-radius: 16px;
-        gap: 16px;
+      .profile-identity-card {
+        padding: 1.5rem;
       }
-
-      .profile-user-left {
-        gap: 14px;
-        width: 100%;
-      }
-
-      .profile-avatar-large {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-      }
-
-      .profile-title-block h1 {
-        font-size: 1.35rem;
-      }
-
-      .profile-handle-tag {
-        font-size: 0.8rem;
-        gap: 6px;
-      }
-
-      .profile-sections-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .settings-panel-card {
-        padding: 20px 16px;
-        border-radius: 14px;
-      }
-
-      .panel-header h2 {
-        font-size: 1.05rem;
-      }
-
-      .connected-account-row {
-        padding: 12px 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .profile-main-stage {
-        padding: 16px 12px 48px;
-      }
-
-      .profile-header-card {
-        padding: 18px 14px;
+      .identity-main-info {
         flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .profile-avatar-large {
-        width: 52px;
-        height: 52px;
-        font-size: 1.35rem;
-      }
-
-      .profile-title-block h1 {
-        font-size: 1.2rem;
-      }
-
-      .profile-handle-tag {
-        font-size: 0.76rem;
-      }
-
-      .plan-status-pill {
-        font-size: 0.72rem;
-        padding: 5px 12px;
-      }
-
-      .settings-panel-card {
-        padding: 16px 14px;
-      }
-
-      .btn-save-primary {
-        width: 100%;
-        padding: 12px 20px;
-      }
-
-      .btn-danger-outline {
-        width: 100%;
         text-align: center;
       }
-
-      .danger-modal-card {
-        padding: 24px 16px;
+      .identity-name-row {
+        flex-direction: column;
       }
-
-      .status-popup-card {
-        padding: 28px 20px 22px;
-        border-radius: 20px;
-      }
-
-      .status-popup-icon-wrap {
-        width: 56px;
-        height: 56px;
-        margin-bottom: 14px;
-      }
-
-      .status-popup-title {
-        font-size: 1.2rem;
-      }
-
-      .status-popup-msg {
-        font-size: 0.88rem;
-        margin-bottom: 20px;
+      .identity-actions-dock {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
 </head>
 <body>
-  <!-- 🌌 3D Ambient Open Star Cluster Background -->
-  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
-    <iframe
-      title="Bright stars of an open cluster"
-      frameborder="0"
-      allowfullscreen
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      xr-spatial-tracking
-      execution-while-out-of-viewport
-      execution-while-not-rendered
-      web-share
-      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
-    </iframe>
-    <div class="cosmic-cluster-overlay"></div>
-  </div>
+  <div class="mf-atmospheric-bg"></div>
 
   <div class="app-shell-layout">
-    <!-- Universal Sidebar Mount -->
     <div id="sidebarMount"></div>
 
-    <!-- Main Content Stage -->
-    <div class="profile-main-stage">
-      <!-- 1. Header Banner -->
-      <header class="profile-header-card">
-        <div class="profile-user-left">
-          <div class="profile-avatar-large" id="userAvatarChar">D</div>
-          <div class="profile-title-block">
-            <h1 id="profileFullName">Developer Profile</h1>
-            <div class="profile-handle-tag">
-              <span id="profileUsername">@developer</span>
-              <span>•</span>
-              <span id="profileEmail">developer@gmail.com</span>
+    <div class="app-main-content">
+      <main class="profile-stage">
+        <!-- Identity Header Card -->
+        <section class="profile-identity-card">
+          <div class="identity-main-info">
+            <div class="avatar-wrapper">
+              <div class="profile-avatar-xl" id="profileAvatarLarge">
+                <span id="userAvatarChar">A</span>
+              </div>
+            </div>
+            <div class="identity-text-col">
+              <div class="identity-name-row">
+                <h1 class="identity-full-name" id="profileFullName">Abdul Aziz Nooruddin</h1>
+                <span class="mf-badge mf-badge-vip" id="profilePlanBadge">💎 VIP MASTER</span>
+              </div>
+              <div class="identity-meta-row">
+                <span id="profileUsername">@abdulaziz</span>
+                <span>•</span>
+                <span id="profileEmail">abdulaziznoor9876@gmail.com</span>
+                <span>•</span>
+                <span class="mf-badge mf-badge-success">
+                  <span class="mf-pulse-dot"></span>
+                  <span id="profileStatusBadge">LIVE SUBDOMAIN</span>
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div>
-          <span class="plan-status-pill" id="profilePlanBadge">✨ LIFETIME STARTER</span>
-        </div>
-      </header>
-
-      <!-- 2. Profile Details & Settings Grid -->
-      <div class="profile-sections-grid">
-        <!-- Panel 1: Account Information -->
-        <section class="settings-panel-card">
-          <div class="panel-header">
-            <h2><span>👤</span> Account Details</h2>
-          </div>
-
-          <form id="profileInfoForm" onsubmit="handleSaveProfile(event)">
-            <div class="form-field-group">
-              <label for="inputName">Display Name</label>
-              <input type="text" id="inputName" class="form-input-control" required placeholder="e.g. Abdul Aziz Nooruddin">
-            </div>
-
-            <div class="form-field-group">
-              <label for="inputEmail">Email Address (Gmail / Primary)</label>
-              <input type="email" id="inputEmail" class="form-input-control" readonly disabled style="background: #F8FAFC; color: #64748B; cursor: not-allowed; border-color: #E2E8F0;" placeholder="yourname@gmail.com" title="Primary account email is permanently locked to your authenticated signup identity.">
-            </div>
-
-            <div class="form-field-group">
-              <label for="inputUsername">Username (Custom URL identifier)</label>
-              <input type="text" id="inputUsername" class="form-input-control" required placeholder="abdulaziz">
-            </div>
-
-            <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
-              <button type="submit" class="btn-save-primary">Save Changes</button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Panel 2: Connected Accounts & Telemetry -->
-        <section class="settings-panel-card">
-          <div class="panel-header">
-            <h2><span>🔗</span> Connected Services</h2>
-          </div>
-
-          <div class="connected-account-row">
-            <div class="account-type-info">
-              <svg width="20" height="20" viewBox="0 0 24 24">
-                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-              </svg>
-              <span>Google Account</span>
-            </div>
-            <span class="status-connected-tag" id="statusGoogle">Active</span>
-          </div>
-
-          <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid var(--border-color);">
-            <a href="/dashboard.html" style="color: var(--primary); font-weight: 700; font-size: 0.9rem; text-decoration: none;">
-              ← Back to Main Dashboard
+          <div class="identity-actions-dock">
+            <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenLiveSite">
+              <span>Open Live Portfolio</span> &nearr;
+            </a>
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+              <span>Edit in Studio</span> &rarr;
             </a>
           </div>
         </section>
 
-        <!-- Panel 3: Danger Zone & Account Wipe -->
-        <section class="settings-panel-card danger-zone-card" style="border-color: #FECACA; background: #FFFDFD; grid-column: 1 / -1;">
-          <div class="panel-header" style="border-color: #FEE2E2;">
-            <h2 style="color: #DC2626;"><span>⚠️</span> Danger Zone</h2>
-          </div>
-
-          <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px;">
-            Permanently wipe your account, delete all active 3D portfolio deployments, sessions, and data. This action cannot be undone.
-          </p>
-
-          <button type="button" class="btn-danger-outline" onclick="openDeleteAccountModal()">
-            Permanently Delete Account
+        <!-- Profile Tabs -->
+        <nav class="profile-tabs-nav" aria-label="Profile Tabs">
+          <button class="tab-btn active" onclick="switchProfileTab('identity', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            <span>Identity</span>
           </button>
-        </section>
-      </div>
+          <button class="tab-btn" onclick="switchProfileTab('account', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Account &amp; Security</span>
+          </button>
+          <button class="tab-btn" onclick="switchProfileTab('portfolio', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+            <span>Portfolio Domain</span>
+          </button>
+          <button class="tab-btn" onclick="switchProfileTab('connections', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            <span>Connected Services</span>
+          </button>
+          <button class="tab-btn" onclick="switchProfileTab('plan', this)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+            <span>Plan &amp; Usage</span>
+          </button>
+          <button class="tab-btn" onclick="switchProfileTab('danger', this)" style="color:var(--mf-error);">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <span>Danger Zone</span>
+          </button>
+        </nav>
+
+        <!-- TAB 1: IDENTITY -->
+        <div id="tabIdentity" class="tab-content-panel active">
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Professional Identity</h2>
+            <p class="section-card-desc">Your display name and bio are mirrored directly in your generated 3D portfolios.</p>
+
+            <form id="profileForm" onsubmit="handleSaveProfile(event)">
+              <div class="mf-input-group">
+                <label class="mf-label" for="inputName">Display Name</label>
+                <input type="text" id="inputName" class="mf-input" placeholder="Abdul Aziz Nooruddin" required>
+              </div>
+
+              <div class="mf-input-group">
+                <label class="mf-label" for="inputTitle">Professional Headline / Title</label>
+                <input type="text" id="inputTitle" class="mf-input" placeholder="Full-Stack Engineer &amp; Systems Architect">
+              </div>
+
+              <div class="mf-input-group">
+                <label class="mf-label" for="inputBio">Brief Narrative Bio</label>
+                <textarea id="inputBio" class="mf-textarea" placeholder="Passionate technologist crafting spatial WebGL systems and scalable edge applications..."></textarea>
+              </div>
+
+              <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+                <button type="submit" class="mf-btn mf-btn-primary">Save Identity</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Profile Photo</h2>
+            <p class="section-card-desc">Used as the avatar focal point across your 3D digital presence.</p>
+            <div style="display:flex; align-items:center; gap:1.25rem;">
+              <div class="profile-avatar-xl" style="width:60px; height:60px; font-size:1.4rem;" id="profilePhotoPreview">
+                <span>A</span>
+              </div>
+              <div style="display:flex; gap:10px;">
+                <label class="mf-btn mf-btn-secondary mf-btn-sm" style="cursor:pointer;">
+                  <span>Upload Photo</span>
+                  <input type="file" id="candidatePhotoInput" accept="image/*" style="display:none;" onchange="handleProfilePhotoUpload(event)">
+                </label>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="removeProfilePhoto()">Remove</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 2: ACCOUNT & SECURITY -->
+        <div id="tabAccount" class="tab-content-panel">
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Account Credentials</h2>
+            <p class="section-card-desc">Update your verified email or change your custom handle.</p>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="inputEmail">Email Address</label>
+              <input type="email" id="inputEmail" class="mf-input" placeholder="abdulaziznoor9876@gmail.com" readonly style="opacity:0.75; cursor:not-allowed;">
+            </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="inputUsername">Username / Custom URL Handle</label>
+              <div style="position:relative;">
+                <input type="text" id="inputUsername" class="mf-input" placeholder="abdulaziz" oninput="checkHandleFormat(this.value)">
+              </div>
+              <span id="handleAvailabilityText" style="font-size:11.5px; margin-top:4px; color:var(--mf-text-muted);">
+                Generates live domain: https://<strong style="color:var(--mf-accent-blue);">abdulaziz</strong>.myfolio.tech
+              </span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:1.5rem;">
+              <button type="button" onclick="document.getElementById('profileForm').requestSubmit()" class="mf-btn mf-btn-primary">Update Handle</button>
+            </div>
+          </section>
+
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Active Sessions</h2>
+            <p class="section-card-desc">Manage active browser access tokens and sessions.</p>
+            <div class="connection-item-row">
+              <div style="display:flex; align-items:center; gap:12px;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                <div>
+                  <div style="font-weight:600; font-size:13.5px;">Current Browser Session</div>
+                  <div style="font-size:11.5px; color:var(--mf-text-muted);">Active now • macOS • Chrome / Safari</div>
+                </div>
+              </div>
+              <span class="mf-badge mf-badge-success">Current</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 3: PORTFOLIO DOMAIN -->
+        <div id="tabPortfolio" class="tab-content-panel">
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Live Portfolio Domain</h2>
+            <p class="section-card-desc">Your portfolio is hosted on edge CDN and served via HTTPS.</p>
+
+            <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+              <div>
+                <div style="font-family:var(--mf-font-mono); font-size:15px; font-weight:600; color:var(--mf-accent-blue);">
+                  https://abdulaziz.myfolio.tech
+                </div>
+                <div style="font-size:12px; color:var(--mf-text-muted); margin-top:4px;">
+                  301 Redirect configured for legacy paths • Edge SSL Active
+                </div>
+              </div>
+              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm">
+                <span>Visit Domain</span> &nearr;
+              </a>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 4: CONNECTED SERVICES -->
+        <div id="tabConnections" class="tab-content-panel">
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Connected Accounts</h2>
+            <p class="section-card-desc">Link your development accounts for automatic portfolio ingestion.</p>
+
+            <div class="connection-item-row">
+              <div class="connection-brand">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                <span>GitHub Integration</span>
+              </div>
+              <span class="mf-badge mf-badge-success">Connected</span>
+            </div>
+
+            <div class="connection-item-row">
+              <div class="connection-brand">
+                <svg width="20" height="20" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                <span>Google OAuth</span>
+              </div>
+              <span class="mf-badge mf-badge-success" id="statusGoogle">Active</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 5: PLAN & USAGE -->
+        <div id="tabPlan" class="tab-content-panel">
+          <section class="settings-section-card">
+            <h2 class="section-card-title">Current Plan</h2>
+            <p class="section-card-desc">Your generation allowance and VIP status.</p>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+              <div>
+                <div style="font-size:1.25rem; font-weight:700; color:#FCD34D;">VIP Founder / Master Edition</div>
+                <div style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">Unlimited weekly builds • Subdomain routing enabled</div>
+              </div>
+              <span class="mf-badge mf-badge-vip">ACTIVE</span>
+            </div>
+          </section>
+        </div>
+
+        <!-- TAB 6: DANGER ZONE -->
+        <div id="tabDanger" class="tab-content-panel">
+          <section class="settings-section-card" style="border-color:rgba(255,111,125,0.3); background:rgba(255,111,125,0.04);">
+            <h2 class="section-card-title" style="color:var(--mf-error);">Permanently Delete Account</h2>
+            <p class="section-card-desc">
+              Irreversibly wipe your account, delete all portfolio builds, domain bindings, and telemetry.
+            </p>
+
+            <button type="button" class="mf-btn mf-btn-danger" onclick="openDeleteAccountModal()">
+              Delete My Account
+            </button>
+          </section>
+        </div>
+      </main>
     </div>
   </div>
 
   <!-- Delete Account Modal -->
   <div id="deleteAccountModal" class="danger-modal-backdrop" onclick="if(event.target === this) closeDeleteAccountModal()">
     <div class="danger-modal-card">
-      <button type="button" class="modal-close-cross-btn" onclick="closeDeleteAccountModal()" aria-label="Close modal">✕</button>
-      <h3 style="color: #DC2626; margin: 0 0 8px 0; font-size: 1.3rem;">Delete Account?</h3>
-      <p style="color: #64748B; font-size: 0.9rem; margin-bottom: 20px; line-height: 1.5;">
-        This action is irreversible. All your portfolios, sessions, and data will be permanently wiped. Please confirm with your current password:
+      <h3 style="color:var(--mf-error); margin-bottom:8px; font-size:1.25rem;">Delete Account?</h3>
+      <p style="color:var(--mf-text-secondary); font-size:13.5px; margin-bottom:18px; line-height:1.5;">
+        This action cannot be undone. Enter your current password to authorize permanent deletion:
       </p>
 
       <form id="deleteAccountConfirmForm" onsubmit="handleConfirmDelete(event)">
-        <div class="form-field-group">
-          <input type="password" id="deleteAccountPassword" class="form-input-control" required placeholder="Enter your password">
+        <div class="mf-input-group">
+          <input type="password" id="deleteAccountPassword" class="mf-input" required placeholder="Enter password to confirm">
         </div>
-        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
-          <button type="button" class="btn-save-primary" style="background: #E2E8F0; color: #1E293B;" onclick="closeDeleteAccountModal()">Cancel</button>
-          <button type="submit" class="btn-danger-outline" style="background: #DC2626; color: #FFFFFF;">Permanently Delete</button>
+        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:20px;">
+          <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="closeDeleteAccountModal()">Cancel</button>
+          <button type="submit" class="mf-btn mf-btn-danger mf-btn-sm">Confirm Deletion</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Modern Status & Notification Popup Modal -->
-  <div id="statusPopupModal" class="status-popup-backdrop" onclick="if(event.target === this) closeStatusPopup()">
-    <div class="status-popup-card">
-      <button type="button" class="modal-close-cross-btn" onclick="closeStatusPopup()" aria-label="Close modal">✕</button>
-      <div class="status-popup-icon-wrap success" id="statusPopupIcon">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      </div>
-      <h3 id="statusPopupTitle" class="status-popup-title">Profile Updated</h3>
-      <p id="statusPopupMessage" class="status-popup-msg">Your changes have been saved successfully.</p>
-      <div>
-        <button type="button" class="status-popup-btn" id="statusPopupConfirmBtn" onclick="closeStatusPopup()">Awesome</button>
-      </div>
+  <!-- Status Notification Popup Modal -->
+  <div id="statusPopupModal" class="danger-modal-backdrop" onclick="if(event.target === this) closeStatusPopup()">
+    <div class="mf-panel-elevated" style="max-width:400px; width:100%; padding:28px; text-align:center;">
+      <h3 id="statusPopupTitle" class="section-card-title" style="justify-content:center; margin-bottom:8px;">Updated</h3>
+      <p id="statusPopupMessage" class="section-card-desc" style="margin-bottom:20px;">Your changes have been saved.</p>
+      <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" id="statusPopupConfirmBtn" onclick="closeStatusPopup()" style="width:100%;">Got it</button>
     </div>
   </div>
 
   <script>
     let currentUserData = null;
 
+    function switchProfileTab(tabName, btn) {
+      document.querySelectorAll('.tab-content-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    function checkHandleFormat(val) {
+      const clean = val.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      const el = document.getElementById('handleAvailabilityText');
+      if (el) {
+        el.innerHTML = `Generates live domain: https://<strong style="color:var(--mf-accent-blue);">${clean || 'yourhandle'}</strong>.myfolio.tech`;
+      }
+    }
+
     async function loadUserProfile() {
       try {
         const res = await fetch('/api/auth/me', { credentials: 'include' });
         if (!res.ok) {
-          window.location.href = '/login';
+          window.location.href = '/auth';
           return;
         }
 
         const data = await res.json();
         currentUserData = data.user || data;
 
-        const name = currentUserData.name || 'Developer';
-        const email = currentUserData.email || 'developer@gmail.com';
-        const username = currentUserData.username || 'developer';
+        const name = currentUserData.name || 'Abdul Aziz Nooruddin';
+        const email = currentUserData.email || 'abdulaziznoor9876@gmail.com';
+        const username = currentUserData.username || 'abdulaziz';
 
         document.getElementById('profileFullName').textContent = name;
         document.getElementById('profileUsername').textContent = `@${username}`;
@@ -854,107 +595,26 @@
         document.getElementById('inputEmail').value = email;
         document.getElementById('inputUsername').value = username;
 
-        // Dynamic Google Connection Tag
         const statusGoogle = document.getElementById('statusGoogle');
         if (statusGoogle) {
-          statusGoogle.textContent = currentUserData.emailVerified ? 'Active' : 'Unverified';
-        }
-
-        if (currentUserData.tier === 'vip_founder' || currentUserData.is_admin || currentUserData.role === 'admin') {
-          document.getElementById('profilePlanBadge').textContent = '💎 VIP FOUNDER';
-        } else if (currentUserData.plan === 'pro' || currentUserData.plan === 'unlimited') {
-          document.getElementById('profilePlanBadge').textContent = '👑 PRO CREATOR';
+          statusGoogle.textContent = currentUserData.emailVerified ? 'Active' : 'Connected';
         }
       } catch (err) {
-        console.error('Failed to load user profile:', err);
+        console.error('Failed to load profile:', err);
       }
-    }
-
-    // 🌟 Modern Status Popup Controller
-    function showStatusPopup({ title, message, type = 'success', confirmText = 'Awesome', onClose = null }) {
-      const modal = document.getElementById('statusPopupModal');
-      const titleEl = document.getElementById('statusPopupTitle');
-      const msgEl = document.getElementById('statusPopupMessage');
-      const iconWrap = document.getElementById('statusPopupIcon');
-      const btn = document.getElementById('statusPopupConfirmBtn');
-
-      titleEl.textContent = title;
-      msgEl.textContent = message;
-      btn.textContent = confirmText;
-
-      iconWrap.className = `status-popup-icon-wrap ${type}`;
-      if (type === 'success') {
-        iconWrap.innerHTML = `
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
-      } else {
-        iconWrap.innerHTML = `
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="8" x2="12" y2="12"></line>
-            <line x1="12" y1="16" x2="12.01" y2="16"></line>
-          </svg>
-        `;
-      }
-
-      window._statusPopupOnClose = onClose;
-      modal.style.display = 'flex';
-      requestAnimationFrame(() => {
-        modal.classList.add('active');
-      });
-      btn.focus();
-    }
-
-    function closeStatusPopup() {
-      const modal = document.getElementById('statusPopupModal');
-      if (!modal) return;
-      modal.classList.remove('active');
-      setTimeout(() => {
-        modal.style.display = 'none';
-        if (typeof window._statusPopupOnClose === 'function') {
-          const cb = window._statusPopupOnClose;
-          window._statusPopupOnClose = null;
-          cb();
-        }
-      }, 200);
     }
 
     async function handleSaveProfile(e) {
       e.preventDefault();
-      const saveBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = saveBtn ? saveBtn.textContent : 'Save Changes';
-
       const name = document.getElementById('inputName').value.trim();
       const username = document.getElementById('inputUsername').value.trim();
 
-      if (!name) {
-        showStatusPopup({
-          title: 'Display Name Required',
-          message: 'Please enter your display name to continue.',
-          type: 'error',
-          confirmText: 'Understood'
-        });
-        return;
-      }
-
-      if (!username) {
-        showStatusPopup({
-          title: 'Username Required',
-          message: 'Please enter a username (custom URL identifier).',
-          type: 'error',
-          confirmText: 'Understood'
-        });
+      if (!name || !username) {
+        showStatusPopup({ title: 'Validation Error', message: 'Name and Username are required.' });
         return;
       }
 
       try {
-        if (saveBtn) {
-          saveBtn.disabled = true;
-          saveBtn.textContent = 'Saving...';
-        }
-
         const res = await fetch('/api/auth/profile', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -963,35 +623,25 @@
         });
 
         const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to update profile');
-        }
+        if (!res.ok) throw new Error(data.error || 'Failed to update profile');
 
-        showStatusPopup({
-          title: 'Profile Updated',
-          message: `Your profile and custom URL identifier have been updated to @${username}!`,
-          type: 'success',
-          confirmText: 'Awesome'
-        });
-
+        showStatusPopup({ title: 'Profile Saved', message: 'Your identity and custom handle have been updated.' });
         await loadUserProfile();
-
-        if (typeof initUniversalSidebar === 'function') {
-          initUniversalSidebar('profile');
-        }
+        if (typeof initUniversalSidebar === 'function') initUniversalSidebar('profile');
       } catch (err) {
-        showStatusPopup({
-          title: 'Update Failed',
-          message: err.message || 'Failed to update profile. Please try again.',
-          type: 'error',
-          confirmText: 'Dismiss'
-        });
-      } finally {
-        if (saveBtn) {
-          saveBtn.disabled = false;
-          saveBtn.textContent = originalText;
-        }
+        showStatusPopup({ title: 'Update Failed', message: err.message });
       }
+    }
+
+    function showStatusPopup({ title, message }) {
+      const modal = document.getElementById('statusPopupModal');
+      document.getElementById('statusPopupTitle').textContent = title;
+      document.getElementById('statusPopupMessage').textContent = message;
+      modal.style.display = 'flex';
+    }
+
+    function closeStatusPopup() {
+      document.getElementById('statusPopupModal').style.display = 'none';
     }
 
     function openDeleteAccountModal() {
@@ -1004,26 +654,11 @@
       document.getElementById('deleteAccountPassword').value = '';
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeDeleteAccountModal();
-        closeStatusPopup();
-      }
-    });
-
     async function handleConfirmDelete(e) {
       e.preventDefault();
-      const delBtn = e.target.querySelector('button[type="submit"]');
-      const originalText = delBtn ? delBtn.textContent : 'Permanently Delete';
-
       const password = document.getElementById('deleteAccountPassword').value;
 
       try {
-        if (delBtn) {
-          delBtn.disabled = true;
-          delBtn.textContent = 'Deleting...';
-        }
-
         const res = await fetch('/api/auth/delete-account', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1031,42 +666,30 @@
           body: JSON.stringify({ password })
         });
 
-        const data = await res.json();
         closeDeleteAccountModal();
-
-        if (res.status === 401) {
-          showStatusPopup({
-            title: 'Authentication Required',
-            message: 'Session expired or incorrect password. Please sign in again.',
-            type: 'error',
-            confirmText: 'Sign In',
-            onClose: () => { window.location.href = '/login'; }
-          });
-          return;
-        }
-
-        if (!res.ok) throw new Error(data.error || 'Failed to delete account');
-        showStatusPopup({
-          title: 'Account Deleted',
-          message: 'Your account and all associated data have been permanently deleted.',
-          type: 'success',
-          confirmText: 'Done',
-          onClose: () => { window.location.href = '/'; }
-        });
+        if (!res.ok) throw new Error('Incorrect password or unauthorized.');
+        showStatusPopup({ title: 'Account Wiped', message: 'Your account has been deleted.' });
+        setTimeout(() => { window.location.href = '/auth'; }, 1000);
       } catch (err) {
-        closeDeleteAccountModal();
-        showStatusPopup({
-          title: 'Deletion Error',
-          message: err.message || 'Failed to delete account.',
-          type: 'error',
-          confirmText: 'Dismiss'
-        });
-      } finally {
-        if (delBtn) {
-          delBtn.disabled = false;
-          delBtn.textContent = originalText;
-        }
+        showStatusPopup({ title: 'Deletion Failed', message: err.message });
       }
+    }
+
+    function handleProfilePhotoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const preview = document.getElementById('profilePhotoPreview');
+          preview.innerHTML = `<img src="${evt.target.result}" alt="Avatar">`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeProfilePhoto() {
+      const preview = document.getElementById('profilePhotoPreview');
+      preview.innerHTML = `<span>A</span>`;
     }
 
     window.addEventListener('DOMContentLoaded', () => {
@@ -1074,6 +697,11 @@
         initUniversalSidebar('profile');
       }
       loadUserProfile();
+
+      // Check hash for direct tab linking (e.g. #security)
+      if (window.location.hash === '#security') {
+        switchProfileTab('account');
+      }
     });
   </script>
 </body>

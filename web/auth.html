@@ -12,149 +12,233 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Create Free Account or Sign In — MyFolio AI Portfolio Generator</title>
-  <meta name="description" content="Sign up free or log in to MyFolio — the AI-powered 3D WebGL portfolio generator. Build a stunning developer portfolio from your GitHub profile or resume in seconds.">
+  <title>Enter MyFolio — Gateway</title>
+  <meta name="description" content="Sign in or create your free MyFolio account. Build a bespoke 3D WebGL developer portfolio from your GitHub or resume in seconds.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://myfolio.tech/auth.html">
+  <link rel="canonical" href="https://myfolio.tech/auth">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="MyFolio Studio">
-  <meta property="og:title" content="Create Free Account — MyFolio AI 3D Portfolio Generator">
-  <meta property="og:description" content="Join MyFolio free. Build a bespoke 3D WebGL developer portfolio from your GitHub or PDF resume in seconds. Free 24-hour live preview.">
+  <meta property="og:site_name" content="MyFolio">
+  <meta property="og:title" content="Enter MyFolio — The Creative Portfolio OS">
+  <meta property="og:description" content="Turn your work into an explorable digital world.">
   <meta property="og:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
-  <meta property="og:url" content="https://myfolio.tech/auth.html">
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Create Free Account — MyFolio AI Portfolio Generator">
-  <meta name="twitter:description" content="Join free. Build a bespoke 3D developer portfolio from GitHub or resume in seconds.">
-  <meta name="twitter:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta property="og:url" content="https://myfolio.tech/auth">
 
   <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#080B1E">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/web/app-tokens.css">
+  <link rel="stylesheet" href="/app-tokens.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
+
   <style>
-    :root {
-      --bg: #080B1E;
-      --surface: #FFFFFF;
-      --surface-border: rgba(15, 23, 42, 0.08);
-      --primary: #0284C7;
-      --primary-hover: #0369A1;
-      --accent: #38BDF8;
-      --success: #10B981;
-      --warning: #F59E0B;
-      --danger: #EF4444;
-      --text: #0F172A;
-      --text-muted: #64748B;
-      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    /* Auth Split Layout Structure */
     body {
-      background: #05070F;
-      color: var(--text);
-      font-family: var(--font-sans);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      position: relative;
+      background-color: var(--mf-bg-primary, #050817);
+      color: var(--mf-text-primary, #F5F7FF);
       overflow-x: hidden;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle at 50% 50%, rgba(8, 11, 30, 0.4) 0%, rgba(8, 11, 30, 0.8) 100%);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .auth-container {
-      background: rgba(11, 13, 25, 0.96);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(139, 92, 246, 0.35);
-      border-radius: 28px;
-      max-width: 480px;
+    .auth-split-wrapper {
+      display: flex;
+      min-height: 100vh;
       width: 100%;
-      padding: 42px 38px;
-      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 35px rgba(139, 92, 246, 0.2);
+    }
+
+    /* Left 55% Visual Experience */
+    .auth-visual-pane {
+      flex: 1.15;
       position: relative;
+      background: 
+        radial-gradient(ellipse 70% 60% at 30% 40%, rgba(110, 168, 255, 0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 70% 80%, rgba(155, 124, 255, 0.08) 0%, transparent 60%),
+        #07112B;
+      border-right: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3.5rem;
+      overflow: hidden;
+    }
+
+    .auth-visual-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
       z-index: 1;
-      color: #F1F5F9;
     }
 
-    .brand-header {
-      text-align: center;
-      margin-bottom: 24px;
+    .auth-visual-content {
+      position: relative;
+      z-index: 2;
+      max-width: 520px;
     }
 
-    .brand-logo {
-      display: inline-flex;
+    .auth-visual-brand {
+      display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 1.3rem;
-      font-weight: 800;
-      letter-spacing: -0.02em;
-      color: #F8FAFC;
+      gap: 12px;
       text-decoration: none;
-      margin-bottom: 8px;
+      color: #FFF;
+      margin-bottom: auto;
     }
 
-    .brand-logo .dot {
-      width: 10px;
-      height: 10px;
-      background: #8b5cf6;
-      border-radius: 50%;
-      box-shadow: 0 0 12px #8b5cf6;
-    }
-
-    .view-title {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #FFFFFF;
-      margin-bottom: 6px;
-      background: linear-gradient(135deg, #FFFFFF 30%, #C4B5FD 100%);
+    .auth-visual-hero-headline {
+      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-size: 2.75rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+      background: linear-gradient(135deg, #FFFFFF 40%, #A8B2CC 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
+    .auth-visual-subtext {
+      font-size: 1.05rem;
+      color: var(--mf-text-secondary, #A8B2CC);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .auth-visual-features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .auth-feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(11, 22, 56, 0.55);
+      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      border-radius: var(--mf-radius-md, 12px);
+      padding: 10px 16px;
+      font-size: 13.5px;
+      color: var(--mf-text-primary, #F5F7FF);
+      backdrop-filter: blur(12px);
+    }
+
+    .auth-feature-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--mf-accent-blue, #6EA8FF);
+      box-shadow: 0 0 10px var(--mf-accent-blue, #6EA8FF);
+    }
+
+    .auth-visual-footer {
+      position: relative;
+      z-index: 2;
+      font-family: var(--mf-font-mono, monospace);
+      font-size: 11px;
+      color: var(--mf-text-muted, #6F7A96);
+      letter-spacing: 0.05em;
+    }
+
+    /* Right 45% Form Experience */
+    .auth-form-pane {
+      flex: 0.95;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+      background: var(--mf-bg-primary, #050817);
+      position: relative;
+    }
+
+    .auth-card-container {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    .auth-header-block {
+      margin-bottom: 1.75rem;
+    }
+
+    .view-title {
+      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--mf-text-primary, #F5F7FF);
+      margin-bottom: 6px;
+    }
+
     .view-subtitle {
-      color: #94A3B8;
       font-size: 0.92rem;
+      color: var(--mf-text-secondary, #A8B2CC);
       line-height: 1.5;
     }
 
-    /* Form Fields */
-    .form-group {
-      margin-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    /* Social Auth */
+    .auth-social-dock {
+      margin-bottom: 1.5rem;
     }
 
-    label {
-      font-size: 0.86rem;
+    .btn-social-auth {
+      width: 100%;
+      background: rgba(11, 22, 56, 0.7);
+      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      border-radius: var(--mf-radius-md, 12px);
+      padding: 11px 16px;
+      font-family: var(--mf-font-sans, sans-serif);
+      font-size: 14px;
       font-weight: 600;
-      color: #334155;
+      color: var(--mf-text-primary, #F5F7FF);
+      cursor: pointer;
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: all var(--mf-transition-fast, 150ms ease);
+    }
+
+    .btn-social-auth:hover {
+      background: rgba(15, 30, 75, 0.85);
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-1px);
+    }
+
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 1.5rem 0;
+      color: var(--mf-text-muted, #6F7A96);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .auth-divider::before, .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--mf-border, rgba(255, 255, 255, 0.08));
+    }
+
+    /* Views & Transitions */
+    .view-card {
+      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.22s var(--mf-ease-out), transform 0.22s var(--mf-ease-out);
+    }
+
+    .view-card.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
     }
 
     .input-wrap {
@@ -163,77 +247,29 @@
       align-items: center;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      background: #ffffff;
-      border: 1px solid rgba(28, 25, 23, 0.15);
-      border-radius: 12px;
-      padding: 13px 16px;
-      color: #1c1917;
-      font-family: var(--font-sans);
-      font-size: 0.95rem;
-      transition: all 0.2s;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(154, 52, 18, 0.15);
-    }
-
     .pwd-toggle {
       position: absolute;
       right: 12px;
       background: none;
       border: none;
-      color: var(--text-muted);
+      color: var(--mf-text-muted, #6F7A96);
+      font-size: 12px;
+      font-weight: 600;
       cursor: pointer;
-      font-size: 0.85rem;
-      padding: 4px 8px;
+      padding: 4px;
     }
 
     .pwd-toggle:hover {
-      color: #1c1917;
+      color: var(--mf-text-primary, #F5F7FF);
     }
 
-    /* Password Strength Meter */
-    .strength-meter {
-      margin-top: 6px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .meter-bar {
-      height: 4px;
-      background: rgba(28, 25, 23, 0.08);
-      border-radius: 2px;
-      overflow: hidden;
-    }
-
-    .meter-fill {
-      height: 100%;
-      width: 0%;
-      transition: all 0.3s;
-      border-radius: 2px;
-    }
-
-    .meter-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    /* Checkbox & Options */
     .form-options {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 24px;
-      font-size: 0.85rem;
+      margin: 14px 0 20px;
+      font-size: 13px;
+      color: var(--mf-text-secondary, #A8B2CC);
     }
 
     .checkbox-label {
@@ -241,454 +277,484 @@
       align-items: center;
       gap: 8px;
       cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .checkbox-label input {
-      accent-color: var(--primary);
-      width: 16px;
-      height: 16px;
+      user-select: none;
     }
 
     .link-btn {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
       background: none;
       border: none;
-      padding: 0;
+      color: var(--mf-accent-blue, #6EA8FF);
       font-size: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      padding: 0;
     }
 
     .link-btn:hover {
       text-decoration: underline;
     }
 
-    /* Action Button */
     .btn-submit {
       width: 100%;
-      background: linear-gradient(135deg, #9a3412, #7c2d12);
-      color: #ffffff;
+      background: linear-gradient(135deg, #6EA8FF 0%, #9B7CFF 100%);
+      color: #FFFFFF;
       border: none;
-      border-radius: 12px;
-      padding: 14px 20px;
-      font-size: 1rem;
-      font-weight: 700;
+      border-radius: var(--mf-radius-md, 12px);
+      padding: 12px 20px;
+      font-family: var(--mf-font-sans, sans-serif);
+      font-size: 14.5px;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 14px rgba(154, 52, 18, 0.25);
+      box-shadow: 0 4px 20px rgba(110, 168, 255, 0.25);
+      transition: all var(--mf-transition-fast, 150ms ease);
     }
 
     .btn-submit:hover:not(:disabled) {
-      background: linear-gradient(135deg, #7c2d12, #5f1d0a);
+      box-shadow: 0 6px 28px rgba(110, 168, 255, 0.4);
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(154, 52, 18, 0.35);
     }
 
     .btn-submit:disabled {
-      opacity: 0.6;
+      opacity: 0.55;
       cursor: not-allowed;
     }
 
-    /* Alerts */
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 13.5px;
+      color: var(--mf-text-secondary, #A8B2CC);
+    }
+
+    /* Password Strength Meter */
+    .strength-meter {
+      margin-top: 8px;
+    }
+
+    .meter-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 0;
+      transition: width 0.3s, background-color 0.3s;
+    }
+
+    .meter-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--mf-text-muted, #6F7A96);
+    }
+
+    /* Alert Banner */
     .alert-box {
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 0.88rem;
-      margin-bottom: 20px;
+      border-radius: var(--mf-radius-md, 12px);
+      padding: 11px 14px;
+      font-size: 13px;
+      margin-bottom: 16px;
       display: none;
       line-height: 1.4;
     }
 
     .alert-error {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: #fca5a5;
+      background: rgba(255, 111, 125, 0.12);
+      border: 1px solid rgba(255, 111, 125, 0.35);
+      color: #FF8F9A;
     }
 
     .alert-success {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: #6ee7b7;
+      background: rgba(101, 214, 160, 0.12);
+      border: 1px solid rgba(101, 214, 160, 0.35);
+      color: #7BE4B0;
     }
 
-    .auth-footer {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-    }
+    /* Mobile Responsive Adaptation */
+    @media (max-width: 960px) {
+      .auth-split-wrapper {
+        flex-direction: column;
+      }
 
-    .view-card {
-      display: none;
-    }
+      .auth-visual-pane {
+        flex: none;
+        padding: 2rem 1.5rem;
+        border-right: none;
+        border-bottom: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      }
 
-    .view-card.active {
-      display: block;
-      animation: fadeIn 0.25s ease-in-out;
-    }
+      .auth-visual-hero-headline {
+        font-size: 1.85rem;
+      }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+      .auth-visual-features, .auth-visual-footer {
+        display: none;
+      }
+
+      .auth-form-pane {
+        padding: 2rem 1.5rem;
+      }
     }
   </style>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <!-- 🌌 3D Ambient Open Star Cluster Background -->
-  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
-    <iframe
-      title="Bright stars of an open cluster"
-      frameborder="0"
-      allowfullscreen
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      xr-spatial-tracking
-      execution-while-out-of-viewport
-      execution-while-not-rendered
-      web-share
-      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
-    </iframe>
-    <div class="cosmic-cluster-overlay"></div>
-  </div>
-  <div class="ambient-glow"></div>
+  <div class="mf-atmospheric-bg"></div>
 
-  <main style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; position: relative; z-index: 10;">
-    <div class="auth-container">
-      <div class="brand-header">
-        <a href="/" class="brand-logo" style="display: inline-flex; align-items: center; gap: 10px; text-decoration: none;">
-        <img src="/assets/logo-3d.webp" alt="myfolio.tech logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover; border: 1.5px solid rgba(56, 189, 248, 0.6); box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);">
-        <span style="font-family: var(--font-sans); font-size: 1.25rem; font-weight: 800; color: #FFFFFF;">myfolio<span style="color: #38bdf8;">.tech</span></span>
+  <div class="auth-split-wrapper">
+    <!-- LEFT 55%: Cinematic Atmospheric Pane -->
+    <section class="auth-visual-pane">
+      <canvas id="authAmbientCanvas" class="auth-visual-canvas"></canvas>
+
+      <a href="/" class="auth-visual-brand">
+        <div class="brand-logo-badge" style="width:36px;height:36px;font-size:1.1rem;border-radius:10px;">M</div>
+        <div>
+          <div style="font-family:var(--mf-font-display);font-weight:700;font-size:1.15rem;letter-spacing:-0.02em;">MyFolio</div>
+          <div style="font-family:var(--mf-font-mono);font-size:0.65rem;color:var(--mf-accent-blue);letter-spacing:0.12em;">CREATIVE WORKSPACE</div>
+        </div>
       </a>
-    </div>
 
-    <!-- Alert Box -->
-    <div id="authAlert" class="alert-box" role="alert"></div>
+      <div class="auth-visual-content">
+        <h1 class="auth-visual-hero-headline">Build your world.</h1>
+        <p class="auth-visual-subtext">Turn your career, GitHub engineering repositories, and technical milestones into an explorable 3D WebGL digital presence.</p>
 
-    <!-- 1. LOGIN VIEW -->
-    <div id="viewLogin" class="view-card active">
-      <h1 class="view-title">Welcome Back</h1>
-      <p class="view-subtitle">Sign in to manage your AI portfolios and domains.</p>
-      
-      <!-- 1-Click Social Sign-In Buttons -->
-      <div class="auth-social-dock" style="margin-top: 20px;">
-        <button type="button" class="btn-social-auth btn-social-google" onclick="handleSocialAuth('google')">
-          <svg class="social-icon" width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>Continue with Google</span>
-        </button>
-      </div>
-
-      <div class="auth-divider">
-        <span>or with email</span>
-      </div>
-
-      <form id="loginForm" style="margin-top: 14px;" novalidate>
-        <div class="form-group">
-          <label for="loginIdentifier">Email or Username</label>
-          <div class="input-wrap">
-            <input type="text" id="loginIdentifier" name="identifier" autocomplete="username" placeholder="alex@example.com or alexpro" required>
+        <div class="auth-visual-features">
+          <div class="auth-feature-pill">
+            <span class="auth-feature-dot"></span>
+            <span>1-Click GitHub repository &amp; skills telemetry analysis</span>
+          </div>
+          <div class="auth-feature-pill">
+            <span class="auth-feature-dot" style="background:#9B7CFF;box-shadow:0 0 10px #9B7CFF;"></span>
+            <span>Bespoke 3D visual universes tailored to your discipline</span>
+          </div>
+          <div class="auth-feature-pill">
+            <span class="auth-feature-dot" style="background:#52DFFF;box-shadow:0 0 10px #52DFFF;"></span>
+            <span>Zero cookie-cutter cards — authentic narrative architecture</span>
           </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="loginPassword">
-            <span>Password</span>
-            <button type="button" class="link-btn" onclick="switchView('forgot')">Forgot?</button>
-          </label>
-          <div class="input-wrap">
-            <input type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
-            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('loginPassword', this)">Show</button>
+      <div class="auth-visual-footer">
+        MYFOLIO OS // SECURE AUTHENTICATION GATEWAY
+      </div>
+    </section>
+
+    <!-- RIGHT 45%: Clean Form Panel -->
+    <main class="auth-form-pane">
+      <div class="auth-card-container">
+        <!-- Alert Banner -->
+        <div id="authAlert" class="alert-box" role="alert"></div>
+
+        <!-- 1. LOGIN VIEW -->
+        <div id="viewLogin" class="view-card active">
+          <div class="auth-header-block">
+            <h2 class="view-title">Welcome back.</h2>
+            <p class="view-subtitle">Your portfolio is waiting.</p>
           </div>
-        </div>
 
-        <div class="form-options">
-          <label class="checkbox-label">
-            <input type="checkbox" id="rememberMe" name="rememberMe" checked>
-            <span>Remember me (30 days)</span>
-          </label>
-        </div>
-
-        <button type="submit" id="btnLoginSubmit" class="btn-submit">
-          <span>Sign In</span> &rarr;
-        </button>
-      </form>
-
-      <div class="auth-footer">
-        Don't have an account? <button type="button" class="link-btn" onclick="switchView('signup')">Sign up for free</button>
-      </div>
-    </div>
-
-    <!-- 2. SIGNUP VIEW -->
-    <div id="viewSignup" class="view-card">
-      <h1 class="view-title">Create Your Account</h1>
-      <p class="view-subtitle">Build, deploy, and host your AI-designed portfolio in 60s.</p>
-
-      <!-- 1-Click Social Sign-In Buttons -->
-      <div class="auth-social-dock" style="margin-top: 20px;">
-        <button type="button" class="btn-social-auth btn-social-google" onclick="handleSocialAuth('google')">
-          <svg class="social-icon" width="18" height="18" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-          </svg>
-          <span>Continue with Google</span>
-        </button>
-      </div>
-
-      <div class="auth-divider">
-        <span>or with credentials</span>
-      </div>
-
-      <form id="signupForm" style="margin-top: 14px;" novalidate>
-        <div class="form-group">
-          <label for="signupName">Full Name</label>
-          <input type="text" id="signupName" name="name" autocomplete="name" placeholder="Alex Morgan" required>
-        </div>
-
-        <div class="form-group">
-          <label for="signupEmail">Email Address</label>
-          <input type="email" id="signupEmail" name="email" autocomplete="email" placeholder="alex@example.com" required>
-        </div>
-
-        <div class="form-group">
-          <label for="signupUsername">Username (Optional)</label>
-          <input type="text" id="signupUsername" name="username" autocomplete="username" placeholder="alexmorgan">
-        </div>
-
-        <div class="form-group">
-          <label for="signupPassword">Password</label>
-          <div class="input-wrap">
-            <input type="password" id="signupPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
-            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupPassword', this)">Show</button>
+          <!-- 1-Click Social Sign-In Buttons -->
+          <div class="auth-social-dock">
+            <button type="button" class="btn-social-auth" onclick="handleSocialAuth('google')">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
           </div>
-          <div class="strength-meter">
-            <div class="meter-bar">
-              <div id="strengthFill" class="meter-fill"></div>
+
+          <div class="auth-divider">
+            <span>or with email</span>
+          </div>
+
+          <form id="loginForm" novalidate>
+            <div class="mf-input-group">
+              <label class="mf-label" for="loginIdentifier">Email or Username</label>
+              <div class="input-wrap">
+                <input class="mf-input" type="text" id="loginIdentifier" name="identifier" autocomplete="username" placeholder="name@domain.com or username" required>
+              </div>
             </div>
-            <div class="meter-label">
-              <span id="strengthText">Enter password</span>
-              <span id="strengthScore">0 / 4</span>
+
+            <div class="mf-input-group">
+              <div class="mf-label">
+                <span>Password</span>
+                <button type="button" class="link-btn" onclick="switchView('forgot')">Forgot?</button>
+              </div>
+              <div class="input-wrap">
+                <input class="mf-input" type="password" id="loginPassword" name="password" autocomplete="current-password" placeholder="••••••••" required>
+                <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('loginPassword', this)">Show</button>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <div class="form-group">
-          <label for="signupConfirmPassword">Confirm Password</label>
-          <div class="input-wrap">
-            <input type="password" id="signupConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
-            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupConfirmPassword', this)">Show</button>
-          </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 24px;">
-          <label class="checkbox-label" style="font-size: 0.82rem; line-height: 1.4; align-items: flex-start;">
-            <input type="checkbox" id="termsAccepted" name="termsAccepted" required style="margin-top: 2px;">
-            <span>
-              I accept the 
-              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('terms')">Terms of Service</button>, 
-              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('privacy')">Privacy Policy</button> &amp; 
-              <button type="button" class="link-btn" style="text-decoration: underline;" onclick="openLegalModal('hosting')">24-hour preview hosting guidelines</button>.
-            </span>
-          </label>
-        </div>
-
-        <button type="submit" id="btnSignupSubmit" class="btn-submit">
-          <span>Create Account</span> &rarr;
-        </button>
-      </form>
-
-      <div class="auth-footer">
-        Already have an account? <button type="button" class="link-btn" onclick="switchView('login')">Sign in</button>
-      </div>
-    </div>
-
-    <!-- 3. FORGOT PASSWORD VIEW -->
-    <div id="viewForgot" class="view-card">
-      <h1 class="view-title">Reset Password</h1>
-      <p class="view-subtitle">Enter your email address and we'll send you secure recovery instructions.</p>
-
-      <form id="forgotForm" style="margin-top: 24px;" novalidate>
-        <div class="form-group">
-          <label for="forgotEmail">Email Address</label>
-          <input type="email" id="forgotEmail" name="email" autocomplete="email" placeholder="alex@example.com" required>
-        </div>
-
-        <button type="submit" id="btnForgotSubmit" class="btn-submit" style="margin-top: 10px;">
-          <span>Send Reset Link</span> &rarr;
-        </button>
-      </form>
-
-      <div class="auth-footer">
-        Remembered your password? <button type="button" class="link-btn" onclick="switchView('login')">Back to Sign In</button>
-      </div>
-    </div>
-
-    <!-- 4. RESET PASSWORD VIEW -->
-    <div id="viewReset" class="view-card">
-      <h1 class="view-title">Set New Password</h1>
-      <p class="view-subtitle">Create a strong new password for your account.</p>
-
-      <form id="resetForm" style="margin-top: 24px;" novalidate>
-        <input type="hidden" id="resetTokenInput" name="token">
-
-        <div class="form-group">
-          <label for="resetPassword">New Password</label>
-          <div class="input-wrap">
-            <input type="password" id="resetPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
-            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetPassword', this)">Show</button>
-          </div>
-          <div class="strength-meter">
-            <div class="meter-bar">
-              <div id="resetStrengthFill" class="meter-fill"></div>
+            <div class="form-options">
+              <label class="checkbox-label">
+                <input type="checkbox" id="rememberMe" name="rememberMe" checked>
+                <span>Remember me</span>
+              </label>
             </div>
-            <div class="meter-label">
-              <span id="resetStrengthText">Enter password</span>
-              <span id="resetStrengthScore">0 / 4</span>
+
+            <button type="submit" id="btnLoginSubmit" class="btn-submit">
+              <span>Sign In</span> &rarr;
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Don't have an account? <button type="button" class="link-btn" onclick="switchView('signup')">Create account</button>
+          </div>
+        </div>
+
+        <!-- 2. SIGNUP VIEW -->
+        <div id="viewSignup" class="view-card">
+          <div class="auth-header-block">
+            <h2 class="view-title">Build your world.</h2>
+            <p class="view-subtitle">Turn your work into something people remember.</p>
+          </div>
+
+          <div class="auth-social-dock">
+            <button type="button" class="btn-social-auth" onclick="handleSocialAuth('google')">
+              <svg width="18" height="18" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+          </div>
+
+          <div class="auth-divider">
+            <span>or with credentials</span>
+          </div>
+
+          <form id="signupForm" novalidate>
+            <div class="mf-input-group">
+              <label class="mf-label" for="signupName">Full Name</label>
+              <input class="mf-input" type="text" id="signupName" name="name" autocomplete="name" placeholder="Abdul Aziz" required>
             </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="signupEmail">Email Address</label>
+              <input class="mf-input" type="email" id="signupEmail" name="email" autocomplete="email" placeholder="alex@example.com" required>
+            </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="signupUsername">Username</label>
+              <input class="mf-input" type="text" id="signupUsername" name="username" autocomplete="username" placeholder="abdulaziz">
+            </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="signupPassword">Password</label>
+              <div class="input-wrap">
+                <input class="mf-input" type="password" id="signupPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
+                <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupPassword', this)">Show</button>
+              </div>
+              <div class="strength-meter">
+                <div class="meter-bar">
+                  <div id="strengthFill" class="meter-fill"></div>
+                </div>
+                <div class="meter-label">
+                  <span id="strengthText">Enter password</span>
+                  <span id="strengthScore">0 / 4</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="signupConfirmPassword">Confirm Password</label>
+              <div class="input-wrap">
+                <input class="mf-input" type="password" id="signupConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
+                <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('signupConfirmPassword', this)">Show</button>
+              </div>
+            </div>
+
+            <div class="mf-input-group" style="margin-bottom: 20px;">
+              <label class="checkbox-label" style="font-size: 12.5px; line-height: 1.4; align-items: flex-start;">
+                <input type="checkbox" id="termsAccepted" name="termsAccepted" required style="margin-top: 2px;">
+                <span>
+                  I accept the 
+                  <button type="button" class="link-btn" onclick="openLegalModal('terms')">Terms</button>, 
+                  <button type="button" class="link-btn" onclick="openLegalModal('privacy')">Privacy</button> &amp; 
+                  <button type="button" class="link-btn" onclick="openLegalModal('hosting')">Preview Guidelines</button>.
+                </span>
+              </label>
+            </div>
+
+            <button type="submit" id="btnSignupSubmit" class="btn-submit">
+              <span>Create Account</span> &rarr;
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Already have an account? <button type="button" class="link-btn" onclick="switchView('login')">Sign in</button>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="resetConfirmPassword">Confirm New Password</label>
-          <div class="input-wrap">
-            <input type="password" id="resetConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
-            <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetConfirmPassword', this)">Show</button>
+        <!-- 3. FORGOT PASSWORD VIEW -->
+        <div id="viewForgot" class="view-card">
+          <div class="auth-header-block">
+            <h2 class="view-title">Reset Password</h2>
+            <p class="view-subtitle">Enter your email and we'll send you recovery instructions.</p>
+          </div>
+
+          <form id="forgotForm" novalidate>
+            <div class="mf-input-group">
+              <label class="mf-label" for="forgotEmail">Email Address</label>
+              <input class="mf-input" type="email" id="forgotEmail" name="email" autocomplete="email" placeholder="name@domain.com" required>
+            </div>
+
+            <button type="submit" id="btnForgotSubmit" class="btn-submit" style="margin-top: 14px;">
+              <span>Send Recovery Link</span> &rarr;
+            </button>
+          </form>
+
+          <div class="auth-footer">
+            Remembered your credentials? <button type="button" class="link-btn" onclick="switchView('login')">Back to Sign In</button>
           </div>
         </div>
 
-        <button type="submit" id="btnResetSubmit" class="btn-submit" style="margin-top: 10px;">
-          <span>Update Password</span> &rarr;
-        </button>
-      </form>
-    </div>
+        <!-- 4. RESET PASSWORD VIEW -->
+        <div id="viewReset" class="view-card">
+          <div class="auth-header-block">
+            <h2 class="view-title">Set New Password</h2>
+            <p class="view-subtitle">Create a secure new password for your account.</p>
+          </div>
 
-    <!-- 5. VERIFY EMAIL VIEW -->
-    <div id="viewVerify" class="view-card">
-      <h1 class="view-title">Verifying Email...</h1>
-      <p id="verifyStatusText" class="view-subtitle">Please wait while we confirm your email address.</p>
-      <div style="margin-top: 28px; text-align: center;">
-        <a id="btnVerifyDashboard" href="/dashboard.html" class="btn-submit" style="display: none; text-decoration: none;">
-          Go to Dashboard &rarr;
-        </a>
+          <form id="resetForm" novalidate>
+            <input type="hidden" id="resetTokenInput" name="token">
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="resetPassword">New Password</label>
+              <div class="input-wrap">
+                <input class="mf-input" type="password" id="resetPassword" name="password" autocomplete="new-password" placeholder="Min. 8 characters" required>
+                <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetPassword', this)">Show</button>
+              </div>
+              <div class="strength-meter">
+                <div class="meter-bar">
+                  <div id="resetStrengthFill" class="meter-fill"></div>
+                </div>
+                <div class="meter-label">
+                  <span id="resetStrengthText">Enter password</span>
+                  <span id="resetStrengthScore">0 / 4</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mf-input-group">
+              <label class="mf-label" for="resetConfirmPassword">Confirm New Password</label>
+              <div class="input-wrap">
+                <input class="mf-input" type="password" id="resetConfirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="Repeat password" required>
+                <button type="button" class="pwd-toggle" onclick="togglePasswordVisibility('resetConfirmPassword', this)">Show</button>
+              </div>
+            </div>
+
+            <button type="submit" id="btnResetSubmit" class="btn-submit" style="margin-top: 14px;">
+              <span>Update Password</span> &rarr;
+            </button>
+          </form>
+        </div>
+
+        <!-- 5. VERIFY EMAIL VIEW -->
+        <div id="viewVerify" class="view-card">
+          <div class="auth-header-block">
+            <h2 class="view-title">Verifying Email...</h2>
+            <p id="verifyStatusText" class="view-subtitle">Confirming your credentials with the MyFolio gateway.</p>
+          </div>
+          <div style="margin-top: 24px;">
+            <a id="btnVerifyDashboard" href="/dashboard" class="btn-submit" style="display: none; text-decoration: none;">
+              Go to Dashboard &rarr;
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
   </div>
 
-  <!-- LEGAL MODAL (Terms of Service, Privacy Policy & 24-Hour Hosting Guidelines) -->
-  <div id="legalModal" class="modal-overlay" style="display: none; position: fixed; inset: 0; background: rgba(28, 25, 23,0.5); backdrop-filter: blur(10px); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
-    <div style="background: #ffffff; border: 1px solid rgba(28, 25, 23,0.12); border-radius: 20px; max-width: 680px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(28, 25, 23,0.2); overflow: hidden; color: #1c1917;">
-      
-      <!-- Modal Header -->
-      <div style="padding: 20px 24px; border-bottom: 1px solid rgba(28, 25, 23,0.08); display: flex; justify-content: space-between; align-items: center;">
-        <div style="display: flex; gap: 8px;">
-          <button id="tabBtnTerms" onclick="switchLegalTab('terms')" style="background: rgba(154, 52, 18,0.12); color: #9a3412; border: 1px solid rgba(154, 52, 18,0.3); border-radius: 8px; padding: 6px 14px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Terms of Service</button>
-          <button id="tabBtnPrivacy" onclick="switchLegalTab('privacy')" style="background: transparent; color: #78716c; border: 1px solid rgba(28, 25, 23,0.08); border-radius: 8px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Privacy Policy</button>
-          <button id="tabBtnHosting" onclick="switchLegalTab('hosting')" style="background: transparent; color: #78716c; border: 1px solid rgba(28, 25, 23,0.08); border-radius: 8px; padding: 6px 14px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">Hosting Guidelines</button>
+  <!-- LEGAL MODAL -->
+  <div id="legalModal" style="display:none; position:fixed; inset:0; background:rgba(5,8,23,0.85); backdrop-filter:blur(16px); z-index:9999; justify-content:center; align-items:center; padding:20px;">
+    <div class="mf-panel-elevated" style="max-width:640px; width:100%; max-height:85vh; display:flex; flex-direction:column; overflow:hidden;">
+      <div style="padding:16px 20px; border-bottom:1px solid var(--mf-border); display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; gap:8px;">
+          <button id="tabBtnTerms" onclick="switchLegalTab('terms')" class="mf-btn mf-btn-sm mf-btn-primary">Terms</button>
+          <button id="tabBtnPrivacy" onclick="switchLegalTab('privacy')" class="mf-btn mf-btn-sm mf-btn-secondary">Privacy</button>
+          <button id="tabBtnHosting" onclick="switchLegalTab('hosting')" class="mf-btn mf-btn-sm mf-btn-secondary">Hosting</button>
         </div>
-        <button onclick="closeLegalModal()" style="background: none; border: none; color: #78716c; font-size: 1.4rem; cursor: pointer; padding: 4px;">&times;</button>
+        <button onclick="closeLegalModal()" style="background:none;border:none;color:var(--mf-text-muted);font-size:1.5rem;cursor:pointer;">&times;</button>
       </div>
-
-      <!-- Modal Body (Scrollable) -->
-      <div id="legalContentArea" style="padding: 24px; overflow-y: auto; color: #334155; font-size: 0.92rem; line-height: 1.6; flex: 1;">
-        <!-- Dynamically injected tab content -->
-      </div>
-
-      <!-- Modal Footer -->
-      <div style="padding: 16px 24px; border-top: 1px solid rgba(28, 25, 23,0.08); display: flex; justify-content: flex-end;">
-        <button onclick="closeLegalModal()" class="btn-submit" style="width: auto; padding: 8px 24px; font-size: 0.9rem;">
-          I Understand &amp; Agree
-        </button>
+      <div id="legalContentArea" style="padding:20px; overflow-y:auto; font-size:13.5px; line-height:1.6; color:var(--mf-text-secondary); flex:1;"></div>
+      <div style="padding:14px 20px; border-top:1px solid var(--mf-border); display:flex; justify-content:flex-end;">
+        <button onclick="closeLegalModal()" class="mf-btn mf-btn-primary mf-btn-sm">I Understand</button>
       </div>
     </div>
   </div>
 
   <script src="/auth.js"></script>
   <script>
+    // Lightweight Atmospheric Starfield on Left Pane
+    (function initAuthCanvas() {
+      const canvas = document.getElementById('authAmbientCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = canvas.offsetWidth;
+      let h = canvas.height = canvas.offsetHeight;
+
+      window.addEventListener('resize', () => {
+        w = canvas.width = canvas.offsetWidth;
+        h = canvas.height = canvas.offsetHeight;
+      });
+
+      const particles = [];
+      for (let i = 0; i < 45; i++) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          r: Math.random() * 1.5 + 0.5,
+          alpha: Math.random() * 0.6 + 0.2,
+          speed: Math.random() * 0.25 + 0.1
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(110, 168, 255, ${p.alpha})`;
+          ctx.fill();
+          p.y -= p.speed;
+          if (p.y < 0) p.y = h;
+        });
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    // Legal Modal Logic
     const legalTexts = {
-      terms: `
-        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">Terms of Service</h2>
-        <p style="margin-bottom: 14px;">Welcome to <strong>myfolio.tech</strong>. By creating an account, generating a portfolio, or subscribing to our edge-hosting platform, you agree to the following terms:</p>
-        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. Ownership & Intellectual Property</h4>
-        <p style="margin-bottom: 14px;">You retain 100% full legal ownership of your resume, personal information, custom code, GitHub repositories, and creative portfolio content. We grant you perpetual rights to host, modify, download, and distribute your generated 3D frontend websites.</p>
-        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Acceptable Use & Security</h4>
-        <p style="margin-bottom: 14px;">You agree not to use myfolio.tech to host malicious software, phishing vectors, fraudulent claims, or illicit media. Any account violating ethical web standards will be neutralized immediately.</p>
-        <h4 style="color: #9a3412; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Pricing & Hosting Tiers</h4>
-        <p style="margin-bottom: 14px;">• <strong>Free Tier:</strong> 5 weekly generations with 24-hour high-speed preview edge CDN deployment.<br>• <strong>Lifetime Starter (₹149 one-time):</strong> Deployed on Netlify Edge CDN with a permanent global link, full source code ZIP export, and zero watermarks.<br>• <strong>Pro Creator (₹149/mo):</strong> Unlimited generations, custom domain mapping, edge CDN distribution, and recruiter visitor telemetry.</p>
-      `,
-      privacy: `
-        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">Privacy Policy</h2>
-        <p style="margin-bottom: 14px;">Your privacy and digital security are our highest commitments. Here is how your data is safeguarded:</p>
-        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. Information We Collect</h4>
-        <p style="margin-bottom: 14px;">We collect only necessary account credentials: full name, verified email, username, cryptographically salted passwords (hashed via Scrypt), active session devices (for multi-device access control), and candidate portfolio bio details.</p>
-        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Zero Data Selling & Monetization</h4>
-        <p style="margin-bottom: 14px;">We will <strong>never</strong> sell, rent, license, or transmit your resume details, contact leads, or project descriptions to third-party data brokers or advertisers.</p>
-        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Cryptographic Cookie Architecture</h4>
-        <p style="margin-bottom: 14px;">We use strictly essential <code>HttpOnly; SameSite=Lax</code> security cookies with zero third-party tracking pixels.</p>
-        <h4 style="color: #047857; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">4. Permanent GDPR & Account Deletion</h4>
-        <p style="margin-bottom: 14px;">You have the absolute right to purge your entire account, all associated portfolio websites, visitor telemetry, and active sessions anytime with 1 click in your Security Settings.</p>
-      `,
-      hosting: `
-        <h2 style="color: #1c1917; font-size: 1.25rem; font-weight: 800; margin-bottom: 12px;">24-Hour Preview Hosting Guidelines</h2>
-        <p style="margin-bottom: 14px;">To guarantee lightning-fast edge performance for creators worldwide, our preview hosting follows a deterministic lifecycle:</p>
-        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">1. Instant Free Preview Window (24 Hours)</h4>
-        <p style="margin-bottom: 14px;">Every newly generated portfolio website is instantly deployed to our high-speed global edge network with a 24-hour live preview window so you can inspect your 3D animations and verify all sections.</p>
-        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">2. Upgrading to Permanent Hosting (Netlify Edge CDN)</h4>
-        <p style="margin-bottom: 14px;">Upgrading to Lifetime Starter deploys your portfolio permanently on Netlify Edge CDN, removes preview banners, and gives you instant static ZIP export access.</p>
-        <h4 style="color: #d97706; font-weight: 700; margin-top: 16px; margin-bottom: 6px;">3. Grace Period & Safe Data Retention (5 Days)</h4>
-        <p style="margin-bottom: 14px;">If a preview expires or a subscription lapses, you receive an automated 5-day takedown grace period with email alerts before site files are archived, ensuring you never lose your work.</p>
-      `
+      terms: `<h3 style="color:#FFF;margin-bottom:8px;">Terms of Service</h3><p>You retain 100% full ownership of your technical resume, code repos, and generated portfolio assets. We provide edge distribution and generative design systems.</p>`,
+      privacy: `<h3 style="color:#FFF;margin-bottom:8px;">Privacy Policy</h3><p>Your data is cryptographically protected. We never sell personal information or technical resumes to third-party brokers.</p>`,
+      hosting: `<h3 style="color:#FFF;margin-bottom:8px;">Hosting Guidelines</h3><p>Portfolios are instantly deployed on high-speed global edge infrastructure. You can bind custom subdomains anytime.</p>`
     };
 
     function openLegalModal(tab = 'terms') {
-      const modal = document.getElementById('legalModal');
-      modal.style.display = 'flex';
+      document.getElementById('legalModal').style.display = 'flex';
       switchLegalTab(tab);
     }
-
     function closeLegalModal() {
-      const modal = document.getElementById('legalModal');
-      modal.style.display = 'none';
+      document.getElementById('legalModal').style.display = 'none';
     }
-
     function switchLegalTab(tab) {
       document.getElementById('legalContentArea').innerHTML = legalTexts[tab] || legalTexts.terms;
-      
-      const tabs = ['terms', 'privacy', 'hosting'];
-      tabs.forEach(t => {
-        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
-        if (t === tab) {
-          btn.style.background = 'rgba(59,130,246,0.2)';
-          btn.style.color = '#60a5fa';
-          btn.style.borderColor = 'rgba(59,130,246,0.4)';
-        } else {
-          btn.style.background = 'transparent';
-          btn.style.color = '#9ca3af';
-          btn.style.borderColor = 'rgba(255,255,255,0.08)';
-        }
-      });
     }
-
-    // Close on backdrop click
-    document.getElementById('legalModal').addEventListener('click', (e) => {
-      if (e.target.id === 'legalModal') closeLegalModal();
-    });
   </script>
-    </div>
-  </main>
 </body>
 </html>

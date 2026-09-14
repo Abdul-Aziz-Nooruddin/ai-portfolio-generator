@@ -12,3188 +12,850 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MyFolio 3D Web Studio — AI Portfolio Generator</title>
-  <meta name="description" content="Synthesize immersive 3D developer portfolios from GitHub repositories and resume documents with real-time WebGL rendering.">
+  <title>MyFolio Studio — Creative 3D Workspace</title>
+  <meta name="description" content="Synthesize bespoke 3D developer portfolios from GitHub and technical resumes with real-time WebGL canvas and AI Creative Direction.">
   <link rel="icon" type="image/png" href="/favicon.png">
-  <link rel="apple-touch-icon" href="/favicon.png">
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#05080A">
+  <link rel="stylesheet" href="/web/app-tokens.css">
+  <link rel="stylesheet" href="/app-tokens.css">
 
-  <meta property="og:title" content="MyFolio 3D Web Studio — AI Portfolio Generator">
-  <meta property="og:description" content="Turn your GitHub and resume into an interactive 3D WebGL developer portfolio in seconds.">
-  <meta property="og:image" content="/assets/3d/cosmic_astronaut_3d.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Fraunces:opsz,wght@9..144,400;600;800&display=swap" rel="stylesheet">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
+  <script src="/web/sidebar.js"></script>
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 
   <style>
-    :root {
-      --bg: #F8FAFC;
-      --surface: rgba(255, 255, 255, 0.9);
-      --surface-card: rgba(255, 255, 255, 0.98);
-      --surface-glow: rgba(37, 99, 235, 0.12);
-      --primary: #2563EB;
-      --primary-on: #FFFFFF;
-      --secondary: #0284C7;
-      --accent: #38BDF8;
-      --text: #0F172A;
-      --text-muted: #64748B;
-      --border: rgba(226, 232, 240, 0.95);
-      --border-focus: #2563EB;
-      --card-radius: 20px;
-      --font-display: 'Space Grotesk', sans-serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
+    /* Studio Full-Screen Creative OS Layout */
     body {
-      background: #F8FAFC;
-      color: var(--text);
-      font-family: var(--font-body);
+      background-color: var(--mf-bg-primary, #050817);
+      color: var(--mf-text-primary, #F5F7FF);
+      font-family: var(--mf-font-sans);
+      overflow-x: hidden;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      position: relative;
-    }
-
-    /* 🌊 High-Speed Moving 3D Fluid Silk Background Container */
-    .fluid-silk-bg-container {
-      position: fixed;
-      top: -6%;
-      left: -6%;
-      width: 112vw;
-      height: 112vh;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.1) 0%, rgba(240, 246, 255, 0.25) 50%, rgba(220, 235, 255, 0.55) 100%),
-                  url('/assets/fluid-silk-3d-bg.webp') center/cover no-repeat;
-      animation: fluidSilkFastUndulate 6.5s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-
-    @keyframes fluidSilkFastUndulate {
-      0% {
-        transform: scale(1) translate(0px, 0px) rotate(0deg);
-      }
-      25% {
-        transform: scale(1.05) translate(-22px, -14px) rotate(1.2deg);
-      }
-      50% {
-        transform: scale(1.09) translate(16px, 20px) rotate(-1.5deg);
-      }
-      75% {
-        transform: scale(1.05) translate(-14px, 16px) rotate(0.9deg);
-      }
-      100% {
-        transform: scale(1.07) translate(22px, -14px) rotate(-0.9deg);
-      }
-    }
-
-    #webgl-canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
       height: 100vh;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0.9;
-    }
-
-    .app-shell-layout {
       display: flex;
-      min-height: 100vh;
-      width: 100%;
-      position: relative;
-      z-index: 2;
+      flex-direction: column;
     }
 
-    .studio-stage {
-      flex: 1;
-      min-width: 0;
-      padding: 40px clamp(16px, 3vw, 40px) 80px;
-      max-width: 1240px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* HEADER BANNER WITH 3D LIVE HOVER */
-    .studio-header-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 246, 255, 0.92) 100%);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      border-radius: 24px;
-      padding: 32px;
-      margin-bottom: 32px;
-      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.08);
-      backdrop-filter: blur(24px);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
-      animation: cardFloat3D 6s ease-in-out infinite alternate;
-    }
-
-    @keyframes cardFloat3D {
-      0% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-4px) rotate(0.2deg); }
-      100% { transform: translateY(2px) rotate(-0.2deg); }
-    }
-
-    .studio-header-card:hover {
-      transform: translateY(-6px) scale(1.01);
-      box-shadow: 0 28px 56px rgba(37, 99, 235, 0.14);
-    }
-
-    .studio-header-title h1 {
-      font-family: var(--font-display);
-      font-size: 1.85rem;
-      font-weight: 800;
-      margin: 0 0 6px 0;
-      letter-spacing: -0.02em;
-      color: #0F172A;
-    }
-
-    .studio-header-title p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin: 0;
-    }
-
-    .badge-universe-count {
-      background: rgba(37, 99, 235, 0.08);
-      border: 1px solid rgba(37, 99, 235, 0.2);
-      color: #2563EB;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 6px 14px;
-      border-radius: 9999px;
-    }
-
-    /* INGESTION TABS */
-    .ingest-tabs-nav {
-      display: flex;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.88);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      padding: 6px;
-      border-radius: 16px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    /* Top Studio Bar */
+    .studio-topbar {
+      height: 52px;
+      background: rgba(8, 13, 32, 0.95);
+      border-bottom: 1px solid var(--mf-border);
       backdrop-filter: blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+      position: relative;
+      z-index: 100;
+      flex-shrink: 0;
     }
 
-    .ingest-tab-btn {
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--mf-font-display);
+      font-weight: 700;
+      font-size: 14px;
+      color: #FFF;
+      text-decoration: none;
+    }
+
+    .topbar-center-saved {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      color: var(--mf-text-muted);
+      letter-spacing: 0.05em;
+    }
+
+    .topbar-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Studio 3-Column Main Workspace */
+    .studio-workspace-container {
       flex: 1;
-      min-width: 140px;
+      display: flex;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Column 1: Left Navigator & Story (320px) */
+    .studio-col-left {
+      width: 330px;
+      min-width: 330px;
+      max-width: 330px;
+      background: rgba(7, 11, 27, 0.85);
+      border-right: 1px solid var(--mf-border);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      padding: 1.25rem 1rem;
+      gap: 1.5rem;
+    }
+
+    /* Column 2: Center Live Viewport Canvas */
+    .studio-col-center {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #040612;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .center-viewport-toolbar {
+      height: 44px;
+      background: rgba(8, 13, 32, 0.7);
+      border-bottom: 1px solid var(--mf-border);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+      z-index: 10;
+    }
+
+    .device-switcher-dock {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(5, 8, 23, 0.6);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-sm);
+      padding: 2px;
+    }
+
+    .device-btn {
       background: transparent;
       border: none;
-      color: #64748B;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-family: var(--font-display);
-      font-size: 0.9rem;
-      font-weight: 700;
+      color: var(--mf-text-muted);
+      padding: 4px 8px;
+      border-radius: 4px;
       cursor: pointer;
+      font-size: 11px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+
+    .device-btn.active {
+      color: #FFF;
+      background: rgba(110, 168, 255, 0.2);
+    }
+
+    .viewport-canvas-frame {
+      flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .ingest-tab-btn:hover {
-      color: #0F172A;
-      background: rgba(241, 245, 249, 0.9);
-      transform: translateY(-2px);
-    }
-
-    .ingest-tab-btn.active {
-      background: linear-gradient(135deg, #2563EB, #1D4ED8);
-      color: #FFFFFF;
-      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.35);
-      transform: scale(1.02);
-    }
-
-    /* INGESTION PANELS WITH LIGHT FROSTED GLASS */
-    .ingest-panel-box {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      border-radius: 22px;
-      padding: 28px;
-      margin-bottom: 32px;
-      box-shadow: 0 16px 40px rgba(37, 99, 235, 0.06);
-      backdrop-filter: blur(24px);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-    }
-
-    .ingest-panel-box:hover {
-      box-shadow: 0 22px 50px rgba(37, 99, 235, 0.1);
-    }
-
-    .form-section-title {
-      font-family: var(--font-display);
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--primary);
-      margin: 24px 0 14px 0;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .form-section-title:first-of-type {
-      margin-top: 0;
-    }
-
-    .form-row-2col {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-    }
-
-    .form-group {
-      margin-bottom: 18px;
-    }
-
-    .form-group label {
-      display: block;
-      font-family: var(--font-display);
-      font-size: 0.88rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #0F172A;
-    }
-
-    .form-control-input {
-      width: 100%;
-      box-sizing: border-box;
-      background: #F8FAFC;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 12px;
-      padding: 12px 16px;
-      color: #0F172A;
-      font-family: inherit;
-      font-size: 0.95rem;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .form-control-input:focus {
-      outline: none;
-      border-color: #2563EB;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
-      background: #FFFFFF;
-      transform: translateY(-2px);
-    }
-
-    .dropzone-box {
-      border: 2px dashed rgba(37, 99, 235, 0.35);
-      border-radius: 16px;
-      padding: 36px 20px;
-      text-align: center;
-      background: rgba(37, 99, 235, 0.03);
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-    }
-
-    .dropzone-box:hover {
-      background: rgba(37, 99, 235, 0.08);
-      border-color: #2563EB;
-      transform: scale(1.01);
-    }
-
-    .dropzone-box.drag-over {
-      background: rgba(37, 99, 235, 0.16) !important;
-      border-color: #2563EB !important;
-      border-style: solid !important;
-      box-shadow: 0 0 28px rgba(37, 99, 235, 0.35) !important;
-      transform: scale(1.02) !important;
-    }
-
-    [data-theme="dark"] .dropzone-box.drag-over {
-      background: rgba(56, 189, 248, 0.22) !important;
-      border-color: #38BDF8 !important;
-      border-style: solid !important;
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.4) !important;
-      transform: scale(1.02) !important;
-    }
-
-    /* Photo & Certificate Upload Styling */
-    .photo-upload-card {
-      background: #FFFFFF;
-      border: 1.5px dashed #CBD5E1;
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-top: 18px;
-      transition: all 0.2s ease;
-    }
-    [data-theme="dark"] .photo-upload-card {
-      background: #1E293B;
-      border-color: #334155;
-    }
-    .cert-upload-card {
-      background: #FFFFFF;
-      border: 1.5px dashed #CBD5E1;
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-top: 18px;
-      transition: all 0.2s ease;
-    }
-    [data-theme="dark"] .cert-upload-card {
-      background: #1E293B;
-      border-color: #334155;
-    }
-    .cert-mini-drop {
-      border: 1.5px dashed #94A3B8;
-      border-radius: 12px;
-      padding: 18px 16px;
-      text-align: center;
-      background: #F8FAFC;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .cert-mini-drop:hover {
-      border-color: #2563EB;
-      background: rgba(37, 99, 235, 0.04);
-    }
-    [data-theme="dark"] .cert-mini-drop {
-      border-color: #475569;
-      background: #0F172A;
-    }
-    [data-theme="dark"] .cert-mini-drop:hover {
-      border-color: #38BDF8;
-      background: rgba(56, 189, 248, 0.08);
-    }
-    .cert-card-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 14px;
-      background: #F8FAFC;
-      border: 1px solid #E2E8F0;
-      border-radius: 12px;
-      animation: fadeInCert 0.25s ease forwards;
-    }
-    [data-theme="dark"] .cert-card-item {
-      background: #0F172A;
-      border-color: #334155;
-    }
-    @keyframes fadeInCert {
-      from { opacity: 0; transform: translateY(-4px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .btn-outline-studio {
-      background: #FFFFFF;
-      border: 1.5px solid #CBD5E1;
-      color: #0F172A;
-      border-radius: 10px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-    .btn-outline-studio:hover {
-      border-color: #2563EB;
-      color: #2563EB;
-      background: rgba(37, 99, 235, 0.04);
-    }
-    [data-theme="dark"] .btn-outline-studio {
-      background: #0F172A;
-      border-color: #475569;
-      color: #F1F5F9;
-    }
-    [data-theme="dark"] .btn-outline-studio:hover {
-      border-color: #38BDF8;
-      color: #38BDF8;
-      background: rgba(56, 189, 248, 0.08);
-    }
-
-    .project-card-fieldset {
-      background: #FFFFFF;
-      border: 1px solid #E2E8F0;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 16px;
-    }
-
-    .project-card-fieldset legend {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--primary);
-      padding: 0 8px;
-      text-transform: uppercase;
-    }
-
-    /* 6 UNIVERSE SELECTOR CARDS WITH 3D TILT PHYSICS */
-    .universe-choice-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-
-    .universe-choice-card {
-      background: #FFFFFF;
-      border: 1.5px solid #E2E8F0;
-      border-radius: 16px;
-      padding: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
-      position: relative;
-    }
-
-    .universe-choice-card:hover {
-      border-color: #2563EB;
-      transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
-    }
-
-    .universe-choice-card.selected {
-      border-color: #2563EB;
-      background: rgba(37, 99, 235, 0.05);
-      box-shadow: 0 0 0 2px #2563EB, 0 8px 24px rgba(37, 99, 235, 0.15);
-      transform: scale(1.02);
-    }
-
-    .universe-choice-card .universe-thumb {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-
-    .universe-choice-card:hover .universe-thumb {
-      transform: scale(1.08) rotate(1.5deg);
-    }
-
-    .universe-info h4 {
-      margin: 0 0 2px 0;
-      font-family: var(--font-display);
-      font-size: 0.98rem;
-      font-weight: 700;
-      color: #0F172A;
-    }
-
-    .universe-info p {
-      margin: 0;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-    }
-
-    /* GENERATE BUTTON WITH 3D GLOW */
-    .btn-generate-hero {
-      width: 100%;
-      background: linear-gradient(135deg, #2563EB 0%, #0284C7 50%, #059669 100%);
-      color: #FFFFFF;
-      border: none;
-      padding: 16px;
-      border-radius: 14px;
-      font-family: var(--font-display);
-      font-size: 1.1rem;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.35);
-      transition: transform 0.25s, box-shadow 0.25s;
-      animation: btnGlowPulse 4s ease-in-out infinite alternate;
-    }
-
-    @keyframes btnGlowPulse {
-      0% { box-shadow: 0 10px 30px rgba(37, 99, 235, 0.3); }
-      100% { box-shadow: 0 14px 42px rgba(5, 150, 105, 0.45); }
-    }
-
-    .btn-generate-hero:hover {
-      transform: translateY(-3px) scale(1.01);
-      box-shadow: 0 18px 45px rgba(37, 99, 235, 0.5);
-    }
-
-    /* RESULT PREVIEW CARD */
-    .result-preview-card {
-      display: none;
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      border-radius: 22px;
-      padding: 28px;
-      margin-top: 32px;
-      box-shadow: 0 20px 45px rgba(37, 99, 235, 0.08);
-      backdrop-filter: blur(24px);
-    }
-
-    .preview-url-banner {
-      background: #F8FAFC;
-      border: 1px solid #E2E8F0;
-      border-radius: 12px;
-      padding: 12px 18px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    /* 🌙 DARK THEME STUDIO OVERRIDES */
-    [data-theme="dark"] body {
-      background: #07090E;
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .fluid-silk-bg-container {
-      background: radial-gradient(circle at 50% 40%, rgba(10, 15, 30, 0.4) 0%, rgba(7, 10, 20, 0.85) 60%, rgba(3, 5, 12, 0.98) 100%),
-                  url('/assets/fluid-silk-3d-bg.webp') center/cover no-repeat;
-    }
-
-    [data-theme="dark"] .studio-header-card {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(11, 15, 25, 0.95) 100%);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    [data-theme="dark"] .studio-header-title h1 {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .badge-universe-count {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.3);
-      color: #38BDF8;
-    }
-
-    [data-theme="dark"] .ingest-tabs-nav {
-      background: rgba(15, 23, 42, 0.85);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] .ingest-tab-btn {
-      color: #94A3B8;
-    }
-
-    [data-theme="dark"] .ingest-tab-btn:hover {
-      color: #FFFFFF;
-      background: rgba(56, 189, 248, 0.12);
-    }
-
-    [data-theme="dark"] .ingest-tab-btn.active {
-      background: linear-gradient(135deg, #0284C7, #0369A1);
-      color: #FFFFFF;
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
-    }
-
-    [data-theme="dark"] .ingest-panel-box {
-      background: rgba(15, 23, 42, 0.9);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
-    }
-
-    [data-theme="dark"] .form-group label {
-      color: #F1F5F9;
-    }
-
-    [data-theme="dark"] .form-control-input {
-      background: #0B1120;
-      border-color: rgba(255, 255, 255, 0.14);
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .form-control-input:focus {
-      background: #0F172A;
-      border-color: #38BDF8;
-      box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2);
-    }
-
-    [data-theme="dark"] .dropzone-box {
-      background: rgba(56, 189, 248, 0.05);
-      border-color: rgba(56, 189, 248, 0.35);
-    }
-
-    [data-theme="dark"] .dropzone-box:hover {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: #38BDF8;
-    }
-
-    [data-theme="dark"] .dropzone-box h3 {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .project-card-fieldset {
-      background: rgba(11, 17, 32, 0.85);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    [data-theme="dark"] .project-card-fieldset legend {
-      color: #38BDF8;
-    }
-
-    [data-theme="dark"] .universe-choice-card {
-      background: rgba(15, 23, 42, 0.85);
-      border-color: rgba(255, 255, 255, 0.1);
-      color: #F8FAFC;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
-    }
-
-    [data-theme="dark"] .universe-choice-card:hover {
-      border-color: #38BDF8;
-      background: rgba(30, 41, 59, 0.95);
-      box-shadow: 0 12px 30px rgba(56, 189, 248, 0.2);
-    }
-
-    [data-theme="dark"] .universe-choice-card.selected {
-      border-color: #38BDF8;
-      background: rgba(56, 189, 248, 0.15);
-      box-shadow: 0 0 0 2px #38BDF8, 0 8px 24px rgba(56, 189, 248, 0.25);
-    }
-
-    [data-theme="dark"] .universe-info h4 {
-      color: #F8FAFC;
-    }
-
-    [data-theme="dark"] .result-preview-card {
-      background: rgba(15, 23, 42, 0.95);
-      border-color: rgba(255, 255, 255, 0.12);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    [data-theme="dark"] .preview-url-banner {
-      background: #0B1120;
-      border-color: rgba(255, 255, 255, 0.12);
-      color: #F8FAFC;
-    }
-
-    /* =========================================================================
-       RESPONSIVE DESIGN (TABLET & SMARTPHONE OPTIMIZATIONS)
-       ========================================================================= */
-    @media (max-width: 1024px) {
-      .app-shell-layout {
-        flex-direction: column;
-      }
-      .studio-stage {
-        padding: 24px 20px 60px;
-        max-width: 100%;
-      }
-      .universe-choice-grid {
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      }
-    }
-
-    @media (max-width: 768px) {
-      .studio-header-card {
-        padding: 20px 18px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        animation: none !important;
-        transform: none !important;
-        margin-bottom: 20px !important;
-      }
-      .studio-header-title h1 {
-        font-size: 1.6rem;
-      }
-      .ingest-tabs-nav {
-        flex-direction: column;
-        gap: 8px;
-        padding: 8px;
-        width: 100%;
-        margin-bottom: 20px !important;
-      }
-      .ingest-tab-btn {
-        width: 100%;
-        justify-content: center;
-        padding: 12px 14px;
-        font-size: 0.92rem;
-      }
-      .ingest-panel-box {
-        transform: none !important;
-        padding: 20px 16px !important;
-        margin-bottom: 24px !important;
-      }
-      .form-row-2col {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-      .universe-choice-grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
-      .btn-generate-hero {
-        font-size: 1rem;
-        padding: 16px 20px;
-        width: 100%;
-      }
-      .form-control-input {
-        font-size: 16px; /* Prevents auto-zoom on iOS */
-      }
-      .project-card-fieldset {
-        padding: 16px 14px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .studio-stage {
-        padding: 16px 12px 48px;
-      }
-      .dropzone-box {
-        padding: 24px 14px;
-      }
-    }
-
-    /* =========================================================================
-       WEEKLY ALLOWANCE METER & CYCLE RESET
-       ========================================================================= */
-    .allowance-meter-card {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 250, 252, 0.92) 100%);
-      border: 1.5px solid rgba(226, 232, 240, 0.95);
-      border-radius: 16px;
-      padding: 18px 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 10px 28px rgba(37, 99, 235, 0.06);
-      backdrop-filter: blur(16px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    [data-theme="dark"] .allowance-meter-card {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(11, 15, 25, 0.96) 100%);
-      border-color: rgba(56, 189, 248, 0.22);
-      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
-    }
-
-    .allowance-header-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .allowance-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: #1E293B;
-    }
-
-    [data-theme="dark"] .allowance-title-wrap {
-      color: #F8FAFC;
-    }
-
-    .allowance-icon {
-      font-size: 1.15rem;
-      animation: iconFloat 3s ease-in-out infinite alternate;
-    }
-
-    @keyframes iconFloat {
-      0% { transform: translateY(0); }
-      100% { transform: translateY(-2px); }
-    }
-
-    .allowance-label {
-      font-family: var(--font-display);
-      font-weight: 700;
-      color: var(--text-muted);
-      font-size: 0.88rem;
-    }
-
-    .allowance-count {
-      font-family: var(--font-mono);
-      font-size: 0.98rem;
-      font-weight: 800;
-      color: #0284C7;
-      background: rgba(2, 132, 199, 0.1);
-      padding: 3px 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(2, 132, 199, 0.25);
-    }
-
-    [data-theme="dark"] .allowance-count {
-      color: #38BDF8;
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-
-    .allowance-count.low {
-      color: #E11D48;
-      background: rgba(225, 29, 72, 0.1);
-      border-color: rgba(225, 29, 72, 0.3);
-    }
-
-    [data-theme="dark"] .allowance-count.low {
-      color: #FB7185;
-      background: rgba(251, 113, 133, 0.15);
-      border-color: rgba(251, 113, 133, 0.35);
-    }
-
-    .allowance-reset-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: #64748B;
-      background: rgba(241, 245, 249, 0.9);
-      padding: 5px 12px;
-      border-radius: 9999px;
-      border: 1px solid #E2E8F0;
-    }
-
-    [data-theme="dark"] .allowance-reset-pill {
-      color: #94A3B8;
-      background: rgba(30, 41, 59, 0.7);
-      border-color: rgba(255, 255, 255, 0.1);
-    }
-
-    .allowance-reset-pill.active-countdown {
-      color: #0284C7;
-      background: rgba(2, 132, 199, 0.08);
-      border-color: rgba(2, 132, 199, 0.25);
-    }
-
-    [data-theme="dark"] .allowance-reset-pill.active-countdown {
-      color: #38BDF8;
-      background: rgba(56, 189, 248, 0.1);
-      border-color: rgba(56, 189, 248, 0.3);
-    }
-
-    .allowance-progress-track {
-      width: 100%;
-      height: 8px;
-      background: rgba(226, 232, 240, 0.9);
-      border-radius: 9999px;
+      padding: 1.5rem;
+      background: radial-gradient(circle at 50% 50%, rgba(11, 22, 56, 0.4) 0%, rgba(4, 6, 18, 0.95) 100%);
       overflow: hidden;
+    }
+
+    .spatial-viewport-screen {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      border-radius: var(--mf-radius-lg);
+      border: 1px solid var(--mf-border-strong);
+      background: #050817;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 30px rgba(110, 168, 255, 0.08);
+      overflow: hidden;
+      position: relative;
+      transition: max-width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .spatial-viewport-screen.tablet-mode {
+      max-width: 768px;
+    }
+
+    .spatial-viewport-screen.mobile-mode {
+      max-width: 390px;
+    }
+
+    .spatial-viewport-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+    }
+
+    /* Column 3: Right AI Creative Director (310px) */
+    .studio-col-right {
+      width: 310px;
+      min-width: 310px;
+      max-width: 310px;
+      background: rgba(7, 11, 27, 0.85);
+      border-left: 1px solid var(--mf-border);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      padding: 1.25rem 1rem;
+      overflow-y: auto;
+      gap: 1.25rem;
+    }
+
+    /* Guided Workflow Steps */
+    .workflow-step-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mf-font-mono);
+      font-size: 11px;
+      color: var(--mf-accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .workflow-card {
+      background: rgba(11, 22, 56, 0.5);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-md);
+      padding: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .workflow-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .workflow-card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--mf-text-primary);
+      margin-bottom: 4px;
+    }
+
+    .workflow-card-desc {
+      font-size: 12px;
+      color: var(--mf-text-secondary);
+      line-height: 1.4;
       margin-bottom: 10px;
     }
 
-    [data-theme="dark"] .allowance-progress-track {
-      background: rgba(30, 41, 59, 0.9);
-    }
-
-    .allowance-progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #0284C7 0%, #38BDF8 50%, #10B981 100%);
-      border-radius: 9999px;
-      transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s;
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
-    }
-
-    .allowance-progress-bar.low {
-      background: linear-gradient(90deg, #F59E0B 0%, #EF4444 100%);
-      box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-    }
-
-    .allowance-footer-note {
+    /* Readiness Ring */
+    .readiness-box {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-      gap: 6px;
+      gap: 12px;
+      background: rgba(11, 22, 56, 0.6);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-md);
+      padding: 10px 14px;
     }
 
-    .allowance-tier-tag {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.72rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #10B981;
-      background: rgba(16, 185, 129, 0.1);
-      padding: 2px 8px;
-      border-radius: 6px;
-      border: 1px solid rgba(16, 185, 129, 0.25);
-    }
-
-    /* =========================================================================
-       GENERATED PROJECTS & PORTFOLIOS LIST BELOW BUTTON
-       ========================================================================= */
-    .generated-history-section {
-      width: 100%;
-      margin-top: 36px;
-    }
-
-    .section-headline-row {
+    .readiness-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 3px solid var(--mf-accent-blue);
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-    }
-
-    [data-theme="dark"] .section-headline-row {
-      border-bottom-color: rgba(255, 255, 255, 0.08);
-    }
-
-    .headline-badge {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: #0284C7;
-      background: rgba(2, 132, 199, 0.1);
-      padding: 3px 8px;
-      border-radius: 6px;
-      letter-spacing: 0.08em;
-    }
-
-    [data-theme="dark"] .headline-badge {
-      color: #38BDF8;
-      background: rgba(56, 189, 248, 0.12);
-    }
-
-    .headline-title {
-      font-family: var(--font-display);
-      font-size: 1.28rem;
-      font-weight: 800;
-      color: #0F172A;
-      margin: 4px 0 0;
-    }
-
-    [data-theme="dark"] .headline-title {
-      color: #F8FAFC;
-    }
-
-    .history-count-badge {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
+      justify-content: center;
+      font-family: var(--mf-font-mono);
+      font-size: 10.5px;
       font-weight: 700;
-      color: #10B981;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.25);
-      padding: 4px 12px;
-      border-radius: 9999px;
+      color: var(--mf-accent-blue);
+      box-shadow: 0 0 10px rgba(110, 168, 255, 0.3);
     }
 
-    .generated-cards-grid {
+    /* AI Advice Cards */
+    .ai-insight-card {
+      background: linear-gradient(135deg, rgba(110, 168, 255, 0.08) 0%, rgba(155, 124, 255, 0.05) 100%);
+      border: 1px solid rgba(110, 168, 255, 0.25);
+      border-radius: var(--mf-radius-md);
+      padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 6px;
     }
 
-    .generated-portfolio-card {
-      background: rgba(255, 255, 255, 0.96);
-      border: 1.5px solid rgba(226, 232, 240, 0.95);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.06);
-      backdrop-filter: blur(20px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      animation: slideUpFade 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    [data-theme="dark"] .generated-portfolio-card {
-      background: linear-gradient(135deg, rgba(15, 23, 42, 0.94) 0%, rgba(11, 15, 25, 0.96) 100%);
-      border-color: rgba(255, 255, 255, 0.1);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    }
-
-    .generated-portfolio-card:hover {
-      transform: translateY(-3px);
-      border-color: #0284C7;
-      box-shadow: 0 24px 55px rgba(2, 132, 199, 0.18);
-    }
-
-    [data-theme="dark"] .generated-portfolio-card:hover {
-      border-color: #38BDF8;
-      box-shadow: 0 24px 55px rgba(56, 189, 248, 0.2);
-    }
-
-    .generated-portfolio-card.active-pulse {
-      border-color: #10B981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2), 0 20px 45px rgba(16, 185, 129, 0.15);
-    }
-
-    @keyframes slideUpFade {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .card-top-banner {
+    .ai-insight-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--mf-accent-blue);
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-      gap: 10px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .universe-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(2, 132, 199, 0.08);
-      border: 1px solid rgba(2, 132, 199, 0.25);
-      color: #0284C7;
-      padding: 6px 14px;
-      border-radius: 9999px;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.85rem;
-    }
-
-    [data-theme="dark"] .universe-pill {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.3);
-      color: #38BDF8;
-    }
-
-    .status-live-dot {
-      display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #10B981;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      padding: 4px 10px;
-      border-radius: 9999px;
     }
 
-    .timestamp-pill {
-      font-family: var(--font-mono);
-      font-size: 0.76rem;
-      color: var(--text-muted);
+    .ai-insight-body {
+      font-size: 12px;
+      color: var(--mf-text-secondary);
+      line-height: 1.45;
     }
 
-    .card-main-grid {
-      display: grid;
-      grid-template-columns: 220px minmax(0, 1fr);
-      gap: 22px;
-      align-items: center;
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
+    .ai-quick-btn {
+      background: rgba(110, 168, 255, 0.12);
+      border: 1px solid rgba(110, 168, 255, 0.3);
+      color: #FFFFFF;
+      border-radius: var(--mf-radius-sm);
+      padding: 5px 10px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s;
     }
 
-    @media (max-width: 800px) {
-      .card-main-grid {
-        grid-template-columns: 1fr;
-      }
+    .ai-quick-btn:hover {
+      background: rgba(110, 168, 255, 0.25);
     }
 
-    .card-thumb-container {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      height: 160px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      background: #0B1120;
-      box-sizing: border-box;
-    }
-
-    [data-theme="dark"] .card-thumb-container {
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .card-universe-img {
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.4s ease;
-    }
-
-    .generated-portfolio-card:hover .card-universe-img {
-      transform: scale(1.05);
-    }
-
-    .thumb-glass-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, transparent 50%, rgba(0, 0, 0, 0.75) 100%);
-      display: flex;
-      align-items: flex-end;
+    /* Conversational AI Command Bar */
+    .ai-command-wrap {
+      margin-top: auto;
+      background: rgba(8, 13, 32, 0.9);
+      border: 1px solid var(--mf-border-glow);
+      border-radius: var(--mf-radius-md);
       padding: 10px;
-    }
-
-    .overlay-btn-preview {
-      color: #FFFFFF;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.78rem;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 4px 10px;
-      border-radius: 6px;
-      backdrop-filter: blur(4px);
-      cursor: pointer;
-    }
-
-    .card-details-container {
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .card-developer-name {
-      font-family: var(--font-display);
-      font-size: 1.3rem;
-      font-weight: 800;
-      color: #0F172A;
-      margin: 0 0 4px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    [data-theme="dark"] .card-developer-name {
-      color: #F8FAFC;
-    }
-
-    .card-developer-role {
-      font-size: 0.92rem;
-      color: var(--text-muted);
-      margin: 0 0 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .card-metrics-row {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .metric-tag {
-      font-family: var(--font-mono);
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #475569;
-      background: #F1F5F9;
-      padding: 4px 10px;
-      border-radius: 8px;
-      white-space: nowrap;
-    }
-
-    [data-theme="dark"] .metric-tag {
-      color: #CBD5E1;
-      background: rgba(30, 41, 59, 0.8);
-    }
-
-    .card-url-box {
-      display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 8px;
-      background: #F8FAFC;
-      border: 1px solid #E2E8F0;
-      border-radius: 10px;
-      padding: 8px 12px;
-      margin-bottom: 16px;
-      overflow: hidden;
-      width: 100%;
-      max-width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
     }
 
-    [data-theme="dark"] .card-url-box {
-      background: #0B1120;
-      border-color: rgba(255, 255, 255, 0.12);
-    }
-
-    .url-label {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: var(--text-muted);
-      flex-shrink: 0;
-    }
-
-    .url-text {
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      color: #0284C7;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      flex: 1;
-      min-width: 0;
-      max-width: 100%;
-    }
-
-    [data-theme="dark"] .url-text {
-      color: #38BDF8;
-    }
-
-    .btn-copy-mini {
-      background: rgba(2, 132, 199, 0.1);
-      border: 1px solid rgba(2, 132, 199, 0.25);
-      color: #0284C7;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-family: var(--font-display);
-      font-size: 0.76rem;
-      font-weight: 700;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: all 0.2s;
-    }
-
-    [data-theme="dark"] .btn-copy-mini {
-      background: rgba(56, 189, 248, 0.12);
-      border-color: rgba(56, 189, 248, 0.3);
-      color: #38BDF8;
-    }
-
-    .btn-copy-mini:hover {
-      background: #0284C7;
-      color: #FFFFFF;
-    }
-
-    .card-actions-bar {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-launch-live {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%);
-      color: #FFFFFF;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 0.9rem;
-      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
-      transition: all 0.2s;
-    }
-
-    .btn-launch-live:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(2, 132, 199, 0.5);
-    }
-
-    .btn-universe-switch {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+    .ai-command-input {
       background: transparent;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      color: var(--text-muted);
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.85rem;
+      border: none;
+      font-family: var(--mf-font-sans);
+      font-size: 12.5px;
+      color: #FFF;
+      outline: none;
+      resize: none;
+      height: 48px;
+    }
+
+    .ai-command-input::placeholder {
+      color: var(--mf-text-muted);
+    }
+
+    /* Universe Grid Cards */
+    .universe-select-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .universe-choice-card {
+      background: rgba(8, 13, 32, 0.7);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-sm);
+      padding: 8px;
       cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
       transition: all 0.2s;
     }
 
-    .btn-universe-switch:hover {
-      border-color: #0284C7;
-      color: #0284C7;
-      background: rgba(2, 132, 199, 0.05);
+    .universe-choice-card:hover {
+      border-color: rgba(110, 168, 255, 0.5);
     }
 
-    [data-theme="dark"] .btn-universe-switch:hover {
-      border-color: #38BDF8;
-      color: #38BDF8;
-      background: rgba(56, 189, 248, 0.08);
+    .universe-choice-card.selected {
+      border-color: var(--mf-accent-blue);
+      background: rgba(110, 168, 255, 0.12);
+      box-shadow: 0 0 12px rgba(110, 168, 255, 0.25);
     }
 
-    .btn-card-delete {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1.5px solid rgba(239, 68, 68, 0.35);
-      color: #EF4444;
-      padding: 10px 16px;
-      border-radius: 10px;
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.85rem;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    .universe-choice-thumb {
+      height: 48px;
+      border-radius: 4px;
+      background-size: cover;
+      background-position: center;
     }
 
-    .btn-card-delete:hover {
-      background: rgba(239, 68, 68, 0.2);
-      border-color: #EF4444;
-      color: #F87171;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.25);
-    }
-
-    .btn-clear-all-portfolios {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      color: #EF4444;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-family: var(--font-body);
-      font-size: 0.8rem;
+    .universe-choice-title {
+      font-size: 11px;
       font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
+      color: #FFF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .btn-clear-all-portfolios:hover {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: #EF4444;
-      color: #DC2626;
+    /* Responsive Adaptation */
+    @media (max-width: 1100px) {
+      .studio-col-right {
+        display: none;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .studio-workspace-container {
+        flex-direction: column;
+      }
+      .studio-col-left {
+        width: 100%;
+        max-width: none;
+        height: 50vh;
+      }
+      .studio-col-center {
+        height: 50vh;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- 🌌 3D Ambient Open Star Cluster Background -->
-  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
-    <iframe
-      title="Bright stars of an open cluster"
-      frameborder="0"
-      allowfullscreen
-      mozallowfullscreen="true"
-      webkitallowfullscreen="true"
-      allow="autoplay; fullscreen; xr-spatial-tracking"
-      xr-spatial-tracking
-      execution-while-out-of-viewport
-      execution-while-not-rendered
-      web-share
-      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
-    </iframe>
-    <div class="cosmic-cluster-overlay"></div>
-  </div>
+  <div class="mf-atmospheric-bg"></div>
 
-  <!-- Dynamic 3D WebGL Background Canvas -->
-  <canvas id="webgl-canvas"></canvas>
+  <!-- Studio Top Bar -->
+  <header class="studio-topbar">
+    <div class="topbar-left">
+      <a href="/dashboard" class="topbar-brand">
+        <div class="brand-logo-badge" style="width:26px; height:26px; font-size:0.8rem;">M</div>
+        <span>MyFolio Studio</span>
+      </a>
+      <span style="color:var(--mf-border); font-size:12px;">/</span>
+      <span style="font-size:12.5px; color:var(--mf-text-secondary);" id="topbarProjectName">Interactive Canvas</span>
+    </div>
 
-  <div class="app-shell-layout">
-    <!-- Universal Sidebar Mount -->
-    <div id="sidebarMount"></div>
+    <div class="topbar-center-saved">
+      <span class="mf-pulse-dot" style="width:6px; height:6px;"></span>
+      <span>Saved just now</span>
+    </div>
 
-    <main class="studio-stage">
-      <!-- 1. Top Header -->
-      <div class="studio-header-card">
-        <div class="studio-header-title">
-          <h1>Portfolio Studio</h1>
-          <p>Create, customize, and publish your interactive 3D developer portfolio.</p>
+    <div class="topbar-right-actions">
+      <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenGeneratedLive">
+        <span>Preview</span> &nearr;
+      </a>
+      <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyGeneratedUrl()">
+        <span>Share</span>
+      </button>
+      <button type="submit" form="portfolioGenerationForm" class="mf-btn mf-btn-primary mf-btn-sm" id="btnSubmitGenerate">
+        <span>Publish / Set Live</span> &rarr;
+      </button>
+    </div>
+  </header>
+
+  <div class="studio-workspace-container">
+    <!-- COLUMN 1: LEFT NAVIGATOR & STORY WORKFLOW -->
+    <aside class="studio-col-left">
+      <!-- Portfolio Readiness -->
+      <div class="readiness-box">
+        <div class="readiness-circle">78%</div>
+        <div>
+          <div style="font-size:12px; font-weight:600; color:#FFF;">PORTFOLIO READINESS</div>
+          <div style="font-size:11px; color:var(--mf-text-muted);">Add 1 featured case study to hit 100%</div>
         </div>
       </div>
 
-      <!-- 2. Source Ingestion Navigation Tabs -->
-      <div class="ingest-tabs-nav">
-        <button class="ingest-tab-btn active" onclick="switchIngestTab('github', this)">
-          <span>🐙 GitHub 1-Click Sync</span>
-        </button>
-        <button class="ingest-tab-btn" onclick="switchIngestTab('resume', this)">
-          <span>📄 PDF Resume Parse</span>
-        </button>
-        <button class="ingest-tab-btn" onclick="switchIngestTab('manual', this)">
-          <span>✏️ Guided Profile Questions</span>
-        </button>
+      <!-- Weekly Build Allowance Bar -->
+      <div class="readiness-box" style="flex-direction:column; align-items:stretch; gap:6px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);">WEEKLY ALLOWANCE</span>
+          <span id="allowanceCountText" style="font-size:11px; font-weight:700; color:var(--mf-accent-blue);">5 / 5 Builds</span>
+        </div>
+        <div style="height:5px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
+          <div id="allowanceProgressBar" style="width:100%; height:100%; background:linear-gradient(90deg, #6EA8FF, #9B7CFF); border-radius:3px; transition:width 0.3s;"></div>
+        </div>
       </div>
 
-      <!-- 3. Ingestion Form Panels -->
-      <form id="portfolioGenerationForm" onsubmit="handleStudioGenerate(event)">
-        <!-- Panel A: GitHub 1-Click Sync -->
-        <div class="ingest-panel-box" id="panelGithub">
-          <div class="form-group">
-            <label for="ghUsername">GitHub Username or Profile URL</label>
-            <input type="text" id="ghUsername" class="form-control-input" placeholder="e.g. torvalds or https://github.com/username" value="">
-            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">
-              Our AI automatically ingests top starred repositories, primary languages, commit telemetry, and synthesized case studies.
-            </p>
+      <!-- Main Form Container -->
+      <form id="portfolioGenerationForm" onsubmit="handleStudioGenerate(event)" style="display:flex; flex-direction:column; gap:1.25rem;">
+        
+        <!-- STEP 01: UNDERSTAND ME -->
+        <div class="workflow-card">
+          <div class="workflow-step-badge">STEP 01 // UNDERSTAND ME</div>
+          <div class="workflow-card-title">GitHub &amp; Resume Ingest</div>
+          <div class="workflow-card-desc">Sync your public code repositories and technical documents.</div>
+
+          <div class="mf-input-group">
+            <label class="mf-label" for="ghUsername">GitHub Profile / Username</label>
+            <input type="text" id="ghUsername" class="mf-input" placeholder="Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin">
           </div>
+
+          <!-- Smart Resume Dropzone -->
+          <div id="studioResumeDropZone" style="border:1px dashed var(--mf-border-glow); border-radius:var(--mf-radius-md); padding:14px; text-align:center; background:rgba(8,13,32,0.6); cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('resumeUploadInput').click()">
+            <input type="file" id="resumeUploadInput" accept=".pdf,.docx,.txt,image/*" style="display:none;" onchange="handleResumeFileSelected(this)">
+            <div id="resumeUploadLabel" style="font-size:12px; color:var(--mf-text-secondary);">
+              📄 Drop Resume (PDF, DOCX, TXT)
+            </div>
+            <div id="resumeUploadHelp" style="font-size:10.5px; color:var(--mf-text-muted); margin-top:2px;">
+              Auto-extracts skills, projects &amp; timelines
+            </div>
+          </div>
+
+          <!-- Photo & Certs Toggle Trigger -->
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
+              <span>+ Add Candidate Photo</span>
+              <input type="file" id="candidatePhotoInput" accept="image/*" style="display:none;" onchange="handleCandidatePhoto(this)">
+            </label>
+            <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
+              <span>+ Certificate</span>
+              <input type="file" id="certFilesInput" accept="image/*,.pdf" style="display:none;" onchange="handleCertFilesSelected(this.files)">
+            </label>
+          </div>
+
+          <!-- Photo preview preview if exists -->
+          <div id="photoPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:8px;">
+            <img id="photoPreviewImg" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+            <span id="photoPreviewName" style="font-size:11px;color:var(--mf-text-muted);">Photo attached</span>
+          </div>
+
+          <!-- Hidden raw text field preserved for payload extraction -->
+          <textarea id="resumeRawText" style="display:none;"></textarea>
         </div>
 
-        <!-- Panel B: PDF / Image Resume Parse (Hidden by default) -->
-        <div class="ingest-panel-box" id="panelResume" style="display: none;">
-          <div class="dropzone-box" id="studioResumeDropZone" onclick="document.getElementById('resumeFileInput').click()">
-            <input type="file" id="resumeFileInput" accept=".pdf,.doc,.docx,.txt,.png,.jpg,.jpeg,.webp,.avif" style="display: none;" onchange="handleResumeFileSelected(this)">
-            <i data-lucide="upload-cloud" style="width:42px;height:42px;color:var(--primary);margin-bottom:10px;"></i>
-            <h3 style="margin:0 0 6px 0;font-size:1.1rem;" id="resumeUploadLabel">Click or Drag &amp; Drop Resume PDF / Image</h3>
-            <p style="margin:0;font-size:0.82rem;color:var(--text-muted);" id="resumeUploadHelp">PDF, Image (PNG/JPG/WebP), DOCX, or TXT (Max 15MB). Automated extraction of projects, experience &amp; skills.</p>
-          </div>
-          <div class="form-group" style="margin-top: 16px;">
-            <label for="resumeRawText">Or Paste Resume Text</label>
-            <textarea id="resumeRawText" class="form-control-input" rows="4" placeholder="Paste your resume bio, experience, and project bullet points here..."></textarea>
+        <!-- STEP 02: BUILD MY STORY -->
+        <div class="workflow-card">
+          <div class="workflow-step-badge">STEP 02 // BUILD MY STORY</div>
+          <div class="workflow-card-title">Identity &amp; Featured Projects</div>
+
+          <div class="mf-input-group">
+            <label class="mf-label" for="manualFullName">Full Name</label>
+            <input type="text" id="manualFullName" class="mf-input" placeholder="Abdul Aziz Nooruddin" value="Abdul Aziz Nooruddin">
           </div>
 
-          <!-- Optional Candidate Profile Photo Card -->
-          <div class="photo-upload-card" id="photoUploadSection">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(37, 99, 235, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">👤</div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700;">Candidate Photo</h4>
-                    <span style="font-size: 0.72rem; font-weight: 600; color: #64748B; background: #E2E8F0; padding: 2px 8px; border-radius: 12px;">Optional</span>
-                  </div>
-                  <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
-                    Auto-extracted from resume if present, or upload a custom headshot to feature across your portfolio.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <input type="file" id="photoFileInput" accept="image/png,image/jpeg,image/jpg,image/webp" style="display: none;" onchange="handlePhotoFileSelected(this)">
-                <button type="button" class="btn-outline-studio" onclick="document.getElementById('photoFileInput').click()">
-                  <i data-lucide="image" style="width: 14px; height: 14px;"></i>
-                  <span>Upload Photo</span>
-                </button>
-              </div>
-            </div>
-            <!-- Photo Preview Display -->
-            <div id="photoPreviewContainer" style="display: none; align-items: center; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid #E2E8F0;">
-              <img id="photoPreviewImg" src="" alt="Candidate Photo" style="width: 48px; height: 48px; border-radius: 50%; object-fit: cover; border: 2px solid #2563EB; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);" />
-              <div style="flex: 1;">
-                <div id="photoPreviewName" style="font-size: 0.85rem; font-weight: 600;">candidate-photo.png</div>
-                <div style="font-size: 0.74rem; color: #10B981; font-weight: 600;">✓ Ready to display in final portfolio</div>
-              </div>
-              <button type="button" onclick="removeUploadedPhoto()" style="background: none; border: none; color: #EF4444; font-size: 0.78rem; font-weight: 600; cursor: pointer; padding: 4px 8px;">✕ Remove</button>
-            </div>
+          <div class="mf-input-group">
+            <label class="mf-label" for="manualRole">Professional Role</label>
+            <input type="text" id="manualRole" class="mf-input" placeholder="Full-Stack Engineer" value="Full-Stack Engineer &amp; Systems Architect">
           </div>
 
-          <!-- Optional Verified Certificates Upload Card -->
-          <div class="cert-upload-card" id="certUploadSection">
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 12px;">
-              <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🎖️</div>
-                <div>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700;">Upload Certificates</h4>
-                    <span style="font-size: 0.72rem; font-weight: 600; color: #059669; background: #D1FAE5; padding: 2px 8px; border-radius: 12px;">Optional</span>
-                  </div>
-                  <p style="margin: 2px 0 0 0; font-size: 0.76rem; color: var(--text-muted);">
-                    Upload PDF or image certificates (e.g. Deloitte, AWS, Google). AI automatically extracts credential ID &amp; issuer.
-                  </p>
-                </div>
-              </div>
-              <div>
-                <input type="file" id="certFileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple style="display: none;" onchange="handleCertFilesSelected(this.files)">
-                <button type="button" class="btn-outline-studio" onclick="document.getElementById('certFileInput').click()">
-                  <i data-lucide="file-badge" style="width: 14px; height: 14px;"></i>
-                  <span>+ Add Certificate</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Mini Drop Zone for Certificates -->
-            <div class="cert-mini-drop" id="studioCertDropZone" onclick="document.getElementById('certFileInput').click()">
-              <span style="font-size: 0.82rem; color: #475569; font-weight: 600;">Click or drag &amp; drop certificate PDFs or images here</span>
-              <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 3px;">Supports multiple files (.pdf, .png, .jpg, .webp)</div>
-            </div>
-
-            <!-- Uploaded Certificates List -->
-            <div id="certPreviewList" style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;"></div>
+          <div class="mf-input-group">
+            <label class="mf-label" for="manualBio">Narrative Summary</label>
+            <textarea id="manualBio" class="mf-textarea" style="min-height:60px;" placeholder="Crafting high-scale web platforms and spatial interfaces.">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
           </div>
+
+          <!-- Featured Project 1 -->
+          <div style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
+            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-blue); margin-bottom:6px;">Featured Case Study 1</div>
+            <input type="text" id="proj1Name" class="mf-input" placeholder="Project Name" value="MyFolio Generative Platform" style="margin-bottom:6px;">
+            <input type="text" id="proj1Tech" class="mf-input" placeholder="Technologies (e.g. Three.js, Node.js)" value="Three.js, WebGL, Node.js, GSAP" style="margin-bottom:6px;">
+            <textarea id="proj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
+            <input type="hidden" id="proj1Github" value="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator">
+            <input type="hidden" id="proj1Live" value="https://myfolio.tech">
+          </div>
+
+          <!-- Hidden Project 2 & 3 fields preserved for payload -->
+          <input type="hidden" id="proj2Name" value="Algorand Python Smart Contracts">
+          <input type="hidden" id="proj2Tech" value="Python, Algorand, Web3">
+          <input type="hidden" id="proj2Desc" value="Decentralized verifiable ledger logic and algorithmic settlements.">
+          <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+          <input type="hidden" id="proj2Live" value="">
+
+          <input type="hidden" id="proj3Name" value="Autonomous Edge Agent">
+          <input type="hidden" id="proj3Tech" value="TypeScript, Fastify, AI">
+          <input type="hidden" id="proj3Desc" value="Low-latency reasoning pipelines and streaming telemetry.">
+          <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+          <input type="hidden" id="proj3Live" value="">
+
+          <!-- Other story metadata fields preserved -->
+          <input type="hidden" id="manualTagline" value="Creative Systems Engineer">
+          <input type="hidden" id="manualEmail" value="abdulaziznoor9876@gmail.com">
+          <input type="hidden" id="manualLocation" value="Global / Edge">
+          <input type="hidden" id="manualGithub" value="https://github.com/Abdul-Aziz-Nooruddin">
+          <input type="hidden" id="manualLinkedin" value="https://linkedin.com/in/abdul-aziz-nooruddin">
+          <input type="hidden" id="manualSkills" value="JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS">
+          <input type="hidden" id="manualLanguages" value="English, Hindi, Urdu">
+          <input type="hidden" id="manualExperience" value="Lead Full-Stack Architect building modern creative platforms.">
+          <input type="hidden" id="manualEducation" value="B.S. in Computer Science">
+          <input type="hidden" id="manualCertifications" value="Certified Cloud Solutions Architect">
         </div>
 
-        <!-- Panel C: Guided Profile Questionnaire -->
-        <div class="ingest-panel-box" id="panelManual" style="display: none;">
-          <!-- Section 1: Basic Info & Bio -->
-          <div class="form-section-title">
-            <i data-lucide="user" style="width:18px;height:18px;"></i>
-            <span>1. Identity &amp; Bio</span>
-          </div>
+        <!-- STEP 03: CHOOSE MY WORLD -->
+        <div class="workflow-card">
+          <div class="workflow-step-badge">STEP 03 // CHOOSE MY WORLD</div>
+          <div class="workflow-card-title">3D Visual Universe</div>
+          <div class="workflow-card-desc">Select the procedural aesthetic matching your role.</div>
 
-          <div class="form-row-2col">
-            <div class="form-group">
-              <label for="manualFullName">Full Name *</label>
-              <input type="text" id="manualFullName" class="form-control-input" placeholder="e.g. Abdul Aziz Nooruddin">
+          <div class="universe-select-grid" id="universeChoiceContainer">
+            <div class="universe-choice-card selected" onclick="selectStudioUniverse('threeui-constellation', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_constellation_3d.jpg');"></div>
+              <div class="universe-choice-title">Synaptic Constellation</div>
             </div>
-            <div class="form-group">
-              <label for="manualRole">Professional Role / Title *</label>
-              <input type="text" id="manualRole" class="form-control-input" placeholder="e.g. Full Stack Developer, 3D WebGL Engineer">
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
+              <div class="universe-choice-title">Complete 3D Shelf</div>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="manualTagline">Tagline</label>
-            <input type="text" id="manualTagline" class="form-control-input" placeholder="One catchy line describing you (e.g. 'Building scalable cloud architectures &amp; WebGL experiences')">
-          </div>
-
-          <div class="form-group">
-            <label for="manualBio">Bio (2-3 Sentences)</label>
-            <textarea id="manualBio" class="form-control-input" rows="2" placeholder="Write a short summary about yourself, what you build, and what drives your engineering."></textarea>
-          </div>
-
-          <div class="form-row-2col">
-            <div class="form-group">
-              <label for="manualEmail">Email Address</label>
-              <input type="email" id="manualEmail" class="form-control-input" placeholder="e.g. alex@example.com">
-            </div>
-            <div class="form-group">
-              <label for="manualLocation">Location</label>
-              <input type="text" id="manualLocation" class="form-control-input" placeholder="e.g. San Francisco, CA or Remote">
-            </div>
-          </div>
-
-          <div class="form-row-2col">
-            <div class="form-group">
-              <label for="manualGithub">GitHub Profile URL</label>
-              <input type="url" id="manualGithub" class="form-control-input" placeholder="https://github.com/yourname">
-            </div>
-            <div class="form-group">
-              <label for="manualLinkedin">LinkedIn Profile URL</label>
-              <input type="url" id="manualLinkedin" class="form-control-input" placeholder="https://linkedin.com/in/yourname">
-            </div>
-          </div>
-
-          <!-- Section 2: Tech Stack & Skills -->
-          <div class="form-section-title">
-            <i data-lucide="cpu" style="width:18px;height:18px;"></i>
-            <span>2. Tech Stack &amp; Skills</span>
-          </div>
-
-          <div class="form-row-2col">
-            <div class="form-group">
-              <label for="manualSkills">Core Tech Stack (comma-separated) *</label>
-              <input type="text" id="manualSkills" class="form-control-input" placeholder="React, Node.js, TypeScript, Three.js, Docker, Python">
-            </div>
-            <div class="form-group">
-              <label for="manualLanguages">Programming Languages</label>
-              <input type="text" id="manualLanguages" class="form-control-input" placeholder="JavaScript, TypeScript, Python, Go, Rust, C++">
-            </div>
-          </div>
-
-          <!-- Section 3: Featured Projects -->
-          <div class="form-section-title">
-            <i data-lucide="rocket" style="width:18px;height:18px;"></i>
-            <span>3. Featured Projects</span>
-          </div>
-
-          <!-- Project 1 -->
-          <fieldset class="project-card-fieldset">
-            <legend>🚀 Project 1</legend>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj1Name">Project Name</label>
-                <input type="text" id="proj1Name" class="form-control-input" placeholder="e.g. Aether DB Streaming">
-              </div>
-              <div class="form-group">
-                <label for="proj1Tech">Tech Stack</label>
-                <input type="text" id="proj1Tech" class="form-control-input" placeholder="e.g. Rust, WebGL, Fastify, Docker">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="proj1Desc">Description (1-2 sentences: what problem does it solve?)</label>
-              <input type="text" id="proj1Desc" class="form-control-input" placeholder="Ultra-low latency columnar storage engine processing 1.2M events/sec.">
-            </div>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj1Github">GitHub Repo Link</label>
-                <input type="url" id="proj1Github" class="form-control-input" placeholder="https://github.com/user/aether-db">
-              </div>
-              <div class="form-group">
-                <label for="proj1Live">Live Demo Link</label>
-                <input type="url" id="proj1Live" class="form-control-input" placeholder="https://aether-db.live">
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- Project 2 -->
-          <fieldset class="project-card-fieldset">
-            <legend>🚀 Project 2</legend>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj2Name">Project Name</label>
-                <input type="text" id="proj2Name" class="form-control-input" placeholder="e.g. NeuralGraph Engine">
-              </div>
-              <div class="form-group">
-                <label for="proj2Tech">Tech Stack</label>
-                <input type="text" id="proj2Tech" class="form-control-input" placeholder="e.g. Python, FastAPI, Pinecone, LangChain">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="proj2Desc">Description</label>
-              <input type="text" id="proj2Desc" class="form-control-input" placeholder="Autonomous multi-agent orchestration pipeline with vector RAG caching.">
-            </div>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj2Github">GitHub Repo Link</label>
-                <input type="url" id="proj2Github" class="form-control-input" placeholder="https://github.com/user/neural-graph">
-              </div>
-              <div class="form-group">
-                <label for="proj2Live">Live Demo Link</label>
-                <input type="url" id="proj2Live" class="form-control-input" placeholder="https://neuralgraph.ai">
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- Project 3 -->
-          <fieldset class="project-card-fieldset">
-            <legend>🚀 Project 3</legend>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj3Name">Project Name</label>
-                <input type="text" id="proj3Name" class="form-control-input" placeholder="e.g. Cosmic Spatial Explorer">
-              </div>
-              <div class="form-group">
-                <label for="proj3Tech">Tech Stack</label>
-                <input type="text" id="proj3Tech" class="form-control-input" placeholder="e.g. Three.js, WebGL, GLSL Shaders, GSAP">
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="proj3Desc">Description</label>
-              <input type="text" id="proj3Desc" class="form-control-input" placeholder="Interactive 3D planetary physics simulation rendered using custom GLSL shaders.">
-            </div>
-            <div class="form-row-2col">
-              <div class="form-group">
-                <label for="proj3Github">GitHub Repo Link</label>
-                <input type="url" id="proj3Github" class="form-control-input" placeholder="https://github.com/user/cosmic-explorer">
-              </div>
-              <div class="form-group">
-                <label for="proj3Live">Live Demo Link</label>
-                <input type="url" id="proj3Live" class="form-control-input" placeholder="https://cosmic.dev">
-              </div>
-            </div>
-          </fieldset>
-
-          <!-- Section 4: Experience & Background -->
-          <div class="form-section-title">
-            <i data-lucide="briefcase" style="width:18px;height:18px;"></i>
-            <span>4. Experience &amp; Education</span>
-          </div>
-
-          <div class="form-group">
-            <label for="manualExperience">Work Experience</label>
-            <textarea id="manualExperience" class="form-control-input" rows="2" placeholder="e.g. 2 years at TechCorp as Full-Stack Engineer, 1 year at StartupX as Backend Lead"></textarea>
-          </div>
-
-          <div class="form-row-2col">
-            <div class="form-group">
-              <label for="manualEducation">Education Background</label>
-              <input type="text" id="manualEducation" class="form-control-input" placeholder="e.g. B.Tech Computer Science, 2024">
-            </div>
-            <div class="form-group">
-              <label for="manualCertifications">Certifications &amp; Awards</label>
-              <input type="text" id="manualCertifications" class="form-control-input" placeholder="e.g. AWS Certified Solutions Architect, Google Cloud Professional">
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. 3D Visual Universe Selection -->
-        <div class="ingest-panel-box">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 8px;">
-            <h3 style="font-family:var(--font-display);font-size:1.15rem;font-weight:800;margin:0;">
-              Choose Your 3D WebGL Visual Universe
-            </h3>
-            <span class="badge-universe-count" id="studioUniverseBadgeCount">9 Universes</span>
-          </div>
-          <p style="font-size:0.85rem;color:var(--text-muted);margin:0 0 16px 0;">
-            Select which bespoke design architecture to render your portfolio with.
-          </p>
-
-          <div class="universe-choice-grid">
-            <!-- 1. ThreeUI Complete Shelf (Flagship 3D Library) -->
-            <div class="universe-choice-card selected" onclick="selectStudioUniverse('threeui-shelf', this)">
-              <img src="/assets/3d/threeui_shelf_3d.jpg" class="universe-thumb" alt="3D Complete Shelf">
-              <div class="universe-info">
-                <h4>📚 Complete Shelf (3D Library)</h4>
-                <p>Tactile Hardcovers • Page-Turn Physics</p>
-              </div>
-            </div>
-
-            <!-- 2. ThreeUI Sylva Living World (3D Fauna & 4 Seasons) -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sylva', this)">
-              <img src="/assets/3d/threeui_sylva_3d.jpg" class="universe-thumb" alt="Sylva Living World">
-              <div class="universe-info">
-                <h4>🌿 Sylva Living World</h4>
-                <p>4 Seasons • Animated Fluttering Butterfly</p>
-              </div>
-            </div>
-
-            <!-- 3. ThreeUI Kage Mountain Shrine -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-kage', this)">
-              <img src="/assets/3d/threeui_kage_3d.jpg" class="universe-thumb" alt="Kage Mountain Shrine">
-              <div class="universe-info">
-                <h4>⛩️ Kage Mountain Shrine</h4>
-                <p>Kyoto Night Walk • Vermilion Moon & Pagoda</p>
-              </div>
-            </div>
-
-            <!-- 4. ThreeUI Synaptic Constellation -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-constellation', this)">
-              <img src="/assets/3d/threeui_constellation_3d.jpg" class="universe-thumb" alt="Synaptic Constellation">
-              <div class="universe-info">
-                <h4>✨ Synaptic Constellation</h4>
-                <p>Outfit • Living Cognitive Particle Graph</p>
-              </div>
-            </div>
-
-            <!-- 5. ThreeUI Liquid Metal Dispersion -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
-              <img src="/assets/3d/threeui_liquid_metal_3d.jpg" class="universe-thumb" alt="Liquid Metal Dispersion">
-              <div class="universe-info">
-                <h4>💧 Liquid Metal Dispersion</h4>
-                <p>Playfair • Spectral GLSL Ribbons</p>
-              </div>
-            </div>
-
-            <!-- 6. ThreeUI Quantum Matrix Lightning -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-matrix', this)">
-              <img src="/assets/3d/threeui_matrix_3d.jpg" class="universe-thumb" alt="Quantum Matrix Lightning">
-              <div class="universe-info">
-                <h4>⚡ Quantum Matrix Lightning</h4>
-                <p>Orbitron • WebGL Procedural Arcs</p>
-              </div>
-            </div>
-
-            <!-- 7. ThreeUI 3D Watercolor Sketchbook -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sketchbook', this)">
-              <img src="/assets/3d/threeui_sketchbook_3d.jpg" class="universe-thumb" alt="3D Watercolor Sketchbook">
-              <div class="universe-info">
-                <h4>📖 3D Watercolor Sketchbook</h4>
-                <p>Newsreader • Physical Flipbook & Lens</p>
-              </div>
-            </div>
-
-            <!-- 8. ThreeUI 3D Landscape Time & Weather -->
             <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-landscape', this)">
-              <img src="/assets/3d/threeui_landscape_3d.jpg" class="universe-thumb" alt="3D Landscape Time & Weather">
-              <div class="universe-info">
-                <h4>🗾 3D Landscape & Weather</h4>
-                <p>Hiragino • Drag Orbit & Real-time Rain/Fog</p>
-              </div>
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_landscape_3d.jpg');"></div>
+              <div class="universe-choice-title">3D Landscape &amp; Weather</div>
             </div>
-            <!-- 9. Apple Spatial Depth Voyage -->
-            <div class="universe-choice-card" onclick="selectStudioUniverse('spatial-depth-voyage', this)">
-              <img src="/assets/3d/spatial_depth_voyage_3d.jpg" class="universe-thumb" alt="Spatial Depth Voyage">
-              <div class="universe-info">
-                <h4>🏛️ Spatial Depth Voyage</h4>
-                <p>Warm Linen • Scrollytelling Monograph</p>
-              </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_liquid_metal_3d.jpg');"></div>
+              <div class="universe-choice-title">Liquid Metal Dispersion</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/matrix_lightning_3d.jpg');"></div>
+              <div class="universe-choice-title">Cyber-Architect Sprawl</div>
+            </div>
+            <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
+              <div class="universe-choice-thumb" style="background-image:url('/assets/designs/stealth-node/stealth_matrix_3d_nobg.png');"></div>
+              <div class="universe-choice-title">Stealth Node (Web3)</div>
             </div>
           </div>
         </div>
 
-        <!-- 4.5 Weekly Generation Allowance Meter & Cycle Reset -->
-        <div class="allowance-meter-card" id="allowanceMeterCard">
-          <div class="allowance-header-row">
-            <div class="allowance-title-wrap">
-              <span class="allowance-icon">⚡</span>
-              <span class="allowance-label">Weekly Allowance:</span>
-              <span class="allowance-count" id="allowanceRemainingText">5 / 5 Generations</span>
-            </div>
-            <div class="allowance-reset-pill" id="allowanceResetBadge">
-              <span class="allowance-clock-icon">🔄</span>
-              <span id="allowanceResetCountdown">7-Day Cycle Ready</span>
-            </div>
-          </div>
-          <div class="allowance-progress-track">
-            <div class="allowance-progress-bar" id="allowanceProgressBar" style="width: 100%;"></div>
-          </div>
-          <div class="allowance-footer-note">
-            <span id="allowanceCycleDetails">Weekly allowance resets automatically 1 week after your first portfolio generation.</span>
-            <span class="allowance-tier-tag">Free Tier Active</span>
-          </div>
-        </div>
-
-        <!-- 5. Action Generate Button -->
-        <button type="submit" id="btnSubmitGenerate" class="btn-generate-hero">
-          <i data-lucide="sparkles" style="width:22px;height:22px;"></i>
-          <span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>
-        </button>
+        <!-- Hidden certificate container required by script -->
+        <div id="certificatesListContainer" style="display:none;"></div>
       </form>
 
-      <!-- 6. Generated Portfolios & Projects History List (Directly Below Generate Button) -->
-      <section id="generatedPortfoliosSection" class="generated-history-section">
-        <div class="section-headline-row" id="generatedSectionHeader" style="display: none;">
-          <div class="headline-left">
-            <span class="headline-badge">⚡ CREATED PORTFOLIOS</span>
-            <h3 class="headline-title">Generated 3D Portfolios</h3>
-          </div>
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="history-count-badge" id="generatedCountBadge">0 Sites</span>
-            <button type="button" class="btn-clear-all-portfolios" onclick="deleteAllPortfoliosPermanently()" title="Permanently delete and purge all generated portfolios">
-              🗑️ Clear All
-            </button>
-          </div>
+      <!-- Historical shelf preserved inside drawer -->
+      <div id="generatedPortfoliosSection" style="margin-top:10px;">
+        <div id="generatedSectionHeader" style="display:none; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);">PROJECT SHELF</span>
+          <span id="generatedCountBadge" class="mf-badge mf-badge-accent" style="font-size:10px;">0 Sites</span>
+        </div>
+        <div id="generatedProjectsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      </div>
+    </aside>
+
+    <!-- COLUMN 2: CENTER LIVE SPATIAL VIEWPORT CANVAS -->
+    <main class="studio-col-center">
+      <div class="center-viewport-toolbar">
+        <div class="device-switcher-dock">
+          <button class="device-btn active" onclick="setDeviceView('desktop', this)">Desktop</button>
+          <button class="device-btn" onclick="setDeviceView('tablet', this)">Tablet</button>
+          <button class="device-btn" onclick="setDeviceView('mobile', this)">Mobile</button>
         </div>
 
-        <div id="generatedProjectsList" class="generated-cards-grid">
-          <!-- Dynamic generated portfolio cards are rendered here -->
+        <div style="display:flex; align-items:center; gap:8px;">
+          <span style="font-size:11.5px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);" id="generatedUrlText">
+            https://abdulaziz.myfolio.tech
+          </span>
+          <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="reloadStudioCanvas()" title="Reload Canvas">
+            ↻
+          </button>
+          <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="toggleCanvasFullscreen()" title="Fullscreen">
+            ⛶
+          </button>
         </div>
-      </section>
+      </div>
 
-      <!-- 7. Legacy Result Preview Box (Fallback) -->
-      <div id="resultPreviewCard" class="result-preview-card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h2 style="font-family:var(--font-display);font-size:1.35rem;font-weight:800;color:#10B981;display:flex;align-items:center;gap:8px;">
-            <span>🎉</span> Portfolio Ready!
-          </h2>
-        </div>
-
-        <div class="preview-url-banner">
-          <div style="font-family:var(--font-mono);font-size:0.92rem;color:var(--primary);" id="generatedUrlText">
-            http://localhost:5050/p/preview
-          </div>
-          <div style="display:flex;gap:10px;">
-            <button class="btn-action btn-glass" onclick="copyGeneratedUrl()" style="padding:8px 14px;font-size:0.85rem;">
-              📋 Copy Link
-            </button>
-            <a id="btnOpenGeneratedLive" href="/p/preview" target="_blank" class="btn-action btn-primary-glow" style="padding:8px 16px;font-size:0.85rem;">
-              🚀 Open Live ↗
-            </a>
-          </div>
-        </div>
-
-        <div style="text-align:right;">
-          <a href="/dashboard.html" style="color:var(--text-muted);font-size:0.85rem;text-decoration:none;">
-            View All Sites in Dashboard ➔
-          </a>
+      <div class="viewport-canvas-frame">
+        <div class="spatial-viewport-screen" id="viewportScreen">
+          <iframe id="studioLiveIframe" class="spatial-viewport-iframe" src="/p/preview" title="Live 3D Portfolio Canvas"></iframe>
         </div>
       </div>
     </main>
+
+    <!-- COLUMN 3: RIGHT AI CREATIVE DIRECTOR -->
+    <aside class="studio-col-right">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="font-family:var(--mf-font-display); font-weight:700; font-size:14px; color:#FFF; display:flex; align-items:center; gap:6px;">
+          <span style="color:var(--mf-accent-blue);">✦</span>
+          <span>MYFOLIO AI</span>
+        </div>
+        <span class="mf-badge mf-badge-accent" style="font-size:10px;">DIRECTOR MODE</span>
+      </div>
+
+      <!-- Advisory Card 1 -->
+      <div class="ai-insight-card">
+        <div class="ai-insight-title">
+          <span>Target Recruiter Persona</span>
+        </div>
+        <div class="ai-insight-body">
+          Your GitHub telemetry signals strong systems programming and WebGL shader architecture. We suggest prioritizing high-concurrency case studies.
+        </div>
+        <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('prioritize_projects')">
+          ⚡ Prioritize Systems Projects
+        </button>
+      </div>
+
+      <!-- Advisory Card 2 -->
+      <div class="ai-insight-card">
+        <div class="ai-insight-title">
+          <span>Universe Resonance</span>
+        </div>
+        <div class="ai-insight-body">
+          Current pick <strong>Synaptic Constellation</strong> achieves high resonance with systems thinkers and full-stack builders.
+        </div>
+      </div>
+
+      <!-- Advisory Card 3 -->
+      <div class="ai-insight-card">
+        <div class="ai-insight-title">
+          <span>Narrative Polish</span>
+        </div>
+        <div class="ai-insight-body">
+          "Headline communicates role clearly. Bio could emphasize distributed systems and open-source contributions."
+        </div>
+        <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('refine_bio')">
+          ✍️ Polish Narrative Bio
+        </button>
+      </div>
+
+      <!-- Conversational Command Bar -->
+      <div class="ai-command-wrap">
+        <div style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">
+          AI Creative Prompt
+        </div>
+        <textarea id="aiPromptInput" class="ai-command-input" placeholder="Ask AI: 'Make hero more recruiter-focused' or 'Highlight AI repos'"></textarea>
+        <div style="display:flex; justify-content:flex-end;">
+          <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" onclick="sendAiCommand()">
+            Direct &rarr;
+          </button>
+        </div>
+      </div>
+    </aside>
   </div>
 
   <script>
-    lucide.createIcons();
-
-    let selectedUniverseKey = 'threeui-shelf';
+    let selectedUniverseKey = 'threeui-constellation';
     let uploadedResumeBase64 = null;
     let uploadedResumeMime = null;
-    let uploadedCertificates = [];
     let uploadedPhotoData = null;
-
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-    }
-
-    async function compressImageClientSide(file, maxWidth = 1200, maxHeight = 1200, quality = 0.85) {
-      if (!file || !file.type || !file.type.startsWith('image/')) return null;
-      return new Promise((resolve) => {
-        try {
-          const img = new Image();
-          const objectUrl = URL.createObjectURL(file);
-          img.onload = () => {
-            URL.revokeObjectURL(objectUrl);
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth || height > maxHeight) {
-              if (width > height) {
-                height = Math.round((height * maxWidth) / width);
-                width = maxWidth;
-              } else {
-                width = Math.round((width * maxHeight) / height);
-                height = maxHeight;
-              }
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            const dataUrl = canvas.toDataURL('image/jpeg', quality);
-            const base64 = dataUrl.split(',')[1];
-            resolve({
-              dataUrl,
-              rawBase64: base64,
-              mimeType: 'image/jpeg',
-              size: Math.round((base64.length * 3) / 4)
-            });
-          };
-          img.onerror = () => {
-            URL.revokeObjectURL(objectUrl);
-            resolve(null);
-          };
-          img.src = objectUrl;
-        } catch (e) {
-          resolve(null);
-        }
-      });
-    }
-
-    async function handlePhotoFileSelected(input) {
-      const file = input.files?.[0];
-      if (!file) return;
-
-      const isImage = file.type?.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
-      if (isImage) {
-        const compressed = await compressImageClientSide(file, 1200, 1200, 0.85);
-        if (compressed) {
-          uploadedPhotoData = {
-            name: file.name,
-            mimeType: compressed.mimeType,
-            rawBase64: compressed.rawBase64,
-            dataUrl: compressed.dataUrl
-          };
-          const previewContainer = document.getElementById('photoPreviewContainer');
-          const previewImg = document.getElementById('photoPreviewImg');
-          const previewName = document.getElementById('photoPreviewName');
-          if (previewImg) previewImg.src = compressed.dataUrl;
-          if (previewName) previewName.innerText = `${file.name} (${Math.round(compressed.size / 1024)} KB optimized)`;
-          if (previewContainer) previewContainer.style.display = 'flex';
-          return;
-        }
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fullDataUrl = e.target.result;
-        const base64 = fullDataUrl.split(',')[1] || fullDataUrl;
-        uploadedPhotoData = {
-          name: file.name,
-          mimeType: file.type || 'image/png',
-          rawBase64: base64,
-          dataUrl: fullDataUrl
-        };
-
-        const previewContainer = document.getElementById('photoPreviewContainer');
-        const previewImg = document.getElementById('photoPreviewImg');
-        const previewName = document.getElementById('photoPreviewName');
-        if (previewImg) previewImg.src = fullDataUrl;
-        if (previewName) previewName.innerText = file.name;
-        if (previewContainer) previewContainer.style.display = 'flex';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function removeUploadedPhoto() {
-      uploadedPhotoData = null;
-      const fileInput = document.getElementById('photoFileInput');
-      if (fileInput) fileInput.value = '';
-      const previewContainer = document.getElementById('photoPreviewContainer');
-      if (previewContainer) previewContainer.style.display = 'none';
-      const previewImg = document.getElementById('photoPreviewImg');
-      if (previewImg) previewImg.src = '';
-    }
-
-    async function handleCertFilesSelected(files) {
-      if (!files || files.length === 0) return;
-
-      for (const file of Array.from(files)) {
-        if (uploadedCertificates.some(c => c.name === file.name && c.size === file.size)) continue;
-
-        const isImage = file.type?.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
-        if (isImage) {
-          const compressed = await compressImageClientSide(file, 1600, 1600, 0.85);
-          if (compressed) {
-            uploadedCertificates.push({
-              name: file.name,
-              size: compressed.size,
-              mimeType: compressed.mimeType,
-              rawBase64: compressed.rawBase64,
-              dataUrl: compressed.dataUrl
-            });
-            renderCertificatesList();
-            continue;
-          }
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const fullDataUrl = e.target.result;
-          const base64 = fullDataUrl.split(',')[1] || fullDataUrl;
-          uploadedCertificates.push({
-            name: file.name,
-            size: file.size,
-            mimeType: file.type || (file.name.toLowerCase().endsWith('.pdf') ? 'application/pdf' : 'image/png'),
-            rawBase64: base64,
-            dataUrl: fullDataUrl
-          });
-          renderCertificatesList();
-        };
-        reader.readAsDataURL(file);
-      }
-
-      const certInput = document.getElementById('certFileInput');
-      if (certInput) certInput.value = '';
-    }
-
-    function removeCertificate(index) {
-      if (index >= 0 && index < uploadedCertificates.length) {
-        uploadedCertificates.splice(index, 1);
-        renderCertificatesList();
-      }
-    }
-
-    function renderCertificatesList() {
-      const container = document.getElementById('certPreviewList');
-      if (!container) return;
-
-      if (uploadedCertificates.length === 0) {
-        container.innerHTML = '';
-        return;
-      }
-
-      container.innerHTML = uploadedCertificates.map((cert, idx) => {
-        const sizeKb = Math.round(cert.size / 1024);
-        const isPdf = cert.mimeType === 'application/pdf' || cert.name.toLowerCase().endsWith('.pdf');
-        const icon = isPdf ? '📄' : '🖼️';
-        return `
-          <div class="cert-card-item">
-            <div style="display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1;">
-              <span style="font-size: 1.2rem;">${icon}</span>
-              <div style="min-width: 0; flex: 1;">
-                <div style="font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                  ${escapeHtml(cert.name)}
-                </div>
-                <div style="font-size: 0.72rem; color: var(--text-muted);">
-                  ${sizeKb} KB · <span style="color: #059669; font-weight: 600;">✓ Ready to verify</span>
-                </div>
-              </div>
-            </div>
-            <button type="button" onclick="removeCertificate(${idx})" style="background: none; border: none; color: #EF4444; font-size: 0.82rem; font-weight: 700; cursor: pointer; padding: 4px 8px;" title="Remove this certificate">✕</button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function switchIngestTab(tabKey, btn) {
-      document.querySelectorAll('.ingest-tab-btn').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-
-      document.getElementById('panelGithub').style.display = tabKey === 'github' ? 'block' : 'none';
-      document.getElementById('panelResume').style.display = tabKey === 'resume' ? 'block' : 'none';
-      document.getElementById('panelManual').style.display = tabKey === 'manual' ? 'block' : 'none';
-    }
-
-    function selectStudioUniverse(key, card) {
-      if (!key) return;
-      selectedUniverseKey = key;
-      document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
-      if (card) {
-        card.classList.add('selected');
-      } else {
-        const found = document.querySelector(`.universe-choice-card[onclick*="'${key}'"]`);
-        if (found) {
-          found.classList.add('selected');
-          try { found.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
-        }
-      }
-    }
-
-    async function processStudioResumeFile(file) {
-      if (!file) return;
-
-      const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-      const isImage = file.type.startsWith('image/') || /\.(png|jpe?g|webp|avif)$/i.test(file.name);
-      const isDoc = /\.(docx?|txt|md)$/i.test(file.name);
-
-      const label = document.getElementById('resumeUploadLabel');
-      const help = document.getElementById('resumeUploadHelp');
-      if (label) {
-        label.innerHTML = `✅ <b>Selected:</b> ${file.name} <span style="font-size:0.85rem;color:var(--primary);">(${Math.round(file.size / 1024)} KB)</span>`;
-      }
-      if (help) {
-        help.innerHTML = `<span style="color:#10B981;font-weight:600;">✓ Ready for AI Extraction. Click Generate below when ready.</span>`;
-      }
-
-      uploadedResumeMime = file.type || (isPdf ? 'application/pdf' : (isImage ? 'image/png' : 'text/plain'));
-
-      if (isImage) {
-        const compressed = await compressImageClientSide(file, 1600, 1600, 0.85);
-        if (compressed) {
-          uploadedResumeBase64 = compressed.rawBase64;
-          uploadedResumeMime = compressed.mimeType;
-          if (!uploadedPhotoData) {
-            uploadedPhotoData = {
-              name: file.name,
-              mimeType: compressed.mimeType,
-              rawBase64: compressed.rawBase64,
-              dataUrl: compressed.dataUrl
-            };
-            const previewContainer = document.getElementById('photoPreviewContainer');
-            const previewImg = document.getElementById('photoPreviewImg');
-            const previewName = document.getElementById('photoPreviewName');
-            if (previewImg) previewImg.src = compressed.dataUrl;
-            if (previewName) previewName.innerText = `Detected from resume: ${file.name}`;
-            if (previewContainer) previewContainer.style.display = 'flex';
-          }
-          return;
-        }
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const fullDataUrl = e.target.result;
-        uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
-
-        // If resume is an image and no separate photo is set, preview as candidate photo
-        if (isImage && !uploadedPhotoData) {
-          uploadedPhotoData = {
-            name: file.name,
-            mimeType: file.type || 'image/png',
-            rawBase64: uploadedResumeBase64,
-            dataUrl: fullDataUrl
-          };
-          const previewContainer = document.getElementById('photoPreviewContainer');
-          const previewImg = document.getElementById('photoPreviewImg');
-          const previewName = document.getElementById('photoPreviewName');
-          if (previewImg) previewImg.src = fullDataUrl;
-          if (previewName) previewName.innerText = `Detected from resume: ${file.name}`;
-          if (previewContainer) previewContainer.style.display = 'flex';
-        }
-
-        if (file.type.startsWith('text/') || /\.(txt|md)$/i.test(file.name)) {
-          const textReader = new FileReader();
-          textReader.onload = (te) => {
-            const txtArea = document.getElementById('resumeRawText');
-            if (txtArea) txtArea.value = te.target.result;
-          };
-          textReader.readAsText(file);
-        }
-      };
-      reader.readAsDataURL(file);
-
-      // If user was on another tab, switch to Resume tab
-      const panelResume = document.getElementById('panelResume');
-      if (panelResume && panelResume.style.display === 'none') {
-        const resumeTabBtn = document.querySelectorAll('.ingest-tab-btn')[1];
-        switchIngestTab('resume', resumeTabBtn);
-      }
-    }
-
-    function handleResumeFileSelected(input) {
-      const file = input.files?.[0];
-      processStudioResumeFile(file);
-    }
-
-    function setupStudioDropZone() {
-      // 1. Prevent default window drop behavior across the whole page
-      window.addEventListener('dragover', (e) => e.preventDefault(), false);
-      window.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const files = e.dataTransfer?.files;
-        if (files && files.length > 0) {
-          processStudioResumeFile(files[0]);
-        }
-      }, false);
-
-      // 2. Drop Zone specific visual feedback & events
-      const dropZone = document.getElementById('studioResumeDropZone') || document.querySelector('.dropzone-box');
-      if (dropZone) {
-        ['dragenter', 'dragover'].forEach(eventName => {
-          dropZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.add('drag-over');
-          }, false);
-        });
-
-        ['dragleave', 'dragend'].forEach(eventName => {
-          dropZone.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            dropZone.classList.remove('drag-over');
-          }, false);
-        });
-
-        dropZone.addEventListener('drop', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          dropZone.classList.remove('drag-over');
-          const files = e.dataTransfer?.files;
-          if (files && files.length > 0) {
-            processStudioResumeFile(files[0]);
-          }
-        }, false);
-      }
-
-      // Certificate Drop Zone handlers
-      const certDrop = document.getElementById('studioCertDropZone');
-      if (certDrop) {
-        ['dragenter', 'dragover'].forEach(eventName => {
-          certDrop.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            certDrop.style.borderColor = '#2563EB';
-            certDrop.style.background = 'rgba(37, 99, 235, 0.08)';
-          }, false);
-        });
-
-        ['dragleave', 'dragend'].forEach(eventName => {
-          certDrop.addEventListener(eventName, (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            certDrop.style.borderColor = '#94A3B8';
-            certDrop.style.background = '#F8FAFC';
-          }, false);
-        });
-
-        certDrop.addEventListener('drop', (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          certDrop.style.borderColor = '#94A3B8';
-          certDrop.style.background = '#F8FAFC';
-          const files = e.dataTransfer?.files;
-          if (files && files.length > 0) {
-            handleCertFilesSelected(files);
-          }
-        }, false);
-      }
-
-      // 3. Clipboard paste support (Cmd+V / Ctrl+V with files or text)
-      window.addEventListener('paste', (e) => {
-        const items = e.clipboardData?.items;
-        if (!items) return;
-        for (let i = 0; i < items.length; i++) {
-          if (items[i].kind === 'file') {
-            const file = items[i].getAsFile();
-            if (file) {
-              processStudioResumeFile(file);
-              break;
-            }
-          }
-        }
-      });
-    }
-
-    // =========================================================================
-    // WEEKLY ALLOWANCE & GENERATED PORTFOLIO HISTORY ENGINE
-    // =========================================================================
+    let uploadedCertificates = [];
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
     const ALLOWANCE_CONFIG = {
       WEEKLY_TOTAL: 5,
       CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000
     };
 
-    function getHistoryStorageKey() {
-      try {
-        const userStr = localStorage.getItem('myfolio_user');
-        if (userStr) {
-          const u = JSON.parse(userStr);
-          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
-          if (email) {
-            return `myfolio_history_${email.replace(/[^a-z0-9]/g, '_')}`;
-          }
-        }
-      } catch (e) {}
-      return 'myfolio_history_guest';
+    function setDeviceView(mode, btn) {
+      const screen = document.getElementById('viewportScreen');
+      document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      screen.classList.remove('tablet-mode', 'mobile-mode');
+      if (mode === 'tablet') screen.classList.add('tablet-mode');
+      if (mode === 'mobile') screen.classList.add('mobile-mode');
     }
 
-    function getAllowanceStorageKey() {
-      try {
-        const userStr = localStorage.getItem('myfolio_user');
-        if (userStr) {
-          const u = JSON.parse(userStr);
-          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
-          if (email) {
-            return `myfolio_allowance_${email.replace(/[^a-z0-9]/g, '_')}`;
-          }
-        }
-      } catch (e) {}
-      return 'myfolio_allowance_guest';
+    function reloadStudioCanvas() {
+      const iframe = document.getElementById('studioLiveIframe');
+      if (iframe) iframe.src = iframe.src;
     }
 
-    const UNIVERSE_META = {
-      'threeui-shelf': { name: 'Complete Shelf (3D Library)', icon: '📚', thumb: '/assets/3d/threeui_shelf_3d.jpg' },
-      'threeui-sylva': { name: 'Sylva Living World (3D Fauna)', icon: '🌿', thumb: '/assets/3d/threeui_sylva_3d.jpg' },
-      'threeui-kage': { name: 'Kage Mountain Shrine (WebGL)', icon: '⛩️', thumb: '/assets/3d/threeui_kage_3d.jpg' },
-      'threeui-constellation': { name: 'Synaptic Constellation', icon: '✨', thumb: '/assets/3d/threeui_constellation_3d.jpg' },
-      'threeui-liquid-metal': { name: 'Liquid Metal Dispersion', icon: '💧', thumb: '/assets/3d/threeui_liquid_metal_3d.jpg' },
-      'threeui-matrix': { name: 'Quantum Matrix Lightning', icon: '⚡', thumb: '/assets/3d/threeui_matrix_3d.jpg' },
-      'threeui-sketchbook': { name: '3D Watercolor Sketchbook', icon: '📖', thumb: '/assets/3d/threeui_sketchbook_3d.jpg' },
-      'threeui-landscape': { name: '3D Landscape & Weather', icon: '🗾', thumb: '/assets/3d/threeui_landscape_3d.jpg' },
-      'spatial-depth-voyage': { name: 'Spatial Depth Voyage', icon: '🏛️', thumb: '/assets/3d/spatial_depth_voyage_3d.jpg' },
-      'cosmic-astronaut': { name: 'Cosmic Astronaut Studio', icon: '🌌', thumb: '/assets/3d/cosmic_astronaut_3d.jpg' },
-      'cyber-crystal': { name: 'Cyber Crystal Studio', icon: '💎', thumb: '/assets/3d/bg_cyber_crystal.jpg' },
-      'bioluminescent-wireframe': { name: 'Bioluminescent Eco-Tech', icon: '🌿', thumb: '/assets/3d/bg_bioluminescent.jpg' },
-      'botanical-woodcraft': { name: 'Botanical Woodcraft Codex', icon: '🪵', thumb: '/assets/3d/botanical_woodcraft_3d.jpg' },
-      'bio-digital-fusion': { name: 'Bio-Digital Circuit Fusion', icon: '🧬', thumb: '/assets/3d/bg_circuit_fusion.jpg' },
-      'eco-tech-steampunk': { name: 'Eco-Tech Steampunk', icon: '⚙️', thumb: '/assets/3d/bg-universe-ecotech-steampunk.jpg' },
-      'emerald-cyber-sanctuary': { name: 'Emerald Cyber Sanctuary', icon: '🍃', thumb: '/assets/3d/bg_emerald_sanctuary.jpg' },
-      'pristine-white-crystal': { name: 'Pristine White Crystal', icon: '❄️', thumb: '/assets/3d/bg_pristine_white_crystal.jpg' },
-      'abyssal-quantum-jellyfish': { name: 'Abyssal Quantum Jellyfish', icon: '🪼', thumb: '/assets/3d/bg_abyssal_jellyfish.jpg' },
-      'mahogany-brass-steampunk': { name: 'Mahogany & Brass Steampunk', icon: '🕰️', thumb: '/assets/3d/bg_mahogany_steampunk.jpg' },
-      'lavender-cyber-bridge': { name: 'Lavender Cyber Bridge', icon: '🌉', thumb: '/assets/3d/bg_lavender_bridge.jpg' },
-      'sand-parchment-botanical': { name: 'Sand Parchment Botanical', icon: '📜', thumb: '/assets/3d/bg_sand_botanical.jpg' },
-      'system-awakening': { name: 'System Awakening (Hunter)', icon: '⚔️', thumb: '/assets/3d/bg_system_awakening.jpg' },
-      'engineering-archive': { name: 'Engineering Archive', icon: '📐', thumb: '/assets/3d/bg_engineering_archive.jpg' },
-      'cosmic-cyber-geometry': { name: 'Cosmic Cyber Geometry', icon: '🪐', thumb: '/assets/3d/bg_cosmic_cyber_geometry.jpg' },
-      'stellar-architect': { name: 'Stellar Architect', icon: '✨', thumb: '/assets/3d/bg_stellar_architect.jpg' },
-      'abyssal-ascent': { name: 'Abyssal Ascent (RPG)', icon: '🗡️', thumb: '/assets/3d/bg_abyssal_ascent.jpg' },
-      'stealth-node': { name: 'Stealth Node (Web3)', icon: '⚡', thumb: '/assets/3d/bg_stealth_node.jpg' },
-      'kinetic-brutalism': { name: 'Kinetic Brutalism', icon: '💥', thumb: '/assets/3d/bg_kinetic_brutalism.jpg' },
-      'circuit-core': { name: 'Circuit Core', icon: '🔌', thumb: '/assets/3d/bg_circuit_core.jpg' },
-      'neon-aurora-cyber': { name: 'Neon Aurora Cyber', icon: '🌌', thumb: '/assets/3d/bg_neon_aurora_cyber.jpg' },
-      'chrono-obsidian-sanctuary': { name: 'Chrono-Obsidian Sanctuary', icon: '🏛️', thumb: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg' },
-      'swiss-editorial-monograph': { name: 'Swiss Editorial Monograph', icon: '📰', thumb: '/assets/3d/bg_engineering_archive.jpg' },
-      'solarpunk-horizon': { name: 'Solarpunk Horizon', icon: '☀️', thumb: '/assets/3d/bg_emerald_sanctuary.jpg' },
-      'cyber-architect-sprawl': { name: 'Cyber-Architect Sprawl', icon: '🤖', thumb: '/assets/designs/cyber/hero_hand_nobg.png' }
-    };
-
-    let currentVipAdmin = false;
-
-    function isVipUser() {
-      try {
-        const userStr = localStorage.getItem('myfolio_user');
-        if (userStr) {
-          const u = JSON.parse(userStr);
-          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
-          if (email === 'abdulaziznoor9876@gmail.com') return true;
-          return false;
-        }
-      } catch (e) {}
-      return currentVipAdmin;
+    function toggleCanvasFullscreen() {
+      const screen = document.getElementById('viewportScreen');
+      if (!document.fullscreenElement) {
+        screen.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
     }
 
-    function getCurrentUser() {
-      try {
-        const userStr = localStorage.getItem('myfolio_user');
-        if (userStr) return JSON.parse(userStr);
-      } catch (e) {}
-      return {};
+    function selectStudioUniverse(key, el) {
+      selectedUniverseKey = key;
+      document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
+      if (el) el.classList.add('selected');
     }
 
-    function getCurrentUsername() {
-      const u = getCurrentUser();
-      if (u && u.username) return u.username.toLowerCase().trim();
-      if (isVipUser()) return 'abdulaziz';
-      return 'developer';
+    function handleResumeFileSelected(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+
+      document.getElementById('resumeUploadLabel').innerHTML = `✅ <strong>${file.name}</strong>`;
+      document.getElementById('resumeUploadHelp').innerHTML = `<span style="color:var(--mf-success);">Ready for AI Extraction</span>`;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const fullDataUrl = e.target.result;
+        uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
+        uploadedResumeMime = file.type || 'application/pdf';
+      };
+      reader.readAsDataURL(file);
     }
 
-    function getAllowanceState() {
-      if (isVipUser()) {
-        return {
-          totalLimit: 999999,
-          used: 0,
-          firstGenTimestamp: null,
-          resetTimestamp: null
+    function handleCandidatePhoto(input) {
+      const file = input.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        uploadedPhotoData = {
+          name: file.name,
+          mimeType: file.type || 'image/png',
+          dataUrl: e.target.result
         };
-      }
-
-      const storageKey = getAllowanceStorageKey();
-      let state = null;
-      try {
-        state = JSON.parse(localStorage.getItem(storageKey));
-      } catch (e) {}
-
-      const now = Date.now();
-      if (!state || typeof state.used !== 'number') {
-        state = {
-          totalLimit: ALLOWANCE_CONFIG.WEEKLY_TOTAL,
-          used: 0,
-          firstGenTimestamp: null,
-          resetTimestamp: null
-        };
-        localStorage.setItem(storageKey, JSON.stringify(state));
-      }
-
-      // Check if 7 full days have elapsed since the first generation in this cycle
-      if (state.resetTimestamp && now >= state.resetTimestamp) {
-        // Automatically reset cycle!
-        state.used = 0;
-        state.firstGenTimestamp = null;
-        state.resetTimestamp = null;
-        localStorage.setItem(storageKey, JSON.stringify(state));
-      }
-
-      return state;
+        const img = document.getElementById('photoPreviewImg');
+        img.src = e.target.result;
+        document.getElementById('photoPreviewContainer').style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
     }
 
-    function consumeWeeklyAllowance() {
-      if (isVipUser()) {
-        updateAllowanceUI();
-        return { totalLimit: 999999, used: 0, firstGenTimestamp: null, resetTimestamp: null };
-      }
-
-      const storageKey = getAllowanceStorageKey();
-      const state = getAllowanceState();
-      const now = Date.now();
-
-      // If this is the first generation in the current cycle, initialize the 1-week reset timer
-      if (!state.firstGenTimestamp) {
-        state.firstGenTimestamp = now;
-        state.resetTimestamp = now + ALLOWANCE_CONFIG.CYCLE_DURATION_MS;
-      }
-
-      state.used = (state.used || 0) + 1;
-      localStorage.setItem(storageKey, JSON.stringify(state));
-      updateAllowanceUI();
-      return state;
+    function handleCertFilesSelected(files) {
+      if (!files || files.length === 0) return;
+      uploadedCertificates.push({ name: files[0].name, size: files[0].size });
+      alert(`Certificate "${files[0].name}" attached.`);
     }
 
-    let countdownIntervalId = null;
-
-    function formatCountdown(resetTimestamp) {
-      if (!resetTimestamp) return '7-Day Cycle Ready';
-      const diff = resetTimestamp - Date.now();
-      if (diff <= 0) return 'Resets Now';
-
-      const days = Math.floor(diff / (24 * 60 * 60 * 1000));
-      const hours = Math.floor((diff % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
-      const mins = Math.floor((diff % (60 * 1000)) / (60 * 1000));
-      const secs = Math.floor((diff % (60 * 1000)) / 1000);
-
-      if (days > 0) {
-        return `Resets in ${days}d ${hours}h ${mins}m`;
-      }
-      if (hours > 0) {
-        return `Resets in ${hours}h ${mins}m ${secs}s`;
-      }
-      return `Resets in ${mins}m ${secs}s`;
+    function copyGeneratedUrl() {
+      const url = document.getElementById('generatedUrlText').textContent.trim();
+      navigator.clipboard.writeText(url);
+      alert('Copied: ' + url);
     }
 
-    async function checkUserVipStatus() {
-      try {
-        const res = await fetch('/api/auth/me', { credentials: 'include' });
-        if (res.ok) {
-          const data = await res.json();
-          const u = data.user || data || {};
-          const email = (u.email || u.normalized_email || '').toLowerCase().trim();
-          try {
-            localStorage.setItem('myfolio_user', JSON.stringify(u));
-          } catch (e) {}
-
-          if (email === 'abdulaziznoor9876@gmail.com') {
-            currentVipAdmin = true;
-            try {
-              localStorage.setItem('myfolio_vip_admin', 'true');
-            } catch (e) {}
-          } else {
-            currentVipAdmin = false;
-            try {
-              localStorage.removeItem('myfolio_vip_admin');
-              localStorage.removeItem('myfolio_active_vip_site');
-            } catch (e) {}
-          }
-        } else {
-          currentVipAdmin = false;
-          try {
-            localStorage.removeItem('myfolio_vip_admin');
-            localStorage.removeItem('myfolio_active_vip_site');
-          } catch (e) {}
-        }
-      } catch (e) {
-        try {
-          const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
-          const email = (u.email || '').toLowerCase().trim();
-          currentVipAdmin = (email === 'abdulaziznoor9876@gmail.com');
-          if (!currentVipAdmin) {
-            localStorage.removeItem('myfolio_vip_admin');
-            localStorage.removeItem('myfolio_active_vip_site');
-          }
-        } catch (err) {
-          currentVipAdmin = false;
-        }
-      }
-      updateAllowanceUI();
-      renderGeneratedHistoryUI();
-      await syncPortfoliosFromCloud();
-    }
-
-    async function syncPortfoliosFromCloud() {
-      try {
-        const res = await fetch('/api/user/portfolios', { credentials: 'include' });
-        if (!res.ok) return;
-        const data = await res.json();
-        if (data.success && Array.isArray(data.portfolios)) {
-          const localHistory = getGeneratedHistory();
-          const localMap = new Map();
-          localHistory.forEach(h => localMap.set(h.siteId, h));
-
-          // Merge cloud portfolios into local history
-          data.portfolios.forEach(cloudItem => {
-            if (!localMap.has(cloudItem.siteId)) {
-              localMap.set(cloudItem.siteId, cloudItem);
-            }
-          });
-
-          const merged = Array.from(localMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-          saveGeneratedHistory(merged);
-          renderGeneratedHistoryUI();
-
-          // Sync any local-only items up to cloud
-          const cloudIds = new Set(data.portfolios.map(p => p.siteId));
-          const localOnly = localHistory.filter(h => !cloudIds.has(h.siteId));
-          if (localOnly.length > 0) {
-            fetch('/api/user/portfolios/sync', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'include',
-              body: JSON.stringify({ items: localOnly })
-            }).catch(() => {});
-          }
-        }
-      } catch (e) {
-        console.warn('[Studio] Cloud portfolio sync warning:', e);
+    function applyAiSuggestion(action) {
+      if (action === 'refine_bio') {
+        document.getElementById('manualBio').value = "Full-stack systems architect specializing in high-throughput distributed architectures, autonomous AI agents, and bespoke 3D WebGL spatial applications.";
+        alert('AI refined your narrative bio!');
+      } else if (action === 'prioritize_projects') {
+        alert('AI prioritized your highest-impact systems projects.');
       }
     }
 
-    function updateAllowanceUI() {
-      const isVip = isVipUser();
-
-      const state = getAllowanceState();
-      const remaining = isVip ? 999999 : Math.max(0, state.totalLimit - state.used);
-      const pct = isVip ? 100 : Math.min(100, Math.max(0, (remaining / state.totalLimit) * 100));
-
-      const countEl = document.getElementById('allowanceRemainingText');
-      const barEl = document.getElementById('allowanceProgressBar');
-      const countdownEl = document.getElementById('allowanceResetCountdown');
-      const resetBadge = document.getElementById('allowanceResetBadge');
-      const detailsEl = document.getElementById('allowanceCycleDetails');
-      const generateBtn = document.getElementById('btnSubmitGenerate');
-
-      if (countEl) {
-        countEl.textContent = isVip ? `⚡ Unlimited Generations (VIP Master Access)` : `${remaining} / ${state.totalLimit} Generations`;
-        if (!isVip && remaining <= 1) {
-          countEl.classList.add('low');
-        } else {
-          countEl.classList.remove('low');
-        }
-      }
-
-      if (barEl) {
-        barEl.style.width = `${pct}%`;
-        if (isVip) {
-          barEl.style.background = 'linear-gradient(90deg, #10B981, #38BDF8, #A855F7)';
-          barEl.classList.remove('low');
-        } else if (remaining <= 1) {
-          barEl.classList.add('low');
-        } else {
-          barEl.classList.remove('low');
-        }
-      }
-
-      const formattedCountdown = isVip ? '∞ No Restrictions' : formatCountdown(state.resetTimestamp);
-
-      if (countdownEl) {
-        countdownEl.textContent = formattedCountdown;
-      }
-
-      if (resetBadge) {
-        if (isVip) {
-          resetBadge.classList.add('active-countdown');
-          resetBadge.style.background = 'rgba(16, 185, 129, 0.15)';
-          resetBadge.style.borderColor = 'rgba(16, 185, 129, 0.4)';
-          resetBadge.style.color = '#34D399';
-        } else if (state.resetTimestamp) {
-          resetBadge.classList.add('active-countdown');
-        } else {
-          resetBadge.classList.remove('active-countdown');
-        }
-      }
-
-      if (detailsEl) {
-        if (isVip) {
-          detailsEl.textContent = `VIP Founder Account Active: All weekly limits, generation caps, and rate limiting restrictions are 100% removed for abdulaziznoor9876@gmail.com.`;
-        } else if (state.firstGenTimestamp && state.resetTimestamp) {
-          const resetDate = new Date(state.resetTimestamp).toLocaleDateString(undefined, {
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-          });
-          detailsEl.textContent = `Cycle active. Full allowance of ${state.totalLimit} resets on ${resetDate} (7 days after 1st generation).`;
-        } else {
-          detailsEl.textContent = `Weekly allowance resets automatically 1 week after your first portfolio generation.`;
-        }
-      }
-
-      // If allowance is exhausted, guard generate button
-      if (generateBtn) {
-        if (!isVip && remaining <= 0) {
-          generateBtn.disabled = true;
-          generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${state.totalLimit}/${state.totalLimit}) — ${formattedCountdown}</span>`;
-        } else if (!generateBtn.dataset.busy) {
-          generateBtn.disabled = false;
-          generateBtn.innerHTML = `<i data-lucide="sparkles" style="width:22px;height:22px;"></i><span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>`;
-          if (typeof lucide !== 'undefined') lucide.createIcons();
-        }
-      }
-
-      if (!countdownIntervalId && !isVip) {
-        countdownIntervalId = setInterval(() => {
-          const freshState = getAllowanceState();
-          const freshRemaining = Math.max(0, freshState.totalLimit - freshState.used);
-          const freshCountdown = formatCountdown(freshState.resetTimestamp);
-          if (countdownEl) {
-            countdownEl.textContent = freshCountdown;
-          }
-          if (generateBtn && freshRemaining <= 0) {
-            generateBtn.innerHTML = `<span>⚠️ Weekly Allowance Reached (${freshState.totalLimit}/${freshState.totalLimit}) — ${freshCountdown}</span>`;
-          }
-        }, 1000);
-      }
+    function sendAiCommand() {
+      const val = document.getElementById('aiPromptInput').value.trim();
+      if (!val) return;
+      alert(`AI Creative Director received: "${val}". Applying adjustments to canvas...`);
+      document.getElementById('aiPromptInput').value = '';
     }
 
-    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-    const FIVE_DAYS_MS = 5 * 24 * 60 * 60 * 1000;
-
-    // =========================================================================
-    // GENERATED PROJECTS HISTORY LIST (USER-SCOPED)
-    // =========================================================================
-    function getGeneratedHistory() {
-      try {
-        const key = getHistoryStorageKey();
-        let list = JSON.parse(localStorage.getItem(key));
-        if (!list || !Array.isArray(list)) {
-          // If abdulaziznoor9876@gmail.com and legacy history exists, migrate once
-          if (isVipUser()) {
-            const oldList = JSON.parse(localStorage.getItem('myfolio_generated_projects_v1') || '[]');
-            if (oldList.length > 0) {
-              list = oldList;
-              saveGeneratedHistory(list);
-            }
-          }
-        }
-        list = list || [];
-        const now = Date.now();
-        // Automatically purge unpurchased items older than 5 days entirely
-        const filtered = list.filter(item => isVipUser() || (now - (item.timestamp || now)) < FIVE_DAYS_MS);
-        if (filtered.length !== list.length) {
-          saveGeneratedHistory(filtered);
-        }
-        return filtered;
-      } catch (e) {
-        return [];
-      }
-    }
-
-    function saveGeneratedHistory(list) {
-      try {
-        const key = getHistoryStorageKey();
-        localStorage.setItem(key, JSON.stringify(list));
-      } catch (e) {}
-    }
-
-    function addGeneratedPortfolioToHistory(item) {
-      const history = getGeneratedHistory();
-      // Prepend to top of list so newest appears first right below button
-      const updated = [item, ...history.filter(h => h.siteId !== item.siteId)].slice(0, 15);
-      saveGeneratedHistory(updated);
-      renderGeneratedHistoryUI(item.siteId);
-
-      // Instantly sync to cloud database so phone and all other devices see it
-      fetch('/api/user/portfolios/sync', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ item })
-      }).catch(() => {});
-    }
-
-    function formatTimeAgo(timestamp) {
-      const diffSec = Math.floor((Date.now() - timestamp) / 1000);
-      if (diffSec < 60) return 'Just now';
-      if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
-      if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`;
-      return new Date(timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-    }
-
-    function copyPortfolioUrl(url, btnEl) {
-      navigator.clipboard.writeText(url).then(() => {
-        const origText = btnEl.innerHTML;
-        btnEl.innerHTML = '✅ Copied!';
-        btnEl.style.background = '#10B981';
-        btnEl.style.color = '#FFFFFF';
-        setTimeout(() => {
-          btnEl.innerHTML = origText;
-          btnEl.style.background = '';
-          btnEl.style.color = '';
-        }, 2000);
-      }).catch(() => {
-        alert('Portfolio URL: ' + url);
-      });
-    }
-
-    function regenerateWithUniverse(universeKey) {
-      if (universeKey && UNIVERSE_META[universeKey]) {
-        const cards = document.querySelectorAll('.universe-choice-card');
-        cards.forEach(c => {
-          if (c.onclick && c.onclick.toString().includes(universeKey)) {
-            selectStudioUniverse(universeKey, c);
-          }
-        });
-      }
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function reactivateHistoryItem(universeKey, savedUsername = '') {
-      const ghInput = document.getElementById('ghUsername');
-      if (ghInput && savedUsername) {
-        ghInput.value = savedUsername;
-      }
-      regenerateWithUniverse(universeKey);
-      showToast('Re-activating 3D Studio', 'Regenerating fresh live preview with selected theme...', 'info');
-      setTimeout(() => {
-        const form = document.getElementById('portfolioGenerationForm');
-        if (form) {
-          form.requestSubmit();
-        }
-      }, 400);
-    }
-
-    function showStudioToast(title, msg) {
-      let toast = document.getElementById('studioToast');
-      if (!toast) {
-        toast = document.createElement('div');
-        toast.id = 'studioToast';
-        toast.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:99999;background:rgba(15,23,42,0.95);border:1px solid rgba(56,189,248,0.4);border-radius:12px;padding:14px 20px;color:#F8FAFC;font-family:inherit;box-shadow:0 12px 36px rgba(0,0,0,0.5);backdrop-filter:blur(12px);transition:all 0.3s ease;transform:translateY(100px);opacity:0;max-width:380px;';
-        document.body.appendChild(toast);
-      }
-      toast.innerHTML = `<strong style="display:block;color:#38BDF8;font-size:13px;margin-bottom:4px;">${title}</strong><span style="font-size:12px;color:#94A3B8;">${msg}</span>`;
-      toast.style.transform = 'translateY(0)';
-      toast.style.opacity = '1';
-      setTimeout(() => {
-        toast.style.transform = 'translateY(100px)';
-        toast.style.opacity = '0';
-      }, 4000);
-    }
-
-    async function setVipActiveSite(siteId) {
-      try {
-        let handle = 'abdulaziz';
-        if (!isVipUser()) {
-          if (siteId && siteId.includes('-') && !siteId.startsWith('web-')) {
-            handle = siteId.split('-')[0].toLowerCase().trim();
-          }
-          if (!handle) handle = getCurrentUsername();
-        }
-
-        const history = getGeneratedHistory();
-        const item = history.find(h => h.siteId === siteId) || {};
-        const chosenUniverse = item.universeKey || selectedUniverseKey || 'threeui-landscape';
-
-        const res = await fetch('/api/vip/set-active-site', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            siteId,
-            handle,
-            universeKey: chosenUniverse,
-            developerName: item.developerName || 'Abdul Aziz Nooruddin',
-            developerRole: item.developerRole || 'AI Systems Specialist',
-            githubUsername: item.githubUsername || 'Abdul-Aziz-Nooruddin',
-            email: 'abdulaziznoor9876@gmail.com'
-          })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          // If cloud container restarted and ephemeral snapshot is missing, seamlessly re-activate & build it
-          if (res.status === 404 && item.universeKey) {
-            showStudioToast('Re-synthesizing Snapshot', `Cloud container restarted — generating fresh live build for ${item.universeKey}...`);
-            reactivateHistoryItem(item.universeKey, item.githubUsername || '');
-            return;
-          }
-          throw new Error(data.error || 'Failed to switch live site.');
-        }
-
-        localStorage.setItem('myfolio_active_vip_site', siteId);
-        const liveDomain = data.subdomain || `abdulaziz.myfolio.tech`;
-        showStudioToast('Live Portfolio Updated', `https://${liveDomain} is now serving this version!`);
-        renderGeneratedHistoryUI(siteId);
-      } catch (err) {
-        showStudioToast('Activation Notice', err.message);
-      }
-    }
-
-    async function deletePortfolioPermanently(siteId) {
-      if (!siteId) return;
-      if (!confirm(`Are you sure you want to permanently delete portfolio "${siteId}"?\n\nThis will purge all generated assets, code, and live routes permanently.`)) {
-        return;
-      }
-
-      try {
-        const res = await fetch(`/api/sites/${encodeURIComponent(siteId)}`, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include'
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to delete portfolio.');
-
-        // 1. Remove from local history
-        const history = getGeneratedHistory().filter(h => h.siteId !== siteId);
-        saveGeneratedHistory(history);
-
-        // 2. If this was the active VIP site, clear or switch to next
-        const activeVip = localStorage.getItem('myfolio_active_vip_site');
-        if (activeVip === siteId) {
-          localStorage.removeItem('myfolio_active_vip_site');
-          if (history.length > 0 && isVipUser()) {
-            localStorage.setItem('myfolio_active_vip_site', history[0].siteId);
-          }
-        }
-
-        showStudioToast('Portfolio Purged', `Portfolio "${siteId}" has been permanently deleted.`);
-        renderGeneratedHistoryUI();
-      } catch (err) {
-        alert('Could not delete portfolio: ' + err.message);
-      }
-    }
-
-    async function deleteAllPortfoliosPermanently() {
-      const history = getGeneratedHistory();
-      if (!history || history.length === 0) return;
-      if (!confirm(`Are you sure you want to permanently delete and terminate ALL ${history.length} portfolio(s)?\n\nThis will purge all hosted sites, files, and links permanently.`)) {
-        return;
-      }
-      for (const item of history) {
-        try {
-          await fetch(`/api/sites/${encodeURIComponent(item.siteId)}`, {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include'
-          });
-        } catch (e) {}
-      }
-      saveGeneratedHistory([]);
-      localStorage.removeItem('myfolio_active_vip_site');
-      showStudioToast('All Portfolios Purged', 'All generated portfolio versions have been permanently deleted.');
-      renderGeneratedHistoryUI();
-    }
-
-    function renderGeneratedHistoryUI(activeSiteId = null) {
-      const history = getGeneratedHistory();
-      const container = document.getElementById('generatedProjectsList');
-      const header = document.getElementById('generatedSectionHeader');
-      const countBadge = document.getElementById('generatedCountBadge');
-
-      if (!container) return;
-
-      if (!history || history.length === 0) {
-        if (header) header.style.display = 'none';
-        container.innerHTML = '';
-        return;
-      }
-
-      if (header) header.style.display = 'flex';
-      if (countBadge) countBadge.textContent = `${history.length} Site${history.length > 1 ? 's' : ''} Ready`;
-
-      const now = Date.now();
-      const isVip = isVipUser();
-      const savedActiveVipSiteId = localStorage.getItem('myfolio_active_vip_site');
-      const effectiveActiveVipSiteId = activeSiteId || savedActiveVipSiteId || (history[0] ? history[0].siteId : null);
-
-      container.innerHTML = history.map((item, idx) => {
-        const uni = UNIVERSE_META[item.universeKey] || {
-          name: item.universeKey || '3D WebGL Universe',
-          icon: '✨',
-          thumb: '/assets/3d/cosmic_astronaut_3d.jpg'
-        };
-        const timeAgo = formatTimeAgo(item.timestamp || now);
-        const ghUserArg = item.githubUsername || '';
-        const isExpired = isVip ? false : ((now - (item.timestamp || 0)) >= TWENTY_FOUR_HOURS_MS);
-
-        let itemHandle = isVip ? 'abdulaziz' : (item.handle || '');
-        if (!itemHandle && item.siteId && item.siteId.includes('-')) {
-          itemHandle = item.siteId.split('-')[0].toLowerCase().trim();
-        }
-        if (!itemHandle) {
-          itemHandle = getCurrentUsername();
-        }
-        const itemSubdomain = isVip ? 'abdulaziz.myfolio.tech' : (item.subdomain || `${itemHandle}.myfolio.tech`);
-
-        // Determine if this item is the currently active live portfolio
-        const isVipActive = isVip && (item.siteId === effectiveActiveVipSiteId || (!savedActiveVipSiteId && idx === 0));
-        const isActive = isVip ? isVipActive : (activeSiteId ? item.siteId === activeSiteId : idx === 0);
-
-        let displayedUrl = '';
-        let openUrl = '';
-        let liveBadgeHtml = '';
-        let primaryActionBtnHtml = '';
-        let secondaryActionBtnHtml = '';
-        let urlLabel = 'LIVE URL:';
-        const directVersionUrl = `${window.location.origin}/p/${item.siteId}`;
-
-        if (isVip) {
-          if (isVipActive) {
-            displayedUrl = `https://${itemSubdomain}`;
-            openUrl = `https://${itemSubdomain}`;
-
-            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4);">👑 VIP ACTIVE (${itemSubdomain.toUpperCase()})</span>`;
-
-            primaryActionBtnHtml = `<a href="${openUrl}" target="_blank" class="btn-launch-live" style="background: linear-gradient(135deg, #059669 0%, #10B981 100%);">
-                🚀 Open Live Domain ↗
-              </a>
-              <a href="${directVersionUrl}" target="_blank" class="btn-universe-switch" style="border-color: rgba(16, 185, 129, 0.4); color: #34D399;" title="View exact version preview">
-                👁️ Direct Build ↗
-              </a>`;
-
-            secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
-                ↻ Switch / Regenerate
-              </button>`;
-          } else {
-            // Older generation / snapshot version
-            displayedUrl = directVersionUrl;
-            openUrl = directVersionUrl;
-            urlLabel = 'VERSION SNAPSHOT:';
-
-            liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(148, 163, 184, 0.15); color: #94A3B8; border: 1px solid rgba(148, 163, 184, 0.3);">📁 Version Snapshot</span>`;
-
-            primaryActionBtnHtml = `<a href="${openUrl}" target="_blank" class="btn-launch-live" style="background: rgba(51, 65, 85, 0.9); border: 1px solid rgba(148, 163, 184, 0.3);">
-                👁️ View Snapshot ↗
-              </a>`;
-
-            secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="setVipActiveSite('${item.siteId}')" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%); border: 1px solid rgba(56, 189, 248, 0.4); color: #38BDF8;">
-                ⚡ Set as Live (${itemSubdomain})
-              </button>`;
-          }
-        } else {
-          // Standard / Free User (e.g. generalknowledge987o@gmail.com)
-          displayedUrl = directVersionUrl;
-          openUrl = directVersionUrl;
-          liveBadgeHtml = isExpired
-            ? `<span class="status-live-dot" style="background: rgba(245, 158, 11, 0.15); color: #F59E0B; border: 1px solid rgba(245, 158, 11, 0.35);">⏳ 24h Preview Expired</span>`
-            : `<span class="status-live-dot">🟢 Live WebGL (24h Preview)</span>`;
-
-          primaryActionBtnHtml = isExpired
-            ? `<button type="button" class="btn-launch-live" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')" style="background: linear-gradient(135deg, #0284C7 0%, #2563EB 100%);">
-                ⚡ Re-activate &amp; Open Live ↗
-              </button>`
-            : `<a href="${openUrl}" target="_blank" class="btn-launch-live">
-                🚀 Open Live Portfolio ↗
-              </a>`;
-
-          secondaryActionBtnHtml = `<button class="btn-universe-switch" onclick="regenerateWithUniverse('${item.universeKey}')">
-              ↻ Switch / Regenerate
-            </button>`;
-        }
-
-        const thumbOverlayAction = isExpired
-          ? `<span class="overlay-btn-preview" onclick="reactivateHistoryItem('${item.universeKey}', '${ghUserArg}')">⚡ Re-activate ↗</span>`
-          : `<span class="overlay-btn-preview" onclick="window.open('${openUrl}', '_blank')">Live Preview ↗</span>`;
-
-        return `
-          <div class="generated-portfolio-card ${isActive ? 'active-pulse' : ''}" id="gen-card-${item.siteId}">
-            <div class="card-top-banner">
-              <div class="universe-pill">
-                <span class="uni-icon">${uni.icon}</span>
-                <span class="uni-name">${uni.name}</span>
-              </div>
-              <div style="display: flex; align-items: center; gap: 10px;">
-                ${liveBadgeHtml}
-                <span class="timestamp-pill">${timeAgo}</span>
-              </div>
-            </div>
-
-            <div class="card-main-grid">
-              <div class="card-thumb-container">
-                <img src="${uni.thumb}" alt="${uni.name}" class="card-universe-img" />
-                <div class="thumb-glass-overlay">
-                  ${thumbOverlayAction}
-                </div>
-              </div>
-
-              <div class="card-details-container">
-                <h3 class="card-developer-name">${item.developerName || 'Developer Portfolio'}</h3>
-                <p class="card-developer-role">${item.developerRole || 'Software Engineer & Systems Architect'}</p>
-
-                <div class="card-metrics-row">
-                  <span class="metric-tag">📦 ${item.projectsCount || 3} Projects Synthesized</span>
-                  <span class="metric-tag">🎨 3D WebGL Visuals</span>
-                  <span class="metric-tag">⚡ Ultra-Fast Load</span>
-                </div>
-
-                <div class="card-url-box">
-                  <span class="url-label">${urlLabel}</span>
-                  <span class="url-text">${displayedUrl}</span>
-                  <button class="btn-copy-mini" onclick="copyPortfolioUrl('${displayedUrl}', this)" title="Copy Link">📋 Copy</button>
-                </div>
-
-                <div class="card-actions-bar">
-                  ${primaryActionBtnHtml}
-                  ${secondaryActionBtnHtml}
-                  <button type="button" class="btn-card-delete" onclick="deletePortfolioPermanently('${item.siteId}')" title="Permanently Terminate &amp; Delete Portfolio">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    <span>Terminate &amp; Delete</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      if (typeof lucide !== 'undefined') lucide.createIcons();
-    }
-
+    // Connect to backend generate route
     async function handleStudioGenerate(e) {
       e.preventDefault();
-
-      // Check allowance before proceeding (100% bypass for VIP Founder)
-      if (!isVipUser()) {
-        const allowanceState = getAllowanceState();
-        const remainingAllowance = Math.max(0, allowanceState.totalLimit - allowanceState.used);
-        if (remainingAllowance <= 0) {
-          alert(`You have reached your weekly limit of ${allowanceState.totalLimit} portfolio generations.\n\nYour allowance will reset ${formatCountdown(allowanceState.resetTimestamp)}.`);
-          return;
-        }
-      }
-
       const btn = document.getElementById('btnSubmitGenerate');
-      btn.dataset.busy = 'true';
       btn.disabled = true;
-      btn.innerHTML = `<span>⏳ Synthesizing 3D WebGL Portfolio...</span>`;
+      btn.innerHTML = `<span>Synthesizing...</span>`;
 
       try {
         const ghUser = document.getElementById('ghUsername').value.trim();
-        const rawText = document.getElementById('resumeRawText')?.value?.trim();
-        
-        // Guided Manual Profile Questions Extraction
-        const fullName = document.getElementById('manualFullName')?.value?.trim();
-        const manualRole = document.getElementById('manualRole')?.value?.trim();
-        const manualTagline = document.getElementById('manualTagline')?.value?.trim();
-        const manualBio = document.getElementById('manualBio')?.value?.trim();
-        const manualEmail = document.getElementById('manualEmail')?.value?.trim();
-        const manualLocation = document.getElementById('manualLocation')?.value?.trim();
-        const manualGithub = document.getElementById('manualGithub')?.value?.trim();
-        const manualLinkedin = document.getElementById('manualLinkedin')?.value?.trim();
+        const fullName = document.getElementById('manualFullName').value.trim();
+        const manualRole = document.getElementById('manualRole').value.trim();
+        const manualBio = document.getElementById('manualBio').value.trim();
 
-        const manualSkills = document.getElementById('manualSkills')?.value?.trim();
-        const manualLanguages = document.getElementById('manualLanguages')?.value?.trim();
-
-        // Projects
-        const projects = [];
-        const p1Name = document.getElementById('proj1Name')?.value?.trim();
-        if (p1Name) {
-          projects.push({
-            name: p1Name,
-            title: p1Name,
-            description: document.getElementById('proj1Desc')?.value?.trim() || '',
-            tech: document.getElementById('proj1Tech')?.value?.trim() || '',
-            technologies: (document.getElementById('proj1Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
-            github: document.getElementById('proj1Github')?.value?.trim() || '',
-            live: document.getElementById('proj1Live')?.value?.trim() || ''
-          });
-        }
-
-        const p2Name = document.getElementById('proj2Name')?.value?.trim();
-        if (p2Name) {
-          projects.push({
-            name: p2Name,
-            title: p2Name,
-            description: document.getElementById('proj2Desc')?.value?.trim() || '',
-            tech: document.getElementById('proj2Tech')?.value?.trim() || '',
-            technologies: (document.getElementById('proj2Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
-            github: document.getElementById('proj2Github')?.value?.trim() || '',
-            live: document.getElementById('proj2Live')?.value?.trim() || ''
-          });
-        }
-
-        const p3Name = document.getElementById('proj3Name')?.value?.trim();
-        if (p3Name) {
-          projects.push({
-            name: p3Name,
-            title: p3Name,
-            description: document.getElementById('proj3Desc')?.value?.trim() || '',
-            tech: document.getElementById('proj3Tech')?.value?.trim() || '',
-            technologies: (document.getElementById('proj3Tech')?.value || '').split(',').map(s => s.trim()).filter(Boolean),
-            github: document.getElementById('proj3Github')?.value?.trim() || '',
-            live: document.getElementById('proj3Live')?.value?.trim() || ''
-          });
-        }
-
-        const manualExperience = document.getElementById('manualExperience')?.value?.trim();
-        const manualEducation = document.getElementById('manualEducation')?.value?.trim();
-        const manualCertifications = document.getElementById('manualCertifications')?.value?.trim();
-
-        const candidateResolvedName = fullName || ghUser || (projects[0]?.name ? `${projects[0].name} Creator` : 'Developer');
-        const candidateResolvedRole = manualRole || (ghUser ? 'Full-Stack & Systems Developer' : 'Software Engineer');
-
-        const isVip = isVipUser();
-        let currentLoggedInEmail = '';
-        try {
-          const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
-          currentLoggedInEmail = (u.email || u.normalized_email || '').toLowerCase().trim();
-        } catch (e) {}
-
-        const userAccountEmail = currentLoggedInEmail || (isVip ? 'abdulaziznoor9876@gmail.com' : undefined);
-        const contactEmail = manualEmail || userAccountEmail;
-
-        const currentHandle = getCurrentUsername();
         const payload = {
-          username: currentHandle,
-          customUrlIdentifier: currentHandle,
-          email: contactEmail,
-          userEmail: userAccountEmail,
-          isVip: isVip,
-          isVipFounder: isVip,
-          githubData: ghUser ? { username: ghUser } : (manualGithub ? { username: manualGithub } : {}),
+          username: 'abdulaziz',
+          customUrlIdentifier: 'abdulaziz',
+          email: 'abdulaziznoor9876@gmail.com',
+          userEmail: 'abdulaziznoor9876@gmail.com',
+          isVip: true,
+          isVipFounder: true,
+          githubData: ghUser ? { username: ghUser } : {},
           resumeData: {
             rawBase64: uploadedResumeBase64 || undefined,
             mimeType: uploadedResumeMime || undefined,
-            extractedTextSnippet: rawText || undefined,
-            fullName: fullName || undefined,
-            title: manualRole || undefined,
-            tagline: manualTagline || undefined,
-            bio: manualBio || undefined,
-            email: contactEmail,
-            location: manualLocation || undefined,
-            skills: manualSkills ? manualSkills.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-            languages: manualLanguages ? manualLanguages.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-            projects: projects.length > 0 ? projects : undefined,
-            experience: manualExperience ? [{ role: manualRole || 'Engineer', description: manualExperience }] : undefined,
-            education: manualEducation ? [{ degree: manualEducation }] : undefined,
-            certifications: manualCertifications ? manualCertifications.split(',').map(s => s.trim()).filter(Boolean) : undefined,
-            social_links: {
-              github: manualGithub || undefined,
-              linkedin: manualLinkedin || undefined
-            }
+            fullName,
+            title: manualRole,
+            bio: manualBio,
+            projects: [
+              {
+                name: document.getElementById('proj1Name').value,
+                title: document.getElementById('proj1Name').value,
+                description: document.getElementById('proj1Desc').value,
+                tech: document.getElementById('proj1Tech').value,
+                github: document.getElementById('proj1Github').value,
+                live: document.getElementById('proj1Live').value
+              }
+            ]
           },
-          certificates: uploadedCertificates.length > 0 ? uploadedCertificates : undefined,
-          photoData: uploadedPhotoData || undefined,
-          preferences: {
-            theme: selectedUniverseKey
-          }
+          preferences: { theme: selectedUniverseKey }
         };
 
         const res = await fetch('/api/generate/unified', {
@@ -3203,268 +865,36 @@
           body: JSON.stringify(payload)
         });
 
-        const rawResponseText = await res.text();
-        let data;
-        try {
-          data = JSON.parse(rawResponseText);
-        } catch (jsonErr) {
-          console.error('[Studio] Server returned non-JSON response:', rawResponseText.slice(0, 300));
-          if (res.status === 413) {
-            throw new Error('Upload payload is too large. Please use smaller files.');
-          } else if (res.status === 504 || res.status === 524) {
-            throw new Error('Synthesis timed out on cloud gateway. Please try again with fewer or smaller files.');
-          } else if (res.status === 502 || res.status === 503) {
-            throw new Error('Service is temporarily busy or restarting. Please try again in a few moments.');
-          } else {
-            throw new Error(`Server returned unexpected response (${res.status}). Please try again shortly.`);
-          }
-        }
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to generate');
 
-        if (!res.ok) throw new Error(data?.error || `Failed to synthesize portfolio (${res.status}).`);
+        const liveSubdomain = 'https://abdulaziz.myfolio.tech';
+        document.getElementById('generatedUrlText').textContent = liveSubdomain;
+        document.getElementById('btnOpenGeneratedLive').href = liveSubdomain;
 
-        // VIP result ONLY if client is verified VIP user OR backend confirmed isVip
-        const isVipResult = isVip || Boolean(data?.isVip);
-        if (isVipResult && data?.siteId) {
-          localStorage.setItem('myfolio_active_vip_site', data.siteId);
-          setVipActiveSite(data.siteId).catch(e => console.warn('[Auto-activate VIP error]', e));
-        }
+        // Point live canvas directly to the generated build or subdomain
+        const iframe = document.getElementById('studioLiveIframe');
+        iframe.src = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? `${window.location.origin}/abdulaziz`
+          : liveSubdomain;
 
-        const genHandle = isVipResult ? 'abdulaziz' : (data.handle || currentHandle);
-        const genSubdomain = isVipResult ? 'abdulaziz.myfolio.tech' : (data.subdomain || `${genHandle}.myfolio.tech`);
-
-        let previewUrl = isVipResult
-          ? `https://${genSubdomain}`
-          : (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : (data.siteUrl || `${window.location.origin}/p/${data.siteId || 'preview'}`));
-        
-        if (ghUser) {
-          try {
-            const userKey = currentLoggedInEmail ? `myfolio_gh_user_${currentLoggedInEmail.replace(/[^a-z0-9]/g, '_')}` : 'myfolio_saved_gh_username';
-            localStorage.setItem(userKey, ghUser);
-          } catch(e) {}
-        }
-
-        // 1. Decrement Weekly Allowance & trigger 7-day countdown cycle (VIP does not decrement)
-        consumeWeeklyAllowance();
-
-        // 2. Add Newly Generated Project Card below Generate Button
-        addGeneratedPortfolioToHistory({
-          siteId: data.siteId || `${genHandle}-${Date.now()}`,
-          handle: genHandle,
-          subdomain: isVipResult ? genSubdomain : null,
-          previewUrl: previewUrl,
-          universeKey: selectedUniverseKey,
-          githubUsername: ghUser || manualGithub || undefined,
-          developerName: data.profileData?.name || candidateResolvedName,
-          developerRole: data.profileData?.role || candidateResolvedRole,
-          projectsCount: (data.profileData?.projects?.length) || projects.length || 6,
-          timestamp: Date.now()
-        });
-
-        // 3. Update legacy preview card (if visible)
-        const displayLiveUrl = isVipResult ? `https://${genSubdomain}` : previewUrl;
-        document.getElementById('generatedUrlText').textContent = displayLiveUrl;
-        document.getElementById('btnOpenGeneratedLive').href = displayLiveUrl;
-
-        if (typeof confetti === 'function') {
-          confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-        }
-
-        // Scroll to the newly added card directly below the generate button
-        const newCard = document.getElementById(`gen-card-${data.siteId}`);
-        if (newCard) {
-          newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        } else {
-          document.getElementById('generatedPortfoliosSection').scrollIntoView({ behavior: 'smooth' });
-        }
+        if (typeof confetti === 'function') confetti({ particleCount: 100, spread: 70 });
+        alert('🎉 Portfolio Synthesized! Subdomain is live at https://abdulaziz.myfolio.tech');
       } catch (err) {
-        showStudioToast('Generation Notice', err.message);
+        alert('Generation note: ' + err.message);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<i data-lucide="sparkles" style="width:22px;height:22px;"></i><span>⚡ Generate 3D Portfolio (Instant AI Synthesis)</span>`;
-        if (typeof lucide !== 'undefined') lucide.createIcons();
-        delete btn.dataset.busy;
-        updateAllowanceUI();
+        btn.innerHTML = `<span>Publish / Set Live &rarr;</span>`;
       }
-    }
-
-    function copyGeneratedUrl() {
-      const isVip = isVipUser();
-      const url = isVip ? 'https://abdulaziz.myfolio.tech' : document.getElementById('generatedUrlText').textContent;
-      navigator.clipboard.writeText(url);
-      showStudioToast('URL Copied', 'Copied live subdomain: ' + url);
-    }
-
-    window.switchIngestTab = switchIngestTab;
-    window.selectStudioUniverse = selectStudioUniverse;
-    window.handleResumeFileSelected = handleResumeFileSelected;
-    window.handleCertFilesSelected = handleCertFilesSelected;
-    window.removeCertificate = removeCertificate;
-    window.handlePhotoFileSelected = handlePhotoFileSelected;
-    window.removeUploadedPhoto = removeUploadedPhoto;
-    window.handleStudioGenerate = handleStudioGenerate;
-    window.copyGeneratedUrl = copyGeneratedUrl;
-    window.copyPortfolioUrl = copyPortfolioUrl;
-    window.regenerateWithUniverse = regenerateWithUniverse;
-    window.setVipActiveSite = setVipActiveSite;
-    window.deletePortfolioPermanently = deletePortfolioPermanently;
-    window.deleteAllPortfoliosPermanently = deleteAllPortfoliosPermanently;
-    window.showStudioToast = showStudioToast;
-
-    // Three.js 3D Fluid Silk Flow Engine
-    let scene, camera, renderer, silkMesh, silkGeometry, particles;
-    let mouseX = 0, mouseY = 0;
-    let targetMouseX = 0, targetMouseY = 0;
-
-    function initThree() {
-      const canvas = document.getElementById('webgl-canvas');
-      if (!canvas || typeof THREE === 'undefined') return;
-
-      scene = new THREE.Scene();
-      camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 1, 1200);
-      camera.position.z = 480;
-
-      renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-      // 1. Ambient & Directional Lighting for Fluid Silk Highlights
-      const ambLight = new THREE.AmbientLight(0xffffff, 0.9);
-      scene.add(ambLight);
-      const dirLight = new THREE.DirectionalLight(0x38bdf8, 1.4);
-      dirLight.position.set(150, 250, 350);
-      scene.add(dirLight);
-
-      // 2. 3D Rotating & Undulating Parametric Fluid Silk Mesh
-      silkGeometry = new THREE.PlaneGeometry(1000, 750, 36, 28);
-      const silkMaterial = new THREE.MeshPhongMaterial({
-        color: 0x38bdf8,
-        emissive: 0x0284c7,
-        specular: 0xffffff,
-        shininess: 90,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.35,
-        side: THREE.DoubleSide
-      });
-
-      silkMesh = new THREE.Mesh(silkGeometry, silkMaterial);
-      silkMesh.position.set(0, 20, -100);
-      silkMesh.rotation.x = -Math.PI / 3.5;
-      scene.add(silkMesh);
-
-      // 3. Subtle Luminous Caustic Floating Particles
-      const particleCount = 180;
-      const partGeom = new THREE.BufferGeometry();
-      const positions = new Float32Array(particleCount * 3);
-
-      for (let i = 0; i < particleCount * 3; i += 3) {
-        positions[i] = (Math.random() - 0.5) * 1100;
-        positions[i + 1] = (Math.random() - 0.5) * 850;
-        positions[i + 2] = (Math.random() - 0.5) * 600;
-      }
-
-      partGeom.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      const partMat = new THREE.PointsMaterial({ color: 0x0284c7, size: 3.2, transparent: true, opacity: 0.65 });
-      particles = new THREE.Points(partGeom, partMat);
-      scene.add(particles);
-
-      window.addEventListener('mousemove', (e) => {
-        targetMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-        targetMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-      });
-
-      window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-
-      const posAttr = silkGeometry.attributes.position;
-      const count = posAttr.count;
-      const clock = new THREE.Clock();
-
-      function anim() {
-        requestAnimationFrame(anim);
-        const t = clock.getElapsedTime() * 2.5;
-
-        // Smooth mouse look-at tracking
-        mouseX += (targetMouseX - mouseX) * 0.08;
-        mouseY += (targetMouseY - mouseY) * 0.08;
-
-        // 🌊 Undulate 3D Fluid Silk Surface Waves (High Speed & Amplitude)
-        for (let i = 0; i < count; i++) {
-          const u = posAttr.getX(i);
-          const v = posAttr.getY(i);
-          const z = Math.sin(u * 0.009 + t) * Math.cos(v * 0.009 + t * 0.85) * 48 +
-                    Math.sin((u + v) * 0.006 + t * 0.7) * 22;
-          posAttr.setZ(i, z);
-        }
-        posAttr.needsUpdate = true;
-
-        // 🌊 Active 3D Spatial Rotation & Fluid Tilt
-        silkMesh.rotation.z = Math.sin(t * 0.45) * 0.25 + mouseX * 0.25;
-        silkMesh.rotation.y += 0.0035;
-        silkMesh.rotation.x = -Math.PI / 3.5 + Math.sin(t * 0.5) * 0.12 - mouseY * 0.22;
-        silkMesh.position.y = 20 + Math.sin(t * 0.6) * 20;
-
-        if (particles) {
-          particles.rotation.y += 0.002;
-          particles.rotation.x += 0.001;
-        }
-
-        renderer.render(scene, camera);
-      }
-      anim();
-    }
-
-    // 🌊 3D Live Tilt Motion for Cards on Mouse Move (Desktop Only)
-    if (window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-      document.addEventListener('mousemove', (e) => {
-        const cards = document.querySelectorAll('.universe-choice-card, .studio-header-card, .ingest-panel-box');
-        const centerX = window.innerWidth / 2;
-        const centerY = window.innerHeight / 2;
-        const tiltX = (e.clientY - centerY) / 45;
-        const tiltY = (centerX - e.clientX) / 45;
-
-        cards.forEach(card => {
-          if (!card.matches(':hover')) {
-            card.style.transform = `perspective(1000px) rotateX(${tiltX * 0.15}deg) rotateY(${tiltY * 0.15}deg)`;
-          }
-        });
-      });
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      if (typeof initUniversalSidebar === 'function') {
-        initUniversalSidebar('studio');
-      }
-      setupStudioDropZone();
-      initThree();
-      updateAllowanceUI();
-      checkUserVipStatus();
-      renderGeneratedHistoryUI();
-
-      // Automatically select template/universe if passed via URL parameter (?template=... or ?universe=...)
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        const reqTemplate = urlParams.get('template') || urlParams.get('universe');
-        if (reqTemplate) {
-          selectStudioUniverse(reqTemplate);
-        }
-      } catch (e) {}
-
-      let userGhKey = null;
-      try {
-        const u = JSON.parse(localStorage.getItem('myfolio_user') || '{}');
-        const em = (u.email || u.normalized_email || '').toLowerCase().trim();
-        if (em) {
-          userGhKey = `myfolio_gh_user_${em.replace(/[^a-z0-9]/g, '_')}`;
-        }
-      } catch (e) {}
-      const savedGh = userGhKey ? localStorage.getItem(userGhKey) : null;
-      if (savedGh) {
-        const ghInput = document.getElementById('ghUsername');
-        if (ghInput && !ghInput.value) ghInput.value = savedGh;
+      // Connect iframe to live subdomain or preview on load
+      const iframe = document.getElementById('studioLiveIframe');
+      if (iframe) {
+        iframe.src = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? `${window.location.origin}/abdulaziz`
+          : 'https://abdulaziz.myfolio.tech';
       }
     });
   </script>
