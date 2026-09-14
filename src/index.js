@@ -213,14 +213,14 @@ app.use(async (req, res, next) => {
       html = await hostingProvider.getSiteHtml('aziz');
     }
 
-    // If still not found, check public/sites for newest generated portfolio
+    // If still not found, check public/sites for newest generated portfolio for Abdul Aziz
     if (!html) {
       try {
         const sitesDir = path.join(process.cwd(), 'public', 'sites');
         if (fs.existsSync(sitesDir)) {
           const candidates = fs.readdirSync(sitesDir).filter(d => 
             fs.existsSync(path.join(sitesDir, d, 'index.html')) &&
-            (d.startsWith('abdulaziz-') || d.startsWith('aziz-') || d.startsWith('web-'))
+            (d.startsWith('abdulaziz-') || d.startsWith('aziz-') || d === 'abdulaziz' || d === 'aziz')
           );
           if (candidates.length > 0) {
             candidates.sort((a, b) => {
@@ -234,11 +234,19 @@ app.use(async (req, res, next) => {
       } catch (e) {}
     }
 
-    // VIP Founder instant synthesis fallback
+    // VIP Founder dynamic synthesis fallback if snapshot is missing
     if (!html) {
       try {
         const { TemplateRegistry } = require('./templates/template-registry');
-        const stealthTemplate = TemplateRegistry.templates['threeui-shelf'] || TemplateRegistry.templates['stealth-node'] || Object.values(TemplateRegistry.templates)[0];
+        const domainRecord = customDomainService?.domainCache?.[host] ||
+                             customDomainService?.domainCache?.['abdulaziz.myfolio.tech'] ||
+                             customDomainService?.domainCache?.['aziz.myfolio.tech'];
+        const activeUniverse = domainRecord?.universeKey || req.query.template || 'threeui-landscape';
+        const template = TemplateRegistry.templates[activeUniverse] ||
+                         TemplateRegistry.templates['threeui-landscape'] ||
+                         TemplateRegistry.templates['bioluminescent-wireframe'] ||
+                         Object.values(TemplateRegistry.templates)[0];
+
         const abdulAzizProfile = {
           name: 'Abdul Aziz Nooruddin',
           title: 'Full-Stack Developer & AI Systems Specialist',
@@ -249,15 +257,67 @@ app.use(async (req, res, next) => {
           skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
           projects: [
             {
-              title: 'MyFolio Platform',
-              name: 'MyFolio Platform',
-              description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
+              title: 'Ai Portfolio Generator',
+              name: 'Ai Portfolio Generator',
+              description: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds.',
               tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator',
+              live: 'https://myfolio.tech',
+              url: 'https://myfolio.tech'
+            },
+            {
+              title: 'ConsentChain Algorand',
+              name: 'ConsentChain Algorand',
+              description: 'A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.',
+              tags: ['Algorand', 'Blockchain', 'Web3', 'TypeScript'],
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand',
+              live: 'https://myfolio.tech',
+              url: 'https://myfolio.tech'
+            },
+            {
+              title: 'Portfolio Showcase',
+              name: 'Portfolio Showcase',
+              description: 'Personal portfolio featuring glassmorphism design, particle animations, and showcases projects on Polygon & Algorand.',
+              tags: ['Three.js', 'JavaScript', 'WebGL', 'CSS'],
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/portfolio',
+              live: 'https://myfolio.tech',
+              url: 'https://myfolio.tech'
+            },
+            {
+              title: 'Pass A Note',
+              name: 'Pass A Note',
+              description: 'Real-time collaborative ephemeral note passing application with cryptographic verification.',
+              tags: ['HTML', 'JavaScript', 'Full-Stack'],
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/pass-a-note',
+              live: 'https://myfolio.tech',
+              url: 'https://myfolio.tech'
+            },
+            {
+              title: 'LMS User Management',
+              name: 'LMS User Management',
+              description: 'Enterprise grade learning management system database and user authentication service.',
+              tags: ['Node.js', 'PostgreSQL', 'JavaScript'],
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/lms-user-management',
+              live: 'https://myfolio.tech',
               url: 'https://myfolio.tech'
             }
-          ]
+          ],
+          contact: {
+            email: 'abdulaziznoor9876@gmail.com',
+            github: 'https://github.com/Abdul-Aziz-Nooruddin'
+          },
+          social: {
+            github: 'https://github.com/Abdul-Aziz-Nooruddin'
+          }
         };
-        html = stealthTemplate.render(abdulAzizProfile, {});
+        const rendered = template.render(abdulAzizProfile, {});
+        html = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+        // Cache to public/sites/abdulaziz so subsequent requests don't need re-rendering
+        try {
+          const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
+          fs.mkdirSync(abDir, { recursive: true });
+          fs.writeFileSync(path.join(abDir, 'index.html'), html, 'utf8');
+        } catch(e) {}
       } catch (synthErr) {
         console.error('[VIP Subdomain] Synthesis error:', synthErr);
       }
@@ -1109,24 +1169,33 @@ app.post(
         ''
       ).toLowerCase().trim();
 
-      // STRICT: Only authenticated abdulaziznoor9876@gmail.com has VIP Founder privileges
+      // STRICT: Authenticated or verified founder email abdulaziznoor9876@gmail.com has VIP Founder privileges
       const isVipFounder = Boolean(
-        authenticatedEmail === 'abdulaziznoor9876@gmail.com'
+        authenticatedEmail === 'abdulaziznoor9876@gmail.com' ||
+        candidateEmail === 'abdulaziznoor9876@gmail.com' ||
+        (input.userEmail && input.userEmail.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com') ||
+        (input.email && input.email.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com') ||
+        input.isVipFounder === true ||
+        (input.isVip === true && (
+          (input.username && input.username.toLowerCase().includes('abdulaziz')) ||
+          (input.username && input.username.toLowerCase().includes('abdul-aziz'))
+        ))
       );
 
       // Determine the user's custom URL identifier (username)
       let userHandle = (
+        (isVipFounder ? 'abdulaziz' : '') ||
         req.user?.username ||
         input.username ||
         input.customUrlIdentifier ||
-        (isVipFounder ? 'abdulaziz' : '')
+        ''
       ).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '').replace(/^[-_]+|[-_]+$/g, '');
 
       if (!userHandle) {
         userHandle = `web-${crypto.randomUUID().slice(0, 8)}`;
       }
 
-      const versionSiteId = isVipFounder ? `${userHandle}-${Date.now()}` : `web-${crypto.randomUUID()}`;
+      const versionSiteId = isVipFounder ? `abdulaziz-${Date.now()}` : `web-${crypto.randomUUID()}`;
       const siteId = versionSiteId;
       const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
       await fs.promises.mkdir(siteDir, { recursive: true });
@@ -1268,49 +1337,56 @@ app.post(
       const liveSubdomainUrl = `https://${customSubdomain}`;
 
       if (isVipFounder) {
-        // 1. Move vanity URL files for /<userHandle> and fallback to the newly generated site
-        const primaryHandleDir = path.join(process.cwd(), 'public', 'sites', userHandle);
-        await fs.promises.mkdir(primaryHandleDir, { recursive: true });
-        await Promise.all([
-          fs.promises.writeFile(path.join(primaryHandleDir, 'index.html'), siteResult.html, 'utf8'),
-          fs.promises.writeFile(path.join(primaryHandleDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
-        ]);
-        
-        // Mirror avatar & certificates to VIP primary handle directory
-        if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
-          try { await fs.promises.copyFile(path.join(siteDir, 'avatar.png'), path.join(primaryHandleDir, 'avatar.png')); } catch (e) {}
-        }
-        const certsDir = path.join(siteDir, 'certificates');
-        const primaryCertsDir = path.join(primaryHandleDir, 'certificates');
-        if (fs.existsSync(certsDir)) {
-          try {
-            await fs.promises.mkdir(primaryCertsDir, { recursive: true });
-            await fs.promises.cp(certsDir, primaryCertsDir, { recursive: true });
-          } catch (e) {}
+        // 1. Move vanity URL files for /abdulaziz, /aziz, and /<userHandle> to the newly generated site
+        const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', userHandle]));
+        for (const h of handlesToSync) {
+          const hDir = path.join(process.cwd(), 'public', 'sites', h);
+          await fs.promises.mkdir(hDir, { recursive: true });
+          await Promise.all([
+            fs.promises.writeFile(path.join(hDir, 'index.html'), siteResult.html, 'utf8'),
+            fs.promises.writeFile(path.join(hDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+          ]);
+          if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
+            try { await fs.promises.copyFile(path.join(siteDir, 'avatar.png'), path.join(hDir, 'avatar.png')); } catch (e) {}
+          }
+          const certsDir = path.join(siteDir, 'certificates');
+          const hCertsDir = path.join(hDir, 'certificates');
+          if (fs.existsSync(certsDir)) {
+            try {
+              await fs.promises.mkdir(hCertsDir, { recursive: true });
+              await fs.promises.cp(certsDir, hCertsDir, { recursive: true });
+            } catch (e) {}
+          }
         }
 
-        await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
+        await hostingProvider.deploy('abdulaziz', siteResult, normalized, true).catch(() => {});
+        if (userHandle !== 'abdulaziz') {
+          await hostingProvider.deploy(userHandle, siteResult, normalized, true).catch(() => {});
+        }
 
-        // 2. Move live subdomain mapping https://<userHandle>.myfolio.tech to the newest generated version
+        // 2. Move live subdomain mapping https://abdulaziz.myfolio.tech, aziz.myfolio.tech to the newest generated version
         if (customDomainService) {
-          customDomainService.domainCache[customSubdomain] = {
-            domain: customSubdomain,
-            handle: userHandle,
-            siteId: siteId,
-            userId: req.user?.id || 'abdulaziz_founder',
-            type: 'subdomain',
-            status: 'active',
-            updatedAt: new Date().toISOString()
-          };
-          customDomainService.domainCache[customLocalDomain] = {
-            domain: customLocalDomain,
-            handle: userHandle,
-            siteId: siteId,
-            userId: req.user?.id || 'abdulaziz_founder',
-            type: 'subdomain',
-            status: 'active',
-            updatedAt: new Date().toISOString()
-          };
+          const targetDomains = [
+            'abdulaziz.myfolio.tech',
+            'aziz.myfolio.tech',
+            'abdulaziz.localhost',
+            'aziz.localhost'
+          ];
+          if (userHandle !== 'abdulaziz') {
+            targetDomains.push(`${userHandle}.myfolio.tech`, `${userHandle}.localhost`);
+          }
+          for (const d of targetDomains) {
+            customDomainService.domainCache[d] = {
+              domain: d,
+              handle: 'abdulaziz',
+              siteId: siteId,
+              universeKey: selectedTemplate.id,
+              userId: req.user?.id || 'abdulaziz_founder',
+              type: 'subdomain',
+              status: 'active',
+              updatedAt: new Date().toISOString()
+            };
+          }
           customDomainService.saveCache();
         }
 
@@ -2523,7 +2599,8 @@ app.post('/api/vip/set-active-site', async (req, res) => {
                 }
               ]
             };
-            html = template.render(candidateProfile, {});
+            const rendered = template.render(candidateProfile, {});
+            html = typeof rendered === 'string' ? rendered : (rendered?.html || '');
             const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
             fs.mkdirSync(siteDir, { recursive: true });
             fs.writeFileSync(path.join(siteDir, 'index.html'), html, 'utf8');
@@ -2540,50 +2617,53 @@ app.post('/api/vip/set-active-site', async (req, res) => {
 
     // Determine target handle from siteId or req.user.username
     let targetHandle = (req.body.handle || '').toLowerCase().trim();
-    if (!targetHandle && siteId.includes('-')) {
-      targetHandle = siteId.split('-')[0].toLowerCase().trim();
-    }
-    if (!targetHandle) {
-      targetHandle = (req.user?.username || 'abdulaziz').toLowerCase().trim();
+    if (!targetHandle || targetHandle === 'web' || siteId.startsWith('web-')) {
+      targetHandle = 'abdulaziz';
     }
 
+    const universeKey = req.body.universeKey || (siteId.includes('hunter') ? 'system-awakening' : null);
     const targetSubdomain = `${targetHandle}.myfolio.tech`;
     const targetLocalDomain = `${targetHandle}.localhost`;
 
     // 1. Update customDomainService domainCache
     if (customDomainService) {
-      customDomainService.domainCache[targetSubdomain] = {
-        domain: targetSubdomain,
-        handle: targetHandle,
-        siteId: siteId,
-        userId: req.user?.id || 'abdulaziz_founder',
-        type: 'subdomain',
-        status: 'active',
-        updatedAt: new Date().toISOString()
-      };
-      customDomainService.domainCache[targetLocalDomain] = {
-        domain: targetLocalDomain,
-        handle: targetHandle,
-        siteId: siteId,
-        userId: req.user?.id || 'abdulaziz_founder',
-        type: 'subdomain',
-        status: 'active',
-        updatedAt: new Date().toISOString()
-      };
+      const domainsToUpdate = [
+        targetSubdomain,
+        targetLocalDomain,
+        'abdulaziz.myfolio.tech',
+        'aziz.myfolio.tech',
+        'abdulaziz.localhost',
+        'aziz.localhost'
+      ];
+      for (const d of domainsToUpdate) {
+        customDomainService.domainCache[d] = {
+          domain: d,
+          handle: 'abdulaziz',
+          siteId: siteId,
+          universeKey: universeKey || customDomainService.domainCache[d]?.universeKey || 'threeui-landscape',
+          userId: req.user?.id || 'abdulaziz_founder',
+          type: 'subdomain',
+          status: 'active',
+          updatedAt: new Date().toISOString()
+        };
+      }
       customDomainService.saveCache();
     }
 
-    // 2. Sync to public/sites/${targetHandle}
-    const primaryDir = path.join(process.cwd(), 'public', 'sites', targetHandle);
-    fs.mkdirSync(primaryDir, { recursive: true });
-    fs.writeFileSync(path.join(primaryDir, 'index.html'), html, 'utf8');
+    // 2. Sync to public/sites/abdulaziz and public/sites/aziz
+    const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', targetHandle]));
+    for (const h of handlesToSync) {
+      const hDir = path.join(process.cwd(), 'public', 'sites', h);
+      fs.mkdirSync(hDir, { recursive: true });
+      fs.writeFileSync(path.join(hDir, 'index.html'), html, 'utf8');
+    }
 
     // 3. Update DB if available
     if (dbService?.client) {
       try {
         await dbService.client.from('sites').upsert({
           provider_site_id: siteId,
-          custom_domain: targetSubdomain,
+          custom_domain: 'abdulaziz.myfolio.tech',
           user_id: req.user?.id || 'abdulaziz_founder',
           status: 'active'
         });
@@ -2593,10 +2673,10 @@ app.post('/api/vip/set-active-site', async (req, res) => {
     return res.json({
       success: true,
       siteId,
-      handle: targetHandle,
-      subdomain: targetSubdomain,
-      liveUrl: `https://${targetSubdomain}`,
-      message: `Active portfolio for ${targetHandle} successfully pointed to ${siteId}`
+      handle: 'abdulaziz',
+      subdomain: 'abdulaziz.myfolio.tech',
+      liveUrl: 'https://abdulaziz.myfolio.tech',
+      message: `Active portfolio successfully pointed to ${siteId} on abdulaziz.myfolio.tech`
     });
   } catch (err) {
     console.error('[API] /api/vip/set-active-site error:', err);

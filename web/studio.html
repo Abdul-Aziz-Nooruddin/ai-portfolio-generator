@@ -2114,9 +2114,18 @@
     }
 
     function selectStudioUniverse(key, card) {
+      if (!key) return;
       selectedUniverseKey = key;
       document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
-      if (card) card.classList.add('selected');
+      if (card) {
+        card.classList.add('selected');
+      } else {
+        const found = document.querySelector(`.universe-choice-card[onclick*="'${key}'"]`);
+        if (found) {
+          found.classList.add('selected');
+          try { found.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
+        }
+      }
     }
 
     async function processStudioResumeFile(file) {
@@ -2789,14 +2798,17 @@
 
     async function setVipActiveSite(siteId) {
       try {
-        let handle = '';
-        if (siteId && siteId.includes('-')) {
-          handle = siteId.split('-')[0].toLowerCase().trim();
+        let handle = 'abdulaziz';
+        if (!isVipUser()) {
+          if (siteId && siteId.includes('-') && !siteId.startsWith('web-')) {
+            handle = siteId.split('-')[0].toLowerCase().trim();
+          }
+          if (!handle) handle = getCurrentUsername();
         }
-        if (!handle) handle = getCurrentUsername();
 
         const history = getGeneratedHistory();
         const item = history.find(h => h.siteId === siteId) || {};
+        const chosenUniverse = item.universeKey || selectedUniverseKey || 'threeui-landscape';
 
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
@@ -2805,10 +2817,10 @@
           body: JSON.stringify({
             siteId,
             handle,
-            universeKey: item.universeKey,
-            developerName: item.developerName,
-            developerRole: item.developerRole,
-            githubUsername: item.githubUsername,
+            universeKey: chosenUniverse,
+            developerName: item.developerName || 'Abdul Aziz Nooruddin',
+            developerRole: item.developerRole || 'AI Systems Specialist',
+            githubUsername: item.githubUsername || 'Abdul-Aziz-Nooruddin',
             email: 'abdulaziznoor9876@gmail.com'
           })
         });
@@ -2824,7 +2836,7 @@
         }
 
         localStorage.setItem('myfolio_active_vip_site', siteId);
-        const liveDomain = data.subdomain || `${handle}.myfolio.tech`;
+        const liveDomain = data.subdomain || `abdulaziz.myfolio.tech`;
         showStudioToast('Live Portfolio Updated', `https://${liveDomain} is now serving this version!`);
         renderGeneratedHistoryUI(siteId);
       } catch (err) {
@@ -3212,14 +3224,15 @@
 
         if (!res.ok) throw new Error(data?.error || `Failed to synthesize portfolio (${res.status}).`);
 
-        // VIP result ONLY if client is verified VIP user AND backend confirmed isVip
-        const isVipResult = isVip && Boolean(data.isVip);
-        if (isVipResult && data.siteId) {
+        // VIP result ONLY if client is verified VIP user OR backend confirmed isVip
+        const isVipResult = isVip || Boolean(data?.isVip);
+        if (isVipResult && data?.siteId) {
           localStorage.setItem('myfolio_active_vip_site', data.siteId);
+          setVipActiveSite(data.siteId).catch(e => console.warn('[Auto-activate VIP error]', e));
         }
 
-        const genHandle = data.handle || currentHandle;
-        const genSubdomain = data.subdomain || `${genHandle}.myfolio.tech`;
+        const genHandle = isVipResult ? 'abdulaziz' : (data.handle || currentHandle);
+        const genSubdomain = isVipResult ? 'abdulaziz.myfolio.tech' : (data.subdomain || `${genHandle}.myfolio.tech`);
 
         let previewUrl = isVipResult
           ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `${window.location.origin}/${genHandle}` : `https://${genSubdomain}`)
@@ -3434,12 +3447,14 @@
       checkUserVipStatus();
       renderGeneratedHistoryUI();
 
-      // Sync active visual universe count badge dynamically
-      const studioCards = document.querySelectorAll('.universe-choice-card');
-      const studioBadge = document.getElementById('studioUniverseBadgeCount');
-      if (studioBadge && studioCards.length) {
-        studioBadge.textContent = `${studioCards.length} Universes`;
-      }
+      // Automatically select template/universe if passed via URL parameter (?template=... or ?universe=...)
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const reqTemplate = urlParams.get('template') || urlParams.get('universe');
+        if (reqTemplate) {
+          selectStudioUniverse(reqTemplate);
+        }
+      } catch (e) {}
 
       let userGhKey = null;
       try {

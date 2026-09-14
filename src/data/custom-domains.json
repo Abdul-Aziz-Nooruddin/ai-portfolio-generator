@@ -2,29 +2,32 @@
   "abdulaziz.myfolio.tech": {
     "domain": "abdulaziz.myfolio.tech",
     "handle": "abdulaziz",
-    "siteId": "abdulaziz-1788601265704",
+    "siteId": "abdulaziz-test-1789367774824",
+    "universeKey": "threeui-landscape",
     "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "updatedAt": "2026-09-05T09:45:11.218Z"
+    "updatedAt": "2026-09-14T06:36:14.824Z"
   },
   "aziz.myfolio.tech": {
     "domain": "aziz.myfolio.tech",
-    "handle": "aziz",
-    "siteId": "abdulaziz-1788601265704",
+    "handle": "abdulaziz",
+    "siteId": "abdulaziz",
+    "universeKey": "threeui-landscape",
     "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "updatedAt": "2026-09-05T09:45:11.218Z"
+    "updatedAt": "2026-09-14T06:35:56.544Z"
   },
   "aziz.localhost": {
     "domain": "aziz.localhost",
-    "handle": "aziz",
-    "siteId": "abdulaziz-1788601265704",
+    "handle": "abdulaziz",
+    "siteId": "abdulaziz",
+    "universeKey": "threeui-landscape",
     "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "updatedAt": "2026-09-05T09:45:11.218Z"
+    "updatedAt": "2026-09-14T06:35:56.544Z"
   },
   "abdulaziz.portfolio.site": {
     "domain": "abdulaziz.portfolio.site",
@@ -39,11 +42,12 @@
   "abdulaziz.localhost": {
     "domain": "abdulaziz.localhost",
     "handle": "abdulaziz",
-    "siteId": "abdulaziz-1788601265704",
+    "siteId": "abdulaziz",
+    "universeKey": "threeui-landscape",
     "userId": "abdulaziz_founder",
     "type": "subdomain",
     "status": "active",
-    "updatedAt": "2026-09-05T09:45:11.218Z"
+    "updatedAt": "2026-09-14T06:35:56.544Z"
   },
   "abdulaziz.dev": {
     "domain": "abdulaziz.dev",
