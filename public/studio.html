@@ -797,6 +797,12 @@
             <span id="photoPreviewName" style="font-size:11px;color:var(--mf-text-muted);">Photo attached</span>
           </div>
 
+          <!-- Certificate preview if exists -->
+          <div id="certPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; color:var(--mf-accent-cyan, #38bdf8);">
+            <span>📜</span>
+            <span id="certPreviewName">Certificate attached</span>
+          </div>
+
           <!-- Hidden raw text field preserved for payload extraction -->
           <textarea id="resumeRawText" style="display:none;"></textarea>
         </div>
@@ -1148,18 +1154,71 @@
       if (el) el.classList.add('selected');
     }
 
-    function handleResumeFileSelected(input) {
+    async function handleResumeFileSelected(input) {
       const file = input.files?.[0];
       if (!file) return;
 
-      document.getElementById('resumeUploadLabel').innerHTML = `✅ <strong>${file.name}</strong>`;
-      document.getElementById('resumeUploadHelp').innerHTML = `<span style="color:var(--mf-success);">Ready for AI Extraction</span>`;
+      const label = document.getElementById('resumeUploadLabel');
+      const help = document.getElementById('resumeUploadHelp');
+      if (label) label.innerHTML = `⏳ <strong>${file.name}</strong>`;
+      if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">⚡ Extracting profile & projects with AI...</span>`;
+      showToast(`Uploading & parsing "${file.name}"...`, 'sparkle');
 
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const fullDataUrl = e.target.result;
         uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
         uploadedResumeMime = file.type || 'application/pdf';
+
+        try {
+          const res = await fetch('/api/web/parse-resume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              base64Data: uploadedResumeBase64,
+              mimeType: uploadedResumeMime
+            })
+          });
+
+          if (res.ok) {
+            const json = await res.json();
+            const d = json.data || {};
+            if (d.name && document.getElementById('manualFullName')) document.getElementById('manualFullName').value = d.name;
+            if ((d.title || d.role) && document.getElementById('manualRole')) document.getElementById('manualRole').value = d.title || d.role;
+            if ((d.bio || d.summary) && document.getElementById('manualBio')) document.getElementById('manualBio').value = d.bio || d.summary;
+            if (Array.isArray(d.skills) && document.getElementById('manualSkills')) document.getElementById('manualSkills').value = d.skills.join(', ');
+
+            if (Array.isArray(d.projects) && d.projects.length > 0) {
+              if (d.projects[0]) {
+                if (d.projects[0].name && document.getElementById('proj1Name')) document.getElementById('proj1Name').value = d.projects[0].name;
+                if (d.projects[0].tech && document.getElementById('proj1Tech')) document.getElementById('proj1Tech').value = Array.isArray(d.projects[0].tech) ? d.projects[0].tech.join(', ') : d.projects[0].tech;
+                if (d.projects[0].desc && document.getElementById('proj1Desc')) document.getElementById('proj1Desc').value = d.projects[0].desc;
+              }
+              if (d.projects[1]) {
+                if (d.projects[1].name && document.getElementById('proj2Name')) document.getElementById('proj2Name').value = d.projects[1].name;
+                if (d.projects[1].tech && document.getElementById('proj2Tech')) document.getElementById('proj2Tech').value = Array.isArray(d.projects[1].tech) ? d.projects[1].tech.join(', ') : d.projects[1].tech;
+                if (d.projects[1].desc && document.getElementById('proj2Desc')) document.getElementById('proj2Desc').value = d.projects[1].desc;
+              }
+              if (d.projects[2]) {
+                if (d.projects[2].name && document.getElementById('proj3Name')) document.getElementById('proj3Name').value = d.projects[2].name;
+                if (d.projects[2].tech && document.getElementById('proj3Tech')) document.getElementById('proj3Tech').value = Array.isArray(d.projects[2].tech) ? d.projects[2].tech.join(', ') : d.projects[2].tech;
+                if (d.projects[2].desc && document.getElementById('proj3Desc')) document.getElementById('proj3Desc').value = d.projects[2].desc;
+              }
+            }
+
+            if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+            if (help) help.innerHTML = `<span style="color:var(--mf-success);">✦ AI Extracted &amp; Populated</span>`;
+            showToast(`Resume "${file.name}" parsed! Skills & projects updated.`, 'success');
+          } else {
+            if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+            if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
+            showToast(`Resume "${file.name}" attached successfully!`, 'info');
+          }
+        } catch (err) {
+          if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+          if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
+          showToast(`Resume "${file.name}" attached!`, 'info');
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -1175,10 +1234,16 @@
           dataUrl: e.target.result
         };
         const img = document.getElementById('photoPreviewImg');
-        img.src = e.target.result;
-        document.getElementById('photoPreviewContainer').style.display = 'flex';
+        if (img) img.src = e.target.result;
+        const nameEl = document.getElementById('photoPreviewName');
+        if (nameEl) nameEl.textContent = file.name;
+        const cont = document.getElementById('photoPreviewContainer');
+        if (cont) cont.style.display = 'flex';
+        showToast(`Candidate photo "${file.name}" attached!`, 'success');
       };
       reader.readAsDataURL(file);
+    }
+
     // Toast Notification System (Zero Native Alerts)
     let toastTimeout = null;
     function showToast(msg, type = 'info') {
@@ -1225,8 +1290,15 @@
 
     function handleCertFilesSelected(files) {
       if (!files || files.length === 0) return;
-      uploadedCertificates.push({ name: files[0].name, size: files[0].size });
-      showToast(`Certificate "${files[0].name}" attached.`, 'success');
+      const file = files[0];
+      uploadedCertificates.push({ name: file.name, size: file.size });
+      const certCont = document.getElementById('certPreviewContainer');
+      const certName = document.getElementById('certPreviewName');
+      if (certCont && certName) {
+        certName.textContent = `${file.name} (${uploadedCertificates.length} attached)`;
+        certCont.style.display = 'flex';
+      }
+      showToast(`Certificate "${file.name}" attached.`, 'success');
     }
 
     function copyGeneratedUrl() {
@@ -1406,6 +1478,38 @@
       const iframe = document.getElementById('studioLiveIframe');
       if (iframe) {
         iframe.src = '/abdulaziz';
+      }
+
+      // Drag and drop for resume dropzone
+      const dropZone = document.getElementById('studioResumeDropZone');
+      if (dropZone) {
+        ['dragenter', 'dragover'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.borderColor = 'var(--mf-accent-blue)';
+            dropZone.style.background = 'rgba(26,59,141,0.25)';
+          });
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+          dropZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropZone.style.borderColor = 'var(--mf-border-glow)';
+            dropZone.style.background = 'rgba(8,13,32,0.6)';
+          });
+        });
+        dropZone.addEventListener('drop', (e) => {
+          const dt = e.dataTransfer;
+          const files = dt.files;
+          if (files && files.length > 0) {
+            const input = document.getElementById('resumeUploadInput');
+            if (input) {
+              input.files = files;
+              handleResumeFileSelected(input);
+            }
+          }
+        });
       }
     });
   </script>
