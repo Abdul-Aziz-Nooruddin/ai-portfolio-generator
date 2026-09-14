@@ -176,6 +176,14 @@ app.use('/assets', express.static(path.join(process.cwd(), 'public', 'assets'), 
   immutable: true
 }));
 
+// Serve web assets directly for /web/* paths
+app.use('/web', express.static(path.join(process.cwd(), 'web'), {
+  maxAge: '30d'
+}));
+app.use('/web', express.static(path.join(process.cwd(), 'public', 'web'), {
+  maxAge: '30d'
+}));
+
 // Dynamic Custom Domain & Subdomain Hostname Router
 app.use(async (req, res, next) => {
   const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
