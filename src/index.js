@@ -1203,27 +1203,48 @@ app.post(
       await fs.promises.mkdir(siteDir, { recursive: true });
 
       // 4. Ingest & Persist Candidate Photo / Avatar (if provided or present in resume)
-      if (input.photoData?.rawBase64) {
+      const rawPhotoBase64 = input.photoData?.rawBase64 || 
+        (input.photoData?.dataUrl && input.photoData.dataUrl.includes('base64,') ? input.photoData.dataUrl.split('base64,')[1] : null);
+
+      if (rawPhotoBase64) {
         try {
-          const avatarBuf = Buffer.from(input.photoData.rawBase64, 'base64');
-          const avatarFileExt = (input.photoData.mimeType && input.photoData.mimeType.includes('jpeg')) ? 'jpg' : 'png';
+          const cleanBase64 = rawPhotoBase64.replace(/\s/g, '');
+          const avatarBuf = Buffer.from(cleanBase64, 'base64');
+          const mime = input.photoData.mimeType || (input.photoData.dataUrl?.includes('jpeg') ? 'image/jpeg' : 'image/png');
+          const avatarFileExt = (mime && mime.includes('jpeg')) ? 'jpg' : 'png';
           const avatarFilename = `avatar.${avatarFileExt}`;
           await fs.promises.writeFile(path.join(siteDir, avatarFilename), avatarBuf);
           // Also save canonical avatar.png for template standard compatibility
           if (avatarFileExt !== 'png') {
             await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), avatarBuf);
           }
-          input.avatar = `/sites/${siteId}/avatar.png`;
-          input.photoUrl = `/sites/${siteId}/avatar.png`;
+          const avatarWebPath = isVipFounder ? `/sites/abdulaziz/avatar.png` : `/sites/${siteId}/avatar.png`;
+          input.avatar = avatarWebPath;
+          input.photoUrl = avatarWebPath;
+
+          if (isVipFounder) {
+            const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
+            const azDir = path.join(process.cwd(), 'public', 'sites', 'aziz');
+            await fs.promises.mkdir(abDir, { recursive: true });
+            await fs.promises.mkdir(azDir, { recursive: true });
+            await fs.promises.writeFile(path.join(abDir, 'avatar.png'), avatarBuf);
+            await fs.promises.writeFile(path.join(azDir, 'avatar.png'), avatarBuf);
+          }
         } catch (avErr) {
           console.warn('[API] Avatar save error:', avErr.message);
         }
       } else if (!input.avatar && input.resumeData?.rawBase64 && input.resumeData?.mimeType?.startsWith('image/')) {
         try {
-          const resumeImgBuf = Buffer.from(input.resumeData.rawBase64, 'base64');
+          const resumeImgBuf = Buffer.from(input.resumeData.rawBase64.replace(/\s/g, ''), 'base64');
           await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), resumeImgBuf);
-          input.avatar = `/sites/${siteId}/avatar.png`;
-          input.photoUrl = `/sites/${siteId}/avatar.png`;
+          const avatarWebPath = isVipFounder ? `/sites/abdulaziz/avatar.png` : `/sites/${siteId}/avatar.png`;
+          input.avatar = avatarWebPath;
+          input.photoUrl = avatarWebPath;
+          if (isVipFounder) {
+            const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
+            await fs.promises.mkdir(abDir, { recursive: true });
+            await fs.promises.writeFile(path.join(abDir, 'avatar.png'), resumeImgBuf);
+          }
         } catch (resImgErr) {
           console.warn('[API] Resume image avatar save error:', resImgErr.message);
         }
@@ -2524,6 +2545,34 @@ app.get(['/p/:siteId/resume.pdf', '/api/sites/:siteId/resume.pdf'], async (req, 
     console.error('[PDF] Generation error:', err);
     return res.status(500).send('Failed to generate resume PDF.');
   }
+});
+
+// Dynamic Avatar Route for Subdomains and Direct Resolution
+app.get(['/avatar.png', '/sites/:handle/avatar.png', '/u/:handle/avatar.png'], (req, res, next) => {
+  const host = (req.headers['x-forwarded-host'] || req.headers.host || '').split(':')[0].toLowerCase();
+  let handle = req.params.handle;
+  if (!handle) {
+    if (host.includes('abdulaziz') || host.includes('noor') || host.includes('aziz')) {
+      handle = 'abdulaziz';
+    } else if (customDomainService) {
+      handle = customDomainService.resolveHostname(host);
+    }
+  }
+  if (!handle) handle = 'abdulaziz';
+
+  const candidates = [
+    path.join(process.cwd(), 'public', 'sites', handle, 'avatar.png'),
+    path.join(process.cwd(), 'public', 'sites', 'abdulaziz', 'avatar.png')
+  ];
+
+  for (const c of candidates) {
+    if (fs.existsSync(c)) {
+      res.setHeader('Content-Type', 'image/png');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      return res.sendFile(c);
+    }
+  }
+  next();
 });
 
 // Dynamic Vanity Direct Route: Redirect /abdulaziz or any /:handle to its dedicated subdomain https://<handle>.myfolio.tech/

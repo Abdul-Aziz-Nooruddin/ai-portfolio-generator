@@ -36,6 +36,16 @@ const ThreeUILandscapeTemplate = {
     const safeGithub = TemplateHelper.escapeHtml(data.github || data.contact?.github || 'https://github.com/Abdul-Aziz-Nooruddin');
     const safeLocation = TemplateHelper.escapeHtml(data.location || 'Global / Remote');
 
+    const candidateAvatar = data.avatar || data.photoUrl || '';
+    const safeInitials = TemplateHelper.escapeHtml(data.initials || (safeName.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase()) || 'AN');
+    const avatarHtml = candidateAvatar 
+      ? `<div class="landscape-hero-avatar-wrap">
+           <img src="${candidateAvatar}" alt="${safeName}" class="landscape-hero-avatar-img" />
+         </div>`
+      : `<div class="landscape-hero-avatar-wrap landscape-hero-initials">
+           <span>${safeInitials}</span>
+         </div>`;
+
     const rawSkills = Array.isArray(data.skills) && data.skills.length > 0 
       ? data.skills 
       : ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'];
@@ -186,6 +196,51 @@ const ThreeUILandscapeTemplate = {
       }
 
       /* Hero Stage */
+      .landscape-hero-identity {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+        margin-bottom: 24px;
+      }
+      .landscape-hero-avatar-wrap {
+        position: relative;
+        width: 110px;
+        height: 110px;
+        min-width: 110px;
+        border-radius: 50%;
+        padding: 4px;
+        background: linear-gradient(135deg, rgba(253, 241, 214, 0.95), rgba(168, 98, 31, 0.45));
+        box-shadow: 0 12px 32px rgba(46, 37, 21, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+      }
+      .landscape-hero-avatar-wrap:hover {
+        transform: scale(1.04);
+        box-shadow: 0 16px 40px rgba(46, 37, 21, 0.25);
+      }
+      .landscape-hero-avatar-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        display: block;
+        border: 2px solid rgba(253, 241, 214, 0.9);
+      }
+      .landscape-hero-initials {
+        background: linear-gradient(135deg, #a8621f, #2e2515);
+        color: #fdf1d6;
+        font-family: var(--mincho);
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      }
+      .landscape-hero-text-col {
+        flex: 1;
+        min-width: 0;
+      }
       .hero-eyebrow {
         font-size: 11px;
         font-weight: 700;
@@ -418,9 +473,14 @@ const ThreeUILandscapeTemplate = {
       
       <!-- 01: HERO MASTHEAD -->
       <section class="landscape-glass-card portfolio-interactive">
-        <div class="hero-eyebrow">Interactive 3D Simulation • Architecture Frame</div>
-        <h1 class="hero-masthead">${safeName}</h1>
-        <div class="hero-role">${safeRole}</div>
+        <div class="landscape-hero-identity">
+          ${avatarHtml}
+          <div class="landscape-hero-text-col">
+            <div class="hero-eyebrow">Interactive 3D Simulation • Architecture Frame</div>
+            <h1 class="hero-masthead">${safeName}</h1>
+            <div class="hero-role">${safeRole}</div>
+          </div>
+        </div>
         <p class="hero-bio">“${safeBio}”</p>
         <div class="hero-actions">
           <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Initiate Contact &rarr;</a>

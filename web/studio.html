@@ -1413,6 +1413,15 @@
           });
         }
 
+        const photoDataPayload = uploadedPhotoData ? {
+          name: uploadedPhotoData.name,
+          mimeType: uploadedPhotoData.mimeType,
+          dataUrl: uploadedPhotoData.dataUrl,
+          rawBase64: (uploadedPhotoData.dataUrl && uploadedPhotoData.dataUrl.includes(','))
+            ? uploadedPhotoData.dataUrl.split(',')[1]
+            : uploadedPhotoData.dataUrl
+        } : undefined;
+
         const payload = {
           username: 'abdulaziz',
           customUrlIdentifier: 'abdulaziz',
@@ -1429,6 +1438,7 @@
             bio: manualBio,
             projects
           },
+          photoData: photoDataPayload,
           preferences: { theme: selectedUniverseKey }
         };
 
