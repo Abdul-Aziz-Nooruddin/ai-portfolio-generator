@@ -24,13 +24,14 @@ body,header,footer,.tbtn,.brand,.top-mid,.eyebrow,.big-cn,.sub-cn,.quote,.quote 
   transition:background-color .55s ease,color .55s ease,border-color .55s ease;
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%}
+html{min-height:100%}
 body{
   background:var(--paper);color:var(--ink);
-  font-family:var(--sans);overflow:hidden;
+  font-family:var(--sans);overflow-x:hidden;overflow-y:auto;
   -webkit-font-smoothing:antialiased;
 }
-#app{position:fixed;inset:0;overflow:hidden}
+#app{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+header{pointer-events:auto}
 
 /* ---------- background ---------- */
 .bg-wash{position:absolute;inset:0;
@@ -44,7 +45,7 @@ body{
 
 
 /* ---------- webgl ---------- */
-#stage{position:absolute;left:0;display:block;cursor:grab;touch-action:none}
+#stage{position:absolute;left:0;display:block;cursor:grab;touch-action:pan-y;pointer-events:auto}
 #stage.dragging{cursor:grabbing}
 
 /* ---------- header ---------- */
@@ -3309,10 +3310,21 @@ cvs.addEventListener('pointercancel',endDrag);
 cvs.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse'){hovAz=0;hovEl=0;}});
 cvs.addEventListener('dblclick',()=>{orbAz=0;orbEl=0;zoomT=1;});
 cvs.addEventListener('wheel',e=>{
-  e.preventDefault();
-  const d=e.deltaMode===1?e.deltaY*16:e.deltaY;
-  zoomT=Math.max(ZMIN,Math.min(ZMAX,zoomT*Math.exp(-d*0.0016)));
+  if(e.ctrlKey||e.metaKey){
+    e.preventDefault();
+    const d=e.deltaMode===1?e.deltaY*16:e.deltaY;
+    zoomT=Math.max(ZMIN,Math.min(ZMAX,zoomT*Math.exp(-d*0.0016)));
+  }
 },{passive:false});
+
+window.addEventListener('scroll',()=>{
+  const maxS=document.documentElement.scrollHeight-window.innerHeight;
+  if(maxS>0){
+    const p=window.scrollY/maxS;
+    hovAz=(p-0.5)*0.35;
+    hovEl=-p*0.12;
+  }
+},{passive:true});
 
 const track=document.getElementById('track');
 function seekFrom(ev){

@@ -128,6 +128,9 @@ const ThreeUILandscapeTemplate = {
         position: fixed !important;
         inset: 0 !important;
         z-index: 1 !important;
+        pointer-events: none !important;
+      }
+      header {
         pointer-events: auto !important;
       }
       #stage {
@@ -137,6 +140,8 @@ const ThreeUILandscapeTemplate = {
         height: 100vh !important;
         z-index: 1 !important;
         cursor: grab;
+        touch-action: pan-y !important;
+        pointer-events: auto !important;
       }
       #stage.dragging {
         cursor: grabbing;
@@ -149,11 +154,11 @@ const ThreeUILandscapeTemplate = {
       /* Portfolio Scrollytelling Container */
       .landscape-portfolio-scroll {
         position: relative;
-        z-index: 20;
-        pointer-events: none;
+        z-index: 10;
+        pointer-events: auto;
         max-width: 1140px;
         margin: 0 auto;
-        padding: 90px 24px 80px;
+        padding: 90px 24px 120px;
         display: flex;
         flex-direction: column;
         gap: 60px;
