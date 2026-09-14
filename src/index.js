@@ -2526,8 +2526,8 @@ app.get(['/p/:siteId/resume.pdf', '/api/sites/:siteId/resume.pdf'], async (req, 
   }
 });
 
-// Dynamic Vanity Direct Route for custom handles (/abdulaziz, /aziz, /u/:handle, /:handle)
-app.get(['/abdulaziz', '/u/abdulaziz', '/u/:handle', '/:handle([a-zA-Z0-9_-]{2,32})'], async (req, res, next) => {
+// Dynamic Vanity Direct Route: Redirect /abdulaziz or any /:handle to its dedicated subdomain https://<handle>.myfolio.tech/
+app.get(['/abdulaziz', '/u/abdulaziz', '/aziz', '/u/aziz', '/u/:handle', '/:handle([a-zA-Z0-9_-]{2,32})'], async (req, res, next) => {
   let handle = (req.params.handle || (req.path.startsWith('/u/') ? req.path.slice(3) : req.path.slice(1))).toLowerCase().trim();
   const reservedPaths = [
     'api', 'sites', 'assets', 'p', 'u', 'login', 'signin', 'signup', 'register',
@@ -2540,21 +2540,22 @@ app.get(['/abdulaziz', '/u/abdulaziz', '/u/:handle', '/:handle([a-zA-Z0-9_-]{2,3
     return next();
   }
 
+  // Strict Subdomain Policy: Always 301 redirect to dedicated subdomain https://<handle>.myfolio.tech/
+  if (handle === 'abdulaziz' || handle === 'aziz') {
+    return res.redirect(301, 'https://abdulaziz.myfolio.tech/');
+  }
+
   const subKey = `${handle}.myfolio.tech`;
-  const locKey = `${handle}.localhost`;
-  const activeSiteId = customDomainService?.domainCache?.[subKey]?.siteId ||
-                       customDomainService?.domainCache?.[locKey]?.siteId ||
-                       handle;
-  let html = await hostingProvider.getSiteHtml(activeSiteId);
-  if (!html && activeSiteId !== handle) {
-    html = await hostingProvider.getSiteHtml(handle);
+  if (customDomainService?.domainCache?.[subKey]) {
+    return res.redirect(301, `https://${subKey}/`);
   }
-  if (html) {
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
-    return res.send(html);
+
+  // Local development redirect fallback
+  if (req.headers.host && req.headers.host.includes('localhost')) {
+    return res.redirect(302, `http://${handle}.localhost:5050/`);
   }
-  return next();
+
+  return res.redirect(301, `https://${handle}.myfolio.tech/`);
 });
 
 // VIP Set Active Live Site Endpoint

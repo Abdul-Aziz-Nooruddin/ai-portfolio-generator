@@ -2957,9 +2957,7 @@
         if (isVip) {
           if (isVipActive) {
             displayedUrl = `https://${itemSubdomain}`;
-            openUrl = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-              ? `${window.location.origin}/${itemHandle}`
-              : `https://${itemSubdomain}`;
+            openUrl = `https://${itemSubdomain}`;
 
             liveBadgeHtml = `<span class="status-live-dot" style="background: rgba(16, 185, 129, 0.15); color: #10B981; border: 1px solid rgba(16, 185, 129, 0.4);">👑 VIP ACTIVE (${itemSubdomain.toUpperCase()})</span>`;
 
@@ -3235,7 +3233,7 @@
         const genSubdomain = isVipResult ? 'abdulaziz.myfolio.tech' : (data.subdomain || `${genHandle}.myfolio.tech`);
 
         let previewUrl = isVipResult
-          ? (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? `${window.location.origin}/${genHandle}` : `https://${genSubdomain}`)
+          ? `https://${genSubdomain}`
           : (data.previewUrl ? (data.previewUrl.startsWith('http') ? data.previewUrl : window.location.origin + data.previewUrl) : (data.siteUrl || `${window.location.origin}/p/${data.siteId || 'preview'}`));
         
         if (ghUser) {
@@ -3265,7 +3263,7 @@
         // 3. Update legacy preview card (if visible)
         const displayLiveUrl = isVipResult ? `https://${genSubdomain}` : previewUrl;
         document.getElementById('generatedUrlText').textContent = displayLiveUrl;
-        document.getElementById('btnOpenGeneratedLive').href = previewUrl;
+        document.getElementById('btnOpenGeneratedLive').href = displayLiveUrl;
 
         if (typeof confetti === 'function') {
           confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
@@ -3291,10 +3289,9 @@
 
     function copyGeneratedUrl() {
       const isVip = isVipUser();
-      const handle = getCurrentUsername();
-      const url = isVip ? `https://${handle}.myfolio.tech` : document.getElementById('generatedUrlText').textContent;
+      const url = isVip ? 'https://abdulaziz.myfolio.tech' : document.getElementById('generatedUrlText').textContent;
       navigator.clipboard.writeText(url);
-      alert('Portfolio URL copied to clipboard: ' + url);
+      showStudioToast('URL Copied', 'Copied live subdomain: ' + url);
     }
 
     window.switchIngestTab = switchIngestTab;
