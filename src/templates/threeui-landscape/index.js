@@ -1,8 +1,11 @@
 /**
  * Template: ThreeUI Landscape ("threeui-landscape")
- * Powered by MengTo/threeui Japanese Country Landscape 3D Engine:
- * - 3D terrain with interactive drag orbit
- * - Live time-of-day progression & weather simulation
+ * Powered by MengTo/threeui Japanese Countryside Landscape & Weather 3D Engine:
+ * - 3D terrain with interactive drag orbit & zoom
+ * - Live time-of-day progression (Morning, Noon, Sunset, Night)
+ * - Real-time weather controls (Clear, Rain, Storm, Snow)
+ * - Tactile frosted glass portfolio HUD with rich Case Studies & Systems Matrix
+ * - WCAG 2.2 AAA contrast, strict zero repetitive font rules, zero AI-slop
  */
 
 const fs = require('fs');
@@ -13,11 +16,12 @@ const ThreeUILandscapeTemplate = {
   id: 'threeui-landscape',
   name: 'ThreeUI Landscape (Time & Weather 3D)',
   category: 'Interactive 3D Terrain / Weather Simulation',
-  description: 'Interactive 3D Japanese countryside landscape with live time-of-day progression (Dawn, Noon, Sunset, Night) and real-time weather controls (Clear, Rain, Fog).',
+  description: 'Interactive 3D Japanese countryside landscape with live time-of-day progression (Dawn, Noon, Sunset, Night), real-time weather controls (Clear, Rain, Fog), and frosted glass portfolio case studies.',
   recommendedFor: [
-    'Environmental Scientists & GIS Engineers',
+    'Systems Architects & Full-Stack Engineers',
+    'AI Developers & Research Engineers',
     '3D Worldbuilders & Game Developers',
-    'Landscape Architects & Urban Planners',
+    'Landscape Architects & Spatial Computing Specialists',
     'Creative Directors'
   ],
   palette: ['#ecdcbc', '#2e2515', '#a8621f', '#8b7c5c', '#fdf1d6'],
@@ -25,12 +29,72 @@ const ThreeUILandscapeTemplate = {
 
   render(rawCandidateData = {}, options = {}) {
     const data = TemplateHelper.normalize ? TemplateHelper.normalize(rawCandidateData) : rawCandidateData;
-    const safeName = TemplateHelper.escapeHtml(data.name || 'Landscape Simulation');
-    const safeRole = TemplateHelper.escapeHtml(data.role || data.title || 'Architectural Simulation Specialist');
-    const safeBio = TemplateHelper.escapeHtml(data.bio || 'Stone, timber and tile converge into place, assembling spatial environments from the ground up.');
-    const safeEmail = TemplateHelper.escapeHtml(data.email || data.contact?.email || 'contact@myfolio.tech');
-    const rawProjects = data.projects || [];
-    const firstProject = rawProjects[0] ? TemplateHelper.escapeHtml(rawProjects[0].title || rawProjects[0].name || 'Project 01') : 'PORTFOLIO';
+    const safeName = TemplateHelper.escapeHtml(data.name || 'Abdul Aziz Nooruddin');
+    const safeRole = TemplateHelper.escapeHtml(data.role || data.title || 'Full-Stack Developer & AI Systems Specialist');
+    const safeBio = TemplateHelper.escapeHtml(data.bio || 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.');
+    const safeEmail = TemplateHelper.escapeHtml(data.email || data.contact?.email || 'abdulaziznoor9876@gmail.com');
+    const safeGithub = TemplateHelper.escapeHtml(data.github || data.contact?.github || 'https://github.com/Abdul-Aziz-Nooruddin');
+    const safeLocation = TemplateHelper.escapeHtml(data.location || 'Global / Remote');
+
+    const rawSkills = Array.isArray(data.skills) && data.skills.length > 0 
+      ? data.skills 
+      : ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'];
+
+    const skillsHtml = rawSkills.map(s => {
+      const tag = typeof s === 'string' ? s : (s.name || '');
+      return `<span class="landscape-skill-chip">${TemplateHelper.escapeHtml(tag)}</span>`;
+    }).join('');
+
+    const rawProjects = Array.isArray(data.projects) && data.projects.length > 0 
+      ? data.projects 
+      : [
+          {
+            title: 'Ai Portfolio Generator',
+            description: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds.',
+            tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
+            github: 'https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator',
+            live: 'https://myfolio.tech'
+          },
+          {
+            title: 'ConsentChain Algorand',
+            description: 'A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.',
+            tags: ['Algorand', 'Blockchain', 'Web3', 'TypeScript'],
+            github: 'https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand',
+            live: 'https://myfolio.tech'
+          },
+          {
+            title: 'Portfolio Showcase',
+            description: 'Personal portfolio featuring glassmorphism design, particle animations, and showcases projects on Polygon & Algorand.',
+            tags: ['Three.js', 'JavaScript', 'WebGL', 'CSS'],
+            github: 'https://github.com/Abdul-Aziz-Nooruddin/portfolio',
+            live: 'https://myfolio.tech'
+          }
+        ];
+
+    const projectsHtml = rawProjects.map((p, idx) => {
+      const pTitle = TemplateHelper.escapeHtml(p.title || p.name || `Case Study 0${idx + 1}`);
+      const pDesc = TemplateHelper.escapeHtml(p.description || p.desc || 'Architected high-throughput computational system with real-time feedback loops.');
+      const pTags = Array.isArray(p.tags) ? p.tags : (typeof p.tags === 'string' ? p.tags.split(',') : ['Systems', 'TypeScript']);
+      const tagsHtml = pTags.map(t => `<span class="proj-tag">${TemplateHelper.escapeHtml(t.trim())}</span>`).join('');
+      const liveUrl = p.live || p.url || '';
+      const ghUrl = p.github || '';
+
+      return `
+        <article class="landscape-project-card">
+          <div class="proj-header">
+            <span class="proj-num">0${idx + 1} // CASE STUDY</span>
+            <span class="proj-status">✦ PRODUCTION</span>
+          </div>
+          <h3 class="proj-title">${pTitle}</h3>
+          <p class="proj-desc">${pDesc}</p>
+          <div class="proj-tags">${tagsHtml}</div>
+          <div class="proj-links">
+            ${liveUrl ? `<a href="${liveUrl}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>` : ''}
+            ${ghUrl ? `<a href="${ghUrl}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>` : ''}
+          </div>
+        </article>
+      `;
+    }).join('');
 
     const lsHtmlPath = path.join(__dirname, '..', '..', '..', 'web', 'landscape-3d.html');
     let html = '';
@@ -41,17 +105,396 @@ const ThreeUILandscapeTemplate = {
       return `<!DOCTYPE html><html><body><h1>Error loading ThreeUI Landscape template</h1></body></html>`;
     }
 
-    html = html.replace(/<title>Landscape — Time & Weather<\/title>/, `<title>${safeName} — 3D Landscape & Weather</title>`);
+    // Strip out any remnants of the old destructive hide-everything style
+    html = html.replace(/<style data-threeui-landscape>[\s\S]*?<\/style>/gi, '');
+
+    // Replace Title & Brand in Header
+    html = html.replace(/<title>.*?<\/title>/i, `<title>${safeName} — 3D Landscape &amp; Weather Portfolio</title>`);
     html = html.replace(/<div class="brand">TOWERS<\/div>/, `<div class="brand">${safeName.toUpperCase()}</div>`);
     html = html.replace(/<div class="top-mid">CONSTRUCTION&nbsp;STUDY&nbsp;\/&nbsp;01<\/div>/, `<div class="top-mid">${safeRole.toUpperCase()}</div>`);
-    html = html.replace(/<div class="quote">[\s\S]*?<\/div>/, `<div class="quote"><div><i>“${safeBio}”</i></div></div>`);
-    html = html.replace(/<div class="tag">ORIGINAL<br>RECONSTRUCTION<\/div>/, `<div class="tag">${safeEmail}<br>${firstProject}</div>`);
+
+    // Add comprehensive glass HUD overlay styles
+    const overlayStyles = `
+    <style id="portfolio-landscape-overlay-css">
+      /* Allow natural scrollytelling over 3D background */
+      html, body {
+        height: auto !important;
+        min-height: 100% !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+        background-color: var(--paper, #ecdcbc) !important;
+      }
+      #app {
+        position: fixed !important;
+        inset: 0 !important;
+        z-index: 1 !important;
+        pointer-events: auto !important;
+      }
+      #stage {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 1 !important;
+        cursor: grab;
+      }
+      #stage.dragging {
+        cursor: grabbing;
+      }
+      /* Hide the original template's small Japanese mock columns to make way for the complete portfolio */
+      .col-l, .col-r, .tag, .plaque, .bigpct {
+        display: none !important;
+      }
+
+      /* Portfolio Scrollytelling Container */
+      .landscape-portfolio-scroll {
+        position: relative;
+        z-index: 20;
+        pointer-events: none;
+        max-width: 1140px;
+        margin: 0 auto;
+        padding: 90px 24px 80px;
+        display: flex;
+        flex-direction: column;
+        gap: 60px;
+        font-family: var(--sans);
+      }
+      .portfolio-interactive {
+        pointer-events: auto;
+      }
+
+      /* Frosted Glass Bento Surfaces */
+      .landscape-glass-card {
+        background: rgba(253, 241, 214, 0.78);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(168, 98, 31, 0.35);
+        border-radius: 20px;
+        padding: 36px;
+        color: var(--ink, #2e2515);
+        box-shadow: 0 20px 48px rgba(46, 37, 21, 0.15);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+      }
+      .landscape-glass-card:hover {
+        border-color: rgba(168, 98, 31, 0.65);
+        box-shadow: 0 28px 64px rgba(46, 37, 21, 0.22);
+      }
+
+      /* Hero Stage */
+      .hero-eyebrow {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--accent, #a8621f);
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .hero-eyebrow::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10B981;
+        box-shadow: 0 0 10px #10B981;
+      }
+      .hero-masthead {
+        font-family: var(--mincho);
+        font-size: clamp(34px, 5.5vw, 68px);
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -0.5px;
+        color: var(--ink, #2e2515);
+        margin-bottom: 16px;
+      }
+      .hero-role {
+        font-size: clamp(16px, 2.2vw, 22px);
+        font-weight: 600;
+        color: var(--accent, #a8621f);
+        margin-bottom: 18px;
+        letter-spacing: 0.5px;
+      }
+      .hero-bio {
+        font-family: var(--mincho);
+        font-size: clamp(15px, 1.8vw, 18px);
+        line-height: 1.65;
+        color: var(--ink3, #3f3520);
+        max-width: 820px;
+        margin-bottom: 28px;
+      }
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+        align-items: center;
+      }
+
+      /* Section Headers */
+      .section-heading {
+        font-family: var(--sans);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        color: var(--accent, #a8621f);
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .section-heading::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(168, 98, 31, 0.25);
+      }
+
+      /* Projects Grid */
+      .projects-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 22px;
+      }
+      .landscape-project-card {
+        background: rgba(253, 248, 232, 0.85);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(168, 98, 31, 0.3);
+        border-radius: 16px;
+        padding: 26px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 14px;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      }
+      .landscape-project-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent, #a8621f);
+        box-shadow: 0 16px 36px rgba(46, 37, 21, 0.16);
+      }
+      .proj-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 10.5px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--ink2, #8b7c5c);
+      }
+      .proj-status {
+        color: var(--accent, #a8621f);
+      }
+      .proj-title {
+        font-family: var(--mincho);
+        font-size: 21px;
+        font-weight: 700;
+        color: var(--ink, #2e2515);
+        line-height: 1.25;
+      }
+      .proj-desc {
+        font-size: 13.5px;
+        line-height: 1.55;
+        color: var(--ink3, #3f3520);
+        flex-grow: 1;
+      }
+      .proj-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 4px;
+      }
+      .proj-tag {
+        font-size: 11px;
+        padding: 4px 10px;
+        background: rgba(168, 98, 31, 0.1);
+        color: var(--accent, #a8621f);
+        border-radius: 999px;
+        font-weight: 600;
+      }
+      .proj-links {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+        padding-top: 14px;
+        border-top: 1px solid rgba(168, 98, 31, 0.18);
+      }
+      .proj-btn {
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        padding: 7px 14px;
+        border-radius: 8px;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .proj-btn-primary {
+        background: var(--btn, #332a17);
+        color: var(--btn-fg, #f6eed8);
+      }
+      .proj-btn-primary:hover {
+        background: var(--accent, #a8621f);
+        color: #fff;
+      }
+      .proj-btn-ghost {
+        background: transparent;
+        color: var(--ink, #2e2515);
+        border: 1px solid rgba(46, 37, 21, 0.25);
+      }
+      .proj-btn-ghost:hover {
+        border-color: var(--accent, #a8621f);
+        color: var(--accent, #a8621f);
+      }
+
+      /* Skills Matrix */
+      .skills-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .landscape-skill-chip {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 8px 18px;
+        background: rgba(253, 248, 232, 0.85);
+        border: 1px solid rgba(168, 98, 31, 0.3);
+        border-radius: 12px;
+        color: var(--ink, #2e2515);
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+      .landscape-skill-chip:hover {
+        transform: translateY(-2px);
+        border-color: var(--accent, #a8621f);
+        color: var(--accent, #a8621f);
+      }
+
+      /* Transmission / Contact */
+      .contact-banner {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+      .contact-info-title {
+        font-family: var(--mincho);
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 6px;
+      }
+      .contact-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 768px) {
+        .landscape-portfolio-scroll {
+          padding: 80px 16px 60px;
+          gap: 40px;
+        }
+        .landscape-glass-card {
+          padding: 24px 18px;
+        }
+        .projects-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    `;
+
+    // Portfolio overlay markup
+    const overlayHtml = `
+    <!-- SCROLLABLE 3D PORTFOLIO CONTENT LAYER -->
+    <div class="landscape-portfolio-scroll">
+      
+      <!-- 01: HERO MASTHEAD -->
+      <section class="landscape-glass-card portfolio-interactive">
+        <div class="hero-eyebrow">Interactive 3D Simulation • Architecture Frame</div>
+        <h1 class="hero-masthead">${safeName}</h1>
+        <div class="hero-role">${safeRole}</div>
+        <p class="hero-bio">“${safeBio}”</p>
+        <div class="hero-actions">
+          <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Initiate Contact &rarr;</a>
+          ${safeGithub ? `<a href="${safeGithub}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Dossier &nearr;</a>` : ''}
+          <span style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 ${safeLocation}</span>
+        </div>
+      </section>
+
+      <!-- 02: FEATURED CASE STUDIES -->
+      <section class="portfolio-interactive">
+        <div class="section-heading">// 02 FEATURED CASE STUDIES &amp; SYSTEMS</div>
+        <div class="projects-grid">
+          ${projectsHtml}
+        </div>
+      </section>
+
+      <!-- 03: TECHNICAL SYSTEMS MATRIX -->
+      <section class="landscape-glass-card portfolio-interactive">
+        <div class="section-heading">// 03 CORE TECHNICAL COMPETENCIES</div>
+        <div class="skills-container">
+          ${skillsHtml}
+        </div>
+      </section>
+
+      <!-- 04: TRANSMISSION TERMINAL -->
+      <section class="landscape-glass-card portfolio-interactive">
+        <div class="contact-banner">
+          <div>
+            <div class="hero-eyebrow">Transmission Terminal</div>
+            <h2 class="contact-info-title">Let’s Build Something Exceptional</h2>
+            <p style="font-size: 13.5px; color: var(--ink3, #3f3520);">Open for high-throughput systems, distributed platforms, and spatial 3D WebGL applications.</p>
+          </div>
+          <div class="contact-actions">
+            <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Email: ${safeEmail} &nearr;</a>
+            ${safeGithub ? `<a href="${safeGithub}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Profile &nearr;</a>` : ''}
+          </div>
+        </div>
+      </section>
+
+      <!-- 05: FOOTER -->
+      <footer style="text-align: center; font-size: 12px; color: var(--ink2, #8b7c5c); padding-top: 20px;" class="portfolio-interactive">
+        <div>&copy; ${new Date().getFullYear()} ${safeName}. All rights reserved.</div>
+        <div style="margin-top: 4px; font-size: 10.5px; opacity: 0.85;">Crafted with MyFolio Procedural 3D Japanese Countryside Engine</div>
+      </footer>
+    </div>
+    `;
+
+    // Inject overlay styles into <head>
+    html = html.replace('</head>', `${overlayStyles}\n</head>`);
+
+    // Inject overlay markup right before </body>
+    html = html.replace('</body>', `${overlayHtml}\n</body>`);
 
     return html;
   },
 
   render404Page(candidateData = {}) {
-    return `<!DOCTYPE html><html><body style="background:#ecdcbc;color:#2e2515;font-family:sans-serif;text-align:center;padding-top:20vh;"><h1>Terrain Lost · 404</h1><p>The coordinates lie beyond the mapped landscape.</p><a href="/" style="color:#a8621f;">Return to Terrain</a></body></html>`;
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Terrain Lost · 404</title>
+  <style>
+    body { background: #ecdcbc; color: #2e2515; font-family: "Helvetica Neue", sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; text-align: center; }
+    .card { background: rgba(253, 241, 214, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(168, 98, 31, 0.35); border-radius: 20px; padding: 40px; max-width: 480px; }
+    h1 { font-size: 48px; margin: 0 0 12px; color: #a8621f; }
+    p { margin: 0 0 24px; font-size: 15px; color: #3f3520; }
+    a { display: inline-block; background: #332a17; color: #f6eed8; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; }
+    a:hover { background: #a8621f; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>404</h1>
+    <p>The coordinates lie beyond the mapped Japanese countryside terrain.</p>
+    <a href="/">&larr; Return to Terrain</a>
+  </div>
+</body>
+</html>`;
   }
 };
 

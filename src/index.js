@@ -2540,6 +2540,17 @@ app.get(['/abdulaziz', '/u/abdulaziz', '/aziz', '/u/aziz', '/u/:handle', '/:hand
     return next();
   }
 
+  // When embedded in an iframe or requested with embed query, serve directly on same origin without cross-subdomain redirect
+  if (req.query.embed === '1' || req.query.preview === '1' || req.headers['sec-fetch-dest'] === 'iframe') {
+    let siteId = (handle === 'aziz') ? 'abdulaziz' : handle;
+    let html = await hostingProvider.getSiteHtml(siteId);
+    if (html) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
+      return res.send(html);
+    }
+  }
+
   // Strict Subdomain Policy: Always 301 redirect to dedicated subdomain https://<handle>.myfolio.tech/
   if (handle === 'abdulaziz' || handle === 'aziz') {
     return res.redirect(301, 'https://abdulaziz.myfolio.tech/');

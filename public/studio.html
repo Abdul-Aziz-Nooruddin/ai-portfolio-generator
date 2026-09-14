@@ -1014,7 +1014,7 @@
 
       <div class="viewport-canvas-frame">
         <div class="spatial-viewport-screen" id="viewportScreen">
-          <iframe id="studioLiveIframe" class="spatial-viewport-iframe" src="/abdulaziz" title="Live 3D Portfolio Canvas"></iframe>
+          <iframe id="studioLiveIframe" class="spatial-viewport-iframe" src="/abdulaziz?embed=1" title="Live 3D Portfolio Canvas"></iframe>
         </div>
       </div>
     </main>
@@ -1457,7 +1457,7 @@
         // Point live canvas directly to the generated build on same origin
         const iframe = document.getElementById('studioLiveIframe');
         if (iframe) {
-          iframe.src = '/abdulaziz?t=' + Date.now();
+          iframe.src = '/abdulaziz?embed=1&t=' + Date.now();
         }
 
         if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
@@ -1477,7 +1477,7 @@
       // Connect iframe to same-origin portfolio route on load
       const iframe = document.getElementById('studioLiveIframe');
       if (iframe) {
-        iframe.src = '/abdulaziz';
+        iframe.src = '/abdulaziz?embed=1';
       }
 
       // Drag and drop for resume dropzone
