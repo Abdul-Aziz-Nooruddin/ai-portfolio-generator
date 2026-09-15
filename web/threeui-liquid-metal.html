@@ -100,6 +100,7 @@
     transition-duration:.10s;
   }
 </style>
+  <link rel="stylesheet" href="/button-system.css">
 </head>
 <body>
 <nav style="position:fixed;top:0;left:0;right:0;padding:1.2rem 2.5rem;display:flex;justify-content:space-between;align-items:center;z-index:100;background:rgba(8,10,14,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.08);">
@@ -909,5 +910,6 @@ window.__ripple = (x = 0, y = 0) => addRipple(x, y);
 window.__seek   = v => { clock = v; drawn = null; };
 }
 </script>
+  <script src="/button-engine.js" defer></script>
 </body>
 </html>

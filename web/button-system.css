@@ -1,0 +1,709 @@
+/**
+ * MYFOLIO GLOBAL BUTTON MOTION, COLOR & EFFECT SYSTEM
+ * Unified Interaction Physics Kernel with Contextual Atmospheric Skins
+ * 
+ * 14 Distinct Button Families:
+ * - Family A: Primary Hero CTA (.mf-btn-hero, [data-btn-family="hero"])
+ * - Family B: Liquid / Fluid (.mf-btn-liquid, [data-btn-family="liquid"])
+ * - Family C: Spark / AI Generative (.mf-btn-spark, [data-btn-family="spark"])
+ * - Family D: Shimmer / Light-Sweep (.mf-btn-shimmer, [data-btn-family="shimmer"])
+ * - Family E: Magnetic Nav (.mf-btn-magnetic, [data-btn-family="magnetic"])
+ * - Family F: Glass & Aurora (.mf-btn-glass, [data-btn-family="glass"])
+ * - Family G: Neon / Cyber Energy (.mf-btn-neon, [data-btn-family="neon"])
+ * - Family H: 3D Spatial Depth (.mf-btn-depth, [data-btn-family="depth"])
+ * - Family I: Orbit & Camera Rotary (.mf-btn-orbit, [data-btn-family="orbit"])
+ * - Family J: Kinetic Toggle & Switch (.mf-btn-toggle, [data-btn-family="toggle"])
+ * - Family K: Minimalist Icon Action (.mf-btn-icon, [data-btn-family="icon"])
+ * - Family L: Tactile Command Chip (.mf-btn-chip, [data-btn-family="chip"])
+ * - Family M: Controlled Destructive (.mf-btn-danger, [data-btn-family="danger"])
+ * - Family N: Success & State Morph (.mf-btn-success, [data-btn-family="success"])
+ */
+
+:root {
+  /* Semantic Button Color Tokens */
+  --mf-btn-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --mf-btn-radius-pill: 9999px;
+  --mf-btn-radius-md: 12px;
+  --mf-btn-radius-sm: 8px;
+
+  /* Default Dark Platform Palette */
+  --btn-primary-bg: linear-gradient(135deg, #4f8cff 0%, #7e57c2 50%, #6366f1 100%);
+  --btn-primary-glow: rgba(99, 102, 241, 0.45);
+  --btn-primary-text: #ffffff;
+  --btn-primary-border: rgba(255, 255, 255, 0.22);
+
+  --btn-secondary-bg: rgba(255, 255, 255, 0.06);
+  --btn-secondary-hover: rgba(255, 255, 255, 0.12);
+  --btn-secondary-border: rgba(255, 255, 255, 0.14);
+  --btn-secondary-text: #f1f5f9;
+
+  --btn-danger-bg: rgba(239, 68, 68, 0.12);
+  --btn-danger-border: rgba(239, 68, 68, 0.4);
+  --btn-danger-text: #fca5a5;
+  --btn-danger-hover: #ef4444;
+
+  --btn-success-bg: rgba(16, 185, 129, 0.14);
+  --btn-success-border: rgba(16, 185, 129, 0.45);
+  --btn-success-text: #6ee7b7;
+
+  /* Physics & Easing Constants */
+  --ease-elastic: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* =====================================================================
+   CONTEXTUAL THEME OVERRIDES
+   ===================================================================== */
+
+/* 1. Sylva / Biophilic Theme */
+[data-theme="sylva"], .theme-sylva {
+  --btn-primary-bg: linear-gradient(135deg, #a8d59d 0%, #6ee7b7 50%, #4ade80 100%);
+  --btn-primary-glow: rgba(110, 231, 183, 0.4);
+  --btn-primary-text: #0e1a12;
+  --btn-primary-border: rgba(255, 255, 255, 0.35);
+  --btn-secondary-bg: rgba(22, 28, 20, 0.85);
+  --btn-secondary-border: rgba(168, 213, 157, 0.25);
+  --btn-secondary-text: #e6f4df;
+}
+
+/* 2. Liquid Metal Theme */
+[data-theme="liquid"], .theme-liquid {
+  --btn-primary-bg: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 50%, #cbd5e1 100%);
+  --btn-primary-glow: rgba(255, 255, 255, 0.5);
+  --btn-primary-text: #090d16;
+  --btn-primary-border: rgba(255, 255, 255, 0.8);
+  --btn-secondary-bg: rgba(15, 23, 42, 0.7);
+  --btn-secondary-border: rgba(148, 163, 184, 0.3);
+  --btn-secondary-text: #f8fafc;
+}
+
+/* 3. Quantum Matrix & Terminal Theme */
+[data-theme="quantum"], [data-theme="terminal"], .theme-quantum, .theme-terminal {
+  --btn-primary-bg: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
+  --btn-primary-glow: rgba(6, 182, 212, 0.5);
+  --btn-primary-text: #041316;
+  --btn-primary-border: rgba(34, 211, 238, 0.6);
+  --btn-secondary-bg: rgba(6, 15, 20, 0.85);
+  --btn-secondary-border: rgba(6, 182, 212, 0.3);
+  --btn-secondary-text: #a5f3fc;
+}
+
+/* 4. Constellation / Celestial Theme */
+[data-theme="constellation"], .theme-constellation {
+  --btn-primary-bg: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  --btn-primary-glow: rgba(251, 191, 36, 0.45);
+  --btn-primary-text: #1a1003;
+  --btn-primary-border: rgba(254, 243, 199, 0.5);
+  --btn-secondary-bg: rgba(18, 14, 28, 0.85);
+  --btn-secondary-border: rgba(251, 191, 36, 0.25);
+  --btn-secondary-text: #fef3c7;
+}
+
+/* 5. Palmo Pure / Swiss Editorial Theme */
+[data-theme="palmo"], .theme-palmo {
+  --btn-primary-bg: #0a0a0a;
+  --btn-primary-glow: rgba(0, 0, 0, 0.25);
+  --btn-primary-text: #ffffff;
+  --btn-primary-border: #262626;
+  --btn-secondary-bg: #f4f3ef;
+  --btn-secondary-border: #d4d4d8;
+  --btn-secondary-text: #09090b;
+}
+
+/* =====================================================================
+   BASE BUTTON FOUNDATION (Non-Destructive)
+   ===================================================================== */
+.mf-btn,
+[data-btn-family] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  text-decoration: none;
+  border: 1px solid transparent;
+  border-radius: var(--mf-btn-radius-pill);
+  padding: 10px 20px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  isolation: isolate;
+  overflow: hidden;
+  transition: transform 0.25s var(--ease-elastic),
+              box-shadow 0.3s var(--ease-smooth),
+              background 0.3s var(--ease-smooth),
+              border-color 0.3s var(--ease-smooth),
+              color 0.2s ease;
+}
+
+.mf-btn:focus-visible,
+[data-btn-family]:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 3px;
+}
+
+/* Proximity Spotlight Layer */
+.mf-btn::before,
+[data-btn-family]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle 120px at var(--cursor-x, 50%) var(--cursor-y, 50%),
+    rgba(255, 255, 255, 0.18),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease-smooth);
+  z-index: 1;
+}
+
+.mf-btn:hover::before,
+[data-btn-family]:hover::before {
+  opacity: 1;
+}
+
+/* Active Press Depression */
+.mf-btn:active,
+[data-btn-family]:active {
+  transform: scale(0.97) translateY(1px);
+  transition-duration: 0.08s;
+}
+
+/* Disabled State */
+.mf-btn:disabled,
+.mf-btn[aria-disabled="true"],
+[data-btn-family]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+/* =====================================================================
+   FAMILY A: PRIMARY HERO CTA (.mf-btn-hero, [data-btn-family="hero"])
+   ===================================================================== */
+.mf-btn-hero,
+[data-btn-family="hero"],
+.btn-primary:where(:not([data-btn-family])),
+.mf-btn-primary:where(:not([data-btn-family])),
+.btn-solar-primary:where(:not([data-btn-family])),
+.btn-flavour-primary:where(:not([data-btn-family])),
+.sylva-btn--primary:where(:not([data-btn-family])),
+.btn-solid-gold:where(:not([data-btn-family])),
+.btn-mercury-primary:where(:not([data-btn-family])),
+.btn-tactile-primary:where(:not([data-btn-family])),
+.btn-primary-solid:where(:not([data-btn-family])),
+.btn-primary-glow:where(:not([data-btn-family])),
+.btn-launch:where(:not([data-btn-family])),
+.btn-solar-cta:where(:not([data-btn-family])),
+.btn-amber-solid:where(:not([data-btn-family])),
+.nav-cta-pill:where(:not([data-btn-family])) {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-border);
+  box-shadow: 0 8px 24px var(--btn-primary-glow),
+              inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+/* Specular Traveling Highlight */
+.mf-btn-hero::after,
+[data-btn-family="hero"]::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -80%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.32) 50%,
+    transparent
+  );
+  transform: rotate(25deg);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.6s var(--ease-elastic), opacity 0.3s ease;
+  z-index: 2;
+}
+
+.mf-btn-hero:hover,
+[data-btn-family="hero"]:hover {
+  transform: scale(1.03) translateY(-2px);
+  box-shadow: 0 14px 34px var(--btn-primary-glow),
+              0 0 20px rgba(255, 255, 255, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.mf-btn-hero:hover::after,
+[data-btn-family="hero"]:hover::after {
+  opacity: 1;
+  transform: rotate(25deg) translateX(360%);
+}
+
+/* =====================================================================
+   FAMILY B: LIQUID / FLUID (.mf-btn-liquid, [data-btn-family="liquid"])
+   ===================================================================== */
+.mf-btn-liquid,
+[data-btn-family="liquid"],
+.liquid-button:where(:not([data-btn-family])),
+.metal-btn:where(:not([data-btn-family])) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.01) 60%),
+              rgba(14, 18, 14, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: transform 0.35s var(--ease-spring),
+              border-color 0.3s ease,
+              box-shadow 0.3s ease;
+}
+
+.mf-btn-liquid:hover,
+[data-btn-family="liquid"]:hover {
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5),
+              0 0 24px rgba(110, 231, 183, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px) scale(1.02);
+}
+
+.mf-btn-liquid:active,
+[data-btn-family="liquid"]:active {
+  transform: scale(0.96) translateY(2px);
+  filter: blur(0.2px);
+}
+
+/* =====================================================================
+   FAMILY C: SPARK / AI GENERATIVE (.mf-btn-spark, [data-btn-family="spark"])
+   ===================================================================== */
+.mf-btn-spark,
+[data-btn-family="spark"],
+.ai-quick-btn:where(:not([data-btn-family])),
+.btn-spark:where(:not([data-btn-family])) {
+  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+  border: 1px solid rgba(167, 139, 250, 0.4);
+  color: #ede9fe;
+  box-shadow: 0 4px 20px rgba(129, 140, 248, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Animated Border Glow Pulse */
+.mf-btn-spark::before,
+[data-btn-family="spark"]::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    #a855f7,
+    #ec4899,
+    #3b82f6,
+    #a855f7
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: spark-border 3s linear infinite;
+  z-index: 1;
+}
+
+@keyframes spark-border {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.mf-btn-spark:hover,
+[data-btn-family="spark"]:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 30px rgba(147, 51, 234, 0.45),
+              0 0 20px rgba(168, 85, 247, 0.3);
+  color: #ffffff;
+}
+
+.mf-btn-spark:hover::before,
+[data-btn-family="spark"]:hover::before {
+  opacity: 1;
+}
+
+/* =====================================================================
+   FAMILY D: SHIMMER / LIGHT-SWEEP (.mf-btn-shimmer, [data-btn-family="shimmer"])
+   ===================================================================== */
+.mf-btn-shimmer,
+[data-btn-family="shimmer"],
+.fluid-publish-btn:where(:not([data-btn-family])),
+.btn-shimmer:where(:not([data-btn-family])),
+.btn-export:where(:not([data-btn-family])),
+.save-btn:where(:not([data-btn-family])),
+.btn-submit:where(:not([data-btn-family])),
+.submit-btn:where(:not([data-btn-family])),
+.btn-return-reality:where(:not([data-btn-family])) {
+  background: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--btn-secondary-text);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+}
+
+.mf-btn-shimmer::after,
+[data-btn-family="shimmer"]::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%; height: 100%;
+  background: linear-gradient(
+    100deg,
+    transparent,
+    rgba(255, 255, 255, 0.28) 50%,
+    transparent
+  );
+  transform: skewX(-20deg);
+  opacity: 0;
+  transition: transform 0.65s var(--ease-elastic), opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.mf-btn-shimmer:hover,
+[data-btn-family="shimmer"]:hover {
+  background: var(--btn-secondary-hover);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.mf-btn-shimmer:hover::after,
+[data-btn-family="shimmer"]:hover::after {
+  opacity: 1;
+  transform: skewX(-20deg) translateX(380%);
+}
+
+/* =====================================================================
+   FAMILY E: MAGNETIC NAV (.mf-btn-magnetic, [data-btn-family="magnetic"])
+   ===================================================================== */
+.mf-btn-magnetic,
+[data-btn-family="magnetic"],
+.nav-cta-btn:where(:not([data-btn-family])),
+.nav-cta:where(:not([data-btn-family])),
+.btn-biosynth-magnetic:where(:not([data-btn-family])) {
+  will-change: transform;
+  transition: transform 0.25s var(--ease-spring),
+              box-shadow 0.25s ease,
+              background 0.2s ease;
+}
+
+.mf-btn-magnetic:hover,
+[data-btn-family="magnetic"]:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+}
+
+/* =====================================================================
+   FAMILY F: GLASS & AURORA (.mf-btn-glass, [data-btn-family="glass"])
+   ===================================================================== */
+.mf-btn-glass,
+[data-btn-family="glass"],
+.btn-glass:where(:not([data-btn-family])),
+.btn-glass-subtle:where(:not([data-btn-family])),
+.btn-shell-gold:where(:not([data-btn-family])),
+.btn-solar-outline:where(:not([data-btn-family])),
+.btn-solar-secondary:where(:not([data-btn-family])),
+.btn-flavour-secondary:where(:not([data-btn-family])),
+.sylva-btn--secondary:where(:not([data-btn-family])),
+.btn-outline-glass:where(:not([data-btn-family])),
+.btn-celestial-secondary:where(:not([data-btn-family])),
+.btn-top-glass:where(:not([data-btn-family])),
+.nav-threeui-btn:where(:not([data-btn-family])),
+.btn-biosynth-outline:where(:not([data-btn-family])),
+.universe-footer-btn:where(:not([data-btn-family])),
+.mf-btn-secondary:where(:not([data-btn-family])),
+.btn-secondary:where(:not([data-btn-family])),
+.back-btn:where(:not([data-btn-family])) {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f1f5f9;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.mf-btn-glass:hover,
+[data-btn-family="glass"]:hover {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4),
+              0 0 20px rgba(147, 197, 253, 0.2);
+}
+
+/* =====================================================================
+   FAMILY G: NEON / CYBER ENERGY (.mf-btn-neon, [data-btn-family="neon"])
+   ===================================================================== */
+.mf-btn-neon,
+[data-btn-family="neon"],
+.btn-cyan-solid:where(:not([data-btn-family])),
+.btn-matrix-hollow:where(:not([data-btn-family])),
+.btn-action:where(:not([data-btn-family])),
+.btn-tactile-link:where(:not([data-btn-family])),
+.inspect-artifact-btn:where(:not([data-btn-family])) {
+  background: rgba(4, 19, 24, 0.85);
+  border: 1px solid rgba(6, 182, 212, 0.5);
+  color: #22d3ee;
+  box-shadow: 0 0 14px rgba(6, 182, 212, 0.25),
+              inset 0 0 10px rgba(6, 182, 212, 0.1);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Space Mono', monospace;
+  letter-spacing: 0.5px;
+}
+
+.mf-btn-neon:hover,
+[data-btn-family="neon"]:hover {
+  background: rgba(6, 182, 212, 0.18);
+  border-color: #22d3ee;
+  color: #ffffff;
+  box-shadow: 0 0 24px rgba(34, 211, 238, 0.5),
+              inset 0 0 16px rgba(34, 211, 238, 0.25);
+  transform: translateY(-1px);
+}
+
+/* =====================================================================
+   FAMILY H: 3D SPATIAL DEPTH (.mf-btn-depth, [data-btn-family="depth"])
+   ===================================================================== */
+.mf-btn-depth,
+[data-btn-family="depth"],
+.knob:where(:not([data-btn-family])),
+.knob--about:where(:not([data-btn-family])),
+.ticket-button:where(:not([data-btn-family])),
+.viewport-btn:where(:not([data-btn-family])) {
+  transform: perspective(600px) translateZ(0);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.4),
+              0 12px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.2s var(--ease-spring),
+              box-shadow 0.2s var(--ease-spring);
+}
+
+.mf-btn-depth:hover,
+[data-btn-family="depth"]:hover {
+  transform: perspective(600px) translateZ(4px) translateY(-2px);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.45),
+              0 18px 28px rgba(0, 0, 0, 0.4);
+}
+
+.mf-btn-depth:active,
+[data-btn-family="depth"]:active {
+  transform: perspective(600px) translateZ(-2px) translateY(4px);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.5),
+              0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* =====================================================================
+   FAMILY I: ORBIT & CAMERA ROTARY (.mf-btn-orbit, [data-btn-family="orbit"])
+   ===================================================================== */
+.mf-btn-orbit,
+[data-btn-family="orbit"],
+.tool:where(:not([data-btn-family])),
+.sb-arrow:where(:not([data-btn-family])),
+.cam-btn:where(:not([data-btn-family])),
+.btn-top:where(:not([data-btn-family])) {
+  border-radius: 50%;
+  aspect-ratio: 1;
+  padding: 0;
+  width: 42px; height: 42px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #e2e8f0;
+}
+
+.mf-btn-orbit svg,
+[data-btn-family="orbit"] svg {
+  transition: transform 0.4s var(--ease-spring);
+}
+
+.mf-btn-orbit:hover,
+[data-btn-family="orbit"]:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.mf-btn-orbit:hover svg,
+[data-btn-family="orbit"]:hover svg {
+  transform: rotate(90deg);
+}
+
+/* =====================================================================
+   FAMILY J: KINETIC TOGGLE & SWITCH (.mf-btn-toggle, [data-btn-family="toggle"])
+   ===================================================================== */
+.mf-btn-toggle,
+[data-btn-family="toggle"],
+.device-btn:where(:not([data-btn-family])),
+.theme-btn:where(:not([data-btn-family])),
+.hardware-toggle-btn:where(:not([data-btn-family])),
+.audio-toggle-btn:where(:not([data-btn-family])) {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.65);
+  border-radius: var(--mf-btn-radius-sm);
+  padding: 6px 14px;
+  font-size: 13px;
+  transition: all 0.25s var(--ease-smooth);
+}
+
+.mf-btn-toggle:hover,
+[data-btn-family="toggle"]:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.mf-btn-toggle.active,
+.mf-btn-toggle[aria-pressed="true"],
+[data-btn-family="toggle"].active,
+.device-btn.active {
+  background: #ffffff !important;
+  color: #090d16 !important;
+  border-color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.35);
+  font-weight: 600;
+}
+
+/* =====================================================================
+   FAMILY K: MINIMALIST ICON ACTION (.mf-btn-icon, [data-btn-family="icon"])
+   ===================================================================== */
+.mf-btn-icon,
+[data-btn-family="icon"],
+.icon-btn:where(:not([data-btn-family])),
+.icon-button:where(:not([data-btn-family])),
+.close-button:where(:not([data-btn-family])),
+.modal-close-btn:where(:not([data-btn-family])),
+.modal-ctrl-btn:where(:not([data-btn-family])),
+.round-button:where(:not([data-btn-family])),
+.reset-button:where(:not([data-btn-family])),
+.liquid-button--play:where(:not([data-btn-family])),
+.sylva-modal-close:where(:not([data-btn-family])) {
+  padding: 8px;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+}
+
+.mf-btn-icon:hover,
+[data-btn-family="icon"]:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  transform: scale(1.12);
+}
+
+.mf-btn-icon:active,
+[data-btn-family="icon"]:active {
+  transform: scale(0.92);
+}
+
+/* =====================================================================
+   FAMILY L: TACTILE COMMAND CHIP (.mf-btn-chip, [data-btn-family="chip"])
+   ===================================================================== */
+.mf-btn-chip,
+[data-btn-family="chip"],
+.quick-chip:where(:not([data-btn-family])),
+.tab-btn:where(:not([data-btn-family])),
+.tbtn:where(:not([data-btn-family])),
+.color-swatch-btn:where(:not([data-btn-family])),
+.filter-btn:where(:not([data-btn-family])),
+.page-button:where(:not([data-btn-family])) {
+  font-family: 'Space Mono', 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: var(--mf-btn-radius-sm);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.mf-btn-chip:hover,
+[data-btn-family="chip"]:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.mf-btn-chip.active,
+.tab-btn.active {
+  background: rgba(99, 102, 241, 0.16);
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #c7d2fe;
+}
+
+/* =====================================================================
+   FAMILY M: CONTROLLED DESTRUCTIVE (.mf-btn-danger, [data-btn-family="danger"])
+   ===================================================================== */
+.mf-btn-danger,
+[data-btn-family="danger"],
+.btn-danger:where(:not([data-btn-family])),
+.delete-btn:where(:not([data-btn-family])) {
+  background: var(--btn-danger-bg);
+  border: 1px solid var(--btn-danger-border);
+  color: var(--btn-danger-text);
+}
+
+.mf-btn-danger:hover,
+[data-btn-family="danger"]:hover {
+  background: var(--btn-danger-hover);
+  border-color: var(--btn-danger-hover);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+  transform: translateY(-1px);
+}
+
+.mf-btn-danger:active,
+[data-btn-family="danger"]:active {
+  transform: scale(0.96);
+}
+
+/* =====================================================================
+   FAMILY N: SUCCESS & STATE MORPH (.mf-btn-success, [data-btn-family="success"])
+   ===================================================================== */
+.mf-btn-success,
+[data-btn-family="success"],
+[data-state="success"] {
+  background: var(--btn-success-bg) !important;
+  border-color: var(--btn-success-border) !important;
+  color: var(--btn-success-text) !important;
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35) !important;
+}
+
+/* =====================================================================
+   ACCESSIBILITY & REDUCED MOTION
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .mf-btn,
+  [data-btn-family],
+  .mf-btn::before,
+  .mf-btn::after,
+  [data-btn-family]::before,
+  [data-btn-family]::after {
+    animation: none !important;
+    transition: opacity 0.12s ease, background-color 0.12s ease, border-color 0.12s ease !important;
+    transform: none !important;
+  }
+}

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- GA4 Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZJFT5YTN2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9ZJFT5YTN2');
+  </script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thank You! Your 3D Portfolio Is Live | MyFolio</title>
@@ -21,6 +30,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
@@ -66,17 +76,17 @@
     }
 
     .card {
-      position: relative;
-      z-index: 1;
-      max-width: 640px;
-      width: 100%;
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 28px;
-      padding: 48px 36px;
+      border-radius: 24px;
+      padding: 48px;
+      max-width: 580px;
+      width: 100%;
       text-align: center;
-      backdrop-filter: blur(24px);
-      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 50px rgba(16, 185, 129, 0.15);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      position: relative;
+      z-index: 10;
     }
 
     .success-icon {
@@ -172,8 +182,26 @@
       .btn { width: 100%; justify-content: center; }
     }
   </style>
+  <link rel="stylesheet" href="/button-system.css">
 </head>
 <body>
+  <!-- 🌌 3D Ambient Open Star Cluster Background -->
+  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
+    <iframe
+      title="Bright stars of an open cluster"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      xr-spatial-tracking
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share
+      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
+    </iframe>
+    <div class="cosmic-cluster-overlay"></div>
+  </div>
   <div class="ambient-glow"></div>
 
   <div class="card">
@@ -196,11 +224,11 @@
         <i data-lucide="external-link" style="width:18px;height:18px;"></i>
         <span>View Live Portfolio</span>
       </a>
-      <a href="/dashboard.html" class="btn btn-secondary">
+      <a href="/dashboard" class="btn btn-primary">
         <i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i>
         <span>Go to Dashboard</span>
       </a>
-      <a href="/studio.html" class="btn btn-secondary">
+      <a href="/studio" class="btn btn-secondary">
         <i data-lucide="sparkles" style="width:18px;height:18px;"></i>
         <span>Generate Another</span>
       </a>
@@ -230,5 +258,6 @@
       alert('Portfolio link copied to clipboard!');
     }
   </script>
+  <script src="/button-engine.js" defer></script>
 </body>
 </html>
