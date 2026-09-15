@@ -135,7 +135,7 @@ const ThreeUIConstellationTemplate = {
     .hero-section { min-height: 88vh; display: flex; flex-direction: column; justify-content: center; padding: 8rem 0 3rem; }
     .hero-status-pill { display: inline-flex; align-items: center; gap: 0.6rem; background: rgba(14, 18, 34, 0.75); border: 1px solid var(--border-subtle); border-radius: 9999px; padding: 0.45rem 1.1rem; font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-accent); margin-bottom: 1.8rem; width: fit-content; }
     .hero-status-pill span { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-accent); }
-    .hero-title { font-family: var(--font-display); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 300; line-height: 1.12; color: #FFFFFF; margin-bottom: 1.4rem; max-width: 900px; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 5vw, 4.2rem); font-weight: 300; line-height: 1.12; color: #FFFFFF; margin-bottom: 1.4rem; max-width: 900px; }
     .hero-title strong { font-weight: 700; background: linear-gradient(135deg, #FFFFFF 30%, var(--gold-accent) 70%, var(--cyan-spark) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero-subtitle { font-size: clamp(1rem, 1.8vw, 1.22rem); color: var(--text-muted); max-width: 680px; line-height: 1.7; margin-bottom: 2.5rem; font-weight: 300; }
     .hero-cta-group { display: flex; flex-wrap: wrap; gap: 1.2rem; align-items: center; }

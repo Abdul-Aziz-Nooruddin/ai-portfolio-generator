@@ -262,7 +262,7 @@ const BotanicalWoodcraftTemplate = {
 
     .wood-section-title {
       font-family: var(--font-heading);
-      font-size: clamp(2.2rem, 4.5vw, 3rem);
+      font-size: clamp(1.4rem, 4.5vw, 3rem);
       font-weight: 800;
       color: var(--primary);
     }
@@ -292,7 +292,7 @@ const BotanicalWoodcraftTemplate = {
 
     .wood-hero-name {
       font-family: var(--font-heading);
-      font-size: clamp(3rem, 5.5vw, 4.5rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.5rem);
       font-weight: 800;
       line-height: 1.1;
       color: var(--primary);

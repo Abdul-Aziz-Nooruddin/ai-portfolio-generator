@@ -17,3 +17,7 @@ Whenever creating or adding a new visual template to the MyFolio platform:
    - **Never display hardcoded template content in generated portfolios**.
    - Strictly bind candidate metadata (`data.name`, `data.title`, `data.bio`, `data.skills`, `data.projects`, `data.experience`, `data.education`, etc.).
    - Dynamically render lists without placeholder mock data leakage.
+7. **Strict Project Visual Domain Relevancy & Zero Universe Preview Recycling**:
+   - Project cards MUST NEVER recycle or display design template / universe preview thumbnails.
+   - All project visuals MUST be strictly and contextually relevant to the project's title and actual technical domain (e.g., Note/Messenger projects receive encrypted message dispatch visuals; LMS/Management projects receive database & user directory system architecture visuals; Algorand/Web3 projects receive cryptographic ledger/smart contract visuals; AI/LLM projects receive neural inference/edge compute visuals; Developer Tools/CLI receive code IDE/workstation visuals).
+

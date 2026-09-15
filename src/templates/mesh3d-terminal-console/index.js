@@ -331,7 +331,7 @@ const Mesh3DTerminalConsoleTemplate = {
 
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(2.2rem, 5vw, 4rem);
+      font-size: clamp(1.6rem, 5vw, 4rem);
       font-weight: 700;
       line-height: 1.05;
       letter-spacing: -0.01em;

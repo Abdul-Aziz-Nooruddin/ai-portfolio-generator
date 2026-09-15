@@ -12,41 +12,37 @@
  */
 
 class ProjectArtworkSynthesizer {
-  // Rich catalog of authentic 3D visual assets in /assets/3d/
+  // Dedicated catalog of authentic 3D visual assets strictly representing software project domains
+  // Under NO circumstances does this catalog use or recycle design universe preview thumbnails
   static assetCatalog = [
-    { src: '/assets/3d/algorand_escrow_protocol_3d.jpg', label: 'Algorand Escrow Protocol', icon: '🏛️', color: '#00f2fe', keywords: ['algorand', 'algo', 'escrow', 'dpdp', 'compliance', 'monetization', 'p2p', 'settlement'] },
-    { src: '/assets/3d/smart_contract_dapp_3d.jpg', label: 'Web3 & Smart Contracts', icon: '⚡', color: '#38bdf8', keywords: ['smart contract', 'contract', 'solidity', 'ethereum', 'polygon', 'dapp', 'web3', 'gas', 'mainnet', 'pos'] },
-    { src: '/assets/3d/blockchain_consent_3d.jpg', label: 'Decentralized Protocol', icon: '⛓️', color: '#a855f7', keywords: ['blockchain', 'consent', 'crypto', 'ledger', 'token', 'nft', 'dao', 'chain', 'peer', 'trust'] },
-    { src: '/assets/3d/developer_showcase_portfolio_3d.jpg', label: 'Developer WebGL Portfolio', icon: '💻', color: '#38bdf8', keywords: ['portfolio', 'showcase', 'personal', 'generator', 'website', 'devfolio', 'myfolio', 'interactive', 'experience'] },
-    { src: '/assets/3d/youtube_shorts_bot_3d.jpg', label: 'Media & Video Pipeline', icon: '🎬', color: '#ef4444', keywords: ['youtube', 'shorts', 'video', 'stream', 'reel', 'media', 'film', 'movie', 'ffmpeg', 'clip', 'podcast', 'audio', 'sound', 'render', 'speech'] },
-    { src: '/assets/3d/student_database_manager_3d.jpg', label: 'Database & Systems', icon: '🗄️', color: '#3b82f6', keywords: ['student', 'database', 'management', 'sql', 'postgres', 'mongodb', 'mysql', 'sqlite', 'crud', 'backend', 'server', 'admin', 'records', 'portal'] },
+    { src: '/assets/3d/pass_note_messenger_3d.jpg', label: 'Encrypted Note Messenger', icon: '✉️', color: '#38bdf8', keywords: ['pass a note', 'pass note', 'note', 'notes', 'messenger', 'message', 'chat', 'mail', 'notification', 'dispatch', 'communication', 'ephemeral', 'transmission', 'secret', 'text', 'inbox', 'peer-to-peer note'] },
+    { src: '/assets/3d/ai_portfolio_generator_3d.jpg', label: 'AI Portfolio Generator', icon: '⚡', color: '#f59e0b', keywords: ['ai portfolio generator', 'portfolio generator', 'ai portfolio', 'portfolio-generator', 'ai generator', 'devfolio', 'myfolio', 'showcase generator', 'compiler', 'builder', 'automated portfolio', 'generator'] },
+    { src: '/assets/3d/webgl_developer_portfolio_3d.jpg', label: 'Developer WebGL Portfolio', icon: '💻', color: '#00f2fe', keywords: ['developer webgl portfolio', 'developer webgl', 'webgl portfolio', 'developer showcase', 'personal website', 'interactive portfolio', 'shaders', 'geometry', '3d portfolio', 'dev showcase', 'frontend portfolio', 'portfolio'] },
+    { src: '/assets/3d/autonomous_edge_agent_3d.jpg', label: 'Autonomous Edge Agent', icon: '🧠', color: '#818cf8', keywords: ['autonomous edge agent', 'autonomous edge', 'edge agent', 'edge computing', 'reasoning', 'pipeline', 'llm', 'gpt', 'neural', 'inference', 'langchain', 'rag', 'deep learning', 'machine learning', 'ai agent', 'autonomous', 'agent'] },
+    { src: '/assets/3d/algorand_smart_contracts_3d.jpg', label: 'Algorand Python Smart Contracts', icon: '⚡', color: '#00f2fe', keywords: ['algorand python smart contracts', 'algorand python', 'algorand', 'algo', 'pyteal', 'smart contract', 'smart contracts', 'contract', 'avm', 'pure pos', 'consensus', 'execution layer', 'beaker'] },
+    { src: '/assets/3d/consent_chain_privacy_3d.jpg', label: 'ConsentChain Protocol', icon: '⛓️', color: '#10b981', keywords: ['consentchain algorand', 'consentchain', 'consent chain', 'consent', 'dpdp', 'compliance', 'gdpr', 'data sovereignty', 'audit trail', 'privacy', 'identity vault', 'permission', 'regulatory', 'blockchain consent'] },
+    { src: '/assets/3d/lms_user_management_3d.jpg', label: 'LMS & User Management', icon: '🎓', color: '#38bdf8', keywords: ['lms user management', 'user management', 'lms', 'learning management', 'student database', 'education', 'curriculum', 'records', 'admin hub', 'access control', 'roles', 'student portal', 'course', 'enrollment'] },
+    { src: '/assets/3d/holographic_resume_codex_3d.jpg', label: 'Personal Portfolio & Profile', icon: '📜', color: '#c084fc', keywords: ['portfolio', 'resume', 'profile', 'cv', 'personal', 'bio', 'showcase', 'identity', 'website', 'portfolio website'] },
+    { src: '/assets/3d/cybersecurity_auth_vault_3d.jpg', label: 'Security & Auth Shield', icon: '🛡️', color: '#ec4899', keywords: ['security', 'auth', 'authentication', 'jwt', 'oauth', 'biometric', 'shield', 'firewall', 'pentest', 'infosec', 'vault', 'cipher', 'zero-knowledge', 'rbac', 'credentials', 'passwords', 'encryption'] },
+    { src: '/assets/3d/cloud_microservices_gateway_3d.jpg', label: 'Cloud API Gateway', icon: '🌐', color: '#10b981', keywords: ['cloud', 'microservices', 'gateway', 'api gateway', 'load balancer', 'docker', 'k8s', 'kubernetes', 'cluster', 'distributed', 'service mesh', 'backend', 'routing', 'aws', 'gcp', 'azure', 'devops'] },
+    { src: '/assets/3d/ecommerce_marketplace_3d.jpg', label: 'E-Commerce & Marketplace', icon: '🛍️', color: '#f59e0b', keywords: ['ecommerce', 'e-commerce', 'marketplace', 'store', 'shop', 'cart', 'checkout', 'products', 'retail', 'catalog', 'order', 'stripe', 'commerce'] },
+    { src: '/assets/3d/devops_cicd_pipeline_3d.jpg', label: 'DevOps CI/CD Pipeline', icon: '🔄', color: '#10b981', keywords: ['devops', 'ci/cd', 'pipeline', 'automated testing', 'docker build', 'github actions', 'deploy', 'build', 'jenkins', 'continuous integration', 'workflow'] },
+    { src: '/assets/3d/game_engine_spatial_3d.jpg', label: '3D Game Engine & Physics', icon: '🎮', color: '#8b5cf6', keywords: ['game', 'arcade', 'gaming', 'unity', 'unreal', 'three', 'webgl', 'shader', 'canvas', 'physics', 'game engine', 'spatial', '3d', 'render', 'graphics'] },
+    { src: '/assets/3d/algorand_escrow_protocol_3d.jpg', label: 'Algorand Escrow Protocol', icon: '🏛️', color: '#00f2fe', keywords: ['escrow', 'settlement', 'p2p escrow', 'monetization', 'atomic transfer', 'trustless', 'vault escrow', 'lockup', 'algo escrow'] },
+    { src: '/assets/3d/youtube_shorts_bot_3d.jpg', label: 'Media & Video Pipeline', icon: '🎬', color: '#ef4444', keywords: ['youtube', 'shorts', 'video', 'stream', 'reel', 'media', 'film', 'movie', 'ffmpeg', 'clip', 'podcast', 'audio', 'sound', 'render', 'speech', 'subtitles'] },
+    { src: '/assets/3d/student_database_manager_3d.jpg', label: 'Database & Systems', icon: '🗄️', color: '#3b82f6', keywords: ['database', 'sql', 'postgres', 'mongodb', 'mysql', 'sqlite', 'crud', 'server', 'admin', 'records', 'tables', 'orm', 'prisma', 'migration', 'queries'] },
     { src: '/assets/3d/loan_approval_finance_3d.jpg', label: 'Fintech & Risk Engine', icon: '📈', color: '#10b981', keywords: ['finance', 'loan', 'credit', 'bank', 'trading', 'stock', 'investment', 'fintech', 'payment', 'risk', 'fraud', 'wealth', 'market', 'money', 'billing'] },
-    { src: '/assets/3d/forest_fire_climate_3d.jpg', label: 'Climate & Geospatial AI', icon: '🌍', color: '#f59e0b', keywords: ['climate', 'forest', 'fire', 'wildfire', 'nature', 'weather', 'earth', 'green', 'solar', 'sustainability', 'geospatial', 'satellite', 'environmental', 'ecology'] },
-    { src: '/assets/3d/holographic_resume_codex_3d.jpg', label: 'Holographic Codex & Docs', icon: '💎', color: '#c084fc', keywords: ['resume', 'profile', 'cv', 'showcase', 'dossier', 'career', 'bio', 'identity', 'document', 'codex'] },
-    { src: '/assets/3d/bio_digital_fusion_3d.jpg', label: 'AI & Machine Learning', icon: '🧠', color: '#818cf8', keywords: ['ai', 'neural', 'deep learning', 'machine learning', 'tensor', 'pytorch', 'classifier', 'predict', 'vision', 'nlp', 'llm', 'gpt', 'transformer', 'agent', 'rag', 'langchain'] },
-    { src: '/assets/3d/cyber_crystal_3d.jpg', label: 'Security & Auth Shield', icon: '🛡️', color: '#ec4899', keywords: ['auth', 'security', 'jwt', 'oauth', 'identity', 'cipher', 'shield', 'rbac', 'encryption', 'firewall', 'pentest', 'infosec', 'vault', 'pass', 'note', 'secret'] },
-    { src: '/assets/3d/steampunk_satellite_bird_3d.jpg', label: 'Hardware & Telemetry', icon: '🛰️', color: '#f97316', keywords: ['iot', 'arduino', 'raspberry', 'robot', 'sensor', 'hardware', 'embedded', 'telemetry', 'drone', 'esp32', 'firmware', 'device', 'messenger'] },
-    { src: '/assets/3d/cosmic_astronaut_3d.jpg', label: 'Interactive 3D Engine', icon: '🌌', color: '#06b6d4', keywords: ['game', 'arcade', 'gaming', 'unity', 'unreal', 'three', 'webgl', 'shader', 'canvas', 'physics', 'orbit', 'spatial', '3d'] },
-    { src: '/assets/3d/bioluminescent_wireframe_3d.jpg', label: 'Bio-Tech & Botanical', icon: '🌿', color: '#10b981', keywords: ['bio', 'medical', 'health', 'dna', 'pharma', 'biology', 'plant', 'botanical', 'eco', 'growth', 'sprout', 'leaf'] },
-    { src: '/assets/3d/emerald_cyber_sanctuary_3d.png', label: 'Cloud Architecture', icon: '🍃', color: '#00f5a0', keywords: ['cloud', 'aws', 'gcp', 'azure', 'docker', 'k8s', 'kubernetes', 'devops', 'ci/cd', 'infrastructure', 'pipeline', 'cluster', 'microservice'] },
-    { src: '/assets/3d/pristine_white_crystal_3d.jpg', label: 'UI/UX Glass Artisan', icon: '❄️', color: '#0ea5e9', keywords: ['ui', 'ux', 'frontend', 'design', 'glass', 'dashboard', 'interface', 'component', 'tailwind', 'css', 'layout', 'style'] },
-    { src: '/assets/3d/pristine_crystal_ribbon_3d.jpg', label: 'Full-Stack Architecture', icon: '✨', color: '#38bdf8', keywords: ['fullstack', 'full stack', 'web', 'app', 'react', 'next', 'node', 'express', 'vue', 'svelte', 'stack'] },
-    { src: '/assets/3d/pristine_glass_cube_3d.jpg', label: 'Systems & Workstation', icon: '🧊', color: '#a855f7', keywords: ['system', 'tool', 'utility', 'workbench', 'platform', 'engine', 'runtime', 'compiler', 'cli', 'automation'] },
-    { src: '/assets/3d/crystal_leaf_hand_3d.jpg', label: 'Sustainable Software', icon: '🌱', color: '#34d399', keywords: ['core', 'engine', 'app', 'tool', 'utility', 'library', 'framework', 'package', 'module', 'system'] },
-    { src: '/assets/3d/botanical_woodcraft_3d.jpg', label: 'Artisanal Codecraft', icon: '🪵', color: '#d97706', keywords: ['craft', 'script', 'toolkit', 'helper', 'parser', 'generator', 'template', 'theme', 'crafting'] },
-    { src: '/assets/3d/emerald_biodome_laboratory_3d.jpg', label: 'Research & Labs', icon: '🔬', color: '#10b981', keywords: ['research', 'lab', 'experiment', 'prototype', 'study', 'analysis', 'benchmark', 'testing'] },
-    { src: '/assets/3d/space_command_deck_about_3d.jpg', label: 'Platform Operations', icon: '🛸', color: '#6366f1', keywords: ['platform', 'operations', 'command', 'monitor', 'metrics', 'logging', 'observability', 'grafana', 'prometheus'] },
-    { src: '/assets/3d/golden_lotus_experience_3d.jpg', label: 'Enterprise Solutions', icon: '🏵️', color: '#eab308', keywords: ['enterprise', 'crm', 'erp', 'business', 'commerce', 'store', 'shop', 'marketplace', 'sales'] },
-    { src: '/assets/3d/chrono_obsidian_sanctuary_3d.jpg', label: 'Chrono-Obsidian Monolith', icon: '🏛️', color: '#f59e0b', keywords: ['obsidian', 'steampunk', 'clockwork', 'gear', 'sanctuary', 'monolith', 'stone', 'brass', 'astrolabe', 'relic'] }
+    { src: '/assets/3d/forest_fire_climate_3d.jpg', label: 'Climate & Geospatial AI', icon: '🌍', color: '#f59e0b', keywords: ['climate', 'forest', 'fire', 'wildfire', 'nature', 'weather', 'earth', 'green', 'solar', 'sustainability', 'geospatial', 'satellite', 'environmental', 'ecology', 'gis', 'sensors'] },
+    { src: '/assets/3d/steampunk_satellite_bird_3d.jpg', label: 'Hardware & IoT Telemetry', icon: '🛰️', color: '#f97316', keywords: ['iot', 'arduino', 'raspberry', 'robot', 'hardware', 'embedded', 'telemetry', 'drone', 'esp32', 'firmware', 'device', 'sensor'] }
   ];
 
   // Dedicated Cyber-Architect 3D Assets (100% transparent high-res assets)
   static cyberCatalog = [
     { src: '/assets/designs/cyber/project_ai_core_nobg.png', label: 'Neural AI Core', icon: '🧠', color: '#00F0FF', keywords: ['ai', 'intelligence', 'neural', 'machine learning', 'model', 'agent', 'brain', 'deep learning', 'vision', 'nlp', 'llm', 'gpt', 'generator'] },
     { src: '/assets/designs/cyber/project_data_chain_nobg.png', label: 'ConsentChain Protocol', icon: '⛓️', color: '#FF007A', keywords: ['algorand', 'algo', 'consent', 'blockchain', 'chain', 'crypto', 'escrow', 'web3', 'ledger', 'token', 'nft', 'dapp', 'polygon'] },
-    { src: '/assets/designs/cyber/circuit_board_nobg.png', label: 'Systems & Management Hub', icon: '🖧', color: '#FFB800', keywords: ['lms', 'management', 'database', 'sql', 'system', 'user', 'backend', 'server', 'admin', 'records', 'portal', 'api', 'pass'] },
+    { src: '/assets/designs/cyber/circuit_board_nobg.png', label: 'Systems & Management Hub', icon: '🖧', color: '#FFB800', keywords: ['lms', 'management', 'database', 'sql', 'system', 'user', 'backend', 'server', 'admin', 'records', 'portal', 'api'] },
     { src: '/assets/designs/cyber/project_crystal_nobg.png', label: 'Glassmorphic WebGL Portfolio', icon: '💎', color: '#00F0FF', keywords: ['portfolio', 'showcase', 'personal', 'design', 'glassmorphism', 'particle', 'ui', 'ux', 'frontend', 'website', 'devfolio'] },
-    { src: '/assets/designs/cyber/origami_bird_nobg.png', label: 'Encrypted Note Messenger', icon: '🕊️', color: '#38BDF8', keywords: ['pass', 'note', 'messenger', 'secret', 'chat', 'message', 'text', 'send', 'mail', 'notification', 'dispatch', 'cipher', 'iota'] },
+    { src: '/assets/designs/cyber/origami_bird_nobg.png', label: 'Encrypted Note Messenger', icon: '🕊️', color: '#38BDF8', keywords: ['pass a note', 'pass', 'note', 'messenger', 'secret', 'chat', 'message', 'text', 'send', 'mail', 'notification', 'dispatch', 'cipher', 'iota'] },
     { src: '/assets/designs/cyber/cyber_eye_nobg.png', label: 'Cybernetic Telemetry Radar', icon: '👁️', color: '#F43F5E', keywords: ['vision', 'eye', 'radar', 'monitoring', 'observability', 'telemetry', 'detector', 'lens', 'sensor'] },
     { src: '/assets/designs/cyber/hero_hand_nobg.png', label: 'Robotic Automation Stage', icon: '🤖', color: '#00F0FF', keywords: ['robot', 'hand', 'automation', 'hardware', 'spatial', 'device', 'control', 'bot'] },
     { src: '/assets/designs/cyber/resume_cards_nobg.png', label: 'Curated Codex Dossier', icon: '📜', color: '#C084FC', keywords: ['resume', 'dossier', 'codex', 'profile', 'auth', 'identity', 'credential', 'license'] },
@@ -57,14 +53,14 @@ class ProjectArtworkSynthesizer {
   ];
 
   /**
-   * Resolves a distinct, highly relevant 3D image for a project.
-   * Guarantees 0 duplicate matching images within the same portfolio.
+   * Resolves a distinct, highly relevant 3D image for a project strictly aligned with the project title & domain.
+   * Guarantees 0 duplicate matching images within the same portfolio, and ZERO recycling of design universe previews.
    */
   static resolveProjectArtwork(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
-    const nameText = String(project.name || project.title || '').toLowerCase();
-    const descText = String(project.desc || project.description || project.problem || '').toLowerCase();
-    const categoryText = String(project.category || '').toLowerCase();
-    const techText = String(project.tech || (Array.isArray(project.technologies) ? project.technologies.join(' ') : '') || '').toLowerCase();
+    const nameText = String(project.name || project.title || '').toLowerCase().trim();
+    const descText = String(project.desc || project.description || project.problem || '').toLowerCase().trim();
+    const categoryText = String(project.category || '').toLowerCase().trim();
+    const techText = String(project.tech || (Array.isArray(project.technologies) ? project.technologies.join(' ') : '') || '').toLowerCase().trim();
     const seed = String(userSeed || '').toLowerCase();
     const combinedText = `${seed} ${nameText} ${descText} ${categoryText} ${techText}`;
 
@@ -80,7 +76,7 @@ class ProjectArtworkSynthesizer {
     const idx = Number(projectIndex || 0);
     const assigned = (usedAssets instanceof Set) ? usedAssets : null;
 
-    // Helper: word boundary match for short keywords (e.g. 'ai', 'ui', 'ux')
+    // Helper: word boundary match for keywords
     const matchesKeyword = (text, kw) => {
       if (!text || !kw) return false;
       if (kw.length <= 3) {
@@ -95,16 +91,23 @@ class ProjectArtworkSynthesizer {
       let score = 0;
       const isThemeNative = (isCyberTheme && this.cyberCatalog.some(c => c.src === item.src));
 
-      // Theme affinity boost: native 3D assets get a boost to match the aesthetic DNA
+      // Theme affinity boost: native 3D assets get a boost in cyber theme
       if (isThemeNative) {
         score += 25;
       }
 
       for (const kw of item.keywords) {
-        if (matchesKeyword(nameText, kw)) score += 20;
-        else if (matchesKeyword(categoryText, kw)) score += 10;
-        else if (matchesKeyword(descText, kw)) score += 5;
-        else if (matchesKeyword(techText, kw)) score += 3;
+        if (nameText === kw) {
+          score += 60; // Exact project title match
+        } else if (matchesKeyword(nameText, kw)) {
+          score += (kw.includes(' ') ? 40 : 25); // Direct project title keyword match
+        } else if (matchesKeyword(categoryText, kw)) {
+          score += 15;
+        } else if (matchesKeyword(descText, kw)) {
+          score += 8;
+        } else if (matchesKeyword(techText, kw)) {
+          score += 5;
+        }
       }
       return { item, score, originalIndex, isThemeNative };
     });
@@ -132,12 +135,22 @@ class ProjectArtworkSynthesizer {
     if (positiveMatches.length > 0) {
       chosenAsset = positiveMatches[0].item;
     } else {
+      // For score === 0 (unmatched), pick from general developer/systems assets rather than specialized domain assets
+      const genericSafePool = availableScored.filter(s => 
+        s.item.src.includes('developer_showcase') ||
+        s.item.src.includes('webgl_developer') ||
+        s.item.src.includes('student_database') ||
+        s.item.src.includes('holographic_resume') ||
+        s.item.src.includes('cloud_microservices') ||
+        s.item.src.includes('circuit_board')
+      );
+      const pool = genericSafePool.length > 0 ? genericSafePool.map(s => s.item) : availableScored.map(s => s.item);
+
       let hash = 0;
       for (let i = 0; i < combinedText.length; i++) {
         hash = ((hash << 5) - hash) + combinedText.charCodeAt(i);
         hash |= 0;
       }
-      const pool = availableScored.map(s => s.item);
       const assetIdx = Math.abs(hash + idx) % pool.length;
       chosenAsset = pool[assetIdx];
     }

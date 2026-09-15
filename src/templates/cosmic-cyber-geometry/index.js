@@ -352,7 +352,7 @@ const CosmicCyberGeometryTemplate = {
 
     .section-title-large {
       font-family: var(--font-display);
-      font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+      font-size: clamp(1.5rem, 4.5vw, 3.6rem);
       font-weight: 800;
       line-height: 1.1;
       letter-spacing: -0.03em;
@@ -378,7 +378,7 @@ const CosmicCyberGeometryTemplate = {
 
     .hero-name-title {
       font-family: var(--font-display);
-      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      font-size: clamp(1.6rem, 5.5vw, 5rem);
       font-weight: 800;
       line-height: 1.02;
       letter-spacing: -0.04em;

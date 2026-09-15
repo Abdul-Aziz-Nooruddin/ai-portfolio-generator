@@ -479,7 +479,7 @@ const CyberArchitectSprawlTemplate = {
 
     .hero-lead-kicker {
       font-family: var(--font-mono);
-      font-size: 1.1rem;
+      font-size: clamp(0.72rem, 2.2vw, 1.1rem);
       color: var(--neon-cyan);
       letter-spacing: 0.04em;
       margin-bottom: 12px;
@@ -487,7 +487,7 @@ const CyberArchitectSprawlTemplate = {
 
     .hero-headline-h1 {
       font-family: var(--font-display);
-      font-size: 4rem;
+      font-size: clamp(1.6rem, 6vw, 4rem);
       font-weight: 900;
       line-height: 1.05;
       letter-spacing: -0.04em;
@@ -506,7 +506,7 @@ const CyberArchitectSprawlTemplate = {
     }
 
     .hero-bio-paragraph {
-      font-size: 1.15rem;
+      font-size: clamp(0.85rem, 2.5vw, 1.15rem);
       color: var(--text-sub);
       line-height: 1.7;
       max-width: 540px;
@@ -1588,6 +1588,19 @@ const CyberArchitectSprawlTemplate = {
         grid-template-columns: 1fr;
       }
     }
+
+    @media (max-width: 480px) {
+      .sprawl-section { padding: 48px 16px; }
+      .sprawl-header { height: 56px; }
+      .hero-sprawl-grid { gap: 24px; padding-top: 20px; }
+      .hero-action-row { flex-direction: column; gap: 10px; }
+      .sprawl-btn { width: 100%; text-align: center; padding: 12px 16px; }
+      .hero-telemetry-strip { gap: 16px; flex-wrap: wrap; }
+      .sprawl-footer { flex-direction: column; gap: 8px; padding: 20px 16px; text-align: center; }
+      .skills-dual-grid { gap: 16px; }
+      .telemetry-bar-wrap { height: 4px; }
+      .about-copy-col { padding: 0; }
+    }
   </style>
 </head>
 <body>
@@ -2403,7 +2416,7 @@ const CyberArchitectSprawlTemplate = {
 
     .quantum-404-h1 {
       font-family: var(--font-display);
-      font-size: clamp(2.4rem, 4.5vw, 3.4rem);
+      font-size: clamp(1.5rem, 4.5vw, 3.4rem);
       font-weight: 900;
       color: #FFFFFF;
       margin-bottom: 16px;

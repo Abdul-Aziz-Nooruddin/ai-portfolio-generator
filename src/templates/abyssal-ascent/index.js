@@ -381,7 +381,7 @@ const AbyssalAscentTemplate = {
 
     .huge-sharp-heading {
       font-family: var(--font-heading);
-      font-size: clamp(3rem, 6vw, 5.4rem);
+      font-size: clamp(1.6rem, 6vw, 5.4rem);
       font-weight: 900;
       line-height: 1.02;
       letter-spacing: -0.02em;

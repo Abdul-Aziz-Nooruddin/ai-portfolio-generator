@@ -110,18 +110,12 @@ class AuthMiddleware {
       .split(',')
       .map(e => e.trim().toLowerCase());
 
-    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro')
-      .split(',')
-      .map(u => u.trim().toLowerCase());
-
     const userEmail = req.user.email || req.user.normalized_email || '';
-    const userUsername = req.user.username || '';
 
     const isAdmin =
       req.user.role === 'admin' ||
       req.user.is_admin === true ||
-      (userEmail && adminEmails.includes(userEmail.toLowerCase())) ||
-      (userUsername && adminUsernames.includes(userUsername.toLowerCase()));
+      (userEmail && adminEmails.includes(userEmail.toLowerCase()));
 
     if (!isAdmin) {
       return res.status(403).json({
@@ -149,14 +143,14 @@ class AuthMiddleware {
           return res.status(404).json({ error: 'Resource not found' });
         }
 
+        const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+          .split(',')
+          .map(e => e.trim().toLowerCase());
         const userEmail = (req.user.email || req.user.normalized_email || '').toLowerCase();
-        const userUsername = (req.user.username || '').toLowerCase();
         const isSuperAdmin =
           req.user.role === 'admin' ||
           req.user.is_admin === true ||
-          userEmail === 'abdulaziznoor9876@gmail.com' ||
-          userUsername === 'abdulazizpro1' ||
-          userUsername === 'abdulazizpro';
+          (userEmail && adminEmails.includes(userEmail));
 
         if (ownerId !== req.user.id && !isSuperAdmin) {
           return res.status(403).json({

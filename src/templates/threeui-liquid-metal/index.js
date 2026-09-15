@@ -112,7 +112,7 @@ const ThreeUILiquidMetalTemplate = {
     .brand-title { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; }
     .page-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 10; }
     .hero-stage { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 8rem 0 4rem; }
-    .hero-heading { font-family: var(--font-display); font-size: clamp(2.4rem, 5vw, 4.4rem); font-weight: 400; line-height: 1.15; color: #FFFFFF; max-width: 960px; margin-bottom: 1.5rem; }
+    .hero-heading { font-family: var(--font-display); font-size: clamp(1.6rem, 5vw, 4.4rem); font-weight: 400; line-height: 1.15; color: #FFFFFF; max-width: 960px; margin-bottom: 1.5rem; }
     .hero-heading em { font-family: var(--font-editorial); font-style: italic; color: var(--spectral-amber); }
     .hero-subtext { font-size: clamp(1rem, 1.8vw, 1.2rem); color: var(--text-muted); max-width: 680px; margin-bottom: 3rem; font-weight: 300; }
     .section-wrap { padding: 5rem 0; }

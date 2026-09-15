@@ -386,7 +386,7 @@ const SystemAwakeningTemplate = {
 
     .hero-greeting-bold {
       font-family: var(--font-system);
-      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      font-size: clamp(1.5rem, 5vw, 3.8rem);
       font-weight: 900;
       line-height: 1.08;
       letter-spacing: -0.01em;
@@ -492,7 +492,7 @@ const SystemAwakeningTemplate = {
 
     .system-section-title {
       font-family: var(--font-system);
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: clamp(1.3rem, 4vw, 3rem);
       font-weight: 900;
       letter-spacing: 0.04em;
       color: #FFFFFF;
@@ -1417,7 +1417,7 @@ const SystemAwakeningTemplate = {
           <input type="text" placeholder="Hunter Name / Guild ID" class="system-input-field" />
           <input type="email" placeholder="Mana Frequency / Email" class="system-input-field" />
           <textarea rows="4" placeholder="Transmit your mission request or co-op coordinates..." class="system-input-field" style="resize: vertical;"></textarea>
-          <button type="button" class="btn-transmit-signal" onclick="window.location.href='mailto:${safeEmail}'">TRANSMIT SIGNAL ➔</button>
+          <a href="mailto:${safeEmail}" class="btn-transmit-signal" style="display: inline-block; text-align: center; text-decoration: none;">TRANSMIT SIGNAL ➔</a>
         </div>
       </div>
     </section>

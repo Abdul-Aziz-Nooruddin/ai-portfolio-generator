@@ -12,7 +12,17 @@ class TemplateHelper {
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;')
+      .replace(/`/g, '&#96;');
+  }
+
+  static escapeJsString(str) {
+    if (!str) return '';
+    return JSON.stringify(String(str))
+      .slice(1, -1)
+      .replace(/'/g, "\\'")
+      .replace(/`/g, "\\`");
   }
 
   static normalize(candidateData = {}) {

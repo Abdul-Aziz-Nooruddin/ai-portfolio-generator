@@ -37,7 +37,7 @@ const StealthNodeTemplate = {
     const nodesActive = data.publicRepos ?? data.projects?.length ?? 6;
 
     // 03. Deployed dApps (Projects)
-    const assignedArtworks = new Set(['/assets/3d/algorand_escrow_protocol_3d.jpg', '/assets/3d/smart_contract_dapp_3d.jpg']);
+    const assignedArtworks = new Set(['/assets/3d/algorand_escrow_protocol_3d.jpg']);
     const userSeed = data.github || data.username || data.name || '';
     const projectCardsHtml = data.projects.map((p, idx) => {
       const projHexId = `0x${(idx + 1).toString(16).padStart(4, '0').toUpperCase()}`;
@@ -395,7 +395,7 @@ contract ${p.name.replace(/[^a-zA-Z0-9]/g, '')} {
 
     .huge-stealth-heading {
       font-family: var(--font-mono);
-      font-size: clamp(2.8rem, 5.5vw, 4.8rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.8rem);
       font-weight: 800;
       line-height: 1.05;
       letter-spacing: -0.03em;

@@ -258,68 +258,21 @@ class AuthHandler {
   /**
    * POST /api/auth/social
    * Handles Google & GitHub Social Authentication (Sign in / Sign up)
+   * Strictly requires verified OAuth cryptographic token; rejects raw email parameters.
    */
   async social(req, res) {
     try {
-      const { provider, email, name, username } = req.body;
-      const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+      const { provider, credential } = req.body || {};
 
-      if (!email || typeof email !== 'string' || !email.includes('@')) {
-        return res.status(400).json({ error: 'A valid email address is required for social authentication.' });
-      }
-
-      const cleanName = this.security.sanitizeInput(name || email.split('@')[0]);
-      const cleanUsername = username ? this.security.sanitizeInput(username).toLowerCase() : email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
-      const normalizedEmail = this.db.constructor.normalizeEmail(email);
-
-      let user = await this.db.getUserByNormalizedEmail(normalizedEmail);
-      if (!user) {
-        // Create user with randomized high-entropy password hash
-        const dummyPass = this.security.generateSecureToken(24);
-        const passwordHash = await this.security.hashPassword(dummyPass);
-        user = await this.db.createUserWithPassword({
-          name: cleanName,
-          email: email.toLowerCase().trim(),
-          username: cleanUsername,
-          passwordHash,
-          role: 'user',
-          emailVerified: true
+      if (!credential || typeof credential !== 'string') {
+        return res.status(401).json({
+          error: 'Unauthorized',
+          message: 'A cryptographically verified OAuth credential token is required. Unverified email authentication is rejected.'
         });
-      } else {
-        // Update user if missing name
-        if (!user.name && cleanName) {
-          await this.db.updateUser(user.id, { name: cleanName });
-          user.name = cleanName;
-        }
       }
 
-      // Record successful login
-      await this.db.recordLoginAttempt(normalizedEmail, true, ip);
-
-      // Create new session
-      const rawSessionToken = this.security.generateSecureToken(32);
-      const sessionTokenHash = this.security.hashToken(rawSessionToken);
-      const userAgent = req.headers['user-agent'] || `${provider || 'Social'} OAuth Browser`;
-      const maxAgeMs = 30 * 24 * 60 * 60 * 1000;
-
-      await this.db.createSession({
-        userId: user.id,
-        tokenHash: sessionTokenHash,
-        userAgent,
-        ipAddress: ip,
-        maxAgeMs
-      });
-
-      this._setSessionCookie(res, rawSessionToken, maxAgeMs);
-
-      const sanitizedUser = { ...user };
-      delete sanitizedUser.password_hash;
-
-      res.json({
-        success: true,
-        message: `Authenticated with ${provider === 'google' ? 'Google' : 'GitHub'} successfully`,
-        user: sanitizedUser
-      });
+      // Delegate to verified Google ID Token handler
+      return this.googleVerify(req, res);
     } catch (err) {
       console.error('[SOCIAL AUTH ERROR]', err);
       res.status(500).json({ error: 'Social authentication failed. Please try again.' });
@@ -620,29 +573,21 @@ class AuthHandler {
    */
   async googleVerify(req, res) {
     try {
-      const { credential, email, name, picture, sub } = req.body;
-      const ip = req.ip || req.headers['x-forwarded-for'] || '127.0.0.1';
+      const { credential } = req.body || {};
+      const ip = req.ip || req.headers?.['x-forwarded-for'] || '127.0.0.1';
 
-      let googleData = null;
-
-      if (credential) {
-        // Official Google Identity Services JWT verification
-        googleData = await this.googleOAuth.verifyIdToken(credential);
-      } else if (email && email.includes('@')) {
-        // Direct / interactive verification
-        googleData = {
-          googleId: sub || `google_${Date.now()}`,
-          email: email.toLowerCase().trim(),
-          emailVerified: true,
-          name: name || email.split('@')[0],
-          picture: picture || null
-        };
-      } else {
-        return res.status(400).json({ error: 'Google credential or verified email is required.' });
+      if (!credential || typeof credential !== 'string') {
+        return res.status(401).json({
+          error: 'Unauthorized',
+          message: 'Valid Google ID Token credential is required.'
+        });
       }
 
-      if (!googleData.emailVerified) {
-        return res.status(400).json({ error: 'Google email is not verified by Google.' });
+      // Cryptographically verify Google Identity Services ID token
+      const googleData = await this.googleOAuth.verifyIdToken(credential);
+
+      if (!googleData || !googleData.emailVerified) {
+        return res.status(401).json({ error: 'Google account email is not verified by Google.' });
       }
 
       const normalizedEmail = this.db.constructor.normalizeEmail(googleData.email);

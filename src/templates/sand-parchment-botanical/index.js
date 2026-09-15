@@ -261,7 +261,7 @@ const SandParchmentBotanicalTemplate = {
     }
 
     .parchment-title {
-      font-size: clamp(2.5rem, 5.5vw, 4.2rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.2rem);
       font-weight: 900;
       line-height: 1.1;
       letter-spacing: -0.03em;
@@ -406,7 +406,7 @@ const SandParchmentBotanicalTemplate = {
     }
 
     .parchment-section-title {
-      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      font-size: clamp(1.3rem, 3.5vw, 2.8rem);
       font-weight: 900;
       color: var(--primary);
       margin-bottom: 12px;

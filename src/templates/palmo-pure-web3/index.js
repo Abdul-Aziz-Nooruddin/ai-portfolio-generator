@@ -379,7 +379,7 @@ const PalmoPureWeb3Template = {
 
     .hero-headline {
       font-family: var(--font-khand);
-      font-size: clamp(4rem, 11vw, 9rem);
+      font-size: clamp(1.8rem, 11vw, 9rem);
       font-weight: 700;
       line-height: 0.88;
       text-transform: uppercase;
@@ -505,7 +505,7 @@ const PalmoPureWeb3Template = {
 
     .section-headline {
       font-family: var(--font-khand);
-      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-size: clamp(1.6rem, 7vw, 5.5rem);
       font-weight: 700;
       text-transform: uppercase;
       line-height: 0.95;
@@ -673,7 +673,7 @@ const PalmoPureWeb3Template = {
 
     .nutrition-content h2 {
       font-family: var(--font-khand);
-      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.5rem);
       font-weight: 700;
       text-transform: uppercase;
       line-height: 0.92;
@@ -810,7 +810,7 @@ const PalmoPureWeb3Template = {
 
     .footer-huge-title {
       font-family: var(--font-khand);
-      font-size: clamp(3.8rem, 13vw, 10rem);
+      font-size: clamp(1.8rem, 13vw, 10rem);
       font-weight: 700;
       line-height: 0.85;
       text-transform: uppercase;

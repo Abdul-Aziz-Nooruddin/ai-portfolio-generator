@@ -226,7 +226,7 @@ const ChronoObsidianSanctuaryTemplate = {
 
     .section-main-heading {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3rem);
+      font-size: clamp(1.3rem, 4vw, 3rem);
       font-weight: 800;
       color: var(--text-main);
       letter-spacing: 0.04em;
@@ -352,7 +352,7 @@ const ChronoObsidianSanctuaryTemplate = {
 
     .hero-name-title {
       font-family: var(--font-display);
-      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      font-size: clamp(1.6rem, 5vw, 3.8rem);
       font-weight: 900;
       color: #FFFFFF;
       line-height: 1.1;

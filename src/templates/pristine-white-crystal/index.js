@@ -282,7 +282,7 @@ const PristineWhiteCrystalTemplate = {
 
     .pristine-hero-title {
       font-family: var(--font-display);
-      font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.4rem);
       font-weight: 900;
       line-height: 1.04;
       letter-spacing: -0.03em;
@@ -396,7 +396,7 @@ const PristineWhiteCrystalTemplate = {
     }
 
     .section-main-title {
-      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-size: clamp(1.3rem, 4vw, 2.8rem);
       font-weight: 900;
       letter-spacing: -0.02em;
       color: #1C1917;
@@ -1075,7 +1075,7 @@ const PristineWhiteCrystalTemplate = {
           <input type="text" placeholder="Your Name" class="form-input-field" />
           <input type="email" placeholder="Your Email Address" class="form-input-field" />
           <textarea rows="4" placeholder="How can I assist your team or project?" class="form-input-field" style="resize: vertical;"></textarea>
-          <button type="button" class="btn-send-message" onclick="window.location.href='mailto:${safeEmail}'">Send Message ➔</button>
+          <a href="mailto:${safeEmail}" class="btn-send-message" style="display: inline-block; text-align: center; text-decoration: none;">Send Message ➔</a>
         </div>
       </div>
     </section>

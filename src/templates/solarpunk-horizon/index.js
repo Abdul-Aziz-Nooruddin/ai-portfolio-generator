@@ -352,7 +352,7 @@ const SolarpunkHorizonTemplate = {
 
     .hero-solar-headline {
       font-family: var(--font-display);
-      font-size: clamp(3rem, 6.5vw, 5.2rem);
+      font-size: clamp(1.6rem, 6.5vw, 5.2rem);
       font-weight: 900;
       line-height: 1;
       letter-spacing: -0.04em;
@@ -558,7 +558,7 @@ const SolarpunkHorizonTemplate = {
 
     .solar-section-h2 {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 3.8vw, 3rem);
+      font-size: clamp(1.3rem, 3.8vw, 3rem);
       font-weight: 800;
       color: var(--slate-midnight);
       letter-spacing: -0.02em;

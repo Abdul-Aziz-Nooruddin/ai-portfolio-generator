@@ -263,7 +263,7 @@ const ThreeUILandscapeTemplate = {
       }
       .hero-masthead {
         font-family: var(--mincho);
-        font-size: clamp(34px, 5.5vw, 68px);
+        font-size: clamp(22px, 5.5vw, 68px);
         font-weight: 700;
         line-height: 1.08;
         letter-spacing: -0.5px;

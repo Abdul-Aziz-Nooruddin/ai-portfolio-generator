@@ -107,6 +107,34 @@ class CustomDomainService {
     }
 
     const fullDomain = `${cleanHandle}.${this.primaryHost}`;
+    const locDomain = `${cleanHandle}.localhost`;
+
+    // SECURITY: Prevent Subdomain Hijacking (VULN-03)
+    // Verify that the requested subdomain is not already claimed by another site or user
+    const existing = this.domainCache[fullDomain] || this.domainCache[locDomain];
+    if (existing && existing.siteId !== siteId) {
+      if (existing.userId && userId && existing.userId !== userId) {
+        throw new Error(`Subdomain "${cleanHandle}" is already claimed by another user.`);
+      }
+      if (existing.userId && !userId) {
+        throw new Error(`Subdomain "${cleanHandle}" is already claimed by another user.`);
+      }
+    }
+
+    if (this.db?.client) {
+      try {
+        const { data: existingDb } = await this.db.client
+          .from('client_sites')
+          .select('id, user_id, custom_domain')
+          .eq('custom_domain', fullDomain)
+          .maybeSingle();
+        if (existingDb && existingDb.id !== siteId && existingDb.user_id !== userId) {
+          throw new Error(`Subdomain "${cleanHandle}" is already registered by another account.`);
+        }
+      } catch (dbCheckErr) {
+        if (dbCheckErr.message && dbCheckErr.message.includes('already')) throw dbCheckErr;
+      }
+    }
 
     const record = {
       domain: fullDomain,
@@ -120,7 +148,7 @@ class CustomDomainService {
     };
 
     this.domainCache[fullDomain] = record;
-    this.domainCache[`${cleanHandle}.localhost`] = record; // for local dev testing
+    this.domainCache[locDomain] = record; // for local dev testing
     this.saveCache();
 
     if (this.db) {

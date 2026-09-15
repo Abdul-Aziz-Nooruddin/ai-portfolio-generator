@@ -395,7 +395,7 @@ const EngineeringArchiveTemplate = {
 
     .section-main-heading {
       font-family: var(--font-editorial);
-      font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+      font-size: clamp(1.6rem, 4.5vw, 3.8rem);
       font-weight: 800;
       line-height: 1.1;
       letter-spacing: -0.03em;
@@ -452,7 +452,7 @@ const EngineeringArchiveTemplate = {
 
     .editorial-hero-statement {
       font-family: var(--font-editorial);
-      font-size: clamp(2.8rem, 5.8vw, 5.2rem);
+      font-size: clamp(1.6rem, 5.8vw, 5.2rem);
       font-weight: 800;
       line-height: 0.98;
       letter-spacing: -0.04em;

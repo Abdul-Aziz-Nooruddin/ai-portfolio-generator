@@ -247,7 +247,7 @@ const BioDigitalFusionTemplate = {
     }
 
     .fusion-section-title {
-      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-size: clamp(1.3rem, 4vw, 2.8rem);
       font-weight: 800;
       color: #FFFFFF;
       background: linear-gradient(135deg, #FFFFFF 20%, var(--primary) 100%);
@@ -279,7 +279,7 @@ const BioDigitalFusionTemplate = {
     }
 
     .fusion-hero-name {
-      font-size: clamp(2.8rem, 5.5vw, 4.4rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.4rem);
       font-weight: 800;
       line-height: 1.1;
       margin-bottom: 12px;

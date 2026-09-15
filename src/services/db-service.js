@@ -58,26 +58,23 @@ class DatabaseService {
   // Core User Operations
   // ==========================================
 
-  static isSuperAdminEmailOrUsername(email, username) {
+  static isSuperAdminEmail(email) {
     const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
       .split(',')
       .map(e => e.trim().toLowerCase());
-    const adminUsernames = (process.env.ADMIN_USERNAMES || 'abdulazizpro1,abdulazizpro')
-      .split(',')
-      .map(u => u.trim().toLowerCase());
-
     const cleanEmail = DatabaseService.normalizeEmail(email);
-    const cleanUser = username ? username.trim().toLowerCase() : '';
+    return Boolean(cleanEmail && adminEmails.includes(cleanEmail));
+  }
 
-    return (
-      (cleanEmail && adminEmails.includes(cleanEmail)) ||
-      (cleanUser && adminUsernames.includes(cleanUser))
-    );
+  static isSuperAdminEmailOrUsername(email, username) {
+    // SECURITY: Administrative privileges are strictly tied to verified emails or database role, never mutable usernames.
+    return DatabaseService.isSuperAdminEmail(email);
   }
 
   _decorateUser(user) {
     if (!user) return null;
-    if (DatabaseService.isSuperAdminEmailOrUsername(user.email || user.normalized_email, user.username)) {
+    const isSuperAdmin = DatabaseService.isSuperAdminEmail(user.email || user.normalized_email) || user.role === 'admin' || user.is_admin === true;
+    if (isSuperAdmin) {
       user.role = 'admin';
       user.is_admin = true;
       user.plan = 'unlimited';

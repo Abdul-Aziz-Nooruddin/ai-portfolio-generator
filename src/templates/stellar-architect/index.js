@@ -370,7 +370,7 @@ const StellarArchitectTemplate = {
 
     .huge-name-title {
       font-family: var(--font-display);
-      font-size: clamp(3rem, 6vw, 5.2rem);
+      font-size: clamp(1.6rem, 6vw, 5.2rem);
       font-weight: 800;
       line-height: 1.0;
       letter-spacing: -0.04em;

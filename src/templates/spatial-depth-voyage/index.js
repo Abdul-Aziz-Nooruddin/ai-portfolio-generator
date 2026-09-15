@@ -99,10 +99,10 @@ const SpatialDepthVoyageTemplate = {
             ${pTags.map(t => `<span class="tech-chip">${TemplateHelper.escapeHtml(t)}</span>`).join('')}
           </div>
           <div class="card-footer-actions">
-            <button class="inspect-artifact-btn" onclick="openArtifactModal('${pTitle.replace(/'/g, "\\'")}', '${geoType}')">
+            <button class="inspect-artifact-btn btn-open-artifact" data-title="${TemplateHelper.escapeHtml(pTitle)}" data-geo="${TemplateHelper.escapeHtml(geoType)}">
               <span>✦ Inspect 3D Model</span>
             </button>
-            ${idx === 0 ? `<button class="inspect-artifact-btn" onclick="togglePhysicalLens(this)"><span>✦ Liquid Glass Loupe</span></button>` : ''}
+            ${idx === 0 ? `<button class="inspect-artifact-btn btn-physical-lens"><span>✦ Liquid Glass Loupe</span></button>` : ''}
             ${pUrl !== '#' ? `<a href="${TemplateHelper.escapeHtml(pUrl)}" target="_blank" rel="noopener noreferrer" class="project-ext-link">Live Project ↗</a>` : ''}
           </div>
         </article>
@@ -383,7 +383,7 @@ const SpatialDepthVoyageTemplate = {
 
     .telemetry-beat-heading {
       font-family: var(--font-masthead);
-      font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+      font-size: clamp(1.5rem, 4.2vw, 3.8rem);
       font-weight: 800;
       line-height: 1.08;
       letter-spacing: -1px;
@@ -466,7 +466,7 @@ const SpatialDepthVoyageTemplate = {
 
     .hero-editorial-title {
       font-family: var(--font-masthead);
-      font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+      font-size: clamp(1.6rem, 5.5vw, 4.4rem);
       font-weight: 800;
       line-height: 1.08;
       letter-spacing: -1px;
@@ -630,7 +630,7 @@ const SpatialDepthVoyageTemplate = {
 
     .section-heading {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-size: clamp(1.3rem, 4vw, 3.2rem);
       font-weight: 800;
       letter-spacing: -0.5px;
       line-height: 1.15;
@@ -1799,6 +1799,19 @@ const SpatialDepthVoyageTemplate = {
         }
       }
     }
+
+    document.addEventListener('click', (e) => {
+      const inspectBtn = e.target.closest('.btn-open-artifact');
+      if (inspectBtn) {
+        const title = inspectBtn.getAttribute('data-title');
+        const geo = inspectBtn.getAttribute('data-geo');
+        openArtifactModal(title, geo);
+      }
+      const lensBtn = e.target.closest('.btn-physical-lens');
+      if (lensBtn) {
+        togglePhysicalLens(lensBtn);
+      }
+    });
 
     window.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isModalOpen) closeArtifactModal(); });
     modal.addEventListener('click', (e) => { if (e.target === modal) closeArtifactModal(); });

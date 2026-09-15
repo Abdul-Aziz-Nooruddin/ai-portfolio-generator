@@ -1218,5 +1218,165 @@
     requestAnimationFrame(renderLoop);
   </script>
   <script src="/button-engine.js" defer></script>
+
+<style id="myfolio-universal-mobile">
+  /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
+  @media (max-width: 600px) {
+    /* Reset base font size so rem units scale down */
+    html { font-size: 14px !important; }
+
+    /* Hero headline — cap at a safe mobile size */
+    h1,
+    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
+    [class*="masthead"], [class*="main-title"], [class*="display-title"],
+    [class*="hero-name"], [class*="page-title"], [class*="folio-name"],
+    [class*="profile-name"] {
+      font-size: clamp(1.6rem, 7vw, 2.4rem) !important;
+      line-height: 1.15 !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    /* Section headings */
+    h2, [class*="section-title"], [class*="section-heading"],
+    [class*="chapter-title"], [class*="block-title"] {
+      font-size: clamp(1.25rem, 5.5vw, 1.8rem) !important;
+      line-height: 1.2 !important;
+    }
+
+    h3, [class*="card-title"], [class*="project-name"],
+    [class*="exp-title"], [class*="role-title"] {
+      font-size: clamp(1rem, 4.5vw, 1.35rem) !important;
+    }
+
+    /* Body / bio text */
+    p, [class*="bio"], [class*="hero-bio"], [class*="subtitle"],
+    [class*="intro-text"], [class*="description"], [class*="lead"] {
+      font-size: clamp(0.8rem, 3.5vw, 1rem) !important;
+      line-height: 1.65 !important;
+    }
+
+    /* Tag / badge / mono accent text */
+    [class*="tag"], [class*="badge"], [class*="chip"], [class*="label"],
+    [class*="kicker"], [class*="mono"], code, pre {
+      font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
+    }
+
+    /* Section padding — prevent edges being clipped */
+    section, [class*="section"], [class*="-section"],
+    [class*="wrapper"], [class*="container"], [class*="layout"] {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    /* Hero sections — reduce vertical breathing room */
+    [class*="hero"], [id="home"] {
+      padding-top: 64px !important;
+      padding-bottom: 32px !important;
+      min-height: auto !important;
+    }
+
+    /* Force single-column grids everywhere */
+    [style*="grid-template-columns"],
+    [class*="grid"], [class*="bento"], [class*="dual"],
+    [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Navigation — hide multi-item desktop navs, show only brand */
+    [class*="nav-menu"], [class*="header-nav"], [class*="dock"],
+    [class*="vertical-dock"], [class*="sidebar-nav"] {
+      display: none !important;
+    }
+
+    /* Buttons — stack and full-width */
+    [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
+      flex-direction: column !important;
+      gap: 12px !important;
+    }
+    [class*="btn"], [class*="cta-btn"], [class*="sprawl-btn"] {
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 12px 20px !important;
+      font-size: 0.82rem !important;
+    }
+
+    /* Project / card images */
+    [class*="card-img"], [class*="project-img"], [class*="project-image"],
+    [class*="artwork"], [class*="thumbnail"] {
+      height: 160px !important;
+    }
+
+    /* Skill / telemetry numbers — prevent overflow */
+    [class*="stat-num"], [class*="metric-value"], [class*="counter"],
+    [class*="number-display"] {
+      font-size: clamp(1.4rem, 6vw, 2rem) !important;
+    }
+
+    /* 404 hero numbers */
+    [class*="404"], [class*="error-code"] {
+      font-size: clamp(4rem, 20vw, 7rem) !important;
+    }
+
+    /* Floating 3D assets — reduce to prevent layout blowout */
+    [class*="hero-3d"], [class*="focal-asset"], [class*="floating-asset"],
+    [class*="hero-img"], [class*="hero-visual"] {
+      max-width: 260px !important;
+      width: 70vw !important;
+      margin: 24px auto 0 !important;
+    }
+
+    /* Canvas backgrounds — don't overflow */
+    canvas {
+      max-width: 100vw !important;
+    }
+
+    /* Footer */
+    [class*="footer"] {
+      flex-direction: column !important;
+      gap: 12px !important;
+      padding: 24px 16px !important;
+      text-align: center !important;
+      font-size: 0.72rem !important;
+    }
+  }
+
+  /* ─── Tablet override ≤768px ────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    html { font-size: 15px !important; }
+
+    h1,
+    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
+    [class*="masthead"], [class*="main-title"], [class*="display-title"] {
+      font-size: clamp(2rem, 6vw, 3rem) !important;
+    }
+
+    h2, [class*="section-title"], [class*="section-heading"] {
+      font-size: clamp(1.4rem, 4.5vw, 2rem) !important;
+    }
+
+    section, [class*="section"], [class*="-section"] {
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+
+    [class*="grid"], [class*="bento"],
+    [class*="tri-layout"], [class*="three-col"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    [class*="two-col"], [class*="dual"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* ─── Reduced-motion: disable floating keyframes ───────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
 </body>
 </html>

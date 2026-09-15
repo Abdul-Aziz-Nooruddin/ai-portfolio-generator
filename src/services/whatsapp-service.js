@@ -36,7 +36,8 @@ class WhatsAppService {
    * @returns {boolean}
    */
   verifySignature(rawBody, signatureHeader) {
-    if (!this.appSecret || !signatureHeader) return true; // Optional if secret not provided
+    if (!this.appSecret) return true; // Optional only if appSecret not configured in environment
+    if (!signatureHeader || !rawBody) return false;
     try {
       const parts = signatureHeader.split('=');
       const sigHash = parts[1];
@@ -47,7 +48,10 @@ class WhatsAppService {
         .update(rawBody)
         .digest('hex');
 
-      return crypto.timingSafeEqual(Buffer.from(sigHash), Buffer.from(expectedHash));
+      const sigBuf = Buffer.from(sigHash, 'utf8');
+      const expectedBuf = Buffer.from(expectedHash, 'utf8');
+      if (sigBuf.length !== expectedBuf.length) return false;
+      return crypto.timingSafeEqual(sigBuf, expectedBuf);
     } catch (e) {
       return false;
     }

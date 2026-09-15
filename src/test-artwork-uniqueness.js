@@ -122,10 +122,75 @@ test('🎨 100% Unique Project Artwork & Disambiguation Engine', async (t) => {
     assert.strictEqual(unique.size, 5, `Must have ZERO duplicate images across project cards (Found: ${JSON.stringify(matches)})`);
 
     // Verify title relevance
-    assert.ok(matches[0].includes('project_ai_core') || matches[0].includes('developer_showcase'), 'Ai Portfolio Generator gets AI Core / WebGL Showcase');
-    assert.ok(matches[1].includes('project_data_chain') || matches[1].includes('blockchain'), 'ConsentChain Algorand gets Data Chain / Blockchain');
+    assert.ok(matches[0].includes('project_ai_core') || matches[0].includes('developer_showcase') || matches[0].includes('ai_portfolio_generator'), 'Ai Portfolio Generator gets AI Core / WebGL Showcase / AI Portfolio Generator');
+    assert.ok(matches[1].includes('project_data_chain') || matches[1].includes('blockchain') || matches[1].includes('consent_chain'), 'ConsentChain Algorand gets Data Chain / Blockchain / ConsentChain');
     assert.ok(matches[2].includes('project_crystal') || matches[2].includes('portfolio'), 'Portfolio gets Crystal / Portfolio asset');
-    assert.ok(matches[3].includes('origami_bird') || matches[3].includes('bird'), 'Pass A Note gets Note Messenger Bird');
-    assert.ok(matches[4].includes('circuit_board') || matches[4].includes('database'), 'Lms User Management gets Circuit Board Systems Hub');
+    assert.ok(matches[3].includes('origami_bird') || matches[3].includes('bird') || matches[3].includes('pass_note'), 'Pass A Note gets Note Messenger Bird / Encrypted Messenger');
+    assert.ok(matches[4].includes('circuit_board') || matches[4].includes('database') || matches[4].includes('lms_user'), 'Lms User Management gets Circuit Board Systems Hub / LMS Management');
+  });
+
+  await t.test('5. Strictly verifies project images are relevant to project title & ZERO universe preview images recycled', () => {
+    const { StealthNodeTemplate } = require('./templates/stealth-node');
+    const projects = [
+      { name: 'Developer WebGL Portfolio', tech: 'Three.js, WebGL, Node.js', desc: 'Engineered procedural WebGL generator.' },
+      { name: 'Algorand Python Smart Contracts', tech: 'Python, Algorand, Web3', desc: 'Decentralized verifiable ledger logic and algorithmic settlements.' },
+      { name: 'Autonomous Edge Agent', tech: 'TypeScript, Fastify, AI', desc: 'Low-latency reasoning pipelines and streaming telemetry.' },
+      { name: 'Ai Portfolio Generator', tech: 'HTML', desc: 'Converts GitHub repositories into bespoke 3D portfolios.' },
+      { name: 'Portfolio', tech: 'CSS', desc: 'Personal interactive portfolio with glassmorphism.' },
+      { name: 'ConsentChain Algorand', tech: 'TypeScript', desc: 'Decentralized consent management on Algorand for DPDP Act 2023.' },
+      { name: 'Lms User Management', tech: 'JavaScript', desc: 'Dedicated user administration and access control module.' },
+      { name: 'Pass A Note', tech: 'HTML', desc: 'Streamlined communication tool for rapid note transmission.' }
+    ];
+
+    const rendered = StealthNodeTemplate.render({
+      name: 'Abdul Aziz Nooruddin',
+      projects
+    });
+
+    const matches = [...rendered.matchAll(/<article class="stealth-hex-card"[^>]*>[\s\S]*?<img src="([^"]+)" alt="([^"]+)"[\s\S]*?<h3 class="hex-card-title">([^<]+)<\/h3>/g)];
+    assert.strictEqual(matches.length, 8, 'Must render 8 project cards');
+
+    const universePreviewImages = [
+      'stealth_node_3d',
+      'circuit_core_3d',
+      'chrono_obsidian_sanctuary_3d',
+      'neon_aurora_cyber_3d',
+      'kinetic_brutalism_3d',
+      'stellar_architect_3d',
+      'cosmic_cyber_geometry_3d',
+      'engineering_archive_3d',
+      'system_awakening_3d',
+      'cosmic_astronaut_3d',
+      'bioluminescent_wireframe_3d',
+      'cyber_crystal_3d',
+      'botanical_woodcraft_3d',
+      'bio_digital_fusion_3d',
+      'abyssal_ascent_3d'
+    ];
+
+    const assignments = {};
+    for (const m of matches) {
+      const src = m[1];
+      const title = m[3];
+      assignments[title] = src;
+
+      // Ensure NO universe preview image is used
+      for (const uniImg of universePreviewImages) {
+        assert.ok(
+          !src.includes(uniImg),
+          `Project "${title}" must NEVER use universe preview image "${uniImg}". Found: ${src}`
+        );
+      }
+    }
+
+    // Strictly verify project title domain relevance
+    assert.ok(assignments['Pass A Note'].includes('pass_note_messenger'), 'Pass A Note must receive encrypted note messenger asset');
+    assert.ok(assignments['Ai Portfolio Generator'].includes('ai_portfolio_generator'), 'Ai Portfolio Generator must receive AI portfolio generator asset');
+    assert.ok(assignments['Autonomous Edge Agent'].includes('autonomous_edge_agent'), 'Autonomous Edge Agent must receive autonomous edge agent asset');
+    assert.ok(assignments['Algorand Python Smart Contracts'].includes('algorand_smart_contracts'), 'Algorand Python Smart Contracts must receive Algorand smart contracts asset');
+    assert.ok(assignments['ConsentChain Algorand'].includes('consent_chain_privacy'), 'ConsentChain Algorand must receive ConsentChain privacy asset');
+    assert.ok(assignments['Lms User Management'].includes('lms_user_management'), 'Lms User Management must receive LMS user management asset');
+    assert.ok(assignments['Developer WebGL Portfolio'].includes('webgl_developer_portfolio'), 'Developer WebGL Portfolio must receive developer WebGL portfolio asset');
   });
 });
+

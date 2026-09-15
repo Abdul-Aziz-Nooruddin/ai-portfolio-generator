@@ -49,7 +49,7 @@
     "test:benchmarks": "node --test src/test-design-intelligence-benchmarks.js",
     "test:structural": "node --test src/test-structural-diversity-benchmark.js",
     "test:github": "node --test src/test-github-generator.js",
-    "test:security": "node --test src/test-auth-security.js src/test-razorpay-security.js",
+    "test:security": "node --test src/test-auth-security.js src/test-razorpay-security.js src/test-security-remediation.js",
     "test:web": "node --test src/test-web-api.js",
     "test:lifecycle": "node --test src/test-lifecycle.js",
     "test:conversation": "node src/test-conversation.js",

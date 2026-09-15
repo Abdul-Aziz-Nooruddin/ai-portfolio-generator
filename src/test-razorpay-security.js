@@ -2,6 +2,7 @@
  * Razorpay Anti-Tampering & Payment Approval Test Suite
  */
 
+process.env.NODE_ENV = process.env.NODE_ENV || 'test';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('crypto');

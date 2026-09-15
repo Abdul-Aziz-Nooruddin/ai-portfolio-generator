@@ -365,7 +365,7 @@ const KineticBrutalismTemplate = {
 
     .huge-brutal-title {
       font-family: var(--font-display);
-      font-size: clamp(3.2rem, 7vw, 6rem);
+      font-size: clamp(1.6rem, 7vw, 6rem);
       font-weight: 900;
       line-height: 0.95;
       letter-spacing: -0.04em;
@@ -762,7 +762,7 @@ const KineticBrutalismTemplate = {
 
     .colossal-val {
       font-family: var(--font-display);
-      font-size: clamp(3.5rem, 8vw, 6rem);
+      font-size: clamp(1.8rem, 8vw, 6rem);
       font-weight: 900;
       line-height: 1;
     }

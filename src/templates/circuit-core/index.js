@@ -366,7 +366,7 @@ const CircuitCoreTemplate = {
 
     .huge-circuit-title {
       font-family: var(--font-heading);
-      font-size: clamp(3rem, 6vw, 5.2rem);
+      font-size: clamp(1.6rem, 6vw, 5.2rem);
       font-weight: 800;
       line-height: 1.02;
       letter-spacing: -0.03em;

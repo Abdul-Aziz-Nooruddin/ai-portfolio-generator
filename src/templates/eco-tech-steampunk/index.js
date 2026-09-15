@@ -421,7 +421,7 @@ const EcoTechSteampunkTemplate = {
 
     .section-title {
       font-family: var(--font-display);
-      font-size: clamp(30px, 4vw, 46px);
+      font-size: clamp(20px, 4vw, 46px);
       color: var(--parchment-light);
       font-weight: 800;
       letter-spacing: 0.5px;
@@ -481,7 +481,7 @@ const EcoTechSteampunkTemplate = {
 
     .hero-headline {
       font-family: var(--font-display);
-      font-size: clamp(38px, 5.2vw, 64px);
+      font-size: clamp(22px, 5.2vw, 64px);
       font-weight: 900;
       line-height: 1.12;
       color: var(--parchment-light);

@@ -43,12 +43,19 @@ const { UnifiedProfileNormalizer } = require('./services/unified-profile-normali
 const { LegacyVibeDetector } = require('./design-intelligence/legacy-vibe-detector');
 const { ErrorRecoveryService } = require('./services/error-recovery-service');
 const { TemplateRegistry } = require('./templates/template-registry');
+const { TemplateHelper } = require('./templates/template-helper');
 const { globalConcurrencyManager } = require('./services/concurrency-manager');
 const { WhatsAppService } = require('./services/whatsapp-service');
 const { WhatsAppHandler } = require('./handlers/whatsapp-handler');
 const compression = require('compression');
 
+// Universal helper: inject mobile CSS into any raw template HTML
+const injectMobileCSS = (html) => html && html.includes('</body>')
+  ? html.replace('</body>', `${TemplateRegistry.getMobileCSS()}\n</body>`)
+  : html;
+
 const app = express();
+app.disable('x-powered-by');
 
 // Instant 0ms Health Check for Render /healthz and monitoring probes (Bypasses all heavy middleware, DB & auth)
 app.get(['/health', '/healthz'], (req, res) => {
@@ -99,20 +106,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Smart Public Domain Detection (Converts localhost to real public URL automatically, ignoring private LAN IPs)
-app.use((req, res, next) => {
-  if (!process.env.HOST_URL || process.env.HOST_URL.includes('localhost') || process.env.HOST_URL.includes('127.0.0.1')) {
-    const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
-    const host = req.headers['x-forwarded-host'] || req.get('host');
-    const hostNoPort = (host || '').split(':')[0];
-    const isPrivateIp = !hostNoPort || /^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|127\.|0\.0\.0\.0|localhost)/i.test(hostNoPort);
-    if (host && !isPrivateIp) {
-      process.env.HOST_URL = `${proto}://${host}`;
-      if (hostingProvider) hostingProvider.hostUrl = process.env.HOST_URL;
-    }
-  }
-  next();
-});
+// Canonical Application Host URL Configuration (Immutable runtime origin to prevent Host Header Poisoning)
+if (!process.env.HOST_URL) {
+  process.env.HOST_URL = process.env.NODE_ENV === 'production' ? 'https://myfolio.tech' : 'http://localhost:5050';
+}
 
 // Initialize core services
 const aiService = new AIService(process.env.GEMINI_API_KEY);
@@ -321,7 +318,7 @@ app.use(async (req, res, next) => {
           }
         };
         const rendered = template.render(abdulAzizProfile, {});
-        html = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+        html = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
         // Cache to public/sites/abdulaziz so subsequent requests don't need re-rendering
         try {
           const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
@@ -464,6 +461,15 @@ app.get('/api/webhook/whatsapp', (req, res) => {
 
 // Meta WhatsApp Cloud API Real-Time Inbound Event Receiver
 app.post('/api/webhook/whatsapp', async (req, res) => {
+  const signature = req.headers['x-hub-signature-256'];
+  if (whatsAppService && whatsAppService.appSecret) {
+    const isValid = whatsAppService.verifySignature(req.rawBody, signature);
+    if (!isValid) {
+      console.warn('❌ [WHATSAPP WEBHOOK] Rejected: Invalid or missing signature.');
+      return res.status(403).send('Forbidden: Invalid webhook signature');
+    }
+  }
+
   // Always acknowledge immediately within 3 seconds to avoid Meta webhook retries
   res.status(200).send('EVENT_RECEIVED');
 
@@ -477,16 +483,42 @@ app.post('/api/webhook/whatsapp', async (req, res) => {
 });
 
 // Razorpay Payment & Subscription Webhook Route
+const processedWebhookEvents = new Set();
+
 app.post('/webhook/razorpay', async (req, res) => {
-  if (!razorpayService) return res.status(200).send('OK');
+  if (!razorpayService) {
+    console.warn('❌ [RAZORPAY WEBHOOK] Rejected: Razorpay service not configured.');
+    return res.status(503).json({ error: 'Razorpay service unavailable' });
+  }
   try {
     const signature = req.headers['x-razorpay-signature'];
-    const isValid = signature && req.rawBody ? razorpayService.verifyWebhookSignature(req.rawBody.toString(), signature) : true;
+    if (!signature || !req.rawBody) {
+      console.warn('❌ [RAZORPAY WEBHOOK] Rejected: Missing signature header or raw body.');
+      return res.status(400).json({ error: 'Missing webhook signature' });
+    }
 
-    if (isValid) {
-      const event = req.body;
-      const paymentEntity = event.payload?.payment?.entity || event.payload?.payment_link?.entity;
-      const subscriptionEntity = event.payload?.subscription?.entity;
+    const isValid = razorpayService.verifyWebhookSignature(req.rawBody.toString(), signature);
+    if (!isValid) {
+      console.warn('❌ [RAZORPAY WEBHOOK] Rejected: Cryptographic signature mismatch.');
+      return res.status(401).json({ error: 'Invalid webhook signature' });
+    }
+
+    const event = req.body;
+    const paymentEntity = event.payload?.payment?.entity || event.payload?.payment_link?.entity;
+    const subscriptionEntity = event.payload?.subscription?.entity;
+    const eventId = event.id || paymentEntity?.id;
+
+    if (eventId && processedWebhookEvents.has(eventId)) {
+      console.log(`[RAZORPAY] Duplicate webhook event ${eventId} safely ignored.`);
+      return res.status(200).json({ status: 'ok', message: 'Event already processed' });
+    }
+    if (eventId) {
+      processedWebhookEvents.add(eventId);
+      if (processedWebhookEvents.size > 2000) {
+        const iter = processedWebhookEvents.values();
+        for (let i = 0; i < 500; i++) processedWebhookEvents.delete(iter.next().value);
+      }
+    }
       const userId = paymentEntity?.notes?.user_id || subscriptionEntity?.notes?.user_id;
 
       if (event.event === 'payment.captured' || event.event === 'payment_link.paid' || event.event === 'subscription.charged') {
@@ -537,7 +569,6 @@ app.post('/webhook/razorpay', async (req, res) => {
           }
         }
       }
-    }
     res.status(200).json({ status: 'ok' });
   } catch (err) {
     console.error('[RAZORPAY WEBHOOK ERROR]', err.message);
@@ -793,10 +824,90 @@ function getOrInitPortfolioState(siteId) {
   return state;
 }
 
+// Centralized Site Ownership Verification Guard (IDOR / BOLA Defense)
+async function verifySiteOwnership(req, siteId) {
+  if (!req.user) {
+    return { allowed: false, status: 401, error: 'Unauthorized: Authentication required' };
+  }
+
+  const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+    .split(',')
+    .map(e => e.trim().toLowerCase());
+  const userEmail = (req.user.email || req.user.normalized_email || '').toLowerCase();
+  const isAdmin = req.user.role === 'admin' || req.user.is_admin === true || (userEmail && adminEmails.includes(userEmail));
+  if (isAdmin) {
+    return { allowed: true, isAdmin: true };
+  }
+
+  const userId = req.user.id;
+
+  // 1. Check meta.json on disk if present
+  const metaPath = path.join(process.cwd(), 'public', 'sites', siteId, 'meta.json');
+  if (fs.existsSync(metaPath)) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+      if (meta.userId) {
+        if (meta.userId === userId) return { allowed: true };
+        return { allowed: false, status: 403, error: 'Forbidden: You do not own this portfolio' };
+      }
+    } catch (e) {}
+  }
+
+  // 2. Check customDomainService cache
+  if (customDomainService?.domainCache) {
+    for (const [domain, entry] of Object.entries(customDomainService.domainCache)) {
+      if (entry?.siteId === siteId) {
+        if (entry.userId === userId) return { allowed: true };
+        return { allowed: false, status: 403, error: 'Forbidden: You do not own this portfolio' };
+      }
+    }
+  }
+
+  // 3. Check DB sites & client_sites tables
+  if (dbService?.client) {
+    try {
+      const { data: siteRecord } = await dbService.client
+        .from('sites')
+        .select('user_id')
+        .or(`provider_site_id.eq.${siteId},id.eq.${siteId}`)
+        .maybeSingle();
+
+      if (siteRecord) {
+        if (siteRecord.user_id === userId) return { allowed: true };
+        return { allowed: false, status: 403, error: 'Forbidden: You do not own this portfolio' };
+      }
+
+      const { data: clientSiteRecord } = await dbService.client
+        .from('client_sites')
+        .select('user_id')
+        .or(`provider_site_id.eq.${siteId},id.eq.${siteId}`)
+        .maybeSingle();
+
+      if (clientSiteRecord) {
+        if (clientSiteRecord.user_id === userId) return { allowed: true };
+        return { allowed: false, status: 403, error: 'Forbidden: You do not own this portfolio' };
+      }
+    } catch (e) {}
+  }
+
+  // 4. In-memory state check
+  const state = portfolioCustomizerMap.get(siteId);
+  if (state && state.userId) {
+    if (state.userId === userId) return { allowed: true };
+    return { allowed: false, status: 403, error: 'Forbidden: You do not own this portfolio' };
+  }
+
+  return { allowed: true };
+}
+
 // 6. Portfolio Customizer State Endpoint (GET)
-app.get('/api/portfolio/:siteId/customizer', (req, res) => {
+app.get('/api/portfolio/:siteId/customizer', AuthMiddleware.requireAuth, async (req, res) => {
   try {
     const { siteId } = req.params;
+    const ownership = await verifySiteOwnership(req, siteId);
+    if (!ownership.allowed) {
+      return res.status(ownership.status).json({ error: ownership.error });
+    }
     const state = getOrInitPortfolioState(siteId);
     if (!state) {
       return res.status(404).json({ error: 'Portfolio not found or expired.' });
@@ -823,9 +934,13 @@ app.get('/api/portfolio/:siteId/customizer', (req, res) => {
 });
 
 // 7. Portfolio Customizer Action Endpoint (POST)
-app.post('/api/portfolio/:siteId/customizer', async (req, res) => {
+app.post('/api/portfolio/:siteId/customizer', AuthMiddleware.requireAuth, async (req, res) => {
   try {
     const { siteId } = req.params;
+    const ownership = await verifySiteOwnership(req, siteId);
+    if (!ownership.allowed) {
+      return res.status(ownership.status).json({ error: ownership.error });
+    }
     const { action, newOrder, sectionId, visible, token, value } = req.body;
 
     const state = getOrInitPortfolioState(siteId);
@@ -893,9 +1008,13 @@ app.post('/api/portfolio/:siteId/customizer', async (req, res) => {
 });
 
 // 8. Static ZIP Export Endpoint (POST)
-app.post('/api/portfolio/:siteId/export', async (req, res) => {
+app.post('/api/portfolio/:siteId/export', AuthMiddleware.requireAuth, async (req, res) => {
   try {
     const { siteId } = req.params;
+    const ownership = await verifySiteOwnership(req, siteId);
+    if (!ownership.allowed) {
+      return res.status(ownership.status).json({ error: ownership.error });
+    }
     const state = getOrInitPortfolioState(siteId);
     if (!state) {
       return res.status(404).json({ error: 'Portfolio not found or expired.' });
@@ -945,8 +1064,8 @@ app.get('/api/demo/samples', (req, res) => {
   res.json({ success: true, count: samples.length, samples });
 });
 
-// 10. Admin Observability & Health Telemetry Endpoints
-app.get('/api/admin/observability', (req, res) => {
+// 10. Admin Observability & Health Telemetry Endpoints (Protected)
+app.get('/api/admin/observability', AuthMiddleware.requireAdmin, (req, res) => {
   try {
     const report = BetaDashboard.generateReport({ isRealUserData: true });
     res.json({
@@ -959,7 +1078,7 @@ app.get('/api/admin/observability', (req, res) => {
   }
 });
 
-app.get('/api/admin/health', (req, res) => {
+app.get('/api/admin/health', AuthMiddleware.requireAdmin, (req, res) => {
   res.json({
     status: 'healthy',
     uptimeSeconds: process.uptime(),
@@ -975,8 +1094,15 @@ app.get('/api/admin/health', (req, res) => {
   });
 });
 
+// Strict rate limiter for expensive AI resume parsing
+const resumeUploadLimiter = SecurityMiddleware.rateLimiter({
+  max: 20,
+  windowMs: 15 * 60 * 1000,
+  actionName: 'resume_upload'
+});
+
 // 11. Multi-Input Upload & Adaptive Questionnaire Endpoints (Phase 31)
-app.post('/api/upload/resume', async (req, res) => {
+app.post('/api/upload/resume', resumeUploadLimiter, async (req, res) => {
   try {
     const { base64Data, filename } = req.body || {};
     if (!base64Data) {
@@ -1179,17 +1305,13 @@ app.post(
         ''
       ).toLowerCase().trim();
 
-      // STRICT: Authenticated or verified founder email abdulaziznoor9876@gmail.com has VIP Founder privileges
+      // STRICT: Only genuine authenticated founder session has VIP Founder privileges (Immutable server-side verification)
       const isVipFounder = Boolean(
-        authenticatedEmail === 'abdulaziznoor9876@gmail.com' ||
-        candidateEmail === 'abdulaziznoor9876@gmail.com' ||
-        (input.userEmail && input.userEmail.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com') ||
-        (input.email && input.email.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com') ||
-        input.isVipFounder === true ||
-        (input.isVip === true && (
-          (input.username && input.username.toLowerCase().includes('abdulaziz')) ||
-          (input.username && input.username.toLowerCase().includes('abdul-aziz'))
-        ))
+        req.user && (
+          req.user.role === 'admin' ||
+          req.user.is_admin === true ||
+          authenticatedEmail === 'abdulaziznoor9876@gmail.com'
+        )
       );
 
       // Determine the user's custom URL identifier (username)
@@ -1746,11 +1868,16 @@ app.post('/api/web/verify-payment', async (req, res) => {
 // ==========================================
 // Custom Domain & Subdomain API Endpoints
 // ==========================================
-app.post('/api/domain/register', async (req, res) => {
+app.post('/api/domain/register', AuthMiddleware.requireAuth, async (req, res) => {
   try {
-    const { siteId, domain, type = 'custom', userId } = req.body;
+    const { siteId, domain, type = 'custom' } = req.body;
+    const userId = req.user.id;
     if (!siteId || !domain) {
       return res.status(400).json({ error: 'siteId and domain are required' });
+    }
+    const ownership = await verifySiteOwnership(req, siteId);
+    if (!ownership.allowed) {
+      return res.status(ownership.status).json({ error: ownership.error });
     }
     let record;
     if (type === 'subdomain') {
@@ -1783,8 +1910,20 @@ app.get('/api/domain/info/:siteId', (req, res) => {
 // ==========================================
 app.all('/api/cron/lifecycle', async (req, res) => {
   try {
-    const cronSecret = req.headers['authorization'] || req.query.secret;
-    if (process.env.CRON_SECRET && cronSecret !== `Bearer ${process.env.CRON_SECRET}` && cronSecret !== process.env.CRON_SECRET) {
+    const configuredSecret = process.env.CRON_SECRET;
+    if (!configuredSecret || configuredSecret.length < 16) {
+      console.error('❌ [CRON API] CRON_SECRET is not securely configured.');
+      return res.status(503).json({ error: 'Lifecycle cron is unavailable (missing or insecure configuration)' });
+    }
+    const authHeader = req.headers['authorization'] || '';
+    const querySecret = typeof req.query.secret === 'string' ? req.query.secret : '';
+    const provided = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : (authHeader || querySecret);
+
+    if (!provided || provided.length !== configuredSecret.length) {
+      return res.status(401).json({ error: 'Unauthorized cron request' });
+    }
+    const isValid = crypto.timingSafeEqual(Buffer.from(provided, 'utf8'), Buffer.from(configuredSecret, 'utf8'));
+    if (!isValid) {
       return res.status(401).json({ error: 'Unauthorized cron request' });
     }
     const results = await lifecycleService.runLifecycleCycle();
@@ -2394,27 +2533,36 @@ app.post('/api/sites/:siteId/contact', async (req, res) => {
     }
 
     if (ownerEmail && emailService) {
+      const safeOwnerName = TemplateHelper.escapeHtml(ownerName || 'Portfolio Creator');
+      const safeName = TemplateHelper.escapeHtml(name || 'Recruiter / Client');
+      const safeEmail = TemplateHelper.escapeHtml(email || '');
+      const safeSubject = subject ? TemplateHelper.escapeHtml(subject) : '';
+      const safeMessage = TemplateHelper.escapeHtml(message || '');
+      const mailtoEmail = encodeURIComponent(email || '');
+      const mailtoSubject = encodeURIComponent(`Re: Portfolio Inquiry${subject ? ` - ${subject}` : ''}`);
+      const mailtoReplyName = TemplateHelper.escapeHtml(name || 'Sender');
+
       await emailService.sendMail({
         to: ownerEmail,
         replyTo: email || undefined,
-        subject: `📬 New Inquiry from your Portfolio: ${name || 'Recruiter / Client'}`,
+        subject: `📬 New Inquiry from your Portfolio: ${safeName}`,
         html: `
           <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; background: #0B0F19; color: #FFFFFF; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
             <div style="font-size: 0.85rem; color: #38BDF8; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Portfolio Lead Alert</div>
             <h2 style="color: #FFFFFF; margin: 0 0 16px 0; font-size: 1.5rem;">📬 New Message from your Portfolio</h2>
-            <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.5;">Hi <strong>${ownerName}</strong>, someone just reached out to you through your online portfolio!</p>
+            <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.5;">Hi <strong>${safeOwnerName}</strong>, someone just reached out to you through your online portfolio!</p>
             
             <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #38BDF8;">
-              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>From / Recruiter:</strong> ${name || 'Prospective Client'}</p>
-              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Email:</strong> <a href="mailto:${email}" style="color: #38BDF8; text-decoration: none;">${email}</a></p>
-              ${subject ? `<p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Subject:</strong> ${subject}</p>` : ''}
+              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>From / Recruiter:</strong> ${safeName}</p>
+              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Email:</strong> <a href="mailto:${mailtoEmail}" style="color: #38BDF8; text-decoration: none;">${safeEmail}</a></p>
+              ${safeSubject ? `<p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Subject:</strong> ${safeSubject}</p>` : ''}
               <p style="margin: 0 0 6px 0; font-size: 0.95rem;"><strong>Message:</strong></p>
-              <p style="margin: 0; color: #E2E8F0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px;">${message}</p>
+              <p style="margin: 0; color: #E2E8F0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px;">${safeMessage}</p>
             </div>
             
             <div style="text-align: center; margin-top: 24px;">
-              <a href="mailto:${email}?subject=Re: Portfolio Inquiry" style="display: inline-block; background: #22C55E; color: #000000; font-weight: 800; font-size: 0.95rem; padding: 12px 28px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
-                Reply Directly to ${name || 'Sender'} ➔
+              <a href="mailto:${mailtoEmail}?subject=${mailtoSubject}" style="display: inline-block; background: #22C55E; color: #000000; font-weight: 800; font-size: 0.95rem; padding: 12px 28px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                Reply Directly to ${mailtoReplyName} ➔
               </a>
             </div>
           </div>
@@ -2626,17 +2774,17 @@ app.get(['/abdulaziz', '/u/abdulaziz', '/aziz', '/u/aziz', '/u/:handle', '/:hand
   return res.redirect(301, `https://${handle}.myfolio.tech/`);
 });
 
-// VIP Set Active Live Site Endpoint
-app.post('/api/vip/set-active-site', async (req, res) => {
+// VIP Set Active Live Site Endpoint (Protected: Admin Only)
+app.post('/api/vip/set-active-site', AuthMiddleware.requireAdmin, async (req, res) => {
   try {
     const { siteId, isVip } = req.body;
-    const userEmail = (req.body.userEmail || req.body.email || '').toLowerCase().trim();
     if (!siteId) return res.status(400).json({ error: 'siteId is required' });
 
-    const isAuthorized = Boolean(
-      (req.user?.email && req.user.email.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com') ||
-      userEmail === 'abdulaziznoor9876@gmail.com'
-    );
+    const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
+    const userEmail = (req.user?.email || req.user?.normalized_email || '').toLowerCase().trim();
+    const isAuthorized = req.user?.role === 'admin' || req.user?.is_admin === true || (userEmail && adminEmails.includes(userEmail));
     if (!isAuthorized) {
       return res.status(403).json({ error: 'Unauthorized. VIP Founder privileges required.' });
     }
@@ -2669,7 +2817,7 @@ app.post('/api/vip/set-active-site', async (req, res) => {
               ]
             };
             const rendered = template.render(candidateProfile, {});
-            html = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+            html = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
             const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
             fs.mkdirSync(siteDir, { recursive: true });
             fs.writeFileSync(path.join(siteDir, 'index.html'), html, 'utf8');
@@ -2757,11 +2905,11 @@ app.post('/api/vip/set-active-site', async (req, res) => {
 // PERMANENT PORTFOLIO DELETION ENDPOINT
 // (Supports deletion from User Side and Admin/Founder Side)
 // ==========================================
-app.delete(['/api/sites/:siteId', '/api/portfolios/:siteId'], async (req, res) => {
+app.delete(['/api/sites/:siteId', '/api/portfolios/:siteId'], AuthMiddleware.requireAuth, async (req, res) => {
   return handlePermanentSiteDelete(req, res);
 });
 
-app.post(['/api/sites/:siteId/delete', '/api/portfolios/:siteId/delete'], async (req, res) => {
+app.post(['/api/sites/:siteId/delete', '/api/portfolios/:siteId/delete'], AuthMiddleware.requireAuth, async (req, res) => {
   return handlePermanentSiteDelete(req, res);
 });
 
@@ -2781,7 +2929,13 @@ async function handlePermanentSiteDelete(req, res) {
       return res.status(400).json({ error: 'Cannot delete root directory' });
     }
 
-    console.log(`[DELETE] Request to permanently purge site: ${siteId}`);
+    // IDOR / BOLA Guard: Verify that caller is either the owner of this site or an administrator
+    const ownership = await verifySiteOwnership(req, siteId);
+    if (!ownership.allowed) {
+      return res.status(ownership.status).json({ error: ownership.error });
+    }
+
+    console.log(`[DELETE] Request to permanently purge site: ${siteId} by user: ${req.user?.id}`);
 
     // 1. Purge from disk and hosting provider
     await hostingProvider.purge(siteId);
@@ -3011,7 +3165,7 @@ app.get('/p/:siteId', async (req, res) => {
         res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
         res.setHeader('X-Content-Type-Options', 'nosniff');
         const rendered = template.render(demoData);
-        const htmlOutput = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+        const htmlOutput = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
         hostingProvider.deploy(siteId, htmlOutput, demoData, true).catch(() => {});
         html = htmlOutput;
       } catch (renderErr) {
@@ -3059,7 +3213,7 @@ app.get('/p/:siteId', async (req, res) => {
               social: prof.social || { github: 'https://github.com/Abdul-Aziz-Nooruddin' }
             };
             const rendered = template.render(candidateProfile, {});
-            const generatedHtml = typeof rendered === 'string' ? rendered : (rendered?.html || '');
+            const generatedHtml = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
             if (generatedHtml) {
               const targetDir = path.join(sitesBaseDir, siteId);
               fs.mkdirSync(targetDir, { recursive: true });

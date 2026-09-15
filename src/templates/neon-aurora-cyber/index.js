@@ -524,7 +524,7 @@ const NeonAuroraCyberTemplate = {
 
     .hero h1 {
       font-family: var(--font-head);
-      font-size: clamp(38px, 6vw, 68px);
+      font-size: clamp(22px, 6vw, 68px);
       font-weight: 800;
       line-height: 1.06;
       letter-spacing: -0.03em;

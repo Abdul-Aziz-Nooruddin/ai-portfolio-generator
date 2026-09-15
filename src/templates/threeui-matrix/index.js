@@ -114,7 +114,7 @@ const ThreeUIMatrixTemplate = {
     .page-wrapper { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 10; }
     .hero-stage { min-height: 85vh; display: flex; flex-direction: column; justify-content: center; padding: 8rem 0 3.5rem; }
     .hero-protocol-pill { display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.74rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--cyan-core); background: rgba(93, 205, 224, 0.08); border: 1px solid var(--border-subtle); padding: 0.4rem 1rem; border-radius: 4px; margin-bottom: 1.6rem; width: fit-content; }
-    .hero-title { font-family: var(--font-display); font-size: clamp(2.3rem, 4.8vw, 4.2rem); font-weight: 800; line-height: 1.12; text-transform: uppercase; color: #FFFFFF; margin-bottom: 1.4rem; max-width: 960px; }
+    .hero-title { font-family: var(--font-display); font-size: clamp(1.6rem, 4.8vw, 4.2rem); font-weight: 800; line-height: 1.12; text-transform: uppercase; color: #FFFFFF; margin-bottom: 1.4rem; max-width: 960px; }
     .hero-title span { color: var(--cyan-core); }
     .hero-subtitle { font-size: clamp(1rem, 1.8vw, 1.2rem); color: var(--text-muted); max-width: 650px; line-height: 1.7; margin-bottom: 2.8rem; font-weight: 300; }
     .btn-cyan-solid { background: var(--cyan-core); color: #040507; font-family: var(--font-display); font-weight: 800; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.85rem 2rem; border-radius: 6px; text-decoration: none; display: inline-block; }

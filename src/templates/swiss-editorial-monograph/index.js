@@ -330,7 +330,7 @@ const SwissEditorialMonographTemplate = {
 
     .hero-monumental-name {
       font-family: var(--font-display);
-      font-size: clamp(3.2rem, 7vw, 5.8rem);
+      font-size: clamp(1.6rem, 7vw, 5.8rem);
       font-weight: 800;
       line-height: 0.95;
       letter-spacing: -0.04em;
@@ -540,7 +540,7 @@ const SwissEditorialMonographTemplate = {
 
     .section-h2 {
       font-family: var(--font-display);
-      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-size: clamp(1.3rem, 4vw, 3.2rem);
       font-weight: 800;
       text-transform: uppercase;
       color: var(--alabaster);

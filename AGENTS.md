@@ -74,6 +74,22 @@ You MUST strictly consult and apply the following three authoritative design and
     - **Project Intelligence**: Treat projects as authentic technical case studies (problem, solution, architecture, technical challenge, live demo link) rather than generic thumbnail cards.
     - **Content-First Pipeline**: Follow the strict order: `CONTENT → IDENTITY → STORY → HIERARCHY → SECTION STRUCTURE → VISUAL REPRESENTATION → 3D EXPERIENCE`. MyFolio generates personalized digital worlds around real people, never cookie-cutter templates.
 
+11. **Project Visual Relevancy & Strict Zero Universe Preview Recycling Rule (MANDATORY)**:
+    - **NEVER REUSE TEMPLATE / UNIVERSE SHOWCASE THUMBNAILS ON PROJECT CARDS**: Under NO circumstances should project cards in generated portfolios reuse, recycle, or display template/universe preview showcase thumbnails (e.g. `stealth_node_3d.jpg`, `circuit_core_3d.jpg`, `cyber_crystal_3d.jpg`, `botanical_woodcraft_3d.jpg`, `pristine_glass_cube_3d.jpg`, `chrono_obsidian_sanctuary_3d.jpg`, `bio_digital_fusion_3d.jpg`, `cosmic_astronaut_3d.jpg`, etc., which are reserved exclusively for the 3D Visual Universe selection in Studio).
+    - **STRICT PROJECT TITLE & DOMAIN RELEVANCY**: Every single project image displayed in a generated portfolio MUST be strictly and contextually relevant to the project's title, technical domain, and actual system content:
+      - Encrypted Messaging / Note Dispatch (e.g. "Pass A Note", "Messenger", "Chat") -> MUST display secure peer-to-peer message transmission or encrypted origami cipher visuals (`pass_note_messenger_3d.jpg`). NEVER purple fantasy crystals.
+      - Developer Portfolio Generators / WebGL Tooling (e.g. "Ai Portfolio Generator", "Portfolio Generator", "DevFolio") -> MUST display 3D holographic developer workspaces rendering WebGL code viewports (`ai_portfolio_generator_3d.jpg`, `webgl_developer_portfolio_3d.jpg`). NEVER an artisanal wooden tree.
+      - Autonomous Edge AI / LLM Reasoning (e.g. "Autonomous Edge Agent", "AI Agent", "RAG Pipeline") -> MUST display autonomous edge neural processing units and server telemetry nodes (`autonomous_edge_agent_3d.jpg`). NEVER a botanical tree.
+      - Algorand / Smart Contracts (e.g. "Algorand Python Smart Contracts", "Smart Contracts", "EVM DApp") -> MUST display Algorand decentralized algorithmic block consensus and smart contract execution architecture (`algorand_smart_contracts_3d.jpg`, `algorand_escrow_protocol_3d.jpg`). NEVER a template universe icon.
+      - Decentralized Privacy / Compliance (e.g. "ConsentChain", "Privacy Vault", "DPDP Compliance") -> MUST display cryptographic privacy shields and compliance verification networks (`consent_chain_privacy_3d.jpg`).
+      - LMS / User Administration / Systems (e.g. "Lms User Management", "Student Records", "Admin Hub") -> MUST display educational LMS server racks with user access credentials and database matrices (`lms_user_management_3d.jpg`, `student_database_manager_3d.jpg`).
+      - Cloud Architecture & API Gateways -> MUST display distributed load-balanced container networks (`cloud_microservices_gateway_3d.jpg`).
+      - Security, Zero-Knowledge & Auth -> MUST display biometric access vaults and authentication shields (`cybersecurity_auth_vault_3d.jpg`).
+      - Video / Media Pipelines -> MUST display automated media rendering pipelines (`youtube_shorts_bot_3d.jpg`).
+      - Fintech & Risk Engines -> MUST display financial risk terminals and payment ledgers (`loan_approval_finance_3d.jpg`).
+      - Climate & Geospatial -> MUST display planetary geospatial telemetry sensors (`forest_fire_climate_3d.jpg`).
+    - **Semantic Relevancy Matching Guarantee**: The system must enforce high-affinity keyword and title classification matching. If a project title mentions notes/messaging, it receives messaging artwork; if it mentions portfolio/generator, it receives developer tooling artwork; if it mentions smart contracts/crypto, it receives blockchain ledger artwork. Zero visual-semantic mismatch.
+
 ## Standard Operating Procedure for Template Additions
 
 For **ANY** future template addition or redesign, you MUST strictly follow this mandatory pipeline:
