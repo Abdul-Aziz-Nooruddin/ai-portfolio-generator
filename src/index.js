@@ -106,6 +106,22 @@ app.use((req, res, next) => {
   next();
 });
 
+// Global X-Robots-Tag header on all /api/ endpoints to protect search index
+app.use('/api', (req, res, next) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  next();
+});
+
+// Guard GET on POST-only endpoints (e.g. /api/generate/unified) so crawlers get 405 with noindex instead of 404
+app.get(['/api/generate/unified', '/api/generate/github', '/api/web/generate', '/api/web/parse-resume'], (req, res) => {
+  res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
+  res.status(405).json({
+    status: 405,
+    error: 'Method Not Allowed',
+    message: 'This endpoint requires HTTP POST with valid JSON payload.'
+  });
+});
+
 // Canonical Application Host URL Configuration (Immutable runtime origin to prevent Host Header Poisoning)
 if (!process.env.HOST_URL) {
   process.env.HOST_URL = process.env.NODE_ENV === 'production' ? 'https://myfolio.tech' : 'http://localhost:5050';
@@ -3908,6 +3924,7 @@ async function dbHealthCheck(db) {
 // ==========================================
 app.use((req, res) => {
   if (req.path.startsWith('/api/')) {
+    res.setHeader('X-Robots-Tag', 'noindex, nofollow, noarchive');
     return res.status(404).json({ error: 'Endpoint not found', path: req.path });
   }
 

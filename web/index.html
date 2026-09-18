@@ -52,7 +52,7 @@
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
   <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#050817">
+  <meta name="theme-color" content="#040714">
 
   <!-- ============================================================
        JSON-LD STRUCTURED DATA
@@ -101,20 +101,21 @@
 
   <!-- Core Scripts & Libraries -->
   <script src="/assets/three.min.js?v=r128"></script>
-  <script src="/assets/GLTFLoader.js?v=r128"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js" defer></script>
+  <script src="/assets/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
   <script src="/sidebar.js" defer></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 
+  <!-- Base Design Tokens & Legacy Helpers -->
+  <link rel="stylesheet" href="/button-system.css">
+  <link rel="stylesheet" href="/assets/cinematic-engine/cinematic-universe.css">
+
   <style>
-    /* ============================================================
-       1. GLOBAL COSMIC DESIGN TOKENS
-       ============================================================ */
     :root {
-      --void-deep: #050817;
+      --void-deep: #040714;
       --void-mid: #07112B;
       --void-surface: #0B1638;
       
@@ -126,12 +127,6 @@
       --cyan-glow: rgba(56, 189, 248, 0.35);
       --violet-ambient: #8B5CF6;
       --solar-amber: #F5A623;
-      --solar-glow: rgba(245, 166, 35, 0.28);
-      
-      --card-obsidian: linear-gradient(145deg, rgba(11, 22, 56, 0.72) 0%, rgba(5, 8, 23, 0.85) 100%);
-      --card-border: 1px solid rgba(186, 230, 253, 0.16);
-      --card-border-hover: 1px solid rgba(56, 189, 248, 0.45);
-      --card-shadow: 0 16px 45px rgba(0, 0, 0, 0.55), 0 0 30px rgba(56, 189, 248, 0.08);
       
       --font-heading: 'Space Grotesk', -apple-system, sans-serif;
       --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
@@ -149,125 +144,52 @@
       background-color: var(--void-deep);
       color: var(--starlight);
       font-family: var(--font-body);
-      scroll-behavior: smooth;
       overflow-x: hidden;
+      scroll-behavior: auto;
     }
 
     body {
-      position: relative;
-      min-height: 100vh;
       overflow-x: hidden;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      background: #040714;
     }
 
-    /* ============================================================
-       2. FIXED UNIVERSE BACKGROUND CANVASES
-       ============================================================ */
-    .master-viewport-container {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: 0;
-      pointer-events: none;
-      overflow: hidden;
-      transform: translateZ(0);
-    }
-
-    .master-universe-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    .master-particle-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      display: block;
-      mix-blend-mode: screen;
-    }
-
-    .master-atmosphere-vignette {
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 75% 30%, rgba(245, 166, 35, 0.08) 0%, transparent 45%),
-                  radial-gradient(circle at 50% 50%, transparent 20%, rgba(5, 8, 23, 0.6) 80%, rgba(5, 8, 23, 0.92) 100%);
-      pointer-events: none;
-    }
-
-    /* ============================================================
-       3. NAVIGATION BAR & BRAND HEADER (Floating Pill Standard)
-       ============================================================ */
+    /* Minimal Floating Navigation Dock */
     .chrono-nav {
       position: fixed;
-      top: 14px;
-      left: 0;
-      right: 0;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 1180px;
       z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 20px;
-      pointer-events: none;
-      transition: all 0.3s ease;
-    }
-
-    .nav-container {
-      max-width: 1240px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 10px 20px;
+      background: rgba(7, 14, 38, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      pointer-events: auto;
-      background: rgba(7, 13, 33, 0.76);
-      backdrop-filter: blur(28px);
-      -webkit-backdrop-filter: blur(28px);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 999px;
-      padding: 7px 18px;
-      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(56, 189, 248, 0.12);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.08);
+      transition: all 0.3s ease;
     }
 
     .nav-brand-anchor {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       text-decoration: none;
-      color: var(--starlight);
-    }
-
-    .brand-logo-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(139, 92, 246, 0.2));
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.25);
-    }
-
-    .brand-logo-icon img {
-      width: 22px;
-      height: 22px;
-      object-fit: contain;
+      color: #ffffff;
     }
 
     .brand-logo-text {
-      font-family: var(--font-heading);
-      font-size: 1.35rem;
-      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
       letter-spacing: -0.02em;
-      color: #FFFFFF;
     }
-
     .brand-logo-text span {
       color: var(--cyan-core);
     }
@@ -275,127 +197,82 @@
     .nav-links-cluster {
       display: flex;
       align-items: center;
-      gap: 28px;
+      gap: 24px;
     }
 
     .nav-link-item {
-      font-family: var(--font-body);
+      font-family: var(--font-heading);
       font-size: 0.88rem;
       font-weight: 500;
-      color: var(--stardust);
+      color: #94A3B8;
       text-decoration: none;
       transition: color 0.2s ease;
     }
-
     .nav-link-item:hover {
-      color: var(--cyan-core);
+      color: #FFFFFF;
     }
 
     .nav-actions-cluster {
       display: flex;
       align-items: center;
-      gap: 14px;
-    }
-
-    .btn-solar-primary {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 10px 22px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #F5A623 0%, #E08E0B 100%);
-      color: #050817;
-      font-family: var(--font-heading);
-      font-size: 0.9rem;
-      font-weight: 700;
-      text-decoration: none;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(245, 166, 35, 0.35);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .btn-solar-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 28px rgba(245, 166, 35, 0.5);
+      gap: 12px;
     }
 
     .btn-solar-outline {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 9px 20px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.08);
-      color: var(--cyan-core);
-      font-family: var(--font-heading);
-      font-size: 0.9rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      cursor: pointer;
-      backdrop-filter: blur(12px);
-      transition: all 0.2s ease;
-    }
-
-    .btn-solar-outline:hover {
-      background: rgba(56, 189, 248, 0.16);
-      border-color: var(--cyan-core);
-      transform: translateY(-1px);
-    }
-
-    .nav-btn-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      gap: 8px;
       padding: 8px 18px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #F5A623 0%, #E08E0B 100%);
-      color: #050817;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: rgba(11, 22, 56, 0.5);
+      color: #BAE6FD;
       font-family: var(--font-heading);
       font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .btn-solar-outline:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+    }
+
+    .btn-solar-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 22px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+      color: #04091A;
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
       font-weight: 700;
       text-decoration: none;
-      border: none;
       cursor: pointer;
-      box-shadow: 0 4px 16px rgba(245, 166, 35, 0.35);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+      transition: all 0.25s ease;
     }
-
-    .nav-btn-pill:hover {
+    .btn-solar-primary:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(245, 166, 35, 0.5);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.55);
     }
 
-    .nav-login-btn {
-      background: transparent;
-      border: none;
-      cursor: pointer;
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      font-weight: 500;
-      color: var(--stardust);
-      transition: color 0.2s ease;
-      padding: 6px 12px;
-    }
-
-    .nav-login-btn:hover {
-      color: var(--cyan-core);
-    }
-
-    /* Mobile Nav Toggle */
     .mobile-nav-toggle {
       display: none;
-      background: transparent;
+      background: none;
       border: none;
-      color: var(--starlight);
+      color: #ffffff;
       cursor: pointer;
-      padding: 8px;
     }
 
-    @media (max-width: 960px) {
-      .nav-links-cluster {
+    @media (max-width: 768px) {
+      .nav-links-cluster, .nav-actions-cluster {
         display: none;
       }
       .mobile-nav-toggle {
@@ -403,1015 +280,30 @@
       }
     }
 
-    @media (max-width: 768px) {
-      .nav-actions-cluster {
-        display: none;
-      }
-    }
-
-    /* ============================================================
-       4. SCROLL JOURNEY SECTIONS WRAPPER
-       ============================================================ */
-    .journey-scroll-wrapper {
-      position: relative;
-      z-index: 10;
-      width: 100%;
-    }
-
-    .journey-section {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 120px 24px 80px;
-    }
-
-    .journey-container {
-      max-width: 1280px;
-      width: 100%;
-      margin: 0 auto;
-    }
-
-    .section-tag-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 16px;
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.32);
-      color: var(--cyan-core);
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      margin-bottom: 20px;
-    }
-
-    .section-masthead-title {
-      font-family: var(--font-heading);
-      font-size: clamp(2.4rem, 5vw, 4.2rem);
-      font-weight: 700;
-      line-height: 1.12;
-      letter-spacing: -0.03em;
-      color: #FFFFFF;
-      margin-bottom: 20px;
-    }
-
-    .section-lead-copy {
-      font-family: var(--font-body);
-      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
-      font-weight: 400;
-      line-height: 1.65;
-      color: var(--stardust);
-      max-width: 680px;
-      margin-bottom: 36px;
-    }
-
-    /* ============================================================
-       REACTIVE 3D STAGE & FRAMED BEZEL CANVAS (Reference Video Style)
-       ============================================================ */
-    .wildcrumb-stage-frame {
-      max-width: 1440px;
-      margin: 10px auto 48px;
-      border-radius: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      background: radial-gradient(circle at 50% 36%, #1c3668 0%, #0d1e40 52%, #050c1e 100%);
-      box-shadow: 0 32px 90px rgba(0, 0, 0, 0.85), 0 0 60px rgba(56, 189, 248, 0.18);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .wildcrumb-hero-stage {
-      position: relative;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 85px 20px 35px;
-      text-align: center;
-      overflow: hidden;
-      gap: 12px;
-    }
-
-    .stage-masthead-top {
-      position: relative;
-      z-index: 2;
-      max-width: 1120px;
-      margin: 0 auto;
-    }
-
-    .stage-giant-title {
-      font-family: var(--font-heading);
-      font-size: clamp(3.2rem, 7vw, 6.2rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.04em;
-      color: #FFFFFF;
-      text-shadow: 0 12px 45px rgba(0, 0, 0, 0.7);
-      margin-bottom: 8px;
-    }
-
-    .stage-giant-subtitle {
-      font-family: var(--font-body);
-      font-size: clamp(1.0rem, 1.6vw, 1.2rem);
-      color: #BAE6FD;
-      max-width: 620px;
-      margin: 0 auto;
-      line-height: 1.55;
-    }
-
-    .reactive-core-viewport {
-      position: relative;
-      width: 100%;
-      max-width: 900px;
-      height: 410px;
-      margin: -10px auto 5px;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      perspective: 1200px;
-    }
-
-    .reactive-core-3d-wrapper {
-      position: relative;
-      width: 360px;
-      height: 360px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-style: preserve-3d;
-      cursor: grab;
-      user-select: none;
-    }
-
-    .reactive-core-asset {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      filter: drop-shadow(0 30px 65px rgba(0, 0, 0, 0.75)) drop-shadow(0 0 45px rgba(56, 189, 248, 0.45));
-      transform-origin: center center;
-      will-change: transform;
-      pointer-events: none;
-    }
-
-    /* Ambient soft ground shadow */
-    .reactive-core-3d-wrapper::after {
-      content: '';
-      position: absolute;
-      bottom: -30px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 320px;
-      height: 45px;
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.65) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%);
-      border-radius: 50%;
-      filter: blur(14px);
-      z-index: -1;
-      pointer-events: none;
-    }
-
-    /* 4 Telemetry Hotspot Badges */
-    .stage-callout-pill {
-      position: absolute;
-      z-index: 20;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      padding: 9px 18px 9px 12px;
-      border-radius: 999px;
-      background: rgba(11, 20, 50, 0.82);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.22);
-      color: #FFFFFF;
-      font-family: var(--font-heading);
-      font-size: 0.9rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.18);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .stage-callout-pill:hover {
-      transform: scale(1.06) translateY(-2px);
-      border-color: rgba(56, 189, 248, 0.7);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7), 0 0 35px rgba(56, 189, 248, 0.4);
-      background: rgba(15, 30, 75, 0.95);
-    }
-
-    .callout-icon-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: #04091A;
-      border: 1px solid rgba(56, 189, 248, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.05rem;
-      color: var(--cyan-core);
-      box-shadow: 0 0 15px rgba(56, 189, 248, 0.35);
-      flex-shrink: 0;
-    }
-
-    /* Quadrant positions */
-    .callout-top-left {
-      top: 18%;
-      left: 2%;
-    }
-
-    .callout-bottom-left {
-      bottom: 18%;
-      left: 4%;
-    }
-
-    .callout-top-right {
-      top: 18%;
-      right: 2%;
-      flex-direction: row-reverse;
-      padding: 9px 12px 9px 18px;
-    }
-
-    .callout-bottom-right {
-      bottom: 18%;
-      right: 4%;
-      flex-direction: row-reverse;
-      padding: 9px 12px 9px 18px;
-    }
-
-    .stage-difference-section {
-      position: relative;
-      z-index: 2;
-      padding: 90px 24px 85px;
-      text-align: center;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(4, 9, 26, 0.65);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-    }
-
-    .stage-difference-title {
-      font-family: var(--font-heading);
-      font-size: clamp(3.2rem, 7vw, 6.2rem);
-      font-weight: 800;
-      letter-spacing: -0.04em;
-      color: #FFFFFF;
-      text-shadow: 0 12px 45px rgba(0, 0, 0, 0.7);
-      margin-bottom: 16px;
-    }
-
-    .stage-action-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    /* Bottom Terrain Framing in corners */
-    .stage-terrain-left {
-      position: absolute;
-      bottom: -15px;
-      left: -20px;
-      width: 300px;
-      height: 200px;
-      background: radial-gradient(circle at 0% 100%, rgba(13, 30, 74, 0.95) 0%, transparent 70%);
-      border-radius: 0 220px 0 0;
-      pointer-events: none;
-      z-index: 1;
-      filter: blur(6px);
-    }
-
-    .stage-terrain-right {
-      position: absolute;
-      bottom: -15px;
-      right: -20px;
-      width: 300px;
-      height: 200px;
-      background: radial-gradient(circle at 100% 100%, rgba(13, 30, 74, 0.95) 0%, transparent 70%);
-      border-radius: 220px 0 0 0;
-      pointer-events: none;
-      z-index: 1;
-      filter: blur(6px);
-    }
-
-    @media (max-width: 960px) {
-      .wildcrumb-stage-frame {
-        margin: 10px 8px 30px;
-        border-radius: 20px;
-      }
-      .reactive-core-viewport {
-        height: 420px;
-      }
-      .reactive-core-3d-wrapper {
-        width: 340px;
-        height: 340px;
-      }
-      .stage-callout-pill {
-        font-size: 0.8rem;
-        padding: 6px 14px 6px 10px;
-      }
-      .callout-icon-badge {
-        width: 30px;
-        height: 30px;
-        font-size: 0.85rem;
-      }
-      .callout-top-left { top: 6%; left: 1%; }
-      .callout-bottom-left { bottom: 6%; left: 1%; }
-      .callout-top-right { top: 6%; right: 1%; }
-      .callout-bottom-right { bottom: 6%; right: 1%; }
-    }
-
-    @media (max-width: 900px) {
-      .wildcrumb-stage-frame {
-        margin: 10px 8px 30px;
-        border-radius: 20px;
-      }
-      .reactive-core-viewport {
-        height: 380px;
-      }
-      .stage-callout-pill {
-        font-size: 0.78rem;
-        padding: 6px 12px 6px 8px;
-      }
-      .callout-icon-badge {
-        width: 28px;
-        height: 28px;
-        font-size: 0.8rem;
-      }
-      .callout-top-left { top: 8%; left: 2%; }
-      .callout-bottom-left { bottom: 10%; left: 2%; }
-      .callout-top-right { top: 8%; right: 2%; }
-      .callout-bottom-right { bottom: 10%; right: 2%; }
-    }
-
-    @media (max-width: 600px) {
-      .stage-callout-pill {
-        position: static;
-        margin: 4px;
-      }
-      .reactive-callouts-mobile-wrap {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 8px;
-        margin-top: 14px;
-      }
-    }
-
-    /* ============================================================
-       5. SECTION 01 — HERO
-       ============================================================ */
-    .hero-layout-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      gap: 48px;
-      align-items: center;
-    }
-
-    .hero-content-col {
-      max-width: 650px;
-    }
-
-    .hero-cta-cluster {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 36px;
-    }
-
-    .hero-trust-indicators {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 20px;
-      font-family: var(--font-body);
-      font-size: 0.82rem;
-      color: rgba(224, 242, 254, 0.65);
-    }
-
-    .trust-indicator-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .trust-indicator-pill svg {
-      width: 14px;
-      height: 14px;
-      color: var(--cyan-core);
-    }
-
-    .hero-spatial-card {
-      position: relative;
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 24px;
-      overflow: hidden;
-      box-shadow: var(--card-shadow);
-      backdrop-filter: blur(28px);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-      cursor: pointer;
-    }
-
-    .hero-spatial-card:hover {
-      transform: translateY(-6px) scale(1.01);
-      border-color: rgba(56, 189, 248, 0.5);
-    }
-
-    .hero-spatial-media {
-      position: relative;
-      width: 100%;
-      height: 340px;
-      overflow: hidden;
-      background: #020408;
-    }
-
-    .hero-spatial-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .hero-spatial-card:hover .hero-spatial-media img {
-      transform: scale(1.04);
-    }
-
-    .hero-spatial-body {
-      padding: 24px 28px;
-    }
-
-    .hero-spatial-tags {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .spatial-tag {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      color: var(--cyan-core);
-      background: rgba(56, 189, 248, 0.1);
-      padding: 3px 10px;
-      border-radius: 6px;
-      border: 1px solid rgba(56, 189, 248, 0.25);
-    }
-
-    .hero-spatial-title {
-      font-family: var(--font-heading);
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 6px;
-    }
-
-    .hero-spatial-desc {
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      color: var(--stardust);
-      line-height: 1.5;
-    }
-
-    /* ============================================================
-       6. SECTION 02 — THE PROBLEM (SCATTERED OBJECTS)
-       ============================================================ */
-    .scattered-fragments-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .scattered-artifact-monolith {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 20px;
-      padding: 28px 24px;
-      backdrop-filter: blur(20px);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scattered-artifact-monolith:hover {
-      transform: translateY(-6px);
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.15);
-    }
-
-    .artifact-visual-beacon {
-      width: 54px;
-      height: 54px;
-      border-radius: 14px;
-      background: rgba(56, 189, 248, 0.1);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 20px;
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.2);
-    }
-
-    .artifact-title {
-      font-family: var(--font-heading);
-      font-size: 1.2rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 8px;
-    }
-
-    .artifact-desc {
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      color: var(--stardust);
-      line-height: 1.55;
-    }
-
-    /* ============================================================
-       7. SECTION 03 & 04 — SOLUTION & HOW IT WORKS
-       ============================================================ */
-    .progression-triad-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      margin-top: 48px;
-      position: relative;
-    }
-
-    .progression-stage-card {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 22px;
-      padding: 36px 28px;
-      backdrop-filter: blur(24px);
-      position: relative;
-      transition: all 0.3s ease;
-    }
-
-    .progression-stage-card:hover {
-      border-color: rgba(56, 189, 248, 0.45);
-      transform: translateY(-4px);
-    }
-
-    .stage-index-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--cyan-core);
-      font-family: var(--font-mono);
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 22px;
-    }
-
-    .stage-card-title {
-      font-family: var(--font-heading);
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 10px;
-    }
-
-    .stage-card-desc {
-      font-family: var(--font-body);
-      font-size: 0.92rem;
-      color: var(--stardust);
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       8. SECTION 05 — AI TRANSFORMATION CORE
-       ============================================================ */
-    .reactor-core-card {
-      background: linear-gradient(145deg, rgba(14, 24, 64, 0.75) 0%, rgba(5, 8, 23, 0.92) 100%);
-      border: 1px solid rgba(186, 230, 253, 0.22);
-      border-radius: 28px;
-      padding: 48px;
-      backdrop-filter: blur(30px);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 40px;
-      align-items: center;
-    }
-
-    .reactor-metrics-list {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      margin-top: 24px;
-    }
-
-    .reactor-metric-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      font-family: var(--font-body);
-      font-size: 0.92rem;
-      color: var(--starlight-dim);
-    }
-
-    .reactor-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--cyan-core);
-      box-shadow: 0 0 10px var(--cyan-core);
-    }
-
-    .reactor-visual-stage {
-      position: relative;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      background: #03050C;
-    }
-
-    .reactor-visual-stage img {
-      width: 100%;
-      height: 320px;
-      object-fit: cover;
-      display: block;
-    }
-
-    /* ============================================================
-       9. SECTION 06 — EXPLORE THE UNIVERSES (8 DISTINCT WORLDS)
-       ============================================================ */
-    .universes-octo-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .universe-world-card {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 18px;
-      overflow: hidden;
-      backdrop-filter: blur(20px);
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .universe-world-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(56, 189, 248, 0.5);
-      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.14);
-    }
-
-    .world-card-media {
-      position: relative;
-      width: 100%;
-      height: 180px;
-      overflow: hidden;
-      background: #050810;
-    }
-
-    .world-card-media img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-
-    .universe-world-card:hover .world-card-media img {
-      transform: scale(1.06);
-    }
-
-    .world-card-body {
-      padding: 18px 20px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .world-card-tag {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--cyan-core);
-      margin-bottom: 6px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .world-card-title {
-      font-family: var(--font-heading);
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 6px;
-    }
-
-    .world-card-desc {
-      font-family: var(--font-body);
-      font-size: 0.82rem;
-      color: var(--stardust);
-      line-height: 1.5;
-      margin-bottom: 14px;
-      flex-grow: 1;
-    }
-
-    .world-card-action {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font-heading);
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #F5A623;
-    }
-
-    /* ============================================================
-       10. SECTION 07 — WHAT YOUR PORTFOLIO CAN CONTAIN (8 ARTIFACTS)
-       ============================================================ */
-    .portfolio-artifacts-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      margin-top: 48px;
-    }
-
-    .content-artifact-pill {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 16px;
-      padding: 24px 20px;
-      backdrop-filter: blur(20px);
-      transition: all 0.25s ease;
-    }
-
-    .content-artifact-pill:hover {
-      border-color: rgba(56, 189, 248, 0.4);
-      transform: translateY(-3px);
-    }
-
-    .artifact-kind-icon {
-      font-size: 1.4rem;
-      margin-bottom: 12px;
-      display: inline-block;
-    }
-
-    .artifact-kind-title {
-      font-family: var(--font-heading);
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 6px;
-    }
-
-    .artifact-kind-desc {
-      font-family: var(--font-body);
-      font-size: 0.82rem;
-      color: var(--stardust);
-      line-height: 1.5;
-    }
-
-    /* ============================================================
-       11. SECTION 08 — WHY MYFOLIO (4 DIFFERENTIATORS)
-       ============================================================ */
-    .differentiators-quad-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .differentiator-stela {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 20px;
-      padding: 32px 24px;
-      backdrop-filter: blur(24px);
-      position: relative;
-    }
-
-    .diff-num-accent {
-      font-family: var(--font-mono);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #F5A623;
-      margin-bottom: 16px;
-    }
-
-    .diff-title {
-      font-family: var(--font-heading);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 10px;
-    }
-
-    .diff-desc {
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      color: var(--stardust);
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       12. SECTION 09 — REAL PORTFOLIO SHOWCASE
-       ============================================================ */
-    .showcase-windows-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px;
-      margin-top: 48px;
-    }
-
-    .showcase-window-card {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 22px;
-      overflow: hidden;
-      backdrop-filter: blur(24px);
-      transition: all 0.3s ease;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .showcase-window-card:hover {
-      transform: translateY(-5px);
-      border-color: rgba(56, 189, 248, 0.5);
-    }
-
-    .window-media-wrap {
-      width: 100%;
-      height: 220px;
-      background: #020408;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .window-media-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.4s ease;
-    }
-
-    .showcase-window-card:hover .window-media-wrap img {
-      transform: scale(1.05);
-    }
-
-    .window-body-wrap {
-      padding: 24px;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
-    .window-title {
-      font-family: var(--font-heading);
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #FFFFFF;
-      margin-bottom: 8px;
-    }
-
-    .window-desc {
-      font-family: var(--font-body);
-      font-size: 0.88rem;
-      color: var(--stardust);
-      line-height: 1.55;
-      margin-bottom: 20px;
-      flex-grow: 1;
-    }
-
-    /* ============================================================
-       13. SECTION 10 — TRUST & PROVEN SPEED
-       ============================================================ */
-    .trust-metrics-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 24px;
-      margin-top: 48px;
-    }
-
-    .trust-metric-box {
-      background: var(--card-obsidian);
-      border: var(--card-border);
-      border-radius: 18px;
-      padding: 28px 20px;
-      text-align: center;
-      backdrop-filter: blur(20px);
-    }
-
-    .trust-metric-value {
-      font-family: var(--font-heading);
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--cyan-core);
-      margin-bottom: 6px;
-    }
-
-    .trust-metric-label {
-      font-family: var(--font-body);
-      font-size: 0.85rem;
-      color: var(--stardust);
-    }
-
-    /* ============================================================
-       14. SECTION 11 — FINAL CTA / 100% SCROLL PORTAL
-       ============================================================ */
-    .portal-climax-stage {
-      background: linear-gradient(145deg, rgba(14, 24, 56, 0.85) 0%, rgba(5, 8, 23, 0.95) 100%);
-      border: 1px solid rgba(186, 230, 253, 0.28);
-      border-radius: 32px;
-      padding: 64px 48px;
-      backdrop-filter: blur(32px);
-      box-shadow: 0 32px 80px rgba(0, 0, 0, 0.7), 0 0 50px rgba(56, 189, 248, 0.16);
-      text-align: center;
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .portal-tag-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 18px;
-      border-radius: 999px;
-      background: rgba(245, 166, 35, 0.12);
-      border: 1px solid rgba(245, 166, 35, 0.35);
-      color: #F5A623;
-      font-family: var(--font-mono);
-      font-size: 0.82rem;
-      font-weight: 700;
-      margin-bottom: 24px;
-    }
-
-    .portal-climax-headline {
-      font-family: var(--font-heading);
-      font-size: clamp(2.6rem, 5.5vw, 4.4rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      color: #FFFFFF;
-      margin-bottom: 16px;
-    }
-
-    .portal-climax-secondline {
-      font-family: var(--font-heading);
-      font-size: clamp(1.8rem, 3.8vw, 3rem);
-      font-weight: 700;
-      color: var(--cyan-core);
-      margin-bottom: 24px;
-    }
-
-    .portal-climax-subtext {
-      font-family: var(--font-body);
-      font-size: 1.15rem;
-      color: var(--stardust);
-      max-width: 620px;
-      margin: 0 auto 36px;
-      line-height: 1.6;
-    }
-
-    /* ============================================================
-       15. SECTION 12 — REFINED MINIMAL FOOTER
-       ============================================================ */
+    /* Architectural Footer */
     .master-architectural-footer {
       position: relative;
-      z-index: 10;
-      background: rgba(5, 8, 23, 0.9);
-      border-top: 1px solid rgba(186, 230, 253, 0.12);
-      padding: 64px 32px 40px;
-      backdrop-filter: blur(24px);
+      z-index: 20;
+      background: #030612;
+      border-top: 1px solid rgba(56, 189, 248, 0.18);
+      padding: 60px 24px 32px;
     }
 
     .footer-content-grid {
-      max-width: 1280px;
+      max-width: 1180px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
-      gap: 40px;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 36px;
       margin-bottom: 48px;
     }
 
     .footer-brand-bio {
-      font-family: var(--font-body);
-      font-size: 0.9rem;
-      color: var(--stardust);
-      max-width: 320px;
       margin-top: 14px;
+      font-size: 0.88rem;
       line-height: 1.6;
+      color: #94A3B8;
+      max-width: 320px;
     }
 
     .footer-nav-col-title {
@@ -1430,706 +322,370 @@
     }
 
     .footer-nav-list a {
-      color: var(--stardust);
-      text-decoration: none;
+      color: #64748B;
       font-size: 0.85rem;
-      transition: color 0.2s ease;
+      text-decoration: none;
+      transition: color 0.2s;
     }
-
     .footer-nav-list a:hover {
-      color: var(--cyan-core);
+      color: #38BDF8;
     }
 
     .footer-copyright-strip {
-      max-width: 1280px;
+      max-width: 1180px;
       margin: 0 auto;
-      padding-top: 24px;
-      border-top: 1px solid rgba(186, 230, 253, 0.08);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8rem;
-      color: rgba(224, 242, 254, 0.5);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 24px;
+      font-size: 0.78rem;
+      color: #64748B;
     }
 
-    /* ============================================================
-       16. STICKY MOBILE CTA BAR (Mandatory Production Item)
-       ============================================================ */
+    /* Sticky Mobile CTA */
     .sticky-mobile-cta-bar {
+      display: none;
       position: fixed;
       bottom: 0;
       left: 0;
-      right: 0;
+      width: 100%;
+      background: rgba(4, 7, 20, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 10px 16px;
       z-index: 999;
-      display: none;
-      padding: 12px 16px;
-      background: rgba(5, 8, 23, 0.88);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(186, 230, 253, 0.16);
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
     }
-
-    @media (max-width: 768px) {
+    @media (max-width: 600px) {
       .sticky-mobile-cta-bar {
         display: flex;
       }
-      .hero-layout-grid {
-        grid-template-columns: 1fr;
-      }
-      .scattered-fragments-grid,
-      .progression-triad-grid,
-      .universes-octo-grid,
-      .portfolio-artifacts-grid,
-      .differentiators-quad-grid,
-      .showcase-windows-grid,
-      .trust-metrics-strip,
-      .footer-content-grid {
-        grid-template-columns: 1fr;
-      }
-      .reactor-core-card {
-        grid-template-columns: 1fr;
-        padding: 28px 20px;
-      }
     }
   </style>
-  <link rel="stylesheet" href="/button-system.css">
 </head>
 <body>
 
+  <!-- Top Scroll Progress Bar -->
+  <div id="scroll-progress-indicator"></div>
+
   <!-- Master Fixed Continuous 3D Universe Viewport -->
   <div class="master-viewport-container" aria-hidden="true">
-    <canvas id="masterUniverseCanvas" class="master-universe-canvas"></canvas>
-    <canvas id="masterParticleCanvas" class="master-particle-canvas"></canvas>
+    <canvas id="masterUniverseCanvas"></canvas>
     <div class="master-atmosphere-vignette"></div>
   </div>
 
   <!-- Main Navigation Bar -->
   <nav class="chrono-nav" id="mainNav">
-    <div class="nav-container">
-      <a href="/" class="nav-brand-anchor" aria-label="MyFolio Home">
-        <div class="brand-logo-icon">
-          <img src="/assets/logo-3d.png" alt="MyFolio Emblem" width="22" height="22">
-        </div>
-        <span class="brand-logo-text">My<span>Folio</span></span>
-      </a>
-
-      <div class="nav-links-cluster">
-        <a href="#sectionProblem" class="nav-link-item">Problem</a>
-        <a href="#sectionHowItWorks" class="nav-link-item">How it works</a>
-        <a href="#sectionUniverses" class="nav-link-item">Universes</a>
-        <a href="#sectionArtifacts" class="nav-link-item">Artifacts</a>
-        <a href="#sectionShowcase" class="nav-link-item">Showcase</a>
-        <a href="/studio" class="nav-link-item">Studio</a>
+    <a href="/" class="nav-brand-anchor" aria-label="MyFolio Home">
+      <div class="brand-logo-icon">
+        <img src="/assets/logo-3d.png" alt="MyFolio Emblem" width="22" height="22">
       </div>
+      <span class="brand-logo-text">My<span>Folio</span></span>
+    </a>
 
-      <div class="nav-actions-cluster" id="navAuthDock">
-        <button type="button" class="btn-solar-outline" onclick="openAuthModal('signin')">Sign in</button>
-        <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
-          <span>Build my portfolio</span>
-        </button>
-      </div>
+    <div class="nav-links-cluster">
+      <a href="#sectionProblem" class="nav-link-item">The Journey</a>
+      <a href="#sectionHowItWorks" class="nav-link-item">How It Works</a>
+      <a href="#sectionUniverses" class="nav-link-item">Universes</a>
+      <a href="#sectionShowcase" class="nav-link-item">Showcase</a>
+      <a href="/studio" class="nav-link-item">Web Studio</a>
+    </div>
 
-      <button type="button" class="mobile-nav-toggle" onclick="openAuthModal('signup')" aria-label="Open Navigation">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <div class="nav-actions-cluster" id="navAuthDock">
+      <button type="button" class="btn-solar-outline" onclick="openAuthModal('signin')">Sign in</button>
+      <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+        <span>Build my portfolio</span>
       </button>
     </div>
+
+    <button type="button" class="mobile-nav-toggle" onclick="openAuthModal('signup')" aria-label="Open Navigation">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
   </nav>
 
-  <!-- 12-Section Continuous Camera Journey Wrapper -->
-  <main class="journey-scroll-wrapper">
+  <!-- ============================================================
+       MASTER JOURNEY SCROLL TRACK (Coordinates 3D Camera & Chapters)
+       ============================================================ -->
+  <main class="journey-scroll-track" id="journeyScrollWrapper">
 
-    <!-- ============================================================
-         01 — HERO & 3D REACTIVE CORE STAGE (Reference Video Standard)
-         ============================================================ -->
-    <section class="wildcrumb-stage-frame" id="sectionHero">
-      <div class="wildcrumb-hero-stage">
-        
-        <!-- Subtle Natural Depth Horizon Silhouettes in Corners -->
-        <div class="stage-terrain-left" aria-hidden="true"></div>
-        <div class="stage-terrain-right" aria-hidden="true"></div>
+    <!-- Pinned Viewport Container (Fixed position overlaying 3D WebGL world) -->
+    <div class="cinematic-stage-pin">
 
-        <!-- STAGE 1: Giant Top Masthead ("Taste the Sky" equivalent) -->
-        <div class="stage-masthead-top">
-          <div class="section-tag-pill" style="margin-bottom: 14px;">
-            <span>✦</span> AUTONOMOUS 3D SPATIAL ENGINE
-          </div>
-          <h1 class="stage-giant-title">
-            Turn Code Into Worlds
-          </h1>
-          <p class="stage-giant-subtitle">
-            Beyond flat resumes and generic templates. An interactive, ultra-high-definition universe rendered directly from your engineering DNA.
-          </p>
+      <!-- ============================================================
+           STAGE 0: HERO (0.00 - 0.12)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter chapter-hero chapter-active" id="sectionHero">
+        <div class="chapter-tag-badge">
+          <span>✦</span> AUTONOMOUS 3D SPATIAL ENGINE
         </div>
-
-        <!-- STAGE 2: Centered 3D Viewport with Reactive World Core Asset & 4 Telemetry Hotspots -->
-        <div class="reactive-core-viewport" id="reactiveCoreViewport">
-          <div class="reactive-core-3d-wrapper" id="reactiveCore3DWrapper">
-            <img src="/assets/3d/quantum_world_core_3d_nobg.png" id="reactiveCoreAsset" class="reactive-core-asset" alt="MyFolio Ultra-HD 3D World Core" draggable="false" />
-          </div>
-
-          <!-- Hotspot 1: Top-Left -->
-          <div class="stage-callout-pill callout-top-left" onclick="showHotspotModal('engine')" title="Inspect Autonomous Engine">
-            <span>Autonomous World Engine</span>
-            <div class="callout-icon-badge">⚡</div>
-          </div>
-
-          <!-- Hotspot 2: Bottom-Left -->
-          <div class="stage-callout-pill callout-bottom-left" onclick="showHotspotModal('physics')" title="Inspect 3D Physics">
-            <span>Apple-Grade 3D Motion</span>
-            <div class="callout-icon-badge">🌐</div>
-          </div>
-
-          <!-- Hotspot 3: Top-Right -->
-          <div class="stage-callout-pill callout-top-right" onclick="showHotspotModal('telemetry')" title="Inspect Live Telemetry">
-            <div class="callout-icon-badge">💎</div>
-            <span>Live GitHub Telemetry</span>
-          </div>
-
-          <!-- Hotspot 4: Bottom-Right -->
-          <div class="stage-callout-pill callout-bottom-right" onclick="showHotspotModal('shaders')" title="Inspect Procedural PBR">
-            <div class="callout-icon-badge">✦</div>
-            <span>Procedural PBR Shaders</span>
-          </div>
-        </div>
-
-        <!-- Hero Action Row & Trust Indicators -->
-        <div class="stage-action-row" style="margin-top: 8px; z-index: 20;">
+        <h1 class="chapter-headline">
+          Turn Code Into <span>Worlds</span>
+        </h1>
+        <p class="chapter-subtitle">
+          Beyond flat resumes and generic templates. An interactive, continuous 3D universe rendered directly from your engineering DNA.
+        </p>
+        <div class="chapter-action-cluster">
           <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
             <span>Build my portfolio</span>
             <span>➔</span>
           </button>
           <a href="/complete-shelf-3d" class="btn-solar-outline">
-            <span>👁️ Explore Complete Shelf 3D</span>
+            <span>👁️ Explore Shelf 3D</span>
           </a>
           <a href="/studio" class="btn-solar-outline">
             <span>⚙️ Open Studio</span>
           </a>
         </div>
+      </section>
 
-        <div class="hero-trust-indicators" style="justify-content: center; margin-top: 12px; z-index: 20;">
-          <div class="trust-indicator-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Instant setup under 60s</span>
+      <!-- ============================================================
+           STAGE 1: THE PROBLEM — SCATTERED FRAGMENTS (0.12 - 0.24)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterProblem">
+        <div class="chapter-tag-badge">
+          <span>01</span> SCATTERED TELEMETRY
+        </div>
+        <h2 class="chapter-headline">
+          Your work is everywhere.<br><span>Your story shouldn't be.</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Recruiters spend 6 seconds scanning flat paper PDFs, tab-switching between GitHub repositories, and guessing what you actually built.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">⚡</div>
+            <h3 class="feature-card-title">Scattered GitHub Code</h3>
+            <p class="feature-card-desc">Brilliant pull requests and complex architectures buried across standard markdown files.</p>
           </div>
-          <div class="trust-indicator-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Free 24-hour live CDN preview</span>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">📄</div>
+            <h3 class="feature-card-title">Flat Paper PDFs</h3>
+            <p class="feature-card-desc">Monochrome A4 documents designed in 1993 that strip away physical weight and engineering depth.</p>
           </div>
-          <div class="trust-indicator-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            <span>Clean static export included</span>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🌐</div>
+            <h3 class="feature-card-title">Siloed Deployments</h3>
+            <p class="feature-card-desc">Broken links and hidden demo environments that hiring teams never take the time to inspect.</p>
           </div>
         </div>
+      </section>
 
-      </div>
-
-      <!-- STAGE 2: "The Difference" (Scrolls smoothly into view) -->
-      <div class="stage-difference-section" id="sectionDifference">
-        <div class="section-tag-pill" style="margin-bottom: 14px;">✦ ARCHITECTURAL MATRIX</div>
-        <h2 class="stage-difference-title">The Difference</h2>
-        <p class="section-lead-copy" style="margin: 0 auto 32px; text-align: center;">
-          Ordinary tools generate generic card grids. MyFolio orchestrates living WebGL universes powered by spatial physics and authentic engineering evidence.
+      <!-- ============================================================
+           STAGE 2: GRAVITATIONAL CONVERGENCE (0.24 - 0.36)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterConvergence">
+        <div class="chapter-tag-badge">
+          <span>02</span> GRAVITATIONAL CONVERGENCE
+        </div>
+        <h2 class="chapter-headline">
+          From scattered data to <span>single identity</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Watch your repositories, commit cadence, and career telemetry get pulled into an orbital vortex toward a central genesis core.
         </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🌀</div>
+            <h3 class="feature-card-title">Intake Telemetry Prism</h3>
+            <p class="feature-card-desc">Direct ingestion of GitHub handle, resume PDF, and deployed coordinates.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🧠</div>
+            <h3 class="feature-card-title">Engineering DNA Analysis</h3>
+            <p class="feature-card-desc">Autonomous extraction of architectural patterns, system depth, and leadership milestones.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">✨</div>
+            <h3 class="feature-card-title">Archetype Mapping</h3>
+            <p class="feature-card-desc">Translates your verified record into a tailored multi-dimensional physical world.</p>
+          </div>
+        </div>
+      </section>
 
-        <div class="stage-action-row">
+      <!-- ============================================================
+           STAGE 3: AI SYNTHESIS & WORLD CONSTRUCTION (0.36 - 0.48)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterSynthesis">
+        <div class="chapter-tag-badge">
+          <span>03</span> PROCEDURAL SYNTHESIS
+        </div>
+        <h2 class="chapter-headline">
+          Raw code terraforms into <span>living space</span>
+        </h2>
+        <p class="chapter-subtitle">
+          The synthesis engine constructs responsive 3D WebGL geometry, physics, and PBR materials directly from your verified engineering record in under 60 seconds.
+        </p>
+        <div class="chapter-action-cluster">
           <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
-            <span>Synthesize My Universe</span>
+            <span>Start My Synthesis</span>
             <span>➔</span>
           </button>
-          <a href="#sectionProblem" class="btn-solar-outline">
-            <span>Explore The Problem ↓</span>
-          </a>
         </div>
-      </div>
+      </section>
 
-      </div>
-    </section>
-
-    <!-- ============================================================
-         02 — THE PROBLEM (15% - 25% Scroll)
-         ============================================================ -->
-    <section class="journey-section" id="sectionProblem">
-      <div class="journey-container">
-        <div class="section-tag-pill">02 — THE PROBLEM</div>
-        <h2 class="section-masthead-title">
-          Your work is everywhere.<br>Your story shouldn't be.
+      <!-- ============================================================
+           STAGE 4: THE PORTFOLIO WORLD HUB (0.48 - 0.60)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterWorld">
+        <div class="chapter-tag-badge">
+          <span>04</span> THE PORTFOLIO WORLD
+        </div>
+        <h2 class="chapter-headline">
+          Every engineer deserves <span>their own world</span>
         </h2>
-        <p class="section-lead-copy">
-          Recruiters and hiring managers spend 6 seconds scanning flat PDFs, tab-switching between GitHub repositories, and guessing what you actually built.
+        <p class="chapter-subtitle">
+          Explore the central biosphere. Your engineering philosophy rises as a Living Tree of Knowledge, surrounded by geological terrain and planetary monuments.
         </p>
-        <div class="scattered-fragments-grid">
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">⚡</div>
-            <h3 class="artifact-title">Scattered GitHub Code</h3>
-            <p class="artifact-desc">Brilliant pull requests, complex architectures, and commit histories buried in standard markdown files.</p>
-          </div>
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">📄</div>
-            <h3 class="artifact-title">Flat PDF Documents</h3>
-            <p class="artifact-desc">Black-and-white A4 paper formats designed in 1993 that strip away physical weight and engineering depth.</p>
-          </div>
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">🌐</div>
-            <h3 class="artifact-title">Fragmented Live Demos</h3>
-            <p class="artifact-desc">Broken URLs and siloed deployments requiring manual credentials that nobody ever opens.</p>
-          </div>
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">💎</div>
-            <h3 class="artifact-title">Unverified Skill Lists</h3>
-            <p class="artifact-desc">Plain keyword bullet points that fail to demonstrate real-world mastery or architectural judgment.</p>
-          </div>
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">🏛️</div>
-            <h3 class="artifact-title">Hidden Project Context</h3>
-            <p class="artifact-desc">Technical trade-offs, scaling bottlenecks, and engineering decisions invisible to hiring teams.</p>
-          </div>
-          <div class="scattered-artifact-monolith">
-            <div class="artifact-visual-beacon">✨</div>
-            <h3 class="artifact-title">Vanishing Achievements</h3>
-            <p class="artifact-desc">Hackathon trophies, open source impact, and team leadership compressed into single-line bullet points.</p>
-          </div>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Synthesize My World</span>
+            <span>➔</span>
+          </button>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         03 — THE SOLUTION (25% - 35% Scroll)
-         ============================================================ -->
-    <section class="journey-section" id="sectionSolution">
-      <div class="journey-container">
-        <div class="section-tag-pill">03 — THE SOLUTION</div>
-        <h2 class="section-masthead-title">
-          From information to identity.
+      <!-- ============================================================
+           STAGE 5: TERRAFORMED PROJECT PLANETOIDS (0.60 - 0.70)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterProjects">
+        <div class="chapter-tag-badge">
+          <span>05</span> PROJECT PLANETOIDS
+        </div>
+        <h2 class="chapter-headline">
+          Projects aren't thumbnails.<br><span>They're worlds.</span>
         </h2>
-        <p class="section-lead-copy">
-          MyFolio draws your scattered engineering telemetry together into one cohesive, interactive physical world. Not a generic card grid — an authentic universe.
+        <p class="chapter-subtitle">
+          Each system you built is represented by a miniature terraformed planetoid with real technical challenges, architecture, and live links.
         </p>
-        <div class="progression-triad-grid">
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">01</div>
-            <h3 class="stage-card-title">Gravitational Convergence</h3>
-            <p class="stage-card-desc">Your GitHub handle, resume PDF, and technical coordinates enter the intake prism as raw telemetry fragments.</p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🪐</div>
+            <h3 class="feature-card-title">Distributed Microservices</h3>
+            <p class="feature-card-desc">High-throughput architectures rendered as orbiting terraformed globes with live status telemetry.</p>
           </div>
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">02</div>
-            <h3 class="stage-card-title">Structural Synthesis</h3>
-            <p class="stage-card-desc">MyFolio AI analyzes code complexity, architectural patterns, and career trajectory to map your unique archetype.</p>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">💎</div>
+            <h3 class="feature-card-title">Cryptographic Escrow</h3>
+            <p class="feature-card-desc">Smart contract protocols materialized as crystalline obsidian facets with audited code traces.</p>
           </div>
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">03</div>
-            <h3 class="stage-card-title">Living World Generation</h3>
-            <p class="stage-card-desc">The engine renders a high-performance 3D WebGL realm complete with PBR shaders, physics, and interactive artifacts.</p>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🌿</div>
+            <h3 class="feature-card-title">Autonomous AI Agents</h3>
+            <p class="feature-card-desc">Neural reasoning pipelines visualized as living biospheres with procedural weather loops.</p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         04 — HOW IT WORKS (35% - 45% Scroll)
-         ============================================================ -->
-    <section class="journey-section" id="sectionHowItWorks">
-      <div class="journey-container">
-        <div class="section-tag-pill">04 — HOW IT WORKS</div>
-        <h2 class="section-masthead-title">
-          Three steps from code to living world.
+      <!-- ============================================================
+           STAGE 6: SKILL NETWORK & BASALT GITHUB MOUNTAIN (0.70 - 0.80)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterSkills">
+        <div class="chapter-tag-badge">
+          <span>06</span> NEURAL GRAPH & CODE TERRAIN
+        </div>
+        <h2 class="chapter-headline">
+          Skills connected by evidence.<br><span>GitHub carved in stone.</span>
         </h2>
-        <p class="section-lead-copy">
-          No manual 3D modeling. No WebGL shader coding. Just your authentic engineering experience brought to life in under 60 seconds.
+        <p class="chapter-subtitle">
+          A 3D constellation where node brightness reflects real repository usage, anchored beside a volcanic basalt mountain pulsing with commit activity.
         </p>
-        <div class="progression-triad-grid">
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">01</div>
-            <h3 class="stage-card-title">Connect Your Source</h3>
-            <p class="stage-card-desc">Provide your GitHub handle, upload a PDF resume, or outline your stack. The engine extracts your actual projects and metrics.</p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">💠</div>
+            <h3 class="feature-card-title">Resonant Skill Mesh</h3>
+            <p class="feature-card-desc">Zero unverified bullet points. Skill node sizes and linkages reflect authentic production frameworks.</p>
           </div>
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">02</div>
-            <h3 class="stage-card-title">Synthesize a Universe</h3>
-            <p class="stage-card-desc">Select from distinct architectural worlds — from tactile 3D libraries to living seasonal biomes with custom lighting.</p>
-          </div>
-          <div class="progression-stage-card">
-            <div class="stage-index-badge">03</div>
-            <h3 class="stage-card-title">Launch to the World</h3>
-            <p class="stage-card-desc">Publish instantly with your personal subdomain, connect custom DNS, or download standalone static code ready for Vercel and Netlify.</p>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">⛰️</div>
+            <h3 class="feature-card-title">Basalt Commit Mountain</h3>
+            <p class="feature-card-desc">A computational geological face illuminated with glowing copper veins representing your commit cadence.</p>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         05 — AI TRANSFORMATION (45% - 55% Scroll)
-         ============================================================ -->
-    <section class="journey-section" id="sectionAITransformation">
-      <div class="journey-container">
-        <div class="reactor-core-card">
-          <div class="reactor-text-stage">
-            <div class="section-tag-pill">05 — AI TRANSFORMATION</div>
-            <h2 class="section-masthead-title" style="font-size: clamp(2rem, 3.8vw, 3.2rem);">
-              Watch your story become a world.
-            </h2>
-            <p class="section-lead-copy" style="font-size: 1rem; margin-bottom: 24px;">
-              The MyFolio synthesis reactor ingests raw code repositories, commits, and resume prose. It understands technical depth, structures content, and renders a living environment.
-            </p>
-            <div class="reactor-metrics-list">
-              <div class="reactor-metric-item">
-                <span class="reactor-dot"></span>
-                <span>Extracts genuine project architectures, frameworks, and metrics</span>
-              </div>
-              <div class="reactor-metric-item">
-                <span class="reactor-dot"></span>
-                <span>Synthesizes responsive 3D WebGL scenes running at steady 60 FPS</span>
-              </div>
-              <div class="reactor-metric-item">
-                <span class="reactor-dot"></span>
-                <span>Zero hallucinations — builds strictly from your verified record</span>
-              </div>
-            </div>
-            <div style="margin-top: 32px;">
-              <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
-                <span>Start transformation</span>
-                <span>➔</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="reactor-visual-stage">
-            <img src="/assets/3d/threeui_constellation_3d.jpg" alt="AI Transformation Constellation Nexus" loading="lazy">
-          </div>
+      <!-- ============================================================
+           STAGE 7: EXPERIENCE TIME CORRIDOR (0.80 - 0.88)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterExperience">
+        <div class="chapter-tag-badge">
+          <span>07</span> SPATIAL CHRONOLOGY
         </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         06 — EXPLORE THE UNIVERSES (55% - 65% Scroll)
-         ============================================================ -->
-    <section class="journey-section" id="sectionUniverses">
-      <div class="journey-container">
-        <div class="section-tag-pill">06 — EXPLORE THE UNIVERSES</div>
-        <h2 class="section-masthead-title">
-          Eight living architectural universes.
+        <h2 class="chapter-headline">
+          Fly through your <span>career milestones</span>
         </h2>
-        <p class="section-lead-copy">
-          Not generic templates. Each universe is a distinct spatial environment engineered around a specific developer archetype.
+        <p class="chapter-subtitle">
+          Travel through the dimensional rings of time: from foundational breakthroughs to high-throughput systems leadership and recognized honors.
         </p>
-        <div class="universes-octo-grid">
-          <!-- 1. Complete Shelf 3D -->
-          <a href="/complete-shelf-3d" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/threeui_shelf_3d.jpg" alt="Complete Shelf 3D Interactive Library" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Interactive Library</span>
-              <h3 class="world-card-title">Complete Shelf 3D</h3>
-              <p class="world-card-desc">Tactile mahogany library with real-time hardcover tilts and book spine physics.</p>
-              <span class="world-card-action">Live Demo ↗</span>
-            </div>
-          </a>
-
-          <!-- 2. Pure Sylva Living World -->
-          <a href="/sylva-living-world" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/threeui_sylva_3d.jpg" alt="Pure Sylva Living World" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Living Biome</span>
-              <h3 class="world-card-title">Pure Sylva Living World</h3>
-              <p class="world-card-desc">Moss-covered ancient bough with fluttering butterflies and 4 seasonal weather shaders.</p>
-              <span class="world-card-action">Live Demo ↗</span>
-            </div>
-          </a>
-
-          <!-- 3. Kage Shrine 3D -->
-          <a href="/kage-living-world" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/threeui_kage_3d.jpg" alt="Kage Shrine 3D" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Kyoto Night</span>
-              <h3 class="world-card-title">Kage Shrine 3D</h3>
-              <p class="world-card-desc">Nocturnal pagoda bathed in full moonlight with cherry blossom particle physics.</p>
-              <span class="world-card-action">Live Demo ↗</span>
-            </div>
-          </a>
-
-          <!-- 4. Cosmic Astronaut -->
-          <a href="/studio?template=cosmic-astronaut" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/cosmic_astronaut_3d.jpg" alt="Cosmic Astronaut Studio" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Deep Cosmos</span>
-              <h3 class="world-card-title">Cosmic Astronaut</h3>
-              <p class="world-card-desc">Zero-gravity orbital voyage with celestial stardust and planetary coordinates.</p>
-              <span class="world-card-action">Use in Studio ➔</span>
-            </div>
-          </a>
-
-          <!-- 5. Cyber Crystal -->
-          <a href="/studio?template=cyber-crystal" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/cyber_crystal_3d.jpg" alt="Cyber Crystal Studio" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Dark Quartz</span>
-              <h3 class="world-card-title">Cyber Crystal</h3>
-              <p class="world-card-desc">Prismatic obsidian quartz refractions with clean dark glassmorphism.</p>
-              <span class="world-card-action">Use in Studio ➔</span>
-            </div>
-          </a>
-
-          <!-- 6. Bioluminescent Wireframe -->
-          <a href="/studio?template=bioluminescent-wireframe" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/bioluminescent_wireframe_3d.jpg" alt="Bioluminescent Wireframe" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Abyssal Trench</span>
-              <h3 class="world-card-title">Bioluminescent</h3>
-              <p class="world-card-desc">Deep ocean glowing particle mesh with synaptic neural node linkages.</p>
-              <span class="world-card-action">Use in Studio ➔</span>
-            </div>
-          </a>
-
-          <!-- 7. Chrono Obsidian -->
-          <a href="/studio?template=chrono-obsidian-sanctuary" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/chrono_obsidian_sanctuary_3d.jpg" alt="Chrono Obsidian Sanctuary" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Liquid Gold</span>
-              <h3 class="world-card-title">Chrono Obsidian</h3>
-              <p class="world-card-desc">Astronomical astrolabe gears with carved gold runes on volcanic obsidian.</p>
-              <span class="world-card-action">Use in Studio ➔</span>
-            </div>
-          </a>
-
-          <!-- 8. Neon Aurora Cyber -->
-          <a href="/studio?template=neon-aurora-cyber" class="universe-world-card">
-            <div class="world-card-media">
-              <img src="/assets/3d/neon_aurora_cyber_3d.jpg" alt="Neon Aurora Cyber" loading="lazy">
-            </div>
-            <div class="world-card-body">
-              <span class="world-card-tag">Aurora Borealis</span>
-              <h3 class="world-card-title">Neon Aurora Cyber</h3>
-              <p class="world-card-desc">Midnight velvet backdrop with flowing cyan flare and chromatic particle ribbons.</p>
-              <span class="world-card-action">Use in Studio ➔</span>
-            </div>
-          </a>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🏛️</div>
+            <h3 class="feature-card-title">Chronological Corridor</h3>
+            <p class="feature-card-desc">Stepped spatial portals marking promotions, system scale, and architectural contributions.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">✨</div>
+            <h3 class="feature-card-title">Starlight Constellation</h3>
+            <p class="feature-card-desc">Hackathon victories, patents, and speaking keynotes immortalized as celestial beacons.</p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         07 — WHAT YOUR PORTFOLIO CAN CONTAIN (8 PHYSICAL ARTIFACTS)
-         ============================================================ -->
-    <section class="journey-section" id="sectionArtifacts">
-      <div class="journey-container">
-        <div class="section-tag-pill">07 — WHAT YOUR PORTFOLIO CAN CONTAIN</div>
-        <h2 class="section-masthead-title">
-          Every facet of your career,<br>physically realized.
+      <!-- ============================================================
+           STAGE 8: LIVING UNIVERSES GATEWAY (0.88 - 0.94)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterUniverses">
+        <div class="chapter-tag-badge">
+          <span>08</span> THE LIVING UNIVERSES
+        </div>
+        <h2 class="chapter-headline">
+          Eight distinct <span>architectural worlds</span>
         </h2>
-        <p class="section-lead-copy">
-          Instead of plain text blocks, MyFolio maps each dimension of your professional identity into a physical 3D artifact.
+        <p class="chapter-subtitle">
+          Not generic templates. Each universe is a living WebGL environment engineered around a specific developer archetype.
         </p>
-        <div class="portfolio-artifacts-grid">
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">🌱</span>
-            <h3 class="artifact-kind-title">About • Living Tree</h3>
-            <p class="artifact-kind-desc">An organic biophilic ecosystem communicating your engineering mission and ethos.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">🪐</span>
-            <h3 class="artifact-kind-title">Projects • Terraformed Worlds</h3>
-            <p class="artifact-kind-desc">Miniature orbiting globes with interactive sonar scanners and live production URLs.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">💠</span>
-            <h3 class="artifact-kind-title">Skills • Crystal Network</h3>
-            <p class="artifact-kind-desc">A resonant energy mesh illuminating technical depth and library proficiencies.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">🏛️</span>
-            <h3 class="artifact-kind-title">Experience • Chronoliths</h3>
-            <p class="artifact-kind-desc">Stepped architectural monuments recording career milestones, scale, and promotions.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">🔭</span>
-            <h3 class="artifact-kind-title">Education • Observatory</h3>
-            <p class="artifact-kind-desc">Knowledge astrolabes mapping computer science degrees and academic honors.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">✨</span>
-            <h3 class="artifact-kind-title">Achievements • Constellation</h3>
-            <p class="artifact-kind-desc">Starlight nodes celebrating hackathon victories, patent filings, and speaking keynotes.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">⛰️</span>
-            <h3 class="artifact-kind-title">GitHub • Basalt Mountain</h3>
-            <p class="artifact-kind-desc">A computational rock face pulsing with copper logic traces and commit activity.</p>
-          </div>
-          <div class="content-artifact-pill">
-            <span class="artifact-kind-icon">🚪</span>
-            <h3 class="artifact-kind-title">Contact • Beacon Portal</h3>
-            <p class="artifact-kind-desc">A dimensional transmission gate connecting recruiters directly to your verified inbox.</p>
-          </div>
+        <div class="universe-quick-strip">
+          <a href="/complete-shelf-3d" class="universe-mini-token">📚 Complete Shelf 3D</a>
+          <a href="/sylva-living-world" class="universe-mini-token">🌿 Sylva Living World</a>
+          <a href="/kage-living-world" class="universe-mini-token">⛩️ Kage Shrine 3D</a>
+          <a href="/studio?template=cosmic-astronaut" class="universe-mini-token">🚀 Cosmic Astronaut</a>
+          <a href="/studio?template=cyber-crystal" class="universe-mini-token">💎 Cyber Crystal</a>
+          <a href="/studio?template=bioluminescent-wireframe" class="universe-mini-token">🌊 Bioluminescent</a>
+          <a href="/studio?template=chrono-obsidian-sanctuary" class="universe-mini-token">⏳ Chrono Obsidian</a>
+          <a href="/studio?template=neon-aurora-cyber" class="universe-mini-token">🌌 Neon Aurora</a>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         08 — WHY MYFOLIO (4 DIFFERENTIATORS)
-         ============================================================ -->
-    <section class="journey-section" id="sectionWhyMyFolio">
-      <div class="journey-container">
-        <div class="section-tag-pill">08 — WHY MYFOLIO</div>
-        <h2 class="section-masthead-title">
-          Engineered for engineers.
+      <!-- ============================================================
+           STAGE 9: THE DESTINATION / FINAL CLIMAX (0.94 - 1.00)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterClimax">
+        <div class="chapter-tag-badge">
+          <span>✦</span> THE DESTINATION
+        </div>
+        <h2 class="chapter-headline">
+          Your work already tells a story.<br><span>Give it a world.</span>
         </h2>
-        <p class="section-lead-copy">
-          Why top developers and founders leave static portfolio templates behind.
+        <p class="chapter-subtitle">
+          Turn your GitHub, resume, and experience into an interactive 3D universe. Free 24-hour preview with zero commitment.
         </p>
-        <div class="differentiators-quad-grid">
-          <div class="differentiator-stela">
-            <div class="diff-num-accent">01</div>
-            <h3 class="diff-title">Built from your real work</h3>
-            <p class="diff-desc">MyFolio parses real repositories, commit frequencies, and resume bullet points — zero hallucinated fluff.</p>
-          </div>
-          <div class="differentiator-stela">
-            <div class="diff-num-accent">02</div>
-            <h3 class="diff-title">Designed around identity</h3>
-            <p class="diff-desc">Your portfolio should feel like your work — not another generic beige blog template or SaaS card clone.</p>
-          </div>
-          <div class="differentiator-stela">
-            <div class="diff-num-accent">03</div>
-            <h3 class="diff-title">Interactive by default</h3>
-            <p class="diff-desc">Recruiters explore real physical 3D depths, turn virtual book volumes, and test live systems in place.</p>
-          </div>
-          <div class="differentiator-stela">
-            <div class="diff-num-accent">04</div>
-            <h3 class="diff-title">Free to start</h3>
-            <p class="diff-desc">Generate, preview, and test your 3D universe with a 24-hour live link before deciding on permanent hosting.</p>
-          </div>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" style="padding: 14px 38px; font-size: 1.05rem;" onclick="openAuthModal('signup')">
+            <span>Build my portfolio</span>
+            <span>➔</span>
+          </button>
+          <a href="/studio" class="btn-solar-outline" style="padding: 14px 28px; font-size: 1.05rem;">
+            <span>Open Web Studio</span>
+          </a>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- ============================================================
-         09 — REAL PORTFOLIO SHOWCASE
-         ============================================================ -->
-    <section class="journey-section" id="sectionShowcase">
-      <div class="journey-container">
-        <div class="section-tag-pill">09 — REAL PORTFOLIO SHOWCASE</div>
-        <h2 class="section-masthead-title">
-          See what your portfolio could become.
-        </h2>
-        <p class="section-lead-copy">
-          Real developer portfolios generated by MyFolio. Fully responsive, WCAG accessible, and deployed on modern edge infrastructure.
-        </p>
-        <div class="showcase-windows-grid">
-          <div class="showcase-window-card" onclick="window.location.href='/portfolio-complete-shelf'" style="cursor: pointer;">
-            <div class="window-media-wrap">
-              <img src="/assets/3d/developer_showcase_portfolio_3d.jpg" alt="Principal Systems Architect Portfolio" loading="lazy">
-            </div>
-            <div class="window-body-wrap">
-              <h3 class="window-title">Systems & Infrastructure</h3>
-              <p class="window-desc">Generated from 47 GitHub repositories, highlighting high-throughput microservices and interactive library architecture.</p>
-              <a href="/portfolio-complete-shelf" class="btn-solar-outline" style="align-self: flex-start;" onclick="event.stopPropagation()">Live Template Demo ↗</a>
-            </div>
-          </div>
-
-          <div class="showcase-window-card" onclick="window.location.href='/portfolio-living-world'" style="cursor: pointer;">
-            <div class="window-media-wrap">
-              <img src="/assets/3d/smart_contract_dapp_3d.jpg" alt="Living World and Ecology Portfolio" loading="lazy">
-            </div>
-            <div class="window-body-wrap">
-              <h3 class="window-title">Living World & Ecology</h3>
-              <p class="window-desc">Living 3D spatial portfolio featuring real-time WebGL living environments, procedural branches, and seasonal dynamics.</p>
-              <a href="/portfolio-living-world" class="btn-solar-outline" style="align-self: flex-start;" onclick="event.stopPropagation()">Live Template Demo ↗</a>
-            </div>
-          </div>
-
-          <div class="showcase-window-card" onclick="window.location.href='/portfolio-constellation'" style="cursor: pointer;">
-            <div class="window-media-wrap">
-              <img src="/assets/3d/student_database_manager_3d.jpg" alt="Neural Constellation and AI Portfolio" loading="lazy">
-            </div>
-            <div class="window-body-wrap">
-              <h3 class="window-title">Neural Constellation & AI</h3>
-              <p class="window-desc">High-dimensional cognitive graph visualization with synaptic node linkages and interactive WebGPU views.</p>
-              <a href="/portfolio-constellation" class="btn-solar-outline" style="align-self: flex-start;" onclick="event.stopPropagation()">Live Template Demo ↗</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         10 — TRUST & PROVEN SPEED
-         ============================================================ -->
-    <section class="journey-section" id="sectionTrust">
-      <div class="journey-container">
-        <div class="section-tag-pill">10 — VERIFIED PERFORMANCE</div>
-        <h2 class="section-masthead-title">
-          Built in public. Engineered for speed.
-        </h2>
-        <p class="section-lead-copy">
-          Engineered from first principles with zero runtime bloat. Every generated portfolio delivers pristine performance across all devices.
-        </p>
-        <div class="trust-metrics-strip">
-          <div class="trust-metric-box">
-            <div class="trust-metric-value">&lt; 60s</div>
-            <div class="trust-metric-label">AI Generation Speed</div>
-          </div>
-          <div class="trust-metric-box">
-            <div class="trust-metric-value">60 FPS</div>
-            <div class="trust-metric-label">Client WebGL Framerate</div>
-          </div>
-          <div class="trust-metric-box">
-            <div class="trust-metric-value">24h</div>
-            <div class="trust-metric-label">Free Live Preview Link</div>
-          </div>
-          <div class="trust-metric-box">
-            <div class="trust-metric-value">100%</div>
-            <div class="trust-metric-label">Clean Static Export Included</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============================================================
-         11 — FINAL CTA / 100% SCROLL PORTAL ARRIVAL
-         ============================================================ -->
-    <section class="journey-section" id="sectionClimax">
-      <div class="journey-container">
-        <div class="portal-climax-stage">
-          <div class="portal-tag-badge">✦ THE DESTINATION ✦</div>
-          <h2 class="portal-climax-headline">
-            Your work already tells a story.
-          </h2>
-          <div class="portal-climax-secondline">
-            Give it a world.
-          </div>
-          <p class="portal-climax-subtext">
-            Turn your GitHub, resume, and experience into something people can explore. Free 24-hour preview with zero commitment.
-          </p>
-          <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
-            <button type="button" class="btn-solar-primary" style="padding: 14px 36px; font-size: 1.05rem;" onclick="openAuthModal('signup')">
-              <span>Build my portfolio</span>
-              <span>➔</span>
-            </button>
-            <a href="/studio" class="btn-solar-outline" style="padding: 14px 28px; font-size: 1.05rem;">
-              <span>Open Web Studio</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    </div>
   </main>
 
   <!-- ============================================================
-       12 — REFINED MINIMAL ARCHITECTURAL FOOTER
+       REFINED MINIMAL ARCHITECTURAL FOOTER
        ============================================================ -->
   <footer class="master-architectural-footer">
     <div class="footer-content-grid">
@@ -2148,9 +704,9 @@
       <div class="footer-nav-col">
         <h4 class="footer-nav-col-title">Product</h4>
         <ul class="footer-nav-list">
-          <li><a href="#sectionHowItWorks">How it works</a></li>
-          <li><a href="#sectionUniverses">Universes</a></li>
-          <li><a href="#sectionShowcase">Examples</a></li>
+          <li><a href="#chapterHero">Home World</a></li>
+          <li><a href="#chapterUniverses">Universes</a></li>
+          <li><a href="/complete-shelf-3d">Shelf 3D Demo</a></li>
           <li><a href="/studio">Web Studio</a></li>
         </ul>
       </div>
@@ -2183,13 +739,13 @@
 
     <div class="footer-copyright-strip">
       <span>© 2026 MyFolio Studio. All rights reserved.</span>
-      <span>Designed with authentic physical depth.</span>
+      <span>Engineered with continuous 3D spatial depth.</span>
     </div>
   </footer>
 
   <!-- Mandatory Sticky Mobile Floating CTA Bar -->
   <div class="sticky-mobile-cta-bar" id="stickyMobileCtaBar">
-    <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700;">
+    <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: #FFFFFF;">
       MyFolio Studio
     </div>
     <button type="button" class="btn-solar-primary" style="padding: 7px 16px; font-size: 0.82rem;" onclick="openAuthModal('signup')">
@@ -2197,10 +753,13 @@
     </button>
   </div>
 
-  <!-- Client Application Engine & Camera Engine -->
+  <!-- Client Application & 3D Cinematic Engine Modules -->
   <script src="/app.js" defer></script>
-  <script src="/assets/spatial-master-journey.js?v=20260913_cinematic_redesign" defer></script>
-  <script src="/assets/reactive-core-engine.js?v=20260913_reactive_standard" defer></script>
+  <script src="/assets/cinematic-engine/core-world-renderer.js" defer></script>
+  <script src="/assets/cinematic-engine/camera-timeline-controller.js" defer></script>
+  <script src="/assets/cinematic-engine/scene-objects-manager.js" defer></script>
+  <script src="/assets/cinematic-engine/scroll-master-orchestrator.js" defer></script>
+  <script src="/button-engine.js" defer></script>
 
   <!-- Hotspot Interactive Details Modal -->
   <div id="hotspotModalOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(3,6,18,0.85); backdrop-filter:blur(24px); align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)closeHotspotModal()">
@@ -2218,202 +777,39 @@
   </div>
 
   <script>
-    const hotspotData = {
-      engine: {
-        icon: '⚡',
-        title: 'Autonomous World Engine',
-        desc: 'Transforms raw code commits, pull requests, and resume PDFs into a rich multi-dimensional space without requiring manual 3D modeling or design skills.'
-      },
-      physics: {
-        icon: '🌐',
-        title: 'Apple-Grade 3D Physics',
-        desc: 'Hardware-accelerated inertia scrolling, 3-axis gyro rotation, and reactive mouse parallax driven by smooth cubic-bezier easing and WebGL 60 FPS loops.'
-      },
-      telemetry: {
-        icon: '💎',
-        title: 'Live GitHub Telemetry',
-        desc: 'Direct repository synchronization pulling authentic language distribution, commit streaks, top stars, and production milestones directly into the 3D world.'
-      },
-      shaders: {
-        icon: '✦',
-        title: 'Procedural PBR Shaders',
-        desc: 'Cinematic physically-based rendering featuring subsurface scattering, metallic chromatic dispersion, ambient occlusion, and dynamic starlight blooms.'
-      }
-    };
-
-    function showHotspotModal(key) {
-      const data = hotspotData[key];
-      if (!data) return;
-      if (window.__MyFolioReactiveCore && window.__MyFolioReactiveCore.triggerPulse) {
-        window.__MyFolioReactiveCore.triggerPulse();
-      }
-      document.getElementById('hotspotModalIcon').textContent = data.icon;
-      document.getElementById('hotspotModalTitle').textContent = data.title;
-      document.getElementById('hotspotModalDesc').textContent = data.desc;
-      const modal = document.getElementById('hotspotModalOverlay');
-      modal.style.display = 'flex';
-    }
-
     function closeHotspotModal() {
-      document.getElementById('hotspotModalOverlay').style.display = 'none';
+      const modal = document.getElementById('hotspotModalOverlay');
+      if (modal) modal.style.display = 'none';
     }
 
-    // Initialize Auth Dock state on page load
+    // Initialize Auth state on page load
     document.addEventListener('DOMContentLoaded', () => {
       if (typeof checkUserAuth === 'function') {
         checkUserAuth();
       }
     });
   </script>
-  <script src="/button-engine.js" defer></script>
 
 <style id="myfolio-universal-mobile">
   /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
   @media (max-width: 600px) {
-    /* Reset base font size so rem units scale down */
     html { font-size: 14px !important; }
-
-    /* Hero headline — cap at a safe mobile size */
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"],
-    [class*="hero-name"], [class*="page-title"], [class*="folio-name"],
-    [class*="profile-name"] {
-      font-size: clamp(1.6rem, 7vw, 2.4rem) !important;
+    h1, [class*="chapter-headline"] {
+      font-size: clamp(1.8rem, 7.5vw, 2.5rem) !important;
       line-height: 1.15 !important;
       letter-spacing: -0.02em !important;
     }
-
-    /* Section headings */
-    h2, [class*="section-title"], [class*="section-heading"],
-    [class*="chapter-title"], [class*="block-title"] {
-      font-size: clamp(1.25rem, 5.5vw, 1.8rem) !important;
+    h2 {
+      font-size: clamp(1.35rem, 6vw, 1.85rem) !important;
       line-height: 1.2 !important;
     }
-
-    h3, [class*="card-title"], [class*="project-name"],
-    [class*="exp-title"], [class*="role-title"] {
-      font-size: clamp(1rem, 4.5vw, 1.35rem) !important;
+    p, [class*="chapter-subtitle"] {
+      font-size: clamp(0.85rem, 3.8vw, 1rem) !important;
+      line-height: 1.6 !important;
     }
-
-    /* Body / bio text */
-    p, [class*="bio"], [class*="hero-bio"], [class*="subtitle"],
-    [class*="intro-text"], [class*="description"], [class*="lead"] {
-      font-size: clamp(0.8rem, 3.5vw, 1rem) !important;
-      line-height: 1.65 !important;
-    }
-
-    /* Tag / badge / mono accent text */
-    [class*="tag"], [class*="badge"], [class*="chip"], [class*="label"],
-    [class*="kicker"], [class*="mono"], code, pre {
-      font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
-    }
-
-    /* Section padding — prevent edges being clipped */
-    section, [class*="section"], [class*="-section"],
-    [class*="wrapper"], [class*="container"], [class*="layout"] {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-    }
-
-    /* Hero sections — reduce vertical breathing room */
-    [class*="hero"], [id="home"] {
-      padding-top: 64px !important;
-      padding-bottom: 32px !important;
-      min-height: auto !important;
-    }
-
-    /* Force single-column grids everywhere */
-    [style*="grid-template-columns"],
-    [class*="grid"], [class*="bento"], [class*="dual"],
-    [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
+    .master-architectural-footer .footer-content-grid {
       grid-template-columns: 1fr !important;
-    }
-
-    /* Navigation — hide multi-item desktop navs, show only brand */
-    [class*="nav-menu"], [class*="header-nav"], [class*="dock"],
-    [class*="vertical-dock"], [class*="sidebar-nav"] {
-      display: none !important;
-    }
-
-    /* Buttons — stack and full-width */
-    [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-    }
-    [class*="btn"], [class*="cta-btn"], [class*="sprawl-btn"] {
-      width: 100% !important;
-      justify-content: center !important;
-      padding: 12px 20px !important;
-      font-size: 0.82rem !important;
-    }
-
-    /* Project / card images */
-    [class*="card-img"], [class*="project-img"], [class*="project-image"],
-    [class*="artwork"], [class*="thumbnail"] {
-      height: 160px !important;
-    }
-
-    /* Skill / telemetry numbers — prevent overflow */
-    [class*="stat-num"], [class*="metric-value"], [class*="counter"],
-    [class*="number-display"] {
-      font-size: clamp(1.4rem, 6vw, 2rem) !important;
-    }
-
-    /* 404 hero numbers */
-    [class*="404"], [class*="error-code"] {
-      font-size: clamp(4rem, 20vw, 7rem) !important;
-    }
-
-    /* Floating 3D assets — reduce to prevent layout blowout */
-    [class*="hero-3d"], [class*="focal-asset"], [class*="floating-asset"],
-    [class*="hero-img"], [class*="hero-visual"] {
-      max-width: 260px !important;
-      width: 70vw !important;
-      margin: 24px auto 0 !important;
-    }
-
-    /* Canvas backgrounds — don't overflow */
-    canvas {
-      max-width: 100vw !important;
-    }
-
-    /* Footer */
-    [class*="footer"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-      padding: 24px 16px !important;
-      text-align: center !important;
-      font-size: 0.72rem !important;
-    }
-  }
-
-  /* ─── Tablet override ≤768px ────────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    html { font-size: 15px !important; }
-
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"] {
-      font-size: clamp(2rem, 6vw, 3rem) !important;
-    }
-
-    h2, [class*="section-title"], [class*="section-heading"] {
-      font-size: clamp(1.4rem, 4.5vw, 2rem) !important;
-    }
-
-    section, [class*="section"], [class*="-section"] {
-      padding-left: 24px !important;
-      padding-right: 24px !important;
-    }
-
-    [class*="grid"], [class*="bento"],
-    [class*="tri-layout"], [class*="three-col"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    [class*="two-col"], [class*="dual"] {
-      grid-template-columns: 1fr !important;
+      gap: 24px !important;
     }
   }
 

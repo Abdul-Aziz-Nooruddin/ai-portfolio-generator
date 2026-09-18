@@ -1,45 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+
+  <!-- MyFolio.tech — XML Sitemap | Last updated: 2026-09-18 -->
+
+  <!-- Homepage — Primary landing & conversion world -->
   <url>
     <loc>https://myfolio.tech/</loc>
-    <lastmod>2026-08-31</lastmod>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg</image:loc>
+      <image:title>MyFolio AI 3D Portfolio Generator</image:title>
+    </image:image>
   </url>
+
+  <!-- Creator Studio -->
   <url>
-    <loc>https://myfolio.tech/studio.html</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://myfolio.tech/studio</loc>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.95</priority>
   </url>
+
+  <!-- About Page — E-E-A-T Trust & Engineering Ethos -->
   <url>
-    <loc>https://myfolio.tech/design-demo.html</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://myfolio.tech/about</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+  </url>
+
+  <!-- Contact Page — Direct Support & Communications -->
+  <url>
+    <loc>https://myfolio.tech/contact</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.80</priority>
+  </url>
+
+  <!-- Universes Showcase -->
+  <url>
+    <loc>https://myfolio.tech/universes</loc>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.85</priority>
   </url>
+
+  <!-- Living 3D WebGL Portfolio Demos -->
   <url>
-    <loc>https://myfolio.tech/auth.html</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://myfolio.tech/complete-shelf-3d</loc>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.80</priority>
   </url>
+
   <url>
-    <loc>https://myfolio.tech/dashboard.html</loc>
-    <lastmod>2026-08-31</lastmod>
-    <changefreq>always</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://myfolio.tech/terms.html</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://myfolio.tech/sylva-living-world</loc>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.80</priority>
   </url>
+
   <url>
-    <loc>https://myfolio.tech/privacy.html</loc>
-    <lastmod>2026-08-31</lastmod>
+    <loc>https://myfolio.tech/kage-living-world</loc>
+    <lastmod>2026-09-18</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.3</priority>
+    <priority>0.80</priority>
   </url>
+
+  <!-- Terms of Service -->
+  <url>
+    <loc>https://myfolio.tech/terms</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.40</priority>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://myfolio.tech/privacy</loc>
+    <lastmod>2026-09-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.40</priority>
+  </url>
+
 </urlset>

@@ -19,7 +19,7 @@ class SecurityMiddleware {
         "img-src 'self' data: https: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.google.co.in",
         "frame-src 'self' https://myfolio.tech https://*.myfolio.tech https://sketchfab.com https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com http://localhost:* http://127.0.0.1:*",
         "frame-ancestors 'self' https://myfolio.tech https://*.myfolio.tech http://localhost:* http://127.0.0.1:*",
-        "connect-src 'self' blob: data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com",
+        "connect-src 'self' blob: data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://*.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'"

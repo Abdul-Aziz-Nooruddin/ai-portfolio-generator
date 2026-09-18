@@ -1,10 +1,110 @@
-User-agent: *
-Allow: /
-Allow: /studio.html
-Allow: /design-demo.html
-Allow: /p/
-Allow: /sites/
-Disallow: /api/
-Disallow: /admin.html
+# ==========================================================
+# MyFolio.tech — robots.txt (Google Search Console Hardened)
+# ==========================================================
 
+User-agent: *
+# Indexable Public Pages (Clean Canonical URLs)
+Allow: /$
+Allow: /studio
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /universes
+Allow: /design-demo
+Allow: /complete-shelf-3d
+Allow: /sylva-living-world
+Allow: /kage-living-world
+Allow: /assets/
+Allow: /sitemap.xml
+
+# Block API endpoints from search crawlers (Prevents 404 indexing errors)
+Disallow: /api/
+
+# Block authentication, private account & app states (Prevents "Crawled - not indexed" thin content)
+Disallow: /auth
+Disallow: /auth.html
+Disallow: /login
+Disallow: /signin
+Disallow: /signup
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /dashboard
+Disallow: /dashboard.html
+Disallow: /profile
+Disallow: /profile.html
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /thank-you
+Disallow: /thank-you.html
+
+# Block dynamic user preview sites & storage
+Disallow: /p/
+Disallow: /sites/
+
+# Block internal assets, data schemas & traps
+Disallow: /*.json$
+Disallow: /src/
+Disallow: /node_modules/
+
+# Explicit Rules for Googlebot (RFC 9309 Strict Compliance)
+User-agent: Googlebot
+Allow: /$
+Allow: /studio
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /universes
+Allow: /design-demo
+Allow: /complete-shelf-3d
+Allow: /sylva-living-world
+Allow: /kage-living-world
+Allow: /assets/
+Allow: /sitemap.xml
+Disallow: /api/
+Disallow: /auth
+Disallow: /auth.html
+Disallow: /login
+Disallow: /signin
+Disallow: /signup
+Disallow: /dashboard
+Disallow: /dashboard.html
+Disallow: /profile
+Disallow: /profile.html
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /thank-you
+Disallow: /p/
+Disallow: /sites/
+Disallow: /*.json$
+
+# Social Media Crawlers (Allow Assets for Rich Link Previews)
+User-agent: Twitterbot
+Allow: /assets/
+
+User-agent: LinkedInBot
+Allow: /assets/
+
+User-agent: facebookexternalhit
+Allow: /assets/
+
+# Block aggressive SEO scrapers from wasting server bandwidth
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+Crawl-delay: 2
+
+# Sitemap location
 Sitemap: https://myfolio.tech/sitemap.xml
