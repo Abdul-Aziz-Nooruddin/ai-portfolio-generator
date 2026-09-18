@@ -29,20 +29,20 @@
       this.smoothMouseX = 0;
       this.smoothMouseY = 0;
 
-      // 10 Key Waypoints across the continuous 3D world journey
+      // 10 Key Waypoints traveling through the real-world architectural campus:
       // progress: [0.0 -> 1.0]
       this.waypoints = [
-        { progress: 0.00, pos: [0, 8, 95],     look: [0, 0, 0] },       // 00 Hero Distant
-        { progress: 0.12, pos: [0, 6, 76],     look: [0, 0, 10] },      // 01 Hero Approaching
-        { progress: 0.22, pos: [14, 4, 58],    look: [2, -1, 15] },     // 02 Scattered Data Monoliths
-        { progress: 0.32, pos: [-10, 2, 40],   look: [0, 0, 0] },       // 03 Gravitational Convergence Vortex
-        { progress: 0.44, pos: [0, -2, 24],    look: [0, 1, -12] },     // 04 AI Synthesis & Terraforming Grid
-        { progress: 0.55, pos: [0, 4, 8],      look: [0, 2, -26] },     // 05 Living Portfolio World Hub
-        { progress: 0.67, pos: [15, 3, -16],   look: [0, 0, -36] },     // 06 Terraformed Project Planetoids
-        { progress: 0.78, pos: [-12, 5, -46],  look: [2, 1, -66] },     // 07 Skill Network & Basalt GitHub Mountain
-        { progress: 0.88, pos: [0, 2, -78],    look: [0, 1, -118] },    // 08 Experience Time Corridor
-        { progress: 0.94, pos: [0, 5, -112],   look: [0, 4, -150] },    // 09 The Universe Gateway
-        { progress: 1.00, pos: [0, 26, -132],  look: [0, 5, -182] }     // 10 Final Climax Wide Vantage
+        { progress: 0.00, pos: [0, 9, 95],     look: [0, 2, 40] },      // 00 Hero: Panoramic Valley & Research Campus
+        { progress: 0.12, pos: [0, 6, 75],     look: [0, 3, 25] },      // 01 Roadway: Approaching Contemporary Pavilion
+        { progress: 0.22, pos: [6, 3.8, 56],   look: [0, 2, 36] },      // 02 Plaza: Entrance Steps & Slate Paving
+        { progress: 0.32, pos: [-2, 2.8, 40],  look: [0, 1.8, 16] },    // 03 Atrium: Reception Lounge & Terminals
+        { progress: 0.44, pos: [0, 1.6, 22],   look: [0, 1.2, -6] },    // 04 Studio: Computational Synthesis Lab
+        { progress: 0.55, pos: [0, 2.5, 6],    look: [0, 2.0, -22] },   // 05 Living Hub: Biophilic Glass Pavilion
+        { progress: 0.67, pos: [0, 1.8, -22],  look: [0, 1.2, -45] },   // 06 Projects: Walking Developer Lab Aisle
+        { progress: 0.78, pos: [0, 2.2, -54],  look: [0, 2.0, -72] },   // 07 Data Center: Hyperscale Server Rack Corridor
+        { progress: 0.88, pos: [0, 2.8, -84],  look: [0, 2.2, -112] },  // 08 Skybridge: Suspended Glass Bridge Walkway
+        { progress: 0.94, pos: [0, 3.5, -125], look: [0, 2.5, -150] },  // 09 Gallery: Architectural Exhibition Pavilion
+        { progress: 1.00, pos: [0, 15, -158],  look: [0, 8, -188] }     // 10 Summit: Panoramic Observatory & Beacon Terrace
       ];
 
       this.initMouseListener();

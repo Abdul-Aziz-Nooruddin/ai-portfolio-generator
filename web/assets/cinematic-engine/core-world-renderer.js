@@ -31,7 +31,8 @@
 
     initScene() {
       this.scene = new THREE.Scene();
-      this.scene.background = new THREE.Color(0x040714);
+      // Natural Atmospheric Twilight Sky (Deep Indigo to Horizon Gradient)
+      this.scene.background = new THREE.Color(0x091428);
     }
 
     initRenderer() {
@@ -51,7 +52,7 @@
         // Cinematic ACES Film Tone Mapping
         if (THREE.ACESFilmicToneMapping) {
           this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-          this.renderer.toneMappingExposure = 1.18;
+          this.renderer.toneMappingExposure = 1.22;
         }
         if (THREE.sRGBEncoding) {
           this.renderer.outputEncoding = THREE.sRGBEncoding;
@@ -69,42 +70,42 @@
     }
 
     initLighting() {
-      // 1. Deep Space Ambient Light
-      this.ambientLight = new THREE.AmbientLight(0x0a1435, 1.4);
+      // 1. Natural Sky Hemisphere Ambient Light (Soft Blue Sky + Warm Earth Bounce)
+      this.ambientLight = new THREE.AmbientLight(0x1a2b4c, 1.8);
       this.scene.add(this.ambientLight);
 
-      // 2. Celestial Sun Directional Light (Warm Solar Accent)
-      this.sunLight = new THREE.DirectionalLight(0xfffaed, 2.6);
-      this.sunLight.position.set(60, 80, 45);
+      // 2. Realistic Directional Sunlight (Warm Solar Key Light with Shadows)
+      this.sunLight = new THREE.DirectionalLight(0xfffaed, 3.2);
+      this.sunLight.position.set(50, 95, 55);
       if (!this.isMobile) {
         this.sunLight.castShadow = true;
         this.sunLight.shadow.mapSize.width = 1024;
         this.sunLight.shadow.mapSize.height = 1024;
         this.sunLight.shadow.camera.near = 10;
-        this.sunLight.shadow.camera.far = 300;
-        this.sunLight.shadow.bias = -0.0005;
+        this.sunLight.shadow.camera.far = 400;
+        this.sunLight.shadow.bias = -0.0004;
       }
       this.scene.add(this.sunLight);
 
-      // 3. Electric Cyan Rim Light
-      this.rimLight = new THREE.DirectionalLight(0x38bdf8, 1.8);
-      this.rimLight.position.set(-50, -20, -40);
+      // 3. Skyfill Rim Light (Cool Horizon Rim)
+      this.rimLight = new THREE.DirectionalLight(0x93c5fd, 1.4);
+      this.rimLight.position.set(-60, 20, -40);
       this.scene.add(this.rimLight);
 
-      // 4. Violet Atmospheric Backlight
-      this.backLight = new THREE.DirectionalLight(0x8b5cf6, 1.3);
-      this.backLight.position.set(0, -60, 60);
+      // 4. Warm Interior Architectural Fill Light
+      this.backLight = new THREE.DirectionalLight(0xfef3c7, 1.2);
+      this.backLight.position.set(0, 30, -80);
       this.scene.add(this.backLight);
 
-      // 5. Dynamic Core Point Light for Interactive Pulses
-      this.corePulseLight = new THREE.PointLight(0x38bdf8, 2.0, 120, 2);
-      this.corePulseLight.position.set(0, 0, 0);
+      // 5. Dynamic Workstation & Terminal Practical Light
+      this.corePulseLight = new THREE.PointLight(0x38bdf8, 2.2, 80, 2);
+      this.corePulseLight.position.set(0, 4, -42);
       this.scene.add(this.corePulseLight);
     }
 
     initFog() {
-      // Atmospheric depth fog that gently occludes distant objects
-      this.scene.fog = new THREE.FogExp2(0x040714, 0.0042);
+      // Realistic atmospheric perspective depth fog matching horizon haze
+      this.scene.fog = new THREE.FogExp2(0x0b172a, 0.0036);
     }
 
     bindEvents() {
@@ -125,77 +126,80 @@
     }
 
     setLightingForScene(sceneIndex, factor) {
-      // Dynamic lighting orchestration per narrative scene
-      // sceneIndex: 0 (Hero), 1 (Fragments), 2 (Convergence), 3 (Synthesis),
-      // 4 (World), 5 (Projects), 6 (Skills/GitHub), 7 (Experience), 8 (Universes), 9 (Final Portal)
+      // Photorealistic Architectural Lighting Progression
       switch (sceneIndex) {
-        case 0: // Hero: Crisp celestial starlight
-          this.ambientLight.color.setHex(0x0a1435);
-          this.ambientLight.intensity = 1.4;
-          this.sunLight.intensity = 2.6;
-          this.rimLight.color.setHex(0x38bdf8);
-          this.scene.fog.density = 0.0040;
+        case 0: // Hero: Crisp Natural Daylight on Research Campus Exterior
+          this.ambientLight.color.setHex(0x1a2b4c);
+          this.ambientLight.intensity = 1.9;
+          this.sunLight.color.setHex(0xfffaed);
+          this.sunLight.intensity = 3.2;
+          this.rimLight.color.setHex(0x93c5fd);
+          this.scene.fog.density = 0.0034;
           break;
-        case 1: // Scattered Data: Dark void with crisp laser highlights
-          this.ambientLight.color.setHex(0x060b1e);
-          this.ambientLight.intensity = 1.0;
-          this.sunLight.intensity = 2.0;
-          this.rimLight.color.setHex(0x38bdf8);
-          this.scene.fog.density = 0.0055;
-          break;
-        case 2: // Convergence: Intensifying energy core
-          this.ambientLight.color.setHex(0x0c1a40);
-          this.ambientLight.intensity = 1.5;
-          this.corePulseLight.intensity = 3.2;
-          this.scene.fog.density = 0.0045;
-          break;
-        case 3: // AI Synthesis: High-energy amber & cyan matrix
-          this.ambientLight.color.setHex(0x131233);
-          this.sunLight.color.setHex(0xf5a623);
-          this.rimLight.color.setHex(0x00f0ff);
+        case 1: // Intake Plaza: High-contrast outdoor architectural lighting
+          this.ambientLight.color.setHex(0x16243d);
+          this.ambientLight.intensity = 1.7;
           this.sunLight.intensity = 3.0;
+          this.scene.fog.density = 0.0038;
+          break;
+        case 2: // Atrium Entrance: Soft architectural interior daylight
+          this.ambientLight.color.setHex(0x182640);
+          this.ambientLight.intensity = 1.8;
+          this.sunLight.intensity = 2.6;
+          this.corePulseLight.intensity = 1.8;
           this.scene.fog.density = 0.0035;
           break;
-        case 4: // Living Portfolio World: Balanced rich PBR illumination
-          this.ambientLight.color.setHex(0x0d2038);
-          this.ambientLight.intensity = 1.7;
-          this.sunLight.color.setHex(0xfffaed);
-          this.sunLight.intensity = 2.8;
-          this.scene.fog.density = 0.0030;
+        case 3: // Synthesis Studio: High-performance computing lab lighting
+          this.ambientLight.color.setHex(0x121b2d);
+          this.sunLight.color.setHex(0xf5a623);
+          this.sunLight.intensity = 2.4;
+          this.corePulseLight.intensity = 2.6;
+          this.scene.fog.density = 0.0032;
           break;
-        case 5: // Project Worlds: Dramatic directional shadows showcasing miniature structures
-          this.ambientLight.intensity = 1.3;
-          this.sunLight.intensity = 3.2;
+        case 4: // Living Pavilion: Rich daylight through biophilic glass skylights
+          this.ambientLight.color.setHex(0x1a2e42);
+          this.ambientLight.intensity = 2.0;
+          this.sunLight.color.setHex(0xfffaed);
+          this.sunLight.intensity = 3.0;
+          this.scene.fog.density = 0.0028;
+          break;
+        case 5: // Project Workstations: Intimate developer lab task lighting & monitor radiance
+          this.ambientLight.color.setHex(0x101726);
+          this.ambientLight.intensity = 1.6;
+          this.sunLight.intensity = 2.2;
+          this.corePulseLight.intensity = 3.0;
           this.rimLight.color.setHex(0x38bdf8);
           this.scene.fog.density = 0.0032;
           break;
-        case 6: // Skills & GitHub: Deep basalt contrast with glowing copper & neon traces
-          this.ambientLight.color.setHex(0x060f1c);
-          this.ambientLight.intensity = 1.1;
+        case 6: // Skills & Data Center: Cool industrial server room ambient with green/cyan LED glow
+          this.ambientLight.color.setHex(0x0a1424);
+          this.ambientLight.intensity = 1.4;
           this.sunLight.color.setHex(0x10b981);
-          this.sunLight.intensity = 2.2;
-          this.scene.fog.density = 0.0048;
+          this.sunLight.intensity = 2.0;
+          this.corePulseLight.intensity = 2.8;
+          this.scene.fog.density = 0.0040;
           break;
-        case 7: // Experience Corridor: Rhythmic temporal lighting
-          this.ambientLight.color.setHex(0x0e1124);
-          this.ambientLight.intensity = 1.3;
-          this.rimLight.color.setHex(0xd4af37);
-          this.scene.fog.density = 0.0038;
-          break;
-        case 8: // Universe Gate: Prismatic multi-chromatic portal radiance
-          this.ambientLight.color.setHex(0x1a0f30);
+        case 7: // Experience Skybridge: Suspended corridor with panoramic outside lighting
+          this.ambientLight.color.setHex(0x16223a);
           this.ambientLight.intensity = 1.8;
-          this.rimLight.color.setHex(0xa855f7);
-          this.sunLight.color.setHex(0x38bdf8);
-          this.scene.fog.density = 0.0028;
+          this.sunLight.color.setHex(0xfef3c7);
+          this.sunLight.intensity = 2.8;
+          this.scene.fog.density = 0.0035;
           break;
-        case 9: // Climax Departure: Epic high-key celestial gateway
-          this.ambientLight.color.setHex(0x162248);
-          this.ambientLight.intensity = 2.2;
-          this.sunLight.color.setHex(0xffffff);
-          this.sunLight.intensity = 3.6;
-          this.corePulseLight.intensity = 4.5;
-          this.scene.fog.density = 0.0022;
+        case 8: // Universes Gallery: Architectural exhibition downlights
+          this.ambientLight.color.setHex(0x131a2c);
+          this.ambientLight.intensity = 1.7;
+          this.rimLight.color.setHex(0xa855f7);
+          this.sunLight.intensity = 2.4;
+          this.scene.fog.density = 0.0030;
+          break;
+        case 9: // Summit Observatory: Twilight panoramic horizon with warm solar beacon
+          this.ambientLight.color.setHex(0x15223e);
+          this.ambientLight.intensity = 2.1;
+          this.sunLight.color.setHex(0xf5a623);
+          this.sunLight.intensity = 3.4;
+          this.corePulseLight.intensity = 3.5;
+          this.scene.fog.density = 0.0025;
           break;
       }
     }
