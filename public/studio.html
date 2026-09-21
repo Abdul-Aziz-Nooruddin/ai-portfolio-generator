@@ -358,6 +358,386 @@
       color: var(--mf-text-muted);
     }
 
+    /* =======================================================
+       PERSISTENT VISUAL WORKFLOW STEPPER
+       CONTENT → WORLD → GENERATE → EDIT → PUBLISH
+       ======================================================= */
+    .studio-workflow-stepper {
+      height: 40px;
+      background: rgba(6, 10, 26, 0.96);
+      border-bottom: 1px solid var(--mf-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 1.25rem;
+      z-index: 95;
+      flex-shrink: 0;
+      backdrop-filter: blur(16px);
+    }
+
+    .stepper-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .stepper-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mf-font-mono, monospace);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--mf-text-muted, #7C8BA1);
+      cursor: pointer;
+      padding: 4px 9px;
+      border-radius: 4px;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      letter-spacing: 0.06em;
+      border: 1px solid transparent;
+    }
+
+    .stepper-item:hover {
+      color: #FFF;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .stepper-item.active {
+      color: #FFF;
+      background: rgba(110, 168, 255, 0.16);
+      border-color: rgba(110, 168, 255, 0.4);
+      box-shadow: 0 0 12px rgba(110, 168, 255, 0.2);
+    }
+
+    .stepper-item.completed {
+      color: var(--mf-accent-cyan, #38bdf8);
+    }
+
+    .stepper-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      font-size: 10px;
+    }
+
+    .stepper-item.active .stepper-num {
+      background: var(--mf-accent-blue, #6EA8FF);
+      color: #050817;
+      font-weight: 700;
+    }
+
+    .stepper-item.completed .stepper-num {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38bdf8;
+    }
+
+    .stepper-arrow {
+      color: rgba(255, 255, 255, 0.2);
+      font-size: 11px;
+      user-select: none;
+    }
+
+    /* Left Panel Mode Switcher Tabs */
+    .studio-mode-tabs {
+      display: flex;
+      background: rgba(5, 8, 22, 0.7);
+      border: 1px solid var(--mf-border);
+      border-radius: var(--mf-radius-md);
+      padding: 3px;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+
+    .studio-mode-tab {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      color: var(--mf-text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 7px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .studio-mode-tab.active {
+      color: #FFF;
+      background: rgba(110, 168, 255, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Curated World Category Cards (4–6 Large Cards) */
+    .world-category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .world-cat-card {
+      background: rgba(8, 14, 34, 0.85);
+      border: 1px solid var(--mf-border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+
+    .world-cat-card:hover {
+      border-color: rgba(110, 168, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .world-cat-card.selected {
+      border-color: var(--mf-accent-blue);
+      background: rgba(110, 168, 255, 0.12);
+      box-shadow: 0 0 20px rgba(110, 168, 255, 0.35);
+    }
+
+    .world-cat-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--mf-accent-blue);
+      color: #050817;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      z-index: 3;
+    }
+
+    .world-cat-thumb {
+      height: 78px;
+      background-size: cover;
+      background-position: center;
+      background-color: #0c1228;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .world-cat-thumb::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 35%, rgba(8, 14, 34, 0.95) 100%);
+    }
+
+    .world-cat-body {
+      padding: 8px 10px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .world-cat-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #FFF;
+      line-height: 1.2;
+    }
+
+    .world-cat-desc {
+      font-size: 11px;
+      color: var(--mf-text-secondary);
+      line-height: 1.35;
+    }
+
+    .toggle-all-worlds-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 11.5px;
+      color: var(--mf-text-muted);
+      border: 1px dashed var(--mf-border);
+      border-radius: 6px;
+      background: rgba(6, 10, 24, 0.4);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .toggle-all-worlds-btn:hover {
+      color: #FFF;
+      border-color: rgba(110, 168, 255, 0.4);
+      background: rgba(110, 168, 255, 0.08);
+    }
+
+    .all-worlds-drawer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .all-worlds-drawer.open {
+      max-height: 480px;
+      margin-top: 8px;
+    }
+
+    /* Confirmation Summary Box */
+    .confirmation-summary-box {
+      background: linear-gradient(135deg, rgba(14, 24, 62, 0.7) 0%, rgba(8, 14, 36, 0.85) 100%);
+      border: 1px solid rgba(110, 168, 255, 0.35);
+      border-radius: var(--mf-radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .confirmation-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chk-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--mf-text-muted);
+      transition: color 0.2s;
+    }
+
+    .chk-item.checked {
+      color: #F0F4FF;
+    }
+
+    .chk-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .chk-item.checked .chk-icon {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .ready-banner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #34D399;
+    }
+
+    .primary-generate-btn {
+      width: 100%;
+      height: 44px;
+      background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+      border: 1px solid rgba(110, 168, 255, 0.5);
+      border-radius: 8px;
+      color: #FFFFFF;
+      font-family: var(--mf-font-sans);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 18px rgba(37, 99, 235, 0.4);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .primary-generate-btn:hover {
+      background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(59, 130, 246, 0.5);
+    }
+
+    /* Advanced Editor Layout */
+    .advanced-editor-container {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .advanced-editor-container.active {
+      display: flex;
+    }
+
+    .editor-subtabs {
+      display: flex;
+      gap: 4px;
+      background: rgba(5, 8, 22, 0.7);
+      border: 1px solid var(--mf-border);
+      border-radius: 6px;
+      padding: 3px;
+    }
+
+    .editor-subtab-btn {
+      flex: 1;
+      padding: 6px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--mf-text-muted);
+      background: transparent;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .editor-subtab-btn.active {
+      background: rgba(110, 168, 255, 0.2);
+      color: #FFF;
+    }
+
+    .editor-pane {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .editor-pane.active {
+      display: flex;
+    }
+
     /* Universe Grid Cards */
     .universe-select-grid {
       display: grid;
@@ -734,250 +1114,509 @@
     </div>
   </header>
 
+  <!-- PERSISTENT VISUAL WORKFLOW STEPPER -->
+  <nav class="studio-workflow-stepper" aria-label="Portfolio Creation Workflow">
+    <div class="stepper-inner">
+      <div class="stepper-item active" id="stepIndicatorContent" onclick="jumpToStudioStep('content')">
+        <span class="stepper-num">1</span>
+        <span class="stepper-label">CONTENT</span>
+      </div>
+      <span class="stepper-arrow">&rarr;</span>
+      <div class="stepper-item" id="stepIndicatorWorld" onclick="jumpToStudioStep('world')">
+        <span class="stepper-num">2</span>
+        <span class="stepper-label">WORLD</span>
+      </div>
+      <span class="stepper-arrow">&rarr;</span>
+      <div class="stepper-item" id="stepIndicatorGenerate" onclick="jumpToStudioStep('generate')">
+        <span class="stepper-num">3</span>
+        <span class="stepper-label">GENERATE</span>
+      </div>
+      <span class="stepper-arrow">&rarr;</span>
+      <div class="stepper-item" id="stepIndicatorEdit" onclick="jumpToStudioStep('edit')">
+        <span class="stepper-num">4</span>
+        <span class="stepper-label">EDIT</span>
+      </div>
+      <span class="stepper-arrow">&rarr;</span>
+      <div class="stepper-item" id="stepIndicatorPublish" onclick="jumpToStudioStep('publish')">
+        <span class="stepper-num">5</span>
+        <span class="stepper-label">PUBLISH</span>
+      </div>
+    </div>
+  </nav>
+
   <div class="studio-workspace-container">
-    <!-- COLUMN 1: LEFT NAVIGATOR & STORY WORKFLOW -->
+    <!-- COLUMN 1: LEFT CREATION & ADVANCED EDITOR -->
     <aside class="studio-col-left">
-      <!-- Portfolio Readiness -->
-      <div class="readiness-box">
-        <div class="readiness-circle">78%</div>
-        <div>
-          <div style="font-size:12px; font-weight:600; color:#FFF;">PORTFOLIO READINESS</div>
-          <div style="font-size:11px; color:var(--mf-text-muted);">Add 1 featured case study to hit 100%</div>
-        </div>
+      <!-- Studio Workflow Mode Tabs: Fast Create vs Advanced Editor -->
+      <div class="studio-mode-tabs">
+        <button type="button" class="studio-mode-tab active" id="tabBtnCreate" onclick="switchStudioMode('create')">
+          <span>✦ 1. Create Portfolio</span>
+        </button>
+        <button type="button" class="studio-mode-tab" id="tabBtnEdit" onclick="switchStudioMode('edit')">
+          <span>⚙️ 2. Advanced Editor</span>
+        </button>
       </div>
 
-      <!-- Weekly Build Allowance Bar -->
-      <div class="readiness-box" style="flex-direction:column; align-items:stretch; gap:6px;">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);">WEEKLY ALLOWANCE</span>
-          <span id="allowanceCountText" style="font-size:11px; font-weight:700; color:var(--mf-accent-blue);">5 / 5 Builds</span>
+      <!-- Portfolio Readiness & Allowance Overview -->
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="readiness-box">
+          <div class="readiness-circle" id="readinessCircleScore">95%</div>
+          <div>
+            <div style="font-size:12px; font-weight:700; color:#FFF; letter-spacing:0.04em;">PORTFOLIO READINESS</div>
+            <div style="font-size:11px; color:var(--mf-text-muted);" id="readinessHintText">All core credentials populated &amp; ready</div>
+          </div>
         </div>
-        <div style="height:5px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden;">
-          <div id="allowanceProgressBar" style="width:100%; height:100%; background:linear-gradient(90deg, #6EA8FF, #9B7CFF); border-radius:3px; transition:width 0.3s;"></div>
+
+        <!-- Weekly Build Allowance Bar -->
+        <div class="readiness-box" style="flex-direction:column; align-items:stretch; gap:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:10.5px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);">BUILD ALLOWANCE</span>
+            <span id="allowanceCountText" style="font-size:11px; font-weight:700; color:var(--mf-accent-blue);">5 / 5 Builds</span>
+          </div>
+          <div style="height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
+            <div id="allowanceProgressBar" style="width:100%; height:100%; background:linear-gradient(90deg, #6EA8FF, #9B7CFF); border-radius:2px; transition:width 0.3s;"></div>
+          </div>
         </div>
       </div>
 
       <!-- Main Form Container -->
       <form id="portfolioGenerationForm" onsubmit="handleStudioGenerate(event)" style="display:flex; flex-direction:column; gap:1.25rem;">
         
-        <!-- STEP 01: UNDERSTAND ME -->
-        <div class="workflow-card">
-          <div class="workflow-step-badge">STEP 01 // UNDERSTAND ME</div>
-          <div class="workflow-card-title">GitHub &amp; Resume Ingest</div>
-          <div class="workflow-card-desc">Sync your public code repositories and technical documents.</div>
+        <!-- FAST CREATE VIEW CONTAINER -->
+        <div id="viewCreateMode" style="display:flex; flex-direction:column; gap:1.25rem;">
+          
+          <!-- STEP 1: ADD YOUR INFORMATION -->
+          <div class="workflow-card" id="stepSectionContent">
+            <div class="workflow-step-badge">1. Add your information</div>
+            <div class="workflow-card-title">GitHub &amp; Resume Ingest</div>
+            <div class="workflow-card-desc">Add your code repositories or drop your resume to automatically assemble your portfolio.</div>
 
-          <div class="mf-input-group">
-            <label class="mf-label" for="ghUsername">GitHub Profile / Username</label>
-            <input type="text" id="ghUsername" class="mf-input" placeholder="Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin">
-          </div>
-
-          <!-- Smart Resume Dropzone -->
-          <div id="studioResumeDropZone" style="border:1px dashed var(--mf-border-glow); border-radius:var(--mf-radius-md); padding:14px; text-align:center; background:rgba(8,13,32,0.6); cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('resumeUploadInput').click()">
-            <input type="file" id="resumeUploadInput" accept=".pdf,.docx,.txt,image/*" style="display:none;" onchange="handleResumeFileSelected(this)">
-            <div id="resumeUploadLabel" style="font-size:12px; color:var(--mf-text-secondary);">
-              📄 Drop Resume (PDF, DOCX, TXT)
+            <div class="mf-input-group">
+              <label class="mf-label" for="ghUsername">GitHub Profile / Username</label>
+              <input type="text" id="ghUsername" class="mf-input" placeholder="e.g. Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin" oninput="updateConfirmationChecks()">
             </div>
-            <div id="resumeUploadHelp" style="font-size:10.5px; color:var(--mf-text-muted); margin-top:2px;">
-              Auto-extracts skills, projects &amp; timelines
+
+            <!-- Smart Resume Dropzone -->
+            <div id="studioResumeDropZone" style="border:1px dashed var(--mf-border-glow); border-radius:var(--mf-radius-md); padding:14px; text-align:center; background:rgba(8,13,32,0.6); cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('resumeUploadInput').click()">
+              <input type="file" id="resumeUploadInput" accept=".pdf,.docx,.txt,image/*" style="display:none;" onchange="handleResumeFileSelected(this)">
+              <div id="resumeUploadLabel" style="font-size:12px; color:var(--mf-text-secondary);">
+                📄 Drop Resume (PDF, DOCX, TXT)
+              </div>
+              <div id="resumeUploadHelp" style="font-size:10.5px; color:var(--mf-text-muted); margin-top:2px;">
+                Auto-extracts skills, projects &amp; timelines
+              </div>
+            </div>
+
+            <!-- Photo & Certs Toggle Trigger -->
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
+                <span>+ Add Photo</span>
+                <input type="file" id="candidatePhotoInput" accept="image/*" style="display:none;" onchange="handleCandidatePhoto(this)">
+              </label>
+              <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
+                <span>+ Certificate</span>
+                <input type="file" id="certFilesInput" accept="image/*,.pdf" style="display:none;" onchange="handleCertFilesSelected(this.files)">
+              </label>
+            </div>
+
+            <!-- Photo preview if exists -->
+            <div id="photoPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:8px;">
+              <img id="photoPreviewImg" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
+              <span id="photoPreviewName" style="font-size:11px;color:var(--mf-text-muted);">Photo attached</span>
+            </div>
+
+            <!-- Certificate preview if exists -->
+            <div id="certPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; color:var(--mf-accent-cyan, #38bdf8);">
+              <span>📜</span>
+              <span id="certPreviewName">Certificate attached</span>
+            </div>
+
+            <!-- Collapsible Quick Manual Editor Trigger -->
+            <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" style="width:100%; margin-top:10px; font-size:11.5px; justify-content:center;" onclick="toggleQuickManualDetails()">
+              <span id="toggleManualLabel">✎ Edit identity &amp; projects manually &darr;</span>
+            </button>
+
+            <!-- Collapsible manual info block -->
+            <div id="quickManualDetailsDrawer" style="display:none; flex-direction:column; gap:10px; margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px;">
+              <div class="mf-input-group">
+                <label class="mf-label" for="manualFullName">Full Name</label>
+                <input type="text" id="manualFullName" class="mf-input" placeholder="Abdul Aziz Nooruddin" value="Abdul Aziz Nooruddin" oninput="updateConfirmationChecks()">
+              </div>
+
+              <div class="mf-input-group">
+                <label class="mf-label" for="manualRole">Professional Role</label>
+                <input type="text" id="manualRole" class="mf-input" placeholder="Full-Stack Engineer" value="Full-Stack Engineer &amp; Systems Architect" oninput="updateConfirmationChecks()">
+              </div>
+
+              <div class="mf-input-group">
+                <label class="mf-label" for="manualBio">Narrative Summary</label>
+                <textarea id="manualBio" class="mf-textarea" style="min-height:55px;" placeholder="Crafting high-scale web platforms and spatial interfaces." oninput="updateConfirmationChecks()">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
+              </div>
+
+              <!-- Featured Project 1 -->
+              <div style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
+                <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-blue); margin-bottom:6px;">Featured Case Study 1</div>
+                <input type="text" id="proj1Name" class="mf-input" placeholder="Project Name" value="MyFolio Generative Platform" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj1Tech" class="mf-input" placeholder="Technologies (e.g. Three.js, Node.js)" value="Three.js, WebGL, Node.js, GSAP" style="margin-bottom:6px;">
+                <textarea id="proj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
+                <input type="hidden" id="proj1Github" value="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator">
+                <input type="hidden" id="proj1Live" value="https://myfolio.tech">
+              </div>
+
+              <!-- Featured Project 2 -->
+              <div id="projectCard2" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
+                <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-cyan, #38bdf8); margin-bottom:6px;">Featured Case Study 2</div>
+                <input type="text" id="proj2Name" class="mf-input" placeholder="Project Name" value="Algorand Python Smart Contracts" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj2Tech" class="mf-input" placeholder="Technologies" value="Python, Algorand, Web3" style="margin-bottom:6px;">
+                <textarea id="proj2Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Decentralized verifiable ledger logic and algorithmic settlements.</textarea>
+                <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+                <input type="hidden" id="proj2Live" value="">
+              </div>
+
+              <!-- Featured Project 3 -->
+              <div id="projectCard3" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
+                <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-gold, #FCD34D); margin-bottom:6px;">Featured Case Study 3</div>
+                <input type="text" id="proj3Name" class="mf-input" placeholder="Project Name" value="Autonomous Edge Agent" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj3Tech" class="mf-input" placeholder="Technologies" value="TypeScript, Fastify, AI" style="margin-bottom:6px;">
+                <textarea id="proj3Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Low-latency reasoning pipelines and streaming telemetry.</textarea>
+                <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+                <input type="hidden" id="proj3Live" value="">
+              </div>
+            </div>
+
+            <!-- Hidden raw text field preserved for payload extraction -->
+            <textarea id="resumeRawText" style="display:none;"></textarea>
+          </div>
+
+          <!-- STEP 2: CHOOSE YOUR VISUAL WORLD -->
+          <div class="workflow-card" id="stepSectionWorld">
+            <div class="workflow-step-badge">2. Choose your visual world</div>
+            <div class="workflow-card-title">Choose a visual world</div>
+            <div class="workflow-card-desc">Select the real-world environment for your 3D portfolio.</div>
+
+            <!-- 6 Large Curated World Categories -->
+            <div class="world-category-grid" id="curatedWorldsGrid">
+              <!-- World 1: Architectural -->
+              <div class="world-cat-card" onclick="selectCuratedWorld('chrono-obsidian-sanctuary', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_campus_skybridge.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Architectural</div>
+                  <div class="world-cat-desc">"Premium, structured and editorial."</div>
+                </div>
+              </div>
+
+              <!-- World 2: Biophilic Campus -->
+              <div class="world-cat-card" onclick="selectCuratedWorld('botanical-woodcraft', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_alpine_valley.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Biophilic</div>
+                  <div class="world-cat-desc">"Nature, technology and organic movement."</div>
+                </div>
+              </div>
+
+              <!-- World 3: AI Laboratory -->
+              <div class="world-cat-card" onclick="selectCuratedWorld('system-awakening', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_lab_workstations.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Laboratory</div>
+                  <div class="world-cat-desc">"Research, AI and engineering."</div>
+                </div>
+              </div>
+
+              <!-- World 4: Developer Workspace (Default selected) -->
+              <div class="world-cat-card selected" onclick="selectCuratedWorld('threeui-constellation', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/3d/developer_showcase_portfolio_3d.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Workspace</div>
+                  <div class="world-cat-desc">"Focused, technical and code-first."</div>
+                </div>
+              </div>
+
+              <!-- World 5: Cyber Infrastructure -->
+              <div class="world-cat-card" onclick="selectCuratedWorld('circuit-core', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_datacenter_hall.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Cyber Infrastructure</div>
+                  <div class="world-cat-desc">"High-scale, telemetry and systems."</div>
+                </div>
+              </div>
+
+              <!-- World 6: Cosmic Exploration -->
+              <div class="world-cat-card" onclick="selectCuratedWorld('stellar-architect', this)">
+                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_summit_observatory.jpg');"></div>
+                <div class="world-cat-body">
+                  <div class="world-cat-name">Cosmic</div>
+                  <div class="world-cat-desc">"Expansive, experimental and futuristic."</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Expandable Action for Advanced Worlds -->
+            <button type="button" class="toggle-all-worlds-btn" id="btnToggleAllWorlds" onclick="toggleAllWorldsGrid()">
+              <span>✦ Explore all 36+ worlds</span>
+              <span id="exploreArrow">↓</span>
+            </button>
+
+            <!-- Collapsed Drawer containing full catalog -->
+            <div class="all-worlds-drawer" id="allWorldsDrawer">
+              <div style="font-size:11px; color:var(--mf-text-muted); margin-bottom:6px; font-family:var(--mf-font-mono);">SPECIALIZED WORLDS &amp; SHADER SUITES:</div>
+              <div class="universe-select-grid" id="universeChoiceContainer">
+                <div class="universe-choice-card selected" onclick="selectStudioUniverse('threeui-constellation', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_constellation_3d.jpg');"></div>
+                  <div class="universe-choice-title">Synaptic Constellation</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-landscape', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_landscape_3d.jpg');"></div>
+                  <div class="universe-choice-title">3D Landscape &amp; Weather</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
+                  <div class="universe-choice-title">Complete 3D Shelf</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_liquid_metal_3d.jpg');"></div>
+                  <div class="universe-choice-title">Liquid Metal Dispersion</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_matrix_3d.jpg');"></div>
+                  <div class="universe-choice-title">Cyber-Architect Sprawl</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stealth_node_3d.jpg');"></div>
+                  <div class="universe-choice-title">Stealth Node (Web3)</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('circuit-core', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/circuit_core_3d.jpg');"></div>
+                  <div class="universe-choice-title">Circuit Core</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('chrono-obsidian-sanctuary', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/chrono_obsidian_sanctuary_3d.jpg');"></div>
+                  <div class="universe-choice-title">Chrono-Obsidian</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('neon-aurora-cyber', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/neon_aurora_cyber_3d.jpg');"></div>
+                  <div class="universe-choice-title">Neon Aurora Cyber</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('kinetic-brutalism', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/kinetic_brutalism_3d.jpg');"></div>
+                  <div class="universe-choice-title">Kinetic Brutalism</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('stellar-architect', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stellar_architect_3d.jpg');"></div>
+                  <div class="universe-choice-title">Stellar Architect</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-cyber-geometry', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_cyber_geometry_3d.jpg');"></div>
+                  <div class="universe-choice-title">Cosmic Geometry</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('engineering-archive', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/engineering_archive_3d.jpg');"></div>
+                  <div class="universe-choice-title">Engineering Archive</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('system-awakening', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/system_awakening_3d.jpg');"></div>
+                  <div class="universe-choice-title">System Awakening</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-astronaut', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_astronaut_3d.jpg');"></div>
+                  <div class="universe-choice-title">Cosmic Astronaut</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('bioluminescent-wireframe', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bioluminescent_wireframe_3d.jpg');"></div>
+                  <div class="universe-choice-title">Bioluminescent Eco</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-crystal', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cyber_crystal_3d.jpg');"></div>
+                  <div class="universe-choice-title">Cyber Crystal</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('botanical-woodcraft', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/botanical_woodcraft_3d.jpg');"></div>
+                  <div class="universe-choice-title">Botanical Woodcraft</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('bio-digital-fusion', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bio_digital_fusion_3d.jpg');"></div>
+                  <div class="universe-choice-title">Bio-Digital Fusion</div>
+                </div>
+                <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-ascent', this)">
+                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/abyssal_ascent_3d.jpg');"></div>
+                  <div class="universe-choice-title">Abyssal Ascent</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Photo & Certs Toggle Trigger -->
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
-              <span>+ Add Candidate Photo</span>
-              <input type="file" id="candidatePhotoInput" accept="image/*" style="display:none;" onchange="handleCandidatePhoto(this)">
-            </label>
-            <label class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:11px; cursor:pointer;">
-              <span>+ Certificate</span>
-              <input type="file" id="certFilesInput" accept="image/*,.pdf" style="display:none;" onchange="handleCertFilesSelected(this.files)">
-            </label>
+          <!-- CONFIRMATION SUMMARY & PRIMARY ACTION -->
+          <div class="confirmation-summary-box" id="confirmationSummaryBox">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-accent-blue); letter-spacing:0.08em; font-weight:700;">CONFIRMATION SUMMARY</span>
+              <span class="mf-badge mf-badge-accent" style="font-size:9.5px;" id="summaryStatusBadge">READY</span>
+            </div>
+
+            <ul class="confirmation-list">
+              <li id="chkGithub" class="chk-item checked">
+                <span class="chk-icon">✓</span>
+                <span>GitHub connected</span>
+              </li>
+              <li id="chkProjects" class="chk-item checked">
+                <span class="chk-icon">✓</span>
+                <span>Projects found</span>
+              </li>
+              <li id="chkSkills" class="chk-item checked">
+                <span class="chk-icon">✓</span>
+                <span>Skills detected</span>
+              </li>
+              <li id="chkExperience" class="chk-item checked">
+                <span class="chk-icon">✓</span>
+                <span>Experience detected</span>
+              </li>
+              <li id="chkResume" class="chk-item checked">
+                <span class="chk-icon">✓</span>
+                <span>Resume analyzed</span>
+              </li>
+            </ul>
+
+            <div class="ready-banner">
+              <span style="font-size:14px;">✦</span>
+              <span>Your portfolio is ready to generate.</span>
+            </div>
+
+            <button type="submit" form="portfolioGenerationForm" class="primary-generate-btn" id="btnMainGenerateAction">
+              <span>Generate My Portfolio &rarr;</span>
+            </button>
           </div>
 
-          <!-- Photo preview preview if exists -->
-          <div id="photoPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:8px;">
-            <img id="photoPreviewImg" style="width:28px;height:28px;border-radius:50%;object-fit:cover;">
-            <span id="photoPreviewName" style="font-size:11px;color:var(--mf-text-muted);">Photo attached</span>
-          </div>
-
-          <!-- Certificate preview if exists -->
-          <div id="certPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; color:var(--mf-accent-cyan, #38bdf8);">
-            <span>📜</span>
-            <span id="certPreviewName">Certificate attached</span>
-          </div>
-
-          <!-- Hidden raw text field preserved for payload extraction -->
-          <textarea id="resumeRawText" style="display:none;"></textarea>
         </div>
 
-        <!-- STEP 02: BUILD MY STORY -->
-        <div class="workflow-card">
-          <div class="workflow-step-badge">STEP 02 // BUILD MY STORY</div>
-          <div class="workflow-card-title">Identity &amp; Featured Projects</div>
-
-          <div class="mf-input-group">
-            <label class="mf-label" for="manualFullName">Full Name</label>
-            <input type="text" id="manualFullName" class="mf-input" placeholder="Abdul Aziz Nooruddin" value="Abdul Aziz Nooruddin">
+        <!-- ADVANCED EDITOR VIEW CONTAINER -->
+        <div id="viewEditMode" class="advanced-editor-container">
+          <div class="editor-subtabs">
+            <button type="button" class="editor-subtab-btn active" id="subtabBtnContent" onclick="switchEditorSubtab('content')">Content</button>
+            <button type="button" class="editor-subtab-btn" id="subtabBtnWorld" onclick="switchEditorSubtab('world')">Visual World</button>
+            <button type="button" class="editor-subtab-btn" id="subtabBtnAi" onclick="switchEditorSubtab('ai')">AI Assistant</button>
           </div>
 
-          <div class="mf-input-group">
-            <label class="mf-label" for="manualRole">Professional Role</label>
-            <input type="text" id="manualRole" class="mf-input" placeholder="Full-Stack Engineer" value="Full-Stack Engineer &amp; Systems Architect">
+          <!-- PANE 1: CONTENT EDITOR -->
+          <div class="editor-pane active" id="paneContent">
+            <!-- Hero Section -->
+            <div class="workflow-card">
+              <div class="workflow-card-title" style="color:var(--mf-accent-blue);">Hero &amp; Identity</div>
+              <div class="mf-input-group" style="margin-top:6px;">
+                <label class="mf-label">Full Name</label>
+                <input type="text" id="editorFullName" class="mf-input" value="Abdul Aziz Nooruddin" oninput="syncEditorToForm('name', this.value)">
+              </div>
+              <div class="mf-input-group" style="margin-top:6px;">
+                <label class="mf-label">Professional Role</label>
+                <input type="text" id="editorRole" class="mf-input" value="Full-Stack Engineer &amp; Systems Architect" oninput="syncEditorToForm('role', this.value)">
+              </div>
+              <div class="mf-input-group" style="margin-top:6px;">
+                <label class="mf-label">Bio Narrative</label>
+                <textarea id="editorBio" class="mf-textarea" style="min-height:55px;" oninput="syncEditorToForm('bio', this.value)">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
+              </div>
+            </div>
+
+            <!-- Projects Section -->
+            <div class="workflow-card">
+              <div class="workflow-card-title" style="color:var(--mf-accent-cyan, #38bdf8);">Featured Case Studies</div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
+                <input type="text" id="editorProj1Name" class="mf-input" value="MyFolio Generative Platform" placeholder="Project 1 Name" oninput="syncEditorToForm('p1name', this.value)">
+                <input type="text" id="editorProj1Tech" class="mf-input" value="Three.js, WebGL, Node.js, GSAP" placeholder="Tech stack" oninput="syncEditorToForm('p1tech', this.value)">
+                <textarea id="editorProj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved" oninput="syncEditorToForm('p1desc', this.value)">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
+              </div>
+            </div>
+
+            <!-- Skills Section -->
+            <div class="workflow-card">
+              <div class="workflow-card-title" style="color:var(--mf-accent-gold, #FCD34D);">Skills &amp; Technologies</div>
+              <textarea id="editorSkills" class="mf-textarea" style="min-height:50px; margin-top:6px;" oninput="syncEditorToForm('skills', this.value)">JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS</textarea>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="workflow-card">
+              <div class="workflow-card-title">Contact Coordinates</div>
+              <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
+                <input type="email" id="editorEmail" class="mf-input" value="abdulaziznoor9876@gmail.com" placeholder="Email">
+                <input type="text" id="editorLocation" class="mf-input" value="Global / Edge" placeholder="Location">
+              </div>
+            </div>
           </div>
 
-          <div class="mf-input-group">
-            <label class="mf-label" for="manualBio">Narrative Summary</label>
-            <textarea id="manualBio" class="mf-textarea" style="min-height:60px;" placeholder="Crafting high-scale web platforms and spatial interfaces.">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
+          <!-- PANE 2: VISUAL WORLD EDITOR -->
+          <div class="editor-pane" id="paneWorld">
+            <div class="workflow-card">
+              <div class="workflow-card-title" style="color:var(--mf-accent-blue);">Typography Engine</div>
+              <div class="workflow-card-desc">Bespoke 3-tier font hierarchy tailored to your archetype.</div>
+              <div class="mf-input-group" style="margin-top:6px;">
+                <label class="mf-label">Masthead &amp; Display</label>
+                <select class="mf-input" id="editorTypeMasthead">
+                  <option value="Syne">Syne (Sculptural &amp; Modern)</option>
+                  <option value="Orbitron">Orbitron (Geometric Systems)</option>
+                  <option value="Chakra Petch">Chakra Petch (Hardware Industrial)</option>
+                  <option value="Cinzel Decorative">Cinzel Decorative (Dark Luxury)</option>
+                  <option value="Playfair Display">Playfair Display (Editorial)</option>
+                </select>
+              </div>
+              <div class="mf-input-group" style="margin-top:6px;">
+                <label class="mf-label">Body Typeface</label>
+                <select class="mf-input" id="editorTypeBody">
+                  <option value="Space Grotesk">Space Grotesk</option>
+                  <option value="Instrument Serif">Instrument Serif</option>
+                  <option value="IBM Plex Sans">IBM Plex Sans</option>
+                  <option value="Outfit">Outfit</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="workflow-card">
+              <div class="workflow-card-title" style="color:var(--mf-accent-cyan, #38bdf8);">Motion &amp; 3D Camera</div>
+              <div class="workflow-card-desc">Hardware-accelerated inertia scrolling and spatial tilt physics.</div>
+              <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
+                  <input type="checkbox" id="chkSmoothLenis" checked>
+                  <span>Lenis Inertia Scrolling Enabled</span>
+                </label>
+                <label style="display:flex; align-items:center; gap:8px; font-size:12px; cursor:pointer;">
+                  <input type="checkbox" id="chkCardTilt" checked>
+                  <span>3D Card Perspective Tilt</span>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <!-- Featured Project 1 -->
-          <div style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
-            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-blue); margin-bottom:6px;">Featured Case Study 1</div>
-            <input type="text" id="proj1Name" class="mf-input" placeholder="Project Name" value="MyFolio Generative Platform" style="margin-bottom:6px;">
-            <input type="text" id="proj1Tech" class="mf-input" placeholder="Technologies (e.g. Three.js, Node.js)" value="Three.js, WebGL, Node.js, GSAP" style="margin-bottom:6px;">
-            <textarea id="proj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
-            <input type="hidden" id="proj1Github" value="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator">
-            <input type="hidden" id="proj1Live" value="https://myfolio.tech">
+          <!-- PANE 3: AI ASSISTANT IN EDITOR -->
+          <div class="editor-pane" id="paneAi">
+            <div class="ai-insight-card">
+              <div class="ai-insight-title">
+                <span>✦ AI Recommendations</span>
+              </div>
+              <div class="ai-insight-body">
+                We analyzed your technical case studies. Here are fast 1-click improvements:
+              </div>
+              <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('refine_bio')">
+                ✍️ Polish Hero Narrative Bio
+              </button>
+              <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('prioritize_projects')">
+                ⚡ Highlight Systems Architecture
+              </button>
+            </div>
           </div>
 
-          <!-- Featured Project 2 -->
-          <div id="projectCard2" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
-            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-cyan, #38bdf8); margin-bottom:6px;">Featured Case Study 2</div>
-            <input type="text" id="proj2Name" class="mf-input" placeholder="Project Name" value="Algorand Python Smart Contracts" style="margin-bottom:6px;">
-            <input type="text" id="proj2Tech" class="mf-input" placeholder="Technologies" value="Python, Algorand, Web3" style="margin-bottom:6px;">
-            <textarea id="proj2Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Decentralized verifiable ledger logic and algorithmic settlements.</textarea>
-            <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
-            <input type="hidden" id="proj2Live" value="">
-          </div>
-
-          <!-- Featured Project 3 -->
-          <div id="projectCard3" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px; margin-top:8px;">
-            <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-gold, #FCD34D); margin-bottom:6px;">Featured Case Study 3</div>
-            <input type="text" id="proj3Name" class="mf-input" placeholder="Project Name" value="Autonomous Edge Agent" style="margin-bottom:6px;">
-            <input type="text" id="proj3Tech" class="mf-input" placeholder="Technologies" value="TypeScript, Fastify, AI" style="margin-bottom:6px;">
-            <textarea id="proj3Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Low-latency reasoning pipelines and streaming telemetry.</textarea>
-            <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
-            <input type="hidden" id="proj3Live" value="">
-          </div>
-
-          <!-- Other story metadata fields preserved -->
-          <input type="hidden" id="manualTagline" value="Creative Systems Engineer">
-          <input type="hidden" id="manualEmail" value="abdulaziznoor9876@gmail.com">
-          <input type="hidden" id="manualLocation" value="Global / Edge">
-          <input type="hidden" id="manualGithub" value="https://github.com/Abdul-Aziz-Nooruddin">
-          <input type="hidden" id="manualLinkedin" value="https://linkedin.com/in/abdul-aziz-nooruddin">
-          <input type="hidden" id="manualSkills" value="JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS">
-          <input type="hidden" id="manualLanguages" value="English, Hindi, Urdu">
-          <input type="hidden" id="manualExperience" value="Lead Full-Stack Architect building modern creative platforms.">
-          <input type="hidden" id="manualEducation" value="B.S. in Computer Science">
-          <input type="hidden" id="manualCertifications" value="Certified Cloud Solutions Architect">
+          <!-- Quick Apply Button inside Editor -->
+          <button type="submit" form="portfolioGenerationForm" class="primary-generate-btn" style="margin-top:4px;">
+            <span>Update Portfolio &amp; Refresh Preview ↺</span>
+          </button>
         </div>
 
-        <!-- STEP 03: CHOOSE MY WORLD -->
-        <div class="workflow-card">
-          <div class="workflow-step-badge">STEP 03 // CHOOSE MY WORLD</div>
-          <div class="workflow-card-title">3D Visual Universe</div>
-          <div class="workflow-card-desc">Select the procedural aesthetic matching your role.</div>
-
-          <div class="universe-select-grid" id="universeChoiceContainer">
-            <div class="universe-choice-card selected" onclick="selectStudioUniverse('threeui-constellation', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_constellation_3d.jpg');"></div>
-              <div class="universe-choice-title">Synaptic Constellation</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-landscape', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_landscape_3d.jpg');"></div>
-              <div class="universe-choice-title">3D Landscape &amp; Weather</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
-              <div class="universe-choice-title">Complete 3D Shelf</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_liquid_metal_3d.jpg');"></div>
-              <div class="universe-choice-title">Liquid Metal Dispersion</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_matrix_3d.jpg');"></div>
-              <div class="universe-choice-title">Cyber-Architect Sprawl</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stealth_node_3d.jpg');"></div>
-              <div class="universe-choice-title">Stealth Node (Web3)</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('circuit-core', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/circuit_core_3d.jpg');"></div>
-              <div class="universe-choice-title">Circuit Core</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('chrono-obsidian-sanctuary', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/chrono_obsidian_sanctuary_3d.jpg');"></div>
-              <div class="universe-choice-title">Chrono-Obsidian</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('neon-aurora-cyber', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/neon_aurora_cyber_3d.jpg');"></div>
-              <div class="universe-choice-title">Neon Aurora Cyber</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('kinetic-brutalism', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/kinetic_brutalism_3d.jpg');"></div>
-              <div class="universe-choice-title">Kinetic Brutalism</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('stellar-architect', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stellar_architect_3d.jpg');"></div>
-              <div class="universe-choice-title">Stellar Architect</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-cyber-geometry', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_cyber_geometry_3d.jpg');"></div>
-              <div class="universe-choice-title">Cosmic Geometry</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('engineering-archive', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/engineering_archive_3d.jpg');"></div>
-              <div class="universe-choice-title">Engineering Archive</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('system-awakening', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/system_awakening_3d.jpg');"></div>
-              <div class="universe-choice-title">System Awakening</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-astronaut', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_astronaut_3d.jpg');"></div>
-              <div class="universe-choice-title">Cosmic Astronaut</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('bioluminescent-wireframe', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bioluminescent_wireframe_3d.jpg');"></div>
-              <div class="universe-choice-title">Bioluminescent Eco</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-crystal', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cyber_crystal_3d.jpg');"></div>
-              <div class="universe-choice-title">Cyber Crystal</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('botanical-woodcraft', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/botanical_woodcraft_3d.jpg');"></div>
-              <div class="universe-choice-title">Botanical Woodcraft</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('bio-digital-fusion', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bio_digital_fusion_3d.jpg');"></div>
-              <div class="universe-choice-title">Bio-Digital Fusion</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-ascent', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/abyssal_ascent_3d.jpg');"></div>
-              <div class="universe-choice-title">Abyssal Ascent</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sylva', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_sylva_3d.jpg');"></div>
-              <div class="universe-choice-title">ThreeUI Sylva</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-kage', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_kage_3d.jpg');"></div>
-              <div class="universe-choice-title">ThreeUI Kage</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-sketchbook', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_sketchbook_3d.jpg');"></div>
-              <div class="universe-choice-title">ThreeUI Sketchbook</div>
-            </div>
-            <div class="universe-choice-card" onclick="selectStudioUniverse('spatial-depth-voyage', this)">
-              <div class="universe-choice-thumb" style="background-image:url('/assets/3d/spatial_depth_voyage_3d.jpg');"></div>
-              <div class="universe-choice-title">Spatial Depth Voyage</div>
-            </div>
-          </div>
-        </div>
+        <!-- Other story metadata fields preserved -->
+        <input type="hidden" id="manualTagline" value="Creative Systems Engineer">
+        <input type="hidden" id="manualEmail" value="abdulaziznoor9876@gmail.com">
+        <input type="hidden" id="manualLocation" value="Global / Edge">
+        <input type="hidden" id="manualGithub" value="https://github.com/Abdul-Aziz-Nooruddin">
+        <input type="hidden" id="manualLinkedin" value="https://linkedin.com/in/abdul-aziz-nooruddin">
+        <input type="hidden" id="manualSkills" value="JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS">
+        <input type="hidden" id="manualLanguages" value="English, Hindi, Urdu">
+        <input type="hidden" id="manualExperience" value="Lead Full-Stack Architect building modern creative platforms.">
+        <input type="hidden" id="manualEducation" value="B.S. in Computer Science">
+        <input type="hidden" id="manualCertifications" value="Certified Cloud Solutions Architect">
 
         <!-- Hidden certificate container required by script -->
         <div id="certificatesListContainer" style="display:none;"></div>
@@ -1022,66 +1661,66 @@
       </div>
     </main>
 
-    <!-- COLUMN 3: RIGHT AI CREATIVE DIRECTOR -->
+    <!-- COLUMN 3: RIGHT AI ASSISTANT -->
     <aside class="studio-col-right">
       <div style="display:flex; align-items:center; justify-content:space-between;">
         <div style="font-family:var(--mf-font-display); font-weight:700; font-size:14px; color:#FFF; display:flex; align-items:center; gap:6px;">
           <span style="color:var(--mf-accent-blue);">✦</span>
-          <span>MYFOLIO AI</span>
+          <span>AI ASSISTANT</span>
         </div>
-        <span class="mf-badge mf-badge-accent" style="font-size:10px;">DIRECTOR MODE</span>
+        <span class="mf-badge mf-badge-accent" style="font-size:10px;">RECOMMENDATIONS</span>
       </div>
 
-      <!-- Advisory Card 1 -->
+      <!-- Advisory Card 1: Role & Positioning -->
       <div class="ai-insight-card">
         <div class="ai-insight-title">
-          <span>Target Recruiter Persona</span>
+          <span>Role &amp; Positioning</span>
         </div>
         <div class="ai-insight-body">
-          Your GitHub telemetry signals strong systems programming and WebGL shader architecture. We suggest prioritizing high-concurrency case studies.
+          Your profile signals strong systems programming and WebGL shader architecture. We recommend prioritizing high-concurrency case studies.
         </div>
         <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('prioritize_projects')">
           ⚡ Prioritize Systems Projects
         </button>
       </div>
 
-      <!-- Advisory Card 2 -->
+      <!-- Advisory Card 2: Visual World Match -->
       <div class="ai-insight-card">
         <div class="ai-insight-title">
-          <span>Universe Resonance</span>
+          <span>Visual World Match</span>
         </div>
         <div class="ai-insight-body">
-          Current pick <strong>Synaptic Constellation</strong> achieves high resonance with systems thinkers and full-stack builders.
+          The selected <strong>Developer Workspace</strong> world pairs naturally with technical builders and full-stack architects.
         </div>
       </div>
 
-      <!-- Advisory Card 3 -->
+      <!-- Advisory Card 3: Bio Improvement -->
       <div class="ai-insight-card">
         <div class="ai-insight-title">
-          <span>Narrative Polish</span>
+          <span>Bio Improvement</span>
         </div>
         <div class="ai-insight-body">
-          "Headline communicates role clearly. Bio could emphasize distributed systems and open-source contributions."
+          "Headline communicates your role clearly. Your summary could emphasize distributed systems and open-source contributions."
         </div>
         <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('refine_bio')">
           ✍️ Polish Narrative Bio
         </button>
       </div>
 
-        <!-- Conversational Command Bar -->
-        <div class="ai-command-wrap">
-          <div style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">
-            AI Creative Prompt
-          </div>
-          <textarea id="aiPromptInput" class="ai-command-input" placeholder="Ask AI: 'Why are not all my projects showing?' or 'Make hero more recruiter-focused'"></textarea>
-          <div style="display:flex; justify-content:flex-end;">
-            <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" onclick="sendAiCommand()">
-              Direct &rarr;
-            </button>
-          </div>
-          <div id="aiChatFeed" class="ai-chat-feed"></div>
+      <!-- Conversational Command Bar -->
+      <div class="ai-command-wrap">
+        <div style="font-size:11px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">
+          Ask AI Assistant
         </div>
-      </aside>
+        <textarea id="aiPromptInput" class="ai-command-input" placeholder="Ask AI: 'Make bio more concise' or 'Focus hero on full-stack engineering'"></textarea>
+        <div style="display:flex; justify-content:flex-end;">
+          <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" onclick="sendAiCommand()">
+            Ask &rarr;
+          </button>
+        </div>
+        <div id="aiChatFeed" class="ai-chat-feed"></div>
+      </div>
+    </aside>
     </div>
 
     <!-- Floating Toast Banner -->
@@ -1155,6 +1794,201 @@
       selectedUniverseKey = key;
       document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
       if (el) el.classList.add('selected');
+      // Also sync curated card if matches
+      document.querySelectorAll('.world-cat-card').forEach(c => c.classList.remove('selected'));
+      const matchingCurated = document.querySelector(`.world-cat-card[onclick*="'${key}'"]`);
+      if (matchingCurated) matchingCurated.classList.add('selected');
+      updateConfirmationChecks();
+    }
+
+    function selectCuratedWorld(key, el) {
+      selectedUniverseKey = key;
+      document.querySelectorAll('.world-cat-card').forEach(c => c.classList.remove('selected'));
+      if (el) el.classList.add('selected');
+      document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
+      const matchingUniv = document.querySelector(`.universe-choice-card[onclick*="'${key}'"]`);
+      if (matchingUniv) matchingUniv.classList.add('selected');
+      updateConfirmationChecks();
+      showToast('Visual world selected: ' + key.replace(/-/g, ' '), 'info');
+    }
+
+    function toggleAllWorldsGrid() {
+      const drawer = document.getElementById('allWorldsDrawer');
+      const arrow = document.getElementById('exploreArrow');
+      if (!drawer) return;
+      drawer.classList.toggle('open');
+      if (arrow) arrow.textContent = drawer.classList.contains('open') ? '↑' : '↓';
+    }
+
+    function toggleQuickManualDetails() {
+      const drawer = document.getElementById('quickManualDetailsDrawer');
+      const label = document.getElementById('toggleManualLabel');
+      if (!drawer) return;
+      if (drawer.style.display === 'none' || !drawer.style.display) {
+        drawer.style.display = 'flex';
+        if (label) label.innerHTML = '✎ Hide manual details &uarr;';
+      } else {
+        drawer.style.display = 'none';
+        if (label) label.innerHTML = '✎ Edit identity &amp; projects manually &darr;';
+      }
+    }
+
+    function switchStudioMode(mode) {
+      const tabCreate = document.getElementById('tabBtnCreate');
+      const tabEdit = document.getElementById('tabBtnEdit');
+      const viewCreate = document.getElementById('viewCreateMode');
+      const viewEdit = document.getElementById('viewEditMode');
+
+      if (mode === 'edit') {
+        if (tabCreate) tabCreate.classList.remove('active');
+        if (tabEdit) tabEdit.classList.add('active');
+        if (viewCreate) viewCreate.style.display = 'none';
+        if (viewEdit) viewEdit.classList.add('active');
+        syncFormToEditor();
+        updateStepperActive('edit');
+      } else {
+        if (tabCreate) tabCreate.classList.add('active');
+        if (tabEdit) tabEdit.classList.remove('active');
+        if (viewCreate) viewCreate.style.display = 'flex';
+        if (viewEdit) viewEdit.classList.remove('active');
+        updateStepperActive('content');
+      }
+    }
+
+    function switchEditorSubtab(tabName) {
+      document.querySelectorAll('.editor-subtab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.editor-pane').forEach(p => p.classList.remove('active'));
+
+      const btn = document.getElementById('subtabBtn' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+      const pane = document.getElementById('pane' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+      if (btn) btn.classList.add('active');
+      if (pane) pane.classList.add('active');
+    }
+
+    function syncEditorToForm(field, value) {
+      if (field === 'name') {
+        const el = document.getElementById('manualFullName');
+        if (el) el.value = value;
+      } else if (field === 'role') {
+        const el = document.getElementById('manualRole');
+        if (el) el.value = value;
+      } else if (field === 'bio') {
+        const el = document.getElementById('manualBio');
+        if (el) el.value = value;
+      } else if (field === 'p1name') {
+        const el = document.getElementById('proj1Name');
+        if (el) el.value = value;
+      } else if (field === 'p1tech') {
+        const el = document.getElementById('proj1Tech');
+        if (el) el.value = value;
+      } else if (field === 'p1desc') {
+        const el = document.getElementById('proj1Desc');
+        if (el) el.value = value;
+      } else if (field === 'skills') {
+        const el = document.getElementById('manualSkills');
+        if (el) el.value = value;
+      }
+      updateConfirmationChecks();
+    }
+
+    function syncFormToEditor() {
+      const fn = document.getElementById('manualFullName')?.value;
+      const role = document.getElementById('manualRole')?.value;
+      const bio = document.getElementById('manualBio')?.value;
+      const p1 = document.getElementById('proj1Name')?.value;
+      const p1t = document.getElementById('proj1Tech')?.value;
+      const p1d = document.getElementById('proj1Desc')?.value;
+      const sk = document.getElementById('manualSkills')?.value;
+
+      if (fn && document.getElementById('editorFullName')) document.getElementById('editorFullName').value = fn;
+      if (role && document.getElementById('editorRole')) document.getElementById('editorRole').value = role;
+      if (bio && document.getElementById('editorBio')) document.getElementById('editorBio').value = bio;
+      if (p1 && document.getElementById('editorProj1Name')) document.getElementById('editorProj1Name').value = p1;
+      if (p1t && document.getElementById('editorProj1Tech')) document.getElementById('editorProj1Tech').value = p1t;
+      if (p1d && document.getElementById('editorProj1Desc')) document.getElementById('editorProj1Desc').value = p1d;
+      if (sk && document.getElementById('editorSkills')) document.getElementById('editorSkills').value = sk;
+    }
+
+    function updateConfirmationChecks() {
+      const gh = document.getElementById('ghUsername')?.value.trim();
+      const p1 = document.getElementById('proj1Name')?.value.trim();
+      const sk = document.getElementById('manualSkills')?.value.trim();
+      const role = document.getElementById('manualRole')?.value.trim();
+      const bio = document.getElementById('manualBio')?.value.trim();
+
+      const chkGh = document.getElementById('chkGithub');
+      const chkProj = document.getElementById('chkProjects');
+      const chkSk = document.getElementById('chkSkills');
+      const chkExp = document.getElementById('chkExperience');
+      const chkRes = document.getElementById('chkResume');
+
+      let completedCount = 0;
+
+      if (chkGh) {
+        if (gh) { chkGh.classList.add('checked'); completedCount++; }
+        else { chkGh.classList.remove('checked'); }
+      }
+      if (chkProj) {
+        if (p1) { chkProj.classList.add('checked'); completedCount++; }
+        else { chkProj.classList.remove('checked'); }
+      }
+      if (chkSk) {
+        if (sk) { chkSk.classList.add('checked'); completedCount++; }
+        else { chkSk.classList.remove('checked'); }
+      }
+      if (chkExp) {
+        if (role) { chkExp.classList.add('checked'); completedCount++; }
+        else { chkExp.classList.remove('checked'); }
+      }
+      if (chkRes) {
+        if (uploadedResumeBase64 || bio) { chkRes.classList.add('checked'); completedCount++; }
+        else { chkRes.classList.remove('checked'); }
+      }
+
+      // Update Readiness Score
+      const score = Math.min(100, Math.round((completedCount / 5) * 100));
+      const scoreEl = document.getElementById('readinessCircleScore');
+      const hintEl = document.getElementById('readinessHintText');
+      if (scoreEl) scoreEl.textContent = score + '%';
+      if (hintEl) {
+        if (score === 100) hintEl.textContent = 'All core credentials populated & ready';
+        else hintEl.textContent = `${5 - completedCount} items pending before optimal generation`;
+      }
+    }
+
+    function updateStepperActive(step) {
+      const steps = ['content', 'world', 'generate', 'edit', 'publish'];
+      steps.forEach(s => {
+        const el = document.getElementById('stepIndicator' + s.charAt(0).toUpperCase() + s.slice(1));
+        if (el) el.classList.remove('active');
+      });
+      const current = document.getElementById('stepIndicator' + step.charAt(0).toUpperCase() + step.slice(1));
+      if (current) current.classList.add('active');
+    }
+
+    function jumpToStudioStep(step) {
+      if (step === 'content') {
+        switchStudioMode('create');
+        const s = document.getElementById('stepSectionContent');
+        if (s) s.scrollIntoView({ behavior: 'smooth' });
+        updateStepperActive('content');
+      } else if (step === 'world') {
+        switchStudioMode('create');
+        const s = document.getElementById('stepSectionWorld');
+        if (s) s.scrollIntoView({ behavior: 'smooth' });
+        updateStepperActive('world');
+      } else if (step === 'generate') {
+        switchStudioMode('create');
+        const s = document.getElementById('confirmationSummaryBox');
+        if (s) s.scrollIntoView({ behavior: 'smooth' });
+        updateStepperActive('generate');
+      } else if (step === 'edit') {
+        switchStudioMode('edit');
+        updateStepperActive('edit');
+      } else if (step === 'publish') {
+        const btn = document.getElementById('btnSubmitGenerate');
+        if (btn) btn.click();
+      }
     }
 
     async function handleResumeFileSelected(input) {
@@ -1475,6 +2309,22 @@
 
         if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
         showSynthesisModal(liveSubdomain);
+
+        // Advance stepper to EDIT and mark previous steps completed
+        const sContent = document.getElementById('stepIndicatorContent');
+        const sWorld = document.getElementById('stepIndicatorWorld');
+        const sGen = document.getElementById('stepIndicatorGenerate');
+        const sEdit = document.getElementById('stepIndicatorEdit');
+        const sPub = document.getElementById('stepIndicatorPublish');
+        if (sContent) { sContent.classList.remove('active'); sContent.classList.add('completed'); }
+        if (sWorld) { sWorld.classList.remove('active'); sWorld.classList.add('completed'); }
+        if (sGen) { sGen.classList.remove('active'); sGen.classList.add('completed'); }
+        if (sEdit) { sEdit.classList.add('active'); }
+        if (sPub) { sPub.classList.add('completed'); }
+
+        // Transition to advanced editor view so user can refine portfolio
+        switchStudioMode('edit');
+        syncFormToEditor();
       } catch (err) {
         clearInterval(progressInterval);
         if (fluidLevel) fluidLevel.style.height = '0%';
@@ -1492,6 +2342,9 @@
       if (iframe) {
         iframe.src = '/abdulaziz?embed=1';
       }
+
+      // Initial validation of confirmation summary checklist
+      updateConfirmationChecks();
 
       // Drag and drop for resume dropzone
       const dropZone = document.getElementById('studioResumeDropZone');
