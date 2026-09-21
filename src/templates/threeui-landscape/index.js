@@ -132,7 +132,7 @@ const ThreeUILandscapeTemplate = {
         min-height: 100% !important;
         overflow-x: hidden !important;
         overflow-y: auto !important;
-        background-color: var(--paper, #ecdcbc) !important;
+        background-color: transparent !important;
       }
       #app {
         position: fixed !important;
@@ -156,43 +156,46 @@ const ThreeUILandscapeTemplate = {
       #stage.dragging {
         cursor: grabbing;
       }
-      /* Hide the original template's small Japanese mock columns to make way for the complete portfolio */
+      /* Hide the original template's small Japanese mock columns & legacy overlays */
       .col-l, .col-r, .tag, .plaque, .bigpct {
         display: none !important;
       }
+      #app > footer, footer:not(.portfolio-footer), .legacy-footer {
+        display: none !important;
+      }
 
-      /* Portfolio Scrollytelling Container */
+      /* Portfolio Scrollytelling Container - gestures pass through outside cards */
       .landscape-portfolio-scroll {
         position: relative;
         z-index: 10;
-        pointer-events: auto;
+        pointer-events: none;
         max-width: 1140px;
         margin: 0 auto;
         padding: 90px 24px 120px;
         display: flex;
         flex-direction: column;
-        gap: 60px;
+        gap: 56px;
         font-family: var(--sans);
       }
       .portfolio-interactive {
-        pointer-events: auto;
+        pointer-events: auto !important;
       }
 
-      /* Frosted Glass Bento Surfaces */
+      /* Frosted Glass Bento Surfaces (Paper-Glass Japanese luxury) */
       .landscape-glass-card {
-        background: rgba(253, 241, 214, 0.78);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(168, 98, 31, 0.35);
-        border-radius: 20px;
-        padding: 36px;
+        background: rgba(255, 252, 246, 0.82);
+        backdrop-filter: blur(28px) saturate(180%);
+        -webkit-backdrop-filter: blur(28px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.85);
+        border-radius: 24px;
+        padding: 38px;
         color: var(--ink, #2e2515);
-        box-shadow: 0 20px 48px rgba(46, 37, 21, 0.15);
+        box-shadow: 0 20px 48px -10px rgba(46, 37, 21, 0.12), 0 2px 10px rgba(168, 98, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
         transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
       }
       .landscape-glass-card:hover {
-        border-color: rgba(168, 98, 31, 0.65);
-        box-shadow: 0 28px 64px rgba(46, 37, 21, 0.22);
+        border-color: rgba(168, 98, 31, 0.45);
+        box-shadow: 0 28px 64px -10px rgba(46, 37, 21, 0.18);
       }
 
       /* Hero Stage */
@@ -204,13 +207,13 @@ const ThreeUILandscapeTemplate = {
       }
       .landscape-hero-avatar-wrap {
         position: relative;
-        width: 110px;
-        height: 110px;
-        min-width: 110px;
+        width: 108px;
+        height: 108px;
+        min-width: 108px;
         border-radius: 50%;
         padding: 4px;
-        background: linear-gradient(135deg, rgba(253, 241, 214, 0.95), rgba(168, 98, 31, 0.45));
-        box-shadow: 0 12px 32px rgba(46, 37, 21, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(168, 98, 31, 0.4));
+        box-shadow: 0 12px 32px rgba(46, 37, 21, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.85);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -218,7 +221,7 @@ const ThreeUILandscapeTemplate = {
       }
       .landscape-hero-avatar-wrap:hover {
         transform: scale(1.04);
-        box-shadow: 0 16px 40px rgba(46, 37, 21, 0.25);
+        box-shadow: 0 16px 40px rgba(46, 37, 21, 0.22);
       }
       .landscape-hero-avatar-img {
         width: 100%;
@@ -226,7 +229,7 @@ const ThreeUILandscapeTemplate = {
         border-radius: 50%;
         object-fit: cover;
         display: block;
-        border: 2px solid rgba(253, 241, 214, 0.9);
+        border: 2px solid rgba(255, 252, 246, 0.95);
       }
       .landscape-hero-initials {
         background: linear-gradient(135deg, #a8621f, #2e2515);
@@ -235,7 +238,7 @@ const ThreeUILandscapeTemplate = {
         font-size: 34px;
         font-weight: 700;
         letter-spacing: 1px;
-        text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.25);
       }
       .landscape-hero-text-col {
         flex: 1;
@@ -244,63 +247,74 @@ const ThreeUILandscapeTemplate = {
       .hero-eyebrow {
         font-size: 11px;
         font-weight: 700;
-        letter-spacing: 2px;
+        letter-spacing: 1.8px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 12px;
-        display: flex;
+        margin-bottom: 10px;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-      }
-      .hero-eyebrow::before {
-        content: "";
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #10B981;
-        box-shadow: 0 0 10px #10B981;
+        gap: 6px;
       }
       .hero-masthead {
         font-family: var(--mincho);
-        font-size: clamp(22px, 5.5vw, 68px);
+        font-size: clamp(24px, 5vw, 56px);
         font-weight: 700;
-        line-height: 1.08;
+        line-height: 1.1;
         letter-spacing: -0.5px;
         color: var(--ink, #2e2515);
-        margin-bottom: 16px;
+        margin-bottom: 12px;
       }
       .hero-role {
-        font-size: clamp(16px, 2.2vw, 22px);
+        font-size: clamp(14px, 2vw, 18px);
         font-weight: 600;
         color: var(--accent, #a8621f);
-        margin-bottom: 18px;
+        margin-bottom: 16px;
         letter-spacing: 0.5px;
+        text-transform: uppercase;
       }
       .hero-bio {
-        font-family: var(--mincho);
-        font-size: clamp(15px, 1.8vw, 18px);
+        font-size: clamp(14.5px, 1.6vw, 16.5px);
         line-height: 1.65;
         color: var(--ink3, #3f3520);
         max-width: 820px;
-        margin-bottom: 28px;
+        margin-bottom: 24px;
       }
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 14px;
+        gap: 12px;
         align-items: center;
+      }
+
+      /* Floating hint pill for 3D scenery */
+      .landscape-3d-hint {
+        align-self: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 14px;
+        border-radius: 999px;
+        background: rgba(255, 252, 246, 0.75);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid rgba(168, 98, 31, 0.2);
+        color: var(--accent, #a8621f);
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        box-shadow: 0 4px 14px rgba(46, 37, 21, 0.08);
       }
 
       /* Section Headers */
       .section-heading {
         font-family: var(--sans);
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
         letter-spacing: 2px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -309,7 +323,7 @@ const ThreeUILandscapeTemplate = {
         content: "";
         flex: 1;
         height: 1px;
-        background: rgba(168, 98, 31, 0.25);
+        background: rgba(168, 98, 31, 0.22);
       }
 
       /* Projects Grid */
@@ -319,22 +333,23 @@ const ThreeUILandscapeTemplate = {
         gap: 22px;
       }
       .landscape-project-card {
-        background: rgba(253, 248, 232, 0.85);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border: 1px solid rgba(168, 98, 31, 0.3);
-        border-radius: 16px;
-        padding: 26px;
+        background: rgba(255, 253, 249, 0.88);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(168, 98, 31, 0.22);
+        border-radius: 20px;
+        padding: 28px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 14px;
+        gap: 16px;
+        box-shadow: 0 10px 30px rgba(46, 37, 21, 0.08);
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       }
       .landscape-project-card:hover {
         transform: translateY(-4px);
         border-color: var(--accent, #a8621f);
-        box-shadow: 0 16px 36px rgba(46, 37, 21, 0.16);
+        box-shadow: 0 18px 42px rgba(46, 37, 21, 0.14);
       }
       .proj-header {
         display: flex;
@@ -342,7 +357,7 @@ const ThreeUILandscapeTemplate = {
         align-items: center;
         font-size: 10.5px;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
         color: var(--ink2, #8b7c5c);
       }
       .proj-status {
@@ -357,7 +372,7 @@ const ThreeUILandscapeTemplate = {
       }
       .proj-desc {
         font-size: 13.5px;
-        line-height: 1.55;
+        line-height: 1.58;
         color: var(--ink3, #3f3520);
         flex-grow: 1;
       }
@@ -370,8 +385,9 @@ const ThreeUILandscapeTemplate = {
       .proj-tag {
         font-size: 11px;
         padding: 4px 10px;
-        background: rgba(168, 98, 31, 0.1);
+        background: rgba(168, 98, 31, 0.08);
         color: var(--accent, #a8621f);
+        border: 1px solid rgba(168, 98, 31, 0.15);
         border-radius: 999px;
         font-weight: 600;
       }
@@ -386,26 +402,32 @@ const ThreeUILandscapeTemplate = {
         font-size: 12px;
         font-weight: 700;
         text-decoration: none;
-        padding: 7px 14px;
-        border-radius: 8px;
-        transition: background 0.2s ease, color 0.2s ease;
+        padding: 8px 16px;
+        border-radius: 10px;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
       .proj-btn-primary {
-        background: var(--btn, #332a17);
-        color: var(--btn-fg, #f6eed8);
+        background: var(--ink, #2e2515);
+        color: #fdf1d6;
+        box-shadow: 0 4px 14px rgba(46, 37, 21, 0.2);
       }
       .proj-btn-primary:hover {
         background: var(--accent, #a8621f);
         color: #fff;
+        transform: translateY(-1px);
       }
       .proj-btn-ghost {
-        background: transparent;
+        background: rgba(255, 255, 255, 0.6);
         color: var(--ink, #2e2515);
-        border: 1px solid rgba(46, 37, 21, 0.25);
+        border: 1px solid rgba(168, 98, 31, 0.25);
       }
       .proj-btn-ghost:hover {
         border-color: var(--accent, #a8621f);
         color: var(--accent, #a8621f);
+        transform: translateY(-1px);
       }
 
       /* Skills Matrix */
@@ -418,11 +440,12 @@ const ThreeUILandscapeTemplate = {
         font-size: 13px;
         font-weight: 600;
         padding: 8px 18px;
-        background: rgba(253, 248, 232, 0.85);
-        border: 1px solid rgba(168, 98, 31, 0.3);
+        background: rgba(255, 253, 249, 0.88);
+        border: 1px solid rgba(168, 98, 31, 0.25);
         border-radius: 12px;
         color: var(--ink, #2e2515);
-        transition: transform 0.2s ease, border-color 0.2s ease;
+        box-shadow: 0 2px 8px rgba(46, 37, 21, 0.04);
+        transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
       }
       .landscape-skill-chip:hover {
         transform: translateY(-2px);
@@ -436,7 +459,7 @@ const ThreeUILandscapeTemplate = {
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
-        gap: 20px;
+        gap: 24px;
       }
       .contact-info-title {
         font-family: var(--mincho);
@@ -450,17 +473,211 @@ const ThreeUILandscapeTemplate = {
         gap: 12px;
       }
 
-      /* Mobile adjustments */
-      @media (max-width: 768px) {
+      /* ==========================================================================
+         MOBILE RESPONSIVE ENGINE (Strict High-End Executive Standard)
+         ========================================================================== */
+      @media (max-width: 768px), (max-height: 460px) {
+        /* Remove template legacy footer and fixed bottom blockers */
+        #app > footer, footer:not(.portfolio-footer), .legacy-footer, .bigpct {
+          display: none !important;
+        }
+
+        /* Fixed glass header housing brand & 3D weather switches */
+        header {
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          height: 52px !important;
+          padding: 0 16px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          background: rgba(253, 248, 238, 0.88) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
+          border-bottom: 1px solid rgba(168, 98, 31, 0.16) !important;
+          z-index: 100 !important;
+        }
+        .brand {
+          font-size: 17px !important;
+          letter-spacing: 0.5px !important;
+          transform: none !important;
+          top: 0 !important;
+          font-weight: 800 !important;
+        }
+        .top-mid {
+          display: none !important;
+        }
+        .top-right {
+          position: static !important;
+          bottom: auto !important;
+          left: auto !important;
+          right: auto !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          gap: 6px !important;
+          display: flex !important;
+          align-items: center !important;
+          background: transparent !important;
+          border: none !important;
+          overflow: visible !important;
+        }
+        .tbtn {
+          font-size: 10px !important;
+          font-weight: 700 !important;
+          padding: 5px 9px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(168, 98, 31, 0.25) !important;
+          background: rgba(255, 255, 255, 0.8) !important;
+          color: var(--ink, #2e2515) !important;
+          display: inline-flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 3px !important;
+          line-height: 1 !important;
+          white-space: nowrap !important;
+          box-shadow: 0 2px 6px rgba(46, 37, 21, 0.05) !important;
+        }
+        .tbtn b {
+          color: var(--accent, #a8621f) !important;
+        }
+
+        /* Generous top clearance so 3D Pagoda & atmospheric landscape shine through immediately! */
         .landscape-portfolio-scroll {
-          padding: 80px 16px 60px;
-          gap: 40px;
+          padding: clamp(210px, 34vh, 290px) 14px 60px !important;
+          gap: 28px !important;
         }
+
+        /* Polished mobile card styling */
         .landscape-glass-card {
-          padding: 24px 18px;
+          padding: 24px 18px !important;
+          border-radius: 20px !important;
         }
+
+        /* Centered Executive Hero Layout on Mobile */
+        .landscape-hero-identity {
+          flex-direction: column !important;
+          align-items: center !important;
+          text-align: center !important;
+          gap: 16px !important;
+          margin-bottom: 16px !important;
+        }
+        .landscape-hero-avatar-wrap {
+          width: 88px !important;
+          height: 88px !important;
+          min-width: 88px !important;
+          margin: 0 auto !important;
+          box-shadow: 0 10px 24px rgba(46, 37, 21, 0.18), inset 0 0 0 2px rgba(255, 255, 255, 0.8) !important;
+        }
+        .landscape-hero-initials {
+          font-size: 28px !important;
+        }
+        .landscape-hero-text-col {
+          width: 100% !important;
+          text-align: center !important;
+        }
+        .hero-eyebrow {
+          justify-content: center !important;
+          margin-bottom: 8px !important;
+          font-size: 10px !important;
+          letter-spacing: 1.5px !important;
+        }
+        .hero-masthead {
+          font-size: clamp(24px, 7vw, 32px) !important;
+          line-height: 1.15 !important;
+          margin-bottom: 6px !important;
+          text-align: center !important;
+        }
+        .hero-role {
+          font-size: 13px !important;
+          letter-spacing: 1px !important;
+          margin-bottom: 12px !important;
+          text-align: center !important;
+        }
+        .hero-bio {
+          font-size: 13.5px !important;
+          line-height: 1.6 !important;
+          text-align: center !important;
+          margin: 0 auto 18px !important;
+          padding: 0 4px !important;
+        }
+        .hero-actions {
+          flex-direction: column !important;
+          width: 100% !important;
+          gap: 9px !important;
+          align-items: stretch !important;
+        }
+        .hero-actions .proj-btn {
+          width: 100% !important;
+          text-align: center !important;
+          padding: 12px 16px !important;
+          font-size: 13px !important;
+          box-sizing: border-box !important;
+        }
+        .hero-actions .hero-location-badge {
+          text-align: center !important;
+          margin-left: 0 !important;
+          margin-top: 4px !important;
+          display: block !important;
+          font-size: 12px !important;
+        }
+
+        /* Responsive Projects Grid */
         .projects-grid {
-          grid-template-columns: 1fr;
+          grid-template-columns: 1fr !important;
+          gap: 16px !important;
+        }
+        .landscape-project-card {
+          padding: 20px 16px !important;
+          border-radius: 16px !important;
+        }
+        .proj-title {
+          font-size: 18px !important;
+        }
+        .proj-desc {
+          font-size: 13px !important;
+        }
+        .proj-links {
+          flex-direction: column !important;
+          gap: 8px !important;
+        }
+        .proj-links .proj-btn {
+          width: 100% !important;
+          text-align: center !important;
+          padding: 10px 14px !important;
+        }
+
+        /* Skills Matrix */
+        .skills-container {
+          gap: 8px !important;
+          justify-content: center !important;
+        }
+        .landscape-skill-chip {
+          font-size: 12px !important;
+          padding: 6px 14px !important;
+          border-radius: 10px !important;
+        }
+
+        /* Contact Section */
+        .contact-banner {
+          flex-direction: column !important;
+          text-align: center !important;
+          align-items: stretch !important;
+          gap: 16px !important;
+        }
+        .contact-info-title {
+          font-size: 21px !important;
+        }
+        .contact-actions {
+          flex-direction: column !important;
+          width: 100% !important;
+          gap: 9px !important;
+        }
+        .contact-actions .proj-btn {
+          width: 100% !important;
+          text-align: center !important;
+          padding: 12px 16px !important;
         }
       }
     </style>
@@ -471,21 +688,28 @@ const ThreeUILandscapeTemplate = {
     <!-- SCROLLABLE 3D PORTFOLIO CONTENT LAYER -->
     <div class="landscape-portfolio-scroll">
       
+      <!-- 00: FLOATING SCENIC HINT -->
+      <div class="landscape-3d-hint portfolio-interactive">
+        <span>✦ PROCEDURAL 3D ATMOSPHERE</span>
+        <span>·</span>
+        <span>DRAG TO ROTATE ↺</span>
+      </div>
+
       <!-- 01: HERO MASTHEAD -->
       <section class="landscape-glass-card portfolio-interactive">
         <div class="landscape-hero-identity">
           ${avatarHtml}
           <div class="landscape-hero-text-col">
-            <div class="hero-eyebrow">Interactive 3D Simulation • Architecture Frame</div>
+            <div class="hero-eyebrow">✦ ${safeRole ? safeRole.toUpperCase() : 'SYSTEMS ARCHITECT'}</div>
             <h1 class="hero-masthead">${safeName}</h1>
             <div class="hero-role">${safeRole}</div>
           </div>
         </div>
-        <p class="hero-bio">“${safeBio}”</p>
+        <p class="hero-bio">${safeBio}</p>
         <div class="hero-actions">
           <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Initiate Contact &rarr;</a>
           ${safeGithub ? `<a href="${safeGithub}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Dossier &nearr;</a>` : ''}
-          <span style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 ${safeLocation}</span>
+          <span class="hero-location-badge" style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 ${safeLocation}</span>
         </div>
       </section>
 
@@ -521,9 +745,9 @@ const ThreeUILandscapeTemplate = {
       </section>
 
       <!-- 05: FOOTER -->
-      <footer style="text-align: center; font-size: 12px; color: var(--ink2, #8b7c5c); padding-top: 20px;" class="portfolio-interactive">
+      <footer style="text-align: center; font-size: 12px; color: var(--ink2, #8b7c5c); padding-top: 10px;" class="portfolio-interactive portfolio-footer">
         <div>&copy; ${new Date().getFullYear()} ${safeName}. All rights reserved.</div>
-        <div style="margin-top: 4px; font-size: 10.5px; opacity: 0.85;">Crafted with MyFolio Procedural 3D Japanese Countryside Engine</div>
+        <div style="margin-top: 4px; font-size: 10.5px; opacity: 0.85;">Procedural 3D Japanese Countryside Engine</div>
       </footer>
     </div>
     `;

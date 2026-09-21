@@ -264,23 +264,23 @@ class TemplateRegistry {
       font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
     }
 
-    /* Section padding — prevent edges being clipped */
-    section, [class*="section"], [class*="-section"],
-    [class*="wrapper"], [class*="container"], [class*="layout"] {
+    /* Section padding — prevent edges being clipped on main sections */
+    section, .portfolio-section, [class*="section-container"],
+    [class*="page-wrapper"], [class*="content-wrapper"], [class*="main-layout"] {
       padding-left: 16px !important;
       padding-right: 16px !important;
     }
 
-    /* Hero sections — reduce vertical breathing room */
-    [class*="hero"], [id="home"] {
-      padding-top: 64px !important;
-      padding-bottom: 32px !important;
+    /* Hero top-level containers — reduce vertical breathing room without polluting inner elements */
+    section[class*="hero"], [class*="hero-section"], [class*="hero-stage"], [class*="hero-viewport"], [id="home"] {
+      padding-top: 48px !important;
+      padding-bottom: 24px !important;
       min-height: auto !important;
     }
 
     /* Force single-column grids everywhere */
     [style*="grid-template-columns"],
-    [class*="grid"], [class*="bento"], [class*="dual"],
+    [class*="grid"]:not(.glyphs):not(.proj-links), [class*="bento"], [class*="dual"],
     [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
       grid-template-columns: 1fr !important;
     }
@@ -291,12 +291,13 @@ class TemplateRegistry {
       display: none !important;
     }
 
-    /* Buttons — stack and full-width */
+    /* Primary CTA buttons — stack cleanly without breaking controls or tags */
     [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
       flex-direction: column !important;
       gap: 12px !important;
     }
-    [class*="btn"], [class*="cta-btn"], [class*="sprawl-btn"] {
+    [class*="cta-btn"], [class*="sprawl-btn"], [class*="hero-btn"],
+    .primary-generate-btn {
       width: 100% !important;
       justify-content: center !important;
       padding: 12px 20px !important;
