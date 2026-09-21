@@ -413,6 +413,24 @@
       color: var(--mf-accent-cyan, #38bdf8);
     }
 
+    .stepper-item.ready-to-publish {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.16);
+      border-color: rgba(56, 189, 248, 0.5);
+      animation: stepperPulse 2s infinite ease-in-out;
+    }
+
+    .stepper-item.ready-to-publish .stepper-num {
+      background: #38bdf8 !important;
+      color: #050817 !important;
+      font-weight: 700 !important;
+    }
+
+    @keyframes stepperPulse {
+      0%, 100% { box-shadow: 0 0 8px rgba(56, 189, 248, 0.3); }
+      50% { box-shadow: 0 0 18px rgba(56, 189, 248, 0.6); }
+    }
+
     .stepper-num {
       display: inline-flex;
       align-items: center;
@@ -896,6 +914,23 @@
       animation-duration: 2s;
     }
 
+    .fluid-publish-btn.ready-to-publish {
+      border-color: #10b981 !important;
+      background: linear-gradient(135deg, rgba(16,185,129,0.35), rgba(56,189,248,0.35)) !important;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.45) !important;
+      animation: readyPublishGlow 2.5s infinite ease-in-out;
+    }
+
+    .fluid-publish-btn.ready-to-publish .fluid-level {
+      height: 100% !important;
+      background: linear-gradient(180deg, #10b981 0%, #059669 100%) !important;
+    }
+
+    @keyframes readyPublishGlow {
+      0%, 100% { box-shadow: 0 0 14px rgba(16, 185, 129, 0.4); }
+      50% { box-shadow: 0 0 26px rgba(56, 189, 248, 0.7); }
+    }
+
     .fluid-btn-content {
       position: relative;
       z-index: 5;
@@ -1098,7 +1133,7 @@
       <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyGeneratedUrl()">
         <span>Share</span>
       </button>
-      <button type="submit" form="portfolioGenerationForm" class="mf-btn mf-btn-primary mf-btn-sm fluid-publish-btn" id="btnSubmitGenerate">
+      <button type="button" class="mf-btn mf-btn-primary mf-btn-sm fluid-publish-btn" id="btnSubmitGenerate" onclick="handleTopPublishClick()">
         <div class="fluid-wave-container" id="fluidWaveContainer">
           <div class="fluid-level" id="fluidLevel">
             <div class="fluid-wave fluid-wave-back"></div>
@@ -1107,7 +1142,7 @@
         </div>
         <div class="fluid-btn-content" id="fluidBtnContent">
           <span class="fluid-btn-icon" id="fluidBtnIcon">⚡</span>
-          <span class="fluid-btn-text" id="fluidBtnText">Publish / Set Live</span>
+          <span class="fluid-btn-text" id="fluidBtnText">Publish Live</span>
           <span class="fluid-btn-percent" id="fluidBtnPercent" style="display:none;">0%</span>
         </div>
       </button>
@@ -1489,6 +1524,20 @@
 
         <!-- ADVANCED EDITOR VIEW CONTAINER -->
         <div id="viewEditMode" class="advanced-editor-container">
+          <!-- Draft Preview Status & Publish Callout -->
+          <div id="draftPublishBanner" style="display:none; background:linear-gradient(135deg, rgba(37,99,235,0.18), rgba(16,185,129,0.18)); border:1px solid rgba(56,189,248,0.4); border-radius:12px; padding:13px 15px; margin-bottom:12px;">
+            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:5px;">
+              <span style="font-size:11.5px; font-weight:700; color:#38bdf8;">✦ DRAFT PREVIEW READY</span>
+              <span style="font-size:9.5px; background:rgba(234,179,8,0.2); color:#facc15; padding:2px 6px; border-radius:4px; font-weight:700; border:1px solid rgba(234,179,8,0.4);">NOT LIVE YET</span>
+            </div>
+            <p style="font-size:11px; color:var(--mf-text-muted); line-height:1.45; margin-bottom:10px;">
+              Your 3D portfolio preview is loaded on the canvas. Tweak details below, or click <strong>Publish Live</strong> when you're ready to launch to your domain.
+            </p>
+            <button type="button" class="primary-generate-btn" style="background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 4px 14px rgba(16,185,129,0.3); padding:10px 16px; font-size:12px;" onclick="publishDraftPortfolio()">
+              <span>Publish Portfolio Live 🚀</span>
+            </button>
+          </div>
+
           <div class="editor-subtabs">
             <button type="button" class="editor-subtab-btn active" id="subtabBtnContent" onclick="switchEditorSubtab('content')">Content</button>
             <button type="button" class="editor-subtab-btn" id="subtabBtnWorld" onclick="switchEditorSubtab('world')">Visual World</button>
@@ -1760,6 +1809,8 @@
     let uploadedResumeMime = null;
     let uploadedPhotoData = null;
     let uploadedCertificates = [];
+    let currentDraftSiteId = null;
+    let isPortfolioPublished = false;
     const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
     const ALLOWANCE_CONFIG = {
       WEEKLY_TOTAL: 5,
@@ -1986,8 +2037,7 @@
         switchStudioMode('edit');
         updateStepperActive('edit');
       } else if (step === 'publish') {
-        const btn = document.getElementById('btnSubmitGenerate');
-        if (btn) btn.click();
+        publishDraftPortfolio();
       }
     }
 
@@ -2279,6 +2329,8 @@
           preferences: { theme: selectedUniverseKey }
         };
 
+        payload.publish = false; // Always generate preview draft first
+
         const res = await fetch('/api/generate/unified', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -2287,30 +2339,39 @@
         });
 
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Failed to generate');
+        if (!res.ok) throw new Error(data.error || 'Failed to generate preview');
 
-        // Complete fluid fill to 100%
+        // Store draft site ID
+        currentDraftSiteId = data.siteId;
+        isPortfolioPublished = false;
+
+        // Reset progress bar & transition to "Publish Live" state
         clearInterval(progressInterval);
         if (fluidLevel) fluidLevel.style.height = '100%';
-        if (fluidBtnPercent) fluidBtnPercent.textContent = '100%';
-        btn.classList.add('fully-filled');
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
-        if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
+        if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
+        btn.classList.remove('fully-filled');
+        btn.classList.add('ready-to-publish');
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '🚀';
+        if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
 
-        const liveSubdomain = 'https://abdulaziz.myfolio.tech';
-        document.getElementById('generatedUrlText').textContent = liveSubdomain;
-        document.getElementById('btnOpenGeneratedLive').href = liveSubdomain;
-
-        // Point live canvas directly to the generated build on same origin
+        // Point live canvas iframe to the preview route
         const iframe = document.getElementById('studioLiveIframe');
         if (iframe) {
-          iframe.src = '/abdulaziz?embed=1&t=' + Date.now();
+          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : `/abdulaziz?embed=1&preview=1&t=${Date.now()}`;
+          iframe.src = previewSrc;
         }
 
-        if (typeof confetti === 'function') confetti({ particleCount: 120, spread: 80 });
-        showSynthesisModal(liveSubdomain);
+        // Update URL bar to display draft preview status
+        const urlDisplay = document.getElementById('generatedUrlText');
+        if (urlDisplay) {
+          urlDisplay.innerHTML = `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid rgba(234,179,8,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">DRAFT PREVIEW</span> https://abdulaziz.myfolio.tech`;
+        }
 
-        // Advance stepper to EDIT and mark previous steps completed
+        // Show draft banner in the editor pane
+        const draftBanner = document.getElementById('draftPublishBanner');
+        if (draftBanner) draftBanner.style.display = 'block';
+
+        // Stepper: complete CONTENT, WORLD, GENERATE, activate EDIT, set PUBLISH as ready-to-publish
         const sContent = document.getElementById('stepIndicatorContent');
         const sWorld = document.getElementById('stepIndicatorWorld');
         const sGen = document.getElementById('stepIndicatorGenerate');
@@ -2320,19 +2381,118 @@
         if (sWorld) { sWorld.classList.remove('active'); sWorld.classList.add('completed'); }
         if (sGen) { sGen.classList.remove('active'); sGen.classList.add('completed'); }
         if (sEdit) { sEdit.classList.add('active'); }
-        if (sPub) { sPub.classList.add('completed'); }
+        if (sPub) { sPub.classList.remove('completed'); sPub.classList.add('ready-to-publish'); }
 
-        // Transition to advanced editor view so user can refine portfolio
+        showToast('✦ Draft preview generated! Review on canvas, then click "Publish Live" to publish.', 'sparkle');
+
+        // Transition to advanced editor view so user can review and tweak
         switchStudioMode('edit');
         syncFormToEditor();
       } catch (err) {
         clearInterval(progressInterval);
         if (fluidLevel) fluidLevel.style.height = '0%';
         if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
-        if (fluidBtnText) fluidBtnText.textContent = 'Publish / Set Live';
+        if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
         showToast('Generation note: ' + err.message, 'error');
       } finally {
         btn.disabled = false;
+      }
+    }
+
+    async function publishDraftPortfolio() {
+      const btn = document.getElementById('btnSubmitGenerate');
+      const fluidBtnText = document.getElementById('fluidBtnText');
+      const fluidBtnIcon = document.getElementById('fluidBtnIcon');
+
+      // If no draft generated yet, prompt user or trigger preview generation
+      if (!currentDraftSiteId) {
+        showToast('Generating portfolio preview first...', 'info');
+        const form = document.getElementById('portfolioGenerationForm');
+        if (form) form.requestSubmit();
+        return;
+      }
+
+      try {
+        if (btn) btn.disabled = true;
+        if (fluidBtnText) fluidBtnText.textContent = 'Publishing...';
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '⏳';
+        showToast('Publishing to https://abdulaziz.myfolio.tech...', 'info');
+
+        const res = await fetch('/api/portfolio/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            siteId: currentDraftSiteId,
+            handle: 'abdulaziz'
+          })
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Failed to publish live.');
+
+        isPortfolioPublished = true;
+        const liveSubdomain = data.liveUrl || 'https://abdulaziz.myfolio.tech';
+
+        // Stepper: mark Step 5 PUBLISH completed
+        const sPub = document.getElementById('stepIndicatorPublish');
+        if (sPub) {
+          sPub.classList.remove('ready-to-publish');
+          sPub.classList.add('completed');
+        }
+
+        // Update button to Live & Deployed
+        if (btn) {
+          btn.classList.remove('ready-to-publish');
+          btn.classList.add('fully-filled');
+        }
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
+        if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
+
+        // Update URL bar to Live
+        const urlDisplay = document.getElementById('generatedUrlText');
+        if (urlDisplay) {
+          urlDisplay.innerHTML = `<span style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">● LIVE</span> ${liveSubdomain}`;
+        }
+        const openLiveBtn = document.getElementById('btnOpenGeneratedLive');
+        if (openLiveBtn) openLiveBtn.href = liveSubdomain;
+
+        // Update draft banner in edit panel
+        const draftBanner = document.getElementById('draftPublishBanner');
+        if (draftBanner) {
+          draftBanner.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <span style="font-size:12px; font-weight:700; color:#10b981;">✓ PORTFOLIO PUBLISHED LIVE</span>
+              <a href="${liveSubdomain}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#38bdf8; font-weight:700; text-decoration:none;">View Live &nearr;</a>
+            </div>
+            <p style="font-size:11.5px; color:var(--mf-text-muted); margin-top:4px; margin-bottom:0;">
+              Your 3D world is live at <strong>${liveSubdomain}</strong>. Any new changes will be saved as draft until you publish again.
+            </p>
+          `;
+        }
+
+        // Celebrate!
+        if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 85 });
+        showSynthesisModal(liveSubdomain);
+        showToast('🚀 Successfully published live to ' + liveSubdomain + '!', 'success');
+
+      } catch (err) {
+        if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '🚀';
+        showToast('Publish error: ' + err.message, 'error');
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    }
+
+    function handleTopPublishClick() {
+      if (currentDraftSiteId && !isPortfolioPublished) {
+        publishDraftPortfolio();
+      } else if (isPortfolioPublished) {
+        window.open('https://abdulaziz.myfolio.tech', '_blank');
+      } else {
+        const form = document.getElementById('portfolioGenerationForm');
+        if (form) form.requestSubmit();
       }
     }
 

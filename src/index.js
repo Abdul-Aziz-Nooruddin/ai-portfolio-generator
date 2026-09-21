@@ -1469,6 +1469,8 @@ app.post(
         fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
       ]);
 
+      const shouldPublishLive = req.body.publish === true;
+
       // Persist complete portfolio metadata for cross-device synchronization
       const metaPayload = {
         siteId,
@@ -1480,7 +1482,9 @@ app.post(
         projectsCount: normalized.projects?.length || 6,
         timestamp: Date.now(),
         userId: req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null),
-        userEmail: candidateEmail
+        userEmail: candidateEmail,
+        isPublished: shouldPublishLive,
+        publishedAt: shouldPublishLive ? Date.now() : null
       };
       try {
         await fs.promises.writeFile(path.join(siteDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
@@ -1495,7 +1499,7 @@ app.post(
             provider_site_id: siteId,
             custom_domain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
             user_id: effectiveOwnerId,
-            status: 'active',
+            status: shouldPublishLive ? 'active' : 'draft',
             updated_at: new Date().toISOString()
           });
         } catch (e) {}
@@ -1505,7 +1509,8 @@ app.post(
       const customLocalDomain = `${userHandle}.localhost`;
       const liveSubdomainUrl = `https://${customSubdomain}`;
 
-      if (isVipFounder) {
+      // Only publish to live domains if explicitly requested
+      if (shouldPublishLive && isVipFounder) {
         // 1. Move vanity URL files for /abdulaziz, /aziz, and /<userHandle> to the newly generated site
         const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', userHandle]));
         for (const h of handlesToSync) {
@@ -1584,7 +1589,8 @@ app.post(
         source: 'unified',
         vibeScore: vibeAudit.score,
         isVip: isVipFounder,
-        isFastTrack: isOverloadFastTrack
+        isFastTrack: isOverloadFastTrack,
+        isPublished: shouldPublishLive
       });
 
       res.json({
@@ -1593,11 +1599,13 @@ app.post(
         activeSiteId: siteId,
         handle: userHandle,
         previewUrl: `/p/${siteId}`,
-        siteUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
-        liveUrl: isVipFounder ? liveSubdomainUrl : `/p/${siteId}`,
+        siteUrl: `/p/${siteId}`,
+        liveUrl: liveSubdomainUrl,
         subdomain: isVipFounder ? customSubdomain : null,
         customDomain: isVipFounder ? customSubdomain : null,
         isVip: isVipFounder,
+        isPublished: shouldPublishLive,
+        isDraft: !shouldPublishLive,
         profileData: normalized,
         vibeAudit,
         designBlueprint: siteResult.designBlueprint
@@ -1610,6 +1618,144 @@ app.post(
     }
   }
 );
+
+// Dedicated Publish Endpoint: Promotes a generated preview draft to live production
+app.post('/api/portfolio/publish', async (req, res) => {
+  try {
+    const { siteId, handle } = req.body;
+    if (!siteId) {
+      return res.status(400).json({ error: 'siteId is required to publish.' });
+    }
+
+    const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+    if (!securityService.isPathSafe(sitesBaseDir, siteId)) {
+      return res.status(400).json({ error: 'Invalid siteId identifier.' });
+    }
+
+    const draftDir = path.join(sitesBaseDir, siteId);
+    if (!fs.existsSync(draftDir)) {
+      return res.status(404).json({ error: `Draft site "${siteId}" not found.` });
+    }
+
+    // Read draft metadata and profile
+    let meta = {};
+    let profile = {};
+    try {
+      meta = JSON.parse(fs.readFileSync(path.join(draftDir, 'meta.json'), 'utf8'));
+    } catch (e) {}
+    try {
+      profile = JSON.parse(fs.readFileSync(path.join(draftDir, 'profile.json'), 'utf8'));
+    } catch (e) {}
+
+    let siteHtml = '';
+    try {
+      siteHtml = fs.readFileSync(path.join(draftDir, 'index.html'), 'utf8');
+    } catch (e) {
+      return res.status(500).json({ error: 'Draft index.html is missing.' });
+    }
+
+    const effectiveHandle = (handle || meta.handle || 'abdulaziz').toLowerCase().trim();
+    const effectiveUserId = req.user?.id || meta.userId || 'abdulaziz_founder';
+    const isVipFounder = effectiveHandle === 'abdulaziz' || effectiveHandle === 'aziz' || effectiveUserId === 'abdulaziz_founder';
+    const universeKey = meta.universeKey || 'threeui-landscape';
+
+    // Promote to published targets: /abdulaziz, /aziz, /<handle>
+    const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', effectiveHandle]));
+    for (const h of handlesToSync) {
+      const hDir = path.join(sitesBaseDir, h);
+      await fs.promises.mkdir(hDir, { recursive: true });
+      await fs.promises.writeFile(path.join(hDir, 'index.html'), siteHtml, 'utf8');
+      if (Object.keys(profile).length > 0) {
+        await fs.promises.writeFile(path.join(hDir, 'profile.json'), JSON.stringify(profile, null, 2), 'utf8');
+      }
+      if (fs.existsSync(path.join(draftDir, 'avatar.png'))) {
+        try { await fs.promises.copyFile(path.join(draftDir, 'avatar.png'), path.join(hDir, 'avatar.png')); } catch (e) {}
+      }
+      const certsDir = path.join(draftDir, 'certificates');
+      const hCertsDir = path.join(hDir, 'certificates');
+      if (fs.existsSync(certsDir)) {
+        try {
+          await fs.promises.mkdir(hCertsDir, { recursive: true });
+          await fs.promises.cp(certsDir, hCertsDir, { recursive: true });
+        } catch (e) {}
+      }
+    }
+
+    // Deploy to hosting provider
+    await hostingProvider.deploy('abdulaziz', siteHtml, profile, true).catch(() => {});
+    if (effectiveHandle !== 'abdulaziz') {
+      await hostingProvider.deploy(effectiveHandle, siteHtml, profile, true).catch(() => {});
+    }
+
+    // Update custom domain service
+    if (customDomainService) {
+      const targetDomains = [
+        'abdulaziz.myfolio.tech',
+        'aziz.myfolio.tech',
+        'abdulaziz.localhost',
+        'aziz.localhost'
+      ];
+      if (effectiveHandle !== 'abdulaziz') {
+        targetDomains.push(`${effectiveHandle}.myfolio.tech`, `${effectiveHandle}.localhost`);
+      }
+      for (const d of targetDomains) {
+        customDomainService.domainCache[d] = {
+          domain: d,
+          handle: 'abdulaziz',
+          siteId: siteId,
+          universeKey: universeKey,
+          userId: effectiveUserId,
+          type: 'subdomain',
+          status: 'active',
+          updatedAt: new Date().toISOString()
+        };
+      }
+      customDomainService.saveCache();
+    }
+
+    // Update meta.json to mark as published
+    meta.isPublished = true;
+    meta.publishedAt = Date.now();
+    try {
+      await fs.promises.writeFile(path.join(draftDir, 'meta.json'), JSON.stringify(meta, null, 2), 'utf8');
+      await fs.promises.writeFile(path.join(sitesBaseDir, 'abdulaziz', 'meta.json'), JSON.stringify(meta, null, 2), 'utf8');
+    } catch (e) {}
+
+    // Update DB
+    if (dbService?.client) {
+      try {
+        await dbService.client.from('sites').upsert({
+          provider_site_id: siteId,
+          custom_domain: `${effectiveHandle}.myfolio.tech`,
+          user_id: effectiveUserId,
+          status: 'active',
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {}
+    }
+
+    // Record Telemetry
+    productTelemetry.recordEvent(EVENT_TYPES.GENERATION_COMPLETED, null, {
+      siteId,
+      source: 'publish',
+      isPublished: true,
+      handle: effectiveHandle
+    });
+
+    return res.json({
+      success: true,
+      published: true,
+      siteId,
+      handle: effectiveHandle,
+      liveUrl: `https://${effectiveHandle}.myfolio.tech`,
+      customDomain: `${effectiveHandle}.myfolio.tech`,
+      message: `Portfolio successfully published live to https://${effectiveHandle}.myfolio.tech!`
+    });
+  } catch (pubErr) {
+    console.error('[API] /api/portfolio/publish error:', pubErr);
+    return res.status(500).json({ error: pubErr.message || 'Failed to publish portfolio live.' });
+  }
+});
 
 /// Studio & Design Engine API Endpoints
 app.get('/api/design-resources', (req, res) => {
