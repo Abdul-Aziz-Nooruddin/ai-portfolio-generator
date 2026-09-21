@@ -135,55 +135,72 @@
           this.sunLight.intensity = 3.2;
           this.rimLight.color.setHex(0x93c5fd);
           this.scene.fog.density = 0.0034;
+          this.corePulseLight.intensity = 0.5;
           break;
-        case 1: // Intake Plaza: High-contrast outdoor architectural lighting
-          this.ambientLight.color.setHex(0x16243d);
-          this.ambientLight.intensity = 1.7;
-          this.sunLight.intensity = 3.0;
-          this.scene.fog.density = 0.0038;
-          break;
-        case 2: // Atrium Entrance: Soft architectural interior daylight
-          this.ambientLight.color.setHex(0x182640);
+        case 1: // Telemetry Workspace: Warm interior developer task lighting & dual monitor radiance
+          this.ambientLight.color.setHex(0x162238);
           this.ambientLight.intensity = 1.8;
-          this.sunLight.intensity = 2.6;
-          this.corePulseLight.intensity = 1.8;
+          this.sunLight.intensity = 2.4;
+          this.corePulseLight.position.set(0, 3.5, 42);
+          this.corePulseLight.color.setHex(0x38bdf8);
+          this.corePulseLight.intensity = 2.6;
           this.scene.fog.density = 0.0035;
           break;
-        case 3: // Synthesis Studio: High-performance computing lab lighting
-          this.ambientLight.color.setHex(0x121b2d);
-          this.sunLight.color.setHex(0xf5a623);
-          this.sunLight.intensity = 2.4;
-          this.corePulseLight.intensity = 2.6;
+        case 2: // Data Operations Room: Cool infrastructure lighting & central processing machine
+          this.ambientLight.color.setHex(0x101a2e);
+          this.ambientLight.intensity = 1.7;
+          this.sunLight.intensity = 2.0;
+          this.corePulseLight.position.set(0, 3.0, 18);
+          this.corePulseLight.color.setHex(0x10b981);
+          this.corePulseLight.intensity = 3.0;
+          this.scene.fog.density = 0.0036;
+          break;
+        case 3: // AI Research Lab: High-density GPU compute racks & progress readout
+          this.ambientLight.color.setHex(0x0f182c);
+          this.ambientLight.intensity = 1.6;
+          this.sunLight.color.setHex(0x38bdf8);
+          this.sunLight.intensity = 2.2;
+          this.corePulseLight.position.set(0, 3.0, -8);
+          this.corePulseLight.color.setHex(0x38bdf8);
+          this.corePulseLight.intensity = 3.2;
           this.scene.fog.density = 0.0032;
           break;
-        case 4: // Living Pavilion: Rich daylight through biophilic glass skylights
+        case 4: // Living World Hub: Rich natural daylight through floor-to-ceiling glass
           this.ambientLight.color.setHex(0x1a2e42);
           this.ambientLight.intensity = 2.0;
           this.sunLight.color.setHex(0xfffaed);
           this.sunLight.intensity = 3.0;
+          this.corePulseLight.position.set(0, 3.0, -32);
+          this.corePulseLight.intensity = 1.8;
           this.scene.fog.density = 0.0028;
           break;
         case 5: // Project Workstations: Intimate developer lab task lighting & monitor radiance
           this.ambientLight.color.setHex(0x101726);
           this.ambientLight.intensity = 1.6;
-          this.sunLight.intensity = 2.2;
+          this.sunLight.intensity = 2.0;
+          this.corePulseLight.position.set(0, 3.0, -56);
+          this.corePulseLight.color.setHex(0x38bdf8);
           this.corePulseLight.intensity = 3.0;
           this.rimLight.color.setHex(0x38bdf8);
           this.scene.fog.density = 0.0032;
           break;
-        case 6: // Skills & Data Center: Cool industrial server room ambient with green/cyan LED glow
+        case 6: // Hyperscale Data Center: Cool server aisle ambient with green/amber LED glow
           this.ambientLight.color.setHex(0x0a1424);
           this.ambientLight.intensity = 1.4;
           this.sunLight.color.setHex(0x10b981);
-          this.sunLight.intensity = 2.0;
-          this.corePulseLight.intensity = 2.8;
+          this.sunLight.intensity = 1.8;
+          this.corePulseLight.position.set(0, 3.0, -84);
+          this.corePulseLight.color.setHex(0x10b981);
+          this.corePulseLight.intensity = 3.0;
           this.scene.fog.density = 0.0040;
           break;
-        case 7: // Experience Skybridge: Suspended corridor with panoramic outside lighting
+        case 7: // Suspended Skybridge: Outdoor alpine lighting on glass balustrades
           this.ambientLight.color.setHex(0x16223a);
           this.ambientLight.intensity = 1.8;
           this.sunLight.color.setHex(0xfef3c7);
           this.sunLight.intensity = 2.8;
+          this.corePulseLight.position.set(0, 3.0, -114);
+          this.corePulseLight.intensity = 1.5;
           this.scene.fog.density = 0.0035;
           break;
         case 8: // Universes Gallery: Architectural exhibition downlights
@@ -191,6 +208,9 @@
           this.ambientLight.intensity = 1.7;
           this.rimLight.color.setHex(0xa855f7);
           this.sunLight.intensity = 2.4;
+          this.corePulseLight.position.set(0, 4.0, -150);
+          this.corePulseLight.color.setHex(0xa855f7);
+          this.corePulseLight.intensity = 2.8;
           this.scene.fog.density = 0.0030;
           break;
         case 9: // Summit Observatory: Twilight panoramic horizon with warm solar beacon
@@ -198,6 +218,8 @@
           this.ambientLight.intensity = 2.1;
           this.sunLight.color.setHex(0xf5a623);
           this.sunLight.intensity = 3.4;
+          this.corePulseLight.position.set(0, 15, -186);
+          this.corePulseLight.color.setHex(0xf5a623);
           this.corePulseLight.intensity = 3.5;
           this.scene.fog.density = 0.0025;
           break;
