@@ -472,13 +472,13 @@
                 <span id="lifecycleBadge" class="mf-badge mf-badge-vip">👑 VIP ACTIVE</span>
                 <span>Active Edge Domain</span>
               </div>
-              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
-                https://abdulaziz.myfolio.tech
+              <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
+                https://www.myfolio.tech/abdulaziz
               </a>
             </div>
 
             <div class="hero-actions-dock">
-              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
+              <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
                 <span>Open Portfolio</span> &nearr;
               </a>
               <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
@@ -667,10 +667,9 @@
       const user = data.user || currentUser || {};
       const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
-      const handle = isVip ? 'abdulaziz' : (user.username || 'abdulaziz').toLowerCase().trim();
-      const subdomain = `${handle}.myfolio.tech`;
+      const origin = window.location.origin;
+      currentSiteUrl = `${origin}/${handle}`;
 
-      currentSiteUrl = `https://${subdomain}`;
       document.getElementById('portfolioUrlText').textContent = currentSiteUrl;
       document.getElementById('portfolioUrlText').href = currentSiteUrl;
       document.getElementById('btnOpenLive').href = currentSiteUrl;
