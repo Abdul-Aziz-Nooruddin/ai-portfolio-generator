@@ -4,7 +4,9 @@
  * - 3D terrain with interactive drag orbit & zoom
  * - Live time-of-day progression (Morning, Noon, Sunset, Night)
  * - Real-time weather controls (Clear, Rain, Storm, Snow)
- * - Universal fixed frosted glass HUD navbar (100% zoom-independent)
+ * - Universal fixed frosted glass HUD navbar (100% zoom-independent & mobile-docked)
+ * - Mobile Quick-Navigation Strip with instant jump-pills
+ * - Dense, ultra-convenient mobile ergonomics (zero wasted empty space)
  * - Complete executive sections: Hero, About, Case Studies, Skills Matrix, Experience Timeline, Academics, Contact
  * - Dynamic Day/Night WCAG 2.2 AAA contrast engine (zero invisible text in any theme/weather)
  */
@@ -260,7 +262,7 @@ const ThreeUILandscapeTemplate = {
     // Replace Title
     html = html.replace(/<title>.*?<\/title>/i, `<title>${safeName} — 3D Landscape &amp; Weather Portfolio</title>`);
 
-    // Replace existing <header>...</header> with our executive zoom-independent navbar
+    // Replace existing <header>...</header> with our executive zoom-independent navbar and mobile subnav
     const executiveHeader = `
   <header id="portfolio-masthead-navbar">
     <div class="brand-left">
@@ -283,7 +285,17 @@ const ThreeUILandscapeTemplate = {
       <button class="tbtn" id="soundBtn" aria-label="SOUND: ON"><b>SOUND</b><span>ON</span></button>
       <button class="tbtn" id="rebuildBtn">↻ REBUILD</button>
     </div>
-  </header>`;
+  </header>
+  <nav id="mobile-quick-nav">
+    <div class="mobile-nav-scroll">
+      <a href="#about" class="mnav-pill">✦ About</a>
+      <a href="#projects" class="mnav-pill">⚡ Projects (6)</a>
+      <a href="#skills" class="mnav-pill">🛠️ Skills</a>
+      <a href="#experience" class="mnav-pill">📜 Track</a>
+      <a href="#education" class="mnav-pill">🎓 Academics</a>
+      <a href="#contact" class="mnav-pill">📫 Contact</a>
+    </div>
+  </nav>`;
 
     html = html.replace(/<header>[\s\S]*?<\/header>/i, executiveHeader);
 
@@ -341,8 +353,8 @@ const ThreeUILandscapeTemplate = {
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 60px !important;
-        padding: 0 28px !important;
+        height: 56px !important;
+        padding: 0 24px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
@@ -358,7 +370,7 @@ const ThreeUILandscapeTemplate = {
       .brand-left {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 10px;
         min-width: 0;
       }
       .brand-name {
@@ -381,12 +393,12 @@ const ThreeUILandscapeTemplate = {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 280px;
+        max-width: 260px;
       }
       .header-nav-links {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 18px;
       }
       .nav-anchor {
         font-size: 11px;
@@ -400,11 +412,21 @@ const ThreeUILandscapeTemplate = {
       .nav-anchor:hover {
         color: var(--accent, #a8621f);
       }
+      
+      /* Force .top-right to stay inside the top navbar at all times! */
       .top-right {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin-left: auto;
+        position: static !important;
+        bottom: auto !important;
+        left: auto !important;
+        right: auto !important;
+        margin: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+        overflow: visible !important;
       }
       .tbtn {
         font-size: 10px !important;
@@ -430,6 +452,54 @@ const ThreeUILandscapeTemplate = {
         color: var(--accent, #a8621f) !important;
       }
 
+      /* Mobile Quick Nav Strip */
+      #mobile-quick-nav {
+        display: none;
+        position: fixed;
+        top: 54px;
+        left: 0;
+        right: 0;
+        height: 42px;
+        z-index: 99998;
+        background: rgba(253, 248, 238, 0.94);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(168, 98, 31, 0.16);
+        align-items: center;
+        padding: 0 10px;
+        pointer-events: auto !important;
+      }
+      .mobile-nav-scroll {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+      }
+      .mobile-nav-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .mnav-pill {
+        flex: 0 0 auto;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--ink, #2e2515);
+        background: rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(168, 98, 31, 0.22);
+        padding: 4px 11px;
+        border-radius: 999px;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.18s ease;
+      }
+      .mnav-pill:hover, .mnav-pill:active {
+        background: var(--accent, #a8621f);
+        color: #fff;
+        border-color: var(--accent, #a8621f);
+      }
+
       /* ==========================================================================
          PORTFOLIO SCROLLABLE CONTENT HUD
          ========================================================================== */
@@ -439,10 +509,10 @@ const ThreeUILandscapeTemplate = {
         pointer-events: none;
         max-width: 1140px;
         margin: 0 auto;
-        padding: 100px 24px 120px;
+        padding: 95px 24px 120px;
         display: flex;
         flex-direction: column;
-        gap: 56px;
+        gap: 48px;
         font-family: var(--sans);
       }
       .portfolio-interactive {
@@ -456,7 +526,7 @@ const ThreeUILandscapeTemplate = {
         -webkit-backdrop-filter: blur(28px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.92);
         border-radius: 24px;
-        padding: 38px;
+        padding: 34px;
         color: var(--ink, #2e2515);
         box-shadow: 0 20px 48px -10px rgba(46, 37, 21, 0.12), 0 2px 10px rgba(168, 98, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
         transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
@@ -470,16 +540,16 @@ const ThreeUILandscapeTemplate = {
       .landscape-hero-identity {
         display: flex;
         align-items: center;
-        gap: 32px;
-        margin-bottom: 24px;
+        gap: 28px;
+        margin-bottom: 20px;
       }
       .landscape-hero-avatar-wrap {
         position: relative;
-        width: 108px;
-        height: 108px;
-        min-width: 108px;
-        border-radius: 50%;
-        padding: 4px;
+        width: 96px;
+        height: 96px;
+        min-width: 96px;
+        border-radius: 24px;
+        padding: 3px;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(168, 98, 31, 0.4));
         box-shadow: 0 12px 32px rgba(46, 37, 21, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.85);
         display: flex;
@@ -494,7 +564,7 @@ const ThreeUILandscapeTemplate = {
       .landscape-hero-avatar-img {
         width: 100%;
         height: 100%;
-        border-radius: 50%;
+        border-radius: 20px;
         object-fit: cover;
         display: block;
         border: 2px solid rgba(255, 252, 246, 0.95);
@@ -503,7 +573,7 @@ const ThreeUILandscapeTemplate = {
         background: linear-gradient(135deg, #a8621f, #2e2515);
         color: #fdf1d6;
         font-family: var(--mincho);
-        font-size: 34px;
+        font-size: 32px;
         font-weight: 700;
         letter-spacing: 1px;
         text-shadow: 0 2px 8px rgba(0,0,0,0.25);
@@ -518,46 +588,46 @@ const ThreeUILandscapeTemplate = {
         letter-spacing: 1.8px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         display: inline-flex;
         align-items: center;
         gap: 6px;
       }
       .hero-masthead {
         font-family: var(--mincho);
-        font-size: clamp(28px, 5vw, 56px);
+        font-size: clamp(26px, 4.5vw, 50px);
         font-weight: 700;
         line-height: 1.1;
         letter-spacing: -0.5px;
         color: var(--ink, #2e2515);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
       }
       .hero-role {
-        font-size: clamp(14px, 2vw, 18px);
+        font-size: clamp(13px, 1.8vw, 16.5px);
         font-weight: 600;
         color: var(--accent, #a8621f);
-        margin-bottom: 14px;
+        margin-bottom: 10px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
       }
       .hero-tagline {
-        font-size: 14.5px;
+        font-size: 14px;
         font-weight: 600;
         color: var(--ink2, #8b7c5c);
-        margin-bottom: 12px;
-        line-height: 1.5;
+        margin-bottom: 10px;
+        line-height: 1.45;
       }
       .hero-bio {
-        font-size: clamp(14.5px, 1.6vw, 16px);
-        line-height: 1.65;
+        font-size: clamp(14px, 1.5vw, 15.5px);
+        line-height: 1.6;
         color: var(--ink3, #3f3520);
         max-width: 860px;
-        margin-bottom: 24px;
+        margin-bottom: 20px;
       }
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
         align-items: center;
       }
 
@@ -589,7 +659,7 @@ const ThreeUILandscapeTemplate = {
         letter-spacing: 2px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -602,30 +672,25 @@ const ThreeUILandscapeTemplate = {
       }
 
       /* About Bento Card */
-      .about-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 20px;
-      }
       .about-desc {
-        font-size: 15.5px;
+        font-size: 15px;
         line-height: 1.7;
         color: var(--ink3, #3f3520);
       }
       .pillars-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 16px;
+        gap: 14px;
         margin-top: 14px;
       }
       .pillar-box {
-        padding: 18px;
+        padding: 16px;
         border-radius: 16px;
         background: rgba(255, 255, 255, 0.6);
         border: 1px solid rgba(168, 98, 31, 0.2);
       }
       .pillar-title {
-        font-size: 12.5px;
+        font-size: 12px;
         font-weight: 700;
         letter-spacing: 1px;
         color: var(--accent, #a8621f);
@@ -633,7 +698,7 @@ const ThreeUILandscapeTemplate = {
         text-transform: uppercase;
       }
       .pillar-text {
-        font-size: 13px;
+        font-size: 12.5px;
         line-height: 1.55;
         color: var(--ink3, #3f3520);
       }
@@ -642,7 +707,7 @@ const ThreeUILandscapeTemplate = {
       .projects-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 22px;
+        gap: 20px;
       }
       .landscape-project-card {
         background: rgba(255, 253, 249, 0.90);
@@ -650,11 +715,11 @@ const ThreeUILandscapeTemplate = {
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(168, 98, 31, 0.22);
         border-radius: 20px;
-        padding: 28px;
+        padding: 26px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        gap: 16px;
+        gap: 14px;
         box-shadow: 0 10px 30px rgba(46, 37, 21, 0.08);
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
       }
@@ -667,7 +732,7 @@ const ThreeUILandscapeTemplate = {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 10.5px;
+        font-size: 10px;
         font-weight: 700;
         letter-spacing: 1.2px;
         color: var(--ink2, #8b7c5c);
@@ -677,14 +742,14 @@ const ThreeUILandscapeTemplate = {
       }
       .proj-title {
         font-family: var(--mincho);
-        font-size: 22px;
+        font-size: 21px;
         font-weight: 700;
         color: var(--ink, #2e2515);
         line-height: 1.25;
       }
       .proj-desc {
-        font-size: 13.5px;
-        line-height: 1.58;
+        font-size: 13px;
+        line-height: 1.55;
         color: var(--ink3, #3f3520);
         flex-grow: 1;
       }
@@ -695,8 +760,8 @@ const ThreeUILandscapeTemplate = {
         margin-top: 4px;
       }
       .proj-tag {
-        font-size: 11px;
-        padding: 4px 10px;
+        font-size: 10.5px;
+        padding: 3px 9px;
         background: rgba(168, 98, 31, 0.08);
         color: var(--accent, #a8621f);
         border: 1px solid rgba(168, 98, 31, 0.18);
@@ -706,15 +771,15 @@ const ThreeUILandscapeTemplate = {
       .proj-links {
         display: flex;
         gap: 10px;
-        margin-top: 10px;
-        padding-top: 14px;
+        margin-top: 8px;
+        padding-top: 12px;
         border-top: 1px solid rgba(168, 98, 31, 0.18);
       }
       .proj-btn {
         font-size: 12px;
         font-weight: 700;
         text-decoration: none;
-        padding: 9px 18px;
+        padding: 8px 16px;
         border-radius: 10px;
         transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
         display: inline-flex;
@@ -746,12 +811,12 @@ const ThreeUILandscapeTemplate = {
       .skills-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
       }
       .landscape-skill-chip {
-        font-size: 13px;
+        font-size: 12.5px;
         font-weight: 600;
-        padding: 8px 18px;
+        padding: 7px 16px;
         background: rgba(255, 253, 249, 0.90);
         border: 1px solid rgba(168, 98, 31, 0.25);
         border-radius: 12px;
@@ -769,18 +834,18 @@ const ThreeUILandscapeTemplate = {
       .timeline-track {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: 20px;
         position: relative;
-        padding-left: 20px;
+        padding-left: 18px;
         border-left: 2px solid rgba(168, 98, 31, 0.3);
-        margin-left: 8px;
+        margin-left: 6px;
       }
       .timeline-item {
         position: relative;
       }
       .timeline-dot {
         position: absolute;
-        left: -27px;
+        left: -25px;
         top: 4px;
         width: 12px;
         height: 12px;
@@ -797,40 +862,40 @@ const ThreeUILandscapeTemplate = {
       }
       .timeline-role {
         font-family: var(--mincho);
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 700;
         color: var(--ink, #2e2515);
       }
       .timeline-period {
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 700;
         letter-spacing: 1px;
-        padding: 4px 10px;
+        padding: 3px 9px;
         border-radius: 999px;
         background: rgba(168, 98, 31, 0.12);
         color: var(--accent, #a8621f);
       }
       .timeline-company {
-        font-size: 13.5px;
+        font-size: 13px;
         font-weight: 600;
         color: var(--ink2, #8b7c5c);
-        margin-top: 4px;
-        margin-bottom: 8px;
+        margin-top: 3px;
+        margin-bottom: 6px;
       }
       .timeline-desc {
-        font-size: 13.5px;
-        line-height: 1.6;
+        font-size: 13px;
+        line-height: 1.55;
         color: var(--ink3, #3f3520);
       }
 
       /* Academics & Certifications */
       .academics-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 16px;
       }
       .edu-card, .cert-card {
-        padding: 22px;
+        padding: 20px;
         border-radius: 18px;
         background: rgba(255, 255, 255, 0.65);
         border: 1px solid rgba(168, 98, 31, 0.2);
@@ -839,17 +904,17 @@ const ThreeUILandscapeTemplate = {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        gap: 12px;
+        gap: 10px;
         margin-bottom: 6px;
       }
       .edu-degree {
         font-family: var(--mincho);
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         color: var(--ink, #2e2515);
       }
       .edu-year {
-        font-size: 10.5px;
+        font-size: 10px;
         font-weight: 700;
         padding: 3px 8px;
         border-radius: 999px;
@@ -858,26 +923,26 @@ const ThreeUILandscapeTemplate = {
         white-space: nowrap;
       }
       .edu-institution {
-        font-size: 13px;
+        font-size: 12.5px;
         font-weight: 600;
         color: var(--ink2, #8b7c5c);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
       .edu-desc {
-        font-size: 12.5px;
-        line-height: 1.55;
+        font-size: 12px;
+        line-height: 1.5;
         color: var(--ink3, #3f3520);
       }
       .cert-status {
-        font-size: 10px;
+        font-size: 9.5px;
         font-weight: 700;
         letter-spacing: 1.2px;
         color: var(--accent, #a8621f);
-        margin-bottom: 6px;
+        margin-bottom: 4px;
       }
       .cert-name {
         font-family: var(--mincho);
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         color: var(--ink, #2e2515);
         margin-bottom: 6px;
@@ -885,18 +950,15 @@ const ThreeUILandscapeTemplate = {
       .cert-meta {
         display: flex;
         justify-content: space-between;
-        font-size: 12px;
+        font-size: 11.5px;
         color: var(--ink2, #8b7c5c);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
       .cert-link {
-        font-size: 12px;
+        font-size: 11.5px;
         font-weight: 700;
         color: var(--accent, #a8621f);
         text-decoration: none;
-      }
-      .cert-link:hover {
-        text-decoration: underline;
       }
 
       /* Transmission / Contact */
@@ -905,11 +967,11 @@ const ThreeUILandscapeTemplate = {
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: center;
-        gap: 24px;
+        gap: 20px;
       }
       .contact-info-title {
         font-family: var(--mincho);
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 700;
         margin-bottom: 6px;
         color: var(--ink, #2e2515);
@@ -917,26 +979,32 @@ const ThreeUILandscapeTemplate = {
       .contact-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 10px;
       }
 
       /* ==========================================================================
          NIGHT THEME ADAPTATION (Strict WCAG 2.2 AAA Contrast Engine)
          ========================================================================== */
       [data-time="night"] header,
-      [data-time="night"] #portfolio-masthead-navbar {
-        background: rgba(14, 16, 22, 0.94) !important;
+      [data-time="night"] #portfolio-masthead-navbar,
+      [data-time="night"] #mobile-quick-nav {
+        background: rgba(14, 16, 22, 0.95) !important;
         border-bottom: 1px solid rgba(208, 138, 74, 0.25) !important;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
       }
       [data-time="night"] .brand-name {
         color: #fdf8e8 !important;
       }
-      [data-time="night"] .nav-anchor {
+      [data-time="night"] .nav-anchor,
+      [data-time="night"] .mnav-pill {
         color: #cdc6b6 !important;
+        background: rgba(27, 32, 41, 0.75) !important;
+        border-color: rgba(208, 138, 74, 0.3) !important;
       }
-      [data-time="night"] .nav-anchor:hover {
-        color: #d08a4a !important;
+      [data-time="night"] .nav-anchor:hover,
+      [data-time="night"] .mnav-pill:hover {
+        color: #fff !important;
+        background: #d08a4a !important;
       }
       [data-time="night"] .tbtn {
         background: rgba(27, 32, 41, 0.85) !important;
@@ -998,80 +1066,206 @@ const ThreeUILandscapeTemplate = {
       }
 
       /* ==========================================================================
-         MOBILE RESPONSIVE ENGINE (Strict High-End Executive Standard)
+         MOBILE RESPONSIVE ENGINE (Strict High-Density & Ergonomic Standard)
          ========================================================================== */
       @media (max-width: 900px) {
         .header-nav-links, .brand-role-badge, .brand-sep {
           display: none !important;
         }
+        #mobile-quick-nav {
+          display: flex !important;
+        }
       }
 
       @media (max-width: 768px), (max-height: 460px) {
         header, #portfolio-masthead-navbar {
-          height: 54px !important;
-          padding: 0 14px !important;
+          height: 52px !important;
+          padding: 0 12px !important;
         }
         .brand-name {
-          font-size: 13.5px !important;
+          font-size: 13px !important;
+          letter-spacing: 0.3px !important;
         }
         .top-right {
-          gap: 5px !important;
+          gap: 4px !important;
         }
         .tbtn {
           font-size: 9px !important;
-          padding: 4px 8px !important;
+          padding: 4px 7px !important;
+          background: rgba(255, 255, 255, 0.9) !important;
+          border-color: rgba(168, 98, 31, 0.28) !important;
         }
+        .tbtn b {
+          display: none !important; /* Hide "WEATHER /" prefix to fit cleanly on narrow screens */
+        }
+        .tbtn#rebuildBtn {
+          display: none !important;
+        }
+
+        /* Mobile Container Clearance & Zero Wasted Space */
         .landscape-portfolio-scroll {
-          padding: 80px 14px 60px !important;
-          gap: 28px !important;
+          padding: 104px 12px 60px !important;
+          gap: 16px !important; /* Compact gap between bento sections */
+        }
+        .landscape-3d-hint {
+          display: none !important; /* Save 36px vertical space */
         }
         .landscape-glass-card {
-          padding: 24px 18px !important;
-          border-radius: 20px !important;
+          padding: 16px 14px !important; /* Tight, elegant padding */
+          border-radius: 18px !important;
         }
+        .section-heading {
+          font-size: 11px !important;
+          margin-bottom: 12px !important;
+        }
+
+        /* Dense, Executive Hero Layout on Mobile (Horizontal Header) */
         .landscape-hero-identity {
-          flex-direction: column !important;
+          flex-direction: row !important;
           align-items: center !important;
-          text-align: center !important;
-          gap: 16px !important;
-          margin-bottom: 16px !important;
+          text-align: left !important;
+          gap: 12px !important;
+          margin-bottom: 8px !important;
         }
         .landscape-hero-avatar-wrap {
-          width: 88px !important;
-          height: 88px !important;
-          min-width: 88px !important;
-          margin: 0 auto !important;
+          width: 52px !important;
+          height: 52px !important;
+          min-width: 52px !important;
+          border-radius: 14px !important;
+          margin: 0 !important;
+          padding: 2px !important;
+        }
+        .landscape-hero-initials {
+          font-size: 18px !important;
+          border-radius: 12px !important;
+        }
+        .landscape-hero-text-col {
+          text-align: left !important;
+        }
+        .hero-eyebrow {
+          font-size: 9px !important;
+          letter-spacing: 1px !important;
+          margin-bottom: 2px !important;
+          justify-content: flex-start !important;
         }
         .hero-masthead {
-          font-size: clamp(24px, 7vw, 32px) !important;
-          text-align: center !important;
+          font-size: 20px !important;
+          line-height: 1.15 !important;
+          margin-bottom: 2px !important;
+          text-align: left !important;
         }
-        .hero-role, .hero-tagline, .hero-bio {
-          text-align: center !important;
+        .hero-role {
+          font-size: 11.5px !important;
+          margin-bottom: 0 !important;
+          text-align: left !important;
+        }
+        .hero-tagline {
+          font-size: 11.5px !important;
+          line-height: 1.4 !important;
+          margin-top: 8px !important;
+          margin-bottom: 6px !important;
+          text-align: left !important;
+        }
+        .hero-bio {
+          font-size: 12px !important;
+          line-height: 1.5 !important;
+          margin-bottom: 12px !important;
+          text-align: left !important;
         }
         .hero-actions {
-          flex-direction: column !important;
+          display: grid !important;
+          grid-template-columns: 1fr 1fr !important;
+          gap: 8px !important;
           width: 100% !important;
-          gap: 9px !important;
         }
         .hero-actions .proj-btn {
           width: 100% !important;
+          padding: 8px 10px !important;
+          font-size: 11px !important;
           text-align: center !important;
-          padding: 12px 16px !important;
         }
-        .projects-grid, .academics-grid {
+        .hero-actions .hero-location-badge {
+          grid-column: span 2 !important;
+          text-align: center !important;
+          margin: 4px 0 0 !important;
+          display: block !important;
+          font-size: 11px !important;
+        }
+
+        /* Compact Case Studies on Mobile */
+        .projects-grid {
           grid-template-columns: 1fr !important;
+          gap: 12px !important;
         }
+        .landscape-project-card {
+          padding: 16px 14px !important;
+          border-radius: 16px !important;
+          gap: 10px !important;
+        }
+        .proj-title {
+          font-size: 17px !important;
+        }
+        .proj-desc {
+          font-size: 12px !important;
+          line-height: 1.5 !important;
+        }
+        .proj-links {
+          margin-top: 4px !important;
+          padding-top: 10px !important;
+          gap: 8px !important;
+        }
+        .proj-links .proj-btn {
+          flex: 1 !important;
+          padding: 8px 10px !important;
+          font-size: 11px !important;
+        }
+
+        /* Compact Skills Matrix */
+        .skills-container {
+          gap: 6px !important;
+        }
+        .landscape-skill-chip {
+          font-size: 11.5px !important;
+          padding: 5px 12px !important;
+          border-radius: 10px !important;
+        }
+
+        /* Compact Academics & Timeline */
+        .academics-grid {
+          grid-template-columns: 1fr !important;
+          gap: 10px !important;
+        }
+        .edu-card, .cert-card {
+          padding: 14px 12px !important;
+          border-radius: 14px !important;
+        }
+        .timeline-track {
+          gap: 14px !important;
+          padding-left: 14px !important;
+        }
+        .timeline-dot {
+          left: -21px !important;
+          width: 10px !important;
+          height: 10px !important;
+        }
+
+        /* Compact Contact Banner */
         .contact-banner {
           flex-direction: column !important;
-          text-align: center !important;
+          text-align: left !important;
+          gap: 12px !important;
+        }
+        .contact-info-title {
+          font-size: 19px !important;
         }
         .contact-actions {
           flex-direction: column !important;
           width: 100% !important;
+          gap: 8px !important;
         }
         .contact-actions .proj-btn {
           width: 100% !important;
+          padding: 10px 14px !important;
         }
       }
     </style>
@@ -1097,15 +1291,15 @@ const ThreeUILandscapeTemplate = {
             <div class="hero-eyebrow">✦ VERIFIED SMART CONTRACT &amp; AI ENGINEER</div>
             <h1 class="hero-masthead">${safeName}</h1>
             <div class="hero-role">${safeRole}</div>
-            ${safeTagline ? `<div class="hero-tagline">${safeTagline}</div>` : ''}
           </div>
         </div>
+        ${safeTagline ? `<div class="hero-tagline">${safeTagline}</div>` : ''}
         <p class="hero-bio">${safeBio}</p>
         <div class="hero-actions">
           <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Initiate Contact &rarr;</a>
           ${safeGithub ? `<a href="${safeGithub}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Dossier &nearr;</a>` : ''}
           ${safeLinkedin ? `<a href="${safeLinkedin}" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">LinkedIn Profile &nearr;</a>` : ''}
-          <span class="hero-location-badge" style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 ${safeLocation}</span>
+          <span class="hero-location-badge" style="font-size: 11px; color: var(--ink2, #8b7c5c); margin-left: 4px; font-weight: 600;">📍 ${safeLocation}</span>
         </div>
       </section>
 
@@ -1170,7 +1364,7 @@ const ThreeUILandscapeTemplate = {
           <div>
             <div class="hero-eyebrow">Transmission Terminal</div>
             <h2 class="contact-info-title">Let’s Build Something Exceptional</h2>
-            <p style="font-size: 13.5px; color: var(--ink3, #3f3520);">Open for high-throughput Web3 protocols, smart contract architecture, and spatial WebGL platforms.</p>
+            <p style="font-size: 13px; color: var(--ink3, #3f3520); margin-top: 4px;">Open for high-throughput Web3 protocols, smart contract architecture, and spatial WebGL platforms.</p>
           </div>
           <div class="contact-actions">
             <a href="mailto:${safeEmail}" class="proj-btn proj-btn-primary">Email: ${safeEmail} &nearr;</a>
