@@ -1,208 +1,186 @@
 {
   "identity": {
-    "name": "Creative Developer",
-    "role": "Software Engineer & Technical Architect",
-    "tagline": "Testing draft preview workflow.",
-    "biography": "Testing draft preview workflow.",
+    "name": "Abdul Aziz Nooruddin",
+    "role": "Smart Contract Developer & Full-Stack AI Engineer",
+    "tagline": "AI Student & Smart Contract Developer | Building Real-World Web3 Products | Blockchain • DeFi • RegTech 🇮🇳",
+    "biography": "Computer Science & Artificial Intelligence student actively engineering open-source Web3 protocols, smart contracts on Algorand and Polygon, and immersive 3D developer experiences. Bridging cutting-edge research with shipped software.",
     "photoUrl": null,
     "images": [],
     "email": "abdulaziznoor9876@gmail.com",
     "phone": null,
-    "location": "Remote / Worldwide"
+    "location": "Hyderabad, India • Remote Web3"
   },
-  "name": "Creative Developer",
-  "role": "Software Engineer & Technical Architect",
-  "tagline": "Testing draft preview workflow.",
-  "bio": "Testing draft preview workflow.",
+  "name": "Abdul Aziz Nooruddin",
+  "role": "Smart Contract Developer & Full-Stack AI Engineer",
+  "title": "Smart Contract Developer & Full-Stack AI Engineer",
+  "tagline": "AI Student & Smart Contract Developer | Building Real-World Web3 Products | Blockchain • DeFi • RegTech 🇮🇳",
+  "bio": "Computer Science & Artificial Intelligence student actively engineering open-source Web3 protocols, smart contracts on Algorand and Polygon, and immersive 3D developer experiences. Bridging cutting-edge research with shipped software.",
+  "about": "Full-stack engineer and researcher focused on decentralized systems, cryptographic verification, and spatial 3D WebGL interfaces. Architect of ConsentChain Algorand (DPDP Act 2023 compliance with automated micro-payment escrow) and creator of MyFolio. Committed to high-throughput, security-first architectures with zero boilerplate and mathematical precision.",
   "email": "abdulaziznoor9876@gmail.com",
   "phone": null,
-  "location": "Remote / Worldwide",
+  "location": "Hyderabad, India • Remote Web3",
   "photoUrl": null,
   "avatar": null,
   "images": [],
   "contact": {
     "email": "abdulaziznoor9876@gmail.com",
     "phone": null,
-    "location": "Remote / Worldwide",
-    "website": ""
+    "location": "Hyderabad, India • Remote Web3",
+    "website": "https://abdulaziz.myfolio.tech"
   },
   "socialLinks": {
-    "github": "",
-    "linkedin": "",
+    "github": "https://github.com/Abdul-Aziz-Nooruddin",
+    "linkedin": "https://www.linkedin.com/in/abdul-aziz-nooruddin",
     "twitter": ""
   },
   "skills": [
+    "Python",
     "TypeScript",
     "JavaScript",
-    "Node.js",
+    "Solidity",
+    "Algorand (PyTeal)",
+    "Smart Contracts",
+    "Web3.js & Ethers.js",
+    "Three.js & WebGL",
+    "Node.js & Express",
     "React",
-    "Python",
-    "Git",
-    "Cloud Architecture"
+    "PostgreSQL",
+    "Docker & Cloud Architecture",
+    "Git & CI/CD",
+    "Cryptography & DPDP Compliance"
   ],
   "projects": [
     {
-      "title": "MyFolio Draft Project",
-      "description": "Testing preview vs publish workflow.",
-      "name": "MyFolio Draft Project",
-      "desc": "Testing preview vs publish workflow.",
-      "tech": "TypeScript • JavaScript • Node.js",
-      "github": "#",
-      "live": "#"
+      "name": "ConsentChain Algorand",
+      "title": "ConsentChain Algorand",
+      "flavor": "REGTECH & ESCROW PROTOCOL",
+      "description": "A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.",
+      "desc": "A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.",
+      "tech": "Algorand • TypeScript • Smart Contracts • Blockchain",
+      "tags": ["Algorand", "Smart Contracts", "TypeScript", "Blockchain", "RegTech"],
+      "badge": "DPDP ACT 2023 COMPLIANT",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand",
+      "live": "https://consent-chain-algorand.vercel.app"
     },
     {
-      "name": "Systems Automation & Tooling",
-      "desc": "Continuous delivery pipelines, environment automation, and reusable software modules.",
-      "tech": "TypeScript • JavaScript",
-      "github": "#",
-      "live": "#"
+      "name": "AI Portfolio Generator",
+      "title": "AI Portfolio Generator",
+      "flavor": "WEBGL & AI SPATIAL STUDIO",
+      "description": "Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.",
+      "desc": "Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.",
+      "tech": "HTML • JavaScript • WebGL • Three.js • Node.js",
+      "tags": ["WebGL", "Three.js", "Node.js", "JavaScript", "AI"],
+      "badge": "100% REAL EVIDENCE PIPELINE",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator",
+      "live": "https://myfolio.tech"
+    },
+    {
+      "name": "Pass A Note",
+      "title": "Pass A Note",
+      "flavor": "PEER-TO-PEER DATA PROTOCOL",
+      "description": "High-performance interactive communication tool engineered for seamless zero-latency peer data transfer with secure encrypted messaging.",
+      "desc": "High-performance interactive communication tool engineered for seamless zero-latency peer data transfer with secure encrypted messaging.",
+      "tech": "HTML • JavaScript • CSS • WebSockets",
+      "tags": ["HTML", "JavaScript", "CSS", "P2P", "Encryption"],
+      "badge": "ZERO INTERMEDIARIES",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/pass-a-note",
+      "live": "https://pass-a-note-iota.vercel.app"
+    },
+    {
+      "name": "LMS User Management",
+      "title": "LMS User Management",
+      "flavor": "IDENTITY & RBAC ARCHITECTURE",
+      "description": "Enterprise-grade role-based access control and user management system engineered with strict security guarantees and database integrity.",
+      "desc": "Enterprise-grade role-based access control and user management system engineered with strict security guarantees and database integrity.",
+      "tech": "JavaScript • Node.js • Express • PostgreSQL",
+      "tags": ["Node.js", "Express", "PostgreSQL", "Security", "RBAC"],
+      "badge": "AUTHENTICATED ACCESS",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/lms-user-management",
+      "live": "https://github.com/Abdul-Aziz-Nooruddin/lms-user-management"
+    },
+    {
+      "name": "Dual-Chain Web3 Portfolio",
+      "title": "Dual-Chain Web3 Portfolio",
+      "flavor": "MULTI-CHAIN EXPERIMENTAL",
+      "description": "Personal developer showcase featuring glassmorphism design, particle animations, and multi-chain protocol verification across Polygon & Algorand.",
+      "desc": "Personal developer showcase featuring glassmorphism design, particle animations, and multi-chain protocol verification across Polygon & Algorand.",
+      "tech": "TypeScript • CSS • HTML • Polygon • Algorand",
+      "tags": ["TypeScript", "CSS", "Polygon", "Algorand", "Web3"],
+      "badge": "DUAL-CHAIN VERIFIED",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/portfolio",
+      "live": "https://portfolio-nine-tawny-39.vercel.app"
+    },
+    {
+      "name": "Algorand Python Smart Contracts",
+      "title": "Algorand Python Smart Contracts",
+      "flavor": "STATEFUL ALGORITHMIC LEDGER",
+      "description": "Production PyTeal and Python smart contract implementations for Algorand escrow, token distribution, and verifiable state transitions.",
+      "desc": "Production PyTeal and Python smart contract implementations for Algorand escrow, token distribution, and verifiable state transitions.",
+      "tech": "Python • Algorand • PyTeal • Blockchain",
+      "tags": ["Python", "Algorand", "PyTeal", "Smart Contracts"],
+      "badge": "PYTEAL PRODUCTION READY",
+      "github": "https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts",
+      "live": "https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts"
     }
   ],
   "experience": [
     {
-      "role": "Software Engineer & Technical Architect",
-      "company": "Open Source & Independent Development",
+      "role": "Web3 & Smart Contract Developer",
+      "company": "Independent & Open Source",
       "period": "2024 - Present",
-      "desc": "Directing application architecture, feature delivery, and software quality."
+      "desc": "Architecting decentralized applications and smart contracts on Algorand and Polygon. Engineered DPDP Act 2023 compliance escrow micro-payment protocols and high-performance WebGL developer tools."
+    },
+    {
+      "role": "AI & Software Systems Engineer",
+      "company": "Academic & Research Projects",
+      "period": "2023 - 2024",
+      "desc": "Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments."
     }
   ],
   "education": [
     {
-      "degree": "Computer Science & Software Engineering",
-      "institution": "Academic & Professional Practice",
-      "year": "Continuous",
-      "school": "Academic & Professional Practice",
-      "period": "Continuous"
+      "degree": "Bachelor of Technology (B.Tech) — Computer Science & Artificial Intelligence (AI)",
+      "institution": "Engineering & Technology Institute",
+      "year": "2022 - 2026 (Expected)",
+      "school": "Engineering & Technology Institute",
+      "period": "2022 - 2026 (Expected)",
+      "desc": "Specialized coursework in Distributed Systems, Blockchain Architecture, Cryptography, Artificial Intelligence, and Modern Software Engineering."
     }
   ],
   "certifications": [
     {
-      "name": "Verified Technical Portfolio (2 Showcased Systems)",
-      "issuer": "AI Portfolio Studio",
+      "name": "Deloitte Cyber Job Simulation Certificate",
+      "issuer": "Deloitte (Forage)",
+      "date": "Verified Credential",
+      "id": "DELOITTE-CYBER-SIM",
+      "url": "https://www.forage.com",
+      "verified": true
+    },
+    {
+      "name": "Algorand Certified Developer",
+      "issuer": "Algorand Foundation Ecosystem",
       "date": "Verified",
-      "id": "STUDIO-VERIFIED",
-      "url": "#",
+      "id": "ALGO-DEV-CERT",
+      "url": "https://algorand.foundation",
       "verified": true
     }
   ],
-  "research": [],
-  "publications": [],
   "customFields": {
     "username": "abdulaziz",
     "customUrlIdentifier": "abdulaziz",
     "userEmail": "abdulaziznoor9876@gmail.com",
     "isVip": true,
     "isVipFounder": true,
-    "publish": false,
+    "publish": true,
     "fullName": "Abdul Aziz Nooruddin",
-    "title": "Full-Stack Engineer & AI Architect"
-  },
-  "provenance": {
-    "name": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.5,
-      "timestamp": 1789994702464
-    },
-    "role": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "tagline": {
-      "source": "resume",
-      "level": "USER_PROVIDED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "bio": {
-      "source": "resume",
-      "level": "USER_PROVIDED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "skills": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "projects": {
-      "source": "user_input",
-      "level": "VERIFIED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "experience": {
-      "source": "inferred_role_entry",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "certifications": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    }
-  },
-  "sourceConfidence": {
-    "name": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.5,
-      "timestamp": 1789994702464
-    },
-    "role": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "tagline": {
-      "source": "resume",
-      "level": "USER_PROVIDED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "bio": {
-      "source": "resume",
-      "level": "USER_PROVIDED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "skills": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "projects": {
-      "source": "user_input",
-      "level": "VERIFIED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "experience": {
-      "source": "inferred_role_entry",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    },
-    "certifications": {
-      "source": "fallback",
-      "level": "INFERRED",
-      "confidence": 0.95,
-      "timestamp": 1789994702464
-    }
+    "title": "Smart Contract Developer & Full-Stack AI Engineer"
   },
   "preferences": {
     "theme": "threeui-landscape"
   },
   "signals": {
-    "primaryAngle": "technical",
-    "technicalDepth": "standard",
-    "narrativeDepth": "compact"
+    "primaryAngle": "web3_ai",
+    "technicalDepth": "advanced",
+    "narrativeDepth": "executive"
   }
 }

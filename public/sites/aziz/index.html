@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Creative Developer — 3D Landscape &amp; Weather Portfolio</title>
+<title>Abdul Aziz Nooruddin — 3D Landscape &amp; Weather Portfolio</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23ecdcbc'/><g fill='%232e2515'><path d='M4 12h24l-3 3H7z'/><path d='M6 19h20l-3 3H9z'/><path d='M8.5 26h15l-2 3h-11z'/><rect x='11' y='15' width='10' height='4'/><rect x='12.5' y='22' width='7' height='4'/><rect x='15' y='4' width='2' height='5'/><path d='M9 12l7-6 7 6z'/></g></svg>">
 <style>
 :root{
@@ -228,8 +228,15 @@ footer{position:absolute;left:0;right:0;bottom:0;
   <link rel="stylesheet" href="/button-system.css">
 
     <style id="portfolio-landscape-overlay-css">
-      /* Allow natural scrollytelling over 3D background */
-      html, body {
+      /* Universal smooth scrolling */
+      html {
+        scroll-behavior: smooth !important;
+        height: auto !important;
+        min-height: 100% !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
+      }
+      body {
         height: auto !important;
         min-height: 100% !important;
         overflow-x: hidden !important;
@@ -241,9 +248,6 @@ footer{position:absolute;left:0;right:0;bottom:0;
         inset: 0 !important;
         z-index: 1 !important;
         pointer-events: none !important;
-      }
-      header {
-        pointer-events: auto !important;
       }
       #stage {
         position: fixed !important;
@@ -258,7 +262,8 @@ footer{position:absolute;left:0;right:0;bottom:0;
       #stage.dragging {
         cursor: grabbing;
       }
-      /* Hide the original template's small Japanese mock columns & legacy overlays */
+
+      /* Hide template default decorative side Japanese typography */
       .col-l, .col-r, .tag, .plaque, .bigpct {
         display: none !important;
       }
@@ -266,14 +271,113 @@ footer{position:absolute;left:0;right:0;bottom:0;
         display: none !important;
       }
 
-      /* Portfolio Scrollytelling Container - gestures pass through outside cards */
+      /* ==========================================================================
+         UNIVERSAL FIXED NAVBAR (100% Zoom-Proof & Viewport-Proof)
+         ========================================================================== */
+      header, #portfolio-masthead-navbar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: 60px !important;
+        padding: 0 28px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        background: rgba(253, 248, 238, 0.94) !important;
+        backdrop-filter: blur(24px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+        border-bottom: 1px solid rgba(168, 98, 31, 0.22) !important;
+        box-shadow: 0 4px 20px rgba(46, 37, 21, 0.08) !important;
+        z-index: 99999 !important;
+        pointer-events: auto !important;
+        transition: background 0.3s ease, border-color 0.3s ease;
+      }
+      .brand-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+      }
+      .brand-name {
+        font-family: var(--sans);
+        font-weight: 800;
+        font-size: 15px;
+        letter-spacing: 0.8px;
+        color: var(--ink, #2e2515);
+        text-decoration: none;
+        white-space: nowrap;
+      }
+      .brand-sep {
+        color: var(--accent, #a8621f);
+        font-size: 11px;
+      }
+      .brand-role-badge {
+        font-size: 11.5px;
+        font-weight: 600;
+        color: var(--ink2, #8b7c5c);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 280px;
+      }
+      .header-nav-links {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .nav-anchor {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        color: var(--ink, #2e2515);
+        text-decoration: none;
+        transition: color 0.18s ease;
+        padding: 4px 0;
+      }
+      .nav-anchor:hover {
+        color: var(--accent, #a8621f);
+      }
+      .top-right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+      }
+      .tbtn {
+        font-size: 10px !important;
+        font-weight: 700 !important;
+        padding: 6px 11px !important;
+        border-radius: 999px !important;
+        border: 1px solid rgba(168, 98, 31, 0.25) !important;
+        background: rgba(255, 255, 255, 0.85) !important;
+        color: var(--ink, #2e2515) !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 4px !important;
+        line-height: 1 !important;
+        cursor: pointer !important;
+        box-shadow: 0 2px 6px rgba(46, 37, 21, 0.05) !important;
+        transition: all 0.18s ease !important;
+      }
+      .tbtn:hover {
+        border-color: var(--accent, #a8621f) !important;
+        color: var(--accent, #a8621f) !important;
+      }
+      .tbtn b {
+        color: var(--accent, #a8621f) !important;
+      }
+
+      /* ==========================================================================
+         PORTFOLIO SCROLLABLE CONTENT HUD
+         ========================================================================== */
       .landscape-portfolio-scroll {
         position: relative;
         z-index: 10;
         pointer-events: none;
         max-width: 1140px;
         margin: 0 auto;
-        padding: 90px 24px 120px;
+        padding: 100px 24px 120px;
         display: flex;
         flex-direction: column;
         gap: 56px;
@@ -283,12 +387,12 @@ footer{position:absolute;left:0;right:0;bottom:0;
         pointer-events: auto !important;
       }
 
-      /* Frosted Glass Bento Surfaces (Paper-Glass Japanese luxury) */
+      /* Frosted Glass Bento Surfaces */
       .landscape-glass-card {
-        background: rgba(255, 252, 246, 0.82);
+        background: rgba(255, 252, 246, 0.90);
         backdrop-filter: blur(28px) saturate(180%);
         -webkit-backdrop-filter: blur(28px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.92);
         border-radius: 24px;
         padding: 38px;
         color: var(--ink, #2e2515);
@@ -359,26 +463,33 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
       .hero-masthead {
         font-family: var(--mincho);
-        font-size: clamp(24px, 5vw, 56px);
+        font-size: clamp(28px, 5vw, 56px);
         font-weight: 700;
         line-height: 1.1;
         letter-spacing: -0.5px;
         color: var(--ink, #2e2515);
-        margin-bottom: 12px;
+        margin-bottom: 10px;
       }
       .hero-role {
         font-size: clamp(14px, 2vw, 18px);
         font-weight: 600;
         color: var(--accent, #a8621f);
-        margin-bottom: 16px;
+        margin-bottom: 14px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
       }
+      .hero-tagline {
+        font-size: 14.5px;
+        font-weight: 600;
+        color: var(--ink2, #8b7c5c);
+        margin-bottom: 12px;
+        line-height: 1.5;
+      }
       .hero-bio {
-        font-size: clamp(14.5px, 1.6vw, 16.5px);
+        font-size: clamp(14.5px, 1.6vw, 16px);
         line-height: 1.65;
         color: var(--ink3, #3f3520);
-        max-width: 820px;
+        max-width: 860px;
         margin-bottom: 24px;
       }
       .hero-actions {
@@ -396,7 +507,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         gap: 8px;
         padding: 6px 14px;
         border-radius: 999px;
-        background: rgba(255, 252, 246, 0.75);
+        background: rgba(253, 248, 238, 0.85);
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
         border: 1px solid rgba(168, 98, 31, 0.2);
@@ -408,15 +519,15 @@ footer{position:absolute;left:0;right:0;bottom:0;
         box-shadow: 0 4px 14px rgba(46, 37, 21, 0.08);
       }
 
-      /* Section Headers */
+      /* Section Headings */
       .section-heading {
         font-family: var(--sans);
-        font-size: 11.5px;
+        font-size: 12px;
         font-weight: 700;
         letter-spacing: 2px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 18px;
+        margin-bottom: 20px;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -425,7 +536,44 @@ footer{position:absolute;left:0;right:0;bottom:0;
         content: "";
         flex: 1;
         height: 1px;
-        background: rgba(168, 98, 31, 0.22);
+        background: rgba(168, 98, 31, 0.25);
+      }
+
+      /* About Bento Card */
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .about-desc {
+        font-size: 15.5px;
+        line-height: 1.7;
+        color: var(--ink3, #3f3520);
+      }
+      .pillars-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 14px;
+      }
+      .pillar-box {
+        padding: 18px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(168, 98, 31, 0.2);
+      }
+      .pillar-title {
+        font-size: 12.5px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: var(--accent, #a8621f);
+        margin-bottom: 6px;
+        text-transform: uppercase;
+      }
+      .pillar-text {
+        font-size: 13px;
+        line-height: 1.55;
+        color: var(--ink3, #3f3520);
       }
 
       /* Projects Grid */
@@ -435,7 +583,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         gap: 22px;
       }
       .landscape-project-card {
-        background: rgba(255, 253, 249, 0.88);
+        background: rgba(255, 253, 249, 0.90);
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(168, 98, 31, 0.22);
@@ -467,7 +615,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
       .proj-title {
         font-family: var(--mincho);
-        font-size: 21px;
+        font-size: 22px;
         font-weight: 700;
         color: var(--ink, #2e2515);
         line-height: 1.25;
@@ -489,7 +637,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         padding: 4px 10px;
         background: rgba(168, 98, 31, 0.08);
         color: var(--accent, #a8621f);
-        border: 1px solid rgba(168, 98, 31, 0.15);
+        border: 1px solid rgba(168, 98, 31, 0.18);
         border-radius: 999px;
         font-weight: 600;
       }
@@ -504,7 +652,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         font-size: 12px;
         font-weight: 700;
         text-decoration: none;
-        padding: 8px 16px;
+        padding: 9px 18px;
         border-radius: 10px;
         transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
         display: inline-flex;
@@ -522,7 +670,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         transform: translateY(-1px);
       }
       .proj-btn-ghost {
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.65);
         color: var(--ink, #2e2515);
         border: 1px solid rgba(168, 98, 31, 0.25);
       }
@@ -542,7 +690,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         font-size: 13px;
         font-weight: 600;
         padding: 8px 18px;
-        background: rgba(255, 253, 249, 0.88);
+        background: rgba(255, 253, 249, 0.90);
         border: 1px solid rgba(168, 98, 31, 0.25);
         border-radius: 12px;
         color: var(--ink, #2e2515);
@@ -553,6 +701,140 @@ footer{position:absolute;left:0;right:0;bottom:0;
         transform: translateY(-2px);
         border-color: var(--accent, #a8621f);
         color: var(--accent, #a8621f);
+      }
+
+      /* Experience Timeline */
+      .timeline-track {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        position: relative;
+        padding-left: 20px;
+        border-left: 2px solid rgba(168, 98, 31, 0.3);
+        margin-left: 8px;
+      }
+      .timeline-item {
+        position: relative;
+      }
+      .timeline-dot {
+        position: absolute;
+        left: -27px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--accent, #a8621f);
+        box-shadow: 0 0 0 4px rgba(168, 98, 31, 0.2);
+      }
+      .timeline-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .timeline-role {
+        font-family: var(--mincho);
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--ink, #2e2515);
+      }
+      .timeline-period {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(168, 98, 31, 0.12);
+        color: var(--accent, #a8621f);
+      }
+      .timeline-company {
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink2, #8b7c5c);
+        margin-top: 4px;
+        margin-bottom: 8px;
+      }
+      .timeline-desc {
+        font-size: 13.5px;
+        line-height: 1.6;
+        color: var(--ink3, #3f3520);
+      }
+
+      /* Academics & Certifications */
+      .academics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .edu-card, .cert-card {
+        padding: 22px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.65);
+        border: 1px solid rgba(168, 98, 31, 0.2);
+      }
+      .edu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 6px;
+      }
+      .edu-degree {
+        font-family: var(--mincho);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink, #2e2515);
+      }
+      .edu-year {
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+        background: rgba(168, 98, 31, 0.1);
+        color: var(--accent, #a8621f);
+        white-space: nowrap;
+      }
+      .edu-institution {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink2, #8b7c5c);
+        margin-bottom: 8px;
+      }
+      .edu-desc {
+        font-size: 12.5px;
+        line-height: 1.55;
+        color: var(--ink3, #3f3520);
+      }
+      .cert-status {
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+        color: var(--accent, #a8621f);
+        margin-bottom: 6px;
+      }
+      .cert-name {
+        font-family: var(--mincho);
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ink, #2e2515);
+        margin-bottom: 6px;
+      }
+      .cert-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: var(--ink2, #8b7c5c);
+        margin-bottom: 12px;
+      }
+      .cert-link {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--accent, #a8621f);
+        text-decoration: none;
+      }
+      .cert-link:hover {
+        text-decoration: underline;
       }
 
       /* Transmission / Contact */
@@ -568,6 +850,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         font-size: 26px;
         font-weight: 700;
         margin-bottom: 6px;
+        color: var(--ink, #2e2515);
       }
       .contact-actions {
         display: flex;
@@ -576,88 +859,114 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
 
       /* ==========================================================================
+         NIGHT THEME ADAPTATION (Strict WCAG 2.2 AAA Contrast Engine)
+         ========================================================================== */
+      [data-time="night"] header,
+      [data-time="night"] #portfolio-masthead-navbar {
+        background: rgba(14, 16, 22, 0.94) !important;
+        border-bottom: 1px solid rgba(208, 138, 74, 0.25) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+      }
+      [data-time="night"] .brand-name {
+        color: #fdf8e8 !important;
+      }
+      [data-time="night"] .nav-anchor {
+        color: #cdc6b6 !important;
+      }
+      [data-time="night"] .nav-anchor:hover {
+        color: #d08a4a !important;
+      }
+      [data-time="night"] .tbtn {
+        background: rgba(27, 32, 41, 0.85) !important;
+        color: #e9e2d2 !important;
+        border-color: rgba(208, 138, 74, 0.3) !important;
+      }
+      [data-time="night"] .tbtn b {
+        color: #d08a4a !important;
+      }
+      [data-time="night"] .landscape-3d-hint {
+        background: rgba(14, 16, 22, 0.88) !important;
+        border-color: rgba(208, 138, 74, 0.3) !important;
+        color: #d08a4a !important;
+      }
+      [data-time="night"] .landscape-glass-card,
+      [data-time="night"] .landscape-project-card {
+        background: rgba(14, 16, 22, 0.90) !important;
+        border-color: rgba(208, 138, 74, 0.35) !important;
+        color: #e9e2d2 !important;
+        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.75) !important;
+      }
+      [data-time="night"] .hero-masthead,
+      [data-time="night"] .proj-title,
+      [data-time="night"] .timeline-role,
+      [data-time="night"] .edu-degree,
+      [data-time="night"] .cert-name,
+      [data-time="night"] .contact-info-title {
+        color: #fdf8e8 !important;
+      }
+      [data-time="night"] .hero-tagline {
+        color: #d08a4a !important;
+      }
+      [data-time="night"] .hero-bio,
+      [data-time="night"] .about-desc,
+      [data-time="night"] .proj-desc,
+      [data-time="night"] .timeline-desc,
+      [data-time="night"] .edu-desc {
+        color: #cdc6b6 !important;
+      }
+      [data-time="night"] .pillar-box,
+      [data-time="night"] .edu-card,
+      [data-time="night"] .cert-card {
+        background: rgba(20, 24, 33, 0.85) !important;
+        border-color: rgba(208, 138, 74, 0.25) !important;
+      }
+      [data-time="night"] .landscape-skill-chip {
+        background: rgba(20, 24, 33, 0.90) !important;
+        border-color: rgba(208, 138, 74, 0.3) !important;
+        color: #e9e2d2 !important;
+      }
+      [data-time="night"] .proj-btn-primary {
+        background: #d08a4a !important;
+        color: #0e1016 !important;
+      }
+      [data-time="night"] .proj-btn-ghost {
+        background: rgba(27, 32, 41, 0.8) !important;
+        color: #fdf8e8 !important;
+        border-color: rgba(208, 138, 74, 0.35) !important;
+      }
+
+      /* ==========================================================================
          MOBILE RESPONSIVE ENGINE (Strict High-End Executive Standard)
          ========================================================================== */
-      @media (max-width: 768px), (max-height: 460px) {
-        /* Remove template legacy footer and fixed bottom blockers */
-        #app > footer, footer:not(.portfolio-footer), .legacy-footer, .bigpct {
+      @media (max-width: 900px) {
+        .header-nav-links, .brand-role-badge, .brand-sep {
           display: none !important;
         }
+      }
 
-        /* Fixed glass header housing brand & 3D weather switches */
-        header {
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          right: 0 !important;
-          height: 52px !important;
-          padding: 0 16px !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: space-between !important;
-          background: rgba(253, 248, 238, 0.88) !important;
-          backdrop-filter: blur(20px) !important;
-          -webkit-backdrop-filter: blur(20px) !important;
-          border-bottom: 1px solid rgba(168, 98, 31, 0.16) !important;
-          z-index: 100 !important;
+      @media (max-width: 768px), (max-height: 460px) {
+        header, #portfolio-masthead-navbar {
+          height: 54px !important;
+          padding: 0 14px !important;
         }
-        .brand {
-          font-size: 17px !important;
-          letter-spacing: 0.5px !important;
-          transform: none !important;
-          top: 0 !important;
-          font-weight: 800 !important;
-        }
-        .top-mid {
-          display: none !important;
+        .brand-name {
+          font-size: 13.5px !important;
         }
         .top-right {
-          position: static !important;
-          bottom: auto !important;
-          left: auto !important;
-          right: auto !important;
-          margin: 0 !important;
-          padding: 0 !important;
-          gap: 6px !important;
-          display: flex !important;
-          align-items: center !important;
-          background: transparent !important;
-          border: none !important;
-          overflow: visible !important;
+          gap: 5px !important;
         }
         .tbtn {
-          font-size: 10px !important;
-          font-weight: 700 !important;
-          padding: 5px 9px !important;
-          border-radius: 999px !important;
-          border: 1px solid rgba(168, 98, 31, 0.25) !important;
-          background: rgba(255, 255, 255, 0.8) !important;
-          color: var(--ink, #2e2515) !important;
-          display: inline-flex !important;
-          flex-direction: row !important;
-          align-items: center !important;
-          gap: 3px !important;
-          line-height: 1 !important;
-          white-space: nowrap !important;
-          box-shadow: 0 2px 6px rgba(46, 37, 21, 0.05) !important;
+          font-size: 9px !important;
+          padding: 4px 8px !important;
         }
-        .tbtn b {
-          color: var(--accent, #a8621f) !important;
-        }
-
-        /* Generous top clearance so 3D Pagoda & atmospheric landscape shine through immediately! */
         .landscape-portfolio-scroll {
-          padding: clamp(210px, 34vh, 290px) 14px 60px !important;
+          padding: 80px 14px 60px !important;
           gap: 28px !important;
         }
-
-        /* Polished mobile card styling */
         .landscape-glass-card {
           padding: 24px 18px !important;
           border-radius: 20px !important;
         }
-
-        /* Centered Executive Hero Layout on Mobile */
         .landscape-hero-identity {
           flex-direction: column !important;
           align-items: center !important;
@@ -670,199 +979,41 @@ footer{position:absolute;left:0;right:0;bottom:0;
           height: 88px !important;
           min-width: 88px !important;
           margin: 0 auto !important;
-          box-shadow: 0 10px 24px rgba(46, 37, 21, 0.18), inset 0 0 0 2px rgba(255, 255, 255, 0.8) !important;
-        }
-        .landscape-hero-initials {
-          font-size: 28px !important;
-        }
-        .landscape-hero-text-col {
-          width: 100% !important;
-          text-align: center !important;
-        }
-        .hero-eyebrow {
-          justify-content: center !important;
-          margin-bottom: 8px !important;
-          font-size: 10px !important;
-          letter-spacing: 1.5px !important;
         }
         .hero-masthead {
           font-size: clamp(24px, 7vw, 32px) !important;
-          line-height: 1.15 !important;
-          margin-bottom: 6px !important;
           text-align: center !important;
         }
-        .hero-role {
-          font-size: 13px !important;
-          letter-spacing: 1px !important;
-          margin-bottom: 12px !important;
+        .hero-role, .hero-tagline, .hero-bio {
           text-align: center !important;
-        }
-        .hero-bio {
-          font-size: 13.5px !important;
-          line-height: 1.6 !important;
-          text-align: center !important;
-          margin: 0 auto 18px !important;
-          padding: 0 4px !important;
         }
         .hero-actions {
           flex-direction: column !important;
           width: 100% !important;
           gap: 9px !important;
-          align-items: stretch !important;
         }
         .hero-actions .proj-btn {
           width: 100% !important;
           text-align: center !important;
           padding: 12px 16px !important;
-          font-size: 13px !important;
-          box-sizing: border-box !important;
         }
-        .hero-actions .hero-location-badge {
-          text-align: center !important;
-          margin-left: 0 !important;
-          margin-top: 4px !important;
-          display: block !important;
-          font-size: 12px !important;
-        }
-
-        /* Responsive Projects Grid */
-        .projects-grid {
+        .projects-grid, .academics-grid {
           grid-template-columns: 1fr !important;
-          gap: 16px !important;
         }
-        .landscape-project-card {
-          padding: 20px 16px !important;
-          border-radius: 16px !important;
-        }
-        .proj-title {
-          font-size: 18px !important;
-        }
-        .proj-desc {
-          font-size: 13px !important;
-        }
-        .proj-links {
-          flex-direction: column !important;
-          gap: 8px !important;
-        }
-        .proj-links .proj-btn {
-          width: 100% !important;
-          text-align: center !important;
-          padding: 10px 14px !important;
-        }
-
-        /* Skills Matrix */
-        .skills-container {
-          gap: 8px !important;
-          justify-content: center !important;
-        }
-        .landscape-skill-chip {
-          font-size: 12px !important;
-          padding: 6px 14px !important;
-          border-radius: 10px !important;
-        }
-
-        /* Contact Section */
         .contact-banner {
           flex-direction: column !important;
           text-align: center !important;
-          align-items: stretch !important;
-          gap: 16px !important;
-        }
-        .contact-info-title {
-          font-size: 21px !important;
         }
         .contact-actions {
           flex-direction: column !important;
           width: 100% !important;
-          gap: 9px !important;
         }
         .contact-actions .proj-btn {
           width: 100% !important;
-          text-align: center !important;
-          padding: 12px 16px !important;
         }
       }
     </style>
     
-
-  <!-- Smooth Inertia Scroll (Lenis) & GSAP Motion Ecosystem -->
-  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  
-  <style id="universal-scroll-motion-styles">
-    /* Top Scroll Progress Indicator */
-    #scroll-progress-indicator {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 0%;
-      height: 3.5px;
-      background: linear-gradient(90deg, #8B5CF6, #38bdf8, #ec4899);
-      z-index: 100000;
-      box-shadow: 0 0 14px #8B5CF6, 0 0 4px #ffffff;
-      pointer-events: none;
-      transition: width 0.08s linear;
-    }
-
-    /* Hardware Accelerated Smooth Inertia Scroll Baseline */
-    html.lenis, html.lenis body {
-      height: auto;
-    }
-    .lenis.lenis-smooth {
-      scroll-behavior: auto !important;
-    }
-    .lenis.lenis-smooth [data-lenis-prevent] {
-      overscroll-behavior: contain;
-    }
-    .lenis.lenis-stopped {
-      overflow: hidden;
-    }
-    .lenis.lenis-smooth iframe {
-      pointer-events: none;
-    }
-
-    /* Scroll Velocity Reactive Container */
-    .scroll-velocity-item {
-      will-change: transform;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* 3D Perspective Card Tilt Standards */
-    .project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, 
-    .curio-case-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card,
-    .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card {
-      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, filter 0.35s ease;
-      will-change: transform;
-      transform-style: preserve-3d;
-    }
-
-    .project-card:hover, .crystal-project-card:hover, .bio-project-card:hover, .wood-project-card:hover, 
-    .fusion-project-card:hover, .curio-case-card:hover, .cosmic-project-card:hover, .sanctuary-project-card:hover, 
-    .white-crystal-card:hover, .abyss-chest-card:hover, .sprawl-vault-card:hover,
-    .greenhouse-project-card:hover, .monograph-exhibit-card:hover, .parchment-project-card:hover {
-      box-shadow: 0 24px 50px -12px rgba(0,0,0,0.65), 0 0 30px #8B5CF644;
-    }
-
-    /* Spring-physics Magnetic Buttons */
-    .magnetic-btn, .btn-primary, .cosmic-btn-primary, .crystal-btn-primary, .wood-btn-primary {
-      will-change: transform;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
-    }
-
-    /* Reduced Motion Fallback */
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-      #scroll-progress-indicator { display: none !important; }
-    }
-  </style>
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/hover.css/2.3.1/css/hover-min.css">
 </head>
 <body>
 <div id="app">
@@ -872,9 +1023,21 @@ footer{position:absolute;left:0;right:0;bottom:0;
   <div class="bg-grid2"></div>
   <div class="bg-rings" id="rings"></div>
 
-  <header>
-    <div class="brand">CREATIVE DEVELOPER</div>
-    <div class="top-mid">SOFTWARE ENGINEER &AMP; TECHNICAL ARCHITECT</div>
+  
+  <header id="portfolio-masthead-navbar">
+    <div class="brand-left">
+      <a href="#" class="brand-name">ABDUL AZIZ NOORUDDIN</a>
+      <span class="brand-sep">✦</span>
+      <span class="brand-role-badge">Smart Contract Developer &amp; Full-Stack AI Engineer</span>
+    </div>
+    <nav class="header-nav-links">
+      <a href="#about" class="nav-anchor">ABOUT</a>
+      <a href="#projects" class="nav-anchor">PROJECTS</a>
+      <a href="#skills" class="nav-anchor">SKILLS</a>
+      <a href="#experience" class="nav-anchor">TIMELINE</a>
+      <a href="#education" class="nav-anchor">ACADEMICS</a>
+      <a href="#contact" class="nav-anchor">CONTACT</a>
+    </nav>
     <div class="top-right">
       <button class="tbtn" id="styleBtn" aria-label="STYLE: JAPAN"><b>STYLE</b><span>JAPAN</span></button>
       <button class="tbtn" id="wxBtn" aria-label="WEATHER: CLEAR"><b>WEATHER</b><span>CLEAR</span></button>
@@ -4235,27 +4398,51 @@ window.__scene=scene;window.__camera=camera;window.__renderer=renderer;
       </div>
 
       <!-- 01: HERO MASTHEAD -->
-      <section class="landscape-glass-card portfolio-interactive">
+      <section class="landscape-glass-card portfolio-interactive" id="hero">
         <div class="landscape-hero-identity">
           <div class="landscape-hero-avatar-wrap landscape-hero-initials">
-           <span>CD</span>
+           <span>AN</span>
          </div>
           <div class="landscape-hero-text-col">
-            <div class="hero-eyebrow">✦ SOFTWARE ENGINEER &AMP; TECHNICAL ARCHITECT</div>
-            <h1 class="hero-masthead">Creative Developer</h1>
-            <div class="hero-role">Software Engineer &amp; Technical Architect</div>
+            <div class="hero-eyebrow">✦ VERIFIED SMART CONTRACT &amp; AI ENGINEER</div>
+            <h1 class="hero-masthead">Abdul Aziz Nooruddin</h1>
+            <div class="hero-role">Smart Contract Developer &amp; Full-Stack AI Engineer</div>
+            <div class="hero-tagline">AI Student &amp; Smart Contract Developer | Building Real-World Web3 Products | Blockchain • DeFi • RegTech 🇮🇳</div>
           </div>
         </div>
-        <p class="hero-bio">Testing draft preview workflow.</p>
+        <p class="hero-bio">Computer Science &amp; Artificial Intelligence student actively engineering open-source Web3 protocols, smart contracts on Algorand and Polygon, and immersive 3D developer experiences. Bridging cutting-edge research with shipped software.</p>
         <div class="hero-actions">
           <a href="mailto:abdulaziznoor9876@gmail.com" class="proj-btn proj-btn-primary">Initiate Contact &rarr;</a>
           <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Dossier &nearr;</a>
-          <span class="hero-location-badge" style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 Remote / Worldwide</span>
+          <a href="https://www.linkedin.com/in/abdul-aziz-nooruddin" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">LinkedIn Profile &nearr;</a>
+          <span class="hero-location-badge" style="font-size: 11.5px; color: var(--ink2, #8b7c5c); margin-left: 8px; font-weight: 600;">📍 Hyderabad, India • Remote Web3</span>
         </div>
       </section>
 
-      <!-- 02: FEATURED CASE STUDIES -->
-      <section class="portfolio-interactive">
+      <!-- 02: ABOUT & ARCHITECTURAL PHILOSOPHY -->
+      <section class="landscape-glass-card portfolio-interactive" id="about">
+        <div class="section-heading">// 01 ABOUT &amp; ENGINEERING PHILOSOPHY</div>
+        <div class="about-grid">
+          <p class="about-desc">Specialized in decentralized systems, cryptographic verification, and spatial 3D WebGL interfaces. Architect of ConsentChain Algorand (DPDP Act 2023 compliance with automated micro-payment escrow) and creator of MyFolio. Committed to high-throughput, security-first architectures with zero boilerplate and mathematical precision.</p>
+          <div class="pillars-grid">
+            <div class="pillar-box">
+              <div class="pillar-title">Web3 &amp; Algorand Core</div>
+              <div class="pillar-text">PyTeal stateful contracts, escrow micropayments, and DPDP Act 2023 compliance protocols.</div>
+            </div>
+            <div class="pillar-box">
+              <div class="pillar-title">Spatial 3D &amp; WebGL</div>
+              <div class="pillar-text">Hardware-accelerated Three.js environments, interactive scrollytelling, and shader physics.</div>
+            </div>
+            <div class="pillar-box">
+              <div class="pillar-title">Full-Stack AI Systems</div>
+              <div class="pillar-text">Autonomous pipeline tooling, automated portfolio engines, and scalable microservice runtimes.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 03: FEATURED CASE STUDIES & SYSTEMS -->
+      <section class="portfolio-interactive" id="projects">
         <div class="section-heading">// 02 FEATURED CASE STUDIES &amp; SYSTEMS</div>
         <div class="projects-grid">
           
@@ -4264,12 +4451,12 @@ window.__scene=scene;window.__camera=camera;window.__renderer=renderer;
             <span class="proj-num">01 // CASE STUDY</span>
             <span class="proj-status">✦ PRODUCTION</span>
           </div>
-          <h3 class="proj-title">MyFolio Draft Project</h3>
-          <p class="proj-desc">Testing preview vs publish workflow.</p>
-          <div class="proj-tags"><span class="proj-tag">TypeScript</span><span class="proj-tag">JavaScript</span><span class="proj-tag">Node.js</span></div>
+          <h3 class="proj-title">ConsentChain Algorand</h3>
+          <p class="proj-desc">A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.</p>
+          <div class="proj-tags"><span class="proj-tag">Algorand</span><span class="proj-tag">TypeScript</span><span class="proj-tag">Smart Contracts</span><span class="proj-tag">Blockchain</span></div>
           <div class="proj-links">
-            
-            
+            <a href="https://consent-chain-algorand.vercel.app" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
           </div>
         </article>
       
@@ -4278,573 +4465,174 @@ window.__scene=scene;window.__camera=camera;window.__renderer=renderer;
             <span class="proj-num">02 // CASE STUDY</span>
             <span class="proj-status">✦ PRODUCTION</span>
           </div>
-          <h3 class="proj-title">Systems Automation &amp; Tooling</h3>
-          <p class="proj-desc">Continuous delivery pipelines, environment automation, and reusable software modules.</p>
-          <div class="proj-tags"><span class="proj-tag">TypeScript</span><span class="proj-tag">JavaScript</span></div>
+          <h3 class="proj-title">AI Portfolio Generator</h3>
+          <p class="proj-desc">Turn your GitHub repositories &amp; resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.</p>
+          <div class="proj-tags"><span class="proj-tag">HTML</span><span class="proj-tag">JavaScript</span><span class="proj-tag">WebGL</span><span class="proj-tag">Three.js</span><span class="proj-tag">Node.js</span></div>
           <div class="proj-links">
-            
-            
+            <a href="https://myfolio.tech" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
+          </div>
+        </article>
+      
+        <article class="landscape-project-card">
+          <div class="proj-header">
+            <span class="proj-num">03 // CASE STUDY</span>
+            <span class="proj-status">✦ PRODUCTION</span>
+          </div>
+          <h3 class="proj-title">Pass A Note</h3>
+          <p class="proj-desc">High-performance interactive communication tool engineered for seamless zero-latency peer data transfer with secure encrypted messaging.</p>
+          <div class="proj-tags"><span class="proj-tag">HTML</span><span class="proj-tag">JavaScript</span><span class="proj-tag">CSS</span><span class="proj-tag">WebSockets</span></div>
+          <div class="proj-links">
+            <a href="https://pass-a-note-iota.vercel.app" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/pass-a-note" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
+          </div>
+        </article>
+      
+        <article class="landscape-project-card">
+          <div class="proj-header">
+            <span class="proj-num">04 // CASE STUDY</span>
+            <span class="proj-status">✦ PRODUCTION</span>
+          </div>
+          <h3 class="proj-title">LMS User Management</h3>
+          <p class="proj-desc">Enterprise-grade role-based access control and user management system engineered with strict security guarantees and database integrity.</p>
+          <div class="proj-tags"><span class="proj-tag">JavaScript</span><span class="proj-tag">Node.js</span><span class="proj-tag">Express</span><span class="proj-tag">PostgreSQL</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/lms-user-management" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/lms-user-management" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
+          </div>
+        </article>
+      
+        <article class="landscape-project-card">
+          <div class="proj-header">
+            <span class="proj-num">05 // CASE STUDY</span>
+            <span class="proj-status">✦ PRODUCTION</span>
+          </div>
+          <h3 class="proj-title">Dual-Chain Web3 Portfolio</h3>
+          <p class="proj-desc">Personal developer showcase featuring glassmorphism design, particle animations, and multi-chain protocol verification across Polygon &amp; Algorand.</p>
+          <div class="proj-tags"><span class="proj-tag">TypeScript</span><span class="proj-tag">CSS</span><span class="proj-tag">HTML</span><span class="proj-tag">Polygon</span><span class="proj-tag">Algorand</span></div>
+          <div class="proj-links">
+            <a href="https://portfolio-nine-tawny-39.vercel.app" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/portfolio" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
+          </div>
+        </article>
+      
+        <article class="landscape-project-card">
+          <div class="proj-header">
+            <span class="proj-num">06 // CASE STUDY</span>
+            <span class="proj-status">✦ PRODUCTION</span>
+          </div>
+          <h3 class="proj-title">Algorand Python Smart Contracts</h3>
+          <p class="proj-desc">Production PyTeal and Python smart contract implementations for Algorand escrow, token distribution, and verifiable state transitions.</p>
+          <div class="proj-tags"><span class="proj-tag">Python</span><span class="proj-tag">Algorand</span><span class="proj-tag">PyTeal</span><span class="proj-tag">Blockchain</span></div>
+          <div class="proj-links">
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-primary">Live Experience &nearr;</a>
+            <a href="https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">Source Code &rarr;</a>
           </div>
         </article>
       
         </div>
       </section>
 
-      <!-- 03: TECHNICAL SYSTEMS MATRIX -->
-      <section class="landscape-glass-card portfolio-interactive">
+      <!-- 04: TECHNICAL SYSTEMS MATRIX -->
+      <section class="landscape-glass-card portfolio-interactive" id="skills">
         <div class="section-heading">// 03 CORE TECHNICAL COMPETENCIES</div>
         <div class="skills-container">
-          <span class="landscape-skill-chip">TypeScript</span><span class="landscape-skill-chip">JavaScript</span><span class="landscape-skill-chip">Node.js</span><span class="landscape-skill-chip">React</span><span class="landscape-skill-chip">Python</span><span class="landscape-skill-chip">Git</span><span class="landscape-skill-chip">Cloud Architecture</span>
+          <span class="landscape-skill-chip">Python</span><span class="landscape-skill-chip">TypeScript</span><span class="landscape-skill-chip">JavaScript</span><span class="landscape-skill-chip">Solidity</span><span class="landscape-skill-chip">Algorand (PyTeal)</span><span class="landscape-skill-chip">Smart Contracts</span><span class="landscape-skill-chip">Web3.js &amp; Ethers.js</span><span class="landscape-skill-chip">Three.js &amp; WebGL</span><span class="landscape-skill-chip">Node.js &amp; Express</span><span class="landscape-skill-chip">React</span><span class="landscape-skill-chip">PostgreSQL</span><span class="landscape-skill-chip">Docker &amp; Cloud Architecture</span><span class="landscape-skill-chip">Git &amp; CI/CD</span><span class="landscape-skill-chip">Cryptography &amp; DPDP Compliance</span>
         </div>
       </section>
 
-      <!-- 04: TRANSMISSION TERMINAL -->
-      <section class="landscape-glass-card portfolio-interactive">
+      <!-- 05: EXPERIENCE & CAREER TIMELINE -->
+      <section class="landscape-glass-card portfolio-interactive" id="experience">
+        <div class="section-heading">// 04 EXPERIENCE &amp; ENGINEERING TRACK</div>
+        <div class="timeline-track">
+          
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <h3 class="timeline-role">Web3 &amp; Smart Contract Developer</h3>
+              <span class="timeline-period">2024 - Present</span>
+            </div>
+            <div class="timeline-company">Independent &amp; Open Source</div>
+            <p class="timeline-desc">Architecting decentralized applications and smart contracts on Algorand and Polygon. Engineered DPDP Act 2023 compliance escrow micro-payment protocols and high-performance WebGL developer tools.</p>
+          </div>
+        </div>
+      
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <h3 class="timeline-role">AI &amp; Software Systems Engineer</h3>
+              <span class="timeline-period">2023 - 2024</span>
+            </div>
+            <div class="timeline-company">Academic &amp; Research Projects</div>
+            <p class="timeline-desc">Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments.</p>
+          </div>
+        </div>
+      
+        </div>
+      </section>
+
+      <!-- 06: ACADEMIC FOUNDATION & VERIFIED CREDENTIALS -->
+      <section class="landscape-glass-card portfolio-interactive" id="education">
+        <div class="section-heading">// 05 ACADEMIC FOUNDATION &amp; CREDENTIALS</div>
+        <div class="academics-grid">
+          
+        <div class="edu-card">
+          <div class="edu-header">
+            <h3 class="edu-degree">Bachelor of Technology (B.Tech) — Computer Science &amp; Artificial Intelligence (AI)</h3>
+            <span class="edu-year">2022 - 2026 (Expected)</span>
+          </div>
+          <div class="edu-institution">Engineering &amp; Technology Institute</div>
+          
+        </div>
+      
+          
+        <div class="cert-card">
+          <div class="cert-status">✦ VERIFIED CREDENTIAL</div>
+          <h4 class="cert-name">Deloitte Cyber Job Simulation Certificate</h4>
+          <div class="cert-meta">
+            <span class="cert-issuer">Deloitte (Forage)</span>
+            <span class="cert-date">Verified Credential</span>
+          </div>
+          <a href="https://www.forage.com" target="_blank" rel="noopener noreferrer" class="cert-link">Inspect Credential &nearr;</a>
+        </div>
+      
+        <div class="cert-card">
+          <div class="cert-status">✦ VERIFIED CREDENTIAL</div>
+          <h4 class="cert-name">Algorand Certified Developer</h4>
+          <div class="cert-meta">
+            <span class="cert-issuer">Algorand Foundation Ecosystem</span>
+            <span class="cert-date">Verified</span>
+          </div>
+          <a href="https://algorand.foundation" target="_blank" rel="noopener noreferrer" class="cert-link">Inspect Credential &nearr;</a>
+        </div>
+      
+        </div>
+      </section>
+
+      <!-- 07: TRANSMISSION TERMINAL -->
+      <section class="landscape-glass-card portfolio-interactive" id="contact">
         <div class="contact-banner">
           <div>
             <div class="hero-eyebrow">Transmission Terminal</div>
             <h2 class="contact-info-title">Let’s Build Something Exceptional</h2>
-            <p style="font-size: 13.5px; color: var(--ink3, #3f3520);">Open for high-throughput systems, distributed platforms, and spatial 3D WebGL applications.</p>
+            <p style="font-size: 13.5px; color: var(--ink3, #3f3520);">Open for high-throughput Web3 protocols, smart contract architecture, and spatial WebGL platforms.</p>
           </div>
           <div class="contact-actions">
             <a href="mailto:abdulaziznoor9876@gmail.com" class="proj-btn proj-btn-primary">Email: abdulaziznoor9876@gmail.com &nearr;</a>
             <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">GitHub Profile &nearr;</a>
+            <a href="https://www.linkedin.com/in/abdul-aziz-nooruddin" target="_blank" rel="noopener noreferrer" class="proj-btn proj-btn-ghost">LinkedIn &nearr;</a>
           </div>
         </div>
       </section>
 
-      <!-- 05: FOOTER -->
+      <!-- 08: FOOTER -->
       <footer style="text-align: center; font-size: 12px; color: var(--ink2, #8b7c5c); padding-top: 10px;" class="portfolio-interactive portfolio-footer">
-        <div>&copy; 2026 Creative Developer. All rights reserved.</div>
-        <div style="margin-top: 4px; font-size: 10.5px; opacity: 0.85;">Procedural 3D Japanese Countryside Engine</div>
+        <div>&copy; 2026 Abdul Aziz Nooruddin. All rights reserved.</div>
+        <div style="margin-top: 4px; font-size: 10.5px; opacity: 0.85;">Procedural 3D Japanese Countryside Engine · Dynamic Weather &amp; Time Continuum</div>
       </footer>
     </div>
     
-
-  <!-- Universal Scroll Progress Bar -->
-  <div id="scroll-progress-indicator"></div>
-
-  <!-- Universal Lenis + GSAP + Three/Postprocessing + Motion Scrollytelling Choreographer -->
-  <script id="universal-scroll-motion-engine">
-    (function() {
-      function initScrollAnimations() {
-        var isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        var lastScrollTop = 0;
-        var scrollVelocity = 0;
-        var scrollTimeout;
-        var ticking = false;
-
-        // 1. Lenis Smooth Inertia Scroll Orchestration
-        var lenis = null;
-        if (typeof Lenis !== 'undefined' && !isReducedMotion) {
-          try {
-            lenis = new Lenis({
-              duration: 1.15,
-              easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
-              orientation: 'vertical',
-              gestureOrientation: 'vertical',
-              smoothWheel: true,
-              wheelMultiplier: 0.95,
-              touchMultiplier: 1.4,
-              infinite: false
-            });
-
-            window.__folioLenis = lenis;
-
-            if (typeof ScrollTrigger !== 'undefined') {
-              lenis.on('scroll', ScrollTrigger.update);
-            }
-
-            if (typeof gsap !== 'undefined') {
-              gsap.ticker.add(function(time) {
-                lenis.raf(time * 1000);
-              });
-              gsap.ticker.lagSmoothing(0);
-            } else {
-              function raf(time) {
-                lenis.raf(time);
-                requestAnimationFrame(raf);
-              }
-              requestAnimationFrame(raf);
-            }
-          } catch (e) {
-            console.warn('[Lenis] Fallback to native scroll:', e);
-          }
-        }
-
-        // 2. Real-time Scroll Velocity & Direction Physics
-        window.addEventListener('scroll', function() {
-          var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-          var delta = currentScroll - lastScrollTop;
-          scrollVelocity = delta;
-          lastScrollTop = Math.max(0, currentScroll);
-
-          // Update Progress Indicator
-          var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-          var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-          var scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
-          var bar = document.getElementById('scroll-progress-indicator');
-          if (bar) bar.style.width = scrolled + '%';
-
-          // Apply Dynamic Velocity Skew to Interactive Cards on Scroll
-          if (!ticking && !isReducedMotion) {
-            window.requestAnimationFrame(function() {
-              var clampedVelocity = Math.max(-20, Math.min(20, scrollVelocity));
-              var skewAngle = clampedVelocity * 0.06;
-              var scaleComp = 1 - Math.min(0.03, Math.abs(clampedVelocity) * 0.001);
-
-              var velocityElements = document.querySelectorAll('.project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .curio-case-card, .cosmic-project-card, .nano-banana-3d-hero, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
-              velocityElements.forEach(function(el) {
-                el.style.transform = 'skewY(' + skewAngle + 'deg) scaleY(' + scaleComp + ')';
-              });
-
-              ticking = false;
-            });
-            ticking = true;
-          }
-
-          // Reset velocity skew smoothly when scrolling halts
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(function() {
-            var velocityElements = document.querySelectorAll('.project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .curio-case-card, .cosmic-project-card, .nano-banana-3d-hero, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
-            velocityElements.forEach(function(el) {
-              el.style.transform = 'skewY(0deg) scaleY(1)';
-            });
-          }, 110);
-        }, { passive: true });
-
-        // 3. Motion Spring-Physics 3D Tilt on Hover
-        if (!isReducedMotion) {
-          var tiltCards = document.querySelectorAll('.project-card, .curio-case-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
-          tiltCards.forEach(function(card) {
-            card.addEventListener('mousemove', function(e) {
-              var rect = card.getBoundingClientRect();
-              var x = e.clientX - rect.left;
-              var y = e.clientY - rect.top;
-              var centerX = rect.width / 2;
-              var centerY = rect.height / 2;
-              var rotateX = (centerY - y) / 14;
-              var rotateY = (x - centerX) / 14;
-              card.style.transform = 'perspective(1000px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) scale3d(1.025, 1.025, 1.025)';
-            });
-            card.addEventListener('mouseleave', function() {
-              card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
-            });
-          });
-
-          // Magnetic Buttons Micro-Interaction
-          var magneticBtns = document.querySelectorAll('.magnetic-btn, .cosmic-btn-primary, .crystal-btn-primary, .wood-btn-primary, .btn-primary');
-          magneticBtns.forEach(function(btn) {
-            btn.addEventListener('mousemove', function(e) {
-              var rect = btn.getBoundingClientRect();
-              var x = (e.clientX - rect.left) - rect.width / 2;
-              var y = (e.clientY - rect.top) - rect.height / 2;
-              btn.style.transform = 'translate(' + (x * 0.22) + 'px, ' + (y * 0.22) + 'px)';
-            });
-            btn.addEventListener('mouseleave', function() {
-              btn.style.transform = 'translate(0px, 0px)';
-            });
-          });
-        }
-
-        // 4. GSAP & ScrollTrigger Animations
-        if (typeof gsap === 'undefined') return;
-
-        if (typeof ScrollTrigger !== 'undefined') {
-          gsap.registerPlugin(ScrollTrigger);
-        }
-
-        var mm = gsap.matchMedia();
-
-        mm.add("(min-width: 200px)", function() {
-          // A. Continuous 3D Model Rotation on Scroll Up and Down
-          var hero3D = document.querySelector('.nano-banana-3d-hero, .hero-3d-stage-container, .cosmic-hero-3d-wrapper, .sprawl-3d-stage, .abyss-nautilus-wrapper');
-          if (hero3D && !isReducedMotion) {
-            gsap.to(hero3D, {
-              rotationY: 16,
-              rotationZ: -3,
-              yPercent: 12,
-              ease: "none",
-              scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1.5
-              }
-            });
-          }
-
-          // B. Staggered Hero Entrance
-          var heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
-          var heroBadge = document.querySelector('.cosmic-hero-badge, .crystal-status-pill, .wood-hero-badge, .bio-status-badge, .fusion-status-pill, .curio-brass-badge, .sprawl-status-badge, .abyss-hero-badge');
-          var heroTitle = document.querySelector('h1, .cosmic-title-gradient, .crystal-glitch-title, .wood-title-gradient, .bio-hero-name, .fusion-hero-name, .sprawl-hero-title');
-          var heroTagline = document.querySelector('.cosmic-tagline, .crystal-hero-desc, .wood-hero-tagline, .bio-hero-bio, .fusion-hero-bio, .hero-bio, .sprawl-hero-bio');
-          var heroCta = document.querySelector('.cosmic-cta-row, .crystal-hero-actions, .wood-hero-actions, .bio-hero-actions, .fusion-hero-actions, .hero-actions, .sprawl-actions');
-
-          if (heroBadge) heroTl.fromTo(heroBadge, { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.6 });
-          if (heroTitle) heroTl.fromTo(heroTitle, { autoAlpha: 0, y: 35 }, { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.3");
-          if (heroTagline) heroTl.fromTo(heroTagline, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0, duration: 0.7 }, "-=0.4");
-          if (heroCta) heroTl.fromTo(heroCta, { autoAlpha: 0, scale: 0.95 }, { autoAlpha: 1, scale: 1, duration: 0.5 }, "-=0.3");
-
-          // C. Continuous Parallax Scrub on All Section Headers
-          gsap.utils.toArray('.cosmic-section-header, .crystal-section-header, .wood-section-header, .bio-section-header, .fusion-section-header, .curio-section-header, .sprawl-section-header, section h2').forEach(function(header) {
-            gsap.fromTo(header,
-              { autoAlpha: 0, y: 40 },
-              {
-                autoAlpha: 1,
-                y: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: header,
-                  start: "top 88%",
-                  toggleActions: "play none none none"
-                }
-              }
-            );
-          });
-
-          // D. Staggered Project Cards Reveal with Continuous Scrub
-          var projectCards = gsap.utils.toArray('.project-card, .curio-case-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
-          if (projectCards.length > 0) {
-            ScrollTrigger.batch(projectCards, {
-              start: "top 86%",
-              onEnter: function(batch) {
-                gsap.fromTo(batch,
-                  { autoAlpha: 0, y: 50, scale: 0.95 },
-                  {
-                    autoAlpha: 1,
-                    y: 0,
-                    scale: 1,
-                    duration: 0.8,
-                    stagger: 0.12,
-                    ease: "power2.out",
-                    overwrite: "auto"
-                  }
-                );
-              },
-              onEnterBack: function(batch) {
-                gsap.to(batch, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, overwrite: "auto" });
-              }
-            });
-          }
-
-          // E. Skills Progress Bars Glide-in on Scroll
-          gsap.utils.toArray('.crystal-skill-fill, .wood-skill-fill, .bio-skill-fill, .fusion-skill-fill, .cosmic-skill-fill, .skill-bar-fill, .skill-meter-fill').forEach(function(bar) {
-            var targetWidth = bar.style.width || '85%';
-            gsap.fromTo(bar,
-              { width: "0%" },
-              {
-                width: targetWidth,
-                duration: 1.2,
-                ease: "power2.out",
-                scrollTrigger: {
-                  trigger: bar,
-                  start: "top 92%",
-                  toggleActions: "play none none none"
-                }
-              }
-            );
-          });
-
-          // F. Experience Timeline Nodes & Cards
-          var timelineItems = gsap.utils.toArray('.crystal-timeline-item, .wood-timeline-item, .bio-timeline-item, .fusion-timeline-item, .curio-specimen-node, .cosmic-timeline-item, .timeline-item, .sprawl-drift-item, .abyss-timeline-node');
-          if (timelineItems.length > 0) {
-            ScrollTrigger.batch(timelineItems, {
-              start: "top 88%",
-              onEnter: function(batch) {
-                gsap.fromTo(batch,
-                  { autoAlpha: 0, x: -30 },
-                  {
-                    autoAlpha: 1,
-                    x: 0,
-                    duration: 0.7,
-                    stagger: 0.15,
-                    ease: "power2.out"
-                  }
-                );
-              }
-            });
-          }
-
-          // G. Resume Dossier 3D Card & Details Elevation
-          var resumeVisual = document.querySelector('.resume-3d-wrapper, .cosmic-about-visual-card, .resume-codex-container, .nautical-map-frame, .sprawl-blueprint-box');
-          if (resumeVisual) {
-            gsap.fromTo(resumeVisual,
-              { autoAlpha: 0, scale: 0.9, y: 40 },
-              {
-                autoAlpha: 1,
-                scale: 1,
-                y: 0,
-                duration: 0.9,
-                ease: "back.out(1.2)",
-                scrollTrigger: {
-                  trigger: resumeVisual,
-                  start: "top 85%",
-                  toggleActions: "play none none none"
-                }
-              }
-            );
-          }
-
-          // H. Continuous Interactive 3D Parallax Drift for Background Layers
-          if (!isReducedMotion) {
-            gsap.to('.hero-canvas-container, .cosmic-hero-bg, .stars-layer, .matrix-grid-bg, .abyss-canvas-layer', {
-              yPercent: 22,
-              ease: "none",
-              scrollTrigger: {
-                trigger: "body",
-                start: "top top",
-                end: "bottom bottom",
-                scrub: 1.2
-              }
-            });
-          }
-        });
-
-        // Ensure ScrollTrigger positions are synchronized after layout calculation
-        if (typeof ScrollTrigger !== 'undefined') {
-          ScrollTrigger.refresh();
-        }
-
-        // 5. Scrollytelling Bridge for Theatre.js & 3D Sequences
-        window.__folioScrollytelling = {
-          bindCameraToScroll: function(camera, trackSpline) {
-            if (!camera || !trackSpline || isReducedMotion) return;
-            ScrollTrigger.create({
-              trigger: 'body',
-              start: 'top top',
-              end: 'bottom bottom',
-              scrub: 1.5,
-              onUpdate: function(self) {
-                var pt = trackSpline.getPointAt(self.progress);
-                if (pt) camera.position.set(pt.x, pt.y, pt.z);
-              }
-            });
-          }
-        };
-      }
-
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initScrollAnimations);
-      } else {
-        initScrollAnimations();
-      }
-    })();
-  </script>
-
-
-<style id="myfolio-universal-mobile">
-  /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
-  @media (max-width: 600px) {
-    /* Reset base font size so rem units scale down */
-    html { font-size: 14px !important; }
-
-    /* Hero headline — cap at a safe mobile size */
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"],
-    [class*="hero-name"], [class*="page-title"], [class*="folio-name"],
-    [class*="profile-name"] {
-      font-size: clamp(1.6rem, 7vw, 2.4rem) !important;
-      line-height: 1.15 !important;
-      letter-spacing: -0.02em !important;
-    }
-
-    /* Section headings */
-    h2, [class*="section-title"], [class*="section-heading"],
-    [class*="chapter-title"], [class*="block-title"] {
-      font-size: clamp(1.25rem, 5.5vw, 1.8rem) !important;
-      line-height: 1.2 !important;
-    }
-
-    h3, [class*="card-title"], [class*="project-name"],
-    [class*="exp-title"], [class*="role-title"] {
-      font-size: clamp(1rem, 4.5vw, 1.35rem) !important;
-    }
-
-    /* Body / bio text */
-    p, [class*="bio"], [class*="hero-bio"], [class*="subtitle"],
-    [class*="intro-text"], [class*="description"], [class*="lead"] {
-      font-size: clamp(0.8rem, 3.5vw, 1rem) !important;
-      line-height: 1.65 !important;
-    }
-
-    /* Tag / badge / mono accent text */
-    [class*="tag"], [class*="badge"], [class*="chip"], [class*="label"],
-    [class*="kicker"], [class*="mono"], code, pre {
-      font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
-    }
-
-    /* Section padding — prevent edges being clipped on main sections */
-    section, .portfolio-section, [class*="section-container"],
-    [class*="page-wrapper"], [class*="content-wrapper"], [class*="main-layout"] {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-    }
-
-    /* Hero top-level containers — reduce vertical breathing room without polluting inner elements */
-    section[class*="hero"], [class*="hero-section"], [class*="hero-stage"], [class*="hero-viewport"], [id="home"] {
-      padding-top: 48px !important;
-      padding-bottom: 24px !important;
-      min-height: auto !important;
-    }
-
-    /* Force single-column grids everywhere */
-    [style*="grid-template-columns"],
-    [class*="grid"]:not(.glyphs):not(.proj-links), [class*="bento"], [class*="dual"],
-    [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    /* Navigation — hide multi-item desktop navs, show only brand */
-    [class*="nav-menu"], [class*="header-nav"], [class*="dock"],
-    [class*="vertical-dock"], [class*="sidebar-nav"] {
-      display: none !important;
-    }
-
-    /* Primary CTA buttons — stack cleanly without breaking controls or tags */
-    [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-    }
-    [class*="cta-btn"], [class*="sprawl-btn"], [class*="hero-btn"],
-    .primary-generate-btn {
-      width: 100% !important;
-      justify-content: center !important;
-      padding: 12px 20px !important;
-      font-size: 0.82rem !important;
-    }
-
-    /* Project / card images */
-    [class*="card-img"], [class*="project-img"], [class*="project-image"],
-    [class*="artwork"], [class*="thumbnail"] {
-      height: 160px !important;
-    }
-
-    /* Skill / telemetry numbers — prevent overflow */
-    [class*="stat-num"], [class*="metric-value"], [class*="counter"],
-    [class*="number-display"] {
-      font-size: clamp(1.4rem, 6vw, 2rem) !important;
-    }
-
-    /* 404 hero numbers */
-    [class*="404"], [class*="error-code"] {
-      font-size: clamp(4rem, 20vw, 7rem) !important;
-    }
-
-    /* Floating 3D assets — reduce to prevent layout blowout */
-    [class*="hero-3d"], [class*="focal-asset"], [class*="floating-asset"],
-    [class*="hero-img"], [class*="hero-visual"] {
-      max-width: 260px !important;
-      width: 70vw !important;
-      margin: 24px auto 0 !important;
-    }
-
-    /* Canvas backgrounds — don't overflow */
-    canvas {
-      max-width: 100vw !important;
-    }
-
-    /* Footer */
-    [class*="footer"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-      padding: 24px 16px !important;
-      text-align: center !important;
-      font-size: 0.72rem !important;
-    }
-  }
-
-  /* ─── Tablet override ≤768px ────────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    html { font-size: 15px !important; }
-
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"] {
-      font-size: clamp(2rem, 6vw, 3rem) !important;
-    }
-
-    h2, [class*="section-title"], [class*="section-heading"] {
-      font-size: clamp(1.4rem, 4.5vw, 2rem) !important;
-    }
-
-    section, [class*="section"], [class*="-section"] {
-      padding-left: 24px !important;
-      padding-right: 24px !important;
-    }
-
-    [class*="grid"], [class*="bento"],
-    [class*="tri-layout"], [class*="three-col"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    [class*="two-col"], [class*="dual"] {
-      grid-template-columns: 1fr !important;
-    }
-  }
-
-  /* ─── Reduced-motion: disable floating keyframes ───────────────────────── */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-</style>
-
-    <!-- REAL-TIME ANALYTICS & CONTACT LEAD BEACON -->
-    <script>
-      (function() {
-        try {
-          var pathParts = window.location.pathname.split('/').filter(Boolean);
-          var sId = 'web-03f759dc-0f29-4c1f-8b74-3af796e27fae' || (pathParts[0] === 'p' || pathParts[0] === 'sites' ? pathParts[1] : pathParts[0]) || '';
-          if (sId) {
-            fetch('/api/sites/' + encodeURIComponent(sId) + '/analytics', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ eventType: 'page_view', referrer: document.referrer || 'direct' })
-            }).catch(function(){});
-          }
-        } catch(e) {}
-
-        document.addEventListener('DOMContentLoaded', function() {
-          var forms = document.querySelectorAll('form');
-          forms.forEach(function(form) {
-            form.addEventListener('submit', async function(e) {
-              e.preventDefault();
-              var pathParts = window.location.pathname.split('/').filter(Boolean);
-              var sId = 'web-03f759dc-0f29-4c1f-8b74-3af796e27fae' || (pathParts[0] === 'p' || pathParts[0] === 'sites' ? pathParts[1] : pathParts[0]) || '';
-              var nameInput = form.querySelector('[name="name"]') || form.querySelector('input[type="text"]');
-              var emailInput = form.querySelector('[name="email"]') || form.querySelector('input[type="email"]');
-              var msgInput = form.querySelector('[name="message"]') || form.querySelector('textarea');
-              var btn = form.querySelector('button[type="submit"]') || form.querySelector('button');
-              var prevBtnText = btn ? btn.textContent : '';
-              if (btn) btn.textContent = 'Sending...';
-              try {
-                var res = await fetch('/api/sites/' + encodeURIComponent(sId) + '/contact', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    name: nameInput ? nameInput.value : 'Visitor',
-                    email: emailInput ? emailInput.value : '',
-                    message: msgInput ? msgInput.value : ''
-                  })
-                });
-                if (res.ok) {
-                  form.innerHTML = '<div style="padding: 1.25rem; border-radius: 12px; background: rgba(34,197,94,0.15); border: 1px solid #22c55e; color: #22c55e; text-align: center; font-weight: 700;">✅ Message delivered directly to creator!</div>';
-                } else {
-                  if (btn) btn.textContent = prevBtnText || 'Send Message';
-                }
-              } catch(err) {
-                if (btn) btn.textContent = prevBtnText || 'Send Message';
-              }
-            });
-          });
-        });
-      })();
-    </script>
-    </body>
+</body>
 </html>
