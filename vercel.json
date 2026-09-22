@@ -3,85 +3,81 @@
   "cleanUrls": true,
   "functions": {
     "api/index.js": {
-      "memory": 1024,
-      "maxDuration": 60,
-      "excludeFiles": "{public/assets/**,web/assets/**,scratch/**,screenshots/**,test/**,docs/**}"
+      "maxDuration": 60
     }
   },
-  "routes": [
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable"
-      },
-      "dest": "/assets/$1"
+      "source": "/api/:path*",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.js"
+      "source": "/p/:path*",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/p/(.*)",
-      "dest": "/api/index.js"
+      "source": "/sites/:path*",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/sites/(.*)",
-      "dest": "/api/index.js"
+      "source": "/webhook:path*",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/webhook(.*)",
-      "dest": "/api/index.js"
+      "source": "/health:path*",
+      "destination": "/api/index.js"
     },
     {
-      "src": "/health(.*)",
-      "dest": "/api/index.js"
+      "source": "/login",
+      "destination": "/login.html"
     },
     {
-      "src": "/studio",
-      "dest": "/studio.html"
+      "source": "/signin",
+      "destination": "/login.html"
     },
     {
-      "src": "/dashboard",
-      "dest": "/dashboard.html"
+      "source": "/signup",
+      "destination": "/signup.html"
     },
     {
-      "src": "/login",
-      "dest": "/auth.html"
+      "source": "/register",
+      "destination": "/signup.html"
     },
     {
-      "src": "/auth",
-      "dest": "/auth.html"
+      "source": "/auth",
+      "destination": "/login.html"
     },
     {
-      "src": "/profile",
-      "dest": "/profile.html"
+      "source": "/studio",
+      "destination": "/studio.html"
     },
     {
-      "src": "/universes",
-      "dest": "/design-demo.html"
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
     },
     {
-      "src": "/design-demo",
-      "dest": "/design-demo.html"
+      "source": "/universes",
+      "destination": "/universes.html"
     },
     {
-      "src": "/terms",
-      "dest": "/terms.html"
+      "source": "/design-demo",
+      "destination": "/universes.html"
     },
     {
-      "src": "/privacy",
-      "dest": "/privacy.html"
+      "source": "/profile",
+      "destination": "/profile.html"
     },
     {
-      "src": "/thank-you",
-      "dest": "/thank-you.html"
+      "source": "/terms",
+      "destination": "/terms.html"
     },
     {
-      "handle": "filesystem"
+      "source": "/privacy",
+      "destination": "/privacy.html"
     },
     {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/thank-you",
+      "destination": "/thank-you.html"
     }
   ]
 }
