@@ -31,8 +31,8 @@
 
     initScene() {
       this.scene = new THREE.Scene();
-      // Natural Atmospheric Twilight Sky (Deep Indigo to Horizon Gradient)
-      this.scene.background = new THREE.Color(0x091428);
+      // Deep Space Obsidian Void matching platform theme
+      this.scene.background = new THREE.Color(0x040714);
     }
 
     initRenderer() {
@@ -105,8 +105,8 @@
     }
 
     initFog() {
-      // Realistic atmospheric perspective depth fog matching horizon haze
-      this.scene.fog = new THREE.FogExp2(0x0b172a, 0.0036);
+      // Deep space atmospheric perspective depth fog matching obsidian void
+      this.scene.fog = new THREE.FogExp2(0x040714, 0.0032);
     }
 
     bindEvents() {

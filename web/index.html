@@ -220,49 +220,70 @@
       gap: 12px;
     }
 
-    .btn-solar-outline {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      background: rgba(11, 22, 56, 0.5);
-      color: #BAE6FD;
-      font-family: var(--font-heading);
-      font-size: 0.85rem;
-      font-weight: 600;
-      text-decoration: none;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      transition: all 0.25s ease;
+    .btn-solar-outline,
+    button.btn-solar-outline,
+    a.btn-solar-outline {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      padding: 9px 20px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(56, 189, 248, 0.45) !important;
+      background: rgba(11, 22, 56, 0.65) !important;
+      color: #BAE6FD !important;
+      font-family: var(--font-heading) !important;
+      font-size: 0.88rem !important;
+      font-weight: 600 !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+      outline: none !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
     }
-    .btn-solar-outline:hover {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: #38BDF8;
-      color: #FFFFFF;
+    .btn-solar-outline:hover,
+    button.btn-solar-outline:hover,
+    a.btn-solar-outline:hover {
+      background: rgba(56, 189, 248, 0.2) !important;
+      border-color: #00F0FF !important;
+      color: #FFFFFF !important;
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.35) !important;
+      transform: translateY(-1px) !important;
     }
 
-    .btn-solar-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 22px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
-      color: #04091A;
-      font-family: var(--font-heading);
-      font-size: 0.88rem;
-      font-weight: 700;
-      text-decoration: none;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
-      transition: all 0.25s ease;
+    .btn-solar-primary,
+    button.btn-solar-primary,
+    a.btn-solar-primary {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      padding: 10px 24px !important;
+      border-radius: 999px !important;
+      border: 1px solid rgba(255, 255, 255, 0.25) !important;
+      background: linear-gradient(135deg, #00F0FF 0%, #3B82F6 60%, #8B5CF6 100%) !important;
+      color: #030712 !important;
+      font-family: var(--font-heading) !important;
+      font-size: 0.9rem !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      cursor: pointer !important;
+      box-shadow: 0 6px 25px rgba(0, 240, 255, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      outline: none !important;
+      appearance: none !important;
+      -webkit-appearance: none !important;
     }
-    .btn-solar-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.55);
+    .btn-solar-primary:hover,
+    button.btn-solar-primary:hover,
+    a.btn-solar-primary:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 10px 32px rgba(0, 240, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+      filter: brightness(1.08) !important;
     }
 
     .mobile-nav-toggle {
