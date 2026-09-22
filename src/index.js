@@ -57,8 +57,8 @@ const injectMobileCSS = (html) => html && html.includes('</body>')
 const app = express();
 app.disable('x-powered-by');
 
-// Instant 0ms Health Check for Render /healthz and monitoring probes (Bypasses all heavy middleware, DB & auth)
-app.get(['/health', '/healthz'], (req, res) => {
+// Instant 0ms Health Check for probes (Bypasses all heavy middleware, DB & auth)
+app.get(['/health', '/healthz', '/api/health'], (req, res) => {
   res.status(200).json({
     status: 'healthy',
     ok: true,
@@ -2188,6 +2188,16 @@ app.get(['/contact', '/contact-us', '/support'], (req, res) => {
   res.sendFile(getPagePath('contact.html'));
 });
 
+// Admin Panel
+app.get(['/admin', '/admin.html'], (req, res) => {
+  res.sendFile(getPagePath('admin.html'));
+});
+
+// Design Resources Generator
+app.get(['/design-resources', '/resources'], (req, res) => {
+  res.sendFile(getPagePath('design-resources-generator.html'));
+});
+
 // Contact Form API — accepts form submissions from /contact page
 app.post('/api/contact', async (req, res) => {
   try {
@@ -2202,10 +2212,6 @@ app.post('/api/contact', async (req, res) => {
     console.error('[CONTACT] Error:', err);
     res.status(500).json({ error: 'Failed to process contact form.' });
   }
-});
-
-app.get(['/profile', '/account', '/settings'], (req, res) => {
-  res.sendFile(path.join(process.cwd(), 'web/profile.html'));
 });
 
 // ==========================================
@@ -3693,7 +3699,7 @@ app.get('/p/:siteId/*', (req, res) => {
 // ==========================================
 // Subscription & Payment Landing Page (/subscribe)
 // ==========================================
-app.get(['/subscribe', '/payment/retry'], (req, res) => {
+app.get(['/subscribe', '/pricing', '/payment/retry'], (req, res) => {
   const siteId = req.query.siteId || req.query.userId || 'demo';
 
   res.send(`<!DOCTYPE html>
@@ -4046,8 +4052,8 @@ app.get(['/subscribe', '/payment/retry'], (req, res) => {
 </html>`);
 });
 
-// Health check (Instant 200 OK for Render /healthz and monitoring probes)
-app.get(['/health', '/healthz'], (req, res) => {
+// Health check (Instant 200 OK for probes)
+app.get(['/health', '/healthz', '/api/health'], (req, res) => {
   res.status(200).json({
     status: 'healthy',
     ok: true,
@@ -4085,7 +4091,7 @@ app.use((req, res) => {
     return res.status(404).json({ error: 'Endpoint not found', path: req.path });
   }
 
-  const notFoundPage = path.join(process.cwd(), 'web', '404.html');
+  const notFoundPage = getPagePath('404.html');
   if (fs.existsSync(notFoundPage)) {
     return res.status(404).sendFile(notFoundPage);
   }
