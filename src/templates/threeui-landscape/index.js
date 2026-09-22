@@ -256,8 +256,9 @@ const ThreeUILandscapeTemplate = {
       return `<!DOCTYPE html><html><body><h1>Error loading ThreeUI Landscape template</h1></body></html>`;
     }
 
-    // Strip out any remnants of old styles
+    // Strip out any remnants of old styles or rogue mobile overrides
     html = html.replace(/<style data-threeui-landscape>[\s\S]*?<\/style>/gi, '');
+    html = html.replace(/<style id="myfolio-universal-mobile">[\s\S]*?<\/style>/gi, '');
 
     // Replace Title
     html = html.replace(/<title>.*?<\/title>/i, `<title>${safeName} — 3D Landscape &amp; Weather Portfolio</title>`);
@@ -267,8 +268,6 @@ const ThreeUILandscapeTemplate = {
   <header id="portfolio-masthead-navbar">
     <div class="brand-left">
       <a href="#" class="brand-name">${safeName.toUpperCase()}</a>
-      <span class="brand-sep">✦</span>
-      <span class="brand-role-badge">${safeRole}</span>
     </div>
     <nav class="header-nav-links">
       <a href="#about" class="nav-anchor">ABOUT</a>
@@ -346,71 +345,73 @@ const ThreeUILandscapeTemplate = {
       }
 
       /* ==========================================================================
-         UNIVERSAL FIXED NAVBAR (100% Zoom-Proof & Viewport-Proof)
+         UNIVERSAL FIXED NAVBAR (Zero-Collision & Laptop-Proof)
          ========================================================================== */
       header, #portfolio-masthead-navbar {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 56px !important;
-        padding: 0 24px !important;
+        height: 52px !important;
+        padding: 0 18px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        background: rgba(253, 248, 238, 0.94) !important;
-        backdrop-filter: blur(24px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-        border-bottom: 1px solid rgba(168, 98, 31, 0.22) !important;
-        box-shadow: 0 4px 20px rgba(46, 37, 21, 0.08) !important;
+        gap: 12px !important;
+        background: rgba(253, 248, 238, 0.90) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border-bottom: 1px solid rgba(168, 98, 31, 0.20) !important;
+        box-shadow: 0 2px 14px rgba(46, 37, 21, 0.06) !important;
         z-index: 99999 !important;
         pointer-events: auto !important;
         transition: background 0.3s ease, border-color 0.3s ease;
       }
       .brand-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
       }
       .brand-name {
-        font-family: var(--sans);
-        font-weight: 800;
-        font-size: 15px;
-        letter-spacing: 0.8px;
-        color: var(--ink, #2e2515);
-        text-decoration: none;
-        white-space: nowrap;
-      }
-      .brand-sep {
-        color: var(--accent, #a8621f);
-        font-size: 11px;
-      }
-      .brand-role-badge {
-        font-size: 11.5px;
-        font-weight: 600;
-        color: var(--ink2, #8b7c5c);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 260px;
+        font-family: var(--sans) !important;
+        font-weight: 800 !important;
+        font-size: 14.5px !important;
+        letter-spacing: 0.6px !important;
+        color: var(--ink, #2e2515) !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
       }
       .header-nav-links {
-        display: flex;
-        align-items: center;
-        gap: 18px;
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
       }
       .nav-anchor {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1.2px;
-        color: var(--ink, #2e2515);
-        text-decoration: none;
-        transition: color 0.18s ease;
-        padding: 4px 0;
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        color: var(--ink, #2e2515) !important;
+        text-decoration: none !important;
+        transition: color 0.18s ease !important;
+        padding: 4px 2px !important;
+        white-space: nowrap !important;
       }
       .nav-anchor:hover {
-        color: var(--accent, #a8621f);
+        color: var(--accent, #a8621f) !important;
+      }
+      @media (max-width: 1260px) {
+        .header-nav-links {
+          display: none !important; /* Zero overlap on laptops or narrow viewports */
+        }
+        #mobile-quick-nav {
+          display: flex !important;
+        }
+        .landscape-portfolio-scroll {
+          padding-top: 104px !important;
+        }
       }
       
       /* Force .top-right to stay inside the top navbar at all times! */
@@ -423,6 +424,7 @@ const ThreeUILandscapeTemplate = {
         display: flex !important;
         align-items: center !important;
         gap: 6px !important;
+        flex-shrink: 0 !important;
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
@@ -431,7 +433,7 @@ const ThreeUILandscapeTemplate = {
       .tbtn {
         font-size: 10px !important;
         font-weight: 700 !important;
-        padding: 6px 11px !important;
+        padding: 5px 10px !important;
         border-radius: 999px !important;
         border: 1px solid rgba(168, 98, 31, 0.25) !important;
         background: rgba(255, 255, 255, 0.85) !important;
@@ -443,6 +445,9 @@ const ThreeUILandscapeTemplate = {
         cursor: pointer !important;
         box-shadow: 0 2px 6px rgba(46, 37, 21, 0.05) !important;
         transition: all 0.18s ease !important;
+        width: auto !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
       }
       .tbtn:hover {
         border-color: var(--accent, #a8621f) !important;
@@ -452,21 +457,21 @@ const ThreeUILandscapeTemplate = {
         color: var(--accent, #a8621f) !important;
       }
 
-      /* Mobile Quick Nav Strip */
+      /* Mobile & Laptop Quick Nav Strip */
       #mobile-quick-nav {
         display: none;
         position: fixed;
-        top: 54px;
+        top: 52px;
         left: 0;
         right: 0;
-        height: 42px;
+        height: 38px;
         z-index: 99998;
-        background: rgba(253, 248, 238, 0.94);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(253, 248, 238, 0.90);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid rgba(168, 98, 31, 0.16);
         align-items: center;
-        padding: 0 10px;
+        padding: 0 12px;
         pointer-events: auto !important;
       }
       .mobile-nav-scroll {
@@ -519,17 +524,17 @@ const ThreeUILandscapeTemplate = {
         pointer-events: auto !important;
       }
 
-      /* Frosted Glass Bento Surfaces (Dynamically Hugs Content) */
+      /* Truly Translucent Frosted Glass Bento Surfaces (3D Landscape 100% Visible Behind) */
       .landscape-glass-card {
-        background: rgba(255, 252, 246, 0.90);
-        backdrop-filter: blur(28px) saturate(180%);
-        -webkit-backdrop-filter: blur(28px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.92);
+        background: rgba(255, 252, 246, 0.18) !important;
+        backdrop-filter: blur(12px) saturate(135%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.55) !important;
         border-radius: 22px;
         padding: 24px 28px;
         color: var(--ink, #2e2515);
-        box-shadow: 0 20px 48px -10px rgba(46, 37, 21, 0.12), 0 2px 10px rgba(168, 98, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 16px 40px -10px rgba(46, 37, 21, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.70);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
         width: fit-content;
         max-width: 100%;
         margin: 0 auto;
@@ -538,8 +543,9 @@ const ThreeUILandscapeTemplate = {
         box-sizing: border-box;
       }
       .landscape-glass-card:hover {
-        border-color: rgba(168, 98, 31, 0.45);
-        box-shadow: 0 28px 64px -10px rgba(46, 37, 21, 0.18);
+        background: rgba(255, 252, 246, 0.26) !important;
+        border-color: rgba(168, 98, 31, 0.38) !important;
+        box-shadow: 0 24px 54px -10px rgba(46, 37, 21, 0.14);
       }
 
       /* Hero Stage */
@@ -692,8 +698,10 @@ const ThreeUILandscapeTemplate = {
       .pillar-box {
         padding: 16px;
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(168, 98, 31, 0.2);
+        background: rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(168, 98, 31, 0.16);
       }
       .pillar-title {
         font-size: 12px;
@@ -716,23 +724,24 @@ const ThreeUILandscapeTemplate = {
         gap: 20px;
       }
       .landscape-project-card {
-        background: rgba(255, 253, 249, 0.90);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(168, 98, 31, 0.22);
+        background: rgba(255, 252, 246, 0.18);
+        backdrop-filter: blur(12px) saturate(135%);
+        -webkit-backdrop-filter: blur(12px) saturate(135%);
+        border: 1px solid rgba(255, 255, 255, 0.55);
         border-radius: 20px;
-        padding: 26px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         gap: 14px;
-        box-shadow: 0 10px 30px rgba(46, 37, 21, 0.08);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 10px 30px rgba(46, 37, 21, 0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
       }
       .landscape-project-card:hover {
         transform: translateY(-4px);
+        background: rgba(255, 252, 246, 0.26);
         border-color: var(--accent, #a8621f);
-        box-shadow: 0 18px 42px rgba(46, 37, 21, 0.14);
+        box-shadow: 0 18px 42px rgba(46, 37, 21, 0.12);
       }
       .proj-header {
         display: flex;
@@ -1027,10 +1036,11 @@ const ThreeUILandscapeTemplate = {
       }
       [data-time="night"] .landscape-glass-card,
       [data-time="night"] .landscape-project-card {
-        background: rgba(14, 16, 22, 0.90) !important;
-        border-color: rgba(208, 138, 74, 0.35) !important;
-        color: #e9e2d2 !important;
-        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.75) !important;
+        background: rgba(14, 16, 22, 0.36) !important;
+        backdrop-filter: blur(14px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+        border-color: rgba(208, 138, 74, 0.30) !important;
+        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.60) !important;
       }
       [data-time="night"] .hero-masthead,
       [data-time="night"] .proj-title,
@@ -1053,12 +1063,12 @@ const ThreeUILandscapeTemplate = {
       [data-time="night"] .pillar-box,
       [data-time="night"] .edu-card,
       [data-time="night"] .cert-card {
-        background: rgba(20, 24, 33, 0.85) !important;
-        border-color: rgba(208, 138, 74, 0.25) !important;
+        background: rgba(20, 24, 33, 0.40) !important;
+        border-color: rgba(208, 138, 74, 0.22) !important;
       }
       [data-time="night"] .landscape-skill-chip {
-        background: rgba(20, 24, 33, 0.90) !important;
-        border-color: rgba(208, 138, 74, 0.3) !important;
+        background: rgba(20, 24, 33, 0.50) !important;
+        border-color: rgba(208, 138, 74, 0.28) !important;
         color: #e9e2d2 !important;
       }
       [data-time="night"] .proj-btn-primary {

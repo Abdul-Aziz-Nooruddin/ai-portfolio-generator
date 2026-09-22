@@ -407,8 +407,8 @@ class TemplateRegistry {
       html = html.replace('</head>', '  <link rel="icon" type="image/png" href="/assets/favicon.png">\n  <link rel="apple-touch-icon" href="/assets/favicon.png">\n</head>');
     }
 
-    // Inject universal mobile responsive CSS into every template
-    if (html && html.includes('</body>')) {
+    // Inject universal mobile responsive CSS into every template except bespoke 3D WebGL scenes
+    if (templateId !== 'threeui-landscape' && html && html.includes('</body>')) {
       html = html.replace('</body>', `${TemplateRegistry.getMobileCSS()}\n</body>`);
     }
 

@@ -272,71 +272,73 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
 
       /* ==========================================================================
-         UNIVERSAL FIXED NAVBAR (100% Zoom-Proof & Viewport-Proof)
+         UNIVERSAL FIXED NAVBAR (Zero-Collision & Laptop-Proof)
          ========================================================================== */
       header, #portfolio-masthead-navbar {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         right: 0 !important;
-        height: 56px !important;
-        padding: 0 24px !important;
+        height: 52px !important;
+        padding: 0 18px !important;
         display: flex !important;
         align-items: center !important;
         justify-content: space-between !important;
-        background: rgba(253, 248, 238, 0.94) !important;
-        backdrop-filter: blur(24px) saturate(180%) !important;
-        -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
-        border-bottom: 1px solid rgba(168, 98, 31, 0.22) !important;
-        box-shadow: 0 4px 20px rgba(46, 37, 21, 0.08) !important;
+        gap: 12px !important;
+        background: rgba(253, 248, 238, 0.90) !important;
+        backdrop-filter: blur(20px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+        border-bottom: 1px solid rgba(168, 98, 31, 0.20) !important;
+        box-shadow: 0 2px 14px rgba(46, 37, 21, 0.06) !important;
         z-index: 99999 !important;
         pointer-events: auto !important;
         transition: background 0.3s ease, border-color 0.3s ease;
       }
       .brand-left {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 0;
+        display: flex !important;
+        align-items: center !important;
+        gap: 8px !important;
+        flex-shrink: 0 !important;
       }
       .brand-name {
-        font-family: var(--sans);
-        font-weight: 800;
-        font-size: 15px;
-        letter-spacing: 0.8px;
-        color: var(--ink, #2e2515);
-        text-decoration: none;
-        white-space: nowrap;
-      }
-      .brand-sep {
-        color: var(--accent, #a8621f);
-        font-size: 11px;
-      }
-      .brand-role-badge {
-        font-size: 11.5px;
-        font-weight: 600;
-        color: var(--ink2, #8b7c5c);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 260px;
+        font-family: var(--sans) !important;
+        font-weight: 800 !important;
+        font-size: 14.5px !important;
+        letter-spacing: 0.6px !important;
+        color: var(--ink, #2e2515) !important;
+        text-decoration: none !important;
+        white-space: nowrap !important;
       }
       .header-nav-links {
-        display: flex;
-        align-items: center;
-        gap: 18px;
+        display: flex !important;
+        align-items: center !important;
+        gap: 14px !important;
+        flex-shrink: 1 !important;
+        min-width: 0 !important;
       }
       .nav-anchor {
-        font-size: 11px;
-        font-weight: 700;
-        letter-spacing: 1.2px;
-        color: var(--ink, #2e2515);
-        text-decoration: none;
-        transition: color 0.18s ease;
-        padding: 4px 0;
+        font-size: 10.5px !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        color: var(--ink, #2e2515) !important;
+        text-decoration: none !important;
+        transition: color 0.18s ease !important;
+        padding: 4px 2px !important;
+        white-space: nowrap !important;
       }
       .nav-anchor:hover {
-        color: var(--accent, #a8621f);
+        color: var(--accent, #a8621f) !important;
+      }
+      @media (max-width: 1260px) {
+        .header-nav-links {
+          display: none !important; /* Zero overlap on laptops or narrow viewports */
+        }
+        #mobile-quick-nav {
+          display: flex !important;
+        }
+        .landscape-portfolio-scroll {
+          padding-top: 104px !important;
+        }
       }
       
       /* Force .top-right to stay inside the top navbar at all times! */
@@ -349,6 +351,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
         display: flex !important;
         align-items: center !important;
         gap: 6px !important;
+        flex-shrink: 0 !important;
         background: transparent !important;
         border: none !important;
         padding: 0 !important;
@@ -357,7 +360,7 @@ footer{position:absolute;left:0;right:0;bottom:0;
       .tbtn {
         font-size: 10px !important;
         font-weight: 700 !important;
-        padding: 6px 11px !important;
+        padding: 5px 10px !important;
         border-radius: 999px !important;
         border: 1px solid rgba(168, 98, 31, 0.25) !important;
         background: rgba(255, 255, 255, 0.85) !important;
@@ -369,6 +372,9 @@ footer{position:absolute;left:0;right:0;bottom:0;
         cursor: pointer !important;
         box-shadow: 0 2px 6px rgba(46, 37, 21, 0.05) !important;
         transition: all 0.18s ease !important;
+        width: auto !important;
+        max-width: none !important;
+        flex: 0 0 auto !important;
       }
       .tbtn:hover {
         border-color: var(--accent, #a8621f) !important;
@@ -378,21 +384,21 @@ footer{position:absolute;left:0;right:0;bottom:0;
         color: var(--accent, #a8621f) !important;
       }
 
-      /* Mobile Quick Nav Strip */
+      /* Mobile & Laptop Quick Nav Strip */
       #mobile-quick-nav {
         display: none;
         position: fixed;
-        top: 54px;
+        top: 52px;
         left: 0;
         right: 0;
-        height: 42px;
+        height: 38px;
         z-index: 99998;
-        background: rgba(253, 248, 238, 0.94);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
+        background: rgba(253, 248, 238, 0.90);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         border-bottom: 1px solid rgba(168, 98, 31, 0.16);
         align-items: center;
-        padding: 0 10px;
+        padding: 0 12px;
         pointer-events: auto !important;
       }
       .mobile-nav-scroll {
@@ -445,17 +451,17 @@ footer{position:absolute;left:0;right:0;bottom:0;
         pointer-events: auto !important;
       }
 
-      /* Frosted Glass Bento Surfaces (Dynamically Hugs Content) */
+      /* Truly Translucent Frosted Glass Bento Surfaces (3D Landscape 100% Visible Behind) */
       .landscape-glass-card {
-        background: rgba(255, 252, 246, 0.90);
-        backdrop-filter: blur(28px) saturate(180%);
-        -webkit-backdrop-filter: blur(28px) saturate(180%);
-        border: 1px solid rgba(255, 255, 255, 0.92);
+        background: rgba(255, 252, 246, 0.18) !important;
+        backdrop-filter: blur(12px) saturate(135%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(135%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.55) !important;
         border-radius: 22px;
         padding: 24px 28px;
         color: var(--ink, #2e2515);
-        box-shadow: 0 20px 48px -10px rgba(46, 37, 21, 0.12), 0 2px 10px rgba(168, 98, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
-        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 16px 40px -10px rgba(46, 37, 21, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.70);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
         width: fit-content;
         max-width: 100%;
         margin: 0 auto;
@@ -464,8 +470,9 @@ footer{position:absolute;left:0;right:0;bottom:0;
         box-sizing: border-box;
       }
       .landscape-glass-card:hover {
-        border-color: rgba(168, 98, 31, 0.45);
-        box-shadow: 0 28px 64px -10px rgba(46, 37, 21, 0.18);
+        background: rgba(255, 252, 246, 0.26) !important;
+        border-color: rgba(168, 98, 31, 0.38) !important;
+        box-shadow: 0 24px 54px -10px rgba(46, 37, 21, 0.14);
       }
 
       /* Hero Stage */
@@ -618,8 +625,10 @@ footer{position:absolute;left:0;right:0;bottom:0;
       .pillar-box {
         padding: 16px;
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.6);
-        border: 1px solid rgba(168, 98, 31, 0.2);
+        background: rgba(255, 255, 255, 0.22);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(168, 98, 31, 0.16);
       }
       .pillar-title {
         font-size: 12px;
@@ -642,23 +651,24 @@ footer{position:absolute;left:0;right:0;bottom:0;
         gap: 20px;
       }
       .landscape-project-card {
-        background: rgba(255, 253, 249, 0.90);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1px solid rgba(168, 98, 31, 0.22);
+        background: rgba(255, 252, 246, 0.18);
+        backdrop-filter: blur(12px) saturate(135%);
+        -webkit-backdrop-filter: blur(12px) saturate(135%);
+        border: 1px solid rgba(255, 255, 255, 0.55);
         border-radius: 20px;
-        padding: 26px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         gap: 14px;
-        box-shadow: 0 10px 30px rgba(46, 37, 21, 0.08);
-        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        box-shadow: 0 10px 30px rgba(46, 37, 21, 0.06);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.3s ease;
       }
       .landscape-project-card:hover {
         transform: translateY(-4px);
+        background: rgba(255, 252, 246, 0.26);
         border-color: var(--accent, #a8621f);
-        box-shadow: 0 18px 42px rgba(46, 37, 21, 0.14);
+        box-shadow: 0 18px 42px rgba(46, 37, 21, 0.12);
       }
       .proj-header {
         display: flex;
@@ -953,10 +963,11 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
       [data-time="night"] .landscape-glass-card,
       [data-time="night"] .landscape-project-card {
-        background: rgba(14, 16, 22, 0.90) !important;
-        border-color: rgba(208, 138, 74, 0.35) !important;
-        color: #e9e2d2 !important;
-        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.75) !important;
+        background: rgba(14, 16, 22, 0.36) !important;
+        backdrop-filter: blur(14px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(160%) !important;
+        border-color: rgba(208, 138, 74, 0.30) !important;
+        box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.60) !important;
       }
       [data-time="night"] .hero-masthead,
       [data-time="night"] .proj-title,
@@ -979,12 +990,12 @@ footer{position:absolute;left:0;right:0;bottom:0;
       [data-time="night"] .pillar-box,
       [data-time="night"] .edu-card,
       [data-time="night"] .cert-card {
-        background: rgba(20, 24, 33, 0.85) !important;
-        border-color: rgba(208, 138, 74, 0.25) !important;
+        background: rgba(20, 24, 33, 0.40) !important;
+        border-color: rgba(208, 138, 74, 0.22) !important;
       }
       [data-time="night"] .landscape-skill-chip {
-        background: rgba(20, 24, 33, 0.90) !important;
-        border-color: rgba(208, 138, 74, 0.3) !important;
+        background: rgba(20, 24, 33, 0.50) !important;
+        border-color: rgba(208, 138, 74, 0.28) !important;
         color: #e9e2d2 !important;
       }
       [data-time="night"] .proj-btn-primary {
@@ -1297,6 +1308,84 @@ footer{position:absolute;left:0;right:0;bottom:0;
       }
     </style>
     
+
+  <!-- Smooth Inertia Scroll (Lenis) & GSAP Motion Ecosystem -->
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  
+  <style id="universal-scroll-motion-styles">
+    /* Top Scroll Progress Indicator */
+    #scroll-progress-indicator {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 3.5px;
+      background: linear-gradient(90deg, #8B5CF6, #38bdf8, #ec4899);
+      z-index: 100000;
+      box-shadow: 0 0 14px #8B5CF6, 0 0 4px #ffffff;
+      pointer-events: none;
+      transition: width 0.08s linear;
+    }
+
+    /* Hardware Accelerated Smooth Inertia Scroll Baseline */
+    html.lenis, html.lenis body {
+      height: auto;
+    }
+    .lenis.lenis-smooth {
+      scroll-behavior: auto !important;
+    }
+    .lenis.lenis-smooth [data-lenis-prevent] {
+      overscroll-behavior: contain;
+    }
+    .lenis.lenis-stopped {
+      overflow: hidden;
+    }
+    .lenis.lenis-smooth iframe {
+      pointer-events: none;
+    }
+
+    /* Scroll Velocity Reactive Container */
+    .scroll-velocity-item {
+      will-change: transform;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* 3D Perspective Card Tilt Standards */
+    .project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, 
+    .curio-case-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card,
+    .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card {
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, filter 0.35s ease;
+      will-change: transform;
+      transform-style: preserve-3d;
+    }
+
+    .project-card:hover, .crystal-project-card:hover, .bio-project-card:hover, .wood-project-card:hover, 
+    .fusion-project-card:hover, .curio-case-card:hover, .cosmic-project-card:hover, .sanctuary-project-card:hover, 
+    .white-crystal-card:hover, .abyss-chest-card:hover, .sprawl-vault-card:hover,
+    .greenhouse-project-card:hover, .monograph-exhibit-card:hover, .parchment-project-card:hover {
+      box-shadow: 0 24px 50px -12px rgba(0,0,0,0.65), 0 0 30px #8B5CF644;
+    }
+
+    /* Spring-physics Magnetic Buttons */
+    .magnetic-btn, .btn-primary, .cosmic-btn-primary, .crystal-btn-primary, .wood-btn-primary {
+      will-change: transform;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+    }
+
+    /* Reduced Motion Fallback */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+      #scroll-progress-indicator { display: none !important; }
+    }
+  </style>
+
 </head>
 <body>
 <div id="app">
@@ -1310,8 +1399,6 @@ footer{position:absolute;left:0;right:0;bottom:0;
   <header id="portfolio-masthead-navbar">
     <div class="brand-left">
       <a href="#" class="brand-name">ABDUL AZIZ NOORUDDIN</a>
-      <span class="brand-sep">✦</span>
-      <span class="brand-role-badge">Smart Contract Developer &amp; Full-Stack AI Engineer</span>
     </div>
     <nav class="header-nav-links">
       <a href="#about" class="nav-anchor">ABOUT</a>
@@ -4520,165 +4607,7 @@ window.__scene=scene;window.__camera=camera;window.__renderer=renderer;
 </script>
   <script src="/button-engine.js" defer></script>
 
-<style id="myfolio-universal-mobile">
-  /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
-  @media (max-width: 600px) {
-    /* Reset base font size so rem units scale down */
-    html { font-size: 14px !important; }
 
-    /* Hero headline — cap at a safe mobile size */
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"],
-    [class*="hero-name"], [class*="page-title"], [class*="folio-name"],
-    [class*="profile-name"] {
-      font-size: clamp(1.6rem, 7vw, 2.4rem) !important;
-      line-height: 1.15 !important;
-      letter-spacing: -0.02em !important;
-    }
-
-    /* Section headings */
-    h2, [class*="section-title"], [class*="section-heading"],
-    [class*="chapter-title"], [class*="block-title"] {
-      font-size: clamp(1.25rem, 5.5vw, 1.8rem) !important;
-      line-height: 1.2 !important;
-    }
-
-    h3, [class*="card-title"], [class*="project-name"],
-    [class*="exp-title"], [class*="role-title"] {
-      font-size: clamp(1rem, 4.5vw, 1.35rem) !important;
-    }
-
-    /* Body / bio text */
-    p, [class*="bio"], [class*="hero-bio"], [class*="subtitle"],
-    [class*="intro-text"], [class*="description"], [class*="lead"] {
-      font-size: clamp(0.8rem, 3.5vw, 1rem) !important;
-      line-height: 1.65 !important;
-    }
-
-    /* Tag / badge / mono accent text */
-    [class*="tag"], [class*="badge"], [class*="chip"], [class*="label"],
-    [class*="kicker"], [class*="mono"], code, pre {
-      font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
-    }
-
-    /* Section padding — prevent edges being clipped */
-    section, [class*="section"], [class*="-section"],
-    [class*="wrapper"], [class*="container"], [class*="layout"] {
-      padding-left: 16px !important;
-      padding-right: 16px !important;
-    }
-
-    /* Hero sections — reduce vertical breathing room */
-    [class*="hero"], [id="home"] {
-      padding-top: 64px !important;
-      padding-bottom: 32px !important;
-      min-height: auto !important;
-    }
-
-    /* Force single-column grids everywhere */
-    [style*="grid-template-columns"],
-    [class*="grid"], [class*="bento"], [class*="dual"],
-    [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    /* Navigation — hide multi-item desktop navs, show only brand */
-    [class*="nav-menu"], [class*="header-nav"], [class*="dock"],
-    [class*="vertical-dock"], [class*="sidebar-nav"] {
-      display: none !important;
-    }
-
-    /* Buttons — stack and full-width */
-    [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-    }
-    [class*="btn"], [class*="cta-btn"], [class*="sprawl-btn"] {
-      width: 100% !important;
-      justify-content: center !important;
-      padding: 12px 20px !important;
-      font-size: 0.82rem !important;
-    }
-
-    /* Project / card images */
-    [class*="card-img"], [class*="project-img"], [class*="project-image"],
-    [class*="artwork"], [class*="thumbnail"] {
-      height: 160px !important;
-    }
-
-    /* Skill / telemetry numbers — prevent overflow */
-    [class*="stat-num"], [class*="metric-value"], [class*="counter"],
-    [class*="number-display"] {
-      font-size: clamp(1.4rem, 6vw, 2rem) !important;
-    }
-
-    /* 404 hero numbers */
-    [class*="404"], [class*="error-code"] {
-      font-size: clamp(4rem, 20vw, 7rem) !important;
-    }
-
-    /* Floating 3D assets — reduce to prevent layout blowout */
-    [class*="hero-3d"], [class*="focal-asset"], [class*="floating-asset"],
-    [class*="hero-img"], [class*="hero-visual"] {
-      max-width: 260px !important;
-      width: 70vw !important;
-      margin: 24px auto 0 !important;
-    }
-
-    /* Canvas backgrounds — don't overflow */
-    canvas {
-      max-width: 100vw !important;
-    }
-
-    /* Footer */
-    [class*="footer"] {
-      flex-direction: column !important;
-      gap: 12px !important;
-      padding: 24px 16px !important;
-      text-align: center !important;
-      font-size: 0.72rem !important;
-    }
-  }
-
-  /* ─── Tablet override ≤768px ────────────────────────────────────────────── */
-  @media (max-width: 768px) {
-    html { font-size: 15px !important; }
-
-    h1,
-    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
-    [class*="masthead"], [class*="main-title"], [class*="display-title"] {
-      font-size: clamp(2rem, 6vw, 3rem) !important;
-    }
-
-    h2, [class*="section-title"], [class*="section-heading"] {
-      font-size: clamp(1.4rem, 4.5vw, 2rem) !important;
-    }
-
-    section, [class*="section"], [class*="-section"] {
-      padding-left: 24px !important;
-      padding-right: 24px !important;
-    }
-
-    [class*="grid"], [class*="bento"],
-    [class*="tri-layout"], [class*="three-col"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    [class*="two-col"], [class*="dual"] {
-      grid-template-columns: 1fr !important;
-    }
-  }
-
-  /* ─── Reduced-motion: disable floating keyframes ───────────────────────── */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
-</style>
 
     <!-- SCROLLABLE 3D PORTFOLIO CONTENT LAYER -->
     <div class="landscape-portfolio-scroll">
@@ -4927,5 +4856,318 @@ window.__scene=scene;window.__camera=camera;window.__renderer=renderer;
       </footer>
     </div>
     
+
+  <!-- Universal Scroll Progress Bar -->
+  <div id="scroll-progress-indicator"></div>
+
+  <!-- Universal Lenis + GSAP + Three/Postprocessing + Motion Scrollytelling Choreographer -->
+  <script id="universal-scroll-motion-engine">
+    (function() {
+      function initScrollAnimations() {
+        var isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var lastScrollTop = 0;
+        var scrollVelocity = 0;
+        var scrollTimeout;
+        var ticking = false;
+
+        // 1. Lenis Smooth Inertia Scroll Orchestration
+        var lenis = null;
+        if (typeof Lenis !== 'undefined' && !isReducedMotion) {
+          try {
+            lenis = new Lenis({
+              duration: 1.15,
+              easing: function(t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); },
+              orientation: 'vertical',
+              gestureOrientation: 'vertical',
+              smoothWheel: true,
+              wheelMultiplier: 0.95,
+              touchMultiplier: 1.4,
+              infinite: false
+            });
+
+            window.__folioLenis = lenis;
+
+            if (typeof ScrollTrigger !== 'undefined') {
+              lenis.on('scroll', ScrollTrigger.update);
+            }
+
+            if (typeof gsap !== 'undefined') {
+              gsap.ticker.add(function(time) {
+                lenis.raf(time * 1000);
+              });
+              gsap.ticker.lagSmoothing(0);
+            } else {
+              function raf(time) {
+                lenis.raf(time);
+                requestAnimationFrame(raf);
+              }
+              requestAnimationFrame(raf);
+            }
+          } catch (e) {
+            console.warn('[Lenis] Fallback to native scroll:', e);
+          }
+        }
+
+        // 2. Real-time Scroll Velocity & Direction Physics
+        window.addEventListener('scroll', function() {
+          var currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+          var delta = currentScroll - lastScrollTop;
+          scrollVelocity = delta;
+          lastScrollTop = Math.max(0, currentScroll);
+
+          // Update Progress Indicator
+          var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+          var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+          var scrolled = (height > 0) ? (winScroll / height) * 100 : 0;
+          var bar = document.getElementById('scroll-progress-indicator');
+          if (bar) bar.style.width = scrolled + '%';
+
+          // Apply Dynamic Velocity Skew to Interactive Cards on Scroll
+          if (!ticking && !isReducedMotion) {
+            window.requestAnimationFrame(function() {
+              var clampedVelocity = Math.max(-20, Math.min(20, scrollVelocity));
+              var skewAngle = clampedVelocity * 0.06;
+              var scaleComp = 1 - Math.min(0.03, Math.abs(clampedVelocity) * 0.001);
+
+              var velocityElements = document.querySelectorAll('.project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .curio-case-card, .cosmic-project-card, .nano-banana-3d-hero, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
+              velocityElements.forEach(function(el) {
+                el.style.transform = 'skewY(' + skewAngle + 'deg) scaleY(' + scaleComp + ')';
+              });
+
+              ticking = false;
+            });
+            ticking = true;
+          }
+
+          // Reset velocity skew smoothly when scrolling halts
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(function() {
+            var velocityElements = document.querySelectorAll('.project-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .curio-case-card, .cosmic-project-card, .nano-banana-3d-hero, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
+            velocityElements.forEach(function(el) {
+              el.style.transform = 'skewY(0deg) scaleY(1)';
+            });
+          }, 110);
+        }, { passive: true });
+
+        // 3. Motion Spring-Physics 3D Tilt on Hover
+        if (!isReducedMotion) {
+          var tiltCards = document.querySelectorAll('.project-card, .curio-case-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
+          tiltCards.forEach(function(card) {
+            card.addEventListener('mousemove', function(e) {
+              var rect = card.getBoundingClientRect();
+              var x = e.clientX - rect.left;
+              var y = e.clientY - rect.top;
+              var centerX = rect.width / 2;
+              var centerY = rect.height / 2;
+              var rotateX = (centerY - y) / 14;
+              var rotateY = (x - centerX) / 14;
+              card.style.transform = 'perspective(1000px) rotateX(' + rotateX.toFixed(2) + 'deg) rotateY(' + rotateY.toFixed(2) + 'deg) scale3d(1.025, 1.025, 1.025)';
+            });
+            card.addEventListener('mouseleave', function() {
+              card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+            });
+          });
+
+          // Magnetic Buttons Micro-Interaction
+          var magneticBtns = document.querySelectorAll('.magnetic-btn, .cosmic-btn-primary, .crystal-btn-primary, .wood-btn-primary, .btn-primary');
+          magneticBtns.forEach(function(btn) {
+            btn.addEventListener('mousemove', function(e) {
+              var rect = btn.getBoundingClientRect();
+              var x = (e.clientX - rect.left) - rect.width / 2;
+              var y = (e.clientY - rect.top) - rect.height / 2;
+              btn.style.transform = 'translate(' + (x * 0.22) + 'px, ' + (y * 0.22) + 'px)';
+            });
+            btn.addEventListener('mouseleave', function() {
+              btn.style.transform = 'translate(0px, 0px)';
+            });
+          });
+        }
+
+        // 4. GSAP & ScrollTrigger Animations
+        if (typeof gsap === 'undefined') return;
+
+        if (typeof ScrollTrigger !== 'undefined') {
+          gsap.registerPlugin(ScrollTrigger);
+        }
+
+        var mm = gsap.matchMedia();
+
+        mm.add("(min-width: 200px)", function() {
+          // A. Continuous 3D Model Rotation on Scroll Up and Down
+          var hero3D = document.querySelector('.nano-banana-3d-hero, .hero-3d-stage-container, .cosmic-hero-3d-wrapper, .sprawl-3d-stage, .abyss-nautilus-wrapper');
+          if (hero3D && !isReducedMotion) {
+            gsap.to(hero3D, {
+              rotationY: 16,
+              rotationZ: -3,
+              yPercent: 12,
+              ease: "none",
+              scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1.5
+              }
+            });
+          }
+
+          // B. Staggered Hero Entrance
+          var heroTl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          var heroBadge = document.querySelector('.cosmic-hero-badge, .crystal-status-pill, .wood-hero-badge, .bio-status-badge, .fusion-status-pill, .curio-brass-badge, .sprawl-status-badge, .abyss-hero-badge');
+          var heroTitle = document.querySelector('h1, .cosmic-title-gradient, .crystal-glitch-title, .wood-title-gradient, .bio-hero-name, .fusion-hero-name, .sprawl-hero-title');
+          var heroTagline = document.querySelector('.cosmic-tagline, .crystal-hero-desc, .wood-hero-tagline, .bio-hero-bio, .fusion-hero-bio, .hero-bio, .sprawl-hero-bio');
+          var heroCta = document.querySelector('.cosmic-cta-row, .crystal-hero-actions, .wood-hero-actions, .bio-hero-actions, .fusion-hero-actions, .hero-actions, .sprawl-actions');
+
+          if (heroBadge) heroTl.fromTo(heroBadge, { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.6 });
+          if (heroTitle) heroTl.fromTo(heroTitle, { autoAlpha: 0, y: 35 }, { autoAlpha: 1, y: 0, duration: 0.8 }, "-=0.3");
+          if (heroTagline) heroTl.fromTo(heroTagline, { autoAlpha: 0, y: 25 }, { autoAlpha: 1, y: 0, duration: 0.7 }, "-=0.4");
+          if (heroCta) heroTl.fromTo(heroCta, { autoAlpha: 0, scale: 0.95 }, { autoAlpha: 1, scale: 1, duration: 0.5 }, "-=0.3");
+
+          // C. Continuous Parallax Scrub on All Section Headers
+          gsap.utils.toArray('.cosmic-section-header, .crystal-section-header, .wood-section-header, .bio-section-header, .fusion-section-header, .curio-section-header, .sprawl-section-header, section h2').forEach(function(header) {
+            gsap.fromTo(header,
+              { autoAlpha: 0, y: 40 },
+              {
+                autoAlpha: 1,
+                y: 0,
+                duration: 0.8,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: header,
+                  start: "top 88%",
+                  toggleActions: "play none none none"
+                }
+              }
+            );
+          });
+
+          // D. Staggered Project Cards Reveal with Continuous Scrub
+          var projectCards = gsap.utils.toArray('.project-card, .curio-case-card, .crystal-project-card, .bio-project-card, .wood-project-card, .fusion-project-card, .cosmic-project-card, .sanctuary-project-card, .white-crystal-card, .abyss-chest-card, .sprawl-vault-card, .greenhouse-project-card, .monograph-exhibit-card, .parchment-project-card');
+          if (projectCards.length > 0) {
+            ScrollTrigger.batch(projectCards, {
+              start: "top 86%",
+              onEnter: function(batch) {
+                gsap.fromTo(batch,
+                  { autoAlpha: 0, y: 50, scale: 0.95 },
+                  {
+                    autoAlpha: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.8,
+                    stagger: 0.12,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                  }
+                );
+              },
+              onEnterBack: function(batch) {
+                gsap.to(batch, { autoAlpha: 1, y: 0, scale: 1, duration: 0.6, overwrite: "auto" });
+              }
+            });
+          }
+
+          // E. Skills Progress Bars Glide-in on Scroll
+          gsap.utils.toArray('.crystal-skill-fill, .wood-skill-fill, .bio-skill-fill, .fusion-skill-fill, .cosmic-skill-fill, .skill-bar-fill, .skill-meter-fill').forEach(function(bar) {
+            var targetWidth = bar.style.width || '85%';
+            gsap.fromTo(bar,
+              { width: "0%" },
+              {
+                width: targetWidth,
+                duration: 1.2,
+                ease: "power2.out",
+                scrollTrigger: {
+                  trigger: bar,
+                  start: "top 92%",
+                  toggleActions: "play none none none"
+                }
+              }
+            );
+          });
+
+          // F. Experience Timeline Nodes & Cards
+          var timelineItems = gsap.utils.toArray('.crystal-timeline-item, .wood-timeline-item, .bio-timeline-item, .fusion-timeline-item, .curio-specimen-node, .cosmic-timeline-item, .timeline-item, .sprawl-drift-item, .abyss-timeline-node');
+          if (timelineItems.length > 0) {
+            ScrollTrigger.batch(timelineItems, {
+              start: "top 88%",
+              onEnter: function(batch) {
+                gsap.fromTo(batch,
+                  { autoAlpha: 0, x: -30 },
+                  {
+                    autoAlpha: 1,
+                    x: 0,
+                    duration: 0.7,
+                    stagger: 0.15,
+                    ease: "power2.out"
+                  }
+                );
+              }
+            });
+          }
+
+          // G. Resume Dossier 3D Card & Details Elevation
+          var resumeVisual = document.querySelector('.resume-3d-wrapper, .cosmic-about-visual-card, .resume-codex-container, .nautical-map-frame, .sprawl-blueprint-box');
+          if (resumeVisual) {
+            gsap.fromTo(resumeVisual,
+              { autoAlpha: 0, scale: 0.9, y: 40 },
+              {
+                autoAlpha: 1,
+                scale: 1,
+                y: 0,
+                duration: 0.9,
+                ease: "back.out(1.2)",
+                scrollTrigger: {
+                  trigger: resumeVisual,
+                  start: "top 85%",
+                  toggleActions: "play none none none"
+                }
+              }
+            );
+          }
+
+          // H. Continuous Interactive 3D Parallax Drift for Background Layers
+          if (!isReducedMotion) {
+            gsap.to('.hero-canvas-container, .cosmic-hero-bg, .stars-layer, .matrix-grid-bg, .abyss-canvas-layer', {
+              yPercent: 22,
+              ease: "none",
+              scrollTrigger: {
+                trigger: "body",
+                start: "top top",
+                end: "bottom bottom",
+                scrub: 1.2
+              }
+            });
+          }
+        });
+
+        // Ensure ScrollTrigger positions are synchronized after layout calculation
+        if (typeof ScrollTrigger !== 'undefined') {
+          ScrollTrigger.refresh();
+        }
+
+        // 5. Scrollytelling Bridge for Theatre.js & 3D Sequences
+        window.__folioScrollytelling = {
+          bindCameraToScroll: function(camera, trackSpline) {
+            if (!camera || !trackSpline || isReducedMotion) return;
+            ScrollTrigger.create({
+              trigger: 'body',
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: 1.5,
+              onUpdate: function(self) {
+                var pt = trackSpline.getPointAt(self.progress);
+                if (pt) camera.position.set(pt.x, pt.y, pt.z);
+              }
+            });
+          }
+        };
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollAnimations);
+      } else {
+        initScrollAnimations();
+      }
+    })();
+  </script>
+
 </body>
 </html>
