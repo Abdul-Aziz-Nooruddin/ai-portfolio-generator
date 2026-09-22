@@ -43,7 +43,8 @@
           powerPreference: 'high-performance',
           alpha: false,
           stencil: false,
-          depth: true
+          depth: true,
+          logarithmicDepthBuffer: true
         });
 
         this.renderer.setSize(this.width, this.height);

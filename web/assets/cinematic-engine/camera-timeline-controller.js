@@ -13,7 +13,7 @@
 
       // 45° FOV on desktop for cinematic compression, 56° on mobile for spatial breathing room
       const fov = this.isMobile ? 56 : 45;
-      this.camera = new THREE.PerspectiveCamera(fov, aspectRatio, 0.1, 800);
+      this.camera = new THREE.PerspectiveCamera(fov, aspectRatio, 0.8, 800);
 
       // Current smooth coordinates
       this.currentPos = new THREE.Vector3(0, 8, 95);
