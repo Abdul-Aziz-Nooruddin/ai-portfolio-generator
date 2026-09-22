@@ -519,17 +519,23 @@ const ThreeUILandscapeTemplate = {
         pointer-events: auto !important;
       }
 
-      /* Frosted Glass Bento Surfaces */
+      /* Frosted Glass Bento Surfaces (Dynamically Hugs Content) */
       .landscape-glass-card {
         background: rgba(255, 252, 246, 0.90);
         backdrop-filter: blur(28px) saturate(180%);
         -webkit-backdrop-filter: blur(28px) saturate(180%);
         border: 1px solid rgba(255, 255, 255, 0.92);
-        border-radius: 24px;
-        padding: 34px;
+        border-radius: 22px;
+        padding: 24px 28px;
         color: var(--ink, #2e2515);
         box-shadow: 0 20px 48px -10px rgba(46, 37, 21, 0.12), 0 2px 10px rgba(168, 98, 31, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.95);
         transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 auto;
+        height: auto !important;
+        min-height: 0 !important;
+        box-sizing: border-box;
       }
       .landscape-glass-card:hover {
         border-color: rgba(168, 98, 31, 0.45);
@@ -540,15 +546,15 @@ const ThreeUILandscapeTemplate = {
       .landscape-hero-identity {
         display: flex;
         align-items: center;
-        gap: 28px;
-        margin-bottom: 20px;
+        gap: 22px;
+        margin-bottom: 14px;
       }
       .landscape-hero-avatar-wrap {
         position: relative;
-        width: 96px;
-        height: 96px;
-        min-width: 96px;
-        border-radius: 24px;
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+        border-radius: 20px;
         padding: 3px;
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(168, 98, 31, 0.4));
         box-shadow: 0 12px 32px rgba(46, 37, 21, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.85);
@@ -564,7 +570,7 @@ const ThreeUILandscapeTemplate = {
       .landscape-hero-avatar-img {
         width: 100%;
         height: 100%;
-        border-radius: 20px;
+        border-radius: 17px;
         object-fit: cover;
         display: block;
         border: 2px solid rgba(255, 252, 246, 0.95);
@@ -573,7 +579,7 @@ const ThreeUILandscapeTemplate = {
         background: linear-gradient(135deg, #a8621f, #2e2515);
         color: #fdf1d6;
         font-family: var(--mincho);
-        font-size: 32px;
+        font-size: 28px;
         font-weight: 700;
         letter-spacing: 1px;
         text-shadow: 0 2px 8px rgba(0,0,0,0.25);
@@ -583,51 +589,51 @@ const ThreeUILandscapeTemplate = {
         min-width: 0;
       }
       .hero-eyebrow {
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 700;
-        letter-spacing: 1.8px;
+        letter-spacing: 1.6px;
         color: var(--accent, #a8621f);
         text-transform: uppercase;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         display: inline-flex;
         align-items: center;
         gap: 6px;
       }
       .hero-masthead {
         font-family: var(--mincho);
-        font-size: clamp(26px, 4.5vw, 50px);
+        font-size: clamp(24px, 4vw, 44px);
         font-weight: 700;
-        line-height: 1.1;
+        line-height: 1.12;
         letter-spacing: -0.5px;
         color: var(--ink, #2e2515);
-        margin-bottom: 8px;
+        margin-bottom: 6px;
       }
       .hero-role {
-        font-size: clamp(13px, 1.8vw, 16.5px);
+        font-size: clamp(12.5px, 1.6vw, 15px);
         font-weight: 600;
         color: var(--accent, #a8621f);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         letter-spacing: 0.5px;
         text-transform: uppercase;
       }
       .hero-tagline {
-        font-size: 14px;
+        font-size: 13.5px;
         font-weight: 600;
         color: var(--ink2, #8b7c5c);
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         line-height: 1.45;
       }
       .hero-bio {
-        font-size: clamp(14px, 1.5vw, 15.5px);
-        line-height: 1.6;
+        font-size: clamp(13px, 1.4vw, 15px);
+        line-height: 1.55;
         color: var(--ink3, #3f3520);
-        max-width: 860px;
-        margin-bottom: 20px;
+        max-width: 840px;
+        margin-bottom: 16px;
       }
       .hero-actions {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
         align-items: center;
       }
 
@@ -1066,206 +1072,301 @@ const ThreeUILandscapeTemplate = {
       }
 
       /* ==========================================================================
-         MOBILE RESPONSIVE ENGINE (Strict High-Density & Ergonomic Standard)
+         MOBILE RESPONSIVE ENGINE (Dedicated 3D Controls Strip & Dynamic Content Hug)
          ========================================================================== */
-      @media (max-width: 900px) {
+      @media (max-width: 900px), (max-height: 460px) {
+        /* Hide legacy side Japanese typography unconditionally on mobile */
+        .col-l, .col-r, .tag, .plaque, .bigpct {
+          display: none !important;
+        }
+
+        /* Top Navbar: Brand Title & Jump Link */
+        header, #portfolio-masthead-navbar {
+          height: 46px !important;
+          padding: 0 12px !important;
+          justify-content: space-between !important;
+        }
+        .brand-left {
+          flex: 1 !important;
+        }
+        .brand-name {
+          font-size: 13.5px !important;
+          letter-spacing: 0.4px !important;
+        }
         .header-nav-links, .brand-role-badge, .brand-sep {
           display: none !important;
         }
-        #mobile-quick-nav {
-          display: flex !important;
-        }
-      }
 
-      @media (max-width: 768px), (max-height: 460px) {
-        header, #portfolio-masthead-navbar {
-          height: 52px !important;
-          padding: 0 12px !important;
-        }
-        .brand-name {
-          font-size: 13px !important;
-          letter-spacing: 0.3px !important;
-        }
+        /* 3D Atmosphere Controls: Dedicated, Full-Width, Horizontally-Scrollable Bar */
         .top-right {
-          gap: 4px !important;
+          position: fixed !important;
+          top: 46px !important;
+          left: 0 !important;
+          right: 0 !important;
+          height: 42px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: flex-start !important;
+          gap: 6px !important;
+          padding: 0 10px !important;
+          background: rgba(253, 248, 238, 0.96) !important;
+          backdrop-filter: blur(20px) !important;
+          -webkit-backdrop-filter: blur(20px) !important;
+          border-bottom: 1px solid rgba(168, 98, 31, 0.22) !important;
+          box-shadow: 0 2px 8px rgba(46, 37, 21, 0.06) !important;
+          overflow-x: auto !important;
+          white-space: nowrap !important;
+          scrollbar-width: none !important;
+          -webkit-overflow-scrolling: touch !important;
+          z-index: 99998 !important;
+          pointer-events: auto !important;
+        }
+        .top-right::-webkit-scrollbar {
+          display: none !important;
         }
         .tbtn {
-          font-size: 9px !important;
-          padding: 4px 7px !important;
-          background: rgba(255, 255, 255, 0.9) !important;
-          border-color: rgba(168, 98, 31, 0.28) !important;
+          font-size: 10px !important;
+          font-weight: 700 !important;
+          padding: 5px 9px !important;
+          border-radius: 999px !important;
+          border: 1px solid rgba(168, 98, 31, 0.28) !important;
+          background: rgba(255, 255, 255, 0.92) !important;
+          color: var(--ink, #2e2515) !important;
+          display: inline-flex !important;
+          flex-direction: row !important;
+          align-items: center !important;
+          gap: 4px !important;
+          line-height: 1 !important;
+          cursor: pointer !important;
+          box-shadow: 0 1px 4px rgba(46, 37, 21, 0.06) !important;
+          flex: 0 0 auto !important;
         }
         .tbtn b {
-          display: none !important; /* Hide "WEATHER /" prefix to fit cleanly on narrow screens */
+          display: inline !important;
+          color: var(--accent, #a8621f) !important;
+        }
+        .tbtn b::after {
+          content: " / " !important;
         }
         .tbtn#rebuildBtn {
+          display: inline-flex !important;
+        }
+
+        /* Mobile Quick Nav Strip: Jump to Sections */
+        #mobile-quick-nav {
+          display: flex !important;
+          position: fixed !important;
+          top: 88px !important;
+          left: 0 !important;
+          right: 0 !important;
+          height: 36px !important;
+          background: rgba(253, 248, 238, 0.92) !important;
+          backdrop-filter: blur(16px) !important;
+          -webkit-backdrop-filter: blur(16px) !important;
+          border-bottom: 1px solid rgba(168, 98, 31, 0.16) !important;
+          z-index: 99997 !important;
+          align-items: center !important;
+          padding: 0 8px !important;
+          pointer-events: auto !important;
+        }
+        .mobile-nav-scroll {
+          gap: 5px !important;
+        }
+        .mnav-pill {
+          font-size: 10px !important;
+          padding: 3px 9px !important;
+        }
+
+        /* Mobile Scroll HUD: Dynamic Fit-Content Layout (No Fixed Large Backgrounds) */
+        .landscape-portfolio-scroll {
+          padding: 136px 10px 50px !important;
+          gap: 12px !important;
+          align-items: center !important;
+        }
+        .landscape-3d-hint {
           display: none !important;
         }
 
-        /* Mobile Container Clearance & Zero Wasted Space */
-        .landscape-portfolio-scroll {
-          padding: 104px 12px 60px !important;
-          gap: 16px !important; /* Compact gap between bento sections */
-        }
-        .landscape-3d-hint {
-          display: none !important; /* Save 36px vertical space */
-        }
+        /* Glass Cards: Dynamically Hug Content (Never Rigid or Overflowing) */
         .landscape-glass-card {
-          padding: 16px 14px !important; /* Tight, elegant padding */
-          border-radius: 18px !important;
+          width: fit-content !important;
+          max-width: 95% !important;
+          height: auto !important;
+          min-height: 0 !important;
+          padding: 14px 16px !important;
+          border-radius: 16px !important;
+          margin: 0 auto !important;
+          box-sizing: border-box !important;
         }
         .section-heading {
-          font-size: 11px !important;
-          margin-bottom: 12px !important;
+          font-size: 10.5px !important;
+          margin-bottom: 8px !important;
         }
 
-        /* Dense, Executive Hero Layout on Mobile (Horizontal Header) */
+        /* Dynamic Hero Card: Tight Ergonomics */
         .landscape-hero-identity {
           flex-direction: row !important;
           align-items: center !important;
           text-align: left !important;
-          gap: 12px !important;
-          margin-bottom: 8px !important;
+          gap: 10px !important;
+          margin-bottom: 6px !important;
         }
         .landscape-hero-avatar-wrap {
-          width: 52px !important;
-          height: 52px !important;
-          min-width: 52px !important;
-          border-radius: 14px !important;
+          width: 44px !important;
+          height: 44px !important;
+          min-width: 44px !important;
+          border-radius: 12px !important;
           margin: 0 !important;
           padding: 2px !important;
         }
         .landscape-hero-initials {
-          font-size: 18px !important;
-          border-radius: 12px !important;
+          font-size: 16px !important;
+          border-radius: 10px !important;
         }
         .landscape-hero-text-col {
           text-align: left !important;
         }
         .hero-eyebrow {
           font-size: 9px !important;
-          letter-spacing: 1px !important;
+          letter-spacing: 0.8px !important;
           margin-bottom: 2px !important;
           justify-content: flex-start !important;
         }
         .hero-masthead {
-          font-size: 20px !important;
+          font-size: 19px !important;
           line-height: 1.15 !important;
           margin-bottom: 2px !important;
           text-align: left !important;
         }
         .hero-role {
-          font-size: 11.5px !important;
-          margin-bottom: 0 !important;
+          font-size: 11px !important;
+          margin-bottom: 2px !important;
           text-align: left !important;
         }
         .hero-tagline {
-          font-size: 11.5px !important;
-          line-height: 1.4 !important;
-          margin-top: 8px !important;
-          margin-bottom: 6px !important;
+          font-size: 11px !important;
+          line-height: 1.35 !important;
+          margin: 4px 0 !important;
           text-align: left !important;
         }
         .hero-bio {
-          font-size: 12px !important;
-          line-height: 1.5 !important;
-          margin-bottom: 12px !important;
+          font-size: 11.5px !important;
+          line-height: 1.45 !important;
+          margin-bottom: 8px !important;
           text-align: left !important;
         }
         .hero-actions {
-          display: grid !important;
-          grid-template-columns: 1fr 1fr !important;
-          gap: 8px !important;
+          display: flex !important;
+          flex-wrap: wrap !important;
+          gap: 6px !important;
           width: 100% !important;
         }
         .hero-actions .proj-btn {
-          width: 100% !important;
-          padding: 8px 10px !important;
-          font-size: 11px !important;
+          flex: 1 1 calc(50% - 6px) !important;
+          padding: 6px 8px !important;
+          font-size: 10.5px !important;
           text-align: center !important;
         }
         .hero-actions .hero-location-badge {
-          grid-column: span 2 !important;
+          width: 100% !important;
           text-align: center !important;
-          margin: 4px 0 0 !important;
+          margin: 2px 0 0 !important;
           display: block !important;
-          font-size: 11px !important;
+          font-size: 10.5px !important;
         }
 
         /* Compact Case Studies on Mobile */
         .projects-grid {
           grid-template-columns: 1fr !important;
-          gap: 12px !important;
+          gap: 10px !important;
+          width: 100% !important;
         }
         .landscape-project-card {
-          padding: 16px 14px !important;
+          padding: 14px 14px !important;
           border-radius: 16px !important;
-          gap: 10px !important;
+          gap: 8px !important;
+          height: auto !important;
+          min-height: 0 !important;
         }
         .proj-title {
-          font-size: 17px !important;
+          font-size: 16px !important;
         }
         .proj-desc {
-          font-size: 12px !important;
-          line-height: 1.5 !important;
+          font-size: 11.5px !important;
+          line-height: 1.45 !important;
         }
         .proj-links {
-          margin-top: 4px !important;
-          padding-top: 10px !important;
-          gap: 8px !important;
+          margin-top: 2px !important;
+          padding-top: 8px !important;
+          gap: 6px !important;
         }
         .proj-links .proj-btn {
           flex: 1 !important;
-          padding: 8px 10px !important;
-          font-size: 11px !important;
+          padding: 6px 8px !important;
+          font-size: 10.5px !important;
         }
 
         /* Compact Skills Matrix */
         .skills-container {
-          gap: 6px !important;
+          gap: 5px !important;
         }
         .landscape-skill-chip {
-          font-size: 11.5px !important;
-          padding: 5px 12px !important;
-          border-radius: 10px !important;
+          font-size: 11px !important;
+          padding: 4px 10px !important;
+          border-radius: 8px !important;
         }
 
         /* Compact Academics & Timeline */
         .academics-grid {
           grid-template-columns: 1fr !important;
-          gap: 10px !important;
+          gap: 8px !important;
         }
         .edu-card, .cert-card {
-          padding: 14px 12px !important;
-          border-radius: 14px !important;
+          padding: 12px 10px !important;
+          border-radius: 12px !important;
         }
         .timeline-track {
-          gap: 14px !important;
-          padding-left: 14px !important;
+          gap: 12px !important;
+          padding-left: 12px !important;
         }
         .timeline-dot {
-          left: -21px !important;
-          width: 10px !important;
-          height: 10px !important;
+          left: -19px !important;
+          width: 8px !important;
+          height: 8px !important;
         }
 
         /* Compact Contact Banner */
         .contact-banner {
           flex-direction: column !important;
           text-align: left !important;
-          gap: 12px !important;
+          gap: 10px !important;
         }
         .contact-info-title {
-          font-size: 19px !important;
+          font-size: 17px !important;
         }
         .contact-actions {
           flex-direction: column !important;
           width: 100% !important;
-          gap: 8px !important;
+          gap: 6px !important;
         }
         .contact-actions .proj-btn {
           width: 100% !important;
-          padding: 10px 14px !important;
+          padding: 8px 12px !important;
+        }
+
+        /* Night Mode Adaptation for Mobile Strips */
+        [data-time="night"] .top-right {
+          background: rgba(14, 16, 22, 0.96) !important;
+          border-bottom-color: rgba(208, 138, 74, 0.28) !important;
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+        }
+        [data-time="night"] .tbtn {
+          background: rgba(27, 32, 41, 0.90) !important;
+          color: #e9e2d2 !important;
+          border-color: rgba(208, 138, 74, 0.35) !important;
+        }
+        [data-time="night"] .tbtn b {
+          color: #d08a4a !important;
         }
       }
     </style>
