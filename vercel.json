@@ -1,83 +1,18 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 60
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["web/*.html", "public/*.html"]
+      }
     }
-  },
-  "rewrites": [
+  ],
+  "routes": [
     {
-      "source": "/api/:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/p/:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/sites/:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/webhook:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/health:path*",
-      "destination": "/api/index.js"
-    },
-    {
-      "source": "/login",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/signin",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/signup",
-      "destination": "/signup.html"
-    },
-    {
-      "source": "/register",
-      "destination": "/signup.html"
-    },
-    {
-      "source": "/auth",
-      "destination": "/login.html"
-    },
-    {
-      "source": "/studio",
-      "destination": "/studio.html"
-    },
-    {
-      "source": "/dashboard",
-      "destination": "/dashboard.html"
-    },
-    {
-      "source": "/universes",
-      "destination": "/universes.html"
-    },
-    {
-      "source": "/design-demo",
-      "destination": "/universes.html"
-    },
-    {
-      "source": "/profile",
-      "destination": "/profile.html"
-    },
-    {
-      "source": "/terms",
-      "destination": "/terms.html"
-    },
-    {
-      "source": "/privacy",
-      "destination": "/privacy.html"
-    },
-    {
-      "source": "/thank-you",
-      "destination": "/thank-you.html"
+      "src": "/(.*)",
+      "dest": "src/index.js"
     }
   ]
 }

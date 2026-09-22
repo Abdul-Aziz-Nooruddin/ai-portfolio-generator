@@ -2134,47 +2134,58 @@ app.use((req, res, next) => {
 });
 
 // Clean Semantic Direct Page Routes (No .html shown in address bar)
-const webPagesDir = path.join(process.cwd(), 'web');
+const getPagePath = (filename) => {
+  const candidates = [
+    path.join(__dirname, '..', 'web', filename),
+    path.join(process.cwd(), 'web', filename),
+    path.join(__dirname, '..', 'public', filename),
+    path.join(process.cwd(), 'public', filename)
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  return path.join(process.cwd(), 'web', filename);
+};
 
 app.get(['/login', '/signin', '/signup', '/register', '/auth', '/forgot-password', '/reset-password', '/verify-email'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'auth.html'));
+  res.sendFile(getPagePath('auth.html'));
 });
 
 app.get(['/dashboard', '/app', '/dash'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'dashboard.html'));
+  res.sendFile(getPagePath('dashboard.html'));
 });
 
 app.get(['/studio', '/webstudio', '/builder', '/generator'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'studio.html'));
+  res.sendFile(getPagePath('studio.html'));
 });
 
 app.get(['/design-demo', '/universes', '/themes', '/gallery'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'design-demo.html'));
+  res.sendFile(getPagePath('design-demo.html'));
 });
 
 app.get(['/profile', '/settings', '/account'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'profile.html'));
+  res.sendFile(getPagePath('profile.html'));
 });
 
 app.get(['/terms', '/tos', '/terms-of-service'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'terms.html'));
+  res.sendFile(getPagePath('terms.html'));
 });
 
 app.get(['/privacy', '/privacy-policy'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'privacy.html'));
+  res.sendFile(getPagePath('privacy.html'));
 });
 
 app.get(['/thank-you', '/success'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'thank-you.html'));
+  res.sendFile(getPagePath('thank-you.html'));
 });
 
 // New SEO Pages: About & Contact
 app.get(['/about', '/about-us', '/our-story'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'about.html'));
+  res.sendFile(getPagePath('about.html'));
 });
 
 app.get(['/contact', '/contact-us', '/support'], (req, res) => {
-  res.sendFile(path.join(webPagesDir, 'contact.html'));
+  res.sendFile(getPagePath('contact.html'));
 });
 
 // Contact Form API — accepts form submissions from /contact page
