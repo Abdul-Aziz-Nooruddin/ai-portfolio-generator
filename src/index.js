@@ -2924,25 +2924,27 @@ app.get(['/abdulaziz', '/u/abdulaziz', '/aziz', '/u/aziz', '/u/:handle', '/:hand
     return next();
   }
 
-  // When embedded in an iframe or requested with embed query, serve directly on same origin without cross-subdomain redirect
+  // 1. When embedded in an iframe or requested with embed query, serve directly on same origin
+  let siteId = (handle === 'aziz') ? 'abdulaziz' : handle;
+  let html = await hostingProvider.getSiteHtml(siteId);
+  if (!html) {
+    html = await hostingProvider.getSiteHtml('abdulaziz') || await hostingProvider.getSiteHtml('aziz');
+  }
+
   if (req.query.embed === '1' || req.query.preview === '1' || req.headers['sec-fetch-dest'] === 'iframe') {
-    let siteId = (handle === 'aziz') ? 'abdulaziz' : handle;
-    let html = await hostingProvider.getSiteHtml(siteId);
     if (html) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Content-Security-Policy', "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:; connect-src *; frame-ancestors *;");
       return res.send(html);
     }
+    // Fallback in iframe: render 404 cleanly inside iframe without redirecting out
+    return res.status(200).send(`<!DOCTYPE html><html><body style="background:#050817;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="text-align:center;"><h2>Portfolio Draft Initializing</h2><p style="color:#64748B;">Generate or publish your portfolio in Studio to preview it here.</p></div></body></html>`);
   }
 
-  // Strict Subdomain Policy: Always 301 redirect to dedicated subdomain https://<handle>.myfolio.tech/
-  if (handle === 'abdulaziz' || handle === 'aziz') {
-    return res.redirect(301, 'https://abdulaziz.myfolio.tech/');
-  }
-
-  const subKey = `${handle}.myfolio.tech`;
-  if (customDomainService?.domainCache?.[subKey]) {
-    return res.redirect(301, `https://${subKey}/`);
+  // 2. Direct web route: If portfolio HTML exists, serve directly at /handle
+  if (html) {
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.send(html);
   }
 
   // Local development redirect fallback

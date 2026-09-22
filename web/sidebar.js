@@ -311,15 +311,38 @@ function injectSidebarStyles() {
     }
 
     @media (max-width: 960px) {
+      .app-shell-layout {
+        flex-direction: column !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: hidden !important;
+      }
+
+      #sidebarMount {
+        width: 100% !important;
+        display: block !important;
+        flex: 0 0 auto !important;
+      }
+
+      .app-main-content {
+        width: 100% !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        overflow-x: hidden !important;
+      }
+
       .app-sidebar {
         position: fixed !important;
         top: 0 !important;
         left: 0 !important;
         bottom: 0 !important;
+        width: 280px !important;
+        max-width: 85vw !important;
         height: 100vh !important;
         z-index: 1000 !important;
         transform: translateX(-100%) !important;
         transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6) !important;
       }
 
       .app-sidebar.mobile-open {
@@ -328,20 +351,20 @@ function injectSidebarStyles() {
 
       .mobile-top-bar {
         display: flex !important;
-        position: sticky;
-        top: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        height: 56px;
-        z-index: 990;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 1rem;
-        background: rgba(8, 13, 32, 0.95);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+        position: sticky !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        height: 56px !important;
+        z-index: 990 !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 0 1rem !important;
+        background: rgba(8, 13, 32, 0.95) !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        border-bottom: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08)) !important;
       }
 
       .sidebar-backdrop {

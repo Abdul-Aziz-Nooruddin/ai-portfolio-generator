@@ -1,0 +1,208 @@
+{
+  "identity": {
+    "name": "Creative Developer",
+    "role": "Software Engineer & Technical Architect",
+    "tagline": "Testing draft preview workflow.",
+    "biography": "Testing draft preview workflow.",
+    "photoUrl": null,
+    "images": [],
+    "email": "abdulaziznoor9876@gmail.com",
+    "phone": null,
+    "location": "Remote / Worldwide"
+  },
+  "name": "Creative Developer",
+  "role": "Software Engineer & Technical Architect",
+  "tagline": "Testing draft preview workflow.",
+  "bio": "Testing draft preview workflow.",
+  "email": "abdulaziznoor9876@gmail.com",
+  "phone": null,
+  "location": "Remote / Worldwide",
+  "photoUrl": null,
+  "avatar": null,
+  "images": [],
+  "contact": {
+    "email": "abdulaziznoor9876@gmail.com",
+    "phone": null,
+    "location": "Remote / Worldwide",
+    "website": ""
+  },
+  "socialLinks": {
+    "github": "",
+    "linkedin": "",
+    "twitter": ""
+  },
+  "skills": [
+    "TypeScript",
+    "JavaScript",
+    "Node.js",
+    "React",
+    "Python",
+    "Git",
+    "Cloud Architecture"
+  ],
+  "projects": [
+    {
+      "title": "MyFolio Draft Project",
+      "description": "Testing preview vs publish workflow.",
+      "name": "MyFolio Draft Project",
+      "desc": "Testing preview vs publish workflow.",
+      "tech": "TypeScript • JavaScript • Node.js",
+      "github": "#",
+      "live": "#"
+    },
+    {
+      "name": "Systems Automation & Tooling",
+      "desc": "Continuous delivery pipelines, environment automation, and reusable software modules.",
+      "tech": "TypeScript • JavaScript",
+      "github": "#",
+      "live": "#"
+    }
+  ],
+  "experience": [
+    {
+      "role": "Software Engineer & Technical Architect",
+      "company": "Open Source & Independent Development",
+      "period": "2024 - Present",
+      "desc": "Directing application architecture, feature delivery, and software quality."
+    }
+  ],
+  "education": [
+    {
+      "degree": "Computer Science & Software Engineering",
+      "institution": "Academic & Professional Practice",
+      "year": "Continuous",
+      "school": "Academic & Professional Practice",
+      "period": "Continuous"
+    }
+  ],
+  "certifications": [
+    {
+      "name": "Verified Technical Portfolio (2 Showcased Systems)",
+      "issuer": "AI Portfolio Studio",
+      "date": "Verified",
+      "id": "STUDIO-VERIFIED",
+      "url": "#",
+      "verified": true
+    }
+  ],
+  "research": [],
+  "publications": [],
+  "customFields": {
+    "username": "abdulaziz",
+    "customUrlIdentifier": "abdulaziz",
+    "userEmail": "abdulaziznoor9876@gmail.com",
+    "isVip": true,
+    "isVipFounder": true,
+    "publish": false,
+    "fullName": "Abdul Aziz Nooruddin",
+    "title": "Full-Stack Engineer & AI Architect"
+  },
+  "provenance": {
+    "name": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.5,
+      "timestamp": 1789994702464
+    },
+    "role": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "tagline": {
+      "source": "resume",
+      "level": "USER_PROVIDED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "bio": {
+      "source": "resume",
+      "level": "USER_PROVIDED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "skills": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "projects": {
+      "source": "user_input",
+      "level": "VERIFIED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "experience": {
+      "source": "inferred_role_entry",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "certifications": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    }
+  },
+  "sourceConfidence": {
+    "name": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.5,
+      "timestamp": 1789994702464
+    },
+    "role": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "tagline": {
+      "source": "resume",
+      "level": "USER_PROVIDED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "bio": {
+      "source": "resume",
+      "level": "USER_PROVIDED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "skills": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "projects": {
+      "source": "user_input",
+      "level": "VERIFIED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "experience": {
+      "source": "inferred_role_entry",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    },
+    "certifications": {
+      "source": "fallback",
+      "level": "INFERRED",
+      "confidence": 0.95,
+      "timestamp": 1789994702464
+    }
+  },
+  "preferences": {
+    "theme": "threeui-landscape"
+  },
+  "signals": {
+    "primaryAngle": "technical",
+    "technicalDepth": "standard",
+    "narrativeDepth": "compact"
+  }
+}

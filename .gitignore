@@ -26,10 +26,11 @@ build/
 
 # Temporary
 tmp/
-temp/
 scratch/
-public/sites/
 .design_memory.json
+public/sites/*
+!public/sites/abdulaziz/
+!public/sites/aziz/
 web/assets/animated-floating-astronaut-in-space-suit-loop/
 web/assets/realistic-galaxy-skybox-hdri-panorama/
 web/assets/galaxy-hdri.glb
