@@ -1,39 +1,87 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/index.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "web/**",
-      "use": "@vercel/static"
+  "cleanUrls": true,
+  "functions": {
+    "api/index.js": {
+      "memory": 1024,
+      "maxDuration": 60,
+      "excludeFiles": "{public/assets/**,web/assets/**,scratch/**,screenshots/**,test/**,docs/**}"
     }
-  ],
+  },
   "routes": [
     {
+      "src": "/assets/(.*)",
+      "headers": {
+        "cache-control": "public, max-age=31536000, immutable"
+      },
+      "dest": "/assets/$1"
+    },
+    {
       "src": "/api/(.*)",
-      "dest": "src/index.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/p/(.*)",
-      "dest": "src/index.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/sites/(.*)",
-      "dest": "src/index.js"
+      "dest": "/api/index.js"
     },
     {
       "src": "/webhook(.*)",
-      "dest": "src/index.js"
+      "dest": "/api/index.js"
     },
     {
-      "src": "/health",
-      "dest": "src/index.js"
+      "src": "/health(.*)",
+      "dest": "/api/index.js"
+    },
+    {
+      "src": "/studio",
+      "dest": "/studio.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/dashboard.html"
+    },
+    {
+      "src": "/login",
+      "dest": "/auth.html"
+    },
+    {
+      "src": "/auth",
+      "dest": "/auth.html"
+    },
+    {
+      "src": "/profile",
+      "dest": "/profile.html"
+    },
+    {
+      "src": "/universes",
+      "dest": "/design-demo.html"
+    },
+    {
+      "src": "/design-demo",
+      "dest": "/design-demo.html"
+    },
+    {
+      "src": "/terms",
+      "dest": "/terms.html"
+    },
+    {
+      "src": "/privacy",
+      "dest": "/privacy.html"
+    },
+    {
+      "src": "/thank-you",
+      "dest": "/thank-you.html"
+    },
+    {
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/web/$1"
+      "dest": "/api/index.js"
     }
   ]
 }

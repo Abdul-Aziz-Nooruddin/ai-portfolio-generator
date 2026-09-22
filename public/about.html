@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZJFT5YTN2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9ZJFT5YTN2');
+  </script>
+
+  <title>About MyFolio — AI-Powered 3D Developer Portfolio Generator | Our Mission</title>
+  <meta name="description" content="MyFolio was built to give every developer a stunning 3D portfolio in under 60 seconds. Learn about our mission, the team, and why we believe your work deserves better than a Notion page.">
+  <meta name="keywords" content="about myfolio, AI portfolio generator team, developer portfolio builder India, 3D portfolio mission, myfolio.tech">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://myfolio.tech/about">
+
+  <meta property="og:title" content="About MyFolio — AI-Powered 3D Developer Portfolio Generator">
+  <meta property="og:description" content="We built MyFolio so every developer can have a world-class 3D portfolio in under 60 seconds. Free to start.">
+  <meta property="og:image" content="https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg">
+  <meta property="og:url" content="https://myfolio.tech/about">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About MyFolio",
+    "url": "https://myfolio.tech/about",
+    "description": "MyFolio is an AI-powered 3D portfolio generator built for developers, engineers, and researchers who deserve a stunning portfolio without spending weeks building one.",
+    "publisher": { "@type": "Organization", "name": "MyFolio Studio", "url": "https://myfolio.tech/" }
+  }
+  </script>
+
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/assets/cosmic-cluster-bg.css">
+  <script src="/sidebar.js" defer></script>
+  <script src="/cookie-banner.js" defer></script>
+  <script src="/analytics.js" defer></script>
+
+  <style>
+    :root {
+      --bg: #05070F;
+      --gold: #F5A623;
+      --gold-glow: rgba(245, 166, 35, 0.25);
+      --cyan: #00F2FE;
+      --text: #F8FAFC;
+      --text-muted: #94A3B8;
+      --card-bg: rgba(13, 19, 38, 0.72);
+      --card-border: rgba(245, 166, 35, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Fixed Glass Navigation */
+    .about-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 48px;
+      background: rgba(5, 7, 15, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(245, 166, 35, 0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .about-nav a.brand {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 0.08em;
+      color: #FFFFFF;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .about-nav a.brand span {
+      color: var(--gold);
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .nav-links a {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .nav-links a:hover {
+      color: var(--gold);
+    }
+    .btn-solar-cta {
+      background: linear-gradient(135deg, #FFB834 0%, #E08900 100%);
+      color: #05070F !important;
+      padding: 10px 24px;
+      border-radius: 9999px;
+      font-weight: 700 !important;
+      font-size: 0.85rem;
+      text-decoration: none;
+      box-shadow: 0 4px 18px rgba(245, 166, 35, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-solar-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(245, 166, 35, 0.5);
+    }
+
+    /* Hero Section */
+    .about-hero {
+      text-align: center;
+      padding: 100px 24px 60px;
+      position: relative;
+      z-index: 10;
+    }
+    .about-hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245, 166, 35, 0.12);
+      border: 1px solid rgba(245, 166, 35, 0.3);
+      color: var(--gold);
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .about-hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin: 0 auto 24px;
+      max-width: 860px;
+      background: linear-gradient(135deg, #FFFFFF 50%, var(--gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .about-hero p {
+      font-size: 1.18rem;
+      color: var(--text-muted);
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* Content Layout */
+    .about-container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      position: relative;
+      z-index: 10;
+    }
+    .about-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 44px;
+      margin-bottom: 48px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .about-section:hover {
+      border-color: rgba(245, 166, 35, 0.35);
+      box-shadow: 0 16px 48px rgba(245, 166, 35, 0.12);
+    }
+    .about-section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .about-section h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      font-weight: 800;
+      margin: 0 0 20px;
+      color: #FFFFFF;
+      line-height: 1.2;
+    }
+    .about-section p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+
+    /* Stats Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .stat-item {
+      text-align: center;
+      background: rgba(5, 7, 15, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+      padding: 18px 12px;
+    }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 6px;
+    }
+
+    /* Values Grid */
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 32px;
+    }
+    .value-card {
+      background: rgba(5, 7, 15, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 24px;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .value-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--gold);
+    }
+    .value-icon {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+    .value-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #FFFFFF;
+      margin: 0 0 8px;
+    }
+    .value-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* CTA Banner */
+    .about-cta {
+      background: linear-gradient(135deg, rgba(245, 166, 35, 0.15) 0%, rgba(13, 19, 38, 0.95) 100%);
+      border: 1px solid var(--gold);
+      border-radius: 24px;
+      padding: 56px 36px;
+      text-align: center;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+      margin-bottom: 60px;
+    }
+    .about-cta h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.4rem;
+      font-weight: 800;
+      margin: 0 0 16px;
+      color: #FFFFFF;
+    }
+    .about-cta p {
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      font-size: 1.1rem;
+    }
+
+    /* Footer */
+    .about-footer {
+      text-align: center;
+      padding: 40px 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 10;
+    }
+    .about-footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .about-footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .about-nav { padding: 16px 20px; }
+      .about-hero { padding: 72px 20px 40px; }
+      .about-container { padding: 24px 16px 60px; }
+      .about-section { padding: 28px 20px; }
+    }
+  </style>
+  <link rel="stylesheet" href="/button-system.css">
+</head>
+<body>
+  <!-- 🌌 3D Ambient Open Star Cluster Background -->
+  <div class="cosmic-cluster-bg-wrapper" aria-hidden="true">
+    <iframe
+      title="Bright stars of an open cluster"
+      frameborder="0"
+      allowfullscreen
+      mozallowfullscreen="true"
+      webkitallowfullscreen="true"
+      allow="autoplay; fullscreen; xr-spatial-tracking"
+      xr-spatial-tracking
+      execution-while-out-of-viewport
+      execution-while-not-rendered
+      web-share
+      src="https://sketchfab.com/models/bc068b682f4243b2b702202a65df804d/embed?autostart=1&autospin=0.2&transparent=1&ui_hint=0&ui_controls=0&ui_infos=0&ui_stop=0&ui_watermark=0&ui_theme=dark&dnt=1">
+    </iframe>
+    <div class="cosmic-cluster-overlay"></div>
+  </div>
+
+  <main>
+    <nav class="about-nav" role="navigation" aria-label="Main navigation">
+      <a href="/" class="brand">MYFOLIO <span>STUDIO</span></a>
+      <div class="nav-links">
+        <a href="/">← Home</a>
+        <a href="/contact">Contact</a>
+        <a href="/studio" class="btn-solar-cta" data-analytics="about_nav_studio">Launch 3D Studio</a>
+      </div>
+    </nav>
+
+    <header class="about-hero">
+      <div class="about-hero-tag">✨ OUR MISSION</div>
+      <h1>We Built the Portfolio Every Developer Deserves</h1>
+      <p>Great engineering work should captivate at first glance — not hide behind a flat, generic document. MyFolio turns your code into an interactive 3D WebGL universe.</p>
+    </header>
+
+    <div class="about-container">
+      <section class="about-section" id="mission" aria-label="Our Mission">
+        <div class="about-section-tag">// ARCHITECTURE & MISSION</div>
+        <h2>Levelling the Playing Field for Developers</h2>
+        <p>We noticed a stark gap: top-tier engineers were losing job opportunities to candidates with slicker presentations — not because their work was inferior, but because their portfolio looked like a 2015 static template.</p>
+        <p>MyFolio was built to close that gap. Using AI, we synthesize your GitHub repositories, resume, and career story into a bespoke 3D WebGL universe that makes recruiters stop scrolling. In under 60 seconds.</p>
+        <p>Your code is the product. We just build the spatial stage it deserves.</p>
+        
+        <div class="stats-row">
+          <div class="stat-item"><div class="stat-num">2,400+</div><div class="stat-label">Portfolios Generated</div></div>
+          <div class="stat-item"><div class="stat-num">40+</div><div class="stat-label">Countries</div></div>
+          <div class="stat-item"><div class="stat-num">60s</div><div class="stat-label">Average Build Time</div></div>
+          <div class="stat-item"><div class="stat-num">22</div><div class="stat-label">3D Visual Universes</div></div>
+        </div>
+      </section>
+
+      <section class="about-section" id="values" aria-label="Our Values">
+        <div class="about-section-tag">// CORE PRINCIPLES</div>
+        <h2>What We Stand For</h2>
+        <div class="values-grid">
+          <div class="value-card"><div class="value-icon">🔒</div><h3>Privacy First</h3><p>We only read public GitHub metadata. Your private code and confidential data are never stored or shared.</p></div>
+          <div class="value-card"><div class="value-icon">⚡</div><h3>Instant Synthesis</h3><p>60 seconds from username input to deployed 3D portfolio URL with zero build configuration.</p></div>
+          <div class="value-card"><div class="value-icon">🎨</div><h3>Zero Cookie-Cutter Templates</h3><p>Bespoke typography, HSL color tokens, and 3D WebGL backgrounds tailored to your engineering discipline.</p></div>
+          <div class="value-card"><div class="value-icon">🌍</div><h3>Always Free to Start</h3><p>Free tier gives you a live 24-hour preview with custom subdomains and offline ZIP export.</p></div>
+          <div class="value-card"><div class="value-icon">🤖</div><h3>AI With Integrity</h3><p>Every skill, metric, and project badge is directly traceable to your actual repositories and genuine work.</p></div>
+          <div class="value-card"><div class="value-icon">📱</div><h3>Global Edge Deployment</h3><p>Sub-second CDN latency worldwide, instant cloud syncing, and high-DPI mobile rendering.</p></div>
+        </div>
+      </section>
+
+      <section class="about-section" id="technology" aria-label="How MyFolio Works">
+        <div class="about-section-tag">// SPATIAL INTELLIGENCE</div>
+        <h2>How Our Engine Builds Your Universe</h2>
+        <p>MyFolio's design intelligence pipeline analyzes your GitHub repositories (commit cadences, language clusters, star counts, descriptions), your resume's content hierarchy, and career goals to select the optimal 3D visual universe and layout geometry.</p>
+        <p>It then compiles bespoke HTML, CSS, and Three.js WebGL shaders with your real projects, actual stack, and genuine engineering milestones. No placeholder templates.</p>
+        <p style="margin-top: 24px;">
+          <a href="/studio" style="color: var(--gold); font-weight: 700; text-decoration: none;">→ Launch 3D Web Studio Now</a> &nbsp;·&nbsp;
+          <a href="/#sectionUniverses" style="color: var(--gold); font-weight: 700; text-decoration: none;">→ Explore 22 Visual Universes</a> &nbsp;·&nbsp;
+          <a href="/contact" style="color: var(--gold); font-weight: 700; text-decoration: none;">→ Contact Engineering Team</a>
+        </p>
+      </section>
+
+      <div class="about-cta">
+        <h2>Your 3D Universe Awaits</h2>
+        <p>Join 2,400+ developers standing out with bespoke spatial portfolios.</p>
+        <a href="/studio" class="btn-solar-cta" style="font-size: 1rem; padding: 14px 36px;" data-analytics="about_bottom_cta">🚀 Synthesize 3D Portfolio Free</a>
+      </div>
+    </div>
+
+    <footer class="about-footer">
+      <p>&copy; 2026 MyFolio Studio. All rights reserved.</p>
+      <p style="margin-top: 8px;">
+        <a href="/">Home</a> &middot;
+        <a href="/studio">Studio</a> &middot;
+        <a href="/about">About</a> &middot;
+        <a href="/contact">Contact</a> &middot;
+        <a href="/privacy">Privacy</a> &middot;
+        <a href="/terms">Terms</a>
+      </p>
+      <div class="cosmic-cluster-credit">
+        3D Model: <a href="https://sketchfab.com/3d-models/bright-stars-of-an-open-cluster-bc068b682f4243b2b702202a65df804d" target="_blank" rel="nofollow">Bright stars of an open cluster</a> by Salvatore Orlando (Sketchfab)
+      </div>
+    </footer>
+  </main>
+  <script src="/app.js" defer></script>
+  <script src="/button-engine.js" defer></script>
+
+<style id="myfolio-universal-mobile">
+  /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
+  @media (max-width: 600px) {
+    /* Reset base font size so rem units scale down */
+    html { font-size: 14px !important; }
+
+    /* Hero headline — cap at a safe mobile size */
+    h1,
+    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
+    [class*="masthead"], [class*="main-title"], [class*="display-title"],
+    [class*="hero-name"], [class*="page-title"], [class*="folio-name"],
+    [class*="profile-name"] {
+      font-size: clamp(1.6rem, 7vw, 2.4rem) !important;
+      line-height: 1.15 !important;
+      letter-spacing: -0.02em !important;
+    }
+
+    /* Section headings */
+    h2, [class*="section-title"], [class*="section-heading"],
+    [class*="chapter-title"], [class*="block-title"] {
+      font-size: clamp(1.25rem, 5.5vw, 1.8rem) !important;
+      line-height: 1.2 !important;
+    }
+
+    h3, [class*="card-title"], [class*="project-name"],
+    [class*="exp-title"], [class*="role-title"] {
+      font-size: clamp(1rem, 4.5vw, 1.35rem) !important;
+    }
+
+    /* Body / bio text */
+    p, [class*="bio"], [class*="hero-bio"], [class*="subtitle"],
+    [class*="intro-text"], [class*="description"], [class*="lead"] {
+      font-size: clamp(0.8rem, 3.5vw, 1rem) !important;
+      line-height: 1.65 !important;
+    }
+
+    /* Tag / badge / mono accent text */
+    [class*="tag"], [class*="badge"], [class*="chip"], [class*="label"],
+    [class*="kicker"], [class*="mono"], code, pre {
+      font-size: clamp(0.65rem, 2.5vw, 0.8rem) !important;
+    }
+
+    /* Section padding — prevent edges being clipped */
+    section, [class*="section"], [class*="-section"],
+    [class*="wrapper"], [class*="container"], [class*="layout"] {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    /* Hero sections — reduce vertical breathing room */
+    [class*="hero"], [id="home"] {
+      padding-top: 64px !important;
+      padding-bottom: 32px !important;
+      min-height: auto !important;
+    }
+
+    /* Force single-column grids everywhere */
+    [style*="grid-template-columns"],
+    [class*="grid"], [class*="bento"], [class*="dual"],
+    [class*="tri-layout"], [class*="two-col"], [class*="three-col"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Navigation — hide multi-item desktop navs, show only brand */
+    [class*="nav-menu"], [class*="header-nav"], [class*="dock"],
+    [class*="vertical-dock"], [class*="sidebar-nav"] {
+      display: none !important;
+    }
+
+    /* Buttons — stack and full-width */
+    [class*="action-row"], [class*="btn-group"], [class*="cta-row"] {
+      flex-direction: column !important;
+      gap: 12px !important;
+    }
+    [class*="btn"], [class*="cta-btn"], [class*="sprawl-btn"] {
+      width: 100% !important;
+      justify-content: center !important;
+      padding: 12px 20px !important;
+      font-size: 0.82rem !important;
+    }
+
+    /* Project / card images */
+    [class*="card-img"], [class*="project-img"], [class*="project-image"],
+    [class*="artwork"], [class*="thumbnail"] {
+      height: 160px !important;
+    }
+
+    /* Skill / telemetry numbers — prevent overflow */
+    [class*="stat-num"], [class*="metric-value"], [class*="counter"],
+    [class*="number-display"] {
+      font-size: clamp(1.4rem, 6vw, 2rem) !important;
+    }
+
+    /* 404 hero numbers */
+    [class*="404"], [class*="error-code"] {
+      font-size: clamp(4rem, 20vw, 7rem) !important;
+    }
+
+    /* Floating 3D assets — reduce to prevent layout blowout */
+    [class*="hero-3d"], [class*="focal-asset"], [class*="floating-asset"],
+    [class*="hero-img"], [class*="hero-visual"] {
+      max-width: 260px !important;
+      width: 70vw !important;
+      margin: 24px auto 0 !important;
+    }
+
+    /* Canvas backgrounds — don't overflow */
+    canvas {
+      max-width: 100vw !important;
+    }
+
+    /* Footer */
+    [class*="footer"] {
+      flex-direction: column !important;
+      gap: 12px !important;
+      padding: 24px 16px !important;
+      text-align: center !important;
+      font-size: 0.72rem !important;
+    }
+  }
+
+  /* ─── Tablet override ≤768px ────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    html { font-size: 15px !important; }
+
+    h1,
+    [class*="hero-headline"], [class*="hero-h1"], [class*="hero-title"],
+    [class*="masthead"], [class*="main-title"], [class*="display-title"] {
+      font-size: clamp(2rem, 6vw, 3rem) !important;
+    }
+
+    h2, [class*="section-title"], [class*="section-heading"] {
+      font-size: clamp(1.4rem, 4.5vw, 2rem) !important;
+    }
+
+    section, [class*="section"], [class*="-section"] {
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+
+    [class*="grid"], [class*="bento"],
+    [class*="tri-layout"], [class*="three-col"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    [class*="two-col"], [class*="dual"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* ─── Reduced-motion: disable floating keyframes ───────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</body>
+</html>

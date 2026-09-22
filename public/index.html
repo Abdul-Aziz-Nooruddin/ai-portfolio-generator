@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ============================================================
+       GOOGLE ANALYTICS 4 (GA4)
+       ============================================================ -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-9ZJFT5YTN2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-9ZJFT5YTN2');
+  </script>
+
+  <!-- ============================================================
+       PRIMARY SEO META
+       ============================================================ -->
+  <title>MyFolio — Your Resume, Rendered as a World | AI 3D Portfolio Generator</title>
+  <meta name="description" content="Turn your GitHub, resume, and experience into an interactive 3D portfolio world designed around your story. 8 living universes, sub-60s AI synthesis, free 24-hour live preview.">
+  <meta name="keywords" content="AI portfolio generator, 3D portfolio builder, developer portfolio website, portfolio from GitHub, resume to portfolio, WebGL portfolio, free portfolio generator, 3D portfolio template, online portfolio maker, myfolio.tech">
+  <meta name="author" content="MyFolio Studio">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://myfolio.tech/">
+
+  <!-- ============================================================
+       OPEN GRAPH & SOCIAL CARDS
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MyFolio Studio">
+  <meta property="og:title" content="MyFolio — Your Resume, Rendered as a World">
+  <meta property="og:description" content="Turn your GitHub profile, PDF resume, and experience into an interactive 3D portfolio universe. Free 24-hour preview with zero commitment.">
+  <meta property="og:image" content="https://myfolio.tech/assets/3d/threeui_shelf_3d.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MyFolio 3D WebGL developer portfolio universe">
+  <meta property="og:url" content="https://myfolio.tech/">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@myfoliotech">
+  <meta name="twitter:title" content="MyFolio — Your Resume, Rendered as a World">
+  <meta name="twitter:description" content="Turn your GitHub profile, PDF resume, and experience into an interactive 3D portfolio universe.">
+  <meta name="twitter:image" content="https://myfolio.tech/assets/3d/threeui_shelf_3d.jpg">
+  <meta name="twitter:image:alt" content="MyFolio 3D portfolio generator preview">
+
+  <!-- ============================================================
+       FAVICONS & WEB MANIFEST
+       ============================================================ -->
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/favicon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#040714">
+
+  <!-- ============================================================
+       JSON-LD STRUCTURED DATA
+       ============================================================ -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MyFolio — AI 3D Portfolio Generator",
+    "url": "https://myfolio.tech/",
+    "description": "MyFolio is an AI-powered 3D WebGL portfolio generator that transforms your GitHub, resume, and experience into an interactive digital universe.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web Browser",
+    "offers": [
+      {
+        "@type": "Offer",
+        "name": "Free 24-Hour Preview",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    ],
+    "creator": {
+      "@type": "Organization",
+      "name": "MyFolio Studio",
+      "url": "https://myfolio.tech/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://myfolio.tech/" },
+      { "@type": "ListItem", "position": 2, "name": "Studio", "item": "https://myfolio.tech/studio" }
+    ]
+  }
+  </script>
+
+  <!-- ============================================================
+       TYPOGRAPHY ENGINE (Space Grotesk, Orbitron, Inter, Share Tech Mono)
+       ============================================================ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Core Scripts & Libraries -->
+  <script src="/assets/three.min.js?v=r128"></script>
+  <script src="/assets/lenis.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js" defer></script>
+  <script src="/sidebar.js" defer></script>
+  <script src="/cookie-banner.js" defer></script>
+  <script src="/analytics.js" defer></script>
+
+  <!-- Base Design Tokens & Legacy Helpers -->
+  <link rel="stylesheet" href="/button-system.css">
+  <link rel="stylesheet" href="/assets/cinematic-engine/cinematic-universe.css">
+
+  <style>
+    :root {
+      --void-deep: #040714;
+      --void-mid: #07112B;
+      --void-surface: #0B1638;
+      
+      --starlight: #F8FAFC;
+      --starlight-dim: #E2E8F0;
+      --stardust: rgba(224, 242, 254, 0.72);
+      
+      --cyan-core: #38BDF8;
+      --cyan-glow: rgba(56, 189, 248, 0.35);
+      --violet-ambient: #8B5CF6;
+      --solar-amber: #F5A623;
+      
+      --font-heading: 'Space Grotesk', -apple-system, sans-serif;
+      --font-display: 'Orbitron', 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', -apple-system, sans-serif;
+      --font-mono: 'Share Tech Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background-color: var(--void-deep);
+      color: var(--starlight);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scroll-behavior: auto;
+    }
+
+    body {
+      overflow-x: hidden;
+      min-height: 100vh;
+      background: #040714;
+    }
+
+    /* Minimal Floating Navigation Dock */
+    .chrono-nav {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 32px);
+      max-width: 1180px;
+      z-index: 1000;
+      padding: 10px 20px;
+      background: rgba(7, 14, 38, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.6), 0 0 25px rgba(56, 189, 248, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .nav-brand-anchor {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    .brand-logo-text {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .brand-logo-text span {
+      color: var(--cyan-core);
+    }
+
+    .nav-links-cluster {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .nav-link-item {
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #94A3B8;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .nav-link-item:hover {
+      color: #FFFFFF;
+    }
+
+    .nav-actions-cluster {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-solar-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      background: rgba(11, 22, 56, 0.5);
+      color: #BAE6FD;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.25s ease;
+    }
+    .btn-solar-outline:hover {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: #38BDF8;
+      color: #FFFFFF;
+    }
+
+    .btn-solar-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 22px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #38BDF8 0%, #0284C7 100%);
+      color: #04091A;
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(56, 189, 248, 0.35);
+      transition: all 0.25s ease;
+    }
+    .btn-solar-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(56, 189, 248, 0.55);
+    }
+
+    .mobile-nav-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links-cluster, .nav-actions-cluster {
+        display: none;
+      }
+      .mobile-nav-toggle {
+        display: block;
+      }
+    }
+
+    /* Architectural Footer */
+    .master-architectural-footer {
+      position: relative;
+      z-index: 20;
+      background: #030612;
+      border-top: 1px solid rgba(56, 189, 248, 0.18);
+      padding: 60px 24px 32px;
+    }
+
+    .footer-content-grid {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 36px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand-bio {
+      margin-top: 14px;
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: #94A3B8;
+      max-width: 320px;
+    }
+
+    .footer-nav-col-title {
+      font-family: var(--font-heading);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      margin-bottom: 16px;
+    }
+
+    .footer-nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-nav-list a {
+      color: #64748B;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-nav-list a:hover {
+      color: #38BDF8;
+    }
+
+    .footer-copyright-strip {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 24px;
+      font-size: 0.78rem;
+      color: #64748B;
+    }
+
+    /* Sticky Mobile CTA */
+    .sticky-mobile-cta-bar {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(4, 7, 20, 0.92);
+      backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(56, 189, 248, 0.25);
+      padding: 10px 16px;
+      z-index: 999;
+      justify-content: space-between;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .sticky-mobile-cta-bar {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Scroll Progress Bar -->
+  <div id="scroll-progress-indicator"></div>
+
+  <!-- Master Fixed Continuous 3D Universe Viewport -->
+  <div class="master-viewport-container" aria-hidden="true">
+    <canvas id="masterUniverseCanvas"></canvas>
+    <div class="master-atmosphere-vignette"></div>
+  </div>
+
+  <!-- Main Navigation Bar -->
+  <nav class="chrono-nav" id="mainNav">
+    <a href="/" class="nav-brand-anchor" aria-label="MyFolio Home">
+      <div class="brand-logo-icon">
+        <img src="/assets/logo-3d.png" alt="MyFolio Emblem" width="22" height="22">
+      </div>
+      <span class="brand-logo-text">My<span>Folio</span></span>
+    </a>
+
+    <div class="nav-links-cluster">
+      <a href="#sectionProblem" class="nav-link-item">The Journey</a>
+      <a href="#sectionHowItWorks" class="nav-link-item">How It Works</a>
+      <a href="#sectionUniverses" class="nav-link-item">Universes</a>
+      <a href="#sectionShowcase" class="nav-link-item">Showcase</a>
+      <a href="/studio" class="nav-link-item">Web Studio</a>
+    </div>
+
+    <div class="nav-actions-cluster" id="navAuthDock">
+      <button type="button" class="btn-solar-outline" onclick="openAuthModal('signin')">Sign in</button>
+      <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+        <span>Build my portfolio</span>
+      </button>
+    </div>
+
+    <button type="button" class="mobile-nav-toggle" onclick="openAuthModal('signup')" aria-label="Open Navigation">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+  </nav>
+
+  <!-- ============================================================
+       MASTER JOURNEY SCROLL TRACK (Coordinates 3D Camera & Chapters)
+       ============================================================ -->
+  <main class="journey-scroll-track" id="journeyScrollWrapper">
+
+    <!-- Pinned Viewport Container (Fixed position overlaying 3D WebGL world) -->
+    <div class="cinematic-stage-pin">
+
+      <!-- ============================================================
+           STAGE 0: HERO (0.00 - 0.12)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter chapter-hero chapter-active" id="sectionHero">
+        <div class="chapter-tag-badge">
+          <span>✦</span> AUTONOMOUS 3D SPATIAL ENGINE
+        </div>
+        <h1 class="chapter-headline">
+          Turn Code Into <span>Worlds</span>
+        </h1>
+        <p class="chapter-subtitle">
+          Beyond flat resumes and generic templates. An interactive, continuous 3D universe rendered directly from your engineering DNA.
+        </p>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Build my portfolio</span>
+            <span>➔</span>
+          </button>
+          <a href="/complete-shelf-3d" class="btn-solar-outline">
+            <span>👁️ Explore Shelf 3D</span>
+          </a>
+          <a href="/studio" class="btn-solar-outline">
+            <span>⚙️ Open Studio</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 1: THE PROBLEM — SCATTERED FRAGMENTS (0.12 - 0.24)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterProblem">
+        <div class="chapter-tag-badge">
+          <span>01</span> SCATTERED TELEMETRY
+        </div>
+        <h2 class="chapter-headline">
+          Your work is everywhere.<br><span>Your story shouldn't be.</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Recruiters spend 6 seconds scanning flat paper PDFs, tab-switching between GitHub repositories, and guessing what you actually built.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">⚡</div>
+            <h3 class="feature-card-title">Scattered GitHub Code</h3>
+            <p class="feature-card-desc">Brilliant pull requests and complex architectures buried across standard markdown files.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">📄</div>
+            <h3 class="feature-card-title">Flat Paper PDFs</h3>
+            <p class="feature-card-desc">Monochrome A4 documents designed in 1993 that strip away physical weight and engineering depth.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🌐</div>
+            <h3 class="feature-card-title">Siloed Deployments</h3>
+            <p class="feature-card-desc">Broken links and hidden demo environments that hiring teams never take the time to inspect.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 2: DATA OPERATIONS ROOM (0.24 - 0.36)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterConvergence">
+        <div class="chapter-tag-badge">
+          <span>02</span> DATA OPERATIONS ROOM
+        </div>
+        <h2 class="chapter-headline">
+          Scattered engineering data,<br><span>unified infrastructure</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Your GitHub commits, resume documents, and deployments flow through physical server cabinets and diagnostic partitions into a central processing machine.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🖧</div>
+            <h3 class="feature-card-title">Infrastructure Ingestion</h3>
+            <p class="feature-card-desc">Direct ingestion of GitHub handle, resume PDF dossier, and production deployments into enterprise racks.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">⚙️</div>
+            <h3 class="feature-card-title">Central Processing Core</h3>
+            <p class="feature-card-desc">Transparent server enclosure with active copper cooling conduits reconciling your complete technical record.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">📊</div>
+            <h3 class="feature-card-title">Diagnostic Partitioning</h3>
+            <p class="feature-card-desc">Architectural glass monitors verifying commit cadence, repository provenance, and production uptime.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 3: AI RESEARCH LABORATORY (0.36 - 0.48)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterSynthesis">
+        <div class="chapter-tag-badge">
+          <span>03</span> AI RESEARCH LABORATORY
+        </div>
+        <h2 class="chapter-headline">
+          Neural synthesis terraforms code into <span>living space</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Inside the GPU research lab, multi-monitor arrays extract your engineering DNA, mapping repositories, credentials, and achievements into an interactive 3D universe in under 60 seconds.
+        </p>
+        <div class="spatial-feature-row" style="margin-bottom: 24px;">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🧠</div>
+            <h3 class="feature-card-title">Automated Analysis</h3>
+            <p class="feature-card-desc">GitHub 100% • Resume 100% • Projects 100% • Experience 100% verified across diagnostic benches.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🖥️</div>
+            <h3 class="feature-card-title">GPU Compute Arrays</h3>
+            <p class="feature-card-desc">High-density liquid-cooled compute towers generating responsive 3D WebGL geometry and PBR materials.</p>
+          </div>
+        </div>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Start My Synthesis</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 4: THE PORTFOLIO WORLD HUB (0.48 - 0.60)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterWorld">
+        <div class="chapter-tag-badge">
+          <span>04</span> THE PORTFOLIO WORLD
+        </div>
+        <h2 class="chapter-headline">
+          Every engineer deserves <span>their own place</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Explore the central research pavilion. Floor-to-ceiling architectural glass overlooks natural alpine terrain, biophilic courtyards, and active engineering workspaces.
+        </p>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" onclick="openAuthModal('signup')">
+            <span>Synthesize My World</span>
+            <span>➔</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 5: PROJECT WORKSTATIONS & LABS (0.60 - 0.70)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterProjects">
+        <div class="chapter-tag-badge">
+          <span>05</span> PROJECT WORKSTATIONS & LABS
+        </div>
+        <h2 class="chapter-headline">
+          Projects aren't thumbnails.<br><span>They're active workstations.</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Each system you built occupies an authentic engineering workspace equipped with dual 4K monitors, diagnostic benches, and live deployment telemetry.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🖥️</div>
+            <h3 class="feature-card-title">Distributed Microservices</h3>
+            <p class="feature-card-desc">High-throughput architectures rendered as dedicated dual-monitor developer workstations with live terminal logs.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">⚡</div>
+            <h3 class="feature-card-title">Cryptographic Escrow</h3>
+            <p class="feature-card-desc">Smart contract protocols materialized as specialized financial workstations with audited ledger traces.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🔬</div>
+            <h3 class="feature-card-title">Autonomous AI Agents</h3>
+            <p class="feature-card-desc">Neural reasoning pipelines visualized on GPU computing towers with status telemetry.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 6: DIAGNOSTIC BENCHES & DATA CENTER (0.70 - 0.80)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterSkills">
+        <div class="chapter-tag-badge">
+          <span>06</span> DIAGNOSTIC BENCHES & DATA CENTER
+        </div>
+        <h2 class="chapter-headline">
+          Skills connected by evidence.<br><span>GitHub carved in infrastructure.</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Zero unverified bullet points. Physical engineering testing benches transition directly into a hyperscale server room pulsing with live commit activity.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🎛️</div>
+            <h3 class="feature-card-title">Resonant Skill Benches</h3>
+            <p class="feature-card-desc">Hardware diagnostic stations and testing meters calibrated to authentic production frameworks.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🏢</div>
+            <h3 class="feature-card-title">Hyperscale Server Facility</h3>
+            <p class="feature-card-desc">Rows of 42U enterprise server cabinets illuminated with green and amber status LEDs representing your commit cadence.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 7: CAMPUS SKYBRIDGE & CAREER MILESTONES (0.80 - 0.88)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterExperience">
+        <div class="chapter-tag-badge">
+          <span>07</span> CAMPUS SKYBRIDGE
+        </div>
+        <h2 class="chapter-headline">
+          Walk through your <span>career milestones</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Cross the suspended architectural glass skybridge connecting campus wings, with career milestone plaques marking promotions and system scale.
+        </p>
+        <div class="spatial-feature-row">
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🌉</div>
+            <h3 class="feature-card-title">Architectural Skybridge</h3>
+            <p class="feature-card-desc">Suspended glass walkway with structural stanchions marking career growth, team leadership, and production contributions.</p>
+          </div>
+          <div class="spatial-feature-card">
+            <div class="feature-card-icon">🏔️</div>
+            <h3 class="feature-card-title">Panoramic Vantage</h3>
+            <p class="feature-card-desc">Looking out across the alpine mountain landscape, every career milestone is physically anchored in the world.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 8: LIVING UNIVERSES GATEWAY (0.88 - 0.94)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterUniverses">
+        <div class="chapter-tag-badge">
+          <span>08</span> THE LIVING UNIVERSES
+        </div>
+        <h2 class="chapter-headline">
+          Eight distinct <span>architectural worlds</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Not generic templates. Each universe is a living WebGL environment engineered around a specific developer archetype.
+        </p>
+        <div class="universe-quick-strip">
+          <a href="/complete-shelf-3d" class="universe-mini-token">📚 Complete Shelf 3D</a>
+          <a href="/sylva-living-world" class="universe-mini-token">🌿 Sylva Living World</a>
+          <a href="/kage-living-world" class="universe-mini-token">⛩️ Kage Shrine 3D</a>
+          <a href="/studio?template=cosmic-astronaut" class="universe-mini-token">🚀 Cosmic Astronaut</a>
+          <a href="/studio?template=cyber-crystal" class="universe-mini-token">💎 Cyber Crystal</a>
+          <a href="/studio?template=bioluminescent-wireframe" class="universe-mini-token">🌊 Bioluminescent</a>
+          <a href="/studio?template=chrono-obsidian-sanctuary" class="universe-mini-token">⏳ Chrono Obsidian</a>
+          <a href="/studio?template=neon-aurora-cyber" class="universe-mini-token">🌌 Neon Aurora</a>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           STAGE 9: THE DESTINATION / FINAL CLIMAX (0.94 - 1.00)
+           ============================================================ -->
+      <section class="cinematic-narrative-chapter" id="chapterClimax">
+        <div class="chapter-tag-badge">
+          <span>✦</span> THE DESTINATION
+        </div>
+        <h2 class="chapter-headline">
+          Your work already tells a story.<br><span>Give it a world.</span>
+        </h2>
+        <p class="chapter-subtitle">
+          Turn your GitHub, resume, and experience into an interactive 3D universe. Free 24-hour preview with zero commitment.
+        </p>
+        <div class="chapter-action-cluster">
+          <button type="button" class="btn-solar-primary" style="padding: 14px 38px; font-size: 1.05rem;" onclick="openAuthModal('signup')">
+            <span>Build my portfolio</span>
+            <span>➔</span>
+          </button>
+          <a href="/studio" class="btn-solar-outline" style="padding: 14px 28px; font-size: 1.05rem;">
+            <span>Open Web Studio</span>
+          </a>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ============================================================
+       REFINED MINIMAL ARCHITECTURAL FOOTER
+       ============================================================ -->
+  <footer class="master-architectural-footer">
+    <div class="footer-content-grid">
+      <div class="footer-brand-col">
+        <a href="/" class="nav-brand-anchor">
+          <div class="brand-logo-icon">
+            <img src="/assets/logo-3d.png" alt="MyFolio Emblem" width="20" height="20">
+          </div>
+          <span class="brand-logo-text">My<span>Folio</span></span>
+        </a>
+        <p class="footer-brand-bio">
+          Build a portfolio people explore. Transforming code and career records into living 3D WebGL universes.
+        </p>
+      </div>
+
+      <div class="footer-nav-col">
+        <h4 class="footer-nav-col-title">Product</h4>
+        <ul class="footer-nav-list">
+          <li><a href="#chapterHero">Home World</a></li>
+          <li><a href="#chapterUniverses">Universes</a></li>
+          <li><a href="/complete-shelf-3d">Shelf 3D Demo</a></li>
+          <li><a href="/studio">Web Studio</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav-col">
+        <h4 class="footer-nav-col-title">Company</h4>
+        <ul class="footer-nav-list">
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav-col">
+        <h4 class="footer-nav-col-title">Resources</h4>
+        <ul class="footer-nav-list">
+          <li><a href="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-nav-col">
+        <h4 class="footer-nav-col-title">Legal</h4>
+        <ul class="footer-nav-list">
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-copyright-strip">
+      <span>© 2026 MyFolio Studio. All rights reserved.</span>
+      <span>Engineered with continuous 3D spatial depth.</span>
+    </div>
+  </footer>
+
+  <!-- Mandatory Sticky Mobile Floating CTA Bar -->
+  <div class="sticky-mobile-cta-bar" id="stickyMobileCtaBar">
+    <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; color: #FFFFFF;">
+      MyFolio Studio
+    </div>
+    <button type="button" class="btn-solar-primary" style="padding: 7px 16px; font-size: 0.82rem;" onclick="openAuthModal('signup')">
+      <span>Build my portfolio</span>
+    </button>
+  </div>
+
+  <!-- Client Application & 3D Cinematic Engine Modules -->
+  <script src="/app.js" defer></script>
+  <script src="/assets/cinematic-engine/real-world-asset-registry.js" defer></script>
+  <script src="/assets/cinematic-engine/real-world-visual-generator.js" defer></script>
+  <script src="/assets/cinematic-engine/core-world-renderer.js" defer></script>
+  <script src="/assets/cinematic-engine/camera-timeline-controller.js" defer></script>
+  <script src="/assets/cinematic-engine/scene-objects-manager.js" defer></script>
+  <script src="/assets/cinematic-engine/scroll-master-orchestrator.js" defer></script>
+  <script src="/button-engine.js" defer></script>
+
+  <!-- Hotspot Interactive Details Modal -->
+  <div id="hotspotModalOverlay" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(3,6,18,0.85); backdrop-filter:blur(24px); align-items:center; justify-content:center; padding:20px;" onclick="if(event.target===this)closeHotspotModal()">
+    <div style="background:linear-gradient(135deg, #091332 0%, #060B1E 100%); border:1px solid rgba(56,189,248,0.35); border-radius:24px; max-width:520px; width:100%; padding:32px; box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(56,189,248,0.25); position:relative;">
+      <button type="button" onclick="closeHotspotModal()" style="position:absolute; top:20px; right:20px; background:none; border:none; color:#94A3B8; font-size:1.5rem; cursor:pointer;" aria-label="Close modal">×</button>
+      <div id="hotspotModalIcon" style="width:48px; height:48px; border-radius:12px; background:#04091A; border:1px solid rgba(56,189,248,0.4); display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:#38BDF8; margin-bottom:16px;">⚡</div>
+      <h3 id="hotspotModalTitle" style="font-family:var(--font-heading); font-size:1.4rem; font-weight:700; color:#FFFFFF; margin-bottom:10px;">Autonomous World Engine</h3>
+      <p id="hotspotModalDesc" style="font-family:var(--font-body); font-size:0.95rem; color:#BAE6FD; line-height:1.6; margin-bottom:24px;">Automatically analyzes candidate repos, commit cadence, and architectural depth to map your unique archetype into living 3D environments.</p>
+      <div style="display:flex; justify-content:flex-end; gap:12px;">
+        <button type="button" class="btn-solar-primary" onclick="closeHotspotModal(); openAuthModal('signup');">
+          <span>Build My Portfolio ➔</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function closeHotspotModal() {
+      const modal = document.getElementById('hotspotModalOverlay');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Initialize Auth state on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof checkUserAuth === 'function') {
+        checkUserAuth();
+      }
+    });
+  </script>
+
+<style id="myfolio-universal-mobile">
+  /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
+  @media (max-width: 600px) {
+    html { font-size: 14px !important; }
+    h1, [class*="chapter-headline"] {
+      font-size: clamp(1.8rem, 7.5vw, 2.5rem) !important;
+      line-height: 1.15 !important;
+      letter-spacing: -0.02em !important;
+    }
+    h2 {
+      font-size: clamp(1.35rem, 6vw, 1.85rem) !important;
+      line-height: 1.2 !important;
+    }
+    p, [class*="chapter-subtitle"] {
+      font-size: clamp(0.85rem, 3.8vw, 1rem) !important;
+      line-height: 1.6 !important;
+    }
+    .master-architectural-footer .footer-content-grid {
+      grid-template-columns: 1fr !important;
+      gap: 24px !important;
+    }
+  }
+
+  /* ─── Reduced-motion: disable floating keyframes ───────────────────────── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</body>
+</html>

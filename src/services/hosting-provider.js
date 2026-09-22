@@ -47,18 +47,36 @@ class HostingProvider {
       js = siteFiles.js || '';
     }
 
-    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+    const os = require('os');
+    let siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
 
-    // 1. Save locally for instant, zero-latency serving (Unpaid previews live here for 24 hours)
-    if (!fs.existsSync(siteDir)) {
-      await fs.promises.mkdir(siteDir, { recursive: true });
+    // 1. Save locally for instant, zero-latency serving (falls back to /tmp if read-only filesystem)
+    try {
+      if (!fs.existsSync(siteDir)) {
+        await fs.promises.mkdir(siteDir, { recursive: true });
+      }
+      await Promise.all([
+        fs.promises.writeFile(path.join(siteDir, 'index.html'), html, 'utf8'),
+        css ? fs.promises.writeFile(path.join(siteDir, 'style.css'), css, 'utf8') : Promise.resolve(),
+        js ? fs.promises.writeFile(path.join(siteDir, 'script.js'), js, 'utf8') : Promise.resolve(),
+        fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8')
+      ]);
+    } catch (fsErr) {
+      siteDir = path.join(os.tmpdir(), 'sites', siteId);
+      try {
+        if (!fs.existsSync(siteDir)) {
+          await fs.promises.mkdir(siteDir, { recursive: true });
+        }
+        await Promise.all([
+          fs.promises.writeFile(path.join(siteDir, 'index.html'), html, 'utf8'),
+          css ? fs.promises.writeFile(path.join(siteDir, 'style.css'), css, 'utf8') : Promise.resolve(),
+          js ? fs.promises.writeFile(path.join(siteDir, 'script.js'), js, 'utf8') : Promise.resolve(),
+          fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8')
+        ]);
+      } catch (tmpErr) {
+        // Non-blocking fallback
+      }
     }
-    await Promise.all([
-      fs.promises.writeFile(path.join(siteDir, 'index.html'), html, 'utf8'),
-      css ? fs.promises.writeFile(path.join(siteDir, 'style.css'), css, 'utf8') : Promise.resolve(),
-      js ? fs.promises.writeFile(path.join(siteDir, 'script.js'), js, 'utf8') : Promise.resolve(),
-      fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(userData, null, 2), 'utf8')
-    ]);
 
     // Generate genuine ATS-friendly PDF resume for the portfolio owner
     try {
@@ -108,14 +126,20 @@ class HostingProvider {
   }
 
   /**
-   * Retrieves site HTML from local disk, falling back to Supabase Storage if disk was reset
+   * Retrieves site HTML from local disk or /tmp, falling back to Supabase Storage if disk was reset
    */
   async getSiteHtml(siteId) {
-    const filePath = path.join(process.cwd(), 'public', 'sites', siteId, 'index.html');
-    if (fs.existsSync(filePath)) {
-      try {
-        return fs.readFileSync(filePath, 'utf8');
-      } catch (e) {}
+    const os = require('os');
+    const candidates = [
+      path.join(process.cwd(), 'public', 'sites', siteId, 'index.html'),
+      path.join(os.tmpdir(), 'sites', siteId, 'index.html')
+    ];
+    for (const filePath of candidates) {
+      if (fs.existsSync(filePath)) {
+        try {
+          return fs.readFileSync(filePath, 'utf8');
+        } catch (e) {}
+      }
     }
 
     // Fallback: Check Supabase Storage with fast timeout
@@ -128,12 +152,22 @@ class HostingProvider {
         const { data, error } = await Promise.race([downloadPromise, timeoutPromise]);
         if (data && !error && typeof data.text === 'function') {
           const html = await data.text();
-          // Restore to local filesystem so subsequent requests are instant
-          const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
-          if (!fs.existsSync(siteDir)) {
-            fs.mkdirSync(siteDir, { recursive: true });
+          // Restore to local filesystem or /tmp so subsequent requests are instant
+          try {
+            const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+            if (!fs.existsSync(siteDir)) {
+              fs.mkdirSync(siteDir, { recursive: true });
+            }
+            fs.writeFileSync(path.join(siteDir, 'index.html'), html, 'utf8');
+          } catch (writeErr) {
+            try {
+              const tmpSiteDir = path.join(os.tmpdir(), 'sites', siteId);
+              if (!fs.existsSync(tmpSiteDir)) {
+                fs.mkdirSync(tmpSiteDir, { recursive: true });
+              }
+              fs.writeFileSync(path.join(tmpSiteDir, 'index.html'), html, 'utf8');
+            } catch (tmpErr) {}
           }
-          fs.writeFileSync(filePath, html, 'utf8');
           return html;
         }
       } catch (err) {
