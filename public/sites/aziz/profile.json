@@ -137,34 +137,8 @@
       "desc": "Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments."
     }
   ],
-  "education": [
-    {
-      "degree": "Bachelor of Technology (B.Tech) — Computer Science & Artificial Intelligence (AI)",
-      "institution": "Engineering & Technology Institute",
-      "year": "2022 - 2026 (Expected)",
-      "school": "Engineering & Technology Institute",
-      "period": "2022 - 2026 (Expected)",
-      "desc": "Specialized coursework in Distributed Systems, Blockchain Architecture, Cryptography, Artificial Intelligence, and Modern Software Engineering."
-    }
-  ],
-  "certifications": [
-    {
-      "name": "Deloitte Cyber Job Simulation Certificate",
-      "issuer": "Deloitte (Forage)",
-      "date": "Verified Credential",
-      "id": "DELOITTE-CYBER-SIM",
-      "url": "https://www.forage.com",
-      "verified": true
-    },
-    {
-      "name": "Algorand Certified Developer",
-      "issuer": "Algorand Foundation Ecosystem",
-      "date": "Verified",
-      "id": "ALGO-DEV-CERT",
-      "url": "https://algorand.foundation",
-      "verified": true
-    }
-  ],
+  "education": [],
+  "certifications": [],
   "customFields": {
     "username": "abdulaziz",
     "customUrlIdentifier": "abdulaziz",

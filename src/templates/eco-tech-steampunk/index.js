@@ -169,8 +169,8 @@ const EcoTechSteampunkTemplate = {
     `).join('');
 
     // 4. Resume Stack - Leather Folios, Slate Tablets & Aged Parchment
-    const edu = data.education[0] || { degree: 'Computer Science & Software Engineering', institution: 'Accredited Institute', year: `${currentYear - 2}` };
-    const certs = data.certifications.length > 0 ? data.certifications : [{ name: 'Certified Systems Architect' }, { name: 'Full-Stack Modern Engineering' }];
+    const edu = (data.education && data.education.length > 0) ? data.education[0] : null;
+    const certs = (data.certifications && data.certifications.length > 0) ? data.certifications : [];
 
     // 5. Blog Posts - Vintage Wooden Treasure Chests
     const blogChestsHtml = data.blogArticles.map((art, idx) => `
@@ -1738,15 +1738,18 @@ const EcoTechSteampunkTemplate = {
       </div>
 
       <div class="resume-stack-container">
+        ${(edu || certs.length > 0) ? `
         <div class="leather-binder-card">
           <div class="leather-stitch-border"></div>
           <h3 class="leather-card-title">📜 Academic Codex & Credentials</h3>
           
+          ${edu ? `
           <div class="slate-tablet-item">
             <div class="slate-tablet-header">ACADEMIC FOUNDATION</div>
-            <div class="slate-tablet-name">${TemplateHelper.escapeHtml(edu.degree)}</div>
-            <div class="slate-tablet-sub">${TemplateHelper.escapeHtml(edu.institution || edu.school)} • Class of ${TemplateHelper.escapeHtml(edu.year || currentYear)}</div>
+            <div class="slate-tablet-name">${TemplateHelper.escapeHtml(edu.degree || '')}</div>
+            <div class="slate-tablet-sub">${TemplateHelper.escapeHtml(edu.institution || edu.school || '')}${edu.year ? ` • Class of ${TemplateHelper.escapeHtml(edu.year)}` : ''}</div>
           </div>
+          ` : ''}
 
           ${certs.map(c => `
             <div class="slate-tablet-item">
@@ -1756,6 +1759,7 @@ const EcoTechSteampunkTemplate = {
             </div>
           `).join('')}
         </div>
+        ` : ''}
 
         <div class="resume-download-banner">
           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#D49B50" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>

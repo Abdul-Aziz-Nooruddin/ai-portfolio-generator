@@ -77,37 +77,39 @@ export const ExperienceSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Verified Certifications Sub-block */}
-        <div className="mt-16 pt-12 border-t border-white/10">
-          <FadeIn delay={0.2} y={20}>
-            <h3 className="text-xl sm:text-2xl font-medium uppercase tracking-wider text-[#D7E2EA] mb-6 flex items-center gap-3">
-              <Award className="text-[#D7E2EA]" size={24} />
-              <span>Verified Certifications</span>
-            </h3>
+        {/* Verified Certifications Sub-block (Only rendered if candidate provided real verified credentials) */}
+        {CERTIFICATIONS_DATA.length > 0 && (
+          <div className="mt-16 pt-12 border-t border-white/10">
+            <FadeIn delay={0.2} y={20}>
+              <h3 className="text-xl sm:text-2xl font-medium uppercase tracking-wider text-[#D7E2EA] mb-6 flex items-center gap-3">
+                <Award className="text-[#D7E2EA]" size={24} />
+                <span>Verified Certifications</span>
+              </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-              {CERTIFICATIONS_DATA.map((cert) => (
-                <a
-                  key={cert.name}
-                  href={cert.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-5 rounded-2xl bg-[#141414] border border-white/10 hover:border-white/30 flex items-center justify-between gap-4 transition-all duration-200 group"
-                >
-                  <div>
-                    <h4 className="text-sm sm:text-base font-medium text-white group-hover:text-[#D7E2EA]">
-                      {cert.name}
-                    </h4>
-                    <p className="text-xs text-[#D7E2EA]/60 mt-0.5">
-                      {cert.issuer} • {cert.badge}
-                    </p>
-                  </div>
-                  <ExternalLink size={18} className="text-[#D7E2EA]/50 group-hover:text-white transition-colors" />
-                </a>
-              ))}
-            </div>
-          </FadeIn>
-        </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {CERTIFICATIONS_DATA.map((cert) => (
+                  <a
+                    key={cert.name}
+                    href={cert.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-5 rounded-2xl bg-[#141414] border border-white/10 hover:border-white/30 flex items-center justify-between gap-4 transition-all duration-200 group"
+                  >
+                    <div>
+                      <h4 className="text-sm sm:text-base font-medium text-white group-hover:text-[#D7E2EA]">
+                        {cert.name}
+                      </h4>
+                      <p className="text-xs text-[#D7E2EA]/60 mt-0.5">
+                        {cert.issuer} • {cert.badge}
+                      </p>
+                    </div>
+                    <ExternalLink size={18} className="text-[#D7E2EA]/50 group-hover:text-white transition-colors" />
+                  </a>
+                ))}
+              </div>
+            </FadeIn>
+          </div>
+        )}
       </div>
     </section>
   );

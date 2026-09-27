@@ -374,30 +374,8 @@ app.use(async (req, res, next) => {
               desc: 'Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments.'
             }
           ],
-          education: [
-            {
-              degree: 'Bachelor of Technology (B.Tech) — Computer Science & Artificial Intelligence (AI)',
-              institution: 'Engineering & Technology Institute',
-              year: '2022 - 2026 (Expected)',
-              desc: 'Specialized coursework in Distributed Systems, Blockchain Architecture, Cryptography, Artificial Intelligence, and Modern Software Engineering.'
-            }
-          ],
-          certifications: [
-            {
-              name: 'Deloitte Cyber Job Simulation Certificate',
-              issuer: 'Deloitte (Forage)',
-              date: 'Verified Credential',
-              url: 'https://www.forage.com',
-              verified: true
-            },
-            {
-              name: 'Algorand Certified Developer',
-              issuer: 'Algorand Foundation Ecosystem',
-              date: 'Verified',
-              url: 'https://algorand.foundation',
-              verified: true
-            }
-          ],
+          education: [],
+          certifications: [],
           contact: {
             email: 'abdulaziznoor9876@gmail.com',
             github: 'https://github.com/Abdul-Aziz-Nooruddin',

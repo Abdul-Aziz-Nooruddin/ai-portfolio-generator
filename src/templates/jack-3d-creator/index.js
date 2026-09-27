@@ -228,9 +228,20 @@ const Jack3DCreatorTemplate = {
       }
     ];
 
-    // Education & Verified Certifications
-    const educations = Array.isArray(data.education) ? data.education : [];
-    const certifications = Array.isArray(data.certifications) ? data.certifications : [];
+    // Education & Verified Certifications (Strict Zero Fabricated Data - Only render real user evidence)
+    const isDummyEdu = (edu) => {
+      if (!edu) return true;
+      const s = `${edu.degree || ''} ${edu.institution || ''} ${edu.school || ''} ${edu.major || ''}`.toLowerCase();
+      return s.includes('engineering & technology institute') || s.includes('example university') || s.includes('placeholder');
+    };
+    const isDummyCert = (c) => {
+      if (!c) return true;
+      const s = `${c.name || ''} ${c.issuer || ''}`.toLowerCase();
+      return s.includes('deloitte cyber') || s.includes('algorand certified developer') || s.includes('placeholder');
+    };
+
+    const educations = (Array.isArray(data.education) ? data.education : []).filter(e => !isDummyEdu(e));
+    const certifications = (Array.isArray(data.certifications) ? data.certifications : []).filter(c => !isDummyCert(c));
 
     // Dynamically generated 5 services matching candidate's tech stack
     const services = generateDynamicServices(skillsList, safeTitle);

@@ -122,7 +122,7 @@ const SystemAwakeningTemplate = {
       </div>
     `).join('');
 
-    const eduPrimary = data.education[0] || { degree: 'B.Tech in Computer Science & Engineering', institution: 'Apex Hunter Academy' };
+    const eduPrimary = (data.education && data.education[0]) || null;
 
     const yearsExp = data.experience?.length ? data.experience.length : 1;
     const completedQuests = data.publicRepos ?? data.projects.length;

@@ -125,31 +125,14 @@ export const EXPERIENCES_DATA: ExperienceItem[] = [
     description: "Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments.",
     skills: ["Python", "Node.js", "PostgreSQL", "RBAC Security", "Docker"],
   },
-  {
-    number: "03",
-    role: "B.Tech in Computer Science & Artificial Intelligence",
-    organization: "Engineering & Technology Institute",
-    period: "2022 — 2026 (Expected)",
-    badge: "Degree Candidate",
-    description: "Specialized coursework in Distributed Systems, Blockchain Architecture, Cryptography, Artificial Intelligence, and Modern Software Engineering.",
-    skills: ["Distributed Computing", "Cryptography", "Algorithms", "AI Systems"],
-  },
 ];
 
-export const CERTIFICATIONS_DATA = [
-  {
-    name: "Algorand Certified Developer",
-    issuer: "Algorand Foundation Ecosystem",
-    badge: "Verified Credential",
-    link: "https://algorand.foundation",
-  },
-  {
-    name: "Deloitte Cyber Job Simulation Certificate",
-    issuer: "Deloitte (Forage)",
-    badge: "Verified Credential",
-    link: "https://www.forage.com",
-  },
-];
+export const CERTIFICATIONS_DATA: Array<{
+  name: string;
+  issuer: string;
+  badge: string;
+  link: string;
+}> = [];
 
 export const SERVICES_DATA: ServiceItem[] = [
   {

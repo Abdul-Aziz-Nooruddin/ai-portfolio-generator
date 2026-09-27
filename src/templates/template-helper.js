@@ -254,50 +254,36 @@ class TemplateHelper {
       ];
     }
 
-    // 8. Education & Credentials
+    // 8. Education & Credentials (STRICT ZERO FABRICATION - Only use real candidate data)
     let rawEducation = Array.isArray(candidateData.education) ? candidateData.education : (candidateData.education ? [candidateData.education] : []);
-    let education = rawEducation.map(edu => ({
-      degree: edu.degree || edu.study || edu.major || 'Computer Science & Software Engineering',
-      institution: edu.institution || edu.school || edu.university || 'Academic & Professional Practice',
-      grade: edu.grade || edu.gpa || '',
-      period: edu.period || edu.year || 'Completed'
-    }));
+    let education = rawEducation
+      .filter(edu => edu && (edu.degree || edu.institution || edu.school || edu.study || edu.major))
+      .map(edu => ({
+        degree: edu.degree || edu.study || edu.major || '',
+        institution: edu.institution || edu.school || edu.university || '',
+        grade: edu.grade || edu.gpa || '',
+        period: edu.period || edu.year || ''
+      }));
 
-    if (education.length === 0) {
-      education = [
-        {
-          degree: 'Software Engineering & Computer Science Practice',
-          institution: 'Professional Engineering Certification',
-          grade: 'Honors',
-          period: 'Continuous Practice'
-        }
-      ];
-    }
-
-    // 9. Certifications
+    // 9. Certifications (STRICT ZERO FABRICATION - Only use real candidate data)
     let rawCertifications = Array.isArray(candidateData.certifications) ? candidateData.certifications : [];
-    let certifications = rawCertifications.map(c => typeof c === 'string' ? {
-      name: c,
-      issuer: 'Verified Standard',
-      date: 'Verified',
-      id: '',
-      url: '#',
-      verified: true
-    } : {
-      name: c.name || c.title || 'Technical Specialist',
-      issuer: c.issuer || c.organization || c.issuing_organization || 'Verified Standard',
-      date: c.date || c.issueDate || c.year || 'Verified',
-      id: c.id || c.credentialId || c.code || '',
-      url: c.url || c.fileUrl || c.link || '#',
-      verified: c.verified !== false
-    });
-
-    if (certifications.length === 0) {
-      certifications = [
-        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'Engineering Standard', date: 'Verified', id: 'STUDIO-VERIFIED', url: '#', verified: true },
-        { name: `Specialization in ${skills.slice(0, 2).join(' & ')}`, issuer: 'Professional Development', date: 'Verified', id: 'SPEC-DEV', url: '#', verified: true }
-      ];
-    }
+    let certifications = rawCertifications
+      .filter(c => c && (typeof c === 'string' ? c.trim().length > 0 : (c.name || c.title)))
+      .map(c => typeof c === 'string' ? {
+        name: c,
+        issuer: '',
+        date: '',
+        id: '',
+        url: '#',
+        verified: true
+      } : {
+        name: c.name || c.title || '',
+        issuer: c.issuer || c.organization || c.issuing_organization || '',
+        date: c.date || c.issueDate || c.year || '',
+        id: c.id || c.credentialId || c.code || '',
+        url: c.url || c.fileUrl || c.link || '#',
+        verified: c.verified !== false
+      });
 
     // 10. Dynamic Blog / Case Studies based on candidate's real projects & skills
     const blogArticles = [

@@ -90,8 +90,8 @@ const BioDigitalFusionTemplate = {
       </div>
     `).join('');
 
-    const eduPrimary = data.education[0];
-    const certsDisplay = data.certifications.map(c => c.name).join(', ');
+    const eduPrimary = (data.education && data.education[0]) || { degree: '', institution: '', period: '' };
+    const certsDisplay = (data.certifications || []).map(c => (typeof c === 'string' ? c : c.name || '')).filter(Boolean).join(', ');
 
     const blogCardsHtml = data.blogArticles.map(art => `
       <div class="fusion-project-card">

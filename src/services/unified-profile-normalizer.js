@@ -371,18 +371,16 @@ class UnifiedProfileNormalizer {
     } else if (resumeData?.education && typeof resumeData.education === 'object') {
       education = [resumeData.education];
     } else {
-      education = [
-        { degree: 'Computer Science & Software Engineering', institution: 'Academic & Professional Practice', year: 'Continuous' }
-      ];
+      education = [];
     }
 
     education = education.map(edu => ({
       ...edu,
-      degree: edu.degree || edu.study || edu.major || 'Computer Science & Software Engineering',
-      institution: edu.institution || edu.school || edu.university || 'Academic & Professional Practice',
-      school: edu.school || edu.institution || edu.university || 'Academic & Professional Practice',
-      period: edu.period || edu.year || 'Continuous'
-    }));
+      degree: edu.degree || edu.study || edu.major || '',
+      institution: edu.institution || edu.school || edu.university || '',
+      school: edu.school || edu.institution || edu.university || '',
+      period: edu.period || edu.year || ''
+    })).filter(edu => edu.degree || edu.institution);
 
     // 9. Certifications Normalization (Multi-source merge preserving uploads & metadata)
     const allCerts = [];
@@ -399,13 +397,14 @@ class UnifiedProfileNormalizer {
           url: '#',
           verified: true
         } : {
-          name: c.name || c.title || 'Technical Specialist Certification',
-          issuer: c.issuer || c.organization || c.issuing_organization || 'Accredited Authority',
+          name: c.name || c.title || '',
+          issuer: c.issuer || c.organization || c.issuing_organization || '',
           date: c.date || c.issueDate || c.year || 'Verified',
           id: c.id || c.credentialId || c.code || '',
           url: c.url || c.fileUrl || c.link || '#',
           verified: c.verified !== false
         };
+        if (!certObj.name) return;
         const key = `${certObj.name.toLowerCase()}_${certObj.issuer.toLowerCase()}`;
         if (!seenCerts.has(key)) {
           seenCerts.add(key);
@@ -427,10 +426,7 @@ class UnifiedProfileNormalizer {
     if (certifications.length > 0) {
       recordProvenance('certifications', 'multi_source_merge', PROVENANCE_LEVELS.USER_PROVIDED);
     } else {
-      certifications = [
-        { name: `Verified Technical Portfolio (${projects.length} Showcased Systems)`, issuer: 'AI Portfolio Studio', date: 'Verified', id: 'STUDIO-VERIFIED', url: '#', verified: true }
-      ];
-      recordProvenance('certifications', 'fallback', PROVENANCE_LEVELS.INFERRED);
+      certifications = [];
     }
 
     const research = input.research || input.publications || questionnaireData?.research || questionnaireData?.publications || resumeData?.research || resumeData?.publications || manualData?.research || manualData?.publications || [];

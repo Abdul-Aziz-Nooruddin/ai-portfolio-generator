@@ -90,8 +90,8 @@ const BotanicalWoodcraftTemplate = {
       </div>
     `).join('');
 
-    const eduPrimary = data.education[0];
-    const certsDisplay = data.certifications.map(c => c.name).join(', ');
+    const eduPrimary = (data.education && data.education[0]) || { degree: '', institution: '', grade: '' };
+    const certsDisplay = (data.certifications || []).map(c => c.name || c).join(', ');
 
     const blogCardsHtml = data.blogArticles.map(art => `
       <div class="wood-project-card">

@@ -896,8 +896,8 @@ class HtmlRenderer {
     `).join('');
 
     // 4. Education & Resume Highlights
-    const eduPrimary = data.education[0];
-    const certList = data.certifications;
+    const eduPrimary = (data.education && data.education.length > 0) ? data.education[0] : null;
+    const certList = data.certifications || [];
     const certsDisplay = certList.map(c => typeof c === 'string' ? c : (c.name || c.title || 'Certified Professional')).join(', ');
 
     const expYears = data.metrics.yearsExp;
@@ -2239,13 +2239,15 @@ class HtmlRenderer {
           ${Template3DVisuals.getHolographicResume3DArtwork(safeName)}
         </div>
         <div>
+          ${eduPrimary ? `
           <div class="cosmic-resume-card-item">
             <div class="cosmic-resume-icon">🎓</div>
             <div>
               <div class="cosmic-resume-label">Education</div>
-              <div class="cosmic-resume-val">${this.escapeHtml(eduPrimary.degree || 'B.Tech in Computer Science')} • ${this.escapeHtml(eduPrimary.institution || 'Engineering College')} ${eduPrimary.grade ? `• ${this.escapeHtml(eduPrimary.grade)}` : ''}</div>
+              <div class="cosmic-resume-val">${this.escapeHtml(eduPrimary.degree || '')} ${eduPrimary.institution ? `• ${this.escapeHtml(eduPrimary.institution)}` : ''} ${eduPrimary.grade ? `• ${this.escapeHtml(eduPrimary.grade)}` : ''}</div>
             </div>
           </div>
+          ` : ''}
           <div class="cosmic-resume-card-item">
             <div class="cosmic-resume-icon">💼</div>
             <div>

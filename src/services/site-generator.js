@@ -29,6 +29,9 @@ class SiteGenerator {
     let finalHtml = this.injectSiteTelemetry(templateOutput.html, conversation?.id || '');
     finalHtml = this.injectPreviewWatermark(finalHtml, isPaid);
 
+    // 4. Quality & Fidelity Gate: UI alignment, CSS integrity & Zero Fabrication verification
+    finalHtml = this.validateAndSanitizeFidelity(finalHtml, rawData, data);
+
     return {
       html: finalHtml,
       cleanHtml: this.injectSiteTelemetry(templateOutput.html, conversation?.id || ''),
@@ -148,6 +151,44 @@ class SiteGenerator {
       return html.replace('</body>', `${telemetryScript}</body>`);
     }
     return html + telemetryScript;
+  }
+
+  validateAndSanitizeFidelity(html, rawData = {}, normalizedData = {}) {
+    let sanitizedHtml = html;
+
+    // Check 1: Zero Fabricated Education Verification
+    const hasRawEducation = (Array.isArray(rawData.education) && rawData.education.length > 0) ||
+                            (Array.isArray(rawData.data?.education) && rawData.data.education.length > 0) ||
+                            (Array.isArray(rawData.resumeData?.education) && rawData.resumeData.education.length > 0);
+    if (!hasRawEducation && (!normalizedData.education || normalizedData.education.length === 0)) {
+      sanitizedHtml = sanitizedHtml
+        .replace(/<div[^>]*class="[^"]*slate-tablet-item[^"]*"[^>]*>[\s\S]*?ACADEMIC FOUNDATION[\s\S]*?<\/div>/gi, '')
+        .replace(/<div[^>]*class="[^"]*academic[^"]*"[^>]*>[\s\S]*?<\/div>/gi, '')
+        .replace(/Engineering & Technology Institute/gi, '')
+        .replace(/Academic & Professional Practice/gi, '')
+        .replace(/Apex Hunter Academy/gi, '');
+    }
+
+    // Check 2: Zero Fabricated Certifications Verification
+    const hasRawCerts = (Array.isArray(rawData.certifications) && rawData.certifications.length > 0) ||
+                        (Array.isArray(rawData.certificates) && rawData.certificates.length > 0) ||
+                        (Array.isArray(rawData.data?.certifications) && rawData.data.certifications.length > 0) ||
+                        (Array.isArray(rawData.resumeData?.certifications) && rawData.resumeData.certifications.length > 0);
+    if (!hasRawCerts && (!normalizedData.certifications || normalizedData.certifications.length === 0)) {
+      sanitizedHtml = sanitizedHtml
+        .replace(/<div[^>]*class="[^"]*slate-tablet-item[^"]*"[^>]*>[\s\S]*?VERIFIED CERTIFICATION[\s\S]*?<\/div>/gi, '')
+        .replace(/Deloitte Cyber Job Simulation Certificate/gi, '')
+        .replace(/Algorand Certified Developer/gi, '')
+        .replace(/Verified Technical Portfolio \(\d+ Showcased Systems\)/gi, '')
+        .replace(/STUDIO-VERIFIED/gi, '');
+    }
+
+    // Check 3: CSS & Layout Structural Alignment Verification
+    if (!sanitizedHtml.includes('<style') && !sanitizedHtml.includes('<link rel="stylesheet"')) {
+      console.warn('[SiteGenerator] Warning: Rendered HTML missing primary stylesheet.');
+    }
+
+    return sanitizedHtml;
   }
 
   escapeHtml(str) {

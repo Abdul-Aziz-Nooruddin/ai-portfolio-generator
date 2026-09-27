@@ -148,17 +148,34 @@ class TemplateRegistry {
    * Intelligent template selector based on user request, candidate role, or non-repeating cycle
    */
   static selectTemplate(requestedId = null, candidateProfile = null, userId = null) {
-    if (requestedId === 'jack-3d-creator' || requestedId === '3d-creator') {
-      return this.templates['jack-3d-creator'];
-    }
-
-    // In test mode, allow explicitly requested legacy templates to satisfy unit test assertions
-    if (process.env.NODE_ENV === 'test' && requestedId && this.templates[requestedId]) {
+    if (requestedId && this.templates[requestedId]) {
       return this.templates[requestedId];
     }
 
+    if (candidateProfile && candidateProfile.role) {
+      const r = candidateProfile.role.toLowerCase();
+      if (r.includes('steampunk') || r.includes('eco-tech')) {
+        return this.templates['eco-tech-steampunk'];
+      }
+      if (r.includes('woodcraft') || r.includes('botanical')) {
+        return this.templates['botanical-woodcraft'];
+      }
+      if (r.includes('cosmic') || (r.includes('ai') && r.includes('cloud'))) {
+        return this.templates['cosmic-astronaut'];
+      }
+      if (r.includes('cyber-architect')) {
+        return this.templates['cyber-architect-sprawl'];
+      }
+      if (r.includes('swiss') || r.includes('editorial')) {
+        return this.templates['swiss-editorial-monograph'];
+      }
+      if (r.includes('solarpunk')) {
+        return this.templates['solarpunk-horizon'];
+      }
+    }
+
     // Universal default: 3D Creator & Engineer Template
-    return this.templates['jack-3d-creator'];
+    return this.templates['jack-3d-creator'] || Object.values(this.templates)[0];
   }
 
   static _legacySelectTemplate(requestedId = null, candidateProfile = null, userId = null) {

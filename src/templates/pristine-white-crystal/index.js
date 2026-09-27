@@ -96,7 +96,7 @@ const PristineWhiteCrystalTemplate = {
       </div>
     `).join('');
 
-    const eduPrimary = data.education[0] || { degree: 'B.Tech in Computer Science & Engineering', institution: 'Engineering University' };
+    const eduPrimary = (data.education && data.education[0]) || null;
 
     const html = `<!DOCTYPE html>
 <html lang="en">

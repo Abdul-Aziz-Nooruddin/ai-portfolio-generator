@@ -94,8 +94,8 @@ const CyberCrystalTemplate = {
     `).join('');
 
     // Dynamic Education & Resume
-    const eduPrimary = data.education[0];
-    const certsDisplay = data.certifications.map(c => c.name).join(', ');
+    const eduPrimary = (data.education && data.education[0]) || { degree: '', institution: '', grade: '' };
+    const certsDisplay = (data.certifications || []).map(c => c.name || c).join(', ');
 
     // Dynamic Blog Cards
     const blogCardsHtml = data.blogArticles.map(art => `
