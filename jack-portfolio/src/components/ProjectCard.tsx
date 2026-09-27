@@ -85,36 +85,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
         </div>
 
-        {/* Bottom Row: Two-column image grid */}
-        <div className="grid grid-cols-1 md:grid-cols-10 gap-3 sm:gap-4 pt-2">
-          {/* Left Column (40% width / 4 cols) - 2 stacked images */}
-          <div className="md:col-span-4 flex flex-col gap-3 sm:gap-4">
-            <div className="h-[clamp(130px,16vw,230px)] w-full overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px] bg-[#141414] border border-white/5">
-              <img
-                src={project.col1Image1}
-                alt={`${project.name} - View 1`}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-            <div className="h-[clamp(160px,22vw,340px)] w-full overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px] bg-[#141414] border border-white/5">
-              <img
-                src={project.col1Image2}
-                alt={`${project.name} - View 2`}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
-              />
-            </div>
-          </div>
-
-          {/* Right Column (60% width / 6 cols) - 1 tall image */}
-          <div className="md:col-span-6 h-[clamp(300px,40vw,586px)] w-full overflow-hidden rounded-[40px] sm:rounded-[50px] md:rounded-[60px] bg-[#141414] border border-white/5">
+        {/* Bottom: Single Relevant 3D Hero Viewport */}
+        <div className="w-full my-4">
+          <div className="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
             <img
-              src={project.col2Image}
-              alt={`${project.name} - Showcase Hero`}
+              src={project.image || project.col2Image}
+              alt={`${project.name} 3D Visual Artwork`}
               loading="lazy"
-              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+              className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 select-none"
             />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
           </div>
         </div>
       </motion.div>

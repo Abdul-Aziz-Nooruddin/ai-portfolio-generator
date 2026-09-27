@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Magnet } from './Magnet';
 import { ContactButton } from './ContactButton';
 import { FadeIn } from './FadeIn';
+import { USER_PROFILE } from '../data/portfolioData';
 
 export const HeroSection: React.FC = () => {
   return (
@@ -56,17 +57,22 @@ export const HeroSection: React.FC = () => {
         </header>
       </FadeIn>
 
-      {/* 2. Hero Heading */}
-      <div className="w-full overflow-hidden z-0">
-        <FadeIn delay={0.15} y={40} duration={0.8}>
-          <h1 className="hero-heading font-black uppercase tracking-tight leading-none whitespace-nowrap w-full text-center text-[14vw] sm:text-[15vw] md:text-[16vw] lg:text-[17.5vw] mt-6 sm:mt-4 md:-mt-5 select-none pointer-events-none">
-            Hi, i&apos;m aziz
-          </h1>
+      {/* 2. Hero Heading (Split flanking center portrait to guarantee zero clipping or obscuring) */}
+      <div className="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
+        <FadeIn delay={0.15} y={30} duration={0.8}>
+          <span className="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap block text-[clamp(2.2rem,8.5vw,130px)]">
+            Hi, i&apos;m
+          </span>
+        </FadeIn>
+        <FadeIn delay={0.25} y={30} duration={0.8}>
+          <span className="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap block text-[clamp(2.2rem,8.5vw,130px)]">
+            {USER_PROFILE.nickname || 'aziz'}
+          </span>
         </FadeIn>
       </div>
 
-      {/* 3. Hero Portrait (Absolute Center/Bottom) */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-10 w-[280px] sm:w-[360px] md:w-[440px] lg:w-[520px] top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 pointer-events-auto">
+      {/* 3. Hero Portrait (Centered, flanked cleanly by the hero title) */}
+      <div className="absolute left-1/2 -translate-x-1/2 z-10 w-[240px] sm:w-[320px] md:w-[380px] lg:w-[440px] top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 pointer-events-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -82,7 +88,7 @@ export const HeroSection: React.FC = () => {
             <img
               src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png"
               alt="Jack 3D Creator Portrait"
-              className="w-full h-auto object-contain select-none pointer-events-none drop-shadow-2xl"
+              className="w-full h-auto object-contain select-none pointer-events-none drop-shadow-2xl max-h-[68vh] rounded-3xl"
               loading="eager"
             />
           </Magnet>

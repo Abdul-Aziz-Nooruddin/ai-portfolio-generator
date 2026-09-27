@@ -290,10 +290,10 @@ app.use(async (req, res, next) => {
         const domainRecord = customDomainService?.domainCache?.[host] ||
                              customDomainService?.domainCache?.['abdulaziz.myfolio.tech'] ||
                              customDomainService?.domainCache?.['aziz.myfolio.tech'];
-        const activeUniverse = domainRecord?.universeKey || req.query.template || 'threeui-landscape';
+        const activeUniverse = domainRecord?.universeKey || req.query.template || 'jack-3d-creator';
         const template = TemplateRegistry.templates[activeUniverse] ||
+                         TemplateRegistry.templates['jack-3d-creator'] ||
                          TemplateRegistry.templates['threeui-landscape'] ||
-                         TemplateRegistry.templates['bioluminescent-wireframe'] ||
                          Object.values(TemplateRegistry.templates)[0];
 
         const abdulAzizProfile = {

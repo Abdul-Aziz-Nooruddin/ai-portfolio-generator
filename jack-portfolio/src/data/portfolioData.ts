@@ -7,9 +7,10 @@ export interface ProjectItem {
   tech: string[];
   liveUrl: string;
   githubUrl: string;
-  col1Image1: string;
-  col1Image2: string;
-  col2Image: string;
+  image: string;
+  col1Image1?: string;
+  col1Image2?: string;
+  col2Image?: string;
 }
 
 export interface ServiceItem {
@@ -187,9 +188,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     tech: ["Algorand", "PyTeal", "TypeScript", "Smart Contracts", "RegTech"],
     liveUrl: "https://consent-chain-algorand.vercel.app",
     githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand",
-    col1Image1: "/assets/projects/blockchain_consent_3d.webp",
-    col1Image2: "/assets/projects/algorand_escrow_protocol_3d.webp",
-    col2Image: "/assets/projects/consent_chain_privacy_3d.webp",
+    image: "/assets/projects/consent_chain_privacy_3d.webp",
   },
   {
     id: "ai-portfolio-generator",
@@ -200,9 +199,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     tech: ["Three.js", "WebGL", "TypeScript", "Node.js", "AI Pipeline"],
     liveUrl: "https://myfolio.tech",
     githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator",
-    col1Image1: "/assets/projects/developer_showcase_portfolio_3d.webp",
-    col1Image2: "/assets/projects/webgl_developer_portfolio_3d.webp",
-    col2Image: "/assets/projects/ai_portfolio_generator_3d.webp",
+    image: "/assets/projects/ai_portfolio_generator_3d.webp",
   },
   {
     id: "pass-a-note",
@@ -213,9 +210,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     tech: ["HTML5", "JavaScript", "WebSockets", "Cryptography", "P2P"],
     liveUrl: "https://pass-a-note-iota.vercel.app",
     githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/pass-a-note",
-    col1Image1: "/assets/projects/spatial_depth_voyage_3d.jpg",
-    col1Image2: "/assets/projects/system_awakening_3d.webp",
-    col2Image: "/assets/projects/pass_note_messenger_3d.webp",
+    image: "/assets/projects/pass_note_messenger_3d.webp",
   },
   {
     id: "lms-user-management",
@@ -226,9 +221,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     tech: ["Node.js", "Express", "PostgreSQL", "RBAC", "Security"],
     liveUrl: "https://github.com/Abdul-Aziz-Nooruddin/lms-user-management",
     githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/lms-user-management",
-    col1Image1: "/assets/projects/student_database_manager_3d.webp",
-    col1Image2: "/assets/projects/cybersecurity_auth_vault_3d.webp",
-    col2Image: "/assets/projects/lms_user_management_3d.webp",
+    image: "/assets/projects/student_database_manager_3d.webp",
   },
   {
     id: "algorand-python-smart-contracts",
@@ -239,8 +232,6 @@ export const PROJECTS_DATA: ProjectItem[] = [
     tech: ["Python", "Algorand", "PyTeal", "Smart Contracts", "Blockchain"],
     liveUrl: "https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts",
     githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts",
-    col1Image1: "/assets/projects/cloud_microservices_gateway_3d.webp",
-    col1Image2: "/assets/projects/smart_contract_dapp_3d.webp",
-    col2Image: "/assets/projects/algorand_smart_contracts_3d.webp",
+    image: "/assets/projects/algorand_smart_contracts_3d.webp",
   },
 ];
