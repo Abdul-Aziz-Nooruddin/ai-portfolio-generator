@@ -57,16 +57,16 @@ export const HeroSection: React.FC = () => {
         </header>
       </FadeIn>
 
-      {/* 2. Hero Heading (Split flanking center portrait to guarantee zero clipping or obscuring) */}
+      {/* 2. Hero Heading (Split flanking center portrait with first & middle name) */}
       <div className="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
         <FadeIn delay={0.15} y={30} duration={0.8}>
-          <span className="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap block text-[clamp(2.2rem,8.5vw,130px)]">
+          <span className="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap block text-[clamp(1.6rem,6.4vw,100px)]">
             Hi, i&apos;m
           </span>
         </FadeIn>
         <FadeIn delay={0.25} y={30} duration={0.8}>
-          <span className="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap block text-[clamp(2.2rem,8.5vw,130px)]">
-            {USER_PROFILE.nickname || 'aziz'}
+          <span className="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap block text-[clamp(1.6rem,6.4vw,100px)]">
+            {USER_PROFILE.nickname || 'abdul aziz'}
           </span>
         </FadeIn>
       </div>

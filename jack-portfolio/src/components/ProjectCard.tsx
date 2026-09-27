@@ -85,9 +85,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           </div>
         </div>
 
-        {/* Bottom: Single Relevant 3D Hero Viewport */}
-        <div className="w-full my-4">
-          <div className="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+        {/* Bottom: Single Relevant 3D Hero Viewport (Reasonable Size) */}
+        <div className="w-full my-3 flex justify-center">
+          <div className="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
             <img
               src={project.image || project.col2Image}
               alt={`${project.name} 3D Visual Artwork`}

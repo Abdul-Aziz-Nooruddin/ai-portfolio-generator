@@ -63,6 +63,14 @@
       50% { transform: translateY(-16px) rotate(-2deg); }
     }
 
+    /* Sleek, reasonable card sizes for marquee */
+    .marquee-card {
+      width: clamp(240px, 22vw, 320px);
+      height: clamp(140px, 13vw, 185px);
+      flex-shrink: 0;
+      border-radius: 20px;
+    }
+
     .animate-float {
       animation: floatSlow 5s ease-in-out infinite;
     }
@@ -168,13 +176,13 @@
         </nav>
       </header>
 
-      <!-- Massive Hero Heading: Split into left (Hi, i'm) and right (firstName) so portrait sits cleanly in center without obscuring or cutting off letters -->
+      <!-- Massive Hero Heading: Split into left (Hi, i'm) and right (first & middle name) -->
       <div class="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
-        <span class="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap" style="font-size: clamp(2.2rem, 8.5vw, 130px);">
+        <span class="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap" style="font-size: clamp(1.6rem, 6.2vw, 98px);">
           Hi, i&apos;m
         </span>
-        <span class="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap" style="font-size: clamp(2.2rem, 10.5vw, 130px);">
-          abdul
+        <span class="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap" style="font-size: clamp(1.6rem, 6.2vw, 98px);">
+          abdul aziz
         </span>
       </div>
 
@@ -201,873 +209,833 @@
       </div>
     </section>
 
-    <!-- 2. MARQUEE SECTION (Scroll-driven Dual Row) -->
-    <section id="marquee-section" class="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden w-full select-none">
-      <div class="relative flex flex-col gap-6 sm:gap-8">
-        <!-- Floating Glass Badge 1 (Moon) -->
-        <div class="absolute left-[1%] sm:left-[2%] md:left-[4%] top-[4%] z-20 pointer-events-none animate-float">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_6.81459862.png"
-            alt="Glass Moon"
-            class="w-[100px] sm:w-[140px] md:w-[180px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 2 (Smiley) -->
-        <div class="absolute right-[1%] sm:right-[2%] md:right-[4%] top-1/2 -translate-y-1/2 z-20 pointer-events-none animate-float-delayed">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_9.81459862.png"
-            alt="Glass Smiley"
-            class="w-[120px] sm:w-[160px] md:w-[200px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 3 (Lego Block) -->
-        <div class="absolute left-[3%] sm:left-[6%] md:left-[10%] bottom-[8%] z-20 pointer-events-none animate-float">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_7.81459862.png"
-            alt="Glass Lego Block"
-            class="w-[130px] sm:w-[170px] md:w-[210px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 4 (Cursor) -->
-        <div class="absolute right-[3%] sm:right-[6%] md:right-[10%] bottom-[8%] z-20 pointer-events-none animate-float-delayed">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_8.81459862.png"
-            alt="Glass Cursor"
-            class="w-[130px] sm:w-[170px] md:w-[220px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
+    <!-- 2. MARQUEE SECTION (Scroll-driven Dual Row with reasonable sleek dimensions) -->
+    <section id="marquee-section" class="bg-[#0C0C0C] pt-20 sm:pt-28 md:pt-32 pb-10 overflow-hidden w-full select-none">
+      <div class="relative flex flex-col gap-4 sm:gap-6">
         <!-- Row 1: Leftward Scrolling Track -->
-        <div id="marquee-row1" class="flex gap-4 sm:gap-6 will-change-transform w-max transition-transform duration-200 ease-out">
+        <div id="marquee-row1" class="flex gap-4 sm:gap-5 will-change-transform w-max transition-transform duration-200 ease-out">
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/smart_contract_dapp_3d.webp"
                 alt="Smart Contract DApps"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_landscape_3d.jpg"
                 alt="Spatial WebGL Landscape"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/autonomous_edge_agent_3d.webp"
                 alt="Autonomous Edge AI"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cloud_microservices_gateway_3d.webp"
                 alt="Cloud Microservices Gateway"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cybersecurity_auth_vault_3d.webp"
                 alt="RBAC & Security Vault"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_constellation_3d.jpg"
                 alt="Synaptic Constellation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/devops_cicd_pipeline_3d.webp"
                 alt="Automated CI/CD Pipeline"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stealth_node_3d.webp"
                 alt="Decentralized Stealth Node"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/pristine_glass_cube_workstation_3d.webp"
                 alt="Developer Spatial Console"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/circuit_core_3d.webp"
                 alt="Algorithmic State Machines"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_liquid_metal_3d.jpg"
                 alt="Liquid Metal Shaders"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/smart_contract_dapp_3d.webp"
                 alt="Smart Contract DApps"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_landscape_3d.jpg"
                 alt="Spatial WebGL Landscape"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/autonomous_edge_agent_3d.webp"
                 alt="Autonomous Edge AI"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cloud_microservices_gateway_3d.webp"
                 alt="Cloud Microservices Gateway"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cybersecurity_auth_vault_3d.webp"
                 alt="RBAC & Security Vault"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_constellation_3d.jpg"
                 alt="Synaptic Constellation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/devops_cicd_pipeline_3d.webp"
                 alt="Automated CI/CD Pipeline"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stealth_node_3d.webp"
                 alt="Decentralized Stealth Node"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/pristine_glass_cube_workstation_3d.webp"
                 alt="Developer Spatial Console"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/circuit_core_3d.webp"
                 alt="Algorithmic State Machines"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_liquid_metal_3d.jpg"
                 alt="Liquid Metal Shaders"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/smart_contract_dapp_3d.webp"
                 alt="Smart Contract DApps"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEB3 // ETHERS.JS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Smart Contract DApps</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_landscape_3d.jpg"
                 alt="Spatial WebGL Landscape"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">THREE.JS // 3D VIEWPORT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Spatial WebGL Landscape</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/autonomous_edge_agent_3d.webp"
                 alt="Autonomous Edge AI"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">AI // DISTRIBUTED SYSTEMS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Autonomous Edge AI</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cloud_microservices_gateway_3d.webp"
                 alt="Cloud Microservices Gateway"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INFRASTRUCTURE // REST API</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cloud Microservices Gateway</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cybersecurity_auth_vault_3d.webp"
                 alt="RBAC & Security Vault"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SECURITY // POSTGRESQL</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">RBAC & Security Vault</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_constellation_3d.jpg"
                 alt="Synaptic Constellation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">SHADERS // NEURAL GRAPH</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Synaptic Constellation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/devops_cicd_pipeline_3d.webp"
                 alt="Automated CI/CD Pipeline"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEVOPS // DOCKER & GIT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Automated CI/CD Pipeline</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stealth_node_3d.webp"
                 alt="Decentralized Stealth Node"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CONSENSUS // CYPHERPUNK</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Decentralized Stealth Node</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/pristine_glass_cube_workstation_3d.webp"
                 alt="Developer Spatial Console"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">DEV STUDIO // TOOLING</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Developer Spatial Console</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/circuit_core_3d.webp"
                 alt="Algorithmic State Machines"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">PYTEAL // VERIFIABLE LEDGER</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Algorithmic State Machines</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_liquid_metal_3d.jpg"
                 alt="Liquid Metal Shaders"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBGL // CHROMATIC UI</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Liquid Metal Shaders</span>
               </div>
             </div>
           
         </div>
 
         <!-- Row 2: Rightward Scrolling Track -->
-        <div id="marquee-row2" class="flex gap-4 sm:gap-6 will-change-transform w-max transition-transform duration-200 ease-out">
+        <div id="marquee-row2" class="flex gap-4 sm:gap-5 will-change-transform w-max transition-transform duration-200 ease-out">
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/game_engine_spatial_3d.webp"
                 alt="Physics & Spatial Simulation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_matrix_3d.jpg"
                 alt="Cyber Matrix Field"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/engineering_archive_3d.webp"
                 alt="System Architecture Codex"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/holographic_resume_codex_3d.webp"
                 alt="Evidence Preservation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/spatial_depth_voyage_3d.jpg"
                 alt="P2P Scrollytelling Voyage"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/system_awakening_3d.webp"
                 alt="Encrypted Data Transmission"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stellar_architect_3d.webp"
                 alt="Distributed Topologies"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/neon_aurora_cyber_3d.webp"
                 alt="Cyber Wave Dynamics"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cosmic_cyber_geometry_3d.webp"
                 alt="Sacred Cryptographic Math"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/bio_digital_fusion_3d.webp"
                 alt="Protocol Ecosystem Fusion"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/game_engine_spatial_3d.webp"
                 alt="Physics & Spatial Simulation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_matrix_3d.jpg"
                 alt="Cyber Matrix Field"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/engineering_archive_3d.webp"
                 alt="System Architecture Codex"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/holographic_resume_codex_3d.webp"
                 alt="Evidence Preservation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/spatial_depth_voyage_3d.jpg"
                 alt="P2P Scrollytelling Voyage"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/system_awakening_3d.webp"
                 alt="Encrypted Data Transmission"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stellar_architect_3d.webp"
                 alt="Distributed Topologies"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/neon_aurora_cyber_3d.webp"
                 alt="Cyber Wave Dynamics"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cosmic_cyber_geometry_3d.webp"
                 alt="Sacred Cryptographic Math"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/bio_digital_fusion_3d.webp"
                 alt="Protocol Ecosystem Fusion"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/game_engine_spatial_3d.webp"
                 alt="Physics & Spatial Simulation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">INTERACTIVE // ENGINE</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Physics & Spatial Simulation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/threeui_matrix_3d.jpg"
                 alt="Cyber Matrix Field"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VOLUMETRIC // PARTICLES</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Matrix Field</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/engineering_archive_3d.webp"
                 alt="System Architecture Codex"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">REGTECH // DPDP ACT</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">System Architecture Codex</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/holographic_resume_codex_3d.webp"
                 alt="Evidence Preservation"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">VERIFIED CREDENTIALS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Evidence Preservation</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/spatial_depth_voyage_3d.jpg"
                 alt="P2P Scrollytelling Voyage"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">WEBSOCKETS // REAL-TIME</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">P2P Scrollytelling Voyage</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/system_awakening_3d.webp"
                 alt="Encrypted Data Transmission"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">CRYPTOGRAPHY // P2P</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Encrypted Data Transmission</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/stellar_architect_3d.webp"
                 alt="Distributed Topologies"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ALGORAND // SMART CONTRACTS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Distributed Topologies</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/neon_aurora_cyber_3d.webp"
                 alt="Cyber Wave Dynamics"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">FRONTEND // FRAMER MOTION</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Cyber Wave Dynamics</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/cosmic_cyber_geometry_3d.webp"
                 alt="Sacred Cryptographic Math"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">ZERO-KNOWLEDGE // CIPHERS</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Sacred Cryptographic Math</span>
               </div>
             </div>
           
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="/assets/marquee/bio_digital_fusion_3d.webp"
                 alt="Protocol Ecosystem Fusion"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">POLYGON & ALGORAND</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">Protocol Ecosystem Fusion</span>
               </div>
             </div>
           
@@ -1364,9 +1332,9 @@
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="/assets/projects/consent_chain_privacy_3d.webp"
                         alt="ConsentChain Algorand 3D Visual Artwork"
@@ -1427,9 +1395,9 @@
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="/assets/projects/ai_portfolio_generator_3d.webp"
                         alt="AI Portfolio Generator 3D Visual Artwork"
@@ -1490,9 +1458,9 @@
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="/assets/projects/pass_note_messenger_3d.webp"
                         alt="Pass A Note 3D Visual Artwork"
@@ -1553,9 +1521,9 @@
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="/assets/projects/student_database_manager_3d.webp"
                         alt="LMS User Management 3D Visual Artwork"
@@ -1616,9 +1584,9 @@
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="/assets/projects/algorand_smart_contracts_3d.webp"
                         alt="Algorand Python Smart Contracts 3D Visual Artwork"

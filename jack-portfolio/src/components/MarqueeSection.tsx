@@ -40,7 +40,7 @@ export const MarqueeSection: React.FC = () => {
       <div className="flex flex-col gap-3 w-full">
         {/* Row 1: Moves RIGHT on scroll: translateX(offset - 200) */}
         <div
-          className="flex gap-3 w-max"
+          className="flex gap-4 sm:gap-5 w-max"
           style={{
             transform: `translateX(${offset - 200}px)`,
             willChange: 'transform',
@@ -49,7 +49,7 @@ export const MarqueeSection: React.FC = () => {
           {row1Items.map((item, index) => (
             <div
               key={`row1-${index}`}
-              className="group relative w-[420px] h-[270px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-white/10 shadow-xl transition-all duration-300 hover:border-white/30"
+              className="group relative w-[280px] sm:w-[320px] h-[160px] sm:h-[185px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-white/10 shadow-lg transition-all duration-300 hover:border-white/30"
             >
               <img
                 src={item.src}
@@ -58,11 +58,11 @@ export const MarqueeSection: React.FC = () => {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Subtle tech gradient overlay with badge */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity p-5 flex flex-col justify-end">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-[#D7E2EA]/70">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-90 group-hover:opacity-100 transition-opacity p-4 sm:p-5 flex flex-col justify-end">
+                <span className="text-[9px] uppercase font-mono tracking-widest text-[#D7E2EA]/70">
                   {item.tag}
                 </span>
-                <h4 className="text-white text-base sm:text-lg font-medium uppercase tracking-wider mt-0.5">
+                <h4 className="text-white text-xs sm:text-sm font-medium uppercase tracking-wider mt-0.5">
                   {item.title}
                 </h4>
               </div>
@@ -72,7 +72,7 @@ export const MarqueeSection: React.FC = () => {
 
         {/* Row 2: Moves LEFT on scroll: translateX(-(offset - 200)) */}
         <div
-          className="flex gap-3 w-max"
+          className="flex gap-4 sm:gap-5 w-max"
           style={{
             transform: `translateX(-${offset - 200}px)`,
             willChange: 'transform',
@@ -81,7 +81,7 @@ export const MarqueeSection: React.FC = () => {
           {row2Items.map((item, index) => (
             <div
               key={`row2-${index}`}
-              className="group relative w-[420px] h-[270px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-white/10 shadow-xl transition-all duration-300 hover:border-white/30"
+              className="group relative w-[280px] sm:w-[320px] h-[160px] sm:h-[185px] flex-shrink-0 rounded-2xl overflow-hidden bg-[#161616] border border-white/10 shadow-lg transition-all duration-300 hover:border-white/30"
             >
               <img
                 src={item.src}
@@ -90,11 +90,11 @@ export const MarqueeSection: React.FC = () => {
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               {/* Subtle tech gradient overlay with badge */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity p-5 flex flex-col justify-end">
-                <span className="text-[10px] uppercase font-mono tracking-widest text-[#D7E2EA]/70">
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent opacity-90 group-hover:opacity-100 transition-opacity p-4 sm:p-5 flex flex-col justify-end">
+                <span className="text-[9px] uppercase font-mono tracking-widest text-[#D7E2EA]/70">
                   {item.tag}
                 </span>
-                <h4 className="text-white text-base sm:text-lg font-medium uppercase tracking-wider mt-0.5">
+                <h4 className="text-white text-xs sm:text-sm font-medium uppercase tracking-wider mt-0.5">
                   {item.title}
                 </h4>
               </div>

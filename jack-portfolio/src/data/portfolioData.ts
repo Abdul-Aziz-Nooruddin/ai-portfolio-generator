@@ -35,8 +35,9 @@ export interface SkillCategory {
 }
 
 export const USER_PROFILE = {
-  nickname: "aziz",
-  firstName: "Aziz",
+  nickname: "abdul aziz",
+  firstName: "Abdul",
+  middleName: "Aziz",
   fullName: "Abdul Aziz Nooruddin",
   title: "Full-Stack AI & Smart Contract Engineer",
   tagline: "AI Student & Smart Contract Developer | Building Real-World Web3 Products | Blockchain • DeFi • RegTech 🇮🇳",

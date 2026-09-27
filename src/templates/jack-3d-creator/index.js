@@ -144,7 +144,14 @@ const Jack3DCreatorTemplate = {
   render(rawCandidateData = {}, options = {}) {
     const data = TemplateHelper.normalize ? TemplateHelper.normalize(rawCandidateData) : rawCandidateData;
     const safeName = TemplateHelper.escapeHtml(data.name || 'Creative Developer');
-    const firstName = safeName.split(' ')[0] || safeName;
+
+    // Extract First Name and Middle Name if available (e.g. "Abdul Aziz")
+    const nameParts = safeName.trim().split(/\s+/);
+    const displayHeroName = nameParts.length >= 2 
+      ? `${nameParts[0]} ${nameParts[1]}`
+      : (nameParts[0] || safeName);
+    const firstName = nameParts[0] || safeName;
+
     const safeTitle = TemplateHelper.escapeHtml(data.role || data.title || 'Full-Stack Software Engineer');
     const safeTagline = TemplateHelper.escapeHtml(data.tagline || data.bio || 'Building High-Performance Software & Modern Web Applications');
     const safeBio = TemplateHelper.escapeHtml(
@@ -158,12 +165,11 @@ const Jack3DCreatorTemplate = {
     // Candidate Avatar: user photo / avatar if available, or signature stylized 3D avatar
     const candidateAvatar = data.avatar || data.photoUrl || data.githubData?.avatar_url || data.githubData?.avatarUrl || 'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png';
 
-    // Dynamic Font Sizes for Hero Title to ensure ZERO letter clipping:
-    // Left side: "Hi, i'm" is 7 chars
-    const safeLeftVw = '8.5';
-    // Right side: firstName dynamically scales based on length so it never clips or collides with center avatar
-    const nameLen = firstName.length || 5;
-    const safeNameVw = Math.min(10.5, Math.max(4.5, (44 / (nameLen * 0.65)))).toFixed(1);
+    // Dynamic Font Sizes for Hero Title to ensure ZERO letter clipping with first & middle name:
+    const nameLen = displayHeroName.length; // e.g. 10 for "abdul aziz"
+    const safeHeroVw = (nameLen > 8 ? 6.2 : (nameLen > 5 ? 7.4 : 8.5)).toFixed(1);
+    const minRem = nameLen > 8 ? 1.6 : 2.0;
+    const maxPx = nameLen > 8 ? 98 : 125;
 
     // Skills
     const skillsList = (data.skills && data.skills.length > 0) ? data.skills : [
@@ -297,6 +303,14 @@ ${COMPILED_CSS}
       50% { transform: translateY(-16px) rotate(-2deg); }
     }
 
+    /* Sleek, reasonable card sizes for marquee */
+    .marquee-card {
+      width: clamp(240px, 22vw, 320px);
+      height: clamp(140px, 13vw, 185px);
+      flex-shrink: 0;
+      border-radius: 20px;
+    }
+
     .animate-float {
       animation: floatSlow 5s ease-in-out infinite;
     }
@@ -322,13 +336,13 @@ ${COMPILED_CSS}
         </nav>
       </header>
 
-      <!-- Massive Hero Heading: Split into left (Hi, i'm) and right (firstName) so portrait sits cleanly in center without obscuring or cutting off letters -->
+      <!-- Massive Hero Heading: Split into left (Hi, i'm) and right (first & middle name) -->
       <div class="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
-        <span class="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap" style="font-size: clamp(2.2rem, ${safeLeftVw}vw, 130px);">
+        <span class="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap" style="font-size: clamp(${minRem}rem, ${safeHeroVw}vw, ${maxPx}px);">
           Hi, i&apos;m
         </span>
-        <span class="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap" style="font-size: clamp(2.2rem, ${safeNameVw}vw, 130px);">
-          ${firstName.toLowerCase()}
+        <span class="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap" style="font-size: clamp(${minRem}rem, ${safeHeroVw}vw, ${maxPx}px);">
+          ${displayHeroName.toLowerCase()}
         </span>
       </div>
 
@@ -355,80 +369,40 @@ ${COMPILED_CSS}
       </div>
     </section>
 
-    <!-- 2. MARQUEE SECTION (Scroll-driven Dual Row) -->
-    <section id="marquee-section" class="bg-[#0C0C0C] pt-24 sm:pt-32 md:pt-40 pb-10 overflow-hidden w-full select-none">
-      <div class="relative flex flex-col gap-6 sm:gap-8">
-        <!-- Floating Glass Badge 1 (Moon) -->
-        <div class="absolute left-[1%] sm:left-[2%] md:left-[4%] top-[4%] z-20 pointer-events-none animate-float">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_6.81459862.png"
-            alt="Glass Moon"
-            class="w-[100px] sm:w-[140px] md:w-[180px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 2 (Smiley) -->
-        <div class="absolute right-[1%] sm:right-[2%] md:right-[4%] top-1/2 -translate-y-1/2 z-20 pointer-events-none animate-float-delayed">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_9.81459862.png"
-            alt="Glass Smiley"
-            class="w-[120px] sm:w-[160px] md:w-[200px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 3 (Lego Block) -->
-        <div class="absolute left-[3%] sm:left-[6%] md:left-[10%] bottom-[8%] z-20 pointer-events-none animate-float">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_7.81459862.png"
-            alt="Glass Lego Block"
-            class="w-[130px] sm:w-[170px] md:w-[210px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
-        <!-- Floating Glass Badge 4 (Cursor) -->
-        <div class="absolute right-[3%] sm:right-[6%] md:right-[10%] bottom-[8%] z-20 pointer-events-none animate-float-delayed">
-          <img
-            src="https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/image_8.81459862.png"
-            alt="Glass Cursor"
-            class="w-[130px] sm:w-[170px] md:w-[220px] h-auto object-contain drop-shadow-2xl"
-            loading="lazy"
-          />
-        </div>
-
+    <!-- 2. MARQUEE SECTION (Scroll-driven Dual Row with reasonable sleek dimensions) -->
+    <section id="marquee-section" class="bg-[#0C0C0C] pt-20 sm:pt-28 md:pt-32 pb-10 overflow-hidden w-full select-none">
+      <div class="relative flex flex-col gap-4 sm:gap-6">
         <!-- Row 1: Leftward Scrolling Track -->
-        <div id="marquee-row1" class="flex gap-4 sm:gap-6 will-change-transform w-max transition-transform duration-200 ease-out">
+        <div id="marquee-row1" class="flex gap-4 sm:gap-5 will-change-transform w-max transition-transform duration-200 ease-out">
           ${row1.map((item, idx) => `
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="${item.src}"
                 alt="${item.title}"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">${item.tag}</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">${item.title}</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">${item.tag}</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">${item.title}</span>
               </div>
             </div>
           `).join('')}
         </div>
 
         <!-- Row 2: Rightward Scrolling Track -->
-        <div id="marquee-row2" class="flex gap-4 sm:gap-6 will-change-transform w-max transition-transform duration-200 ease-out">
+        <div id="marquee-row2" class="flex gap-4 sm:gap-5 will-change-transform w-max transition-transform duration-200 ease-out">
           ${row2.map((item, idx) => `
-            <div class="flex-shrink-0 w-[280px] sm:w-[360px] md:w-[420px] h-[clamp(160px,22vw,340px)] rounded-[36px] sm:rounded-[40px] overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-xl relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
+            <div class="marquee-card overflow-hidden bg-[#161616] border border-[#D7E2EA]/15 shadow-lg relative group hover:border-[#D7E2EA]/40 transition-colors duration-300">
               <img
                 src="${item.src}"
                 alt="${item.title}"
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out select-none pointer-events-none"
                 loading="lazy"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-5 sm:p-6 flex flex-col justify-end pointer-events-none">
-                <span class="text-[10px] sm:text-xs text-[#D7E2EA]/70 uppercase tracking-widest font-mono">${item.tag}</span>
-                <span class="text-sm sm:text-base font-medium text-white uppercase tracking-wider mt-0.5">${item.title}</span>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent p-4 sm:p-5 flex flex-col justify-end pointer-events-none">
+                <span class="text-[9px] sm:text-[10px] text-[#D7E2EA]/70 uppercase tracking-widest font-mono">${item.tag}</span>
+                <span class="text-xs sm:text-sm font-medium text-white uppercase tracking-wider mt-0.5">${item.title}</span>
               </div>
             </div>
           `).join('')}
@@ -631,9 +605,9 @@ ${COMPILED_CSS}
                     </div>
                   </div>
 
-                  <!-- Single Relevant 3D Hero Viewport (Strict Title Matching Guarantee) -->
-                  <div class="w-full my-6 sm:my-8">
-                    <div class="w-full h-[clamp(220px,32vw,440px)] rounded-[28px] sm:rounded-[36px] md:rounded-[44px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
+                  <!-- Single Relevant 3D Hero Viewport (Reasonable, Sleek Dimensions) -->
+                  <div class="w-full my-3 flex justify-center">
+                    <div class="w-full max-w-4xl h-[clamp(170px,20vw,280px)] rounded-[20px] sm:rounded-[24px] md:rounded-[28px] overflow-hidden bg-[#141414] border border-[#D7E2EA]/15 relative group shadow-inner">
                       <img
                         src="${singleImg}"
                         alt="${projName} 3D Visual Artwork"
