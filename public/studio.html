@@ -1323,158 +1323,22 @@
             <textarea id="resumeRawText" style="display:none;"></textarea>
           </div>
 
-          <!-- STEP 2: CHOOSE YOUR VISUAL WORLD -->
+          <!-- STEP 2: CHOOSE YOUR TEMPLATE -->
           <div class="workflow-card" id="stepSectionWorld">
-            <div class="workflow-step-badge">2. Choose your visual world</div>
-            <div class="workflow-card-title">Choose a visual world</div>
-            <div class="workflow-card-desc">Select the real-world environment for your 3D portfolio.</div>
+            <div class="workflow-step-badge">2. Active Portfolio Template</div>
+            <div class="workflow-card-title">3D Creator &amp; Engineer Template</div>
+            <div class="workflow-card-desc">Minimalist dark obsidian aesthetic with Kanit display typography, dual-row marquee, character-reveal mission, domain bentos, inverted services, and sticky-stacking case studies.</div>
 
-            <!-- 6 Large Curated World Categories -->
-            <div class="world-category-grid" id="curatedWorldsGrid">
-              <!-- World 1: Architectural -->
-              <div class="world-cat-card" onclick="selectCuratedWorld('chrono-obsidian-sanctuary', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_campus_skybridge.jpg');"></div>
+            <!-- Single Curated Template: 3D Creator & Engineer -->
+            <div class="world-category-grid" id="curatedWorldsGrid" style="grid-template-columns: 1fr;">
+              <div class="world-cat-card selected" onclick="selectCuratedWorld('jack-3d-creator', this)" style="border: 2px solid var(--mf-accent-blue, #38bdf8); background: rgba(56, 189, 248, 0.08); padding: 14px; border-radius: 12px; display: flex; gap: 16px; align-items: center; cursor: pointer;">
+                <div class="world-cat-thumb" style="width: 80px; height: 80px; border-radius: 10px; background-image:url('/assets/marquee/mesh_quantum_core_3d.png'); background-size: cover; background-position: center; background-color: #0c0c0c; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></div>
                 <div class="world-cat-body">
-                  <div class="world-cat-name">Architectural</div>
-                  <div class="world-cat-desc">"Premium, structured and editorial."</div>
-                </div>
-              </div>
-
-              <!-- World 2: Biophilic Campus -->
-              <div class="world-cat-card" onclick="selectCuratedWorld('botanical-woodcraft', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_alpine_valley.jpg');"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name">Biophilic</div>
-                  <div class="world-cat-desc">"Nature, technology and organic movement."</div>
-                </div>
-              </div>
-
-              <!-- World 3: AI Laboratory -->
-              <div class="world-cat-card" onclick="selectCuratedWorld('system-awakening', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_lab_workstations.jpg');"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name">Laboratory</div>
-                  <div class="world-cat-desc">"Research, AI and engineering."</div>
-                </div>
-              </div>
-
-              <!-- World 4: Developer Workspace (Default selected) -->
-              <div class="world-cat-card selected" onclick="selectCuratedWorld('threeui-constellation', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/3d/developer_showcase_portfolio_3d.jpg');"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name">Workspace</div>
-                  <div class="world-cat-desc">"Focused, technical and code-first."</div>
-                </div>
-              </div>
-
-              <!-- World 5: Cyber Infrastructure -->
-              <div class="world-cat-card" onclick="selectCuratedWorld('circuit-core', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_datacenter_hall.jpg');"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name">Cyber Infrastructure</div>
-                  <div class="world-cat-desc">"High-scale, telemetry and systems."</div>
-                </div>
-              </div>
-
-              <!-- World 6: Cosmic Exploration -->
-              <div class="world-cat-card" onclick="selectCuratedWorld('stellar-architect', this)">
-                <div class="world-cat-thumb" style="background-image:url('/assets/world/env_summit_observatory.jpg');"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name">Cosmic</div>
-                  <div class="world-cat-desc">"Expansive, experimental and futuristic."</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Expandable Action for Advanced Worlds -->
-            <button type="button" class="toggle-all-worlds-btn" id="btnToggleAllWorlds" onclick="toggleAllWorldsGrid()">
-              <span>✦ Explore all 36+ worlds</span>
-              <span id="exploreArrow">↓</span>
-            </button>
-
-            <!-- Collapsed Drawer containing full catalog -->
-            <div class="all-worlds-drawer" id="allWorldsDrawer">
-              <div style="font-size:11px; color:var(--mf-text-muted); margin-bottom:6px; font-family:var(--mf-font-mono);">SPECIALIZED WORLDS &amp; SHADER SUITES:</div>
-              <div class="universe-select-grid" id="universeChoiceContainer">
-                <div class="universe-choice-card selected" onclick="selectStudioUniverse('threeui-constellation', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_constellation_3d.jpg');"></div>
-                  <div class="universe-choice-title">Synaptic Constellation</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-landscape', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_landscape_3d.jpg');"></div>
-                  <div class="universe-choice-title">3D Landscape &amp; Weather</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-shelf', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_shelf_3d.jpg');"></div>
-                  <div class="universe-choice-title">Complete 3D Shelf</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('threeui-liquid-metal', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_liquid_metal_3d.jpg');"></div>
-                  <div class="universe-choice-title">Liquid Metal Dispersion</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-architect-sprawl', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/threeui_matrix_3d.jpg');"></div>
-                  <div class="universe-choice-title">Cyber-Architect Sprawl</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('stealth-node', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stealth_node_3d.jpg');"></div>
-                  <div class="universe-choice-title">Stealth Node (Web3)</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('circuit-core', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/circuit_core_3d.jpg');"></div>
-                  <div class="universe-choice-title">Circuit Core</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('chrono-obsidian-sanctuary', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/chrono_obsidian_sanctuary_3d.jpg');"></div>
-                  <div class="universe-choice-title">Chrono-Obsidian</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('neon-aurora-cyber', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/neon_aurora_cyber_3d.jpg');"></div>
-                  <div class="universe-choice-title">Neon Aurora Cyber</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('kinetic-brutalism', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/kinetic_brutalism_3d.jpg');"></div>
-                  <div class="universe-choice-title">Kinetic Brutalism</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('stellar-architect', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/stellar_architect_3d.jpg');"></div>
-                  <div class="universe-choice-title">Stellar Architect</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-cyber-geometry', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_cyber_geometry_3d.jpg');"></div>
-                  <div class="universe-choice-title">Cosmic Geometry</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('engineering-archive', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/engineering_archive_3d.jpg');"></div>
-                  <div class="universe-choice-title">Engineering Archive</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('system-awakening', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/system_awakening_3d.jpg');"></div>
-                  <div class="universe-choice-title">System Awakening</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('cosmic-astronaut', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cosmic_astronaut_3d.jpg');"></div>
-                  <div class="universe-choice-title">Cosmic Astronaut</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('bioluminescent-wireframe', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bioluminescent_wireframe_3d.jpg');"></div>
-                  <div class="universe-choice-title">Bioluminescent Eco</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('cyber-crystal', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/cyber_crystal_3d.jpg');"></div>
-                  <div class="universe-choice-title">Cyber Crystal</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('botanical-woodcraft', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/botanical_woodcraft_3d.jpg');"></div>
-                  <div class="universe-choice-title">Botanical Woodcraft</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('bio-digital-fusion', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/bio_digital_fusion_3d.jpg');"></div>
-                  <div class="universe-choice-title">Bio-Digital Fusion</div>
-                </div>
-                <div class="universe-choice-card" onclick="selectStudioUniverse('abyssal-ascent', this)">
-                  <div class="universe-choice-thumb" style="background-image:url('/assets/3d/abyssal_ascent_3d.jpg');"></div>
-                  <div class="universe-choice-title">Abyssal Ascent</div>
+                  <div class="world-cat-name" style="font-size: 16px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+                    <span>3D Creator &amp; Engineer</span>
+                    <span style="font-size: 10px; padding: 2px 8px; border-radius: 9999px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-family: var(--mf-font-mono);">ACTIVE TEMPLATE</span>
+                  </div>
+                  <div class="world-cat-desc" style="font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">Bespoke dark theme (#0C0C0C) • Magnetic avatar • 21-asset dual marquee • Character scroll-reveal • Verified credentials • Stacking project cards</div>
                 </div>
               </div>
             </div>
@@ -1804,7 +1668,7 @@
     </div>
 
   <script>
-    let selectedUniverseKey = 'threeui-constellation';
+    let selectedUniverseKey = 'jack-3d-creator';
     let uploadedResumeBase64 = null;
     let uploadedResumeMime = null;
     let uploadedPhotoData = null;
@@ -1842,10 +1706,9 @@
     }
 
     function selectStudioUniverse(key, el) {
-      selectedUniverseKey = key;
+      selectedUniverseKey = key || 'jack-3d-creator';
       document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
       if (el) el.classList.add('selected');
-      // Also sync curated card if matches
       document.querySelectorAll('.world-cat-card').forEach(c => c.classList.remove('selected'));
       const matchingCurated = document.querySelector(`.world-cat-card[onclick*="'${key}'"]`);
       if (matchingCurated) matchingCurated.classList.add('selected');
@@ -1853,14 +1716,11 @@
     }
 
     function selectCuratedWorld(key, el) {
-      selectedUniverseKey = key;
+      selectedUniverseKey = key || 'jack-3d-creator';
       document.querySelectorAll('.world-cat-card').forEach(c => c.classList.remove('selected'));
       if (el) el.classList.add('selected');
-      document.querySelectorAll('.universe-choice-card').forEach(c => c.classList.remove('selected'));
-      const matchingUniv = document.querySelector(`.universe-choice-card[onclick*="'${key}'"]`);
-      if (matchingUniv) matchingUniv.classList.add('selected');
       updateConfirmationChecks();
-      showToast('Visual world selected: ' + key.replace(/-/g, ' '), 'info');
+      showToast('Template active: 3D Creator & Engineer', 'info');
     }
 
     function toggleAllWorldsGrid() {

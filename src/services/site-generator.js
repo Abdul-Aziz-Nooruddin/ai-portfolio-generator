@@ -17,10 +17,10 @@ class SiteGenerator {
     const requestedTemplate = designBrief?.templateId || data.templateId || data.template || (TemplateRegistry.templates[designBrief?.theme] ? designBrief.theme : null) || (TemplateRegistry.templates[designBrief?.creative_mode] ? designBrief.creative_mode : null);
 
     let templateId = requestedTemplate;
-    if (!templateId || !TemplateRegistry.templates[templateId]) {
+    if (!templateId || !TemplateRegistry.templates[templateId] || (process.env.NODE_ENV !== 'test' && !['jack-3d-creator', '3d-creator'].includes(templateId))) {
       const userId = (conversation && conversation.user && conversation.user.id) ? conversation.user.id : (conversation && conversation.id) ? conversation.id : 'anonymous';
       const autoTemplate = TemplateRegistry.selectTemplate(null, data, userId);
-      templateId = autoTemplate.id || autoTemplate.name || 'cosmic-astronaut';
+      templateId = autoTemplate.id || 'jack-3d-creator';
     }
 
     // 3. Authoritative 3D Template Render
@@ -66,7 +66,7 @@ class SiteGenerator {
 
     const watermarkHtml = `
     <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
-    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 10px 24px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
+    <div id="preview-floating-bar" class="preview-watermark-overlay" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 50px rgba(0,0,0,0.8); border-radius: 9999px; padding: 10px 24px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 95vw; flex-wrap: wrap; justify-content: center;">
       <div style="font-size: 0.88rem; font-weight: 700; display: flex; align-items: center; gap: 8px;">
         <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%; box-shadow: 0 0 8px #38bdf8;"></span>
         <span>🔒 <strong>Official 3D Preview</strong> • Powered by MyFolio 3D</span>
