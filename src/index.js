@@ -83,6 +83,26 @@ const designEngine = new DesignEngine();
 const customizationQualityGate = new CustomizationQualityGate();
 const portfolioCustomizerMap = new Map();
 
+// Serverless-resilient site directory resolver (falls back to os.tmpdir() on read-only environments like Vercel)
+function resolveSafeSiteDir(siteId) {
+  const os = require('os');
+  const primary = path.join(process.cwd(), 'public', 'sites', siteId);
+  try {
+    if (!fs.existsSync(primary)) {
+      fs.mkdirSync(primary, { recursive: true });
+    }
+    return primary;
+  } catch (err) {
+    const fallback = path.join(os.tmpdir(), 'sites', siteId);
+    try {
+      if (!fs.existsSync(fallback)) {
+        fs.mkdirSync(fallback, { recursive: true });
+      }
+    } catch (e2) {}
+    return fallback;
+  }
+}
+
 // Global Security Middleware Pipeline
 app.use(SecurityMiddleware.requestTimeout(90000));
 app.use(SecurityMiddleware.securityHeaders());
@@ -236,22 +256,28 @@ app.use(async (req, res, next) => {
       html = await hostingProvider.getSiteHtml('aziz');
     }
 
-    // If still not found, check public/sites for newest generated portfolio for Abdul Aziz
+    // If still not found, check public/sites and /tmp/sites for newest generated portfolio for Abdul Aziz
     if (!html) {
       try {
-        const sitesDir = path.join(process.cwd(), 'public', 'sites');
-        if (fs.existsSync(sitesDir)) {
-          const candidates = fs.readdirSync(sitesDir).filter(d => 
-            fs.existsSync(path.join(sitesDir, d, 'index.html')) &&
-            (d.startsWith('abdulaziz-') || d.startsWith('aziz-') || d === 'abdulaziz' || d === 'aziz')
-          );
-          if (candidates.length > 0) {
-            candidates.sort((a, b) => {
-              try {
-                return fs.statSync(path.join(sitesDir, b, 'index.html')).mtimeMs - fs.statSync(path.join(sitesDir, a, 'index.html')).mtimeMs;
-              } catch(e) { return 0; }
-            });
-            html = await hostingProvider.getSiteHtml(candidates[0]);
+        const sitesDirs = [
+          path.join(process.cwd(), 'public', 'sites'),
+          path.join(os.tmpdir(), 'sites')
+        ];
+        for (const sitesDir of sitesDirs) {
+          if (fs.existsSync(sitesDir)) {
+            const candidates = fs.readdirSync(sitesDir).filter(d => 
+              fs.existsSync(path.join(sitesDir, d, 'index.html')) &&
+              (d.startsWith('abdulaziz-') || d.startsWith('aziz-') || d === 'abdulaziz' || d === 'aziz')
+            );
+            if (candidates.length > 0) {
+              candidates.sort((a, b) => {
+                try {
+                  return fs.statSync(path.join(sitesDir, b, 'index.html')).mtimeMs - fs.statSync(path.join(sitesDir, a, 'index.html')).mtimeMs;
+                } catch(e) { return 0; }
+              });
+              html = await hostingProvider.getSiteHtml(candidates[0]);
+              if (html) break;
+            }
           }
         }
       } catch (e) {}
@@ -1394,8 +1420,7 @@ app.post(
 
       const versionSiteId = isVipFounder ? `abdulaziz-${Date.now()}` : `web-${crypto.randomUUID()}`;
       const siteId = versionSiteId;
-      const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
-      await fs.promises.mkdir(siteDir, { recursive: true });
+      const siteDir = resolveSafeSiteDir(siteId);
 
       // 4. Ingest & Persist Candidate Photo / Avatar (if provided or present in resume)
       const rawPhotoBase64 = input.photoData?.rawBase64 || 
@@ -1408,22 +1433,23 @@ app.post(
           const mime = input.photoData.mimeType || (input.photoData.dataUrl?.includes('jpeg') ? 'image/jpeg' : 'image/png');
           const avatarFileExt = (mime && mime.includes('jpeg')) ? 'jpg' : 'png';
           const avatarFilename = `avatar.${avatarFileExt}`;
-          await fs.promises.writeFile(path.join(siteDir, avatarFilename), avatarBuf);
-          // Also save canonical avatar.png for template standard compatibility
-          if (avatarFileExt !== 'png') {
-            await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), avatarBuf);
-          }
+          try {
+            await fs.promises.writeFile(path.join(siteDir, avatarFilename), avatarBuf);
+            if (avatarFileExt !== 'png') {
+              await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), avatarBuf);
+            }
+          } catch (wErr) {}
           const avatarWebPath = isVipFounder ? `/sites/abdulaziz/avatar.png` : `/sites/${siteId}/avatar.png`;
           input.avatar = avatarWebPath;
           input.photoUrl = avatarWebPath;
 
           if (isVipFounder) {
-            const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
-            const azDir = path.join(process.cwd(), 'public', 'sites', 'aziz');
-            await fs.promises.mkdir(abDir, { recursive: true });
-            await fs.promises.mkdir(azDir, { recursive: true });
-            await fs.promises.writeFile(path.join(abDir, 'avatar.png'), avatarBuf);
-            await fs.promises.writeFile(path.join(azDir, 'avatar.png'), avatarBuf);
+            try {
+              const abDir = resolveSafeSiteDir('abdulaziz');
+              const azDir = resolveSafeSiteDir('aziz');
+              await fs.promises.writeFile(path.join(abDir, 'avatar.png'), avatarBuf).catch(() => {});
+              await fs.promises.writeFile(path.join(azDir, 'avatar.png'), avatarBuf).catch(() => {});
+            } catch (avErr2) {}
           }
         } catch (avErr) {
           console.warn('[API] Avatar save error:', avErr.message);
@@ -1431,14 +1457,17 @@ app.post(
       } else if (!input.avatar && input.resumeData?.rawBase64 && input.resumeData?.mimeType?.startsWith('image/')) {
         try {
           const resumeImgBuf = Buffer.from(input.resumeData.rawBase64.replace(/\s/g, ''), 'base64');
-          await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), resumeImgBuf);
+          try {
+            await fs.promises.writeFile(path.join(siteDir, 'avatar.png'), resumeImgBuf);
+          } catch (wErr) {}
           const avatarWebPath = isVipFounder ? `/sites/abdulaziz/avatar.png` : `/sites/${siteId}/avatar.png`;
           input.avatar = avatarWebPath;
           input.photoUrl = avatarWebPath;
           if (isVipFounder) {
-            const abDir = path.join(process.cwd(), 'public', 'sites', 'abdulaziz');
-            await fs.promises.mkdir(abDir, { recursive: true });
-            await fs.promises.writeFile(path.join(abDir, 'avatar.png'), resumeImgBuf);
+            try {
+              const abDir = resolveSafeSiteDir('abdulaziz');
+              await fs.promises.writeFile(path.join(abDir, 'avatar.png'), resumeImgBuf).catch(() => {});
+            } catch (avErr3) {}
           }
         } catch (resImgErr) {
           console.warn('[API] Resume image avatar save error:', resImgErr.message);
@@ -1448,7 +1477,11 @@ app.post(
       // 5. Ingest, Save & AI-Parse Uploaded Certificates (Parallelized)
       if (Array.isArray(input.certificates) && input.certificates.length > 0) {
         const certsDir = path.join(siteDir, 'certificates');
-        await fs.promises.mkdir(certsDir, { recursive: true });
+        try {
+          if (!fs.existsSync(certsDir)) {
+            await fs.promises.mkdir(certsDir, { recursive: true });
+          }
+        } catch (cErr) {}
 
         const parsedCertList = await Promise.all(input.certificates.map(async (cert, i) => {
           if (!cert) return null;
@@ -1513,10 +1546,23 @@ app.post(
       await hostingProvider.deploy(siteId, siteResult, normalized, isVipFounder);
 
       // Write index.html and profile.json to filesystem for local preview serving non-blockingly
-      await Promise.all([
-        fs.promises.writeFile(path.join(siteDir, 'index.html'), siteResult.html, 'utf8'),
-        fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
-      ]);
+      try {
+        await Promise.all([
+          fs.promises.writeFile(path.join(siteDir, 'index.html'), siteResult.html, 'utf8'),
+          fs.promises.writeFile(path.join(siteDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+        ]);
+      } catch (writeErr) {
+        try {
+          const fallbackDir = path.join(os.tmpdir(), 'sites', siteId);
+          if (!fs.existsSync(fallbackDir)) {
+            await fs.promises.mkdir(fallbackDir, { recursive: true });
+          }
+          await Promise.all([
+            fs.promises.writeFile(path.join(fallbackDir, 'index.html'), siteResult.html, 'utf8'),
+            fs.promises.writeFile(path.join(fallbackDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+          ]);
+        } catch (e) {}
+      }
 
       const shouldPublishLive = req.body.publish === true;
 
@@ -1525,7 +1571,7 @@ app.post(
         siteId,
         handle: userHandle,
         subdomain: isVipFounder ? `${userHandle}.myfolio.tech` : null,
-        universeKey: input.preferences?.theme || 'cosmic-astronaut',
+        universeKey: input.preferences?.theme || 'jack-3d-creator',
         developerName: normalized.name,
         developerRole: normalized.role || normalized.title,
         projectsCount: normalized.projects?.length || 6,
@@ -1537,7 +1583,12 @@ app.post(
       };
       try {
         await fs.promises.writeFile(path.join(siteDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
-      } catch (e) {}
+      } catch (e) {
+        try {
+          const fallbackDir = path.join(os.tmpdir(), 'sites', siteId);
+          await fs.promises.writeFile(path.join(fallbackDir, 'meta.json'), JSON.stringify(metaPayload, null, 2), 'utf8');
+        } catch (e2) {}
+      }
 
       // Associate generated site with authenticated user account across both client_sites and sites tables
       const effectiveOwnerId = req.user?.id || (isVipFounder ? 'abdulaziz_founder' : null);
@@ -1563,22 +1614,27 @@ app.post(
         // 1. Move vanity URL files for /abdulaziz, /aziz, and /<userHandle> to the newly generated site
         const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', userHandle]));
         for (const h of handlesToSync) {
-          const hDir = path.join(process.cwd(), 'public', 'sites', h);
-          await fs.promises.mkdir(hDir, { recursive: true });
-          await Promise.all([
-            fs.promises.writeFile(path.join(hDir, 'index.html'), siteResult.html, 'utf8'),
-            fs.promises.writeFile(path.join(hDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
-          ]);
-          if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
-            try { await fs.promises.copyFile(path.join(siteDir, 'avatar.png'), path.join(hDir, 'avatar.png')); } catch (e) {}
-          }
-          const certsDir = path.join(siteDir, 'certificates');
-          const hCertsDir = path.join(hDir, 'certificates');
-          if (fs.existsSync(certsDir)) {
-            try {
-              await fs.promises.mkdir(hCertsDir, { recursive: true });
-              await fs.promises.cp(certsDir, hCertsDir, { recursive: true });
-            } catch (e) {}
+          try {
+            const hDir = resolveSafeSiteDir(h);
+            await Promise.all([
+              fs.promises.writeFile(path.join(hDir, 'index.html'), siteResult.html, 'utf8'),
+              fs.promises.writeFile(path.join(hDir, 'profile.json'), JSON.stringify(normalized, null, 2), 'utf8')
+            ]);
+            if (fs.existsSync(path.join(siteDir, 'avatar.png'))) {
+              try { await fs.promises.copyFile(path.join(siteDir, 'avatar.png'), path.join(hDir, 'avatar.png')); } catch (e) {}
+            }
+            const certsDir = path.join(siteDir, 'certificates');
+            const hCertsDir = path.join(hDir, 'certificates');
+            if (fs.existsSync(certsDir)) {
+              try {
+                if (!fs.existsSync(hCertsDir)) {
+                  await fs.promises.mkdir(hCertsDir, { recursive: true });
+                }
+                await fs.promises.cp(certsDir, hCertsDir, { recursive: true });
+              } catch (e) {}
+            }
+          } catch (syncErr) {
+            console.warn('[SYNC] Notice syncing handle:', h, syncErr.message);
           }
         }
 
@@ -1681,9 +1737,14 @@ app.post('/api/portfolio/publish', async (req, res) => {
       return res.status(400).json({ error: 'Invalid siteId identifier.' });
     }
 
-    const draftDir = path.join(sitesBaseDir, siteId);
+    let draftDir = path.join(sitesBaseDir, siteId);
     if (!fs.existsSync(draftDir)) {
-      return res.status(404).json({ error: `Draft site "${siteId}" not found.` });
+      const tmpCandidate = path.join(require('os').tmpdir(), 'sites', siteId);
+      if (fs.existsSync(tmpCandidate)) {
+        draftDir = tmpCandidate;
+      } else {
+        return res.status(404).json({ error: `Draft site "${siteId}" not found.` });
+      }
     }
 
     // Read draft metadata and profile
@@ -2869,8 +2930,9 @@ app.get(['/mesh3d-terminal', '/terminal'], (req, res) => {
   res.sendFile(path.join(webDir, 'portfolio-mesh3d-terminal.html'));
 });
 
-// Direct Portfolio Web Hosting Route
+// Direct Portfolio Web Hosting Route (serves both persistent public/sites and serverless /tmp/sites)
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
+app.use('/sites', express.static(path.join(require('os').tmpdir(), 'sites')));
 
 // Serve Static Web Assets with HTTP Cache-Control (7 days for JS/CSS/images/fonts, 0s for dynamic HTML)
 app.use(express.static(webDir, {

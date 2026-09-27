@@ -29,6 +29,7 @@ tmp/
 scratch/
 .design_memory.json
 public/sites/*
+!public/sites/.gitkeep
 !public/sites/abdulaziz/
 !public/sites/aziz/
 web/assets/animated-floating-astronaut-in-space-suit-loop/
