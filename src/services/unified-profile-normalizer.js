@@ -51,9 +51,15 @@ class UnifiedProfileNormalizer {
     const ghTwitter = ghIdentity.twitter || githubData?.twitter_username;
     const ghAvatar = ghIdentity.avatar || githubData?.avatar_url || githubData?.avatarUrl;
 
+    const isExplicitOtherGithub = ghUsername && ghUsername.toLowerCase() !== 'abdul-aziz-nooruddin' && ghUsername.toLowerCase() !== 'abdulaziz';
+    const isDefaultFounderVal = (val) => typeof val === 'string' && (val.toLowerCase().includes('abdul aziz') || val.toLowerCase().includes('abdul-aziz'));
+
     // 1. Identity & Name Resolution (Direct Input > Questionnaire > Resume > GitHub > Default)
     let name = 'Creative Developer';
-    if (input?.name && typeof input.name === 'string' && input.name.trim() && input.name !== 'Software Developer') {
+    if (isExplicitOtherGithub && (ghName || ghUsername) && (isDefaultFounderVal(input?.name) || isDefaultFounderVal(resumeData?.name) || isDefaultFounderVal(resumeData?.fullName))) {
+      name = (ghName || ghUsername).trim();
+      recordProvenance('name', 'github', PROVENANCE_LEVELS.VERIFIED, 0.95);
+    } else if (input?.name && typeof input.name === 'string' && input.name.trim() && input.name !== 'Software Developer') {
       name = input.name.trim();
       recordProvenance('name', 'direct_input', PROVENANCE_LEVELS.USER_PROVIDED, 0.99);
     } else if (questionnaireData?.name) {
@@ -252,14 +258,20 @@ class UnifiedProfileNormalizer {
       });
     };
 
-    // Add projects from all sources in order: direct input > resume > manual > GitHub
-    addProjectsList(input?.projects, 'direct_input');
-    addProjectsList(input?.data?.projects, 'direct_input_data');
-    addProjectsList(resumeData?.projects, 'resume');
-    addProjectsList(questionnaireData?.projects, 'questionnaire');
-    addProjectsList(flatProjects, 'flat_projects');
-    addProjectsList(githubData?.projects, 'github');
-    addProjectsList(manualData?.projects, 'manual');
+    // Add projects: if generating for external GitHub profile, prioritize authentic GitHub repositories
+    if (isExplicitOtherGithub && githubData?.projects?.length > 0) {
+      addProjectsList(githubData.projects, 'github');
+      addProjectsList(input?.projects, 'direct_input');
+      addProjectsList(input?.data?.projects, 'direct_input_data');
+    } else {
+      addProjectsList(input?.projects, 'direct_input');
+      addProjectsList(input?.data?.projects, 'direct_input_data');
+      addProjectsList(resumeData?.projects, 'resume');
+      addProjectsList(questionnaireData?.projects, 'questionnaire');
+      addProjectsList(flatProjects, 'flat_projects');
+      addProjectsList(githubData?.projects, 'github');
+      addProjectsList(manualData?.projects, 'manual');
+    }
 
     projects = allCandidateProjects;
     if (projects.length > 0) {

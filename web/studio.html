@@ -1228,7 +1228,7 @@
 
             <div class="mf-input-group">
               <label class="mf-label" for="ghUsername">GitHub Profile / Username</label>
-              <input type="text" id="ghUsername" class="mf-input" placeholder="e.g. Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin" oninput="updateConfirmationChecks()">
+              <input type="text" id="ghUsername" class="mf-input" placeholder="e.g. Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin" oninput="onGhUsernameChange()">
             </div>
 
             <!-- Smart Resume Dropzone -->
@@ -1820,6 +1820,26 @@
       if (sk && document.getElementById('editorSkills')) document.getElementById('editorSkills').value = sk;
     }
 
+    function onGhUsernameChange() {
+      const gh = document.getElementById('ghUsername')?.value.trim();
+      if (gh && gh.toLowerCase() !== 'abdul-aziz-nooruddin' && gh.toLowerCase() !== 'abdulaziz') {
+        const fn = document.getElementById('manualFullName');
+        if (fn && fn.value === 'Abdul Aziz Nooruddin') {
+          fn.value = '';
+          fn.placeholder = `Loading @${gh} from GitHub...`;
+        }
+        const role = document.getElementById('manualRole');
+        if (role && role.value.includes('Smart Contract Developer')) {
+          role.value = '';
+        }
+        const bio = document.getElementById('manualBio');
+        if (bio && bio.value.includes('Building Real-World Web3 Products')) {
+          bio.value = '';
+        }
+      }
+      updateConfirmationChecks();
+    }
+
     function updateConfirmationChecks() {
       const gh = document.getElementById('ghUsername')?.value.trim();
       const p1 = document.getElementById('proj1Name')?.value.trim();
@@ -2169,21 +2189,25 @@
             : uploadedPhotoData.dataUrl
         } : undefined;
 
+        const isExternalUser = Boolean(ghUser && ghUser.toLowerCase() !== 'abdul-aziz-nooruddin' && ghUser.toLowerCase() !== 'abdulaziz');
+        const defaultName = 'Abdul Aziz Nooruddin';
+        const hasCustomName = fullName && fullName.toLowerCase() !== defaultName.toLowerCase();
+
         const payload = {
-          username: 'abdulaziz',
-          customUrlIdentifier: 'abdulaziz',
-          email: 'abdulaziznoor9876@gmail.com',
-          userEmail: 'abdulaziznoor9876@gmail.com',
-          isVip: true,
-          isVipFounder: true,
+          username: isExternalUser ? ghUser : 'abdulaziz',
+          customUrlIdentifier: isExternalUser ? ghUser : 'abdulaziz',
+          email: isExternalUser ? `${ghUser}@users.noreply.github.com` : 'abdulaziznoor9876@gmail.com',
+          userEmail: isExternalUser ? `${ghUser}@users.noreply.github.com` : 'abdulaziznoor9876@gmail.com',
+          isVip: !isExternalUser,
+          isVipFounder: !isExternalUser,
           githubData: ghUser ? { username: ghUser } : {},
           resumeData: {
             rawBase64: uploadedResumeBase64 || undefined,
             mimeType: uploadedResumeMime || undefined,
-            fullName,
-            title: manualRole,
-            bio: manualBio,
-            projects
+            fullName: isExternalUser && !hasCustomName ? undefined : fullName,
+            title: isExternalUser && !hasCustomName ? undefined : manualRole,
+            bio: isExternalUser && !hasCustomName ? undefined : manualBio,
+            projects: isExternalUser ? [] : projects
           },
           photoData: photoDataPayload,
           preferences: { theme: selectedUniverseKey }
@@ -2217,14 +2241,15 @@
         // Point live canvas iframe to the preview route
         const iframe = document.getElementById('studioLiveIframe');
         if (iframe) {
-          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : `/abdulaziz?embed=1&preview=1&t=${Date.now()}`;
+          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (isExternalUser ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/abdulaziz?embed=1&preview=1&t=${Date.now()}`);
           iframe.src = previewSrc;
         }
 
         // Update URL bar to display draft preview status
         const urlDisplay = document.getElementById('generatedUrlText');
         if (urlDisplay) {
-          urlDisplay.innerHTML = `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid rgba(234,179,8,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">DRAFT PREVIEW</span> ${window.location.origin}/abdulaziz`;
+          const displayUrl = data.liveUrl || (data.previewUrl ? `${window.location.origin}${data.previewUrl}` : `${window.location.origin}/p/${data.siteId}`);
+          urlDisplay.innerHTML = `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid rgba(234,179,8,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">DRAFT PREVIEW</span> ${displayUrl}`;
         }
 
         // Show draft banner in the editor pane

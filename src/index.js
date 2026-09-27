@@ -1396,18 +1396,22 @@ app.post(
         ''
       ).toLowerCase().trim();
 
-      // STRICT: Only genuine authenticated founder session has VIP Founder privileges (Immutable server-side verification)
+      const targetGithubUser = input.githubData?.username ? input.githubData.username.toLowerCase().trim() : '';
+      const isGeneratingForSelf = !targetGithubUser || targetGithubUser === 'abdul-aziz-nooruddin' || targetGithubUser === 'abdulaziz';
+
+      // STRICT: Only genuine authenticated founder session generating for self has VIP Founder privileges
       const isVipFounder = Boolean(
         req.user && (
           req.user.role === 'admin' ||
           req.user.is_admin === true ||
           authenticatedEmail === 'abdulaziznoor9876@gmail.com'
         )
-      );
+      ) && isGeneratingForSelf;
 
       // Determine the user's custom URL identifier (username)
       let userHandle = (
         (isVipFounder ? 'abdulaziz' : '') ||
+        (targetGithubUser && targetGithubUser !== 'abdul-aziz-nooruddin' ? targetGithubUser : '') ||
         req.user?.username ||
         input.username ||
         input.customUrlIdentifier ||
@@ -1418,7 +1422,7 @@ app.post(
         userHandle = `web-${crypto.randomUUID().slice(0, 8)}`;
       }
 
-      const versionSiteId = isVipFounder ? `abdulaziz-${Date.now()}` : `web-${crypto.randomUUID()}`;
+      const versionSiteId = isVipFounder ? `abdulaziz-${Date.now()}` : `${userHandle}-${Date.now()}`;
       const siteId = versionSiteId;
       const siteDir = resolveSafeSiteDir(siteId);
 
