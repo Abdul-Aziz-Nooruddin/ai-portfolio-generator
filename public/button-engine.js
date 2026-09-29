@@ -184,5 +184,5 @@
     }
   };
 
-  console.log('⚡ MyFolio Button Motion & Effects Engine active');
+  console.log('MyFolio Button Motion & Effects Engine active');
 })();

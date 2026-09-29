@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MyFolio — AI 3D Portfolio Generator | Your Resume, Rendered as a World</title>
+  <meta name="description" content="Turn your GitHub, resume, projects, and engineering experience into an interactive 3D portfolio. Real code, real proof, zero templates.">
+  <meta name="keywords" content="AI portfolio generator, 3D portfolio, developer portfolio, GitHub to portfolio, resume to 3D, WebGL, MyFolio">
+  <link rel="canonical" href="https://myfolio.tech/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MyFolio Studio">
+  <meta property="og:title" content="MyFolio — Your Resume, Rendered as a World">
+  <meta property="og:description" content="Turn your GitHub, resume, and experience into an interactive 3D portfolio people can explore.">
+  <meta property="og:url" content="https://myfolio.tech/">
+
+  <!-- Google Fonts: Anton & Condiment -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Condiment&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bgDark: '#010828',
+            cream: '#EFF4FF',
+            neon: '#6FFF00',
+          },
+          fontFamily: {
+            grotesk: ['Anton', 'sans-serif'],
+            condiment: ['Condiment', 'cursive'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          },
+          maxWidth: {
+            content: '1831px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & Babel Standalone -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg-dark: #010828;
+      --cream: #EFF4FF;
+      --neon: #6FFF00;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: #010828;
+      color: #EFF4FF;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Liquid Glass Effect */
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.01);
+      background-blend-mode: luminosity;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: none;
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.4px;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 20%,
+        rgba(255,255,255,0) 40%, rgba(255,255,255,0) 60%,
+        rgba(255,255,255,0.15) 80%, rgba(255,255,255,0.45) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Root React Container -->
+  <div id="root"></div>
+
+  <!-- React TSX / JSX Implementation -->
+  <script type="text/babel">
+    const { useEffect, useState, useRef } = React;
+
+    // SVG Icons
+    function MailIcon({ className = "w-5 h-5" }) {
+      return (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <rect width="20" height="16" x="2" y="4" rx="2"/>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+        </svg>
+      );
+    }
+
+    function TwitterIcon({ className = "w-5 h-5" }) {
+      return (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+        </svg>
+      );
+    }
+
+    function GithubIcon({ className = "w-5 h-5" }) {
+      return (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+          <path d="M9 18c-4.51 2-5-2-7-2"/>
+        </svg>
+      );
+    }
+
+    function ArrowRightIcon({ className = "w-5 h-5" }) {
+      return (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      );
+    }
+
+    function MyFolioApp() {
+      // Ensure all background videos autoplay smoothly
+      useEffect(() => {
+        const playAllVideos = () => {
+          const videos = document.querySelectorAll('video');
+          videos.forEach(v => {
+            v.muted = true;
+            v.defaultMuted = true;
+            v.playsInline = true;
+            const playPromise = v.play();
+            if (playPromise !== undefined) {
+              playPromise.catch(() => {});
+            }
+          });
+        };
+
+        playAllVideos();
+        window.addEventListener('click', playAllVideos, { once: true });
+        window.addEventListener('touchstart', playAllVideos, { once: true });
+      }, []);
+
+      const navLinks = [
+        { label: 'UNIVERSES', href: '/universes.html' },
+        { label: 'HOW IT WORKS', href: '#how-it-works' },
+        { label: 'STUDIO', href: '/studio' },
+        { label: 'EXAMPLES', href: '#collection' },
+        { label: 'ABOUT', href: '/about.html' },
+      ];
+
+      const universes = [
+        {
+          video: "/assets/videos/orbis-card1.mp4",
+          fallbackVideo: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_053923_22c0a6a5-313c-474c-85ff-3b50d25e944a.mp4",
+          title: "CYBER ARCHITECT SPRAWL",
+          archetype: "SYSTEMS & DEVOPS",
+          link: "/studio?universe=cyber-architect-sprawl"
+        },
+        {
+          video: "/assets/videos/orbis-card2.mp4",
+          fallbackVideo: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_054411_511c1b7a-fb2f-42ef-bf6c-32c0b1a06e79.mp4",
+          title: "CHRONO OBSIDIAN SANCTUARY",
+          archetype: "AI RESEARCH & QUANT",
+          link: "/studio?universe=chrono-obsidian-sanctuary"
+        },
+        {
+          video: "/assets/videos/orbis-card3.mp4",
+          fallbackVideo: "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_055427_ac7035b5-9f3b-4289-86fc-941b2432317d.mp4",
+          title: "CIRCUIT CORE HARDWARE",
+          archetype: "ROBOTICS & EMBEDDED",
+          link: "/studio?universe=circuit-core"
+        }
+      ];
+
+      return (
+        <div className="relative w-full bg-[#010828] text-cream min-h-screen">
+          {/* TEXTURE OVERLAY (Fixed z-50 pointer-events-none mix-blend-mode: lighten at opacity: 0.6) */}
+          <div 
+            className="fixed inset-0 z-50 pointer-events-none opacity-60"
+            style={{
+              backgroundImage: 'url(/texture.png)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              mixBlendMode: 'lighten'
+            }}
+          />
+
+          {/* ========================================================================= */}
+          {/* SECTION 1: HERO (Full viewport, rounded-b-[40px] bottom corners clipping video) */}
+          {/* ========================================================================= */}
+          <section id="hero" className="relative w-full min-h-screen rounded-b-[32px] sm:rounded-b-[40px] overflow-hidden flex flex-col justify-between">
+            {/* Background looping muted video positioned at z-0 */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            >
+              <source src="/assets/videos/orbis-hero.mp4" type="video/mp4" />
+              <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_045634_e1c98c76-1265-4f5c-882a-4276f2080894.mp4" type="video/mp4" />
+            </video>
+
+            {/* Header: Logo, Centered Nav, Desktop Social Icons */}
+            <header className="relative z-10 w-full max-w-[1831px] mx-auto px-6 sm:px-10 lg:px-16 pt-8 pb-6 flex items-start justify-between">
+              {/* Left: Logo in Anton, 16px, uppercase */}
+              <a href="/" className="font-grotesk text-[16px] uppercase tracking-wider text-cream no-underline pt-3 flex items-center gap-1.5">
+                <span>MYFOLIO</span>
+                <span className="text-[10px] text-neon font-mono">3D</span>
+              </a>
+
+              {/* Center: Nav bar with liquid-glass effect, rounded-[28px], px-[52px] py-[20px] */}
+              <nav className="hidden lg:flex items-center gap-10 liquid-glass rounded-[28px] px-[52px] py-[20px]">
+                {navLinks.map((link) => (
+                  <a
+                    key={link.label}
+                    href={link.href}
+                    className="font-grotesk text-[13px] uppercase text-cream tracking-wide hover:text-neon transition-colors duration-200 no-underline"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </nav>
+
+              {/* Social / CTAs (Desktop): 3 square buttons (56x56px) stacked vertically in top-right */}
+              <div className="hidden lg:flex flex-col gap-3">
+                <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <GithubIcon className="w-[20px] h-[20px]" />
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <TwitterIcon className="w-[20px] h-[20px]" />
+                </a>
+                <a href="/contact.html" aria-label="Contact" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <MailIcon className="w-[20px] h-[20px]" />
+                </a>
+              </div>
+            </header>
+
+            {/* Hero Main Content */}
+            <div className="relative z-10 w-full max-w-[1831px] mx-auto px-6 sm:px-10 lg:px-16 flex-1 flex flex-col justify-start pt-10 sm:pt-14 lg:pt-20">
+              <div className="relative max-w-[850px] lg:ml-20 xl:ml-32">
+                {/* 3-line Heading matching exact reference typography */}
+                <h1 className="font-grotesk uppercase text-cream text-[40px] sm:text-[60px] md:text-[75px] lg:text-[90px] leading-[1.02] tracking-tight">
+                  YOUR RESUME<br />
+                  RENDERED AS ( A )<br />
+                  LIVING WORLD
+                </h1>
+
+                {/* Overlaid Cursive Accent Text: Condiment font, neon green, mix-blend-exclusion, opacity-90 */}
+                <span 
+                  className="absolute top-[34%] sm:top-[33%] md:top-[32%] right-[-10px] sm:right-[-40px] md:right-[-90px] lg:right-[-120px] font-condiment text-neon text-[28px] sm:text-[38px] md:text-[48px] lg:text-[54px] -rotate-2 mix-blend-exclusion opacity-90 select-none pointer-events-none capitalize whitespace-nowrap"
+                >
+                  Ai portfolio generator
+                </span>
+
+                <p className="mt-6 text-cream/80 font-mono text-[13px] sm:text-[15px] uppercase max-w-xl leading-relaxed tracking-wide">
+                  Your GitHub, resume, and real engineering experience transformed into an interactive 3D universe. Real code, real proof, zero templates.
+                </p>
+
+                {/* CTA Button */}
+                <div className="mt-8 flex items-center gap-5">
+                  <a 
+                    href="/studio"
+                    className="liquid-glass rounded-full px-10 py-4 font-grotesk text-sm sm:text-base uppercase tracking-wider text-cream hover:text-neon hover:scale-[1.03] transition-all duration-200 no-underline inline-flex items-center justify-center cursor-pointer shadow-lg"
+                  >
+                    CREATE MYFOLIO ✦
+                  </a>
+                  <a 
+                    href="/universes.html"
+                    className="font-mono text-xs sm:text-sm uppercase text-cream/70 hover:text-neon transition-colors duration-200 no-underline"
+                  >
+                    EXPLORE UNIVERSES →
+                  </a>
+                </div>
+              </div>
+
+              {/* Social Icons (Mobile): Centered horizontally below heading */}
+              <div className="flex lg:hidden justify-center items-center gap-4 mt-12 z-10">
+                <a href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <GithubIcon className="w-[20px] h-[20px]" />
+                </a>
+                <a href="https://twitter.com" target="_blank" rel="noopener" aria-label="Twitter" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <TwitterIcon className="w-[20px] h-[20px]" />
+                </a>
+                <a href="/contact.html" aria-label="Contact" className="liquid-glass rounded-[1rem] w-[56px] h-[56px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200">
+                  <MailIcon className="w-[20px] h-[20px]" />
+                </a>
+              </div>
+            </div>
+
+            {/* Bottom spacer for padding balance */}
+            <div className="h-16"></div>
+          </section>
+
+          {/* ========================================================================= */}
+          {/* SECTION 2: ABOUT / PHILOSOPHY (Full viewport, looping background video) */}
+          {/* ========================================================================= */}
+          <section id="how-it-works" className="relative w-full min-h-screen overflow-hidden flex flex-col justify-between py-16 md:py-24">
+            {/* Background looping muted video positioned at z-0 */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none"
+            >
+              <source src="/assets/videos/orbis-about.mp4" type="video/mp4" />
+              <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f411.mp4" type="video/mp4" />
+            </video>
+
+            <div className="relative z-10 w-full max-w-[1831px] mx-auto px-6 sm:px-10 lg:px-16 flex-1 flex flex-col justify-between">
+              {/* Top Row: Flex row on desktop, column on mobile */}
+              <div className="flex flex-col md:flex-row md:items-start justify-between gap-8 pt-6">
+                {/* Left: Heading in Anton 32px-60px uppercase with overlaid cursive */}
+                <div className="relative inline-block">
+                  <h2 className="font-grotesk text-[34px] sm:text-[48px] lg:text-[60px] uppercase text-cream leading-[1.02]">
+                    GREAT WORK<br />
+                    SHOULDN'T LOOK FLAT.
+                  </h2>
+                  <div className="absolute -bottom-3 sm:-bottom-5 right-[-20px] sm:right-[-40px] font-condiment text-neon text-[38px] sm:text-[54px] lg:text-[68px] -rotate-3 mix-blend-exclusion select-none pointer-events-none capitalize">
+                    Beyond templates
+                  </div>
+                </div>
+
+                {/* Right: Monospace 14px-16px, uppercase, cream color, max-width 290px */}
+                <div className="max-w-[290px]">
+                  <p className="font-mono text-[13px] sm:text-[15px] uppercase text-cream leading-relaxed tracking-wide">
+                    Repositories contain more than code. They contain your architecture, solved problems, and career evolution. MyFolio turns those signals into an immersive world people can explore.
+                  </p>
+                </div>
+              </div>
+
+              {/* Bottom Row: Authentic descriptive signals at low opacity */}
+              <div className="flex flex-row justify-between items-end gap-12 mt-20 md:mt-32">
+                {/* Left Column: Authentic MyFolio Principles */}
+                <div className="flex flex-col gap-4 max-w-[320px] text-[#010828] lg:text-cream font-mono text-[12px] sm:text-[13px] uppercase leading-relaxed opacity-100 lg:opacity-20 select-none">
+                  <p>GITHUB SIGNALS • RESUME TIMELINES • VERIFIED ARCHITECTURE • REAL ENGINEERING EVIDENCE</p>
+                  <p>NO INVENTED CLAIMS • NO FABRICATED METRICS • TRUE PROFESSIONAL IDENTITY WORLD</p>
+                </div>
+
+                {/* Right Column: Dynamic Universes */}
+                <div className="hidden lg:flex flex-col gap-4 max-w-[320px] text-cream font-mono text-[12px] sm:text-[13px] uppercase leading-relaxed opacity-20 select-none">
+                  <p>CYBER ARCHITECT • CHRONO LUXURY • BOTANICAL CODEX • STEALTH NODE • CIRCUIT CORE</p>
+                  <p>CHOOSE FROM DISTINCT TAILORED UNIVERSES RATHER THAN ONE FIXED FLAT TEMPLATE</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ========================================================================= */}
+          {/* SECTION 3: THE UNIVERSES (Solid #010828 background, no video) */}
+          {/* ========================================================================= */}
+          <section id="collection" className="relative w-full bg-[#010828] py-20 lg:py-32">
+            <div className="relative z-10 w-full max-w-[1831px] mx-auto px-6 sm:px-10 lg:px-16">
+              {/* Header Row: Heading on left, EXPLORE ALL UNIVERSES on right */}
+              <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-16">
+                <div>
+                  <h2 className="font-grotesk text-[32px] sm:text-[46px] lg:text-[60px] uppercase text-cream leading-tight">
+                    COLLECTION OF
+                  </h2>
+                  <div className="ml-12 sm:ml-24 lg:ml-32 flex items-baseline gap-3">
+                    <span className="font-condiment text-neon text-[38px] sm:text-[54px] lg:text-[70px] -rotate-2 capitalize select-none">
+                      Living
+                    </span>
+                    <span className="font-grotesk text-[32px] sm:text-[46px] lg:text-[60px] uppercase text-cream">
+                      UNIVERSES
+                    </span>
+                  </div>
+                </div>
+
+                {/* Right: EXPLORE ALL UNIVERSES button with neon green underline bar */}
+                <a href="/universes.html" className="cursor-pointer group select-none no-underline">
+                  <div className="flex items-baseline gap-3">
+                    <span className="font-grotesk text-[32px] sm:text-[48px] lg:text-[60px] uppercase text-cream leading-none">
+                      EXPLORE
+                    </span>
+                    <div className="flex flex-col font-grotesk text-[20px] sm:text-[28px] lg:text-[36px] uppercase text-cream leading-[0.9]">
+                      <span>ALL</span>
+                      <span>UNIVERSES</span>
+                    </div>
+                  </div>
+                  <div className="w-full bg-neon h-[6px] sm:h-[8px] lg:h-[10px] mt-2 group-hover:opacity-90 transition-opacity"></div>
+                </a>
+              </div>
+
+              {/* Universe Card Grid: 3 cols on desktop, 2 on tablet, 1 on mobile. Gap 24px */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {universes.map((item, idx) => (
+                  <div 
+                    key={idx}
+                    className="liquid-glass rounded-[32px] p-[18px] hover:bg-white/10 transition-colors duration-300 group flex flex-col justify-between"
+                  >
+                    {/* Square video container with rounded-[24px] overflow hidden */}
+                    <div className="relative w-full aspect-square rounded-[24px] overflow-hidden bg-black/40">
+                      <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        className="w-full h-full object-cover"
+                      >
+                        <source src={item.video} type="video/mp4" />
+                        <source src={item.fallbackVideo} type="video/mp4" />
+                      </video>
+                    </div>
+
+                    {/* Bottom Overlay Bar: Liquid-glass with rounded-[20px], px-5 py-4 */}
+                    <div className="liquid-glass rounded-[20px] px-5 py-4 mt-4 flex items-center justify-between">
+                      <div className="flex flex-col">
+                        <span className="text-[11px] font-mono text-cream/70 uppercase tracking-wider">
+                          UNIVERSE: {item.archetype}
+                        </span>
+                        <span className="text-[15px] sm:text-[16px] font-grotesk text-cream tracking-wide mt-0.5">
+                          {item.title}
+                        </span>
+                      </div>
+
+                      {/* Circular purple gradient button (48x48px) with chevron */}
+                      <a 
+                        href={item.link}
+                        aria-label={`Enter ${item.title}`}
+                        className="w-[48px] h-[48px] rounded-full bg-gradient-to-br from-[#b724ff] to-[#7c3aed] flex items-center justify-center text-white shadow-lg shadow-purple-500/50 hover:scale-110 transition-transform duration-200 cursor-pointer no-underline flex-shrink-0"
+                      >
+                        <ArrowRightIcon className="w-5 h-5" />
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ========================================================================= */}
+          {/* SECTION 4: CTA / FINAL SECTION (Full-width native aspect video + Overlay) */}
+          {/* ========================================================================= */}
+          <section id="contact" className="relative w-full bg-[#010828] overflow-hidden">
+            {/* Full-width video at native aspect ratio (w-full h-auto block) */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="w-full h-auto block pointer-events-none relative z-0"
+            >
+              <source src="/assets/videos/orbis-cta.mp4" type="video/mp4" />
+              <source src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260331_055729_72d66327-b59e-4ae9-bb70-de6ccb5ecdb0.mp4" type="video/mp4" />
+            </video>
+
+            {/* Absolute Overlaid Content Container */}
+            <div className="absolute inset-0 z-10 flex flex-col justify-center items-end lg:pr-[20%] lg:pl-[15%] px-6 sm:px-12 pointer-events-none">
+              <div className="relative text-left pointer-events-auto">
+                {/* Small "Go beyond" in Condiment cursive, neon green, mix-blend-exclusion */}
+                <div className="absolute -top-5 sm:-top-9 lg:-top-16 -left-2 sm:-left-6 font-condiment text-neon text-[17px] sm:text-[34px] lg:text-[68px] -rotate-3 mix-blend-exclusion select-none capitalize">
+                  Your story begins
+                </div>
+
+                {/* Heading in Anton, 16px-60px, uppercase */}
+                <div className="font-grotesk text-[20px] sm:text-[36px] md:text-[48px] lg:text-[60px] text-cream uppercase leading-[1.08] tracking-tight">
+                  <div className="mb-4 sm:mb-8 lg:mb-12">READY TO BUILD.</div>
+                  <div>REVEAL YOUR CRAFT.</div>
+                  <div>DEFINE YOUR WORLD.</div>
+                  <div className="text-neon">CREATE MYFOLIO.</div>
+                </div>
+
+                <div className="mt-8 sm:mt-12">
+                  <a 
+                    href="/studio"
+                    className="liquid-glass rounded-full px-12 py-5 font-grotesk text-base sm:text-lg uppercase tracking-wider text-cream hover:text-neon hover:scale-[1.03] transition-all duration-200 no-underline inline-flex items-center justify-center cursor-pointer shadow-xl"
+                  >
+                    ENTER STUDIO ✦
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Social Icons (Bottom-left, absolute positioned at left-[8%], bottom-[12%] to bottom-[20%]) */}
+            <div className="absolute left-[8%] bottom-[12%] sm:bottom-[16%] lg:bottom-[20%] z-20">
+              <div className="liquid-glass rounded-[0.5rem] sm:rounded-[1rem] lg:rounded-[1.25rem] overflow-hidden flex flex-col">
+                <a 
+                  href="https://github.com" 
+                  target="_blank" 
+                  rel="noopener"
+                  aria-label="GitHub"
+                  className="w-[14vw] sm:w-[14.375rem] md:w-[10.78125rem] lg:w-[16.77rem] h-[48px] sm:h-[64px] md:h-[72px] lg:h-[84px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200 border-b border-white/10"
+                >
+                  <GithubIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                </a>
+                <a 
+                  href="https://twitter.com" 
+                  target="_blank" 
+                  rel="noopener"
+                  aria-label="Twitter"
+                  className="w-[14vw] sm:w-[14.375rem] md:w-[10.78125rem] lg:w-[16.77rem] h-[48px] sm:h-[64px] md:h-[72px] lg:h-[84px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200 border-b border-white/10"
+                >
+                  <TwitterIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                </a>
+                <a 
+                  href="/contact.html" 
+                  aria-label="Contact"
+                  className="w-[14vw] sm:w-[14.375rem] md:w-[10.78125rem] lg:w-[16.77rem] h-[48px] sm:h-[64px] md:h-[72px] lg:h-[84px] flex items-center justify-center text-cream hover:text-neon hover:bg-white/10 transition-colors duration-200"
+                >
+                  <MailIcon className="w-5 h-5 sm:w-6 sm:h-6" />
+                </a>
+              </div>
+            </div>
+          </section>
+
+          {/* Minimal Editorial Footer */}
+          <footer className="relative z-10 w-full bg-[#010828] border-t border-white/10 px-6 sm:px-12 py-8 flex flex-col sm:flex-row justify-between items-center text-xs font-mono text-cream/60 gap-4">
+            <div>MYFOLIO® • YOUR WORK. YOUR STORY. YOUR WORLD.</div>
+            <div className="flex gap-6">
+              <a href="/privacy.html" className="text-cream/60 hover:text-cream no-underline">PRIVACY</a>
+              <a href="/terms.html" className="text-cream/60 hover:text-cream no-underline">TERMS</a>
+              <a href="/studio" className="text-neon hover:text-cream no-underline">STUDIO</a>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<MyFolioApp />);
+  </script>
+</body>
+</html>

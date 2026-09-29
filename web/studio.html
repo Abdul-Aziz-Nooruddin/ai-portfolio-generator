@@ -1127,7 +1127,7 @@
     </div>
 
     <div class="topbar-right-actions">
-      <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenGeneratedLive">
+      <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenGeneratedLive">
         <span>Preview</span> &nearr;
       </a>
       <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyGeneratedUrl()">
@@ -1141,7 +1141,7 @@
           </div>
         </div>
         <div class="fluid-btn-content" id="fluidBtnContent">
-          <span class="fluid-btn-icon" id="fluidBtnIcon">⚡</span>
+          <span class="fluid-btn-icon" id="fluidBtnIcon"></span>
           <span class="fluid-btn-text" id="fluidBtnText">Publish Live</span>
           <span class="fluid-btn-percent" id="fluidBtnPercent" style="display:none;">0%</span>
         </div>
@@ -1188,7 +1188,7 @@
           <span>✦ 1. Create Portfolio</span>
         </button>
         <button type="button" class="studio-mode-tab" id="tabBtnEdit" onclick="switchStudioMode('edit')">
-          <span>⚙️ 2. Advanced Editor</span>
+          <span> 2. Advanced Editor</span>
         </button>
       </div>
 
@@ -1228,14 +1228,14 @@
 
             <div class="mf-input-group">
               <label class="mf-label" for="ghUsername">GitHub Profile / Username</label>
-              <input type="text" id="ghUsername" class="mf-input" placeholder="e.g. Abdul-Aziz-Nooruddin" value="Abdul-Aziz-Nooruddin" oninput="onGhUsernameChange()">
+              <input type="text" id="ghUsername" class="mf-input" placeholder="e.g. alex-rivers" value="" oninput="onGhUsernameChange()">
             </div>
 
             <!-- Smart Resume Dropzone -->
             <div id="studioResumeDropZone" style="border:1px dashed var(--mf-border-glow); border-radius:var(--mf-radius-md); padding:14px; text-align:center; background:rgba(8,13,32,0.6); cursor:pointer; margin-bottom:10px;" onclick="document.getElementById('resumeUploadInput').click()">
               <input type="file" id="resumeUploadInput" accept=".pdf,.docx,.txt,image/*" style="display:none;" onchange="handleResumeFileSelected(this)">
               <div id="resumeUploadLabel" style="font-size:12px; color:var(--mf-text-secondary);">
-                📄 Drop Resume (PDF, DOCX, TXT)
+                 Drop Resume (PDF, DOCX, TXT)
               </div>
               <div id="resumeUploadHelp" style="font-size:10.5px; color:var(--mf-text-muted); margin-top:2px;">
                 Auto-extracts skills, projects &amp; timelines
@@ -1262,59 +1262,59 @@
 
             <!-- Certificate preview if exists -->
             <div id="certPreviewContainer" style="display:none; align-items:center; gap:8px; margin-top:6px; font-size:11.5px; color:var(--mf-accent-cyan, #38bdf8);">
-              <span>📜</span>
+              <span></span>
               <span id="certPreviewName">Certificate attached</span>
             </div>
 
             <!-- Collapsible Quick Manual Editor Trigger -->
             <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" style="width:100%; margin-top:10px; font-size:11.5px; justify-content:center;" onclick="toggleQuickManualDetails()">
-              <span id="toggleManualLabel">✎ Edit identity &amp; projects manually &darr;</span>
+              <span id="toggleManualLabel"> Edit identity &amp; projects manually &darr;</span>
             </button>
 
             <!-- Collapsible manual info block -->
             <div id="quickManualDetailsDrawer" style="display:none; flex-direction:column; gap:10px; margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:10px;">
               <div class="mf-input-group">
                 <label class="mf-label" for="manualFullName">Full Name</label>
-                <input type="text" id="manualFullName" class="mf-input" placeholder="Abdul Aziz Nooruddin" value="Abdul Aziz Nooruddin" oninput="updateConfirmationChecks()">
+                <input type="text" id="manualFullName" class="mf-input" placeholder="e.g. Alex Rivers" value="" oninput="updateConfirmationChecks()">
               </div>
 
               <div class="mf-input-group">
                 <label class="mf-label" for="manualRole">Professional Role</label>
-                <input type="text" id="manualRole" class="mf-input" placeholder="Full-Stack Engineer" value="Full-Stack Engineer &amp; Systems Architect" oninput="updateConfirmationChecks()">
+                <input type="text" id="manualRole" class="mf-input" placeholder="e.g. Full-Stack Engineer &amp; Systems Architect" value="" oninput="updateConfirmationChecks()">
               </div>
 
               <div class="mf-input-group">
                 <label class="mf-label" for="manualBio">Narrative Summary</label>
-                <textarea id="manualBio" class="mf-textarea" style="min-height:55px;" placeholder="Crafting high-scale web platforms and spatial interfaces." oninput="updateConfirmationChecks()">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
+                <textarea id="manualBio" class="mf-textarea" style="min-height:55px;" placeholder="e.g. Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces." oninput="updateConfirmationChecks()"></textarea>
               </div>
 
               <!-- Featured Project 1 -->
               <div style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
                 <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-blue); margin-bottom:6px;">Featured Case Study 1</div>
-                <input type="text" id="proj1Name" class="mf-input" placeholder="Project Name" value="MyFolio Generative Platform" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
-                <input type="text" id="proj1Tech" class="mf-input" placeholder="Technologies (e.g. Three.js, Node.js)" value="Three.js, WebGL, Node.js, GSAP" style="margin-bottom:6px;">
-                <textarea id="proj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
-                <input type="hidden" id="proj1Github" value="https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator">
-                <input type="hidden" id="proj1Live" value="https://myfolio.tech">
+                <input type="text" id="proj1Name" class="mf-input" placeholder="e.g. Distributed Consensus Engine" value="" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj1Tech" class="mf-input" placeholder="Technologies (e.g. Three.js, Node.js)" value="" style="margin-bottom:6px;">
+                <textarea id="proj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved"></textarea>
+                <input type="hidden" id="proj1Github" value="">
+                <input type="hidden" id="proj1Live" value="">
               </div>
 
               <!-- Featured Project 2 -->
               <div id="projectCard2" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
                 <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-cyan, #38bdf8); margin-bottom:6px;">Featured Case Study 2</div>
-                <input type="text" id="proj2Name" class="mf-input" placeholder="Project Name" value="Algorand Python Smart Contracts" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
-                <input type="text" id="proj2Tech" class="mf-input" placeholder="Technologies" value="Python, Algorand, Web3" style="margin-bottom:6px;">
-                <textarea id="proj2Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Decentralized verifiable ledger logic and algorithmic settlements.</textarea>
-                <input type="hidden" id="proj2Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+                <input type="text" id="proj2Name" class="mf-input" placeholder="e.g. Spatial Audio Visualizer" value="" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj2Tech" class="mf-input" placeholder="Technologies (e.g. WebGL, Audio API)" value="" style="margin-bottom:6px;">
+                <textarea id="proj2Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved"></textarea>
+                <input type="hidden" id="proj2Github" value="">
                 <input type="hidden" id="proj2Live" value="">
               </div>
 
               <!-- Featured Project 3 -->
               <div id="projectCard3" style="background:rgba(5,8,23,0.5); border:1px solid var(--mf-border); border-radius:6px; padding:10px;">
                 <div style="font-size:11.5px; font-weight:600; color:var(--mf-accent-gold, #FCD34D); margin-bottom:6px;">Featured Case Study 3</div>
-                <input type="text" id="proj3Name" class="mf-input" placeholder="Project Name" value="Autonomous Edge Agent" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
-                <input type="text" id="proj3Tech" class="mf-input" placeholder="Technologies" value="TypeScript, Fastify, AI" style="margin-bottom:6px;">
-                <textarea id="proj3Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved">Low-latency reasoning pipelines and streaming telemetry.</textarea>
-                <input type="hidden" id="proj3Github" value="https://github.com/Abdul-Aziz-Nooruddin">
+                <input type="text" id="proj3Name" class="mf-input" placeholder="e.g. Autonomous Edge Agent" value="" style="margin-bottom:6px;" oninput="updateConfirmationChecks()">
+                <input type="text" id="proj3Tech" class="mf-input" placeholder="Technologies (e.g. TypeScript, Fastify)" value="" style="margin-bottom:6px;">
+                <textarea id="proj3Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved"></textarea>
+                <input type="hidden" id="proj3Github" value="">
                 <input type="hidden" id="proj3Live" value="">
               </div>
             </div>
@@ -1326,19 +1326,30 @@
           <!-- STEP 2: CHOOSE YOUR TEMPLATE -->
           <div class="workflow-card" id="stepSectionWorld">
             <div class="workflow-step-badge">2. Active Portfolio Template</div>
-            <div class="workflow-card-title">3D Creator &amp; Engineer Template</div>
-            <div class="workflow-card-desc">Minimalist dark obsidian aesthetic with Kanit display typography, dual-row marquee, character-reveal mission, domain bentos, inverted services, and sticky-stacking case studies.</div>
+            <div class="workflow-card-title">Choose Your Design Template</div>
+            <div class="workflow-card-desc">Select from our 2 production-grade portfolio architectures crafted for impact.</div>
 
-            <!-- Single Curated Template: 3D Creator & Engineer -->
-            <div class="world-category-grid" id="curatedWorldsGrid" style="grid-template-columns: 1fr;">
-              <div class="world-cat-card selected" onclick="selectCuratedWorld('jack-3d-creator', this)" style="border: 2px solid var(--mf-accent-blue, #38bdf8); background: rgba(56, 189, 248, 0.08); padding: 14px; border-radius: 12px; display: flex; gap: 16px; align-items: center; cursor: pointer;">
-                <div class="world-cat-thumb" style="width: 80px; height: 80px; border-radius: 10px; background-image:url('/assets/marquee/mesh_quantum_core_3d.png'); background-size: cover; background-position: center; background-color: #0c0c0c; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></div>
-                <div class="world-cat-body">
-                  <div class="world-cat-name" style="font-size: 16px; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 8px;">
+            <!-- Curated Templates: Jack 3D Creator & Nadia Personal Brand -->
+            <div class="world-category-grid" id="curatedWorldsGrid" style="display: flex; flex-direction: column; gap: 12px;">
+              <div class="world-cat-card selected" onclick="selectCuratedWorld('jack-3d-creator', this)" style="border: 2px solid var(--mf-accent-blue, #38bdf8); background: rgba(56, 189, 248, 0.08); padding: 14px; border-radius: 12px; display: flex; gap: 16px; align-items: center; cursor: pointer; transition: all 0.2s ease;">
+                <div class="world-cat-thumb" style="width: 72px; height: 72px; border-radius: 10px; background-image:url('/assets/marquee/mesh_quantum_core_3d.png'); background-size: cover; background-position: center; background-color: #0c0c0c; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></div>
+                <div class="world-cat-body" style="flex: 1;">
+                  <div class="world-cat-name" style="font-size: 15px; font-weight: 700; color: #ffffff; display: flex; align-items: center; justify-content: space-between;">
                     <span>3D Creator &amp; Engineer</span>
-                    <span style="font-size: 10px; padding: 2px 8px; border-radius: 9999px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-family: var(--mf-font-mono);">ACTIVE TEMPLATE</span>
+                    <span class="active-badge" style="font-size: 10px; padding: 2px 8px; border-radius: 9999px; background: rgba(56, 189, 248, 0.2); color: #38bdf8; font-family: var(--mf-font-mono);">ACTIVE</span>
                   </div>
-                  <div class="world-cat-desc" style="font-size: 12px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">Bespoke dark theme (#0C0C0C) • Magnetic avatar • 21-asset dual marquee • Character scroll-reveal • Verified credentials • Stacking project cards</div>
+                  <div class="world-cat-desc" style="font-size: 11.5px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">Bespoke dark theme (#0C0C0C) • Magnetic avatar • 21-asset dual marquee • Character scroll-reveal • Stacking project cards</div>
+                </div>
+              </div>
+
+              <div class="world-cat-card" onclick="selectCuratedWorld('nadia-brand', this)" style="border: 1px solid rgba(255,255,255,0.12); background: rgba(255, 77, 48, 0.05); padding: 14px; border-radius: 12px; display: flex; gap: 16px; align-items: center; cursor: pointer; transition: all 0.2s ease;">
+                <div class="world-cat-thumb" style="width: 72px; height: 72px; border-radius: 10px; background-image:url('/assets/nadia_bio.jpg'); background-size: cover; background-position: center; background-color: #0f0f0f; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.15);"></div>
+                <div class="world-cat-body" style="flex: 1;">
+                  <div class="world-cat-name" style="font-size: 15px; font-weight: 700; color: #ffffff; display: flex; align-items: center; justify-content: space-between;">
+                    <span>Nadia Personal Brand</span>
+                    <span class="active-badge" style="font-size: 10px; padding: 2px 8px; border-radius: 9999px; background: rgba(255, 77, 48, 0.2); color: #ff4d30; font-family: var(--mf-font-mono); display: none;">ACTIVE</span>
+                  </div>
+                  <div class="world-cat-desc" style="font-size: 11.5px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">Editorial near-black (#0F0F0F) • Electric coral accents • Edge-to-edge typography &amp; overlapping portrait • Talk directory with hover previews</div>
                 </div>
               </div>
             </div>
@@ -1398,7 +1409,7 @@
               Your 3D portfolio preview is loaded on the canvas. Tweak details below, or click <strong>Publish Live</strong> when you're ready to launch to your domain.
             </p>
             <button type="button" class="primary-generate-btn" style="background:linear-gradient(135deg, #10b981, #059669); box-shadow:0 4px 14px rgba(16,185,129,0.3); padding:10px 16px; font-size:12px;" onclick="publishDraftPortfolio()">
-              <span>Publish Portfolio Live 🚀</span>
+              <span>Publish Portfolio Live </span>
             </button>
           </div>
 
@@ -1415,15 +1426,15 @@
               <div class="workflow-card-title" style="color:var(--mf-accent-blue);">Hero &amp; Identity</div>
               <div class="mf-input-group" style="margin-top:6px;">
                 <label class="mf-label">Full Name</label>
-                <input type="text" id="editorFullName" class="mf-input" value="Abdul Aziz Nooruddin" oninput="syncEditorToForm('name', this.value)">
+                <input type="text" id="editorFullName" class="mf-input" placeholder="e.g. Alex Rivers" value="" oninput="syncEditorToForm('name', this.value)">
               </div>
               <div class="mf-input-group" style="margin-top:6px;">
                 <label class="mf-label">Professional Role</label>
-                <input type="text" id="editorRole" class="mf-input" value="Full-Stack Engineer &amp; Systems Architect" oninput="syncEditorToForm('role', this.value)">
+                <input type="text" id="editorRole" class="mf-input" placeholder="e.g. Full-Stack Engineer &amp; Systems Architect" value="" oninput="syncEditorToForm('role', this.value)">
               </div>
               <div class="mf-input-group" style="margin-top:6px;">
                 <label class="mf-label">Bio Narrative</label>
-                <textarea id="editorBio" class="mf-textarea" style="min-height:55px;" oninput="syncEditorToForm('bio', this.value)">Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces.</textarea>
+                <textarea id="editorBio" class="mf-textarea" style="min-height:55px;" placeholder="e.g. Crafting high-scale web platforms, distributed systems, and bespoke spatial 3D WebGL interfaces." oninput="syncEditorToForm('bio', this.value)"></textarea>
               </div>
             </div>
 
@@ -1431,24 +1442,24 @@
             <div class="workflow-card">
               <div class="workflow-card-title" style="color:var(--mf-accent-cyan, #38bdf8);">Featured Case Studies</div>
               <div style="display:flex; flex-direction:column; gap:8px; margin-top:6px;">
-                <input type="text" id="editorProj1Name" class="mf-input" value="MyFolio Generative Platform" placeholder="Project 1 Name" oninput="syncEditorToForm('p1name', this.value)">
-                <input type="text" id="editorProj1Tech" class="mf-input" value="Three.js, WebGL, Node.js, GSAP" placeholder="Tech stack" oninput="syncEditorToForm('p1tech', this.value)">
-                <textarea id="editorProj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Architecture solved" oninput="syncEditorToForm('p1desc', this.value)">Engineered end-to-end procedural WebGL portfolio generator with instantaneous multi-axis camera motion.</textarea>
+                <input type="text" id="editorProj1Name" class="mf-input" value="" placeholder="e.g. Distributed Consensus Engine" oninput="syncEditorToForm('p1name', this.value)">
+                <input type="text" id="editorProj1Tech" class="mf-input" value="" placeholder="Technologies (e.g. Three.js, Node.js)" oninput="syncEditorToForm('p1tech', this.value)">
+                <textarea id="editorProj1Desc" class="mf-textarea" style="min-height:45px;" placeholder="Problem &amp; architecture solved" oninput="syncEditorToForm('p1desc', this.value)"></textarea>
               </div>
             </div>
 
             <!-- Skills Section -->
             <div class="workflow-card">
               <div class="workflow-card-title" style="color:var(--mf-accent-gold, #FCD34D);">Skills &amp; Technologies</div>
-              <textarea id="editorSkills" class="mf-textarea" style="min-height:50px; margin-top:6px;" oninput="syncEditorToForm('skills', this.value)">JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS</textarea>
+              <textarea id="editorSkills" class="mf-textarea" style="min-height:50px; margin-top:6px;" placeholder="e.g. JavaScript, TypeScript, Python, Three.js, WebGL, Docker" oninput="syncEditorToForm('skills', this.value)"></textarea>
             </div>
 
             <!-- Contact Section -->
             <div class="workflow-card">
               <div class="workflow-card-title">Contact Coordinates</div>
               <div style="display:flex; flex-direction:column; gap:6px; margin-top:6px;">
-                <input type="email" id="editorEmail" class="mf-input" value="abdulaziznoor9876@gmail.com" placeholder="Email">
-                <input type="text" id="editorLocation" class="mf-input" value="Global / Edge" placeholder="Location">
+                <input type="email" id="editorEmail" class="mf-input" value="" placeholder="e.g. alex.rivers@example.com">
+                <input type="text" id="editorLocation" class="mf-input" value="" placeholder="e.g. San Francisco, CA / Remote">
               </div>
             </div>
           </div>
@@ -1505,10 +1516,10 @@
                 We analyzed your technical case studies. Here are fast 1-click improvements:
               </div>
               <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('refine_bio')">
-                ✍️ Polish Hero Narrative Bio
+                 Polish Hero Narrative Bio
               </button>
               <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('prioritize_projects')">
-                ⚡ Highlight Systems Architecture
+                 Highlight Systems Architecture
               </button>
             </div>
           </div>
@@ -1520,16 +1531,16 @@
         </div>
 
         <!-- Other story metadata fields preserved -->
-        <input type="hidden" id="manualTagline" value="Creative Systems Engineer">
-        <input type="hidden" id="manualEmail" value="abdulaziznoor9876@gmail.com">
-        <input type="hidden" id="manualLocation" value="Global / Edge">
-        <input type="hidden" id="manualGithub" value="https://github.com/Abdul-Aziz-Nooruddin">
-        <input type="hidden" id="manualLinkedin" value="https://linkedin.com/in/abdul-aziz-nooruddin">
-        <input type="hidden" id="manualSkills" value="JavaScript, TypeScript, Python, Three.js, WebGL, Docker, TailwindCSS">
-        <input type="hidden" id="manualLanguages" value="English, Hindi, Urdu">
-        <input type="hidden" id="manualExperience" value="Lead Full-Stack Architect building modern creative platforms.">
-        <input type="hidden" id="manualEducation" value="B.S. in Computer Science">
-        <input type="hidden" id="manualCertifications" value="Certified Cloud Solutions Architect">
+        <input type="hidden" id="manualTagline" value="">
+        <input type="hidden" id="manualEmail" value="">
+        <input type="hidden" id="manualLocation" value="">
+        <input type="hidden" id="manualGithub" value="">
+        <input type="hidden" id="manualLinkedin" value="">
+        <input type="hidden" id="manualSkills" value="">
+        <input type="hidden" id="manualLanguages" value="">
+        <input type="hidden" id="manualExperience" value="">
+        <input type="hidden" id="manualEducation" value="">
+        <input type="hidden" id="manualCertifications" value="">
 
         <!-- Hidden certificate container required by script -->
         <div id="certificatesListContainer" style="display:none;"></div>
@@ -1556,20 +1567,20 @@
 
         <div style="display:flex; align-items:center; gap:8px;">
           <span style="font-size:11.5px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);" id="generatedUrlText">
-            https://www.myfolio.tech/abdulaziz
+            https://www.myfolio.tech/jack-3d
           </span>
           <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="reloadStudioCanvas()" title="Reload Canvas">
             ↻
           </button>
           <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="toggleCanvasFullscreen()" title="Fullscreen">
-            ⛶
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
           </button>
         </div>
       </div>
 
       <div class="viewport-canvas-frame">
         <div class="spatial-viewport-screen" id="viewportScreen">
-          <iframe id="studioLiveIframe" class="spatial-viewport-iframe" src="/abdulaziz?embed=1" title="Live 3D Portfolio Canvas"></iframe>
+          <iframe id="studioLiveIframe" class="spatial-viewport-iframe" src="/jack-3d?embed=1" title="Live 3D Portfolio Canvas"></iframe>
         </div>
       </div>
     </main>
@@ -1593,7 +1604,7 @@
           Your profile signals strong systems programming and WebGL shader architecture. We recommend prioritizing high-concurrency case studies.
         </div>
         <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('prioritize_projects')">
-          ⚡ Prioritize Systems Projects
+           Prioritize Systems Projects
         </button>
       </div>
 
@@ -1616,7 +1627,7 @@
           "Headline communicates your role clearly. Your summary could emphasize distributed systems and open-source contributions."
         </div>
         <button type="button" class="ai-quick-btn" onclick="applyAiSuggestion('refine_bio')">
-          ✍️ Polish Narrative Bio
+           Polish Narrative Bio
         </button>
       </div>
 
@@ -1646,21 +1657,21 @@
     <div id="studioToastModal" class="studio-toast-modal" onclick="if(event.target===this) dismissStudioToast()">
       <div class="toast-modal-card">
         <div class="toast-modal-title">
-          <span>🎉</span>
+          <span></span>
           <span>Portfolio Synthesized!</span>
         </div>
         <p class="toast-modal-sub">
           Your bespoke 3D WebGL universe is live and deployed on your verified custom domain.
         </p>
         <div class="toast-url-preview">
-          <span id="modalToastUrl">https://www.myfolio.tech/abdulaziz</span>
+          <span id="modalToastUrl">https://www.myfolio.tech/jack-3d</span>
           <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyToastUrl()" title="Copy Link" style="font-size:11.5px; padding:4px 8px;">
             Copy
           </button>
         </div>
         <div style="display:flex; justify-content:flex-end; gap:10px;">
           <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="dismissStudioToast()">Close</button>
-          <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="modalOpenBtn">
+          <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="modalOpenBtn">
             <span>Open Live Portfolio</span> &nearr;
           </a>
         </div>
@@ -1717,10 +1728,38 @@
 
     function selectCuratedWorld(key, el) {
       selectedUniverseKey = key || 'jack-3d-creator';
-      document.querySelectorAll('.world-cat-card').forEach(c => c.classList.remove('selected'));
-      if (el) el.classList.add('selected');
+      document.querySelectorAll('#curatedWorldsGrid .world-cat-card').forEach(c => {
+        c.classList.remove('selected');
+        c.style.border = '1px solid rgba(255,255,255,0.12)';
+        const b = c.querySelector('.active-badge');
+        if (b) b.style.display = 'none';
+      });
+      if (el) {
+        el.classList.add('selected');
+        const isNadia = selectedUniverseKey === 'nadia-brand';
+        const color = isNadia ? '#ff4d30' : 'var(--mf-accent-blue, #38bdf8)';
+        el.style.border = `2px solid ${color}`;
+        const b = el.querySelector('.active-badge');
+        if (b) {
+          b.style.display = 'inline-block';
+          b.style.color = color;
+          b.style.background = isNadia ? 'rgba(255, 77, 48, 0.2)' : 'rgba(56, 189, 248, 0.2)';
+        }
+      }
+
+      // Update iframe to showcase the selected design template (not a user's generated portfolio)
+      const iframe = document.getElementById('studioLiveIframe');
+      const urlDisplay = document.getElementById('generatedUrlText');
+      const previewBtn = document.getElementById('btnOpenGeneratedLive');
+
+      const designUrl = selectedUniverseKey === 'nadia-brand' ? '/nadia' : '/jack-3d';
+      if (iframe) iframe.src = `${designUrl}?embed=1`;
+      if (urlDisplay) urlDisplay.textContent = `https://www.myfolio.tech${designUrl}`;
+      if (previewBtn) previewBtn.href = designUrl;
+
       updateConfirmationChecks();
-      showToast('Template active: 3D Creator & Engineer', 'info');
+      const displayName = selectedUniverseKey === 'nadia-brand' ? 'Nadia Personal Brand' : 'Jack 3D Creator';
+      showToast('Template active: ' + displayName, 'info');
     }
 
     function toggleAllWorldsGrid() {
@@ -1737,10 +1776,10 @@
       if (!drawer) return;
       if (drawer.style.display === 'none' || !drawer.style.display) {
         drawer.style.display = 'flex';
-        if (label) label.innerHTML = '✎ Hide manual details &uarr;';
+        if (label) label.innerHTML = ' Hide manual details &uarr;';
       } else {
         drawer.style.display = 'none';
-        if (label) label.innerHTML = '✎ Edit identity &amp; projects manually &darr;';
+        if (label) label.innerHTML = ' Edit identity &amp; projects manually &darr;';
       }
     }
 
@@ -1821,22 +1860,6 @@
     }
 
     function onGhUsernameChange() {
-      const gh = document.getElementById('ghUsername')?.value.trim();
-      if (gh && gh.toLowerCase() !== 'abdul-aziz-nooruddin' && gh.toLowerCase() !== 'abdulaziz') {
-        const fn = document.getElementById('manualFullName');
-        if (fn && fn.value === 'Abdul Aziz Nooruddin') {
-          fn.value = '';
-          fn.placeholder = `Loading @${gh} from GitHub...`;
-        }
-        const role = document.getElementById('manualRole');
-        if (role && role.value.includes('Smart Contract Developer')) {
-          role.value = '';
-        }
-        const bio = document.getElementById('manualBio');
-        if (bio && bio.value.includes('Building Real-World Web3 Products')) {
-          bio.value = '';
-        }
-      }
       updateConfirmationChecks();
     }
 
@@ -1927,8 +1950,8 @@
 
       const label = document.getElementById('resumeUploadLabel');
       const help = document.getElementById('resumeUploadHelp');
-      if (label) label.innerHTML = `⏳ <strong>${file.name}</strong>`;
-      if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">⚡ Extracting profile & projects with AI...</span>`;
+      if (label) label.innerHTML = `<strong>${file.name}</strong>`;
+      if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);"> Extracting profile & projects with AI...</span>`;
       showToast(`Uploading & parsing "${file.name}"...`, 'sparkle');
 
       const reader = new FileReader();
@@ -1973,16 +1996,16 @@
               }
             }
 
-            if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+            if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
             if (help) help.innerHTML = `<span style="color:var(--mf-success);">✦ AI Extracted &amp; Populated</span>`;
             showToast(`Resume "${file.name}" parsed! Skills & projects updated.`, 'success');
           } else {
-            if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+            if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
             if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
             showToast(`Resume "${file.name}" attached successfully!`, 'info');
           }
         } catch (err) {
-          if (label) label.innerHTML = `✅ <strong>${file.name}</strong>`;
+          if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
           if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
           showToast(`Resume "${file.name}" attached!`, 'info');
         }
@@ -2020,10 +2043,10 @@
       if (!banner || !text) return;
 
       const icons = {
-        success: '✅',
-        sparkle: '✨',
+        success: '',
+        sparkle: '',
         info: '✦',
-        error: '⚠️'
+        error: ''
       };
       if (icon) icon.textContent = icons[type] || '✦';
       text.textContent = msg;
@@ -2050,7 +2073,7 @@
     }
 
     function copyToastUrl() {
-      const url = document.getElementById('modalToastUrl')?.textContent || 'https://abdulaziz.myfolio.tech';
+      const url = document.getElementById('modalToastUrl')?.textContent || 'https://www.myfolio.tech/jack-3d';
       navigator.clipboard.writeText(url);
       showToast('Copied: ' + url, 'success');
     }
@@ -2125,7 +2148,7 @@
       btn.classList.remove('fully-filled');
       if (fluidBtnPercent) fluidBtnPercent.style.display = 'inline-block';
       if (fluidBtnText) fluidBtnText.textContent = 'Synthesizing...';
-      if (fluidBtnIcon) fluidBtnIcon.textContent = '🌊';
+      if (fluidBtnIcon) fluidBtnIcon.textContent = '';
 
       // Start realistic fluid water-fill rising animation
       let currentProgress = 5;
@@ -2189,25 +2212,24 @@
             : uploadedPhotoData.dataUrl
         } : undefined;
 
-        const isExternalUser = Boolean(ghUser && ghUser.toLowerCase() !== 'abdul-aziz-nooruddin' && ghUser.toLowerCase() !== 'abdulaziz');
-        const defaultName = 'Abdul Aziz Nooruddin';
-        const hasCustomName = fullName && fullName.toLowerCase() !== defaultName.toLowerCase();
+        const username = ghUser || (fullName ? fullName.toLowerCase().replace(/[^a-z0-9]/g, '-') : 'creator');
+        const userEmail = document.getElementById('editorEmail')?.value.trim() || (ghUser ? `${ghUser}@users.noreply.github.com` : 'creator@myfolio.tech');
 
         const payload = {
-          username: isExternalUser ? ghUser : 'abdulaziz',
-          customUrlIdentifier: isExternalUser ? ghUser : 'abdulaziz',
-          email: isExternalUser ? `${ghUser}@users.noreply.github.com` : 'abdulaziznoor9876@gmail.com',
-          userEmail: isExternalUser ? `${ghUser}@users.noreply.github.com` : 'abdulaziznoor9876@gmail.com',
-          isVip: !isExternalUser,
-          isVipFounder: !isExternalUser,
+          username: username,
+          customUrlIdentifier: username,
+          email: userEmail,
+          userEmail: userEmail,
+          isVip: true,
+          isVipFounder: false,
           githubData: ghUser ? { username: ghUser } : {},
           resumeData: {
             rawBase64: uploadedResumeBase64 || undefined,
             mimeType: uploadedResumeMime || undefined,
-            fullName: isExternalUser && !hasCustomName ? undefined : fullName,
-            title: isExternalUser && !hasCustomName ? undefined : manualRole,
-            bio: isExternalUser && !hasCustomName ? undefined : manualBio,
-            projects: isExternalUser ? [] : projects
+            fullName: fullName || undefined,
+            title: manualRole || undefined,
+            bio: manualBio || undefined,
+            projects: projects
           },
           photoData: photoDataPayload,
           preferences: { theme: selectedUniverseKey }
@@ -2235,13 +2257,13 @@
         if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
         btn.classList.remove('fully-filled');
         btn.classList.add('ready-to-publish');
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '🚀';
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '';
         if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
 
         // Point live canvas iframe to the preview route
         const iframe = document.getElementById('studioLiveIframe');
         if (iframe) {
-          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (isExternalUser ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/abdulaziz?embed=1&preview=1&t=${Date.now()}`);
+          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (data.siteId ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/jack-3d?embed=1&preview=1&t=${Date.now()}`);
           iframe.src = previewSrc;
         }
 
@@ -2300,7 +2322,7 @@
       try {
         if (btn) btn.disabled = true;
         if (fluidBtnText) fluidBtnText.textContent = 'Publishing...';
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '⏳';
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '···';
         showToast('Publishing live...', 'info');
 
         const res = await fetch('/api/portfolio/publish', {
@@ -2309,7 +2331,7 @@
           credentials: 'include',
           body: JSON.stringify({
             siteId: currentDraftSiteId,
-            handle: 'abdulaziz'
+            handle: currentDraftSiteId || 'portfolio'
           })
         });
 
@@ -2317,7 +2339,7 @@
         if (!res.ok) throw new Error(data.error || 'Failed to publish live.');
 
         isPortfolioPublished = true;
-        const liveSubdomain = data.liveUrl || (window.location.origin + '/abdulaziz');
+        const liveSubdomain = data.liveUrl || (window.location.origin + (data.previewUrl || '/jack-3d'));
 
         // Stepper: mark Step 5 PUBLISH completed
         const sPub = document.getElementById('stepIndicatorPublish');
@@ -2359,11 +2381,11 @@
         // Celebrate!
         if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 85 });
         showSynthesisModal(liveSubdomain);
-        showToast('🚀 Successfully published live to ' + liveSubdomain + '!', 'success');
+        showToast(' Successfully published live to ' + liveSubdomain + '!', 'success');
 
       } catch (err) {
         if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '🚀';
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '';
         showToast('Publish error: ' + err.message, 'error');
       } finally {
         if (btn) btn.disabled = false;
@@ -2374,7 +2396,7 @@
       if (currentDraftSiteId && !isPortfolioPublished) {
         publishDraftPortfolio();
       } else if (isPortfolioPublished) {
-        window.open('/abdulaziz', '_blank');
+        window.open(document.getElementById('btnOpenGeneratedLive')?.href || '/jack-3d', '_blank');
       } else {
         const form = document.getElementById('portfolioGenerationForm');
         if (form) form.requestSubmit();
@@ -2385,7 +2407,7 @@
       // Connect iframe to same-origin portfolio route on load
       const iframe = document.getElementById('studioLiveIframe');
       if (iframe) {
-        iframe.src = '/abdulaziz?embed=1';
+        iframe.src = '/jack-3d?embed=1';
       }
 
       // Initial validation of confirmation summary checklist

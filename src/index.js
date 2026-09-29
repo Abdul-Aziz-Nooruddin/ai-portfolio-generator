@@ -164,6 +164,8 @@ const hostingProvider = new HostingProvider(
 const netlifyDeployer = process.env.NETLIFY_TOKEN
   ? new NetlifyDeployer(process.env.NETLIFY_TOKEN, process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
   : null;
+const { GitHubAutoSyncService } = require('./services/github-auto-sync');
+const gitHubAutoSync = new GitHubAutoSyncService();
 
 // Authenticate session early across all endpoints & API routers
 app.use(AuthMiddleware.authenticate(dbService, securityService));
@@ -2251,8 +2253,12 @@ app.get(['/studio', '/webstudio', '/builder', '/generator'], (req, res) => {
   res.sendFile(getPagePath('studio.html'));
 });
 
-app.get(['/design-demo', '/universes', '/themes', '/gallery'], (req, res) => {
-  res.sendFile(getPagePath('design-demo.html'));
+app.get(['/design-demo', '/universes', '/themes', '/gallery', '/jack-3d', '/portfolio-3d'], (req, res) => {
+  res.sendFile(getPagePath('jack-3d-creator.html'));
+});
+
+app.get(['/nadia', '/nadia-brand', '/nadia-speaker', '/speaker-brand'], (req, res) => {
+  res.sendFile(getPagePath('nadia-brand.html'));
 });
 
 app.get(['/profile', '/settings', '/account'], (req, res) => {
@@ -2884,8 +2890,12 @@ app.get(['/dashboard', '/app'], (req, res) => {
   res.sendFile(path.join(webDir, 'dashboard.html'));
 });
 
-app.get(['/design-demo', '/universes', '/themes', '/gallery'], (req, res) => {
-  res.sendFile(path.join(webDir, 'design-demo.html'));
+app.get(['/design-demo', '/universes', '/themes', '/gallery', '/jack-3d', '/portfolio-3d'], (req, res) => {
+  res.sendFile(path.join(webDir, 'jack-3d-creator.html'));
+});
+
+app.get(['/nadia', '/nadia-brand', '/nadia-speaker', '/speaker-brand'], (req, res) => {
+  res.sendFile(path.join(webDir, 'nadia-brand.html'));
 });
 
 app.get(['/profile', '/settings', '/account'], (req, res) => {
@@ -2904,12 +2914,45 @@ app.get(['/thank-you', '/success'], (req, res) => {
   res.sendFile(path.join(webDir, 'thank-you.html'));
 });
 
-app.get(['/abdul-aziz', '/palmo', '/palmo-pure'], (req, res) => {
-  res.sendFile(path.join(webDir, 'portfolio-palmo-pure.html'));
+app.get(['/abdul-aziz', '/jack', '/jack-3d-creator', '/portfolio-jack'], (req, res) => {
+  res.sendFile(path.join(webDir, 'jack-3d-creator.html'));
 });
 
-app.get(['/mesh3d-terminal', '/terminal'], (req, res) => {
-  res.sendFile(path.join(webDir, 'portfolio-mesh3d-terminal.html'));
+// =========================================================================
+// GITHUB AUTO-SYNC & RECONCILIATION ENGINE ROUTES
+// =========================================================================
+
+// Stale-While-Revalidate (SWR): Trigger background GitHub reconciliation check when a site is viewed
+app.use('/sites/:siteId', (req, res, next) => {
+  const siteId = req.params.siteId;
+  if (siteId && gitHubAutoSync) {
+    gitHubAutoSync.triggerBackgroundSyncIfDue(siteId);
+  }
+  next();
+});
+
+// Real-Time GitHub Webhook Ingestion Endpoint
+app.post('/api/webhooks/github', express.json({ type: 'application/json' }), async (req, res) => {
+  try {
+    const event = req.headers['x-github-event'] || 'push';
+    const result = await gitHubAutoSync.handleWebhook(event, req.body);
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('[GITHUB WEBHOOK HANDLER ERROR]:', err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+// Manual 1-Click Sync Endpoint for Dashboard / Studio
+app.post('/api/portfolio/:siteId/sync-github', async (req, res) => {
+  try {
+    const siteId = req.params.siteId;
+    const result = await gitHubAutoSync.syncPortfolio(siteId, { force: true });
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('[MANUAL GITHUB SYNC ERROR]:', err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // Direct Portfolio Web Hosting Route (serves both persistent public/sites and serverless /tmp/sites)
@@ -2928,6 +2971,23 @@ app.use(express.static(webDir, {
     }
   }
 }));
+
+// Dedicated Local Design Lab Prototype Environment (Visual Approval Mode)
+app.get(['/design-preview', '/design-preview/*'], (req, res) => {
+  const reqPath = req.params[0] || '';
+  const cleanPath = reqPath.replace(/^\/+|\/+$/g, '');
+  if (cleanPath) {
+    const directFile = path.join(webDir, 'design-preview', cleanPath);
+    const htmlFile = path.join(webDir, 'design-preview', `${cleanPath}.html`);
+    if (fs.existsSync(directFile) && fs.statSync(directFile).isFile()) {
+      return res.sendFile(directFile);
+    }
+    if (fs.existsSync(htmlFile) && fs.statSync(htmlFile).isFile()) {
+      return res.sendFile(htmlFile);
+    }
+  }
+  res.sendFile(path.join(webDir, 'design-preview', 'index.html'));
+});
 
 // ==========================================
 // Portfolio Owner Resume PDF Download Route

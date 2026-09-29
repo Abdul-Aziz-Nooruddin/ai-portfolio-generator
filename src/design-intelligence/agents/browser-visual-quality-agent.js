@@ -87,7 +87,7 @@ class BrowserVisualQualityAgent {
     if (!colors.bg || !colors.text || !colors.primary) {
       colorScore -= 5;
     }
-    if (colors.bg === colors.text) {
+    if (colors.bg && colors.text && colors.bg === colors.text) {
       colorScore -= 10;
       findings.push({ severity: 'CRITICAL', rule: 'ZERO_CONTRAST_DEFECT', desc: 'Background color is identical to text color.' });
     }

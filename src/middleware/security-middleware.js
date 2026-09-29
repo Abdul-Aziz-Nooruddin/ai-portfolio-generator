@@ -14,12 +14,13 @@ class SecurityMiddleware {
       const csp = [
         "default-src 'self'",
         "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://tagassistant.google.com https://checkout.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://unpkg.com https://cdn.tailwindcss.com",
-        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com",
-        "font-src 'self' https://fonts.gstatic.com data:",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://db.onlinewebfonts.com",
+        "font-src 'self' https://fonts.gstatic.com https://db.onlinewebfonts.com data:",
         "img-src 'self' data: https: blob: https://*.google-analytics.com https://*.googletagmanager.com https://www.google.com https://www.google.co.in https://*.figma.site",
+        "media-src 'self' https: data: blob: https://*.cloudfront.net",
         "frame-src 'self' https://myfolio.tech https://*.myfolio.tech https://sketchfab.com https://tagassistant.google.com https://api.razorpay.com https://checkout.razorpay.com http://localhost:* http://127.0.0.1:*",
         "frame-ancestors 'self' https://myfolio.tech https://*.myfolio.tech http://localhost:* http://127.0.0.1:*",
-        "connect-src 'self' blob: data: https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://*.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com https://cdn.tailwindcss.com",
+        "connect-src 'self' blob: data: https://*.cloudfront.net https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://tagassistant.google.com https://*.doubleclick.net https://api.razorpay.com https://lumberjack.razorpay.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.google.com https://analytics.google.com https://cdn.tailwindcss.com",
         "object-src 'none'",
         "base-uri 'self'",
         "form-action 'self'"

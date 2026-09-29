@@ -493,13 +493,13 @@
             </div>
             <div class="identity-text-col">
               <div class="identity-name-row">
-                <h1 class="identity-full-name" id="profileFullName">Abdul Aziz Nooruddin</h1>
-                <span class="mf-badge mf-badge-vip" id="profilePlanBadge">💎 VIP MASTER</span>
+                <h1 class="identity-full-name" id="profileFullName">Alex Rivers</h1>
+                <span class="mf-badge mf-badge-vip" id="profilePlanBadge"><svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><polygon points="6 3 18 3 22 9 12 22 2 9 6 3"/></svg>VIP MASTER</span>
               </div>
               <div class="identity-meta-row">
-                <span id="profileUsername">@abdulaziz</span>
+                <span id="profileUsername">@alex-rivers</span>
                 <span>•</span>
-                <span id="profileEmail">abdulaziznoor9876@gmail.com</span>
+                <span id="profileEmail">alex.rivers@example.com</span>
                 <span>•</span>
                 <span class="mf-badge mf-badge-success">
                   <span class="mf-pulse-dot"></span>
@@ -510,7 +510,7 @@
           </div>
 
           <div class="identity-actions-dock">
-            <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenLiveSite">
+            <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenLiveSite">
               <span>Open Live Portfolio</span> &nearr;
             </a>
             <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
@@ -556,7 +556,7 @@
             <form id="profileForm" onsubmit="handleSaveProfile(event)">
               <div class="mf-input-group">
                 <label class="mf-label" for="inputName">Display Name</label>
-                <input type="text" id="inputName" class="mf-input" placeholder="Abdul Aziz Nooruddin" required>
+                <input type="text" id="inputName" class="mf-input" placeholder="e.g. Alex Rivers" required>
               </div>
 
               <div class="mf-input-group">
@@ -601,16 +601,16 @@
 
             <div class="mf-input-group">
               <label class="mf-label" for="inputEmail">Email Address</label>
-              <input type="email" id="inputEmail" class="mf-input" placeholder="abdulaziznoor9876@gmail.com" readonly style="opacity:0.75; cursor:not-allowed;">
+              <input type="email" id="inputEmail" class="mf-input" placeholder="e.g. alex.rivers@example.com" readonly style="opacity:0.75; cursor:not-allowed;">
             </div>
 
             <div class="mf-input-group">
               <label class="mf-label" for="inputUsername">Username / Custom URL Handle</label>
               <div style="position:relative;">
-                <input type="text" id="inputUsername" class="mf-input" placeholder="abdulaziz" oninput="checkHandleFormat(this.value)">
+                <input type="text" id="inputUsername" class="mf-input" placeholder="alex-rivers" oninput="checkHandleFormat(this.value)">
               </div>
               <span id="handleAvailabilityText" style="font-size:11.5px; margin-top:4px; color:var(--mf-text-muted);">
-                Generates live domain: https://<strong style="color:var(--mf-accent-blue);">abdulaziz</strong>.myfolio.tech
+                Generates live domain: https://<strong style="color:var(--mf-accent-blue);">alex-rivers</strong>.myfolio.tech
               </span>
             </div>
 
@@ -644,13 +644,13 @@
             <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
               <div>
                 <div style="font-family:var(--mf-font-mono); font-size:15px; font-weight:600; color:var(--mf-accent-blue);">
-                  https://abdulaziz.myfolio.tech
+                  https://alex-rivers.myfolio.tech
                 </div>
                 <div style="font-size:12px; color:var(--mf-text-muted); margin-top:4px;">
                   301 Redirect configured for legacy paths • Edge SSL Active
                 </div>
               </div>
-              <a href="https://abdulaziz.myfolio.tech" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm">
+              <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm">
                 <span>Visit Domain</span> &nearr;
               </a>
             </div>
@@ -779,9 +779,9 @@
         const data = await res.json();
         currentUserData = data.user || data;
 
-        const name = currentUserData.name || 'Abdul Aziz Nooruddin';
-        const email = currentUserData.email || 'abdulaziznoor9876@gmail.com';
-        const username = currentUserData.username || 'abdulaziz';
+        const name = currentUserData.name || 'Alex Rivers';
+        const email = currentUserData.email || 'alex.rivers@example.com';
+        const username = currentUserData.username || 'alex-rivers';
 
         document.getElementById('profileFullName').textContent = name;
         document.getElementById('profileUsername').textContent = `@${username}`;

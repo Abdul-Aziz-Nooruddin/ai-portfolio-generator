@@ -579,7 +579,7 @@
       <span><span class="hud-beacon"></span> LAT: 404.092</span>
       <span>SECTOR: SANCTUARY_VOID</span>
       <button class="audio-toggle-btn interactive-target" id="audio-toggle" aria-label="Toggle Cosmic Audio">
-        <span id="audio-icon">🔈</span>
+        <span id="audio-icon"></span>
         <span id="audio-label">HARMONIC SOUND</span>
       </button>
     </div>
@@ -607,7 +607,7 @@
           <span>✦ Enter 3D Studio</span>
         </a>
         <a href="/universes" class="btn-celestial-secondary interactive-target">
-          <span>🪐 Explore 22 Universes</span>
+          <span>Explore 22 Universes</span>
         </a>
         <a href="/" class="btn-return-reality interactive-target">
           <span>⟵ Return to Reality</span>
@@ -868,14 +868,14 @@
 
       if (isAudioActive) {
         startAmbientDrone();
-        audioIcon.textContent = '🔊';
+        audioIcon.textContent = '';
         audioLabel.textContent = 'RESONANCE ON';
         audioToggle.style.borderColor = 'rgba(253, 230, 138, 0.7)';
         audioToggle.style.boxShadow = '0 0 25px rgba(253, 230, 138, 0.4)';
         playChime(659.25, 0.15); // E5 startup chime
       } else {
         stopAmbientDrone();
-        audioIcon.textContent = '🔈';
+        audioIcon.textContent = '';
         audioLabel.textContent = 'HARMONIC SOUND';
         audioToggle.style.borderColor = 'rgba(233, 213, 255, 0.2)';
         audioToggle.style.boxShadow = 'none';

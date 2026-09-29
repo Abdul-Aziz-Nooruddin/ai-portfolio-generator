@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>The Portal — MyFolio Design Lab</title>
+  <meta name="description" content="Singular authentication monolith">
+
+  <!-- Google Fonts: Anton (Masthead), Condiment (Accent), Inter (Body) & JetBrains Mono (Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Condiment&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bgNavy: '#010828',
+            bgCharcoal: '#0C0E17',
+            bgEngine: '#070B19',
+            bgGallery: '#080B18',
+            bgControl: '#0B0F1E',
+            bgIdentity: '#120F19',
+            bgWorkstation: '#080B14',
+            bgArchive: '#F8F7F3',
+            bgManifesto: '#F5F4EE',
+            cream: '#EFF4FF',
+            creamDark: '#010828',
+            neon: '#6FFF00',
+            amberAccent: '#F59E0B',
+            blueTech: '#38BDF8',
+          },
+          fontFamily: {
+            grotesk: ['Anton', 'sans-serif'],
+            condiment: ['Condiment', 'cursive'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+    }
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%,
+        rgba(255,255,255,0) 50%, rgba(255,255,255,0.1) 80%,
+        rgba(255,255,255,0.3) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .env-blueprint {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .env-scanlines {
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(56, 189, 248, 0.015) 0px,
+        rgba(56, 189, 248, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
+    .env-grid-subtle {
+      background-image: radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .env-paper {
+      background-image: radial-gradient(rgba(1, 8, 40, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+    }
+    /* =========================================================================
+       ARCHITECTURAL LIGHT THEME (Museum Ivory Canvas & Pure Alabaster Surfaces)
+       ========================================================================= */
+    /* 1. Global Background Canvas */
+    .theme-light,
+    .theme-light body,
+    .theme-light main,
+    .theme-light #collection {
+      background-color: #F6F5F0 !important;
+      color: #010828 !important;
+    }
+
+    /* Keep the outer page layout wrappers ivory so white cards pop on top */
+    .theme-light .min-h-screen:not(.bg-white) {
+      background-color: #F6F5F0 !important;
+    }
+
+    /* 2. Top Review Command Bar & Nav Header */
+    .theme-light header.sticky {
+      background-color: rgba(255, 255, 255, 0.94) !important;
+      border-bottom: 1px solid rgba(1, 8, 40, 0.10) !important;
+      color: #010828 !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.05) !important;
+    }
+    .theme-light header.sticky a,
+    .theme-light header.sticky span:not(.bg-neon),
+    .theme-light header.sticky button {
+      color: #010828 !important;
+    }
+    .theme-light header.sticky .border-white\/10 {
+      border-color: rgba(1, 8, 40, 0.10) !important;
+    }
+    .theme-light header.sticky a.text-cream\/70,
+    .theme-light header.sticky button.text-cream\/70 {
+      color: rgba(1, 8, 40, 0.65) !important;
+    }
+    .theme-light header.sticky a.text-cream\/70:hover,
+    .theme-light header.sticky button.text-cream\/70:hover {
+      background-color: rgba(1, 8, 40, 0.06) !important;
+      color: #010828 !important;
+    }
+
+    /* 3. Universal Cards, Panels, Slabs & Containers */
+    /* Every card class used across Jack 3D, Studio, Generator, Dashboard, Profile, Auth, etc. */
+    .theme-light .rounded-3xl:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light .rounded-2xl:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[32px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[28px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[24px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[20px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="bg-[#141724]"],
+    .theme-light [class*="bg-[#141416]"],
+    .theme-light [class*="bg-[#0D152A]"],
+    .theme-light [class*="bg-[#121626]"],
+    .theme-light [class*="bg-[#080E24]"],
+    .theme-light [class*="bg-[#12172F]"],
+    .theme-light [class*="bg-[#1B1626]"],
+    .theme-light [class*="bg-[#0E1322]"],
+    .theme-light [class*="bg-[#0B0F1B]"],
+    .theme-light [class*="bg-[#080B14]"],
+    .theme-light [class*="bg-[#070b19]"],
+    .theme-light [class*="bg-[#0e162e]"],
+    .theme-light [class*="bg-[#0b1124]"],
+    .theme-light [class*="bg-[#050b18]"],
+    .theme-light [class*="bg-[#111a36]"],
+    .theme-light [class*="bg-[#0c142b]"],
+    .theme-light [class*="bg-[#101935]"],
+    .theme-light [class*="bg-[#080e22]"],
+    .theme-light [class*="bg-[#0a1024]"],
+    .theme-light [class*="bg-[#070d20]"],
+    .theme-light [class*="bg-[#0e1736]"],
+    .theme-light [class*="bg-[#09112a]"],
+    .theme-light [class*="bg-[#0d132b]"],
+    .theme-light [class*="bg-[#121a3a]"],
+    .theme-light [class*="bg-[#152048]"],
+    .theme-light [class*="bg-[#131120]"],
+    .theme-light [class*="bg-[#1a172c]"],
+    .theme-light [class*="bg-[#1f1b34]"],
+    .theme-light [class*="bg-[#0d1424]"],
+    .theme-light [class*="bg-[#141d33]"],
+    .theme-light [class*="bg-[#0a0f1d]"],
+    .theme-light [class*="bg-[#030612]"] {
+      background-color: #FFFFFF !important;
+      border-color: rgba(1, 8, 40, 0.09) !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.05), 0 1px 3px rgba(1, 8, 40, 0.03) !important;
+      color: #010828 !important;
+    }
+
+    /* 4. Frosted Alabaster Glass */
+    .theme-light .liquid-glass {
+      background: rgba(255, 255, 255, 0.88) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.06), inset 0 1px 1px rgba(255, 255, 255, 1) !important;
+      border: 1px solid rgba(1, 8, 40, 0.09) !important;
+      color: #010828 !important;
+    }
+
+    .theme-light .liquid-glass::before {
+      background: linear-gradient(180deg,
+        rgba(1, 8, 40, 0.08) 0%, rgba(1, 8, 40, 0.02) 25%,
+        transparent 50%, rgba(1, 8, 40, 0.02) 75%,
+        rgba(1, 8, 40, 0.06) 100%) !important;
+    }
+
+    /* 5. Inner Wells, Inputs, Code Blocks, and Inactive Fields */
+    .theme-light input,
+    .theme-light textarea,
+    .theme-light select,
+    .theme-light [class*="bg-black/"],
+    .theme-light .rounded-xl:not(button):not(.bg-neon):not([class*="bg-purpleRoyal"]):not([class*="bg-blueTech"]):not([class*="bg-amberAccent"]) {
+      background-color: #F8F9FA !important;
+      border-color: rgba(1, 8, 40, 0.12) !important;
+      color: #010828 !important;
+    }
+    .theme-light input::placeholder,
+    .theme-light textarea::placeholder {
+      color: rgba(1, 8, 40, 0.45) !important;
+    }
+
+    /* 6. Secondary Pills, Chips, and Micro-affordances */
+    .theme-light [class*="bg-white/5"],
+    .theme-light [class*="bg-white/10"],
+    .theme-light [class*="bg-white/15"],
+    .theme-light [class*="bg-white/20"] {
+      background-color: rgba(1, 8, 40, 0.05) !important;
+      border-color: rgba(1, 8, 40, 0.10) !important;
+      color: #010828 !important;
+    }
+
+    /* 7. Typography Contrasts */
+    .theme-light h1:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h2:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h3:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h4:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h5:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h6:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: #010828 !important;
+    }
+
+    .theme-light p:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light label:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light span.text-cream:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light a.text-cream:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light div.text-cream:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: #010828 !important;
+    }
+
+    .theme-light [class*="text-cream/90"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/80"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/70"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/80"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/70"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: rgba(1, 8, 40, 0.78) !important;
+    }
+
+    .theme-light [class*="text-cream/60"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/50"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/40"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/30"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/60"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/50"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: rgba(1, 8, 40, 0.58) !important;
+    }
+
+    /* 8. Accent Script & Neon Accents */
+    .theme-light .font-condiment.text-neon:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light span.text-neon:not(#hero *):not(#contact *):not(#how-it-works *):not(button *):not(.bg-neon *) {
+      color: #0D5C22 !important;
+      mix-blend-mode: normal !important;
+    }
+
+    /* Neon CTA button stays ultra high-contrast punchy lime */
+    .theme-light .bg-neon {
+      background-color: #6FFF00 !important;
+      color: #010828 !important;
+      border-color: #0D5C22 !important;
+      box-shadow: 0 4px 14px rgba(109, 255, 0, 0.3) !important;
+    }
+
+    /* 9. Hairline Borders */
+    .theme-light [class*="border-white"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      border-color: rgba(1, 8, 40, 0.09) !important;
+    }
+
+    /* 10. Environmental Blueprint & Grid Backgrounds */
+    .theme-light .env-blueprint {
+      background-image: 
+        linear-gradient(to right, rgba(1, 8, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(1, 8, 40, 0.04) 1px, transparent 1px) !important;
+      background-size: 32px 32px;
+    }
+
+    .theme-light .env-scanlines {
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(2, 132, 199, 0.02) 0px,
+        rgba(2, 132, 199, 0.02) 1px,
+        transparent 1px,
+        transparent 3px
+      ) !important;
+    }
+
+    .theme-light .env-grid-subtle {
+      background-image: radial-gradient(circle, rgba(1, 8, 40, 0.06) 1px, transparent 1px) !important;
+    }
+
+    /* 11. Footer */
+    .theme-light footer {
+      background-color: #F6F5F0 !important;
+      border-color: rgba(1, 8, 40, 0.10) !important;
+      color: rgba(1, 8, 40, 0.7) !important;
+    }
+    .theme-light footer a {
+      color: rgba(1, 8, 40, 0.7) !important;
+    }
+    .theme-light footer a:hover {
+      color: #010828 !important;
+    }
+
+    /* 12. Video Sections (#hero, #how-it-works, #contact) Maintain Deep Cinematic Contrast */
+    .theme-light #hero,
+    .theme-light #contact,
+    .theme-light #how-it-works {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero h1,
+    .theme-light #hero h2,
+    .theme-light #hero p,
+    .theme-light #hero a:not(.bg-neon),
+    .theme-light #hero span:not(.bg-neon),
+    .theme-light #contact h1,
+    .theme-light #contact h2,
+    .theme-light #contact p,
+    .theme-light #contact a:not(.bg-neon),
+    .theme-light #contact span:not(.bg-neon),
+    .theme-light #how-it-works h2,
+    .theme-light #how-it-works p,
+    .theme-light #how-it-works span:not(.bg-neon) {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero .text-cream,
+    .theme-light #contact .text-cream,
+    .theme-light #how-it-works .text-cream {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero .text-cream\/80,
+    .theme-light #contact .text-cream\/80,
+    .theme-light #how-it-works .text-cream\/80 {
+      color: rgba(239, 244, 255, 0.8) !important;
+    }
+    .theme-light #hero .font-condiment.text-neon,
+    .theme-light #contact .font-condiment.text-neon,
+    .theme-light #how-it-works .font-condiment.text-neon {
+      color: #6FFF00 !important;
+      mix-blend-mode: exclusion !important;
+    }
+    .theme-light #hero .liquid-glass,
+    .theme-light #how-it-works .liquid-glass {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #EFF4FF !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+  </style>
+</head>
+<body class="bg-[#05081C] text-cream">
+  
+    <!-- Top Review Command Bar -->
+    <header class="sticky top-0 z-50 bg-[#02071E]/95 backdrop-blur-md border-b border-neon/30 px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 text-cream">
+      <div class="flex items-center gap-3">
+        <a href="/design-preview/home" class="font-grotesk text-sm uppercase text-neon tracking-wider flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <span class="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+          MYFOLIO DESIGN LAB
+        </a>
+        <span class="hidden sm:inline-block text-[10px] font-mono bg-neon/10 text-neon px-2.5 py-0.5 rounded-full border border-neon/30">
+          JACK 3D DESIGN SYSTEM ONLY // LOCALHOST
+        </span>
+        <!-- Theme Toggle Button -->
+        <button
+          onclick="toggleTheme()"
+          id="theme-btn"
+          class="flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase transition-all bg-white/10 hover:bg-white/20 border border-white/20 text-cream cursor-pointer"
+          title="Toggle Architectural Light / Dark Cosmic Theme"
+        >
+          <span id="theme-icon"><svg class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg></span>
+          <span id="theme-text">Light Mode</span>
+        </button>
+      </div>
+      <div class="flex items-center gap-1.5 overflow-x-auto max-w-full py-1">
+        <div class="flex items-center gap-1 mr-2 border-r border-white/10 pr-2">
+          <a href="/design-preview/home" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">00 HOME (Entrance)</a>
+          <a href="/design-preview/jack-3d" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">03 JACK 3D (Showcase)</a>
+          <a href="/design-preview/404" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">11 404 (Void)</a>
+        </div>
+        <div class="flex items-center gap-1 mr-2 border-r border-white/10 pr-2">
+          <a href="/design-preview/studio" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">01 STUDIO (Workshop)</a>
+          <a href="/design-preview/generator" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">02 GENERATOR (Engine)</a>
+          <a href="/design-preview/webstudio" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">07 WEBSTUDIO (Software)</a>
+        </div>
+        <div class="flex items-center gap-1 mr-2 border-r border-white/10 pr-2">
+          <a href="/design-preview/dashboard" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">04 DASHBOARD (Control)</a>
+          <a href="/design-preview/profile" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">05 PROFILE (Identity)</a>
+          <a href="/design-preview/auth" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase bg-neon text-bgNavy font-bold shadow-sm shadow-neon/30 whitespace-nowrap">06 AUTH (Portal)</a>
+        </div>
+        <div class="flex items-center gap-1">
+          <a href="/design-preview/about" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">08 ABOUT (Manifesto)</a>
+          <a href="/design-preview/privacy" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">09 PRIVACY (Archive)</a>
+          <a href="/design-preview/terms" class="px-2.5 py-1 rounded-full font-mono text-[10px] uppercase text-cream/70 hover:text-cream hover:bg-white/10 whitespace-nowrap">10 TERMS (Legal)</a>
+        </div>
+      </div>
+    </header>
+  
+  
+    <!-- Minimal Auth Header (Zero Navbar on Sign-in/Sign-up) -->
+    <div class="w-full max-w-md mx-auto pt-8 px-6 flex justify-between items-center relative z-20">
+      <a href="/design-preview/home" class="flex items-center gap-2 font-mono text-xs uppercase text-cream/70 hover:text-neon transition-colors no-underline">
+        <span>&larr;</span>
+        <span>Return to Entrance</span>
+      </a>
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-md bg-bgNavy flex items-center justify-center border border-white/20">
+          <span class="font-grotesk text-neon text-xs">MF</span>
+        </div>
+        <span class="font-grotesk tracking-wider uppercase text-cream text-sm">
+          MYFOLIO<span class="font-condiment text-neon text-base ml-1">world</span>
+        </span>
+      </div>
+    </div>
+  
+  <main class="flex-1">
+    
+  <div class="max-w-md w-full mx-auto px-6 py-8">
+    <div class="text-center mb-8">
+      <span class="text-[11px] font-mono text-neon uppercase tracking-widest">AUTHENTICATION PORTAL</span>
+      <h2 class="font-grotesk text-4xl uppercase text-cream mt-1">ENTER MYFOLIO.</h2>
+      <p class="text-xs font-mono text-cream/60 mt-1">Access your managed worlds and synthesis pipelines.</p>
+    </div>
+
+    <div class="liquid-glass rounded-3xl p-8 shadow-2xl border border-white/15">
+      <!-- Instant Social Auth — Google Only (GitHub removed) -->
+      <div class="space-y-3 mb-6">
+        <a href="/design-preview/dashboard" class="w-full rounded-2xl py-3.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center gap-3 font-grotesk text-xs uppercase text-cream transition-all no-underline group shadow-sm hover:border-white/20">
+          <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </a>
+      </div>
+
+      <div class="flex items-center gap-3 my-5">
+        <div class="h-px bg-white/10 flex-1"></div>
+        <span class="text-[10px] font-mono text-cream/40 uppercase">OR DEVELOPER CREDENTIALS</span>
+        <div class="h-px bg-white/10 flex-1"></div>
+      </div>
+
+      <div class="space-y-4 font-mono text-xs">
+        <div>
+          <label class="block text-cream/60 uppercase mb-1">Developer Email</label>
+          <input type="email" placeholder="sarah@skynet.dev" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 text-cream outline-none focus:border-neon" />
+        </div>
+        <div>
+          <label class="block text-cream/60 uppercase mb-1">Security Passphrase</label>
+          <input type="password" placeholder="••••••••••••" class="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 text-cream outline-none focus:border-neon" />
+        </div>
+        <a href="/design-preview/dashboard" class="block text-center w-full mt-2 rounded-xl py-3.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform">
+          Authenticate Base →
+        </a>
+      </div>
+    </div>
+  </div>
+
+  </main>
+
+  <!-- Review Footer -->
+  <footer class="border-t border-white/10 py-3 px-6 text-center text-[11px] font-mono text-cream/40 flex justify-between items-center bg-[#02071E] text-cream">
+    <div>MYFOLIO ARCHITECTURE // ROOM: AUTH</div>
+    <div>STATUS: READY FOR PAGE-BY-PAGE APPROVAL</div>
+  </footer>
+
+  <script>
+    function applyTheme(t) {
+      if (t === 'light') {
+        document.documentElement.classList.add('theme-light');
+        document.body.classList.add('theme-light');
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        if (icon) icon.innerHTML = '<svg class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+        if (text) text.textContent = 'Dark Mode';
+      } else {
+        document.documentElement.classList.remove('theme-light');
+        document.body.classList.remove('theme-light');
+        const icon = document.getElementById('theme-icon');
+        const text = document.getElementById('theme-text');
+        if (icon) icon.innerHTML = '<svg class="w-3.5 h-3.5 inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>';
+        if (text) text.textContent = 'Light Mode';
+      }
+    }
+    function toggleTheme() {
+      const curr = localStorage.getItem('myfolio-theme') || 'dark';
+      const next = curr === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('myfolio-theme', next);
+      applyTheme(next);
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const t = localStorage.getItem('myfolio-theme') || 'dark';
+      applyTheme(t);
+    });
+  </script>
+</body>
+</html>

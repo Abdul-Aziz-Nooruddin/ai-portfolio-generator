@@ -330,10 +330,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         throw new Error(data.message || data.error || 'Verification failed');
       }
 
-      statusText.innerHTML = '<span style="color: #10b981; font-weight: 700;">✅ Email Verified Successfully!</span><br>Your account is fully activated.';
+      statusText.innerHTML = '<span style="color: #10b981; font-weight: 700;">Email Verified Successfully!</span><br>Your account is fully activated.';
       btnDash.style.display = 'inline-flex';
     } catch (err) {
-      statusText.innerHTML = `<span style="color: #ef4444; font-weight: 700;">❌ Verification Failed</span><br>${err.message}`;
+      statusText.innerHTML = `<span style="color: #ef4444; font-weight: 700;">Verification Failed</span><br>${err.message}`;
     }
     return;
   }
@@ -341,9 +341,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   const errorParam = urlParams.get('error');
   if (errorParam) {
     if (errorParam === 'missing_google_cloud_credentials') {
-      showAlert('⚙️ Google Cloud OAuth Setup Required: Please add your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env from Google Cloud Console.', 'error');
+      showAlert('Google Cloud OAuth Setup Required: Please add your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to .env from Google Cloud Console.', 'error');
     } else if (errorParam === 'missing_github_oauth_credentials') {
-      showAlert('🐙 GitHub OAuth Notice: GITHUB_CLIENT_ID is not configured in .env yet. You can sign in using your Email/Password, or Google 1-Click!', 'info');
+      showAlert('GitHub OAuth Notice: GITHUB_CLIENT_ID is not configured in .env yet. You can sign in using your Email/Password, or Google 1-Click!', 'info');
     } else {
       showAlert(`Authentication Notice: ${decodeURIComponent(errorParam)}`, 'error');
     }
@@ -392,7 +392,7 @@ async function handleGoogleCredentialResponse(response) {
       throw new Error(data.error || 'Google verification failed');
     }
 
-    showAlert(`✅ Google Verified! Welcome, ${data.user.name || data.user.email}. Redirecting...`, 'success');
+    showAlert(`Google Verified! Welcome, ${data.user.name || data.user.email}. Redirecting...`, 'success');
     setTimeout(() => {
       window.location.href = '/dashboard';
     }, 600);
@@ -443,10 +443,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (error) {
       const errorMap = {
-        missing_google_cloud_credentials: '⚠️ Google OAuth keys (GOOGLE_CLIENT_ID) must be configured in Render Environment Variables to enable Google Sign-In.',
-        google_failed: '❌ Google Sign-In could not be completed. Please try again.',
-        google_auth_failed: '❌ Google authentication failed.',
-        missing_code: '❌ Authorization code was not returned by Google.'
+        missing_google_cloud_credentials: 'Google OAuth keys (GOOGLE_CLIENT_ID) must be configured in Render Environment Variables to enable Google Sign-In.',
+        google_failed: 'Google Sign-In could not be completed. Please try again.',
+        google_auth_failed: 'Google authentication failed.',
+        missing_code: 'Authorization code was not returned by Google.'
       };
       showAlert(errorMap[error] || `Authentication notice: ${error.replace(/_/g, ' ')}`, 'error');
     }

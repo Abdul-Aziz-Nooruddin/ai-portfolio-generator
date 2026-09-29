@@ -23,7 +23,7 @@ test('User Account Isolation, Strict VIP Guard & Site Termination Tests', async 
         skills: ['Node.js', 'React']
       },
       preferences: {
-        theme: 'mahogany-brass-steampunk'
+        theme: 'jack-3d-creator'
       }
     };
 
@@ -34,7 +34,7 @@ test('User Account Isolation, Strict VIP Guard & Site Termination Tests', async 
 
     const normalized = UnifiedProfileNormalizer.normalize(input);
     const selectedTemplate = TemplateRegistry.selectTemplate(input.preferences.theme, normalized);
-    assert.strictEqual(selectedTemplate.id, 'mahogany-brass-steampunk', 'Must select mahogany-brass-steampunk template');
+    assert.strictEqual(selectedTemplate.id, 'jack-3d-creator', 'Must select jack-3d-creator template');
 
     const siteGen = new SiteGenerator();
     const siteResult = await siteGen.generateSite({
@@ -45,7 +45,7 @@ test('User Account Isolation, Strict VIP Guard & Site Termination Tests', async 
       templateId: selectedTemplate.id
     });
 
-    assert.ok(siteResult.html.includes('Mahogany') || siteResult.html.includes('mahogany-project-card') || siteResult.html.includes('CURIO // 01'), 'Generated HTML must contain Mahogany Steampunk layout');
+    assert.ok(siteResult.html.includes('Kanit') || siteResult.html.includes('marquee-section') || siteResult.html.includes('Projects'), 'Generated HTML must contain Jack 3D Creator layout');
 
     // Deploy site
     const siteId = `web-${crypto.randomUUID()}`;

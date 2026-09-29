@@ -469,7 +469,7 @@
           <div class="hero-live-artifact">
             <div class="hero-url-block">
               <div class="hero-url-label">
-                <span id="lifecycleBadge" class="mf-badge mf-badge-vip">👑 VIP ACTIVE</span>
+                <span id="lifecycleBadge" class="mf-badge mf-badge-vip">VIP ACTIVE</span>
                 <span>Active Edge Domain</span>
               </div>
               <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
@@ -506,7 +506,7 @@
             <div class="status-matrix-grid">
               <div class="status-matrix-item">
                 <span class="status-item-label">Active Universe</span>
-                <span class="status-item-val" id="statusUniverseVal">🎨 Synaptic Constellation</span>
+                <span class="status-item-val" id="statusUniverseVal">Synaptic Constellation</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Subdomain Routing</span>
@@ -596,15 +596,15 @@
               </p>
             </div>
             <div style="display:flex; gap:8px; align-items:center;">
-              <span id="syncedCountBadge" class="mf-badge mf-badge-accent">☁️ SYNCED</span>
+              <span id="syncedCountBadge" class="mf-badge mf-badge-accent">SYNCED</span>
               <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="cleanDuplicatePortfolios()" title="Clean duplicate builds">
-                🧹 Clean Duplicates
+                Clean Duplicates
               </button>
               <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="refreshUserPortfolios()" title="Refresh sync">
-                🔄 Sync Now
+                Sync Now
               </button>
               <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
-                ⚡ New in Studio
+                New in Studio
               </a>
             </div>
           </div>
@@ -730,7 +730,7 @@
         });
 
         const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        if (badge) badge.textContent = `☁️ SYNCED (${merged.length})`;
+        if (badge) badge.textContent = `SYNCED (${merged.length})`;
 
         renderSyncedPortfolios(merged);
       } catch (err) {
@@ -745,7 +745,7 @@
       if (!portfolios || portfolios.length === 0) {
         grid.innerHTML = `
           <div style="padding:3rem 1.5rem; text-align:center; background:rgba(8,13,32,0.5); border:1px dashed var(--mf-border); border-radius:16px; grid-column:1 / -1;">
-            <div style="font-size:2rem; margin-bottom:8px;">🌐</div>
+            <div style="font-size:2rem; margin-bottom:8px;"></div>
             <h3 style="font-size:1.1rem; font-weight:700; color:#FFF; margin-bottom:4px;">No Portfolios Generated Yet</h3>
             <p style="color:var(--mf-text-secondary); font-size:13px; max-width:400px; margin:0 auto 16px;">
               Build your first bespoke 3D portfolio in the Studio with instant AI analysis.
@@ -779,13 +779,13 @@
             <div class="artifact-body">
               <div class="artifact-title">${name}</div>
               <div class="artifact-role">${role}</div>
-              <div class="artifact-url-tag">🔗 ${href}</div>
-              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:4px;">👑 Active Subdomain</span>' : ''}
+              <div class="artifact-url-tag">${href}</div>
+              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:4px;">Active Subdomain</span>' : ''}
               <div class="artifact-actions">
                 <a href="${href}" target="_blank" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;">View ↗</a>
                 <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="setActiveVipDomain('${sid}', '${universe}', '${name.replace(/'/g, "\\'")}', '${role.replace(/'/g, "\\'")}')" title="Set as live domain">Set Live</button>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy link">📋</button>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" style="color:var(--mf-error);" title="Delete version">🗑️</button>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy link"></button>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" style="color:var(--mf-error);" title="Delete version">️</button>
               </div>
             </div>
           </div>
@@ -814,14 +814,14 @@
     }
 
     async function refreshUserPortfolios() {
-      showToast('🔄 Synchronizing library...');
+      showToast('Synchronizing library...');
       await loadCrossDevicePortfolios();
-      showToast('✅ Library synchronized!');
+      showToast('Library synchronized!');
     }
 
     async function setActiveVipDomain(siteId, universeKey, name, role) {
       try {
-        showToast('👑 Updating active domain...');
+        showToast('Updating active domain...');
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -830,7 +830,7 @@
         });
         if (!res.ok) throw new Error('Failed to update live domain');
         localStorage.setItem('myfolio_active_vip_site', siteId);
-        showToast('✅ Live domain updated!');
+        showToast('Live domain updated!');
         setTimeout(() => window.location.reload(), 1000);
       } catch (err) {
         alert(err.message);

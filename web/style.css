@@ -1,5 +1,5 @@
 /* ==========================================================================
-   🏛️ AI Portfolio Studio — Product Design Constitution (Phase 32)
+    AI Portfolio Studio — Product Design Constitution (Phase 32)
    Calm, editorial, tactile, typography-led visual identity for the generator product.
    Explicitly separated from the diverse visual worlds of generated portfolios.
    ========================================================================== */
@@ -45,7 +45,7 @@
 }
 
 /* ==========================================================================
-   🌙 DARK THEME TOKENS & OVERRIDES (Eye-Friendly Obsidian Slate Design)
+    DARK THEME TOKENS & OVERRIDES (Eye-Friendly Obsidian Slate Design)
    ========================================================================== */
 :root[data-theme="dark"], body[data-theme="dark"], [data-theme="dark"] {
   /* Dark Mode Base Ink & Surfaces */
@@ -3072,7 +3072,7 @@ html, body {
   box-shadow: 0 10px 28px rgba(245, 166, 35, 0.55);
 }
 
-/* 🌙 Dark theme overrides for landing pricing */
+/*  Dark theme overrides for landing pricing */
 [data-theme="dark"] #sectionPricing {
   background: transparent !important;
 }

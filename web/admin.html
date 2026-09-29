@@ -328,13 +328,13 @@
   <!-- Standalone Admin Suite Header -->
   <header style="background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--surface-border); padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;">
     <div style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.15rem; font-weight: 800;">
-      <span style="font-size: 1.3rem;">🛡️</span>
+      <span style="font-size: 1.3rem;"></span>
       <span>Devfolio Admin Control Suite</span>
       <span style="background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-size: 0.7rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px; letter-spacing: 0.05em;">SUPERADMIN</span>
     </div>
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <a href="/studio.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">⚡ Web Studio</a>
-      <a href="/dashboard.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">📊 User Dashboard</a>
+      <a href="/studio.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">Web Studio</a>
+      <a href="/dashboard.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.88rem; font-weight: 600;">User Dashboard</a>
     </div>
   </header>
 
@@ -367,7 +367,7 @@
     <!-- User & Site Management Table -->
     <div class="panel-card">
       <div class="panel-header">
-        <h2 class="panel-title">👥 User Accounts & Site Management</h2>
+        <h2 class="panel-title">User Accounts & Site Management</h2>
         <div class="filter-bar">
           <input type="text" id="userSearch" class="search-input" placeholder="Search by email, phone, or ID..." oninput="renderUsersTable()">
           <button class="filter-pill active" onclick="setFilter('all', this)">All</button>
@@ -400,7 +400,7 @@
     <div class="panel-card" style="border-color: rgba(239, 68, 68, 0.3);">
       <div class="panel-header" style="border-bottom: 1px solid rgba(239, 68, 68, 0.2);">
         <div style="display: flex; align-items: center; gap: 0.5rem;">
-          <span style="font-size: 1.2rem;">🛡️</span>
+          <span style="font-size: 1.2rem;"></span>
           <h2 class="panel-title" style="color: #f87171;">Terms of Service & Content Safety Violations</h2>
         </div>
         <span id="violationCountBadge" style="background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 0.75rem; font-weight: 800; padding: 0.2rem 0.6rem; border-radius: 9999px;">0 FLAGGED</span>
@@ -428,8 +428,8 @@
     <!-- Audit Log Feed -->
     <div class="panel-card">
       <div class="panel-header">
-        <h2 class="panel-title">📜 Admin & System Audit Trail</h2>
-        <button class="btn-action" onclick="fetchData()">🔄 Refresh Feed</button>
+        <h2 class="panel-title">Admin & System Audit Trail</h2>
+        <button class="btn-action" onclick="fetchData()">Refresh Feed</button>
       </div>
       <div id="logStream" class="log-stream">
         <div style="color: var(--text-muted); padding: 1rem;">Loading audit logs...</div>
@@ -484,7 +484,7 @@
       if (badge) badge.textContent = `${allViolations.length} FLAGGED`;
 
       if (allViolations.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">✅ Zero TOS or Content Safety Violations Detected. All active sites are compliant.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">Zero TOS or Content Safety Violations Detected. All active sites are compliant.</td></tr>`;
         return;
       }
 
@@ -518,7 +518,7 @@
             </td>
             <td>
               <button class="btn-action takedown" onclick="handleForceTakedown('${v.userId || v.siteId}')" style="white-space: nowrap;">
-                ⛔ Take Down
+                Take Down
               </button>
             </td>
           </tr>

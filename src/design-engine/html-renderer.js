@@ -83,7 +83,7 @@ class SectionRendererRegistry {
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
               <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10B981; box-shadow: 0 0 10px #10B981;"></span>
-                <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); font-weight: 700;">${nano3D.badgeLabel || '✨ Nano Banana 3D Engine • Spatial Mesh Active'}</span>
+                <span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--primary); font-weight: 700;">${nano3D.badgeLabel || '✦ Nano Banana 3D Engine • Spatial Mesh Active'}</span>
               </div>
               <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted);">INTERACTIVE WEBGL PHYSICS • 60FPS</span>
             </div>
@@ -2241,7 +2241,7 @@ class HtmlRenderer {
         <div>
           ${eduPrimary ? `
           <div class="cosmic-resume-card-item">
-            <div class="cosmic-resume-icon">🎓</div>
+            <div class="cosmic-resume-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
             <div>
               <div class="cosmic-resume-label">Education</div>
               <div class="cosmic-resume-val">${this.escapeHtml(eduPrimary.degree || '')} ${eduPrimary.institution ? `• ${this.escapeHtml(eduPrimary.institution)}` : ''} ${eduPrimary.grade ? `• ${this.escapeHtml(eduPrimary.grade)}` : ''}</div>
@@ -2249,21 +2249,21 @@ class HtmlRenderer {
           </div>
           ` : ''}
           <div class="cosmic-resume-card-item">
-            <div class="cosmic-resume-icon">💼</div>
+            <div class="cosmic-resume-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div>
             <div>
               <div class="cosmic-resume-label">Experience</div>
               <div class="cosmic-resume-val">${expYears}+ Years in ${this.escapeHtml(skillList.slice(0, 3).join(', ') || 'Web Development, AI & Blockchain')}</div>
             </div>
           </div>
           <div class="cosmic-resume-card-item">
-            <div class="cosmic-resume-icon">🚀</div>
+            <div class="cosmic-resume-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 15 2 2 4-4"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m3 9 2.45-4.9A2 2 0 0 1 7.24 3h9.52a2 2 0 0 1 1.8 1.1L21 9"/></svg></div>
             <div>
               <div class="cosmic-resume-label">Projects</div>
               <div class="cosmic-resume-val">${projectCount}+ Completed Production Systems & Tooling</div>
             </div>
           </div>
           <div class="cosmic-resume-card-item">
-            <div class="cosmic-resume-icon">🏆</div>
+            <div class="cosmic-resume-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.686a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6"/></svg></div>
             <div>
               <div class="cosmic-resume-label">Achievements & Certifications</div>
               <div class="cosmic-resume-val">${certsDisplay ? this.escapeHtml(certsDisplay) : `${achievementsCount}+ Hackathons, Open Source Contributions & Awards`}</div>
@@ -2301,7 +2301,7 @@ class HtmlRenderer {
         <div>
           ${safeEmail ? `
           <div class="cosmic-contact-info-card">
-            <div class="cosmic-contact-icon">✉️</div>
+            <div class="cosmic-contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
             <div>
               <div class="cosmic-contact-label">Email</div>
               <div class="cosmic-contact-val"><a href="mailto:${safeEmail}" style="color: inherit; text-decoration: none;">${safeEmail}</a></div>
@@ -2309,14 +2309,14 @@ class HtmlRenderer {
           </div>` : ''}
           ${safePhone ? `
           <div class="cosmic-contact-info-card">
-            <div class="cosmic-contact-icon">📞</div>
+            <div class="cosmic-contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
             <div>
               <div class="cosmic-contact-label">Phone</div>
               <div class="cosmic-contact-val">${safePhone}</div>
             </div>
           </div>` : ''}
           <div class="cosmic-contact-info-card">
-            <div class="cosmic-contact-icon">📍</div>
+            <div class="cosmic-contact-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></div>
             <div>
               <div class="cosmic-contact-label">Location</div>
               <div class="cosmic-contact-val">${safeLocation || 'Remote / Worldwide'}</div>

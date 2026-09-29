@@ -1,5 +1,5 @@
 /**
- * 🏛️ AI Portfolio Studio — Client Application Engine (Phase 32)
+ * AI Portfolio Studio — Client Application Engine (Phase 32)
  * Manages full lifecycle states, multi-input intake, truthful stage tracking,
  * live preview canvas, humanized customization, and resilient error recovery.
  */
@@ -141,10 +141,10 @@ function togglePasswordVisibility(inputId, button) {
   if (!input) return;
   if (input.type === 'password') {
     input.type = 'text';
-    if (button) button.textContent = '🙈';
+    if (button) button.textContent = 'Hide';
   } else {
     input.type = 'password';
-    if (button) button.textContent = '👁️';
+    if (button) button.textContent = 'Show';
   }
 }
 
@@ -177,7 +177,7 @@ function updatePasswordStrength(password) {
     { text: 'Weak', class: 'strength-weak', color: '#EF4444' },
     { text: 'Fair', class: 'strength-fair', color: '#F59E0B' },
     { text: 'Strong', class: 'strength-strong', color: '#38BDF8' },
-    { text: 'Quantum Safe 🛡️', class: 'strength-safe', color: '#22C55E' }
+    { text: 'Quantum Safe ', class: 'strength-safe', color: '#22C55E' }
   ];
 
   const current = configs[score] || configs[0];
@@ -257,7 +257,7 @@ async function handleModalSignup(event) {
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.innerHTML = '<span>⚡ Create Free Account &amp; Continue</span>';
+      btn.innerHTML = '<span>Create Free Account &amp; Continue</span>';
     }
   }
 }
@@ -509,7 +509,7 @@ function processResumeFile(file) {
       };
       saveDraftToStorage();
 
-      if (statusEl) statusEl.textContent = `✅ Ready (${file.name})`;
+      if (statusEl) statusEl.textContent = `Ready (${file.name})`;
       const fileTag = document.getElementById('resumeFileSummary');
       const nameTag = document.getElementById('resumeFileName');
       const btnGen = document.getElementById('btnGenerateResume');
@@ -864,7 +864,7 @@ function updateProgressStage(stageNum, status = 'active') {
   if (current) {
     current.classList.add('active');
     const icon = current.querySelector('.stage-icon');
-    if (icon) icon.textContent = status === 'completed' ? '✓' : '⏳';
+    if (icon) icon.textContent = status === 'completed' ? '✓' : '···';
     if (status === 'completed') current.classList.add('completed');
   }
 }
@@ -1062,7 +1062,7 @@ async function fetchCustomizerSections() {
           <div style="display:flex; gap:6px;">
             <button type="button" class="btn-ghost-mini" onclick="handleMoveSection('${sec.id}', 'up')" ${idx === 0 ? 'disabled' : ''}>↑</button>
             <button type="button" class="btn-ghost-mini" onclick="handleMoveSection('${sec.id}', 'down')" ${idx === data.state.sections.length - 1 ? 'disabled' : ''}>↓</button>
-            <button type="button" class="btn-ghost-mini" onclick="handleToggleSectionVisibility('${sec.id}')">${sec.visible !== false ? '👁️' : '🚫'}</button>
+            <button type="button" class="btn-ghost-mini" onclick="handleToggleSectionVisibility('${sec.id}')">${sec.visible !== false ? 'Hide' : 'Show'}</button>
           </div>
         </div>
       `).join('');

@@ -9,26 +9,26 @@
 
 | Gen | IA Model | Layout Grammar | Project Strategy | Visual Universe | Navigation Model | Section Opening (Top 3) |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| 01 | `minimal-single-screen` | `minimal-single-screen` | `before-after` | `monochrome-gallery` | `sticky-minimal-bar` | `statement_masthead -> interactive_index -> status_footer` |
-| 02 | `computational-terminal` | `computational-terminal` | `failure-recovery` | `futuristic-spatial` | `sticky-minimal-bar` | `cli_prompt_hero -> system_capabilities -> executed_projects` |
-| 03 | `asymmetric-bento-canvas` | `asymmetric-bento-canvas` | `architecture-map` | `brutalist-pop` | `sticky-minimal-bar` | `bento_masthead -> featured_mosaic -> skill_matrices` |
-| 04 | `magazine-spread-columns` | `magazine-spread-columns` | `minimal-project-index` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `magazine_header -> three_column_portfolio -> editorial_skills` |
-| 05 | `spatial-3d-stage` | `spatial-3d-stage` | `metrics-observatory` | `monochrome-gallery` | `sticky-minimal-bar` | `stage_intro -> orbiting_projects -> stack_constellation` |
-| 06 | `narrative-timeline` | `narrative-timeline` | `technical-dossier` | `technical-lab` | `sticky-minimal-bar` | `prologue_hero -> chronological_milestones -> mastered_tools` |
-| 07 | `split-screen-dossier` | `split-screen-dossier` | `failure-recovery` | `swiss-editorial` | `sticky-minimal-bar` | `split_identity -> featured_artifacts -> verified_stack` |
-| 08 | `editorial-monograph` | `editorial-monograph` | `architecture-map` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `monograph_cover -> thesis_statement -> project_chapters` |
-| 09 | `work-first-runway` | `work-first-runway` | `horizontal-filmstrip` | `futuristic-spatial` | `sticky-minimal-bar` | `work_runway -> technical_evidence -> professional_journey` |
-| 10 | `minimal-single-screen` | `minimal-single-screen` | `metrics-observatory` | `technical-lab` | `sticky-minimal-bar` | `statement_masthead -> interactive_index -> status_footer` |
-| 11 | `horizontal-exhibition` | `horizontal-exhibition` | `technical-dossier` | `expressive-typographic` | `sticky-minimal-bar` | `exhibition_title -> curated_track -> skills_archive` |
-| 12 | `asymmetric-bento-canvas` | `asymmetric-bento-canvas` | `failure-recovery` | `brutalist-pop` | `sticky-minimal-bar` | `bento_masthead -> featured_mosaic -> skill_matrices` |
-| 13 | `magazine-spread-columns` | `magazine-spread-columns` | `architecture-map` | `monochrome-gallery` | `sticky-minimal-bar` | `magazine_header -> three_column_portfolio -> editorial_skills` |
-| 14 | `spatial-3d-stage` | `spatial-3d-stage` | `failure-recovery` | `technical-lab` | `sticky-minimal-bar` | `stage_intro -> orbiting_projects -> stack_constellation` |
-| 15 | `computational-terminal` | `computational-terminal` | `feature-atlas` | `cinematic-obsidian` | `sticky-minimal-bar` | `cli_prompt_hero -> system_capabilities -> executed_projects` |
-| 16 | `split-screen-dossier` | `split-screen-dossier` | `metrics-observatory` | `futuristic-spatial` | `sticky-minimal-bar` | `split_identity -> featured_artifacts -> verified_stack` |
-| 17 | `narrative-timeline` | `narrative-timeline` | `technical-dossier` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `prologue_hero -> chronological_milestones -> mastered_tools` |
-| 18 | `editorial-monograph` | `editorial-monograph` | `editorial-feature` | `technical-lab` | `sticky-minimal-bar` | `monograph_cover -> thesis_statement -> project_chapters` |
-| 19 | `work-first-runway` | `work-first-runway` | `failure-recovery` | `cinematic-obsidian` | `sticky-minimal-bar` | `work_runway -> technical_evidence -> professional_journey` |
-| 20 | `minimal-single-screen` | `minimal-single-screen` | `architecture-map` | `futuristic-spatial` | `sticky-minimal-bar` | `statement_masthead -> interactive_index -> status_footer` |
+| 01 | `spatial-3d-stage` | `spatial-3d-stage` | `technical-dossier` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `stage_intro -> orbiting_projects -> stack_constellation` |
+| 02 | `narrative-timeline` | `narrative-timeline` | `minimal-project-index` | `monochrome-gallery` | `sticky-minimal-bar` | `prologue_hero -> chronological_milestones -> mastered_tools` |
+| 03 | `horizontal-exhibition` | `horizontal-exhibition` | `failure-recovery` | `futuristic-spatial` | `sticky-minimal-bar` | `exhibition_title -> curated_track -> skills_archive` |
+| 04 | `minimal-single-screen` | `minimal-single-screen` | `feature-atlas` | `expressive-typographic` | `sticky-minimal-bar` | `statement_masthead -> interactive_index -> status_footer` |
+| 05 | `asymmetric-bento-canvas` | `asymmetric-bento-canvas` | `metrics-observatory` | `cinematic-obsidian` | `sticky-minimal-bar` | `bento_masthead -> featured_mosaic -> skill_matrices` |
+| 06 | `computational-terminal` | `computational-terminal` | `technical-dossier` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `cli_prompt_hero -> system_capabilities -> executed_projects` |
+| 07 | `magazine-spread-columns` | `magazine-spread-columns` | `architecture-map` | `brutalist-pop` | `sticky-minimal-bar` | `magazine_header -> three_column_portfolio -> editorial_skills` |
+| 08 | `editorial-monograph` | `editorial-monograph` | `failure-recovery` | `monochrome-gallery` | `sticky-minimal-bar` | `monograph_cover -> thesis_statement -> project_chapters` |
+| 09 | `split-screen-dossier` | `split-screen-dossier` | `typographic-index-reveal` | `technical-lab` | `sticky-minimal-bar` | `split_identity -> featured_artifacts -> verified_stack` |
+| 10 | `work-first-runway` | `work-first-runway` | `metrics-observatory` | `cinematic-obsidian` | `sticky-minimal-bar` | `work_runway -> technical_evidence -> professional_journey` |
+| 11 | `narrative-timeline` | `narrative-timeline` | `technical-dossier` | `brutalist-pop` | `sticky-minimal-bar` | `prologue_hero -> chronological_milestones -> mastered_tools` |
+| 12 | `spatial-3d-stage` | `spatial-3d-stage` | `architecture-map` | `cosmic-astronaut-holographic` | `sticky-minimal-bar` | `stage_intro -> orbiting_projects -> stack_constellation` |
+| 13 | `horizontal-exhibition` | `horizontal-exhibition` | `failure-recovery` | `monochrome-gallery` | `sticky-minimal-bar` | `exhibition_title -> curated_track -> skills_archive` |
+| 14 | `asymmetric-bento-canvas` | `asymmetric-bento-canvas` | `horizontal-filmstrip` | `swiss-editorial` | `sticky-minimal-bar` | `bento_masthead -> featured_mosaic -> skill_matrices` |
+| 15 | `minimal-single-screen` | `minimal-single-screen` | `metrics-observatory` | `brutalist-pop` | `sticky-minimal-bar` | `statement_masthead -> interactive_index -> status_footer` |
+| 16 | `magazine-spread-columns` | `magazine-spread-columns` | `technical-dossier` | `cinematic-obsidian` | `sticky-minimal-bar` | `magazine_header -> three_column_portfolio -> editorial_skills` |
+| 17 | `editorial-monograph` | `editorial-monograph` | `asymmetric-media-mosaic` | `technical-lab` | `sticky-minimal-bar` | `monograph_cover -> thesis_statement -> project_chapters` |
+| 18 | `computational-terminal` | `computational-terminal` | `architecture-map` | `futuristic-spatial` | `sticky-minimal-bar` | `cli_prompt_hero -> system_capabilities -> executed_projects` |
+| 19 | `split-screen-dossier` | `split-screen-dossier` | `failure-recovery` | `monochrome-gallery` | `sticky-minimal-bar` | `split_identity -> featured_artifacts -> verified_stack` |
+| 20 | `work-first-runway` | `work-first-runway` | `metrics-observatory` | `swiss-editorial` | `sticky-minimal-bar` | `work_runway -> technical_evidence -> professional_journey` |
 
 ---
 

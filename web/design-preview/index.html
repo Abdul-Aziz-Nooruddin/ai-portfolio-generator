@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MyFolio — Cohesive Multi-Page Visual System</title>
+  <meta name="description" content="Different Worlds, One Brand. Isolated localhost prototype environment for MyFolio platform pages.">
+
+  <!-- Google Fonts: Anton (Masthead), Condiment (Accent), Inter (Body) & JetBrains Mono (Telemetry) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Condiment&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            bgNavy: '#010828',
+            bgCharcoal: '#0C0E17',
+            bgEngine: '#070B19',
+            bgGallery: '#080B18',
+            bgControl: '#0B0F1E',
+            bgIdentity: '#120F19',
+            bgWorkstation: '#080B14',
+            bgArchive: '#F8F7F3',
+            bgManifesto: '#F5F4EE',
+            cream: '#EFF4FF',
+            creamDark: '#010828',
+            neon: '#6FFF00',
+            amberAccent: '#F59E0B',
+            blueTech: '#38BDF8',
+          },
+          fontFamily: {
+            grotesk: ['Anton', 'sans-serif'],
+            condiment: ['Condiment', 'cursive'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React 18 & Babel Standalone -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg-navy: #010828;
+      --cream: #EFF4FF;
+      --neon: #6FFF00;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    /* Reserved Liquid Glass Effect (Strictly for floating nav, modals, singular portals) */
+    .liquid-glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+    }
+
+    .liquid-glass::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(180deg,
+        rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 20%,
+        rgba(255,255,255,0) 50%, rgba(255,255,255,0.1) 80%,
+        rgba(255,255,255,0.3) 100%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+
+    /* Environmental Textures */
+    .env-blueprint {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    .env-scanlines {
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(56, 189, 248, 0.015) 0px,
+        rgba(56, 189, 248, 0.015) 1px,
+        transparent 1px,
+        transparent 3px
+      );
+    }
+
+    .env-grid-subtle {
+      background-image: 
+        radial-gradient(circle, rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+
+    .env-paper {
+      background-image: radial-gradient(rgba(1, 8, 40, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.1);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 9999px;
+    }
+    /* =========================================================================
+       ARCHITECTURAL LIGHT THEME (Museum Ivory Canvas & Pure Alabaster Surfaces)
+       ========================================================================= */
+    /* 1. Global Background Canvas */
+    .theme-light,
+    .theme-light body,
+    .theme-light main,
+    .theme-light #collection {
+      background-color: #F6F5F0 !important;
+      color: #010828 !important;
+    }
+
+    /* Keep the outer page layout wrappers ivory so white cards pop on top */
+    .theme-light .min-h-screen:not(.bg-white) {
+      background-color: #F6F5F0 !important;
+    }
+
+    /* 2. Top Review Command Bar & Nav Header */
+    .theme-light header.sticky {
+      background-color: rgba(255, 255, 255, 0.94) !important;
+      border-bottom: 1px solid rgba(1, 8, 40, 0.10) !important;
+      color: #010828 !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.05) !important;
+    }
+    .theme-light header.sticky a,
+    .theme-light header.sticky span:not(.bg-neon),
+    .theme-light header.sticky button {
+      color: #010828 !important;
+    }
+    .theme-light header.sticky .border-white\/10 {
+      border-color: rgba(1, 8, 40, 0.10) !important;
+    }
+    .theme-light header.sticky a.text-cream\/70,
+    .theme-light header.sticky button.text-cream\/70 {
+      color: rgba(1, 8, 40, 0.65) !important;
+    }
+    .theme-light header.sticky a.text-cream\/70:hover,
+    .theme-light header.sticky button.text-cream\/70:hover {
+      background-color: rgba(1, 8, 40, 0.06) !important;
+      color: #010828 !important;
+    }
+
+    /* 3. Universal Cards, Panels, Slabs & Containers */
+    /* Every card class used across Jack 3D, Studio, Generator, Dashboard, Profile, Auth, etc. */
+    .theme-light .rounded-3xl:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light .rounded-2xl:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[32px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[28px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[24px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="rounded-[20px]"]:not(#hero):not(#contact):not(#how-it-works),
+    .theme-light [class*="bg-[#141724]"],
+    .theme-light [class*="bg-[#141416]"],
+    .theme-light [class*="bg-[#0D152A]"],
+    .theme-light [class*="bg-[#121626]"],
+    .theme-light [class*="bg-[#080E24]"],
+    .theme-light [class*="bg-[#12172F]"],
+    .theme-light [class*="bg-[#1B1626]"],
+    .theme-light [class*="bg-[#0E1322]"],
+    .theme-light [class*="bg-[#0B0F1B]"],
+    .theme-light [class*="bg-[#080B14]"],
+    .theme-light [class*="bg-[#070b19]"],
+    .theme-light [class*="bg-[#0e162e]"],
+    .theme-light [class*="bg-[#0b1124]"],
+    .theme-light [class*="bg-[#050b18]"],
+    .theme-light [class*="bg-[#111a36]"],
+    .theme-light [class*="bg-[#0c142b]"],
+    .theme-light [class*="bg-[#101935]"],
+    .theme-light [class*="bg-[#080e22]"],
+    .theme-light [class*="bg-[#0a1024]"],
+    .theme-light [class*="bg-[#070d20]"],
+    .theme-light [class*="bg-[#0e1736]"],
+    .theme-light [class*="bg-[#09112a]"],
+    .theme-light [class*="bg-[#0d132b]"],
+    .theme-light [class*="bg-[#121a3a]"],
+    .theme-light [class*="bg-[#152048]"],
+    .theme-light [class*="bg-[#131120]"],
+    .theme-light [class*="bg-[#1a172c]"],
+    .theme-light [class*="bg-[#1f1b34]"],
+    .theme-light [class*="bg-[#0d1424]"],
+    .theme-light [class*="bg-[#141d33]"],
+    .theme-light [class*="bg-[#0a0f1d]"],
+    .theme-light [class*="bg-[#030612]"] {
+      background-color: #FFFFFF !important;
+      border-color: rgba(1, 8, 40, 0.09) !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.05), 0 1px 3px rgba(1, 8, 40, 0.03) !important;
+      color: #010828 !important;
+    }
+
+    /* 4. Frosted Alabaster Glass */
+    .theme-light .liquid-glass {
+      background: rgba(255, 255, 255, 0.88) !important;
+      backdrop-filter: blur(16px) !important;
+      -webkit-backdrop-filter: blur(16px) !important;
+      box-shadow: 0 4px 20px -2px rgba(1, 8, 40, 0.06), inset 0 1px 1px rgba(255, 255, 255, 1) !important;
+      border: 1px solid rgba(1, 8, 40, 0.09) !important;
+      color: #010828 !important;
+    }
+
+    .theme-light .liquid-glass::before {
+      background: linear-gradient(180deg,
+        rgba(1, 8, 40, 0.08) 0%, rgba(1, 8, 40, 0.02) 25%,
+        transparent 50%, rgba(1, 8, 40, 0.02) 75%,
+        rgba(1, 8, 40, 0.06) 100%) !important;
+    }
+
+    /* 5. Inner Wells, Inputs, Code Blocks, and Inactive Fields */
+    .theme-light input,
+    .theme-light textarea,
+    .theme-light select,
+    .theme-light [class*="bg-black/"],
+    .theme-light .rounded-xl:not(button):not(.bg-neon):not([class*="bg-purpleRoyal"]):not([class*="bg-blueTech"]):not([class*="bg-amberAccent"]) {
+      background-color: #F8F9FA !important;
+      border-color: rgba(1, 8, 40, 0.12) !important;
+      color: #010828 !important;
+    }
+    .theme-light input::placeholder,
+    .theme-light textarea::placeholder {
+      color: rgba(1, 8, 40, 0.45) !important;
+    }
+
+    /* 6. Secondary Pills, Chips, and Micro-affordances */
+    .theme-light [class*="bg-white/5"],
+    .theme-light [class*="bg-white/10"],
+    .theme-light [class*="bg-white/15"],
+    .theme-light [class*="bg-white/20"] {
+      background-color: rgba(1, 8, 40, 0.05) !important;
+      border-color: rgba(1, 8, 40, 0.10) !important;
+      color: #010828 !important;
+    }
+
+    /* 7. Typography Contrasts */
+    .theme-light h1:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h2:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h3:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h4:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h5:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light h6:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: #010828 !important;
+    }
+
+    .theme-light p:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light label:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light span.text-cream:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light a.text-cream:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light div.text-cream:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: #010828 !important;
+    }
+
+    .theme-light [class*="text-cream/90"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/80"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/70"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/80"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/70"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: rgba(1, 8, 40, 0.78) !important;
+    }
+
+    .theme-light [class*="text-cream/60"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/50"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/40"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-cream/30"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/60"]:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light [class*="text-white/50"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      color: rgba(1, 8, 40, 0.58) !important;
+    }
+
+    /* 8. Accent Script & Neon Accents */
+    .theme-light .font-condiment.text-neon:not(#hero *):not(#contact *):not(#how-it-works *),
+    .theme-light span.text-neon:not(#hero *):not(#contact *):not(#how-it-works *):not(button *):not(.bg-neon *) {
+      color: #0D5C22 !important;
+      mix-blend-mode: normal !important;
+    }
+
+    /* Neon CTA button stays ultra high-contrast punchy lime */
+    .theme-light .bg-neon {
+      background-color: #6FFF00 !important;
+      color: #010828 !important;
+      border-color: #0D5C22 !important;
+      box-shadow: 0 4px 14px rgba(109, 255, 0, 0.3) !important;
+    }
+
+    /* 9. Hairline Borders */
+    .theme-light [class*="border-white"]:not(#hero *):not(#contact *):not(#how-it-works *) {
+      border-color: rgba(1, 8, 40, 0.09) !important;
+    }
+
+    /* 10. Environmental Blueprint & Grid Backgrounds */
+    .theme-light .env-blueprint {
+      background-image: 
+        linear-gradient(to right, rgba(1, 8, 40, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(1, 8, 40, 0.04) 1px, transparent 1px) !important;
+      background-size: 32px 32px;
+    }
+
+    .theme-light .env-scanlines {
+      background-image: repeating-linear-gradient(
+        0deg,
+        rgba(2, 132, 199, 0.02) 0px,
+        rgba(2, 132, 199, 0.02) 1px,
+        transparent 1px,
+        transparent 3px
+      ) !important;
+    }
+
+    .theme-light .env-grid-subtle {
+      background-image: radial-gradient(circle, rgba(1, 8, 40, 0.06) 1px, transparent 1px) !important;
+    }
+
+    /* 11. Footer */
+    .theme-light footer {
+      background-color: #F6F5F0 !important;
+      border-color: rgba(1, 8, 40, 0.10) !important;
+      color: rgba(1, 8, 40, 0.7) !important;
+    }
+    .theme-light footer a {
+      color: rgba(1, 8, 40, 0.7) !important;
+    }
+    .theme-light footer a:hover {
+      color: #010828 !important;
+    }
+
+    /* 12. Video Sections (#hero, #how-it-works, #contact) Maintain Deep Cinematic Contrast */
+    .theme-light #hero,
+    .theme-light #contact,
+    .theme-light #how-it-works {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero h1,
+    .theme-light #hero h2,
+    .theme-light #hero p,
+    .theme-light #hero a:not(.bg-neon),
+    .theme-light #hero span:not(.bg-neon),
+    .theme-light #contact h1,
+    .theme-light #contact h2,
+    .theme-light #contact p,
+    .theme-light #contact a:not(.bg-neon),
+    .theme-light #contact span:not(.bg-neon),
+    .theme-light #how-it-works h2,
+    .theme-light #how-it-works p,
+    .theme-light #how-it-works span:not(.bg-neon) {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero .text-cream,
+    .theme-light #contact .text-cream,
+    .theme-light #how-it-works .text-cream {
+      color: #EFF4FF !important;
+    }
+    .theme-light #hero .text-cream\/80,
+    .theme-light #contact .text-cream\/80,
+    .theme-light #how-it-works .text-cream\/80 {
+      color: rgba(239, 244, 255, 0.8) !important;
+    }
+    .theme-light #hero .font-condiment.text-neon,
+    .theme-light #contact .font-condiment.text-neon,
+    .theme-light #how-it-works .font-condiment.text-neon {
+      color: #6FFF00 !important;
+      mix-blend-mode: exclusion !important;
+    }
+    .theme-light #hero .liquid-glass,
+    .theme-light #how-it-works .liquid-glass {
+      background: rgba(255, 255, 255, 0.05) !important;
+      color: #EFF4FF !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React Application -->
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    // ==========================================
+    // ICONS
+    // ==========================================
+    const Icons = {
+      Github: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/>
+        </svg>
+      ),
+      Google: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className}>
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+        </svg>
+      ),
+      Sliders: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="1" x2="7" y1="14" y2="14"/><line x1="9" x2="15" y1="8" y2="8"/><line x1="17" x2="23" y1="16" y2="16"/>
+        </svg>
+      ),
+      Activity: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      ),
+      Check: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      ),
+      ArrowRight: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      ),
+      Layers: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+        </svg>
+      ),
+      Box: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+          <polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" x2="12" y1="22.08" y2="12"/>
+        </svg>
+      ),
+      Sun: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+        </svg>
+      ),
+      Moon: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+        </svg>
+      ),
+      FileText: ({ className = "w-4 h-4" }) => (
+        <svg viewBox="0 0 24 24" className={className} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/>
+        </svg>
+      )
+    };
+
+    // ==========================================
+    // SHARED REUSABLE COMPONENTS
+    // ==========================================
+
+    // Dynamic Navigation Pill that adapts between Dark Environments and Light Document Rooms
+    function BrandNav({ onNavigate, currentPage, isLight = false }) {
+      return (
+        <header className="w-full flex justify-center py-5 px-6 relative z-30">
+          <div className={`rounded-full px-6 py-2.5 flex items-center justify-between gap-8 max-w-4xl w-full transition-all duration-300 ${
+            isLight
+              ? 'bg-white/80 border border-black/10 shadow-sm text-bgNavy backdrop-blur-md'
+              : 'liquid-glass text-cream shadow-2xl'
+          }`}>
+            {/* Logo */}
+            <div 
+              onClick={() => onNavigate('home')} 
+              className="flex items-center gap-2 cursor-pointer select-none group"
+            >
+              <div className="w-7 h-7 rounded-lg bg-bgNavy flex items-center justify-center border border-white/20">
+                <span className="font-grotesk text-neon text-sm group-hover:scale-110 transition-transform">MF</span>
+              </div>
+              <span className="font-grotesk tracking-wider text-lg uppercase">
+                MYFOLIO<span className="font-condiment text-neon text-xl ml-1">world</span>
+              </span>
+            </div>
+
+            {/* Nav Links */}
+            <nav className="hidden md:flex items-center gap-6 font-mono text-xs uppercase tracking-wider">
+              {[
+                { id: 'home', label: 'Entrance' },
+                { id: 'jack-3d', label: 'Jack 3D' },
+                { id: 'studio', label: 'Studio' },
+                { id: 'generator', label: 'Engine' },
+                { id: 'dashboard', label: 'Dashboard' },
+                { id: 'about', label: 'About' },
+              ].map((link) => {
+                const active = currentPage === link.id;
+                return (
+                  <button
+                    key={link.id}
+                    onClick={() => onNavigate(link.id)}
+                    className={`transition-colors duration-200 relative py-1 ${
+                      active 
+                        ? (isLight ? 'text-bgNavy font-bold' : 'text-cream font-bold') 
+                        : (isLight ? 'text-bgNavy/60 hover:text-bgNavy' : 'text-cream/60 hover:text-cream')
+                    }`}
+                  >
+                    {link.label}
+                    {active && (
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-neon rounded-full" />
+                    )}
+                  </button>
+                );
+              })}
+            </nav>
+
+            {/* Quick Portal CTA */}
+            <button
+              onClick={() => onNavigate('auth')}
+              className={`rounded-full px-4 py-1.5 font-grotesk uppercase text-xs tracking-wider transition-transform duration-200 hover:scale-105 active:scale-95 ${
+                isLight 
+                  ? 'bg-bgNavy text-cream' 
+                  : 'bg-white/10 hover:bg-neon hover:text-bgNavy text-cream'
+              }`}
+            >
+              Portal →
+            </button>
+          </div>
+        </header>
+      );
+    }
+
+    // Standardized Page Hero Headline with Shared Typography DNA
+    function RoomHero({ 
+      tag, 
+      roomName, 
+      headline, 
+      accent, 
+      description, 
+      isLight = false, 
+      extraBadge 
+    }) {
+      return (
+        <div className="relative mb-12 sm:mb-16">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-[11px] font-mono uppercase tracking-widest text-neon">
+              {tag}
+            </span>
+            <span className={`h-px w-8 ${isLight ? 'bg-black/15' : 'bg-white/15'}`}></span>
+            <span className={`text-[10px] font-mono uppercase tracking-wider ${isLight ? 'text-bgNavy/50' : 'text-cream/50'}`}>
+              ROOM: {roomName}
+            </span>
+            {extraBadge && (
+              <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded border border-current opacity-70">
+                {extraBadge}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col sm:flex-row sm:items-baseline gap-2 sm:gap-4 flex-wrap">
+            <h1 className={`font-grotesk text-4xl sm:text-6xl lg:text-7xl uppercase leading-[1.02] tracking-tight ${
+              isLight ? 'text-bgNavy' : 'text-cream'
+            }`}>
+              {headline}
+            </h1>
+            {accent && (
+              <span className="font-condiment text-neon text-3xl sm:text-5xl -rotate-2 select-none capitalize whitespace-nowrap drop-shadow">
+                {accent}
+              </span>
+            )}
+          </div>
+
+          {description && (
+            <p className={`mt-3 font-mono text-xs sm:text-sm uppercase max-w-2xl leading-relaxed tracking-wide ${
+              isLight ? 'text-bgNavy/70' : 'text-cream/70'
+            }`}>
+              {description}
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    // ==========================================
+    // MOCK DATA STORE // JACK 3D CREATOR ONLY
+    // ==========================================
+    const MockData = {
+      template: {
+        id: 'jack-3d-creator',
+        name: 'Jack 3D Creator',
+        discipline: 'PREMIER 3D CREATOR & ENGINEER PORTFOLIO',
+        paletteNote: 'Dark Void #0C0C0C, Ice Accent #D7E2EA & Purple-Orange CTA Gradient',
+        accentColor: '#B600A8',
+        bgHue: '#0C0C0C',
+        typefaces: 'Kanit (Google Fonts, weights 300-900)',
+        previewImage: '/assets/3d/cosmic_astronaut_3d.jpg',
+        quote: 'Signature 3D spatial portfolio with magnetic interactive head, dual velocity-skewed tech marquees, and dynamic stacking project vaults.'
+      },
+      portfolios: [
+        {
+          id: 'p-1',
+          name: 'Alex Rivers',
+          title: 'Full-Stack Engineer & Systems Architect',
+          template: 'Jack 3D Creator',
+          domain: 'alex-rivers.myfolio.tech',
+          status: 'LIVE // ACTIVE',
+          views: '5,420',
+          syncedAt: 'Just now'
+        },
+        {
+          id: 'p-2',
+          name: 'Sarah Connor',
+          title: 'Autonomous Robotics Architect',
+          template: 'Jack 3D Creator',
+          domain: 'sarahconnor.dev',
+          status: 'PUBLISHED',
+          views: '3,840',
+          syncedAt: '12m ago'
+        }
+      ]
+    };
+
+    // =========================================================================
+    // ROOM 00: HOMEPAGE — THE ENTRANCE (Family A: Immersive)
+    // Atmosphere: Cosmic / Cinematic, Deep Navy #010828, 3D Video, High Drama
+    // =========================================================================
+    // =========================================================================
+    // ROOM 00: HOME (Arrival // Dawn Architectural Atelier)
+    // Atmosphere: Architectural creative studio at dawn, editorial craft,
+    // tactile storytelling, zero object clutter, zero generic cards.
+    // =========================================================================
+    function HomePage({ onNavigate }) {
+      const [activeTone, setActiveTone] = useState('engineer');
+
+      const toneStyles = {
+        engineer: { accent: '#10B981', label: 'Terminal Substrates · Telemetry Streams' },
+        designer: { accent: '#F7F6F1', label: 'Editorial Monograph · Museum Ivory' },
+        creator: { accent: '#E25B2D', label: 'Photographic Space · Tactile Print' },
+        builder: { accent: '#D4A373', label: 'Hardware Traces · PCB Brass' },
+        architect: { accent: '#38BDF8', label: 'Spatial Coordinates · Glass & Stone' },
+      };
+
+      return (
+        <div className="relative w-full bg-[#0B0D12] text-[#F7F6F1] min-h-screen font-body selection:bg-[#E25B2D] selection:text-white">
+          
+          {/* Ambient Dawn Studio Backdrop */}
+          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden opacity-35">
+            <img 
+              src="/assets/studio-dawn-workspace.jpg" 
+              alt="Architectural studio at dawn" 
+              className="w-full h-full object-cover filter brightness-[0.6] contrast-[1.1]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0B0D12]/70 to-[#0B0D12]"></div>
+          </div>
+
+          <div className="relative z-10">
+
+            {/* CHAPTER 01: ARRIVAL & HERO */}
+            <section className="min-h-screen px-6 sm:px-12 lg:px-20 pt-36 pb-20 max-w-[1440px] mx-auto flex flex-col justify-end">
+              <div className="flex items-center gap-3 font-mono text-[11px] uppercase tracking-widest text-[#8E95A5] mb-6">
+                <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-white">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#E25B2D]"></span>
+                  ARCHITECTURAL PORTFOLIO OS
+                </span>
+                <span>DAWN ATELIER // EDITION 2026</span>
+              </div>
+
+              <h1 className="font-grotesk text-[48px] sm:text-[76px] lg:text-[110px] leading-[0.94] font-extrabold uppercase tracking-tight text-white mb-8 max-w-[1240px]">
+                YOUR WORK.<br />
+                <span className="text-transparent" style={{ WebkitTextStroke: '1.5px #F7F6F1' }}>
+                  MADE VISIBLE.
+                </span>
+              </h1>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-end pt-8 border-t border-white/10">
+                <p className="text-[17px] sm:text-[20px] font-light leading-relaxed text-[#D1D5DB] max-w-xl">
+                  Turn your GitHub repositories, resume, projects, and engineering experience into an immersive digital world built around your story.
+                </p>
+
+                <div className="flex flex-col items-start gap-5">
+                  <div className="flex flex-wrap gap-4">
+                    <button
+                      onClick={() => onNavigate('auth')}
+                      className="px-8 py-3.5 rounded-full bg-white text-[#0B0D12] hover:bg-[#E25B2D] hover:text-white transition-all duration-300 font-semibold text-sm uppercase tracking-wide flex items-center gap-2 shadow-lg cursor-pointer"
+                    >
+                      <span>Create Your MyFolio</span>
+                      <Icons.ArrowRight className="w-4 h-4" />
+                    </button>
+                    <a
+                      href="#exhibition"
+                      className="px-8 py-3.5 rounded-full bg-white/5 border border-white/15 text-white hover:bg-white/10 transition-colors text-sm font-medium uppercase tracking-wide flex items-center gap-2"
+                    >
+                      <span>Explore Exhibition</span>
+                    </a>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-6 font-mono text-[11px] text-[#8E95A5]">
+                    <div className="flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                      <span>GitHub Telemetry Ingestion</span>
+                    </div>
+                    <span>Sub-60s Synthesis</span>
+                    <span>Zero Predefined Templates</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CHAPTER 02: THE STATEMENT / DISCOVER */}
+            <section className="px-6 sm:px-12 lg:px-20 py-32 max-w-[1440px] mx-auto border-t border-white/10">
+              <span className="font-mono text-xs uppercase tracking-widest text-[#E25B2D] block mb-6">
+                01 // PHILOSOPHY
+              </span>
+              <h2 className="font-grotesk text-[38px] sm:text-[60px] lg:text-[84px] leading-[1.02] font-extrabold uppercase tracking-tight text-white mb-10 max-w-5xl">
+                EVERY PROJECT HAS A STORY.
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl text-[18px] font-light leading-relaxed text-[#8E95A5]">
+                <p>
+                  Your GitHub shows what you built. Your resume shows where you've been. <strong className="text-white font-medium">MyFolio brings everything together into one architectural experience</strong> that recruiters and engineering leaders can actually explore.
+                </p>
+                <p>
+                  We rejected the SaaS template paradigm where everyone's career is forced into the same three rounded glass cards. Your work has physical weight, spatial depth, and technical craft. Your portfolio should look like nobody else's.
+                </p>
+              </div>
+            </section>
+
+            {/* CHAPTER 03: FROM DATA TO IDENTITY */}
+            <section className="px-6 sm:px-12 lg:px-20 py-32 max-w-[1440px] mx-auto border-t border-white/10">
+              <div className="flex justify-between items-end pb-6 mb-16 border-b border-white/10">
+                <h2 className="font-grotesk text-[28px] sm:text-[44px] font-bold uppercase tracking-tight text-white">
+                  From Raw Data To Digital World
+                </h2>
+                <span className="font-mono text-xs text-[#8E95A5]">02 // SYSTEM PIPELINE</span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="bg-[#131622] border border-white/10 rounded-xl p-8 flex flex-col justify-between min-h-[360px] hover:border-white/20 transition-all">
+                  <div>
+                    <div className="font-mono text-xs text-[#E25B2D] mb-4">STAGE 01</div>
+                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-6">
+                      <Icons.Github className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-3">GitHub Commits</h3>
+                    <p className="text-sm text-[#8E95A5] leading-relaxed">
+                      Production repositories, architectural depth, and commit cadences are ingested from your public profile into physical diagnostic viewports.
+                    </p>
+                  </div>
+                  <div className="pt-4 border-t border-white/5 font-mono text-[10px] text-[#52596A] flex justify-between uppercase">
+                    <span>INPUT: TELEMETRY</span>
+                    <span>VERIFIED PROOF</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#131622] border border-white/10 rounded-xl p-8 flex flex-col justify-between min-h-[360px] hover:border-white/20 transition-all">
+                  <div>
+                    <div className="font-mono text-xs text-[#E25B2D] mb-4">STAGE 02</div>
+                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-6">
+                      <Icons.FileText className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-3">Resume Dossier</h3>
+                    <p className="text-sm text-[#8E95A5] leading-relaxed">
+                      Your career milestones, certifications, and academic trajectory are parsed into structured typographic layers with crisp hierarchy.
+                    </p>
+                  </div>
+                  <div className="pt-4 border-t border-white/5 font-mono text-[10px] text-[#52596A] flex justify-between uppercase">
+                    <span>INPUT: ARCHIVAL PDF</span>
+                    <span>STRUCTURED DNA</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#131622] border border-white/10 rounded-xl p-8 flex flex-col justify-between min-h-[360px] hover:border-white/20 transition-all">
+                  <div>
+                    <div className="font-mono text-xs text-[#E25B2D] mb-4">STAGE 03</div>
+                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-6">
+                      <Icons.Layers className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-3">Case Artifacts</h3>
+                    <p className="text-sm text-[#8E95A5] leading-relaxed">
+                      Projects become tactile case studies. Live architectures, system diagrams, and performance benchmarks replace generic image thumbnails.
+                    </p>
+                  </div>
+                  <div className="pt-4 border-t border-white/5 font-mono text-[10px] text-[#52596A] flex justify-between uppercase">
+                    <span>SYNTHESIS: CRAFT</span>
+                    <span>SPATIAL PRINTS</span>
+                  </div>
+                </div>
+
+                <div className="bg-[#131622] border border-white/10 rounded-xl p-8 flex flex-col justify-between min-h-[360px] hover:border-white/20 transition-all">
+                  <div>
+                    <div className="font-mono text-xs text-[#E25B2D] mb-4">STAGE 04</div>
+                    <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white mb-6">
+                      <Icons.Globe className="w-5 h-5" />
+                    </div>
+                    <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-3">Living World</h3>
+                    <p className="text-sm text-[#8E95A5] leading-relaxed">
+                      Everything reorganizes into an architectural world calibrated to your discipline, complete with smooth camera dollys and responsive lighting.
+                    </p>
+                  </div>
+                  <div className="pt-4 border-t border-white/5 font-mono text-[10px] text-[#52596A] flex justify-between uppercase">
+                    <span>RESULT: IMMERSION</span>
+                    <span>MYFOLIO WORLD</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CHAPTER 04: EDITORIAL PROJECT EXHIBITION */}
+            <section id="exhibition" className="px-6 sm:px-12 lg:px-20 py-32 max-w-[1440px] mx-auto border-t border-white/10">
+              <div className="flex justify-between items-end pb-6 mb-20 border-b border-white/10">
+                <h2 className="font-grotesk text-[28px] sm:text-[44px] font-bold uppercase tracking-tight text-white">
+                  Selected Work Exhibition
+                </h2>
+                <span className="font-mono text-xs text-[#8E95A5]">03 // EDITORIAL MONOGRAPHS</span>
+              </div>
+
+              <div className="flex flex-col gap-28">
+                {/* Monograph 01 */}
+                <article className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                  <div 
+                    onClick={() => onNavigate('jack-3d')}
+                    className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 bg-[#131622] cursor-pointer group relative"
+                  >
+                    <img 
+                      src="/assets/world/env_summit_observatory.jpg" 
+                      alt="Earth Intelligence platform"
+                      className="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-5 left-5 px-3 py-1 rounded-full bg-[#0B0D12]/80 backdrop-blur-md border border-white/10 font-mono text-[10px] uppercase text-white">
+                      MODE 01 // FULL-BLEED MONOGRAPH
+                    </div>
+                  </div>
+                  <div className="lg:col-span-5 flex flex-col justify-center">
+                    <span className="font-mono text-xs uppercase tracking-wider text-[#E25B2D] mb-3">
+                      Geospatial Telemetry & Climate AI
+                    </span>
+                    <h3 className="font-grotesk text-[32px] sm:text-[44px] font-bold uppercase tracking-tight text-white mb-4 leading-tight">
+                      Earth Intelligence
+                    </h3>
+                    <p className="text-[16px] text-[#8E95A5] leading-relaxed mb-6">
+                      A planetary observation interface rendering real-time atmospheric data, wildfire telemetry, and satellite trajectories across an interactive 3D globe with sub-second tile streaming.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">WebGL 2.0</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Three.js PBR</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Cesium Geospatial</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Python Pipelines</span>
+                    </div>
+                    <button 
+                      onClick={() => onNavigate('jack-3d')}
+                      className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-white hover:text-[#E25B2D] transition-colors"
+                    >
+                      <span>Inspect Architecture</span>
+                      <Icons.ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </article>
+
+                {/* Monograph 02 */}
+                <article className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                  <div className="lg:col-span-5 flex flex-col justify-center order-2 lg:order-1">
+                    <span className="font-mono text-xs uppercase tracking-wider text-[#E25B2D] mb-3">
+                      Distributed Systems & Realtime Protocol
+                    </span>
+                    <h3 className="font-grotesk text-[32px] sm:text-[44px] font-bold uppercase tracking-tight text-white mb-4 leading-tight">
+                      WordRun Core
+                    </h3>
+                    <p className="text-[16px] text-[#8E95A5] leading-relaxed mb-6">
+                      A competitive multiplayer semantic engine synchronizing rapid word-chain state across thousands of concurrent players with sub-20ms WebSocket delta updates and optimistic reconciliation.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Rust WebSocket</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Event Loops</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">State Sync</span>
+                    </div>
+                    <button 
+                      onClick={() => onNavigate('jack-3d')}
+                      className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-white hover:text-[#E25B2D] transition-colors"
+                    >
+                      <span>Inspect Architecture</span>
+                      <Icons.ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div 
+                    onClick={() => onNavigate('jack-3d')}
+                    className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 bg-[#131622] cursor-pointer group relative order-1 lg:order-2"
+                  >
+                    <img 
+                      src="/assets/3d/pass_note_messenger_3d.jpg" 
+                      alt="WordRun core engine"
+                      className="w-full h-[420px] object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-5 left-5 px-3 py-1 rounded-full bg-[#0B0D12]/80 backdrop-blur-md border border-white/10 font-mono text-[10px] uppercase text-white">
+                      MODE 02 // EDITORIAL SPLIT
+                    </div>
+                  </div>
+                </article>
+
+                {/* Monograph 03 */}
+                <article className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-[#131622] border border-white/10 rounded-2xl p-8 sm:p-12">
+                  <div className="lg:col-span-5 flex flex-col justify-center">
+                    <span className="font-mono text-xs uppercase tracking-wider text-[#E25B2D] mb-3">
+                      Procedural Game Engine & Spatial Audio
+                    </span>
+                    <h3 className="font-grotesk text-[32px] sm:text-[44px] font-bold uppercase tracking-tight text-white mb-4 leading-tight">
+                      Aftertime
+                    </h3>
+                    <p className="text-[16px] text-[#8E95A5] leading-relaxed mb-6">
+                      An atmospheric temporal role-playing world where architectural geometry, weather systems, and narrative outcomes procedurally evolve as the player advances in physical real-world time.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mb-8">
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">GLSL Shaders</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">WebGPU Compute</span>
+                      <span className="px-2.5 py-1 rounded bg-white/5 border border-white/5 font-mono text-xs text-[#CBD5E1]">Procedural Audio</span>
+                    </div>
+                    <button 
+                      onClick={() => onNavigate('jack-3d')}
+                      className="inline-flex items-center gap-3 text-sm font-semibold uppercase tracking-wider text-white hover:text-[#E25B2D] transition-colors"
+                    >
+                      <span>Inspect Architecture</span>
+                      <Icons.ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div 
+                    onClick={() => onNavigate('jack-3d')}
+                    className="lg:col-span-7 rounded-xl overflow-hidden border border-white/10 bg-[#0B0D12] cursor-pointer group relative"
+                  >
+                    <img 
+                      src="/assets/3d/abyssal_ascent_3d.jpg" 
+                      alt="Aftertime game engine"
+                      className="w-full h-[400px] object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                    <div className="absolute top-5 left-5 px-3 py-1 rounded-full bg-[#0B0D12]/80 backdrop-blur-md border border-white/10 font-mono text-[10px] uppercase text-white">
+                      MODE 03 // ARCHITECTURAL SCREEN
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+
+            {/* CHAPTER 05: CREATIVE CAPABILITIES / IDENTITY SELECTOR */}
+            <section className="px-6 sm:px-12 lg:px-20 py-32 max-w-[1440px] mx-auto border-t border-white/10">
+              <div className="flex justify-between items-end pb-6 mb-12 border-b border-white/10">
+                <h2 className="font-grotesk text-[28px] sm:text-[44px] font-bold uppercase tracking-tight text-white">
+                  Adaptive Disciplines
+                </h2>
+                <span className="font-mono text-xs text-[#8E95A5]">04 // ARCHETYPE INTELLIGENCE</span>
+              </div>
+
+              <p className="text-[18px] text-[#8E95A5] max-w-2xl mb-12">
+                MyFolio does not force every discipline into the same container. The environment, typography, and density adjust to who you are.
+              </p>
+
+              <div className="flex flex-col border-t border-white/10">
+                {['engineer', 'designer', 'creator', 'builder', 'architect'].map((archetype) => (
+                  <div
+                    key={archetype}
+                    onMouseEnter={() => setActiveTone(archetype)}
+                    className="py-7 border-b border-white/10 flex justify-between items-center group cursor-pointer hover:pl-4 transition-all duration-300"
+                  >
+                    <span className="font-grotesk text-[32px] sm:text-[56px] font-extrabold uppercase text-[#8E95A5] group-hover:text-white transition-colors">
+                      {archetype}
+                    </span>
+                    <div className="font-mono text-xs uppercase text-[#52596A] group-hover:text-[#E25B2D] flex items-center gap-3 transition-colors">
+                      <span>{toneStyles[archetype]?.label}</span>
+                      <Icons.ArrowRight className="w-4 h-4" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {/* CHAPTER 06: ADAPTIVE WORLDS */}
+            <section className="px-6 sm:px-12 lg:px-20 py-32 max-w-[1440px] mx-auto border-t border-white/10">
+              <div className="flex justify-between items-end pb-6 mb-12 border-b border-white/10">
+                <h2 className="font-grotesk text-[28px] sm:text-[44px] font-bold uppercase tracking-tight text-white">
+                  Living Worlds, Not Color Swaps
+                </h2>
+                <span className="font-mono text-xs text-[#8E95A5]">05 // STRUCTURAL DIVERSITY</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div 
+                  onClick={() => onNavigate('jack-3d')}
+                  className="bg-[#131622] border border-white/10 rounded-xl overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
+                >
+                  <div className="h-64 overflow-hidden bg-black/40">
+                    <img 
+                      src="/assets/3d/developer_showcase_portfolio_3d.jpg" 
+                      alt="The Editorial portfolio world"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  </div>
+                  <div className="p-6 flex flex-col justify-between flex-1">
+                    <div>
+                      <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-1">The Editorial</h3>
+                      <div className="font-mono text-[11px] text-[#E25B2D] uppercase mb-3">MONOGRAPH ASYMMETRY // TACTILE PAPER</div>
+                      <p className="text-xs text-[#8E95A5] leading-relaxed mb-4">
+                        High-contrast serif mastheads, generous white space, and archival documentation suitable for design leaders.
+                      </p>
+                    </div>
+                    <span className="font-semibold text-xs uppercase tracking-wider text-white group-hover:text-[#E25B2D] transition-colors">
+                      Preview World →
+                    </span>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => onNavigate('jack-3d')}
+                  className="bg-[#131622] border border-white/10 rounded-xl overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
+                >
+                  <div className="h-64 overflow-hidden bg-black/40">
+                    <img 
+                      src="/assets/3d/pristine_glass_cube_workstation_3d.jpg" 
+                      alt="The Architect portfolio world"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  </div>
+                  <div className="p-6 flex flex-col justify-between flex-1">
+                    <div>
+                      <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-1">The Architect</h3>
+                      <div className="font-mono text-[11px] text-[#E25B2D] uppercase mb-3">SPATIAL BLUEPRINT // GLASS & STONE</div>
+                      <p className="text-xs text-[#8E95A5] leading-relaxed mb-4">
+                        Coordinate grids, architectural cross-sections, and structured modular frames designed for systems engineers.
+                      </p>
+                    </div>
+                    <span className="font-semibold text-xs uppercase tracking-wider text-white group-hover:text-[#E25B2D] transition-colors">
+                      Preview World →
+                    </span>
+                  </div>
+                </div>
+
+                <div 
+                  onClick={() => onNavigate('jack-3d')}
+                  className="bg-[#131622] border border-white/10 rounded-xl overflow-hidden flex flex-col group cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
+                >
+                  <div className="h-64 overflow-hidden bg-black/40">
+                    <img 
+                      src="/assets/3d/stealth_node_3d.jpg" 
+                      alt="The Engineer portfolio world"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    />
+                  </div>
+                  <div className="p-6 flex flex-col justify-between flex-1">
+                    <div>
+                      <h3 className="font-grotesk text-xl font-bold uppercase text-white mb-1">The Engineer</h3>
+                      <div className="font-mono text-[11px] text-[#E25B2D] uppercase mb-3">TERMINAL VOID // PHOSPHOR TRACE</div>
+                      <p className="text-xs text-[#8E95A5] leading-relaxed mb-4">
+                        Low-latency telemetry, commit streams, and hardware metrics crafted for cryptography specialists and kernel hackers.
+                      </p>
+                    </div>
+                    <span className="font-semibold text-xs uppercase tracking-wider text-white group-hover:text-[#E25B2D] transition-colors">
+                      Preview World →
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* CHAPTER 07: MANIFESTO */}
+            <section className="px-6 sm:px-12 lg:px-20 py-36 max-w-[1440px] mx-auto border-t border-white/10 text-center flex flex-col items-center">
+              <blockquote className="font-grotesk text-[32px] sm:text-[54px] lg:text-[72px] font-extrabold uppercase leading-tight text-white max-w-4xl mb-8">
+                "YOUR WORK SHOULD LOOK LIKE YOUR WORK."
+              </blockquote>
+              <p className="text-[18px] text-[#8E95A5] max-w-2xl leading-relaxed mb-8">
+                MyFolio synthesizes portfolios around your real repositories, verified accomplishments, and individual craft instead of squeezing your career into a template.
+              </p>
+              <div className="font-mono text-xs text-[#E25B2D] uppercase tracking-widest">
+                // ZERO FABRICATED METRICS · ZERO GENERIC CARDS
+              </div>
+            </section>
+
+            {/* CHAPTER 08: FINAL CTA */}
+            <section className="px-6 sm:px-12 lg:px-20 pt-20 pb-36 max-w-[1440px] mx-auto border-t border-white/10">
+              <div className="rounded-3xl border border-white/15 p-12 sm:p-20 bg-gradient-to-b from-[#151926] to-[#0E1017] text-center flex flex-col items-center relative overflow-hidden">
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-px bg-gradient-to-r from-transparent via-[#E25B2D] to-transparent"></div>
+                <h2 className="font-grotesk text-[36px] sm:text-[64px] lg:text-[88px] font-extrabold uppercase tracking-tight text-white leading-none mb-6">
+                  MAKE YOUR WORK<br />IMPOSSIBLE TO MISS.
+                </h2>
+                <p className="text-[18px] text-[#8E95A5] max-w-lg mb-10">
+                  Turn your GitHub or resume into your own digital world in sixty seconds.
+                </p>
+                <div className="flex flex-wrap justify-center gap-4">
+                  <button 
+                    onClick={() => onNavigate('auth')}
+                    className="px-10 py-4 rounded-full bg-[#E25B2D] hover:bg-[#c94b22] text-white font-semibold text-sm uppercase tracking-wider flex items-center gap-2 shadow-xl cursor-pointer"
+                  >
+                    <span>Create MyFolio Now</span>
+                    <Icons.ArrowRight className="w-4 h-4" />
+                  </button>
+                  <button 
+                    onClick={() => onNavigate('studio')}
+                    className="px-10 py-4 rounded-full bg-white/5 border border-white/15 text-white hover:bg-white/10 font-medium text-sm uppercase tracking-wider flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Explore The Studio</span>
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* CHAPTER 09: MINIMAL ARCHITECTURAL FOOTER */}
+            <footer className="border-t border-white/10 px-6 sm:px-12 py-10 max-w-[1440px] mx-auto flex flex-wrap justify-between items-center text-xs font-mono text-[#8E95A5] gap-6">
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-sm bg-[#E25B2D]"></span>
+                <span className="font-bold text-white">MYFOLIO</span>
+                <span>— Turn your work into an experience.</span>
+              </div>
+              <div className="flex gap-6 uppercase tracking-wider">
+                <button onClick={() => onNavigate('studio')} className="hover:text-white transition-colors">Studio</button>
+                <button onClick={() => onNavigate('auth')} className="hover:text-white transition-colors">Generate</button>
+                <button onClick={() => onNavigate('about')} className="hover:text-white transition-colors">About</button>
+                <button onClick={() => onNavigate('privacy')} className="hover:text-white transition-colors">Privacy</button>
+                <button onClick={() => onNavigate('terms')} className="hover:text-white transition-colors">Terms</button>
+              </div>
+            </footer>
+
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 01: STUDIO — THE WORKSHOP (Family B: Creative)
+    // Atmosphere: Creative Workshop, Warm Charcoal #0C0E17, Blueprint Grid,
+    // Work surfaces, floating documents, muted amber & small green highlights.
+    // =========================================================================
+    function StudioPage({ onNavigate }) {
+      const [source, setSource] = useState('github');
+
+      return (
+        <div className="min-h-screen bg-bgCharcoal text-cream env-blueprint pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="studio" />
+
+          <div className="max-w-6xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="01 // CREATIVE WORKSHOP"
+              roomName="THE WORKSHOP"
+              headline="BUILD YOUR WORLD."
+              accent="The workshop"
+              description="An architectural design space for assembling project artifacts, laying out spatial evidence, and engineering candidate identity."
+              extraBadge="SURFACES & SLABS"
+            />
+
+            {/* Architectural Work Table Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Left Column: Workshop Drafting Surfaces */}
+              <div className="lg:col-span-7 flex flex-col gap-6">
+                
+                {/* Surface 1: Evidence Drafting Slab */}
+                <div className="rounded-3xl p-7 bg-[#141724] border border-white/10 shadow-xl">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-amberAccent"></span>
+                      <span className="text-xs font-mono uppercase tracking-wider text-cream/80">
+                        SLAB 01: Evidence Ingestion Surface
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-cream/40">FORMAT: ARCHITECTURAL</span>
+                  </div>
+
+                  <div className="flex gap-2 mb-6">
+                    {['github', 'resume', 'hybrid'].map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setSource(tab)}
+                        className={`px-4 py-2 rounded-xl font-mono text-xs uppercase transition-all ${
+                          source === tab
+                            ? 'bg-cream text-bgNavy font-bold'
+                            : 'bg-white/5 text-cream/60 hover:text-cream'
+                        }`}
+                      >
+                        {tab === 'github' ? 'GitHub Signal' : tab === 'resume' ? 'Resume Dossier' : 'Hybrid Spec'}
+                      </button>
+                    ))}
+                  </div>
+
+                  {source === 'github' && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-xs font-mono text-cream/60 uppercase mb-2">GitHub Repository Source</label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            defaultValue="sarah-connor"
+                            className="flex-1 rounded-xl bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-cream focus:border-amberAccent outline-none"
+                          />
+                          <button
+                            onClick={() => onNavigate('generator')}
+                            className="rounded-xl px-5 py-3 font-grotesk uppercase text-xs tracking-wider bg-amberAccent text-bgNavy hover:bg-white transition-all font-bold"
+                          >
+                            Read Signals →
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-[11px] font-mono text-cream/50 pt-1">
+                        <Icons.Check className="w-3.5 h-3.5 text-neon" />
+                        <span>Autonomous webhook reconciliation enabled on verified repositories.</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Surface 2: Jack 3D Physics & Tuning */}
+                <div className="rounded-3xl p-7 bg-[#141724] border border-white/10 shadow-xl">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-sm bg-neon"></span>
+                      <span className="text-xs font-mono uppercase tracking-wider text-cream/80">
+                        SLAB 02: Jack 3D Motion Physics & Tuning
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-mono text-cream/40">JACK 3D PARAMS</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-mono text-cream/50 uppercase">MODULE 01</span>
+                      <h4 className="font-grotesk text-lg text-cream uppercase mt-1">3D Tilt Sensitivity</h4>
+                      <p className="text-xs font-mono text-cream/60 mt-1">Mouse tracking spring responsiveness</p>
+                      <div className="mt-3 flex gap-2">
+                        <span className="px-2.5 py-1 rounded bg-neon text-bgNavy font-mono text-[10px] font-bold">DYNAMIC</span>
+                        <span className="px-2.5 py-1 rounded bg-black/40 text-cream/60 font-mono text-[10px]">SUBTLE</span>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-mono text-cream/50 uppercase">MODULE 02</span>
+                      <h4 className="font-grotesk text-lg text-cream uppercase mt-1">Marquee Velocity</h4>
+                      <p className="text-xs font-mono text-cream/60 mt-1">Dual-row 21 tech badge speed</p>
+                      <div className="mt-3 flex gap-2">
+                        <span className="px-2.5 py-1 rounded bg-neon text-bgNavy font-mono text-[10px] font-bold">SMOOTH 60FPS</span>
+                        <span className="px-2.5 py-1 rounded bg-black/40 text-cream/60 font-mono text-[10px]">FAST</span>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-mono text-cream/50 uppercase">MODULE 03</span>
+                      <h4 className="font-grotesk text-lg text-cream uppercase mt-1">Stacking Depth</h4>
+                      <p className="text-xs font-mono text-cream/60 mt-1">Project card scale transform ratio</p>
+                      <div className="mt-3 flex gap-2">
+                        <span className="px-2.5 py-1 rounded bg-neon text-bgNavy font-mono text-[10px] font-bold">0.90x SCALE</span>
+                        <span className="px-2.5 py-1 rounded bg-black/40 text-cream/60 font-mono text-[10px]">0.95x</span>
+                      </div>
+                    </div>
+
+                    <div className="rounded-2xl p-4 bg-white/5 border border-white/10">
+                      <span className="text-[10px] font-mono text-cream/50 uppercase">MODULE 04</span>
+                      <h4 className="font-grotesk text-lg text-cream uppercase mt-1">Color Accent</h4>
+                      <p className="text-xs font-mono text-cream/60 mt-1">CTA gradient color harmonies</p>
+                      <div className="mt-3 flex gap-2">
+                        <span className="px-2.5 py-1 rounded bg-purpleRoyal text-white font-mono text-[10px] font-bold">PURPLE-ORANGE</span>
+                        <span className="px-2.5 py-1 rounded bg-black/40 text-cream/60 font-mono text-[10px]">NEON LIME</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Surface 3: Floating Document Artifacts */}
+                <div className="rounded-3xl p-6 bg-[#141724]/60 border border-white/10">
+                  <div className="text-[11px] font-mono text-cream/60 uppercase mb-3">WORKSPACE ATTACHMENTS // RECENT ARTIFACTS</div>
+                  <div className="flex flex-wrap gap-3">
+                    {['developer_dossier.pdf', 'system_architecture.json', 'github_repos_signal.json'].map((doc) => (
+                      <div key={doc} className="rounded-xl px-3.5 py-2 bg-black/40 border border-white/10 font-mono text-xs text-cream/80 flex items-center gap-2">
+                        <Icons.FileText className="w-3.5 h-3.5 text-amberAccent" />
+                        <span>{doc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Physical Studio Viewport */}
+              <div className="lg:col-span-5 flex flex-col gap-6">
+                <div className="rounded-3xl p-6 bg-[#141724] border border-white/10 shadow-2xl flex flex-col justify-between aspect-[4/5] relative overflow-hidden">
+                  <img
+                    src="/assets/3d/cosmic_astronaut_3d.jpg"
+                    alt="Jack 3D Portfolio Preview"
+                    className="absolute inset-0 w-full h-full object-cover opacity-75"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-bgCharcoal via-transparent to-bgCharcoal/60"></div>
+
+                  <div className="relative z-10 flex justify-between items-center">
+                    <span className="text-[11px] font-mono bg-bgCharcoal/80 backdrop-blur px-3 py-1 rounded-full text-neon border border-neon/30">
+                      JACK 3D LIVE VIEWPORT
+                    </span>
+                    <span className="text-[11px] font-mono text-cream/60">60 FPS REALTIME</span>
+                  </div>
+
+                  <div className="relative z-10 rounded-2xl p-5 bg-bgCharcoal/90 backdrop-blur border border-white/10">
+                    <span className="text-[10px] font-mono text-neon uppercase">TARGET DESIGN SPEC</span>
+                    <h3 className="font-grotesk text-2xl text-cream uppercase mt-1">Jack — 3D Creator</h3>
+                    <p className="text-xs font-mono text-cream/60 mt-1">Creative Developer &amp; 3D Designer</p>
+
+                    <div className="mt-5 pt-4 border-t border-white/10 flex justify-between items-center">
+                      <span className="text-[10px] font-mono text-cream/50">TEMPLATE: JACK 3D CREATOR</span>
+                      <a
+                        href="/jack-3d-creator.html"
+                        target="_blank"
+                        className="rounded-xl px-4 py-2 font-grotesk text-xs uppercase bg-neon text-bgNavy font-bold hover:scale-105 transition-transform no-underline"
+                      >
+                        Inspect Live ↗
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 02: GENERATOR — THE ENGINE ROOM (Family C: Product)
+    // Atmosphere: Precision machinery, Control Room, Deep Navy/Charcoal #070B19,
+    // Cool Blue #38BDF8, 5% Neon Green for progress & active status, scanlines.
+    // =========================================================================
+    function GeneratorPage({ onNavigate }) {
+      const [stage, setStage] = useState(0);
+      const [running, setRunning] = useState(false);
+
+      const stages = [
+        { label: '01. RECEPTACLE INGESTION', desc: 'Connecting to GitHub GraphQL API & parsing commits, pull requests, and language metrics...' },
+        { label: '02. REASONING & IDENTITY MODEL', desc: 'Classifying architectural domain, repository complexity, and technical specialization...' },
+        { label: '03. SHAPING EXPERIENCE & DNA', desc: 'Selecting optimal 3D universe archetype, non-repetitive typography, and color physics...' },
+        { label: '04. PROCEDURAL SHADER SYNTHESIS', desc: 'Synthesizing Three.js WebGL spatial stages, procedural assets, and scrollytelling splines...' },
+        { label: '05. EDGE DISTRIBUTION READY', desc: 'All spatial geometries rendered. Autonomous portfolio world initialized.' }
+      ];
+
+      const startSimulation = () => {
+        setRunning(true);
+        setStage(0);
+        let curr = 0;
+        const interval = setInterval(() => {
+          curr++;
+          if (curr < stages.length) {
+            setStage(curr);
+          } else {
+            clearInterval(interval);
+            setRunning(false);
+          }
+        }, 1200);
+      };
+
+      return (
+        <div className="min-h-screen bg-bgEngine text-cream env-scanlines pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="generator" />
+
+          <div className="max-w-4xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="02 // SYNTHESIS ENGINE"
+              roomName="THE ENGINE ROOM"
+              headline="TURN SIGNALS INTO STORY."
+              accent="Engine room"
+              description="A deterministic synthesis machine that parses engineering evidence, builds identity models, and compiles spatial WebGL viewports."
+              extraBadge="TELEMETRY SCAN"
+            />
+
+            {/* Machine Control Surface */}
+            <div className="rounded-3xl p-8 bg-[#0D152A] border border-blueTech/20 shadow-2xl">
+              
+              {/* Telemetry Header */}
+              <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-white/10 mb-8">
+                <div>
+                  <div className="text-[10px] font-mono text-blueTech uppercase tracking-widest">INGESTION TARGET</div>
+                  <h3 className="font-grotesk text-2xl text-cream uppercase mt-1">sarah-connor / Systems Architect</h3>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="font-mono text-xs text-cream/60">
+                    STATUS: <span className={running ? "text-neon animate-pulse" : "text-blueTech"}>{running ? "SYNTHESIZING..." : "STANDBY"}</span>
+                  </div>
+                  <button
+                    onClick={startSimulation}
+                    disabled={running}
+                    className="rounded-xl px-5 py-2.5 font-grotesk uppercase text-xs tracking-wider bg-blueTech text-bgNavy font-bold hover:bg-white transition-all disabled:opacity-50"
+                  >
+                    {running ? "Processing Engine..." : "Run Engine Simulation ✦"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Progress Line */}
+              <div className="mb-8">
+                <div className="flex justify-between font-mono text-xs text-cream/60 mb-2">
+                  <span>SYNTHESIS PIPELINE PROGRESS</span>
+                  <span className="text-neon">{Math.round(((stage + 1) / stages.length) * 100)}%</span>
+                </div>
+                <div className="w-full bg-black/50 h-2 rounded-full overflow-hidden border border-white/10">
+                  <div
+                    className="h-full bg-neon transition-all duration-500 ease-out"
+                    style={{ width: `${((stage + 1) / stages.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Engine Stages Stack */}
+              <div className="space-y-4">
+                {stages.map((st, idx) => {
+                  const isActive = idx === stage;
+                  const isDone = idx < stage;
+                  return (
+                    <div
+                      key={st.label}
+                      className={`rounded-2xl p-5 border transition-all flex items-start gap-4 ${
+                        isActive
+                          ? 'bg-blueTech/10 border-blueTech/50'
+                          : isDone
+                            ? 'bg-black/30 border-white/10 opacity-70'
+                            : 'bg-black/20 border-white/5 opacity-30'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-mono text-xs font-bold ${
+                        isDone 
+                          ? 'bg-neon text-bgNavy' 
+                          : isActive 
+                            ? 'bg-blueTech text-bgNavy animate-pulse' 
+                            : 'bg-white/10 text-cream/50'
+                      }`}>
+                        {isDone ? '✓' : idx + 1}
+                      </div>
+
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-grotesk text-lg text-cream tracking-wide uppercase">{st.label}</h4>
+                          {isActive && <span className="text-[11px] font-mono text-neon animate-pulse">PROCESSING</span>}
+                          {isDone && <span className="text-[11px] font-mono text-neon">COMPLETED</span>}
+                        </div>
+                        <p className="text-xs font-mono text-cream/70 mt-1">{st.desc}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Completion Action */}
+              {stage === 4 && (
+                <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap justify-between items-center gap-4">
+                  <span className="font-mono text-xs text-neon flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-neon"></span>
+                    ALL 3D PROCEDURAL SHADERS INITIALIZED
+                  </span>
+                  <button
+                    onClick={() => onNavigate('dashboard')}
+                    className="rounded-full px-6 py-3 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform"
+                  >
+                    View in Dashboard Fleet →
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 03: JACK 3D SHOWCASE — THE SIGNATURE PORTFOLIO SYSTEM (Family A: Immersive)
+    // Atmosphere: Dark Obsidian #0C0C0C, 90% Visual Intensity, Kanit Typography
+    // =========================================================================
+    function Jack3DShowcasePage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-bgCharcoal text-cream relative pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="jack-3d" />
+
+          <div className="max-w-6xl mx-auto px-6 pt-4">
+            <div className="flex items-center gap-2 mb-6 font-mono text-xs">
+              <button onClick={() => onNavigate('home')} className="text-neon hover:underline">
+                ← BACK TO ENTRANCE
+              </button>
+              <span className="text-cream/30">/</span>
+              <span className="text-cream/60">JACK 3D CREATOR SHOWCASE</span>
+            </div>
+
+            {/* Giant Hero Showcase Canvas */}
+            <div className="rounded-3xl overflow-hidden aspect-[16/9] relative border border-white/20 mb-8 shadow-2xl bg-black/60">
+              <img
+                src="/assets/3d/cosmic_astronaut_3d.jpg"
+                alt="Jack 3D Creator"
+                className="w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0C0C0C] via-transparent to-black/50 p-8 flex flex-col justify-between">
+                <div className="flex justify-between items-start">
+                  <span className="font-mono text-xs px-3 py-1.5 rounded-full font-bold uppercase bg-purpleRoyal/30 text-purpleRoyal border border-purpleRoyal">
+                    SIGNATURE ARCHITECTURE // JACK 3D CREATOR
+                  </span>
+                  <span className="font-mono text-xs text-cream/80 bg-black/60 backdrop-blur px-3 py-1.5 rounded-full border border-white/10">
+                    60 FPS MAGNETIC PHYSICS
+                  </span>
+                </div>
+
+                <div>
+                  <span className="text-xs font-mono text-neon uppercase tracking-widest">SIGNATURE PORTFOLIO SYSTEM</span>
+                  <h1 className="font-grotesk text-4xl sm:text-6xl uppercase text-cream tracking-tight mt-1">
+                    JACK 3D CREATOR
+                  </h1>
+                  <p className="font-mono text-sm text-cream/80 max-w-2xl mt-2 leading-relaxed">
+                    Signature 3D spatial portfolio featuring a magnetic interactive portrait following cursor coordinates, dual-row velocity-skewed tech marquee with 21 curated hardware assets, and sticky stacking project vaults.
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap items-center gap-4">
+                    <a
+                      href="/jack-3d-creator.html"
+                      target="_blank"
+                      className="rounded-full px-8 py-3.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform no-underline flex items-center gap-2 shadow-lg shadow-neon/20 cursor-pointer"
+                    >
+                      <span>Launch Live Jack 3D Portfolio</span>
+                      <span>↗</span>
+                    </a>
+                    <button
+                      onClick={() => onNavigate('studio')}
+                      className="liquid-glass rounded-full px-8 py-3.5 font-grotesk uppercase text-xs tracking-wider text-cream hover:text-neon transition-colors cursor-pointer"
+                    >
+                      Tune in Studio →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Core Architectural Pillars */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="rounded-2xl p-6 bg-[#141416] border border-white/10 flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-purpleRoyal/20 border border-purpleRoyal/40 flex items-center justify-center font-mono text-sm text-neon mb-4 font-bold">
+                    01
+                  </div>
+                  <h4 className="font-grotesk text-xl text-cream uppercase">Magnetic 3D Tilt Stage</h4>
+                  <p className="font-mono text-xs text-cream/70 mt-2 leading-relaxed">
+                    Interactive 3D portrait rendered in spatial perspective that tracks mouse coordinates with smooth spring inertia and zero WebGL stutter.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-neon">
+                  PHYSICS: MOUSE PERSPECTIVE TILT
+                </div>
+              </div>
+
+              <div className="rounded-2xl p-6 bg-[#141416] border border-white/10 flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-blueTech/20 border border-blueTech/40 flex items-center justify-center font-mono text-sm text-blueTech mb-4 font-bold">
+                    02
+                  </div>
+                  <h4 className="font-grotesk text-xl text-cream uppercase">Dual-Row 3D Marquee</h4>
+                  <p className="font-mono text-xs text-cream/70 mt-2 leading-relaxed">
+                    Dual continuous horizontal marquee tracks showcasing 21 ultra-clean hardware assets with velocity-based skew and seamless looping.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-blueTech">
+                  ASSETS: 21 HIGH-RES 3D ICONS
+                </div>
+              </div>
+
+              <div className="rounded-2xl p-6 bg-[#141416] border border-white/10 flex flex-col justify-between">
+                <div>
+                  <div className="w-10 h-10 rounded-xl bg-amberAccent/20 border border-amberAccent/40 flex items-center justify-center font-mono text-sm text-amberAccent mb-4 font-bold">
+                    03
+                  </div>
+                  <h4 className="font-grotesk text-xl text-cream uppercase">Stacking Project Vaults</h4>
+                  <p className="font-mono text-xs text-cream/70 mt-2 leading-relaxed">
+                    Sticky stacking project cards that scale down smoothly on scroll, paired with character-by-character bio reveal and verified links.
+                  </p>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/10 font-mono text-[11px] text-amberAccent">
+                  MOTION: STICKY STACK & SCALE
+                </div>
+              </div>
+            </div>
+
+            {/* Specifications Matrix */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="rounded-3xl p-7 bg-[#141416] border border-white/10">
+                <span className="text-xs font-mono text-neon uppercase">SPECIFICATION MATRIX</span>
+                <h4 className="font-grotesk text-2xl text-cream uppercase mt-1 mb-4">Typographic & Color System</h4>
+                <div className="space-y-3 font-mono text-xs">
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-cream/50">Primary Font</span>
+                    <span className="text-cream font-bold">Kanit (Google Fonts, weights 300-900)</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-cream/50">Background Void</span>
+                    <span className="text-cream font-bold">#0C0C0C (Dark Obsidian)</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-cream/50">Accent Text</span>
+                    <span className="text-cream font-bold">#D7E2EA (Ice Titanium)</span>
+                  </div>
+                  <div className="flex justify-between py-2 border-b border-white/10">
+                    <span className="text-cream/50">CTA Gradient</span>
+                    <span className="text-cream font-bold">#18011F → #B600A8 → #7621B0 → #BE4C00</span>
+                  </div>
+                  <div className="flex justify-between py-2">
+                    <span className="text-cream/50">Services Section</span>
+                    <span className="text-cream font-bold">Inverted High-Contrast Editorial Canvas</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl p-7 bg-[#141416] border border-white/10 flex flex-col justify-between">
+                <div>
+                  <span className="text-xs font-mono text-neon uppercase">DYNAMIC REAL EVIDENCE</span>
+                  <h4 className="font-grotesk text-2xl text-cream uppercase mt-1 mb-3">Zero Fake Content Policy</h4>
+                  <p className="font-mono text-xs text-cream/70 leading-relaxed mb-4">
+                    Jack 3D Creator dynamically binds candidate data parsed directly from verified GitHub repositories and parsed resumes. Zero placeholder claims or dummy templates.
+                  </p>
+                  <div className="p-4 rounded-xl bg-black/40 border border-white/5 font-mono text-[11px] text-cream/60 space-y-1">
+                    <div>• Dynamic project artwork tailored to real project titles</div>
+                    <div>• Live GitHub stars, language breakdown, and verified commits</div>
+                    <div>• Real education and professional experience milestones only</div>
+                  </div>
+                </div>
+                <div className="mt-6 pt-4 border-t border-white/10 flex justify-between items-center">
+                  <span className="font-mono text-xs text-neon">DESIGN ENGINE ACTIVE</span>
+                  <button
+                    onClick={() => onNavigate('generator')}
+                    className="rounded-xl px-5 py-2.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform cursor-pointer"
+                  >
+                    Run Generator Engine →
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 05: DASHBOARD — MISSION CONTROL (Family C: Product)
+    // Atmosphere: Command Center, Dark Graphite #0B0F1E, Precision signals.
+    // Green ONLY for PUBLISHED/ACTIVE status, Amber for SYNC, Neutral for DRAFT.
+    // =========================================================================
+    function DashboardPage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-bgControl text-cream env-grid-subtle pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="dashboard" />
+
+          <div className="max-w-6xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="05 // FLEET TELEMETRY"
+              roomName="MISSION CONTROL"
+              headline="YOUR WORLDS."
+              accent="Mission control"
+              description="Monitor live visitor telemetry, manage custom domains, and inspect automatic GitHub synchronization statuses."
+              extraBadge="ACTIVE FLEET"
+            />
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-8">
+              {[
+                { label: 'ACTIVE PORTFOLIOS', val: '2 WORLDS', sub: '1 Published, 1 Draft', state: 'active' },
+                { label: 'VISITOR IMPRESSIONS', val: '5,902', sub: '+24% this week', state: 'neutral' },
+                { label: 'AVG DWELL TIME', val: '4m 12s', sub: 'Top 5% portfolio engagement', state: 'neutral' },
+                { label: 'GITHUB WEBHOOK SYNC', val: 'OPERATIONAL', sub: 'Autonomous listeners active', state: 'active' },
+              ].map((m) => (
+                <div key={m.label} className="rounded-2xl p-5 bg-[#12172F] border border-white/10 shadow-lg">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[10px] font-mono text-cream/50 uppercase">{m.label}</span>
+                    {m.state === 'active' && <span className="w-2 h-2 rounded-full bg-neon"></span>}
+                  </div>
+                  <div className="font-grotesk text-3xl text-cream my-1">{m.val}</div>
+                  <div className="text-[11px] font-mono text-cream/60">{m.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Fleet Operations Table */}
+            <div className="rounded-3xl p-6 bg-[#12172F] border border-white/10 shadow-2xl">
+              <div className="flex justify-between items-center mb-6 pb-4 border-b border-white/10">
+                <div>
+                  <span className="text-[10px] font-mono text-blueTech uppercase">FLEET INVENTORY</span>
+                  <h3 className="font-grotesk text-2xl uppercase text-cream">Managed Worlds</h3>
+                </div>
+                <button
+                  onClick={() => onNavigate('studio')}
+                  className="rounded-full px-5 py-2 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform"
+                >
+                  + Create New World
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {MockData.portfolios.map((p) => {
+                  const isPub = p.status === 'PUBLISHED';
+                  return (
+                    <div 
+                      key={p.id}
+                      className="rounded-2xl p-5 bg-black/40 border border-white/10 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-white/20 transition-all"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-grotesk text-cream text-lg">
+                          3D
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-3">
+                            <h4 className="font-grotesk text-xl text-cream uppercase">{p.name}</h4>
+                            <span className={`text-[10px] font-mono px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${
+                              isPub 
+                                ? 'bg-neon/15 text-neon border border-neon/30' 
+                                : 'bg-white/10 text-cream/60'
+                            }`}>
+                              <span className={`w-1.5 h-1.5 rounded-full ${isPub ? 'bg-neon' : 'bg-cream/40'}`}></span>
+                              {p.status}
+                            </span>
+                          </div>
+                          <div className="text-xs font-mono text-cream/60 mt-0.5">{p.title} • Realm: {p.universe}</div>
+                          <div className="text-xs font-mono text-blueTech mt-1">Domain: {p.domain}</div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-6">
+                        <div className="text-right hidden sm:block font-mono">
+                          <div className="text-xs text-cream">{p.views} Views</div>
+                          <div className="text-[11px] text-cream/40">Synced {p.syncedAt}</div>
+                        </div>
+
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => onNavigate('webstudio')}
+                            className="rounded-xl px-4 py-2 font-mono text-xs uppercase bg-white/10 hover:bg-white/20 text-cream transition-all"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => onNavigate('profile')}
+                            className="rounded-xl px-4 py-2 font-mono text-xs uppercase bg-white/5 hover:bg-white/10 text-cream/70 transition-all"
+                          >
+                            Config
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 06: PROFILE — THE IDENTITY ROOM (Family C: Product)
+    // Atmosphere: Identity / Portrait, Warm Dark Espresso #120F19, Cream, Muted Gold.
+    // Editorial layout: Left Statement, Center Coordinates, Right Socials, Bottom Timeline.
+    // =========================================================================
+    function ProfilePage({ onNavigate }) {
+      const [saved, setSaved] = useState(false);
+
+      return (
+        <div className="min-h-screen bg-bgIdentity text-cream pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="profile" />
+
+          <div className="max-w-6xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="06 // IDENTITY & PORTRAIT"
+              roomName="THE IDENTITY ROOM"
+              headline="YOUR IDENTITY."
+              accent="Coordinates"
+              description="Curate your parsed engineering evidence, configure GitHub auto-sync thresholds, and verify cryptographic developer credentials."
+              extraBadge="WHO AM I"
+            />
+
+            {/* Asymmetrical Editorial Composition */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* Left Column: Big Editorial Statement */}
+              <div className="lg:col-span-4 rounded-3xl p-8 bg-[#1B1626] border border-white/10 flex flex-col justify-between shadow-xl">
+                <div>
+                  <span className="text-[10px] font-mono text-neon uppercase tracking-widest">CANDIDATE MANIFESTO</span>
+                  <h3 className="font-grotesk text-3xl sm:text-4xl uppercase text-cream mt-3 leading-tight">
+                    "I build distributed systems with zero tolerance for latency."
+                  </h3>
+                  <p className="mt-4 font-mono text-xs text-cream/70 leading-relaxed">
+                    Senior Robotics & Perception Architect focusing on autonomous micro-daemons, ROS2 hardware buses, and neural processing units.
+                  </p>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/10 font-mono text-xs space-y-2">
+                  <div className="text-cream/50">BASE OF OPERATIONS:</div>
+                  <div className="text-cream font-bold">San Francisco, CA // UTC-8</div>
+                  <div className="text-[11px] text-neon mt-2">PGP: 4A89 9C01 2F1E 88B4</div>
+                </div>
+              </div>
+
+              {/* Center Column: Developer Coordinates Form */}
+              <div className="lg:col-span-5 rounded-3xl p-8 bg-[#1B1626] border border-white/10 shadow-xl space-y-5">
+                <div className="text-xs font-mono text-cream/50 uppercase">VERIFIED SYSTEM COORDINATES</div>
+                
+                <div>
+                  <label className="block text-xs font-mono text-cream/60 uppercase mb-2">Full Legal Display Name</label>
+                  <input
+                    type="text"
+                    defaultValue="Sarah Connor"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-cream outline-none focus:border-neon"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-cream/60 uppercase mb-2">Engineering Discipline Archetype</label>
+                  <input
+                    type="text"
+                    defaultValue="Autonomous Robotics & Systems Architect"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-cream outline-none focus:border-neon"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-mono text-cream/60 uppercase mb-2">Executive Biography Statement</label>
+                  <textarea
+                    rows="4"
+                    defaultValue="Architecting distributed real-time perception pipelines, ROS2 micro-daemons, and edge neural processing units with zero tolerance for latency."
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-3 font-mono text-sm text-cream outline-none focus:border-neon resize-none"
+                  />
+                </div>
+
+                <div className="pt-2 flex justify-end">
+                  <button
+                    onClick={() => setSaved(true)}
+                    className="rounded-full px-6 py-2.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform"
+                  >
+                    {saved ? "✓ Profile Synchronized" : "Save Coordinates"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Right Column: Social Coordinates & Badges */}
+              <div className="lg:col-span-3 space-y-6">
+                <div className="rounded-3xl p-6 bg-[#1B1626] border border-white/10">
+                  <div className="text-xs font-mono text-cream/50 uppercase mb-4">CONNECTED SIGNALS</div>
+                  <div className="space-y-3 font-mono text-xs">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-black/40">
+                      <div className="flex items-center gap-2">
+                        <Icons.Github className="w-4 h-4 text-neon" />
+                        <span>sarah-connor</span>
+                      </div>
+                      <span className="text-[10px] text-neon">SYNCED</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-black/40">
+                      <div className="flex items-center gap-2">
+                        <Icons.Google className="w-4 h-4" />
+                        <span>sarah@skynet.dev</span>
+                      </div>
+                      <span className="text-[10px] text-cream/40">AUTH</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl p-6 bg-[#1B1626] border border-white/10">
+                  <div className="text-xs font-mono text-cream/50 uppercase mb-3">EXPERIENCE TIMELINE</div>
+                  <div className="space-y-3 font-mono text-xs text-cream/70">
+                    <div>
+                      <span className="text-cream font-bold block">Cyberdyne Systems</span>
+                      <span className="text-[11px] text-cream/40">Principal Architect • 2023 — Present</span>
+                    </div>
+                    <div>
+                      <span className="text-cream font-bold block">DARPA Robotics Challenge</span>
+                      <span className="text-[11px] text-cream/40">Perception Lead • 2020 — 2023</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 07: AUTH — THE PORTAL (Family C: Product)
+    // Atmosphere: Simple portal, Deep Navy/Charcoal #05081C, singular glass monolith,
+    // Google Instant Auth button (Zero navbar, Zero GitHub).
+    // =========================================================================
+    function AuthPage({ onNavigate }) {
+      const [mode, setMode] = useState('login');
+
+      return (
+        <div className="min-h-screen bg-[#05081C] text-cream flex flex-col justify-between">
+          {/* Minimal Auth Header (Zero Navbar on Sign-in/Sign-up) */}
+          <div className="w-full max-w-md mx-auto pt-8 px-6 flex justify-between items-center relative z-20">
+            <button
+              onClick={() => onNavigate('home')}
+              className="flex items-center gap-2 font-mono text-xs uppercase text-cream/70 hover:text-neon transition-colors cursor-pointer"
+            >
+              <span>←</span>
+              <span>Return to Entrance</span>
+            </button>
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 rounded-md bg-bgNavy flex items-center justify-center border border-white/20">
+                <span className="font-grotesk text-neon text-xs">MF</span>
+              </div>
+              <span className="font-grotesk tracking-wider uppercase text-cream text-sm">
+                MYFOLIO<span className="font-condiment text-neon text-base ml-1">world</span>
+              </span>
+            </div>
+          </div>
+
+          <div className="max-w-md w-full mx-auto px-6 py-8">
+            <div className="text-center mb-8">
+              <span className="text-[11px] font-mono text-neon uppercase tracking-widest">AUTHENTICATION PORTAL</span>
+              <h2 className="font-grotesk text-4xl uppercase text-cream mt-1">ENTER MYFOLIO.</h2>
+              <p className="text-xs font-mono text-cream/60 mt-1">Access your managed worlds and synthesis pipelines.</p>
+            </div>
+
+            {/* Singular Monolith Card (Liquid Glass Reserved Here) */}
+            <div className="liquid-glass rounded-3xl p-8 shadow-2xl border border-white/15">
+              
+              {/* Tab Selector */}
+              <div className="flex border-b border-white/10 pb-3 mb-6 font-grotesk text-sm uppercase">
+                <button
+                  onClick={() => setMode('login')}
+                  className={`flex-1 text-center py-1 transition-colors cursor-pointer ${
+                    mode === 'login' ? 'text-neon border-b-2 border-neon' : 'text-cream/50'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setMode('register')}
+                  className={`flex-1 text-center py-1 transition-colors cursor-pointer ${
+                    mode === 'register' ? 'text-neon border-b-2 border-neon' : 'text-cream/50'
+                  }`}
+                >
+                  Register
+                </button>
+              </div>
+
+              {/* Instant Social Auth — Google Only (GitHub removed) */}
+              <div className="space-y-3 mb-6">
+                <button
+                  onClick={() => onNavigate('dashboard')}
+                  className="w-full rounded-2xl py-3.5 px-4 bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center gap-3 font-grotesk text-xs uppercase text-cream transition-all cursor-pointer shadow-sm hover:border-white/20"
+                >
+                  <Icons.Google className="w-5 h-5 flex-shrink-0" />
+                  <span>Continue with Google</span>
+                </button>
+              </div>
+
+              {/* Separator */}
+              <div className="flex items-center gap-3 my-5">
+                <div className="h-px bg-white/10 flex-1"></div>
+                <span className="text-[10px] font-mono text-cream/40 uppercase">OR DEVELOPER CREDENTIALS</span>
+                <div className="h-px bg-white/10 flex-1"></div>
+              </div>
+
+              {/* Email Form */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-mono text-cream/60 uppercase mb-1">Developer Email</label>
+                  <input
+                    type="email"
+                    placeholder="sarah@skynet.dev"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 font-mono text-xs text-cream outline-none focus:border-neon"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-mono text-cream/60 uppercase mb-1">Security Passphrase</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••••••"
+                    className="w-full rounded-xl bg-black/40 border border-white/10 px-4 py-2.5 font-mono text-xs text-cream outline-none focus:border-neon"
+                  />
+                </div>
+
+                <button
+                  onClick={() => onNavigate('dashboard')}
+                  className="w-full mt-2 rounded-xl py-3.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform"
+                >
+                  {mode === 'login' ? 'Authenticate Base →' : 'Initialize Account →'}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="py-6 text-center text-[11px] font-mono text-cream/30">
+            MYFOLIO AUTHENTICATION PROTOCOL // AES-256 ENCRYPTED
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 08: WEBSTUDIO — THE CONTROL DESK (Family C: Product)
+    // Atmosphere: Creative Software / Professional Tool, Dark Graphite #080B14,
+    // Dominating center canvas, compact chrome toolbar, layers & properties.
+    // =========================================================================
+    function WebstudioPage({ onNavigate }) {
+      const [viewport, setViewport] = useState('desktop');
+      const [activeLayer, setActiveLayer] = useState('hero');
+
+      return (
+        <div className="h-screen bg-bgWorkstation text-cream flex flex-col overflow-hidden">
+          {/* Top Compact Software Toolbar */}
+          <div className="h-14 px-6 bg-[#0E1322] border-b border-white/10 flex items-center justify-between shrink-0">
+            <div className="flex items-center gap-4">
+              <span 
+                onClick={() => onNavigate('dashboard')}
+                className="font-grotesk text-sm uppercase text-neon tracking-wider cursor-pointer hover:underline"
+              >
+                ← WEBSTUDIO
+              </span>
+              <span className="text-white/20">|</span>
+              <span className="font-mono text-xs text-cream/80">SARAH CONNOR // 3D STAGE</span>
+            </div>
+
+            {/* Viewport Frame Switcher */}
+            <div className="flex items-center gap-1 bg-black/40 p-1 rounded-lg border border-white/10 font-mono text-[11px]">
+              {['desktop', 'tablet', 'mobile'].map((v) => (
+                <button
+                  key={v}
+                  onClick={() => setViewport(v)}
+                  className={`px-3 py-1 rounded uppercase transition-all ${
+                    viewport === v ? 'bg-white/15 text-neon font-bold' : 'text-cream/50'
+                  }`}
+                >
+                  {v}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => alert('Static standalone ZIP exported!')}
+                className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 font-mono text-xs uppercase text-cream/80 hover:text-cream"
+              >
+                Export ZIP
+              </button>
+              <button 
+                onClick={() => alert('Portfolio published to edge CDN!')}
+                className="px-4 py-1.5 rounded-lg bg-neon text-bgNavy font-grotesk text-xs uppercase font-bold hover:scale-105 transition-transform"
+              >
+                Publish ✦
+              </button>
+            </div>
+          </div>
+
+          {/* 3-Pane Workstation Interface */}
+          <div className="flex-1 flex overflow-hidden">
+            
+            {/* Left Layers Pane */}
+            <div className="w-64 bg-[#0B0F1B] border-r border-white/10 p-4 overflow-y-auto shrink-0 space-y-2">
+              <div className="text-[10px] font-mono text-cream/50 uppercase mb-3">SCROLL LAYERS</div>
+              {[
+                { id: 'hero', name: '01 Stage Hero', type: '3D Monolith' },
+                { id: 'about', name: '02 Sonar Mission', type: 'Text Spline' },
+                { id: 'projects', name: '03 Vault Artifacts', type: 'Chest Meshes' },
+                { id: 'skills', name: '04 Constellation', type: 'Particle Graph' },
+                { id: 'contact', name: '05 Beacon Signal', type: 'Terminal Form' },
+              ].map((l) => (
+                <div
+                  key={l.id}
+                  onClick={() => setActiveLayer(l.id)}
+                  className={`p-3 rounded-xl cursor-pointer font-mono text-xs transition-all ${
+                    activeLayer === l.id 
+                      ? 'bg-blueTech/15 text-blueTech border border-blueTech/30 font-bold' 
+                      : 'text-cream/70 hover:bg-white/5'
+                  }`}
+                >
+                  <div>{l.name}</div>
+                  <div className="text-[10px] text-cream/40 mt-0.5">{l.type}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Dominating Center Canvas */}
+            <div className="flex-1 bg-black/80 p-8 flex items-center justify-center overflow-auto">
+              <div 
+                className={`bg-[#030612] rounded-2xl border border-white/20 shadow-2xl relative overflow-hidden transition-all duration-300 flex flex-col justify-between ${
+                  viewport === 'desktop' ? 'w-full h-full max-w-5xl' : viewport === 'tablet' ? 'w-[768px] h-[90%]' : 'w-[380px] h-[90%]'
+                }`}
+              >
+                <div className="p-8">
+                  <span className="text-xs font-mono text-neon">ACTIVE LAYER: {activeLayer.toUpperCase()}</span>
+                  <h1 className="font-grotesk text-4xl sm:text-6xl uppercase text-cream mt-3">
+                    SARAH CONNOR
+                  </h1>
+                  <p className="font-mono text-xs text-cream/70 mt-2 max-w-lg">
+                    AUTONOMOUS ROBOTICS & SYSTEMS ARCHITECT // CYBER ARCHITECT SPRAWL
+                  </p>
+                </div>
+
+                <div className="p-6 border-t border-white/10 flex justify-between items-center font-mono text-xs text-cream/40">
+                  <span>WEBGL 3D VIEWPORT LIVE</span>
+                  <span>VIEWPORT: {viewport.toUpperCase()}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Properties Inspector */}
+            <div className="w-72 bg-[#0B0F1B] border-l border-white/10 p-5 overflow-y-auto shrink-0 space-y-6">
+              <div className="text-[10px] font-mono text-cream/50 uppercase">LAYER PROPERTIES</div>
+
+              <div className="space-y-2">
+                <label className="block font-mono text-xs text-cream/70 uppercase">Specular Lighting Accent</label>
+                <div className="flex gap-2">
+                  {['#6FFF00', '#00F0FF', '#FF007A', '#F59E0B'].map((c) => (
+                    <div key={c} className="w-7 h-7 rounded-full cursor-pointer border border-white/20" style={{ backgroundColor: c }} />
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="block font-mono text-xs text-cream/70 uppercase">3D Card Tilt Physics</label>
+                <input type="range" min="0" max="100" defaultValue="45" className="w-full accent-neon" />
+              </div>
+
+              <div className="space-y-2">
+                <label className="block font-mono text-xs text-cream/70 uppercase">Lenis Inertia Dampening</label>
+                <input type="range" min="0" max="100" defaultValue="80" className="w-full accent-neon" />
+              </div>
+
+              <div className="pt-4 border-t border-white/10 font-mono text-xs">
+                <div className="text-cream/50 mb-1">ACCESSIBILITY ENGINE</div>
+                <div className="text-neon flex items-center gap-1.5">
+                  <Icons.Check className="w-3.5 h-3.5" />
+                  <span>WCAG 2.2 AAA Contrast Verified</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 09: ABOUT — THE MANIFESTO WALL (Family B: Creative)
+    // Atmosphere: Editorial / Manifesto. Dark cosmic header transitioning into a
+    // WARM LIGHT CREAM EDITORIAL SECTION (#F5F4EE), big typography, manifesto prose.
+    // =========================================================================
+    function AboutPage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-bgNavy text-cream pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="about" />
+
+          {/* Dark Intro Hero */}
+          <div className="max-w-5xl mx-auto px-6 pt-6 pb-16">
+            <RoomHero
+              tag="09 // EDITORIAL MANIFESTO"
+              roomName="THE MANIFESTO WALL"
+              headline="WHY MYFOLIO?"
+              accent="The manifesto"
+              description="Our foundational thesis: great engineering work deserves authentic spatial evidence, zero AI-slop, and complete creator ownership."
+              extraBadge="READING TIME: 3 MIN"
+            />
+          </div>
+
+          {/* TRANSITION INTO WARM LIGHT CREAM EDITORIAL SECTION */}
+          <section className="bg-bgManifesto text-bgNavy py-20 px-6">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-xs font-mono text-bgNavy/50 uppercase tracking-widest mb-3">
+                SECTION 01 // THE PROBLEM WITH 2D RESUMES
+              </div>
+
+              <h2 className="font-grotesk text-4xl sm:text-6xl uppercase tracking-tight text-bgNavy mb-8">
+                GREAT WORK SHOULDN'T LOOK FLAT.
+              </h2>
+
+              <div className="space-y-6 font-mono text-sm leading-relaxed text-bgNavy/80">
+                <p>
+                  For two decades, software developers, systems architects, and creative engineers have crammed years of complex distributed engineering into identical A4 PDFs or cookie-cutter SaaS portfolio cards.
+                </p>
+                <p>
+                  You spend months optimizing microsecond packet routing, training neural network weights, or debugging low-level memory corruption. When a recruiter or collaborator visits your link, they are greeted by generic purple gradients and flat text cards that look like a weekend template.
+                </p>
+              </div>
+
+              {/* Manifesto Pillars in Light Section */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 my-16">
+                <div className="p-8 rounded-3xl bg-white border border-black/10 shadow-sm">
+                  <div className="text-xs font-mono text-neon font-bold uppercase mb-2">01 // HONEST CRAFT</div>
+                  <h3 className="font-grotesk text-2xl uppercase text-bgNavy mb-3">Anti-AI-Slop Guarantee</h3>
+                  <p className="font-mono text-xs text-bgNavy/70 leading-relaxed">
+                    Under no circumstances does MyFolio fabricate metrics, invent clients, or generate fake telemetry jargon. Every world reflects genuine repositories, commit rhythms, and verified architecture.
+                  </p>
+                </div>
+
+                <div className="p-8 rounded-3xl bg-white border border-black/10 shadow-sm">
+                  <div className="text-xs font-mono text-neon font-bold uppercase mb-2">02 // NO VENDOR LOCK-IN</div>
+                  <h3 className="font-grotesk text-2xl uppercase text-bgNavy mb-3">Standalone Export Freedom</h3>
+                  <p className="font-mono text-xs text-bgNavy/70 leading-relaxed">
+                    Every generated portfolio can be exported as a standalone static ZIP package containing plain HTML, Three.js shaders, and WebGL assets. You can self-host anywhere forever.
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center pt-8">
+                <button
+                  onClick={() => onNavigate('studio')}
+                  className="rounded-full px-8 py-4 font-grotesk uppercase text-sm tracking-wider bg-bgNavy text-cream hover:bg-neon hover:text-bgNavy transition-all font-bold shadow-lg"
+                >
+                  Enter the Studio Base ✦
+                </button>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 10: PRIVACY — THE ARCHIVE (Family D: Document)
+    // Atmosphere: Pure Document Archive, Warm Off-White #F8F7F3, Dark Navy Text,
+    // Anton headings, Monospace body, ZERO 3D, ZERO video, complete clarity.
+    // =========================================================================
+    function PrivacyPage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-bgArchive text-bgNavy env-paper pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="privacy" isLight={true} />
+
+          <div className="max-w-4xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="10 // DOCUMENT ARCHIVE"
+              roomName="THE ARCHIVE"
+              headline="YOUR CODE IS YOUR PROPERTY."
+              accent="Data integrity"
+              description="Clear, binding commitments regarding token permissions, source code privacy, and one-click data erasure."
+              isLight={true}
+              extraBadge="LEGAL ARCHIVE"
+            />
+
+            <div className="rounded-3xl p-8 bg-white border border-black/10 shadow-sm space-y-8 font-mono text-xs leading-relaxed text-bgNavy/80">
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">1. Zero Model Training On Private Code</h3>
+                <p>We do not train external LLMs or proprietary foundational models on your private source code, commits, or repositories. Code analysis is strictly deterministic, ephemeral, and executed only for portfolio evidence mapping.</p>
+              </div>
+
+              <div className="h-px bg-black/10"></div>
+
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">2. Scoped OAuth & Token Storage</h3>
+                <p>GitHub and Google tokens are encrypted via AES-256-GCM. We request minimum necessary scopes to read public repositories and manage portfolio synchronization webhooks.</p>
+              </div>
+
+              <div className="h-px bg-black/10"></div>
+
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">3. Complete Right of Erasure</h3>
+                <p>Deleting a portfolio or account irrevocably purges all associated candidate profiles, static builds, and cached assets from our edge network within 60 seconds.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 11: TERMS — THE DOCUMENT ROOM (Family D: Document)
+    // Atmosphere: Clean legal document, Warm Off-White #F8F7F3, Dark Navy Text,
+    // Anton headings, Monospace body, ZERO 3D.
+    // =========================================================================
+    function TermsPage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-bgArchive text-bgNavy env-paper pb-24">
+          <BrandNav onNavigate={onNavigate} currentPage="terms" isLight={true} />
+
+          <div className="max-w-4xl mx-auto px-6 pt-6">
+            <RoomHero
+              tag="11 // TERMS OF OPERATION"
+              roomName="THE DOCUMENT ROOM"
+              headline="TERMS & FREEDOM."
+              accent="No lock-in"
+              description="Our straightforward operating terms guaranteeing standalone static export, edge SLAs, and total creator ownership."
+              isLight={true}
+              extraBadge="LEGAL CODE"
+            />
+
+            <div className="rounded-3xl p-8 bg-white border border-black/10 shadow-sm space-y-8 font-mono text-xs leading-relaxed text-bgNavy/80">
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">1. Standalone Portability Guarantee</h3>
+                <p>Every digital world built on MyFolio can be exported as a standalone static package containing vanilla HTML, CSS, Three.js shaders, and WebGL assets. You can host it on GitHub Pages, Cloudflare Pages, AWS S3, or your own Raspberry Pi without recurring fees.</p>
+              </div>
+
+              <div className="h-px bg-black/10"></div>
+
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">2. Intellectual Property Rights</h3>
+                <p>All portfolio content, custom domain mappings, design tokens, and personal branding remain 100% your intellectual property.</p>
+              </div>
+
+              <div className="h-px bg-black/10"></div>
+
+              <div>
+                <h3 className="font-grotesk text-2xl text-bgNavy uppercase mb-2">3. Edge Availability & SLAs</h3>
+                <p>Published portfolios are distributed globally across multi-region edge caches with a 99.9% uptime target.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // ROOM 12: 404 — THE VOID (Family A: Immersive)
+    // Atmosphere: Lost / Void, Deep Dark #02030A, Large 404, minimal CTA.
+    // =========================================================================
+    function NotFoundPage({ onNavigate }) {
+      return (
+        <div className="min-h-screen bg-[#02030A] text-cream flex flex-col justify-between">
+          <BrandNav onNavigate={onNavigate} currentPage="404" />
+
+          <div className="max-w-xl mx-auto px-6 py-20 text-center">
+            <span className="text-[11px] font-mono text-neon uppercase tracking-widest">
+              SPATIAL COURSE LOST // 404
+            </span>
+            <h1 className="font-grotesk text-8xl sm:text-9xl uppercase text-cream leading-none mt-4">
+              404
+            </h1>
+            <div className="font-condiment text-neon text-4xl -rotate-2 my-2">
+              Orbit deviated
+            </div>
+            <p className="font-mono text-xs sm:text-sm uppercase text-cream/60 mt-4 mb-8 leading-relaxed">
+              The spatial coordinates you requested do not exist in this universe. Re-calibrate your navigational coordinates.
+            </p>
+            <button
+              onClick={() => onNavigate('studio')}
+              className="rounded-full px-8 py-3.5 font-grotesk uppercase text-xs tracking-wider bg-neon text-bgNavy font-bold hover:scale-105 transition-transform"
+            >
+              Return to Studio Base ✦
+            </button>
+          </div>
+
+          <div className="py-6 text-center text-[11px] font-mono text-cream/20">
+            COORDINATES UNRESOLVED // THE VOID
+          </div>
+        </div>
+      );
+    }
+
+    // =========================================================================
+    // MASTER DESIGN LAB SHELL & ROUTER
+    // =========================================================================
+    function DesignLabApp() {
+      // Determine initial page from path
+      const getInitialPage = () => {
+        const path = window.location.pathname.replace('/design-preview/', '').replace('/design-preview', '');
+        return path || 'studio';
+      };
+
+      const [currentPage, setCurrentPage] = useState(getInitialPage);
+
+      const navigateTo = (pageId) => {
+        setCurrentPage(pageId);
+        window.history.pushState({}, '', `/design-preview/${pageId}`);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      };
+
+      useEffect(() => {
+        const handlePop = () => {
+          const path = window.location.pathname.replace('/design-preview/', '').replace('/design-preview', '');
+          setCurrentPage(path || 'studio');
+        };
+        window.addEventListener('popstate', handlePop);
+        return () => window.removeEventListener('popstate', handlePop);
+      }, []);
+
+      const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('myfolio-theme') || 'dark';
+      });
+
+      const toggleTheme = () => {
+        const next = theme === 'dark' ? 'light' : 'dark';
+        setTheme(next);
+        localStorage.setItem('myfolio-theme', next);
+      };
+
+      useEffect(() => {
+        if (theme === 'light') {
+          document.documentElement.classList.add('theme-light');
+          document.body.classList.add('theme-light');
+        } else {
+          document.documentElement.classList.remove('theme-light');
+          document.body.classList.remove('theme-light');
+        }
+      }, [theme]);
+
+      // The 4 Visual Families — 100% Focused on Jack 3D Design
+      const pageFamilies = [
+        {
+          family: 'FAMILY A // IMMERSIVE',
+          pages: [
+            { id: 'home', label: '00 HOME (Entrance)' },
+            { id: 'jack-3d', label: '03 JACK 3D (Showcase)' },
+            { id: '404', label: '11 404 (Void)' },
+          ]
+        },
+        {
+          family: 'FAMILY B // STUDIO & ENGINE',
+          pages: [
+            { id: 'studio', label: '01 STUDIO (Workshop)' },
+            { id: 'generator', label: '02 GENERATOR (Engine)' },
+            { id: 'webstudio', label: '07 WEBSTUDIO (Software)' },
+          ]
+        },
+        {
+          family: 'FAMILY C // PLATFORM & USER',
+          pages: [
+            { id: 'dashboard', label: '04 DASHBOARD (Control)' },
+            { id: 'profile', label: '05 PROFILE (Identity)' },
+            { id: 'auth', label: '06 AUTH (Portal)' },
+          ]
+        },
+        {
+          family: 'FAMILY D // DOCUMENT',
+          pages: [
+            { id: 'about', label: '08 ABOUT (Manifesto)' },
+            { id: 'privacy', label: '09 PRIVACY (Archive)' },
+            { id: 'terms', label: '10 TERMS (Legal)' },
+          ]
+        },
+      ];
+
+      return (
+        <div className={`min-h-screen flex flex-col font-sans transition-colors duration-300 ${theme === 'light' ? 'theme-light' : ''}`}>
+          
+          {/* TOP REVIEW COMMAND BAR (Sticky Prototype Switcher) */}
+          <header className="sticky top-0 z-50 bg-[#02071E]/95 backdrop-blur-md border-b border-neon/30 px-6 py-2.5 flex flex-wrap items-center justify-between gap-4 text-cream">
+            <div className="flex items-center gap-3">
+              <span className="font-grotesk text-sm uppercase text-neon tracking-wider flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-neon animate-pulse"></span>
+                MYFOLIO DESIGN LAB
+              </span>
+              <span className="hidden sm:inline-block text-[10px] font-mono bg-neon/10 text-neon px-2.5 py-0.5 rounded-full border border-neon/30">
+                JACK 3D DESIGN SYSTEM ONLY // LOCALHOST
+              </span>
+
+              {/* Theme Toggle Button */}
+              <button
+                onClick={toggleTheme}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full font-mono text-[11px] uppercase transition-all bg-white/10 hover:bg-white/20 border border-white/20 text-cream cursor-pointer"
+                title="Toggle Architectural Light / Dark Cosmic Theme"
+              >
+                {theme === 'dark' ? <Icons.Sun className="w-3.5 h-3.5 text-amberAccent" /> : <Icons.Moon className="w-3.5 h-3.5 text-[#010828]" />}
+                <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+            </div>
+
+            {/* Quick Switcher grouped into the 4 Visual Families */}
+            <div className="flex items-center gap-1.5 overflow-x-auto max-w-full py-1">
+              {pageFamilies.map((fam) => (
+                <div key={fam.family} className="flex items-center gap-1 mr-2 border-r border-white/10 pr-2 last:border-none">
+                  {fam.pages.map((p) => {
+                    const isActive = currentPage === p.id;
+                    return (
+                      <button
+                        key={p.id}
+                        onClick={() => navigateTo(p.id)}
+                        className={`px-2.5 py-1 rounded-full font-mono text-[10px] uppercase transition-all whitespace-nowrap ${
+                          isActive
+                            ? 'bg-neon text-bgNavy font-bold shadow-sm shadow-neon/30'
+                            : 'text-cream/70 hover:text-cream hover:bg-white/10'
+                        }`}
+                      >
+                        {p.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+          </header>
+
+          {/* ACTIVE ROOM VIEWPORT */}
+          <main className="flex-1">
+            {currentPage === 'home' && <HomePage onNavigate={navigateTo} />}
+            {currentPage === 'studio' && <StudioPage onNavigate={navigateTo} />}
+            {currentPage === 'generator' && <GeneratorPage onNavigate={navigateTo} />}
+            {(currentPage === 'jack-3d' || currentPage === 'universes' || currentPage === 'universe-detail') && <Jack3DShowcasePage onNavigate={navigateTo} />}
+            {currentPage === 'dashboard' && <DashboardPage onNavigate={navigateTo} />}
+            {currentPage === 'profile' && <ProfilePage onNavigate={navigateTo} />}
+            {currentPage === 'auth' && <AuthPage onNavigate={navigateTo} />}
+            {currentPage === 'webstudio' && <WebstudioPage onNavigate={navigateTo} />}
+            {currentPage === 'about' && <AboutPage onNavigate={navigateTo} />}
+            {currentPage === 'privacy' && <PrivacyPage onNavigate={navigateTo} />}
+            {currentPage === 'terms' && <TermsPage onNavigate={navigateTo} />}
+            {currentPage === '404' && <NotFoundPage onNavigate={navigateTo} />}
+          </main>
+
+          {/* REVIEW FOOTER */}
+          <footer className="border-t border-white/10 py-3 px-6 text-center text-[11px] font-mono text-cream/40 flex justify-between items-center bg-[#02071E] text-cream">
+            <div>MYFOLIO ARCHITECTURE // SIGNATURE 3D PORTFOLIO: JACK 3D CREATOR</div>
+            <div>STATUS: READY FOR PAGE-BY-PAGE APPROVAL</div>
+          </footer>
+        </div>
+      );
+    }
+
+    const rootElement = document.getElementById('root');
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<DesignLabApp />);
+  </script>
+</body>
+</html>

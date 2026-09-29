@@ -2,69 +2,78 @@
 @tailwind components;
 @tailwind utilities;
 
-*, *::before, *::after {
-  box-sizing: border-box;
+:root {
+  --background: hsl(0, 0%, 6%);
+  --foreground: hsl(30, 12%, 94%);
+  --primary: hsl(8, 92%, 62%);           /* electric coral #FF4D30 */
+  --primary-foreground: hsl(0, 0%, 6%);
+  --muted-foreground: hsl(30, 4%, 58%);
+  --border: hsl(0, 0%, 16%);
+  --card: hsl(0, 0%, 9%);
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: hsl(0, 0%, 6%);
+  color: hsl(30, 12%, 94%);
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: hsl(0, 0%, 6%);
+  color: hsl(30, 12%, 94%);
+  overflow-x: hidden;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-html, body, #root {
-  background-color: #0C0C0C;
-  font-family: 'Kanit', sans-serif;
-  color: #D7E2EA;
-  min-height: 100%;
-  overflow-x: clip;
+.font-syne {
+  font-family: 'Syne', sans-serif;
 }
 
-.hero-heading {
-  background: linear-gradient(180deg, #646973 0%, #BBCCD7 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.font-inter {
+  font-family: 'Inter', sans-serif;
 }
 
-/* Custom smooth scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0C0C0C;
+  background: hsl(0, 0%, 6%);
 }
 ::-webkit-scrollbar-thumb {
-  background: #252830;
-  border-radius: 9999px;
+  background: hsl(0, 0%, 16%);
+  border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3c424e;
+  background: hsl(8, 92%, 62%);
 }
 
+/* Selection */
 ::selection {
-  background: rgba(182, 0, 168, 0.4);
-  color: #ffffff;
+  background: hsl(8, 92%, 62%);
+  color: hsl(0, 0%, 6%);
 }
 
-@keyframes floatSlow {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (max-width: 768px) {
+  .animate-marquee {
+    animation-duration: 22s;
   }
-  50% {
-    transform: translateY(-12px) rotate(1.5deg);
-  }
 }
-
-@keyframes floatSlowDelayed {
-  0%, 100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  50% {
-    transform: translateY(-16px) rotate(-2deg);
-  }
-}
-
-.animate-float {
-  animation: floatSlow 5s ease-in-out infinite;
-}
-
-.animate-float-delayed {
-  animation: floatSlowDelayed 6.5s ease-in-out infinite;
-}
-

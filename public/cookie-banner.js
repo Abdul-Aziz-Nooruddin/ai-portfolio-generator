@@ -15,7 +15,7 @@
       <div class="cookie-banner-content">
         <div class="cookie-text-col">
           <div class="cookie-title">
-            <span style="font-size:1.1rem;">🍪</span>
+            <span style="font-size:1.1rem;"></span>
             <span>Privacy &amp; Cookie Preferences</span>
           </div>
           <p class="cookie-desc">

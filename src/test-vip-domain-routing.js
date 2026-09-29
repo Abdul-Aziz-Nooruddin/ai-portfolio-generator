@@ -11,7 +11,7 @@ async function testVipDomainRouting() {
   
   // 1. Verify custom domain service can store and retrieve universeKey
   const testSiteId = 'abdulaziz-test-' + Date.now();
-  const testUniverse = 'threeui-landscape';
+  const testUniverse = 'jack-3d-creator';
   
   customDomainService.domainCache['abdulaziz.myfolio.tech'] = {
     domain: 'abdulaziz.myfolio.tech',
@@ -33,15 +33,15 @@ async function testVipDomainRouting() {
   assert.strictEqual(record.universeKey, testUniverse, 'Must preserve universeKey');
   console.log('✔ 1. CustomDomainService stores and reloads universeKey correctly');
 
-  // 2. Verify fallback uses stored universeKey rather than hardcoded threeui-shelf
+  // 2. Verify fallback uses stored universeKey
   const domainRecord = reloadedService.domainCache['abdulaziz.myfolio.tech'];
-  const activeUniverse = domainRecord?.universeKey || 'threeui-landscape';
+  const activeUniverse = domainRecord?.universeKey || 'jack-3d-creator';
   const template = TemplateRegistry.templates[activeUniverse];
   assert.ok(template, `Template for ${activeUniverse} must exist in TemplateRegistry`);
-  assert.strictEqual(template.id, 'threeui-landscape', 'Must resolve to threeui-landscape, not threeui-shelf');
+  assert.strictEqual(template.id, 'jack-3d-creator', 'Must resolve to jack-3d-creator');
   console.log('✔ 2. Dynamic synthesis fallback resolves active universe:', template.id);
 
-  // 3. Verify threeui-landscape renders with Abdul Aziz profile
+  // 3. Verify jack-3d-creator renders with Abdul Aziz profile
   const html = template.render({
     name: 'Abdul Aziz Nooruddin',
     role: 'AI Systems Specialist',
@@ -50,20 +50,19 @@ async function testVipDomainRouting() {
     ]
   });
   assert.ok(html.includes('Abdul Aziz'), 'Rendered HTML must contain Abdul Aziz');
-  assert.ok(!html.includes('Volume II') || !html.includes('Complete Shelf'), 'Must not render Complete Shelf library books');
   console.log('✔ 3. Dynamic template render produces correct bespoke experience');
 
-  // 4. Test bioluminescent-wireframe as another universe
-  const bioTemplate = TemplateRegistry.templates['bioluminescent-wireframe'];
-  assert.ok(bioTemplate, 'bioluminescent-wireframe must be available');
+  // 4. Test universal fallback
+  const bioTemplate = TemplateRegistry.templates['3d-creator'];
+  assert.ok(bioTemplate, '3d-creator must be available');
   const bioRes = bioTemplate.render({
     name: 'Abdul Aziz Nooruddin',
     role: 'AI Systems Specialist',
     skills: ['Three.js', 'WebGL', 'AI']
   });
   const bioHtml = typeof bioRes === 'string' ? bioRes : (bioRes.html || '');
-  assert.ok(bioHtml.includes('Abdul Aziz'), 'Bioluminescent template renders candidate name');
-  console.log('✔ 4. Multiple universes switch dynamically without sticking to yesterday\'s template');
+  assert.ok(bioHtml.includes('Abdul Aziz'), 'Template renders candidate name');
+  console.log('✔ 4. Universal 3D Creator renders dynamically');
 
   console.log('\n🎉 ALL VIP DOMAIN ROUTING CHECKS PASSED!\n');
 }

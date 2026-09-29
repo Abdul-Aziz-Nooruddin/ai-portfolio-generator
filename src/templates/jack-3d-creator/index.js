@@ -37,43 +37,29 @@ function resolveSingleProjectImage(project, index = 0, usedSet = new Set(), user
   const pTech = String(project.tech || (Array.isArray(project.tags) ? project.tags.join(' ') : '')).toLowerCase();
   const combined = (pName + ' ' + pDesc + ' ' + pTech).trim();
 
-  // Strict Title & Domain Keyword Matching
-  if (/\b(pass a note|pass note|messenger|message|chat|mail|dispatch|communication|ephemeral|sms)\b/i.test(combined)) {
-    return '/assets/projects/pass_note_messenger_3d.webp';
-  }
-  if (/\b(portfolio|generator|ai portfolio|devfolio|showcase|studio)\b/i.test(combined)) {
-    return '/assets/projects/ai_portfolio_generator_3d.webp';
-  }
-  if (/\b(consent|privacy|dpdp|compliance|gdpr|data protection|sovereignty)\b/i.test(combined)) {
-    return '/assets/projects/consent_chain_privacy_3d.webp';
-  }
-  if (/\b(algorand|algo|smart contract|pyteal|solidity|evm|blockchain|token|dapp|escrow)\b/i.test(combined)) {
-    return '/assets/projects/algorand_smart_contracts_3d.webp';
-  }
-  if (/\b(lms|user management|student|admin|rbac|identity|records|school|portal)\b/i.test(combined)) {
-    return '/assets/projects/student_database_manager_3d.webp';
-  }
-  if (/\b(cloud|microservice|gateway|api|docker|k8s|kubernetes|aws|load balancer)\b/i.test(combined)) {
-    return '/assets/projects/cloud_microservices_gateway_3d.webp';
-  }
-  if (/\b(security|auth|vault|cipher|cryptography|firewall|pentest|zero-knowledge)\b/i.test(combined)) {
-    return '/assets/projects/cybersecurity_auth_vault_3d.webp';
-  }
-  if (/\b(agent|autonomous|rag|llm|gpt|neural|inference|deep learning|ai)\b/i.test(combined)) {
-    return '/assets/projects/autonomous_edge_agent_3d.webp';
-  }
-  if (/\b(database|sql|postgres|mongodb|mysql|sqlite|data pipeline)\b/i.test(combined)) {
-    return '/assets/projects/student_database_manager_3d.webp';
-  }
-  if (/\b(game|webgl|three|shader|3d|graphics|physics|spatial)\b/i.test(combined)) {
-    return '/assets/projects/game_engine_spatial_3d.webp';
-  }
-  if (/\b(video|youtube|media|stream|ffmpeg|audio|podcast)\b/i.test(combined)) {
-    return '/assets/projects/youtube_shorts_bot_3d.jpg';
-  }
-  if (/\b(finance|fintech|loan|payment|risk|bank|credit|trading)\b/i.test(combined)) {
-    return '/assets/projects/loan_approval_finance_3d.jpg';
-  }
+  const check = (regex, path1, path2) => {
+    if (regex.test(combined)) {
+      if (!usedSet.has(path1)) return path1;
+      if (path2 && !usedSet.has(path2)) return path2;
+    }
+    return null;
+  };
+
+  const candidate = check(/\b(pass a note|pass note|messenger|message|chat|mail|dispatch|communication|ephemeral|sms)\b/i, '/assets/projects/pass_note_messenger_3d.webp')
+    || check(/\b(ai portfolio|portfolio generator|generator)\b/i, '/assets/projects/ai_portfolio_generator_3d.webp', '/assets/projects/developer_showcase_portfolio_3d.webp')
+    || check(/\b(consent|privacy|dpdp|compliance|gdpr|data protection|sovereignty)\b/i, '/assets/projects/consent_chain_privacy_3d.webp', '/assets/projects/blockchain_consent_3d.webp')
+    || check(/\b(algorand|algo|smart contract|pyteal|solidity|evm|blockchain|token|dapp|escrow)\b/i, '/assets/projects/algorand_smart_contracts_3d.webp', '/assets/projects/algorand_escrow_protocol_3d.webp')
+    || check(/\b(lms|user management|student|admin|rbac|identity|records|school|portal)\b/i, '/assets/projects/student_database_manager_3d.webp', '/assets/projects/lms_user_management_3d.webp')
+    || check(/\b(cloud|microservice|gateway|api|docker|k8s|kubernetes|aws|load balancer)\b/i, '/assets/projects/cloud_microservices_gateway_3d.webp')
+    || check(/\b(security|auth|vault|cipher|cryptography|firewall|pentest|zero-knowledge)\b/i, '/assets/projects/cybersecurity_auth_vault_3d.webp')
+    || check(/\b(agent|autonomous|rag|llm|gpt|neural|inference|deep learning|ai)\b/i, '/assets/projects/autonomous_edge_agent_3d.webp')
+    || check(/\b(database|sql|postgres|mongodb|mysql|sqlite|data pipeline)\b/i, '/assets/projects/student_database_manager_3d.webp')
+    || check(/\b(game|webgl|three|shader|3d|graphics|physics|spatial)\b/i, '/assets/projects/game_engine_spatial_3d.webp')
+    || check(/\b(video|youtube|media|stream|ffmpeg|audio|podcast)\b/i, '/assets/projects/youtube_shorts_bot_3d.jpg')
+    || check(/\b(finance|fintech|loan|payment|risk|bank|credit|trading)\b/i, '/assets/projects/loan_approval_finance_3d.jpg')
+    || check(/\b(portfolio|showcase|studio)\b/i, '/assets/projects/webgl_developer_portfolio_3d.webp', '/assets/projects/developer_showcase_portfolio_3d.webp');
+
+  if (candidate) return candidate;
 
   // Fallback to ProjectArtworkSynthesizer
   const art = ProjectArtworkSynthesizer.resolveProjectArtwork(project, 'jack-3d-creator', index, usedSet, userSeed);
@@ -334,7 +320,7 @@ ${COMPILED_CSS}
   <main class="w-full relative" style="overflow-x: clip;">
 
     <!-- 1. HERO SECTION -->
-    <section class="relative h-screen w-full flex flex-col justify-between overflow-x-clip bg-[#0C0C0C]">
+    <section id="hero" class="portfolio-section relative h-screen w-full flex flex-col justify-between overflow-x-clip bg-[#0C0C0C]">
       <!-- Navbar -->
       <header class="w-full px-6 md:px-10 pt-6 md:pt-8 z-30">
         <nav class="flex items-center justify-between w-full flex-wrap gap-3">
@@ -348,14 +334,14 @@ ${COMPILED_CSS}
       </header>
 
       <!-- Massive Hero Heading: Split into left (Hi, i'm) and right (first & middle name) -->
-      <div class="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
+      <h1 class="w-full max-w-[96vw] mx-auto px-4 sm:px-8 md:px-12 flex items-center justify-between z-0 pointer-events-none select-none mt-4 sm:mt-6 md:mt-2">
         <span class="hero-heading font-black uppercase tracking-tight leading-none text-left whitespace-nowrap" style="font-size: clamp(${minRem}rem, ${safeHeroVw}vw, ${maxPx}px);">
           Hi, i&apos;m
         </span>
         <span class="hero-heading font-black uppercase tracking-tight leading-none text-right whitespace-nowrap" style="font-size: clamp(${minRem}rem, ${safeHeroVw}vw, ${maxPx}px);">
           ${displayHeroName.toLowerCase()}
         </span>
-      </div>
+      </h1>
 
       <!-- Hero Portrait with Magnetic Physics -->
       <div id="magnetic-portrait-wrapper" class="absolute left-1/2 -translate-x-1/2 z-10 w-[240px] sm:w-[320px] md:w-[380px] lg:w-[440px] top-1/2 -translate-y-1/2 sm:top-auto sm:translate-y-0 sm:bottom-0 pointer-events-auto">
@@ -740,6 +726,120 @@ ${COMPILED_CSS}
       }
     })();
   </script>
+</body>
+</html>`;
+  },
+
+  render404Page(siteId = '', rawCandidateData = {}) {
+    const data = TemplateHelper.normalize(rawCandidateData);
+    const safeName = TemplateHelper.escapeHtml(data.name || '3D Creator Portfolio');
+    const returnUrl = siteId ? `/p/${siteId}` : '/';
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Dimension Not Found | ${safeName}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: #0C0C0C;
+      color: #D7E2EA;
+      font-family: 'Kanit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      padding: 24px;
+    }
+    .hero-heading {
+      background: linear-gradient(180deg, #646973 0%, #BBCCD7 100%);
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+    }
+    .code-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(215, 226, 234, 0.15);
+      background: rgba(255, 255, 255, 0.03);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(215, 226, 234, 0.7);
+      margin-bottom: 24px;
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #B600A8;
+      box-shadow: 0 0 10px #B600A8;
+    }
+    .glitch-404 {
+      font-size: clamp(5rem, 16vw, 11rem);
+      font-weight: 900;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+    }
+    .subhead {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 500;
+      color: rgba(215, 226, 234, 0.9);
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+    .desc {
+      font-size: clamp(0.9rem, 1.6vw, 1.1rem);
+      color: rgba(215, 226, 234, 0.5);
+      max-width: 480px;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 36px;
+    }
+    .btn-return {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 9999px;
+      border: 1px solid rgba(215, 226, 234, 0.4);
+      background: #0C0C0C;
+      color: #D7E2EA;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .btn-return:hover {
+      background: #D7E2EA;
+      color: #0C0C0C;
+      border-color: #D7E2EA;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="code-badge">
+    <span class="pulse-dot"></span>
+    <span>404 // CREATIVE SIGNAL LOST</span>
+  </div>
+  <h1 class="glitch-404 hero-heading">404</h1>
+  <p class="subhead">Spatial Coordinate Undefined</p>
+  <p class="desc">The portfolio viewport, document artifact, or dimensional coordinate you are navigating to does not exist or has been shifted in spacetime.</p>
+  <a href="${returnUrl}" class="btn-return">
+    Return to Base ↗
+  </a>
 </body>
 </html>`;
   }

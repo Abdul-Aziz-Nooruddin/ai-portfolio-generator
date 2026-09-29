@@ -17,7 +17,7 @@ class SiteGenerator {
     const requestedTemplate = designBrief?.templateId || data.templateId || data.template || (TemplateRegistry.templates[designBrief?.theme] ? designBrief.theme : null) || (TemplateRegistry.templates[designBrief?.creative_mode] ? designBrief.creative_mode : null);
 
     let templateId = requestedTemplate;
-    if (!templateId || !TemplateRegistry.templates[templateId] || (process.env.NODE_ENV !== 'test' && !['jack-3d-creator', '3d-creator'].includes(templateId))) {
+    if (!templateId || !TemplateRegistry.templates[templateId] || (process.env.NODE_ENV !== 'test' && !['jack-3d-creator', '3d-creator', 'nadia-brand', 'nadia-personal-brand'].includes(templateId))) {
       const userId = (conversation && conversation.user && conversation.user.id) ? conversation.user.id : (conversation && conversation.id) ? conversation.id : 'anonymous';
       const autoTemplate = TemplateRegistry.selectTemplate(null, data, userId);
       templateId = autoTemplate.id || 'jack-3d-creator';
@@ -52,7 +52,12 @@ class SiteGenerator {
       contentProfile: data,
       designBrief: {
         templateId: templateId,
-        visualUniverse: { id: templateId }
+        visualUniverse: { id: templateId },
+        colorSystem: {
+          bg: '#0C0C0C',
+          text: '#D7E2EA',
+          primary: '#2F69FF'
+        }
       },
       telemetry: {
         generationTimeMs: Date.now(),

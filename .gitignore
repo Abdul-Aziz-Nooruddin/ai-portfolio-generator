@@ -27,6 +27,7 @@ build/
 # Temporary
 tmp/
 scratch/
+archive/
 .design_memory.json
 public/sites/*
 !public/sites/.gitkeep
