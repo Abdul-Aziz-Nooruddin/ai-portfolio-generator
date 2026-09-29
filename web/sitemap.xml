@@ -2,88 +2,86 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
-  <!-- MyFolio.tech — XML Sitemap | Last updated: 2026-09-18 -->
+  <!-- MyFolio.tech — XML Sitemap | Last updated: 2026-09-29 -->
 
   <!-- Homepage — Primary landing & conversion world -->
   <url>
     <loc>https://myfolio.tech/</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://myfolio.tech/assets/3d/cosmic_astronaut_3d.jpg</image:loc>
-      <image:title>MyFolio AI 3D Portfolio Generator</image:title>
+      <image:loc>https://myfolio.tech/assets/3d/cyber_architect_sprawl_3d.jpg</image:loc>
+      <image:title>MyFolio AI 3D Portfolio Generator for Developers</image:title>
     </image:image>
   </url>
 
-  <!-- Creator Studio -->
+  <!-- Creator Studio — Interactive AI Portfolio Builder -->
   <url>
     <loc>https://myfolio.tech/studio</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://myfolio.tech/assets/marquee/mesh_quantum_core_3d.png</image:loc>
+      <image:title>MyFolio Web Studio Builder Interface</image:title>
+    </image:image>
+  </url>
+
+  <!-- Live Template Demo: Jack 3D Creator & Engineer -->
+  <url>
+    <loc>https://myfolio.tech/jack-3d</loc>
+    <lastmod>2026-09-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://myfolio.tech/assets/marquee/mesh_quantum_core_3d.png</image:loc>
+      <image:title>Jack 3D Creator &amp; Engineer Template</image:title>
+    </image:image>
+  </url>
+
+  <!-- Live Template Demo: Nadia Personal Brand (Speaker & Advisor) -->
+  <url>
+    <loc>https://myfolio.tech/nadia</loc>
+    <lastmod>2026-09-29</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://myfolio.tech/assets/nadia_bio.jpg</image:loc>
+      <image:title>Nadia Personal Brand Executive Template</image:title>
+    </image:image>
   </url>
 
   <!-- About Page — E-E-A-T Trust & Engineering Ethos -->
   <url>
     <loc>https://myfolio.tech/about</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.80</priority>
   </url>
 
-  <!-- Contact Page — Direct Support & Communications -->
+  <!-- Contact Page — Direct Support & Inquiries -->
   <url>
     <loc>https://myfolio.tech/contact</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-
-  <!-- Universes Showcase -->
-  <url>
-    <loc>https://myfolio.tech/universes</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-
-  <!-- Living 3D WebGL Portfolio Demos -->
-  <url>
-    <loc>https://myfolio.tech/complete-shelf-3d</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-
-  <url>
-    <loc>https://myfolio.tech/sylva-living-world</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-
-  <url>
-    <loc>https://myfolio.tech/kage-living-world</loc>
-    <lastmod>2026-09-18</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
+    <priority>0.75</priority>
   </url>
 
   <!-- Terms of Service -->
   <url>
     <loc>https://myfolio.tech/terms</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.40</priority>
+    <priority>0.30</priority>
   </url>
 
   <!-- Privacy Policy -->
   <url>
     <loc>https://myfolio.tech/privacy</loc>
-    <lastmod>2026-09-18</lastmod>
+    <lastmod>2026-09-29</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.40</priority>
+    <priority>0.30</priority>
   </url>
 
 </urlset>

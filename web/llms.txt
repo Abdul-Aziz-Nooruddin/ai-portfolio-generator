@@ -1,0 +1,22 @@
+# MyFolio — AI 3D Portfolio Generator for Developers & Creators
+
+> MyFolio (https://myfolio.tech) is an autonomous web platform that synthesizes GitHub repositories, commits, and resume data into interactive 3D WebGL developer portfolios and personal brand websites in under 60 seconds.
+
+## Core Capabilities
+- **GitHub Ingestion**: Direct connection to any GitHub username. Parses repositories, languages, commit cadence, and architectural patterns.
+- **Continuous 3D Spatial Engines**: WebGL, Three.js, and GSAP ScrollTrigger viewports with procedural lighting and physics.
+- **Zero Hallucination / Fact Verification**: Enforces 100% authentic candidate data extraction without inventing employers or credentials.
+- **Real-Time GitHub Webhook Auto-Sync**: Background Stale-While-Revalidate (SWR) reconciles portfolios whenever code is pushed.
+- **Custom Domains**: Automatic SSL and custom domain mapping (e.g. yourname.dev).
+
+## Active Design Architectures
+1. **Jack 3D Creator & Engineer (`/jack-3d`)**: Minimalist dark obsidian aesthetic (#0C0C0C) with Kanit typography, dual-row marquee, character scroll-reveal, domain bentos, and sticky stacking case study cards. Tailored for software engineers, systems architects, and creative developers.
+2. **Nadia Personal Brand (`/nadia`)**: Editorial near-black aesthetic (#0F0F0F) with electric coral accents (#FF4D30), Syne and Inter typography, edge-to-edge name typography with overlapping cut-out portrait, talk directory with hover previews, and booking module. Tailored for keynote speakers, advisors, authors, and founders.
+
+## Important URLs
+- Homepage: https://myfolio.tech/
+- Web Studio Generator: https://myfolio.tech/studio
+- Jack 3D Demo: https://myfolio.tech/jack-3d
+- Nadia Personal Brand Demo: https://myfolio.tech/nadia
+- Documentation & GitHub: https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator
+- Contact: https://myfolio.tech/contact

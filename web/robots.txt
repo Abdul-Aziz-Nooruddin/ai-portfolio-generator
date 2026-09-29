@@ -1,27 +1,25 @@
 # ==========================================================
-# MyFolio.tech — robots.txt (Google Search Console Hardened)
+# MyFolio.tech — robots.txt (Google Search Console & GEO Hardened)
 # ==========================================================
 
 User-agent: *
 # Indexable Public Pages (Clean Canonical URLs)
 Allow: /$
 Allow: /studio
+Allow: /jack-3d
+Allow: /nadia
 Allow: /about
 Allow: /contact
 Allow: /terms
 Allow: /privacy
-Allow: /universes
-Allow: /design-demo
-Allow: /complete-shelf-3d
-Allow: /sylva-living-world
-Allow: /kage-living-world
 Allow: /assets/
 Allow: /sitemap.xml
+Allow: /llms.txt
 
-# Block API endpoints from search crawlers (Prevents 404 indexing errors)
+# Block API endpoints from search crawlers
 Disallow: /api/
 
-# Block authentication, private account & app states (Prevents "Crawled - not indexed" thin content)
+# Block authentication, private account & app states
 Disallow: /auth
 Disallow: /auth.html
 Disallow: /login
@@ -53,15 +51,12 @@ Disallow: /node_modules/
 User-agent: Googlebot
 Allow: /$
 Allow: /studio
+Allow: /jack-3d
+Allow: /nadia
 Allow: /about
 Allow: /contact
 Allow: /terms
 Allow: /privacy
-Allow: /universes
-Allow: /design-demo
-Allow: /complete-shelf-3d
-Allow: /sylva-living-world
-Allow: /kage-living-world
 Allow: /assets/
 Allow: /sitemap.xml
 Disallow: /api/
@@ -81,6 +76,32 @@ Disallow: /p/
 Disallow: /sites/
 Disallow: /*.json$
 
+# Explicit Rules for Bingbot
+User-agent: Bingbot
+Allow: /$
+Allow: /studio
+Allow: /jack-3d
+Allow: /nadia
+Allow: /about
+Allow: /contact
+Allow: /terms
+Allow: /privacy
+Allow: /assets/
+Allow: /sitemap.xml
+
+# AI & Generative Search Engines (GEO - ChatGPT Search, Perplexity, Claude)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
 # Social Media Crawlers (Allow Assets for Rich Link Previews)
 User-agent: Twitterbot
 Allow: /assets/
@@ -91,7 +112,7 @@ Allow: /assets/
 User-agent: facebookexternalhit
 Allow: /assets/
 
-# Block aggressive SEO scrapers from wasting server bandwidth
+# Block aggressive scrapers
 User-agent: AhrefsBot
 Disallow: /
 
@@ -104,7 +125,5 @@ Disallow: /
 User-agent: MJ12bot
 Disallow: /
 
-Crawl-delay: 2
-
-# Sitemap location
+# Canonical Sitemap Location
 Sitemap: https://myfolio.tech/sitemap.xml
