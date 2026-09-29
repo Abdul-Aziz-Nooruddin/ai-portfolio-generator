@@ -47,7 +47,7 @@ async function generate() {
         desc: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.',
         tech: 'HTML • JavaScript • WebGL • Three.js • Node.js',
         badge: '100% REAL GITHUB DATA',
-        github: 'https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator',
+        github: 'https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech',
         live: 'https://myfolio.tech'
       },
       {

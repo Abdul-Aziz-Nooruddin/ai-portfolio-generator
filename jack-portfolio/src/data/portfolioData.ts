@@ -182,7 +182,7 @@ export const PROJECTS_DATA: ProjectItem[] = [
     description: "Turn GitHub repositories & resumes into bespoke 3D WebGL developer portfolios with real evidence preservation and spatial depth.",
     tech: ["Three.js", "WebGL", "TypeScript", "Node.js", "AI Pipeline"],
     liveUrl: "https://myfolio.tech",
-    githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator",
+    githubUrl: "https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech",
     image: "/assets/projects/ai_portfolio_generator_3d.webp",
   },
   {

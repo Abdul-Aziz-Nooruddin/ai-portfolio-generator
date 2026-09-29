@@ -18,5 +18,5 @@
 - Web Studio Generator: https://myfolio.tech/studio
 - Jack 3D Demo: https://myfolio.tech/jack-3d
 - Nadia Personal Brand Demo: https://myfolio.tech/nadia
-- Documentation & GitHub: https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator
+- Documentation & GitHub: https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech
 - Contact: https://myfolio.tech/contact

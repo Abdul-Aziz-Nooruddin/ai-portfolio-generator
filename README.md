@@ -92,8 +92,8 @@ $$\text{CONTENT} \longrightarrow \text{IDENTITY} \longrightarrow \text{STORY} \l
 
 ### 1. Clone & Install
 ```bash
-git clone https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator.git
-cd ai-portfolio-generator
+git clone https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech.git
+cd myfolio.tech
 npm install
 ```
 

@@ -49,7 +49,7 @@ async function generate() {
         desc: 'Autonomous WebGL portfolio synthesis platform. Turns engineering repositories and GitHub evidence into high-impact 3D interactive portfolio worlds in minutes.',
         tech: 'Three.js • WebGL • GSAP • Lenis • Node.js',
         metrics: 'Interactive 3D Viewports • 100% Real Evidence • Scrollytelling',
-        github: 'https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator',
+        github: 'https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech',
         live: 'https://myfolio.tech'
       },
       {

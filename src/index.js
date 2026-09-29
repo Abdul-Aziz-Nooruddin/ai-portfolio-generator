@@ -326,7 +326,7 @@ app.use(async (req, res, next) => {
               title: 'AI Portfolio Generator',
               description: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.',
               tags: ['WebGL', 'Three.js', 'Node.js', 'JavaScript', 'AI'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/ai-portfolio-generator',
+              github: 'https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech',
               live: 'https://myfolio.tech'
             },
             {
