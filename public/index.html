@@ -90,8 +90,18 @@
         "logo": "https://www.myfolio.tech/favicon.png",
         "sameAs": [
           "https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech",
+          "https://github.com/Abdul-Aziz-Nooruddin",
           "https://twitter.com/myfoliotech"
-        ]
+        ],
+        "founder": {
+          "@type": "Person",
+          "name": "Abdul Aziz Nooruddin",
+          "url": "https://github.com/Abdul-Aziz-Nooruddin",
+          "sameAs": [
+            "https://github.com/Abdul-Aziz-Nooruddin",
+            "https://www.linkedin.com/in/abdul-aziz-nooruddin"
+          ]
+        }
       },
       {
         "@type": "WebSite",
@@ -319,6 +329,37 @@
       transform: translateY(-1px) !important;
     }
 
+    .btn-github-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 15px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      color: #E2E8F0;
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .btn-github-pill:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(56, 189, 248, 0.55);
+      color: #FFFFFF;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+      transform: translateY(-1px);
+    }
+    @media (max-width: 860px) {
+      .btn-github-pill span {
+        display: none;
+      }
+      .btn-github-pill {
+        padding: 8px 10px;
+      }
+    }
+
     .btn-solar-primary,
     button.btn-solar-primary,
     a.btn-solar-primary {
@@ -479,6 +520,13 @@
       <a href="#sectionShowcase" class="nav-link-item">Showcase</a>
       <a href="/studio" class="nav-link-item">Web Studio</a>
     </div>
+
+    <a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener noreferrer" class="btn-github-pill" aria-label="GitHub Repository" title="GitHub: Abdul-Aziz-Nooruddin/myfolio.tech">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      <span>GitHub</span>
+    </a>
 
     <div class="nav-actions-cluster" id="navAuthDock">
       <button type="button" class="btn-solar-outline" onclick="openAuthModal('signin')">Sign in</button>
@@ -880,7 +928,8 @@
       <div class="footer-nav-col">
         <h4 class="footer-nav-col-title">Resources</h4>
         <ul class="footer-nav-list">
-          <li><a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener">GitHub</a></li>
+          <li><a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener">Founder Profile</a></li>
           <li><a href="/sitemap.xml">Sitemap</a></li>
         </ul>
       </div>
@@ -895,8 +944,8 @@
     </div>
 
     <div class="footer-copyright-strip">
-      <span>© 2026 MyFolio Studio. All rights reserved.</span>
-      <span>Engineered with continuous 3D spatial depth.</span>
+      <span>© 2026 MyFolio Studio. Created by <a href="https://github.com/Abdul-Aziz-Nooruddin" target="_blank" rel="noopener" style="color: #38BDF8; text-decoration: none;">Abdul Aziz Nooruddin</a>.</span>
+      <span>Official Repository: <a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener" style="color: #38BDF8; text-decoration: none;">github.com/Abdul-Aziz-Nooruddin/myfolio.tech</a></span>
     </div>
   </footer>
 

@@ -1,8 +1,10 @@
-# 🌌 MyFolio — AI-Powered 3D WebGL Portfolio & Spatial Experience Platform
+# 🌌 myfolio.tech — The Official AI 3D WebGL Portfolio & Developer Showcase Platform
 
 <div align="center">
 
-[![Live Production](https://img.shields.io/badge/Live%20Platform-myfolio.tech-38BDF8.svg?style=for-the-badge&logo=google-chrome&logoColor=white)](https://myfolio.tech)
+[![Official Domain](https://img.shields.io/badge/Official%20Platform-myfolio.tech-38BDF8.svg?style=for-the-badge&logo=google-chrome&logoColor=white)](https://myfolio.tech)
+[![Creator](https://img.shields.io/badge/Author-Abdul--Aziz--Nooruddin-8B5CF6.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Abdul-Aziz-Nooruddin)
+[![Repository](https://img.shields.io/badge/GitHub%20Repo-myfolio.tech-10B981.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech)
 [![3D Web Studio](https://img.shields.io/badge/3D%20Studio-Launch%20Generator-6366F1.svg?style=for-the-badge&logo=three.js&logoColor=white)](https://myfolio.tech/studio)
 [![Curated 3D Universes](https://img.shields.io/badge/Design%20Intelligence-35%2B%20Universes-10B981.svg?style=for-the-badge&logo=webgl&logoColor=white)](https://myfolio.tech/universes)
 
