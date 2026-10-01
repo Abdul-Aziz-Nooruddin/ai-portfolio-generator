@@ -97,11 +97,11 @@ div:has(> img[alt*="Careerflow" i]) {
 .site-header { display: contents; }
 .logo-wrapper { position: fixed; top: 35px; left: 40px; z-index: 104; color: var(--ink); border-radius: 30px; transition: background .2s, color .2s; }
 .site-header.is-scrolled .logo-wrapper { padding: 4px 12px; margin: -4px -12px; background: #f4f1e8f2; backdrop-filter: blur(14px); }
-.brand { display: inline-flex; align-items: center; gap: 11px; font-size: 29px; font-weight: 600; letter-spacing: -.065em; line-height: 1; min-height: 44px; }
-.brand-mark { display: grid; grid-template-columns: repeat(2, 9px); grid-template-rows: repeat(2, 9px); gap: 3px; transform: rotate(-9deg); }
-.brand-mark i { background: currentColor; }
-.brand-mark i:first-child { border-radius: 6px 1px 1px 1px; }
-.brand-mark i:last-child { border-radius: 1px 1px 6px 1px; }
+.brand { display: inline-flex; align-items: center; gap: 11px; font-size: 29px; font-weight: 600; letter-spacing: -.065em; line-height: 1; min-height: 44px; text-decoration: none; }
+.brand-logo-wrap { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; }
+.brand-logo-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; }
+.brand:hover .brand-logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 16px rgba(117, 197, 222, 0.5); }
+.brand-footer .brand-logo-img { box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12); }
 .brand-period { color: inherit; }
 .header-note { position: absolute; z-index: 10; top: 52px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; }
 .header-actions { position: fixed; top: 27px; right: 40px; display: flex; align-items: center; gap: 24px; z-index: 104; }
@@ -342,7 +342,8 @@ div:has(> img[alt*="Careerflow" i]) {
   .logo-wrapper { top: 22px; left: 24px; }
   .site-header.menu-is-open .logo-wrapper { color: var(--paper); background: transparent; backdrop-filter: none; }
   .brand { font-size: 26px; gap: 9px; }
-  .brand-mark { grid-template-columns: repeat(2, 8px); grid-template-rows: repeat(2, 8px); }
+  .brand-logo-wrap { width: 30px; height: 30px; }
+  .brand-logo-img { width: 30px; height: 30px; }
   .header-actions { top: 17px; right: 20px; }
   .burger-button { width: 54px; height: 54px; }
   .studio-link, .header-note { display: none; }

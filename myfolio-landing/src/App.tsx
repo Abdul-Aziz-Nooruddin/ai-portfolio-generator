@@ -118,7 +118,19 @@ const questions = [
 function Brand({ footer = false }: { footer?: boolean }) {
   return (
     <a className={`brand${footer ? ' brand-footer' : ''}`} href="#home" aria-label="MyFolio home">
-      <span className="brand-mark" aria-hidden="true"><i /><i /><i /><i /></span>
+      <span className="brand-logo-wrap" aria-hidden="true">
+        <picture>
+          <source srcSet="/assets/logo-3d.webp" type="image/webp" />
+          <img
+            src="/assets/logo-3d.png"
+            alt="MyFolio logo"
+            className="brand-logo-img"
+            width="34"
+            height="34"
+            loading="eager"
+          />
+        </picture>
+      </span>
       <span aria-hidden="true">myfolio<span className="brand-period">.</span></span>
     </a>
   );

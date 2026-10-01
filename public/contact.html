@@ -43,13 +43,10 @@
       display: inline-flex; align-items: center; gap: 11px;
       font-size: 26px; font-weight: 600; letter-spacing: -0.06em; line-height: 1;
     }
-    .brand-mark {
-      display: grid; grid-template-columns: repeat(2, 9px); grid-template-rows: repeat(2, 9px);
-      gap: 3px; transform: rotate(-9deg);
-    }
-    .brand-mark i { background: currentColor; }
-    .brand-mark i:first-child { border-radius: 6px 1px 1px 1px; }
-    .brand-mark i:last-child { border-radius: 1px 1px 6px 1px; }
+    .brand-logo-wrap { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-logo-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; }
+    .brand:hover .brand-logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 16px rgba(117, 197, 222, 0.5); }
+    .brand-footer .brand-logo-img { box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12); }
 
     .header-nav { display: none; align-items: center; gap: 32px; font-size: 14px; font-weight: 500; }
     @media (min-width: 860px) { .header-nav { display: flex; } }
@@ -231,7 +228,7 @@
   <!-- SITE HEADER -->
   <header class="site-header">
     <a class="brand" href="/" aria-label="MyFolio home">
-      <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="brand-logo-wrap" aria-hidden="true"><img src="/assets/logo-3d.png" alt="MyFolio logo" class="brand-logo-img" width="34" height="34" /></span>
       <span>myfolio<span class="brand-period">.</span></span>
     </a>
     <nav class="header-nav" aria-label="Main Navigation">
@@ -366,7 +363,7 @@
     <div class="footer-top">
       <div>
         <a class="brand" href="/" aria-label="MyFolio home">
-          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span class="brand-logo-wrap" aria-hidden="true"><img src="/assets/logo-3d.png" alt="MyFolio logo" class="brand-logo-img" width="34" height="34" /></span>
           <span>myfolio<span class="brand-period">.</span></span>
         </a>
         <p style="margin-top: 12px; color: var(--muted); font-size: 14px;">Built for people who build things.<br>Made with imagination.</p>
