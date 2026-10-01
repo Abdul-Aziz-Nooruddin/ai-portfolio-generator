@@ -3,17 +3,152 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#e4e4e4" />
-    <meta name="description" content="Your work deserves more than a PDF. Turn your GitHub, projects, and experience into a portfolio people want to explore with MyFolio." />
-    <meta property="og:title" content="MyFolio — Your work. Your world." />
-    <meta property="og:description" content="Turn your GitHub, projects, and experience into a portfolio that's unmistakably you." />
+    <meta name="theme-color" content="#171817" />
+
+    <!-- Primary SEO & Keyword Meta Tags -->
+    <title>MyFolio — #1 AI Portfolio Generator & 3D Portfolio Maker | Full Source Code Export</title>
+    <meta name="title" content="MyFolio — #1 AI Portfolio Generator & 3D Portfolio Maker | Full Source Code Export" />
+    <meta name="description" content="The #1 AI portfolio generator & developer portfolio maker. Turn your GitHub into an interactive 3D WebGL portfolio in 60s. Includes 100% full source code export (ZIP download), GitHub live sync, 3 free weekly builds & custom domains at ₹149. Zero vendor lock-in." />
+    <meta name="keywords" content="portfolio generator, ai portfolio generator, portfolio maker, developer portfolio generator, 3d portfolio generator, 3d portfolio maker, github portfolio generator, free portfolio builder, developer website builder, software engineer portfolio, webgl portfolio generator, personal website maker, coding portfolio generator, best portfolio maker, developer portfolio maker, source code export portfolio, download portfolio source code, export portfolio zip, offline portfolio export, interactive portfolio maker, tech portfolio generator, programmer portfolio builder, modern portfolio maker, portfolio creator, portfolio builder with code download, devfolio, portfolio builder with github sync, free portfolio generator, automated portfolio maker" />
+    <meta name="author" content="Abdul Aziz Nooruddin, MyFolio" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <link rel="canonical" href="https://myfolio.tech/" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://myfolio.tech/" />
+    <meta property="og:title" content="MyFolio — #1 AI Portfolio Generator & 3D Portfolio Maker | Full Source Code Export" />
+    <meta property="og:description" content="Transform your GitHub repositories into an interactive 3D WebGL developer portfolio in under 60 seconds. Full source code export (ZIP), GitHub auto-sync, 3 free builds/week & custom domains at ₹149." />
+    <meta property="og:image" content="https://myfolio.tech/images/hero-base.webp" />
+    <meta property="og:site_name" content="MyFolio" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@myfoliotech" />
+    <meta name="twitter:creator" content="@myfoliotech" />
+    <meta name="twitter:url" content="https://myfolio.tech/" />
+    <meta name="twitter:title" content="MyFolio — AI Portfolio Generator & Developer Portfolio Maker" />
+    <meta name="twitter:description" content="Interactive 3D WebGL developer portfolio maker. 100% full source code export (ZIP download included with all paid builds). Zero vendor lock-in. Self-host anywhere." />
+    <meta name="twitter:image" content="https://myfolio.tech/images/hero-base.webp" />
+
+    <!-- Favicon & Touch Icons with Official 3D Emblem -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/logo-3d.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo-3d.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+
+    <!-- Typography & Performance Preloads -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="preload" href="/images/hero-base.webp" as="image" />
-    <title>MyFolio — Your work. Your world.</title>
+    <link rel="preload" href="/assets/logo-3d.webp" as="image" />
+
+    <!-- AI & LLM Search Engine Optimization Link -->
+    <link rel="help" href="/llms.txt" type="text/plain" title="LLM Knowledge File" />
+
+    <!-- Schema.org JSON-LD Structured Data for Search Engines & AI Crawlers -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebApplication",
+          "@id": "https://myfolio.tech/#webapp",
+          "name": "MyFolio",
+          "alternateName": [
+            "MyFolio AI Portfolio Generator",
+            "MyFolio Portfolio Maker",
+            "MyFolio Developer Portfolio Builder",
+            "MyFolio 3D WebGL Portfolio Generator"
+          ],
+          "url": "https://myfolio.tech",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "All",
+          "description": "The premier AI portfolio generator and developer portfolio maker. Ingests GitHub repositories and synthesizes interactive 3D WebGL portfolios in 60 seconds with full source code export (ZIP download included), zero vendor lock-in, and GitHub auto-sync.",
+          "browserRequirements": "Requires WebGL-compatible browser",
+          "softwareVersion": "2.4.0",
+          "featureList": [
+            "AI-Assisted GitHub Repository Ingestion & Synthesis",
+            "Interactive 3D WebGL Spatial Portfolios (Jack 3D & Nadia Brand Templates)",
+            "100% Full Source Code & Asset Export (Standalone ZIP Download on all Paid Builds)",
+            "Zero Vendor Lock-in: Self-Host on Netlify, Vercel, AWS, Cloudflare, or VPS",
+            "Live GitHub Webhook Auto-Synchronization",
+            "Free Evaluation: 3 Builds Per Week with 24-Hour Previews",
+            "Permanent Netlify Hosting or Custom <username>.myfolio.tech Branded Subdomain at ₹149"
+          ],
+          "offers": [
+            {
+              "@type": "Offer",
+              "name": "Free Evaluation",
+              "price": "0",
+              "priceCurrency": "INR",
+              "description": "3 free preview builds per week, 24-hour evaluation, full Web Studio & 3D WebGL testing"
+            },
+            {
+              "@type": "Offer",
+              "name": "Lifetime Build",
+              "price": "149",
+              "priceCurrency": "INR",
+              "description": "Valid for 1 chosen build, lifetime Netlify hosting, full standalone source code export (ZIP), live GitHub auto-updates"
+            },
+            {
+              "@type": "Offer",
+              "name": "Pro Domain",
+              "price": "149",
+              "priceCurrency": "INR",
+              "billingDuration": "P1M",
+              "description": "Valid for 1 chosen build, branded <username>.myfolio.tech vanity address with SSL, full standalone source code export (ZIP), live GitHub auto-updates"
+            }
+          ],
+          "creator": {
+            "@type": "Person",
+            "name": "Abdul Aziz Nooruddin",
+            "url": "https://github.com/Abdul-Aziz-Nooruddin"
+          }
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://myfolio.tech/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "Can I export and download the source code of my portfolio from MyFolio?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "YES, absolutely. Every paid build on MyFolio (both the ₹149 one-time Lifetime Build and the ₹149/month Pro Domain) includes 100% complete standalone source code and asset export in a clean ZIP package. There is zero vendor lock-in. You own your code completely and can run or self-host it on Vercel, Netlify, AWS, Cloudflare, GitHub Pages, or any server."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is MyFolio free to try as a portfolio generator?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "YES. MyFolio provides 3 free evaluation builds every week. Each build stays active for 24 hours with full Web Studio customization and interactive 3D WebGL desktop and mobile rendering with no credit card required."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does MyFolio compare to competitors like Wix, Squarespace, or Polywork?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Unlike generic closed-source website builders that lock your content into proprietary platforms and prohibit code export, MyFolio gives you complete ownership with full source code download (ZIP), connects natively to your GitHub to auto-update when code is pushed, and renders interactive 3D spatial WebGL environments tailored for developers at just ₹149."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the difference between the ₹149 one-time and ₹149 monthly plans?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Both ₹149 plans include full source code download and live GitHub auto-updates for the purchased build. The only difference is hosting: the one-time plan gives you lifetime hosting on a Netlify address (your-site.netlify.app), while the monthly plan maintains your clean, branded <username>.myfolio.tech domain with continuous SSL and routing."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -99,19 +99,23 @@ const questions = [
   },
   {
     question: 'What happens after the 24-hour preview?',
-    answer: 'The preview is an evaluation period, not a promise of permanent free hosting. Review the current publishing options, prices, and retention terms in the live MyFolio dashboard before the preview ends. This homepage does not take payments or start a subscription.',
+    answer: 'You can generate up to 3 free evaluation builds every week. Each preview stays active for 24 hours. When you find a build you love, pay just ₹149 once for lifetime Netlify hosting, or ₹149/month for a branded <username>.myfolio.tech domain. Both include full source code download and live GitHub auto-updates.',
   },
   {
     question: 'Do I need to share private repositories?',
-    answer: 'No. MyFolio describes its GitHub workflow as reading public repository metadata. You do not need to submit confidential source code to tell a good project story. Review the permissions requested by the live service and remove secrets, private client information, and material you do not have permission to publish.',
+    answer: 'No. MyFolio only reads public repository metadata. You never need to share private code or secrets. You remain in complete control of which public projects, descriptions, and achievements appear in your portfolio.',
   },
   {
-    question: 'Can I keep an offline copy?',
-    answer: 'MyFolio lists offline ZIP export among its capabilities. Check the available export controls in the current studio and review what your chosen template includes. Any third-party fonts, imagery, or models remain subject to their original usage rights.',
+    question: 'Can I download and export the full source code for my portfolio?',
+    answer: 'YES, 100%. Every paid build (both the ₹149 one-time Lifetime Build and the ₹149/month Pro Domain) includes full standalone source code and asset export in a clean ZIP package. There is zero platform lock-in. You own your code, HTML, CSS, React/JS, 3D WebGL assets, and styles completely, and can self-host anywhere (Netlify, Vercel, AWS, Cloudflare, GitHub Pages, or your own server).',
+  },
+  {
+    question: 'How does MyFolio compare to other portfolio makers like Wix or Squarespace?',
+    answer: 'Unlike generic website builders that lock you into recurring monthly fees without source code access, MyFolio is built specifically for developers. It connects directly to your GitHub to extract real repositories, renders interactive 3D WebGL presentations, auto-syncs when you push commits, and provides 100% full source code export with zero vendor lock-in at just ₹149.',
   },
   {
     question: 'Where can I get help or discuss a partnership?',
-    answer: 'For product questions, account issues, and publishing help, contact support@myfolio.tech. For reaching Aziz, partnerships, bootcamps, and collaborations, use aziz@myfolio.tech. The contact section below can prepare an email draft, or you can use the contact page on the live platform.',
+    answer: 'For product questions, account issues, and publishing help, contact support@myfolio.tech. For reaching Aziz, partnerships, bootcamps, and collaborations, use aziz@myfolio.tech. The contact section below can prepare an email draft, or you can reach out directly.',
   },
 ];
 

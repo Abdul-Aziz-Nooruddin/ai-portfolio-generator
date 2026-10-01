@@ -155,7 +155,7 @@ export function PricingSection() {
       <div className="pricing-trust-bar scroll-reveal" aria-label="Purchase protections and guarantees">
         <div className="pricing-trust-item">
           <Code2 size={18} aria-hidden="true" />
-          <span>Full source code export on all paid builds</span>
+          <span>100% Full Source Code & ZIP Export (Zero Lock-in)</span>
         </div>
         <div className="pricing-trust-item">
           <Zap size={18} aria-hidden="true" />
