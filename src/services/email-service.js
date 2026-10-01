@@ -369,6 +369,46 @@ Subscribe here: ${subscribeUrl}
     });
   }
 
+  async sendSignupOtpEmail(toEmail, { name = 'there', otp }) {
+    const subject = `Your MyFolio Verification Code: ${otp}`;
+    const html = `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 580px; margin: 0 auto; padding: 32px 24px; color: #171817; background: #ffffff; border-radius: 16px; border: 1px solid rgba(23, 24, 23, 0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+        <div style="text-align: center; margin-bottom: 24px;">
+          <h1 style="font-size: 26px; font-weight: 800; color: #171817; margin: 0 0 8px;">Verify Your Email</h1>
+          <p style="color: #60615b; font-size: 14px; margin: 0;">Complete your account creation on MyFolio</p>
+        </div>
+
+        <p style="font-size: 15px; color: #171817; line-height: 1.6;">Hey <strong>${name}</strong>,</p>
+        <p style="font-size: 14px; color: #60615b; line-height: 1.6;">Use the following 6-character verification code to confirm your email address and activate your account:</p>
+
+        <div style="margin: 28px 0; text-align: center;">
+          <div style="display: inline-block; background: #f4f1e8; border: 2px dashed #75c5de; border-radius: 12px; padding: 18px 36px; font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 34px; font-weight: 900; letter-spacing: 0.35em; color: #13708e;">
+            ${otp}
+          </div>
+          <div style="margin-top: 10px; font-size: 12px; color: #8e8f89;">
+            This code contains letters and numbers and expires in 10 minutes.
+          </div>
+        </div>
+
+        <p style="font-size: 13px; color: #8e8f89; line-height: 1.5;">
+          If you did not attempt to sign up for MyFolio, please ignore this email. No account will be created without entering this code.
+        </p>
+
+        <hr style="border: 0; border-top: 1px solid rgba(23, 24, 23, 0.08); margin: 28px 0 20px;" />
+        <p style="color: #a0a19b; font-size: 11px; text-align: center; margin: 0;">
+          © 2026 MyFolio • Built by Abdul Aziz Nooruddin • All systems operational
+        </p>
+      </div>
+    `;
+
+    return this.sendMail({
+      to: toEmail,
+      subject,
+      html,
+      meta: { sequence_type: 'transactional', trigger_name: 'signup_otp' }
+    });
+  }
+
   async sendPasswordResetEmail(toEmail, { userId, name = 'there', resetUrl = '' }) {
     const subject = "Password Reset Request — Portfolio Bot";
     const html = `

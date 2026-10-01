@@ -71,6 +71,31 @@ class Template3DVisuals {
     ];
   }
 
+  /**
+   * 3D Holographic Resume & Credential Dossier Specimen
+   */
+  static getHolographicResume3DArtwork(candidateName = 'Dossier') {
+    return `
+      <div class="holographic-resume-3d-stage" style="position: relative; width: 280px; height: 340px; display: flex; align-items: center; justify-content: center; perspective: 1000px;">
+        <div class="holographic-resume-card" style="width: 240px; height: 300px; background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); padding: 24px; box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.2); display: flex; flex-direction: column; justify-content: space-between; transform-style: preserve-3d; animation: floatSpatial 6s ease-in-out infinite;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; color: #38bdf8;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <span style="font-family: monospace; font-size: 10px; letter-spacing: 0.15em; color: rgba(255,255,255,0.5); text-transform: uppercase;">VERIFIED</span>
+          </div>
+          <div style="margin: 20px 0;">
+            <div style="font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 6px;">${candidateName}</div>
+            <div style="font-size: 11px; color: rgba(255,255,255,0.6); line-height: 1.4;">Official Career Dossier & Technical Portfolio Evidence</div>
+          </div>
+          <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; display: flex; align-items: center; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.4);">
+            <span>FOLIO-ID // 2026</span>
+            <span style="color: #38bdf8;">● ACTIVE</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
 }
 
 module.exports = { Template3DVisuals };

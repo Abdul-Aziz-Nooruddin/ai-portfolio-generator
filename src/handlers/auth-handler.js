@@ -4,6 +4,7 @@
  * Password Reset, Active Sessions, Google OAuth 2.0, and Account Deletion.
  */
 
+const crypto = require('crypto');
 const { GoogleOAuthService } = require('../services/google-oauth-service');
 
 class AuthHandler {
@@ -13,6 +14,20 @@ class AuthHandler {
     this.email = emailService;
     this.customDomain = customDomainService;
     this.googleOAuth = new GoogleOAuthService();
+    this.pendingSignups = new Map(); // normalizedEmail -> { name, email, username, passwordHash, otp, expiresAt, attempts }
+  }
+
+  /**
+   * Generates a 6-character random alphanumeric OTP (letters and numbers randomly arranged)
+   */
+  static generateAlphaNumericOtp(length = 6) {
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const randomBytes = crypto.randomBytes(length);
+    let otp = '';
+    for (let i = 0; i < length; i++) {
+      otp += chars[randomBytes[i] % chars.length];
+    }
+    return otp;
   }
 
   /**
@@ -57,6 +72,8 @@ class AuthHandler {
 
   /**
    * POST /api/auth/signup
+   * Validates form and generates 6-character random alphanumeric OTP sent to email.
+   * Account is ONLY created upon successful OTP verification.
    */
   async signup(req, res) {
     try {
@@ -102,51 +119,115 @@ class AuthHandler {
         }
       }
 
-      // Check if user exists
+      // Check if user exists with password
       let existingUser = await this.db.getUserByNormalizedEmail(normalizedEmail);
       if (existingUser && existingUser.password_hash) {
-        // Safe generic message to avoid email enumeration abuse
         return res.status(409).json({ error: 'An account with this email address already exists. Please sign in.' });
       }
 
       const passwordHash = await this.security.hashPassword(password);
+
+      // Generate 6-digit random alphanumeric OTP (letters and numbers randomly arranged)
+      const otp = AuthHandler.generateAlphaNumericOtp(6);
+
+      // Store pending registration (valid for 10 minutes)
+      this.pendingSignups.set(normalizedEmail, {
+        name: cleanName,
+        email,
+        username: cleanUsername,
+        passwordHash,
+        otp,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 10 * 60 * 1000,
+        attempts: 0
+      });
+
+      // Dispatch 6-digit alphanumeric OTP via email
+      this.email.sendSignupOtpEmail(email, {
+        name: cleanName,
+        otp
+      }).catch(e => console.warn('[SIGNUP OTP EMAIL WARN]', e.message));
+
+      console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Code: ${otp}`);
+
+      res.status(200).json({
+        success: true,
+        requireOtp: true,
+        email,
+        message: 'A 6-character verification code has been sent to your email. Please enter it to complete your registration.'
+      });
+    } catch (err) {
+      console.error('[SIGNUP ERROR]', err);
+      res.status(500).json({ error: 'Registration failed. Please try again.' });
+    }
+  }
+
+  /**
+   * POST /api/auth/verify-signup-otp
+   * Validates the 6-character alphanumeric OTP and creates the account ONLY if identical.
+   */
+  async verifySignupOtp(req, res) {
+    try {
+      const { email, otp } = req.body;
+
+      if (!email || !otp) {
+        return res.status(400).json({ error: 'Email and 6-character verification code are required.' });
+      }
+
+      const normalizedEmail = this.db.constructor.normalizeEmail(email);
+      const pending = this.pendingSignups.get(normalizedEmail);
+
+      if (!pending) {
+        return res.status(400).json({ error: 'No pending registration found for this email, or the code has expired. Please sign up again.' });
+      }
+
+      if (Date.now() > pending.expiresAt) {
+        this.pendingSignups.delete(normalizedEmail);
+        return res.status(400).json({ error: 'Verification code has expired. Please request a new code.' });
+      }
+
+      if (pending.attempts >= 5) {
+        this.pendingSignups.delete(normalizedEmail);
+        return res.status(429).json({ error: 'Too many incorrect attempts. Please sign up again.' });
+      }
+
+      pending.attempts++;
+      const cleanOtp = otp.toString().trim().toUpperCase();
+
+      if (cleanOtp !== pending.otp) {
+        return res.status(400).json({ error: 'Invalid verification code. Please check your email and try again.' });
+      }
+
+      // OTP matches! Create account now.
       let user;
+      let existingUser = await this.db.getUserByNormalizedEmail(normalizedEmail);
 
       if (existingUser) {
-        // Upgrade existing phone/pre-created user
         await this.db.updateUser(existingUser.id, {
-          name: cleanName,
-          username: cleanUsername || existingUser.username,
-          password_hash: passwordHash,
-          normalized_email: normalizedEmail
+          name: pending.name,
+          username: pending.username || existingUser.username,
+          password_hash: pending.passwordHash,
+          normalized_email: normalizedEmail,
+          email_verified: true
         });
         user = await this.db.getUserById(existingUser.id);
       } else {
         user = await this.db.createUserWithPassword({
-          name: cleanName,
-          email,
-          username: cleanUsername,
-          passwordHash,
+          name: pending.name,
+          email: pending.email,
+          username: pending.username,
+          passwordHash: pending.passwordHash,
           role: 'user'
         });
+        if (this.db.updateUser) {
+          await this.db.updateUser(user.id, { email_verified: true }).catch(() => {});
+        }
       }
 
-      // Generate Email Verification Token
-      const rawVerifyToken = this.security.generateSecureToken(32);
-      const verifyTokenHash = this.security.hashToken(rawVerifyToken);
-      await this.db.createVerificationToken(user.id, verifyTokenHash);
+      // Clean up pending signup
+      this.pendingSignups.delete(normalizedEmail);
 
-      const hostUrl = process.env.HOST_URL || `${req.protocol}://${req.get('host')}`;
-      const verificationUrl = `${hostUrl}/auth.html?view=verify&token=${rawVerifyToken}`;
-
-      // Dispatch verification email in background
-      this.email.sendVerificationEmail(email, {
-        userId: user.id,
-        name: cleanName,
-        verificationUrl
-      }).catch(e => console.warn('[SIGNUP EMAIL WARN]', e.message));
-
-      // Create initial active session
+      // Create active session
       const rawSessionToken = this.security.generateSecureToken(32);
       const sessionTokenHash = this.security.hashToken(rawSessionToken);
       const userAgent = req.headers['user-agent'] || '';
@@ -166,12 +247,52 @@ class AuthHandler {
 
       res.status(201).json({
         success: true,
-        message: 'Account created successfully! Please check your email to verify your address.',
-        user: sanitizedUser
+        message: 'Account verified and created successfully.',
+        user: sanitizedUser,
+        redirectUrl: '/studio'
       });
     } catch (err) {
-      console.error('[SIGNUP ERROR]', err);
-      res.status(500).json({ error: 'Signup failed. Please try again later.' });
+      console.error('[VERIFY SIGNUP OTP ERROR]', err);
+      res.status(500).json({ error: 'Failed to verify verification code.' });
+    }
+  }
+
+  /**
+   * POST /api/auth/resend-signup-otp
+   */
+  async resendSignupOtp(req, res) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        return res.status(400).json({ error: 'Email address is required.' });
+      }
+
+      const normalizedEmail = this.db.constructor.normalizeEmail(email);
+      const pending = this.pendingSignups.get(normalizedEmail);
+
+      if (!pending) {
+        return res.status(400).json({ error: 'No pending registration found for this email. Please sign up again.' });
+      }
+
+      const newOtp = AuthHandler.generateAlphaNumericOtp(6);
+      pending.otp = newOtp;
+      pending.expiresAt = Date.now() + 10 * 60 * 1000;
+      pending.attempts = 0;
+
+      this.email.sendSignupOtpEmail(pending.email, {
+        name: pending.name,
+        otp: newOtp
+      }).catch(e => console.warn('[RESEND SIGNUP OTP WARN]', e.message));
+
+      console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Code: ${newOtp}`);
+
+      res.json({
+        success: true,
+        message: 'A fresh 6-character verification code has been sent to your email.'
+      });
+    } catch (err) {
+      console.error('[RESEND SIGNUP OTP ERROR]', err);
+      res.status(500).json({ error: 'Failed to resend verification code.' });
     }
   }
 

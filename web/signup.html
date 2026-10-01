@@ -401,7 +401,37 @@
           </form>
         </div>
 
-        <!-- VIEW 3: FORGOT PASSWORD -->
+        <!-- VIEW 3: OTP VERIFICATION (6-Character Alphanumeric Code) -->
+        <div id="viewOtp" class="view-card">
+          <div style="margin-bottom: 20px;">
+            <div style="display:inline-flex; align-items:center; gap:6px; background:rgba(117,197,222,0.14); color:#13708e; border:1px solid rgba(19,112,142,0.25); border-radius:100px; padding:4px 12px; font-size:12px; font-weight:600; margin-bottom:12px;">
+              <span>✉️ Verification Code Sent</span>
+            </div>
+            <h2 class="view-title">Verify your email</h2>
+            <p class="view-subtitle" id="otpInstructionText">We sent a 6-character code with letters and numbers to your email address.</p>
+          </div>
+
+          <form id="otpForm" novalidate>
+            <input type="hidden" id="otpEmail" value="">
+            <div class="form-group">
+              <label for="otpInput">Enter 6-Character Verification Code</label>
+              <input class="mf-input" type="text" id="otpInput" maxlength="6" autocomplete="one-time-code" placeholder="e.g. 7X9B4K" style="font-family: 'SF Mono', Monaco, Menlo, Consolas, monospace; font-size: 24px; font-weight: 800; letter-spacing: 0.35em; text-align: center; text-transform: uppercase;" required>
+              <div class="form-help" style="font-size:12px; color:var(--muted); margin-top:6px;">Contains randomly arranged letters and numbers. Valid for 10 minutes.</div>
+            </div>
+
+            <button type="submit" id="btnOtpSubmit" class="btn-submit" style="margin-top: 14px;">
+              <span>Verify & Complete Registration</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; font-size:13px;">
+              <a href="#" id="btnResendOtp" style="color:#13708e; font-weight:600;">Didn't get code? Resend</a>
+              <a href="#" onclick="switchAuthTab('signup'); return false;" style="color:var(--muted);">← Back to form</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- VIEW 4: FORGOT PASSWORD -->
         <div id="viewForgot" class="view-card">
           <div style="margin-bottom: 20px;">
             <h2 class="view-title">Reset password</h2>
@@ -435,6 +465,7 @@
       const tabSignup = document.getElementById('tabSignup');
       const viewLogin = document.getElementById('viewLogin');
       const viewSignup = document.getElementById('viewSignup');
+      const viewOtp = document.getElementById('viewOtp');
       const viewForgot = document.getElementById('viewForgot');
 
       if (view === 'signup') {
@@ -442,18 +473,28 @@
         if (tabSignup) tabSignup.classList.add('active');
         if (viewLogin) viewLogin.classList.remove('active');
         if (viewSignup) viewSignup.classList.add('active');
+        if (viewOtp) viewOtp.classList.remove('active');
         if (viewForgot) viewForgot.classList.remove('active');
       } else if (view === 'login') {
         if (tabSignup) tabSignup.classList.remove('active');
         if (tabLogin) tabLogin.classList.add('active');
         if (viewSignup) viewSignup.classList.remove('active');
         if (viewLogin) viewLogin.classList.add('active');
+        if (viewOtp) viewOtp.classList.remove('active');
+        if (viewForgot) viewForgot.classList.remove('active');
+      } else if (view === 'otp') {
+        if (tabLogin) tabLogin.classList.remove('active');
+        if (tabSignup) tabSignup.classList.add('active');
+        if (viewLogin) viewLogin.classList.remove('active');
+        if (viewSignup) viewSignup.classList.remove('active');
+        if (viewOtp) viewOtp.classList.add('active');
         if (viewForgot) viewForgot.classList.remove('active');
       } else if (view === 'forgot') {
         if (tabLogin) tabLogin.classList.remove('active');
         if (tabSignup) tabSignup.classList.remove('active');
         if (viewLogin) viewLogin.classList.remove('active');
         if (viewSignup) viewSignup.classList.remove('active');
+        if (viewOtp) viewOtp.classList.remove('active');
         if (viewForgot) viewForgot.classList.add('active');
       }
 

@@ -2350,12 +2350,28 @@ app.post('/api/contact', async (req, res) => {
 // Authentication REST API Endpoints
 // ==========================================
 
-// 1. Sign Up
+// 1. Sign Up (Initiates 6-character alphanumeric OTP verification)
 app.post(
   '/api/auth/signup',
   SecurityMiddleware.limitBodySize(50 * 1024),
   authLimiter,
   (req, res) => authHandler.signup(req, res)
+);
+
+// 1b. Verify Sign Up OTP (Creates account only if OTP matches)
+app.post(
+  '/api/auth/verify-signup-otp',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  authLimiter,
+  (req, res) => authHandler.verifySignupOtp(req, res)
+);
+
+// 1c. Resend Sign Up OTP
+app.post(
+  '/api/auth/resend-signup-otp',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  authLimiter,
+  (req, res) => authHandler.resendSignupOtp(req, res)
 );
 
 // 2. Sign In (with Progressive Delays on Failed Attempts)

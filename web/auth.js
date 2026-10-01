@@ -212,7 +212,7 @@ if (signupForm) {
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span>Creating account...</span>';
+    btn.innerHTML = '<span>Sending code...</span>';
 
     try {
       const res = await fetch('/api/auth/signup', {
@@ -225,6 +225,29 @@ if (signupForm) {
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || data.error || 'Signup failed');
+      }
+
+      if (data.requireOtp) {
+        const otpEmailEl = document.getElementById('otpEmail');
+        if (otpEmailEl) otpEmailEl.value = email;
+        const instruction = document.getElementById('otpInstructionText');
+        if (instruction) {
+          instruction.innerHTML = `We sent a 6-character code (letters and numbers) to <strong>${email}</strong>. Enter it below to create your account.`;
+        }
+        if (typeof window.switchAuthTab === 'function') {
+          window.switchAuthTab('otp');
+        } else {
+          switchView('otp');
+        }
+        showAlert('Verification code sent to your email! Please check your inbox.', 'success');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Create account</span> &rarr;';
+        const otpInput = document.getElementById('otpInput');
+        if (otpInput) {
+          otpInput.value = '';
+          otpInput.focus();
+        }
+        return;
       }
 
       if (data.user) {
@@ -248,7 +271,114 @@ if (signupForm) {
     } catch (err) {
       showAlert(err.message);
       btn.disabled = false;
-      btn.innerHTML = '<span>Create Account</span> &rarr;';
+      btn.innerHTML = '<span>Create account</span> &rarr;';
+    }
+  });
+}
+
+// 2b. Handle OTP Verification Form
+const otpForm = document.getElementById('otpForm');
+if (otpForm) {
+  otpForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlert();
+
+    const email = (document.getElementById('otpEmail')?.value || '').trim();
+    const otpInput = document.getElementById('otpInput');
+    const otp = (otpInput?.value || '').trim().toUpperCase();
+    const btn = document.getElementById('btnOtpSubmit');
+
+    if (!email) {
+      showAlert('Email address is missing. Please start registration again.');
+      return;
+    }
+
+    if (!otp || otp.length !== 6) {
+      showAlert('Please enter the complete 6-character verification code.');
+      if (otpInput) otpInput.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span>Verifying & Creating Account...</span>';
+
+    try {
+      const res = await fetch('/api/auth/verify-signup-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email, otp })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || data.message || 'Verification failed');
+      }
+
+      if (data.user) {
+        try {
+          localStorage.setItem('myfolio_user', JSON.stringify(data.user));
+          const uEmail = (data.user.email || '').toLowerCase().trim();
+          if (uEmail === 'abdulaziznoor9876@gmail.com') {
+            localStorage.setItem('myfolio_vip_admin', 'true');
+          }
+        } catch (e) {}
+      }
+
+      showAlert('✅ Account verified and created successfully! Redirecting...', 'success');
+      setTimeout(() => {
+        window.location.href = data.redirectUrl || '/dashboard';
+      }, 700);
+    } catch (err) {
+      showAlert(err.message, 'error');
+      btn.disabled = false;
+      btn.innerHTML = '<span>Verify & Complete Registration</span> &rarr;';
+      if (otpInput) otpInput.focus();
+    }
+  });
+}
+
+// 2c. Handle Resend OTP
+const btnResendOtp = document.getElementById('btnResendOtp');
+if (btnResendOtp) {
+  btnResendOtp.addEventListener('click', async (e) => {
+    e.preventDefault();
+    hideAlert();
+
+    const email = (document.getElementById('otpEmail')?.value || '').trim();
+    if (!email) {
+      showAlert('No registration in progress. Please start signup again.');
+      return;
+    }
+
+    btnResendOtp.textContent = 'Sending...';
+    btnResendOtp.style.pointerEvents = 'none';
+
+    try {
+      const res = await fetch('/api/auth/resend-signup-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to resend code');
+      }
+
+      showAlert('A fresh 6-character verification code has been sent to your email.', 'success');
+      const otpInput = document.getElementById('otpInput');
+      if (otpInput) {
+        otpInput.value = '';
+        otpInput.focus();
+      }
+    } catch (err) {
+      showAlert(err.message, 'error');
+    } finally {
+      setTimeout(() => {
+        btnResendOtp.textContent = "Didn't get code? Resend";
+        btnResendOtp.style.pointerEvents = 'auto';
+      }, 3000);
     }
   });
 }
