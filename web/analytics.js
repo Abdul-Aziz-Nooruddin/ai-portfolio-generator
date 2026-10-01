@@ -32,13 +32,6 @@
             keepalive: true
           }).catch(() => {});
         }
-
-        // Also mirror event to GA4 if gtag is loaded
-        if (typeof window.gtag === 'function') {
-          try {
-            window.gtag('event', eventType, metadata);
-          } catch(err) {}
-        }
       } catch (e) {}
     }
   };
@@ -62,4 +55,72 @@
       Analytics.track('cta_click', { cta: ctaName, elementId: target.id || null });
     }
   });
+
+  // Universal Third-Party Extension Injected DOM Neutralizer (e.g. Careerflow)
+  (function() {
+    function injectShield() {
+      if (!document.getElementById('anti-extension-shield')) {
+        const style = document.createElement('style');
+        style.id = 'anti-extension-shield';
+        style.textContent = `
+          #careerflow-extension, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow],
+          careerflow-extension, careerflow-app, careerflow-copilot,
+          #cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button,
+          [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar,
+          img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"],
+          div:has(> img[alt*="Careerflow" i]), div:has(> img[src*="careerflow" i]) {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            position: absolute !important;
+            left: -9999px !important;
+            top: -9999px !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+            clip: rect(0, 0, 0, 0) !important;
+            z-index: -99999 !important;
+          }
+        `;
+        (document.head || document.documentElement).appendChild(style);
+      }
+    }
+
+    function purge() {
+      injectShield();
+      const targets = document.querySelectorAll(
+        '#cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button, [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow], careerflow-extension, careerflow-app, careerflow-copilot, img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"]'
+      );
+      targets.forEach((n) => {
+        const p = n.closest('div[style*="fixed"], div[style*="absolute"], aside, section, [id^="cf-"], [class^="cf-"]') || n;
+        try { p.remove(); } catch(e) {}
+      });
+      if (document.body) {
+        Array.from(document.body.children).forEach((el) => {
+          if (el.id === 'root' || el.id === 'main' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'LINK') return;
+          const html = (el.outerHTML || '').toLowerCase();
+          const idClass = ((el.id || '') + ' ' + (el.className || '')).toLowerCase();
+          if (
+            idClass.includes('careerflow') ||
+            idClass.includes('cf-') ||
+            el.tagName.toLowerCase().startsWith('cf-') ||
+            html.includes('careerflow') ||
+            html.includes('chrome-extension://')
+          ) {
+            try { el.remove(); } catch(e) {}
+          }
+        });
+      }
+    }
+
+    injectShield();
+    purge();
+    if (window.MutationObserver) {
+      const observer = new MutationObserver(purge);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
+    }
+    window.addEventListener('DOMContentLoaded', purge);
+    window.addEventListener('load', purge);
+  })();
 })();

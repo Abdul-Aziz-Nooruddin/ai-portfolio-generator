@@ -124,6 +124,27 @@ class TemplateRegistry {
   static getMobileCSS() {
     return `
 <style id="myfolio-universal-mobile">
+  /* ─── Universal Third-Party Extension Suppression (e.g. Careerflow) ─────── */
+  #careerflow-extension, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow],
+  careerflow-extension, careerflow-app, careerflow-copilot,
+  #cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button,
+  [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar,
+  img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"],
+  div:has(> img[alt*="Careerflow" i]), div:has(> img[src*="careerflow" i]) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    z-index: -99999 !important;
+  }
+
   /* ─── Universal Mobile Override ≤600px ─────────────────────────────────── */
   @media (max-width: 600px) {
     /* Reset base font size so rem units scale down */

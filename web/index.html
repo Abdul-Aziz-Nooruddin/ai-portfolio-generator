@@ -42,8 +42,32 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Preload Assets -->
     <link rel="preload" href="/images/hero-base.webp" as="image" />
     <link rel="preload" href="/assets/logo-3d.webp" as="image" />
+
+    <!-- Anti-Extension Injected DOM Shield (Careerflow / third-party overlay suppression) -->
+    <style id="anti-extension-shield">#careerflow-extension,[id*=careerflow i],[class*=careerflow i],[data-careerflow],careerflow-extension,careerflow-app,careerflow-copilot,#cf-root,#cf-sidebar,#cf-sidebar-container,#cf-injected-tab,.cf-sidebar-container,.cf-tab,.cf-button,[id^=cf-],[class^=cf-],[id*=-cf- i],[class*=-cf- i],[data-cf],cf-root,cf-app,cf-sidebar,img[alt*=Careerflow i],img[src*=careerflow i],iframe[src*=careerflow i],iframe[src*="chrome-extension://"]{visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}div:has(>img[alt*=Careerflow i]){visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}div:has(>img[src*=careerflow i]){visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}</style>
+    <script>
+      (function() {
+        function purgeCF() {
+          var targets = document.querySelectorAll(
+            '#cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button, [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow], careerflow-extension, careerflow-app, careerflow-copilot, img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"]'
+          );
+          for (var i = 0; i < targets.length; i++) {
+            var n = targets[i];
+            var p = n.closest('div[style*="fixed"], div[style*="absolute"], aside, section, [id^="cf-"], [class^="cf-"]') || n;
+            try { p.remove(); } catch(e) {}
+          }
+        }
+        if (window.MutationObserver) {
+          var obs = new MutationObserver(purgeCF);
+          obs.observe(document.documentElement, { childList: true, subtree: true });
+        }
+        window.addEventListener('DOMContentLoaded', purgeCF);
+        window.addEventListener('load', purgeCF);
+      })();
+    </script>
 
     <!-- AI & LLM Search Engine Optimization Link -->
     <link rel="help" href="/llms.txt" type="text/plain" title="LLM Knowledge File" />
@@ -149,8 +173,8 @@
       ]
     }
     </script>
-    <script type="module" crossorigin src="/assets/index-DDdR3iym.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-C6JEz_KQ.css">
+    <script type="module" crossorigin src="/assets/index-yQEsPq_M.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DXRQ6TqR.css">
   </head>
   <body>
     <div id="root"></div>

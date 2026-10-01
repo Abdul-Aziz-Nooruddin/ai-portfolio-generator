@@ -230,17 +230,33 @@ export function App() {
   useEffect(() => {
     const purgeInjected = () => {
       const targets = document.querySelectorAll(
-        '[id*="careerflow" i], [class*="careerflow" i], [data-careerflow], careerflow-extension, img[alt*="Careerflow" i]'
+        '#cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button, [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow], careerflow-extension, careerflow-app, careerflow-copilot, img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"], div:has(> img[alt*="Careerflow" i]), div:has(> img[src*="careerflow" i])'
       );
       targets.forEach((node) => {
-        const container = node.closest('div[style*="fixed"], div[style*="absolute"], aside, section') || node;
-        container.remove();
+        const container = node.closest('div[style*="fixed"], div[style*="absolute"], aside, section, [id^="cf-"], [class^="cf-"]') || node;
+        try { container.remove(); } catch (_) { /* ignore */ }
+      });
+
+      // Also inspect root children for any injected unstyled extension containers
+      Array.from(document.body.children).forEach((el) => {
+        if (el.id === 'root' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'LINK') return;
+        const html = (el.outerHTML || '').toLowerCase();
+        const idClass = ((el.id || '') + ' ' + (el.className || '')).toLowerCase();
+        if (
+          idClass.includes('careerflow') ||
+          idClass.includes('cf-') ||
+          el.tagName.toLowerCase().startsWith('cf-') ||
+          html.includes('careerflow') ||
+          html.includes('chrome-extension://')
+        ) {
+          try { el.remove(); } catch (_) { /* ignore */ }
+        }
       });
     };
 
     purgeInjected();
     const domObserver = new MutationObserver(purgeInjected);
-    domObserver.observe(document.body, { childList: true, subtree: true });
+    domObserver.observe(document.documentElement, { childList: true, subtree: true });
     return () => domObserver.disconnect();
   }, []);
 
