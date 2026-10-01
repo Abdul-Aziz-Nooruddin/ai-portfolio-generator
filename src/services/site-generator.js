@@ -74,45 +74,35 @@ class SiteGenerator {
 
     const watermarkHtml = `
     <!-- DIAGONAL PREVIEW ONLY // MYFOLIO.TECH PROMINENT WATERMARK OVERLAY -->
-    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; user-select: none; opacity: 0.38;">
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
-        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 4vh 0; user-select: none; opacity: 0.14;">
+      <span class="watermark-main-title" style="display:none;">PREVIEW ONLY</span>
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
       </div>
-
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
-        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
       </div>
-
-      <div style="display: flex; justify-content: center; align-items: center;">
-        <div class="watermark-stamp-box" style="transform: rotate(-30deg); border: 6px solid #ffffff; border-radius: 28px; padding: 32px 64px; text-align: center; max-width: 94vw; background: rgba(0, 0, 0, 0.55); color: #ffffff; box-sizing: border-box; backdrop-filter: blur(4px); box-shadow: 0 15px 50px rgba(0,0,0,0.6);">
-          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1rem, 2.2vw, 1.45rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 10px;">
-            ✦ 24-HOUR EVALUATION PREVIEW ✦
-          </div>
-          <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(4.2rem, 11vw, 8.5rem); font-weight: 950; letter-spacing: 0.22em; line-height: 1; text-transform: uppercase; border-top: 5px solid currentColor; border-bottom: 5px solid currentColor; padding: 18px 40px; margin: 12px 0; white-space: nowrap;">
-            PREVIEW ONLY
-          </div>
-          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4.5vw, 3.5rem); font-weight: 900; letter-spacing: 0.32em; text-transform: uppercase; margin-top: 12px; color: #75c5de;">
-            MYFOLIO.TECH
-          </div>
-        </div>
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
       </div>
-
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
-        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
       </div>
-
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
-        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
+      </div>
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
+        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
       </div>
     </div>
 
     <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
-    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 45px rgba(0,0,0,0.7); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
-      <div style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-        <span style="display:inline-block; width:10px; height:10px; background:#75c5de; border-radius:50%; box-shadow: 0 0 8px #75c5de;"></span>
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.94); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 16px 40px rgba(0,0,0,0.6); border-radius: 9999px; padding: 10px 24px; display: flex; align-items: center; gap: 14px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
+      <div style="font-size: 0.88rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+        <span style="display:inline-block; width:8px; height:8px; background:#75c5de; border-radius:50%; box-shadow: 0 0 8px #75c5de;"></span>
         <span>🔒 <strong>Preview Only</strong> (24h Evaluation Window) • Powered by MyFolio</span>
       </div>
-      <a href="/#pricing" style="background: linear-gradient(135deg, #75c5de, #13708e); color: #08171c; font-weight: 800; font-size: 0.88rem; padding: 9px 20px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(117,197,222,0.4); transition: transform 0.2s ease;">
+      <a href="/#pricing" style="background: linear-gradient(135deg, #75c5de, #13708e); color: #08171c; font-weight: 800; font-size: 0.85rem; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(117,197,222,0.35); transition: transform 0.2s ease;">
         <span>Buy Build & Remove Watermark (From ₹149) ➔</span>
       </a>
     </div>
@@ -134,14 +124,7 @@ class SiteGenerator {
             } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
               isLight = true;
             }
-            var targetColor = isLight ? 'rgba(15, 23, 42, 0.44)' : 'rgba(255, 255, 255, 0.42)';
-            var boxBg = isLight ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.60)';
-            var box = overlay.querySelector('.watermark-stamp-box');
-            if (box) {
-              box.style.color = targetColor;
-              box.style.borderColor = targetColor;
-              box.style.background = boxBg;
-            }
+            var targetColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.13)';
             var strips = overlay.querySelectorAll('.watermark-diagonal-strip');
             strips.forEach(function(el) { el.style.color = targetColor; });
           } catch (e) {}

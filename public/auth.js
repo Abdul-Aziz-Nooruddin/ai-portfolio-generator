@@ -12,6 +12,19 @@ function switchView(viewName) {
   if (target) {
     target.classList.add('active');
   }
+
+  // Synchronize Tab Buttons Highlight (White Oval Pill)
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  if (tabLogin && tabSignup) {
+    if (viewName === 'login') {
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+    } else if (viewName === 'signup') {
+      tabSignup.classList.add('active');
+      tabLogin.classList.remove('active');
+    }
+  }
 }
 
 // Password Visibility Toggle
@@ -135,6 +148,20 @@ if (loginForm) {
         throw new Error(data.message || data.error || 'Invalid credentials');
       }
 
+      if (data.user) {
+        try {
+          localStorage.setItem('myfolio_user', JSON.stringify(data.user));
+          const uEmail = (data.user.email || '').toLowerCase().trim();
+          if (uEmail === 'abdulaziznoor9876@gmail.com') {
+            localStorage.setItem('myfolio_vip_admin', 'true');
+          } else {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+            localStorage.removeItem('myfolio_weekly_allowance_v1');
+          }
+        } catch (e) {}
+      }
+
       showAlert('Signed in successfully! Redirecting...', 'success');
       setTimeout(() => {
         const params = new URLSearchParams(window.location.search);
@@ -198,6 +225,20 @@ if (signupForm) {
       const data = await res.json();
       if (!res.ok) {
         throw new Error(data.message || data.error || 'Signup failed');
+      }
+
+      if (data.user) {
+        try {
+          localStorage.setItem('myfolio_user', JSON.stringify(data.user));
+          const uEmail = (data.user.email || '').toLowerCase().trim();
+          if (uEmail === 'abdulaziznoor9876@gmail.com') {
+            localStorage.setItem('myfolio_vip_admin', 'true');
+          } else {
+            localStorage.removeItem('myfolio_vip_admin');
+            localStorage.removeItem('myfolio_active_vip_site');
+            localStorage.removeItem('myfolio_weekly_allowance_v1');
+          }
+        } catch (e) {}
       }
 
       showAlert('Account created successfully! Redirecting...', 'success');

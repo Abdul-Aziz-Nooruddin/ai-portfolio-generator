@@ -27,11 +27,31 @@ class AuthMiddleware {
 
   /**
    * Primary Authenticator
-   * Reads HttpOnly cookie -> Hashes -> Validates against DB -> Attaches req.user & req.session
+   * Reads HttpOnly cookie -> Hashes -> Validates against DB (with O(1) TTL memory cache) -> Attaches req.user & req.session
    */
   static authenticate(dbService, securityService) {
+    const SESSION_CACHE_TTL_MS = 60 * 1000; // 60s fast memory cache
+    const MAX_CACHE_ENTRIES = 1000;
+    const sessionCache = new Map(); // tokenHash -> { user, session, cachedAt }
+    const sessionTouchDebounce = new Map(); // sessionId -> lastTouchTimestamp
+
     return async (req, res, next) => {
       try {
+        const reqPath = req.path || '';
+
+        // FAST-PATH: Static assets never require session verification
+        if (
+          reqPath.startsWith('/assets/') ||
+          reqPath.startsWith('/images/') ||
+          reqPath.startsWith('/fonts/') ||
+          reqPath.startsWith('/favicon') ||
+          /\.(css|js|webp|png|jpg|jpeg|gif|svg|ico|woff2?|ttf|eot|map)$/i.test(reqPath)
+        ) {
+          req.user = null;
+          req.session = null;
+          return next();
+        }
+
         const cookies = AuthMiddleware.parseCookies(req.headers.cookie);
         let rawToken = cookies.portfolio_session;
 
@@ -50,9 +70,20 @@ class AuthMiddleware {
         }
 
         const tokenHash = securityService.hashToken(rawToken);
+
+        // Check O(1) in-memory session cache
+        const now = Date.now();
+        const cached = sessionCache.get(tokenHash);
+        if (cached && (now - cached.cachedAt < SESSION_CACHE_TTL_MS)) {
+          req.user = cached.user;
+          req.session = cached.session;
+          return next();
+        }
+
         const sessionRecord = await dbService.getSessionByTokenHash(tokenHash);
 
         if (!sessionRecord || !sessionRecord.users) {
+          sessionCache.delete(tokenHash);
           req.user = null;
           req.session = null;
           return next();
@@ -62,8 +93,7 @@ class AuthMiddleware {
         const user = { ...sessionRecord.users };
         delete user.password_hash;
 
-        req.user = user;
-        req.session = {
+        const session = {
           id: sessionRecord.id,
           userId: sessionRecord.user_id,
           createdAt: sessionRecord.created_at,
@@ -72,8 +102,22 @@ class AuthMiddleware {
           ipAddress: sessionRecord.ip_address
         };
 
-        // Asynchronously touch last_active_at
-        dbService.touchSession(sessionRecord.id).catch(() => {});
+        // Cache session in memory (bounded to MAX_CACHE_ENTRIES)
+        if (sessionCache.size >= MAX_CACHE_ENTRIES) {
+          const oldestKey = sessionCache.keys().next().value;
+          sessionCache.delete(oldestKey);
+        }
+        sessionCache.set(tokenHash, { user, session, cachedAt: now });
+
+        req.user = user;
+        req.session = session;
+
+        // Asynchronously touch last_active_at at most once every 5 minutes per session
+        const lastTouch = sessionTouchDebounce.get(sessionRecord.id) || 0;
+        if (now - lastTouch > 300000) {
+          sessionTouchDebounce.set(sessionRecord.id, now);
+          dbService.touchSession(sessionRecord.id).catch(() => {});
+        }
 
         next();
       } catch (err) {

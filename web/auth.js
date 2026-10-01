@@ -12,6 +12,19 @@ function switchView(viewName) {
   if (target) {
     target.classList.add('active');
   }
+
+  // Synchronize Tab Buttons Highlight (White Oval Pill)
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  if (tabLogin && tabSignup) {
+    if (viewName === 'login') {
+      tabLogin.classList.add('active');
+      tabSignup.classList.remove('active');
+    } else if (viewName === 'signup') {
+      tabSignup.classList.add('active');
+      tabLogin.classList.remove('active');
+    }
+  }
 }
 
 // Password Visibility Toggle
