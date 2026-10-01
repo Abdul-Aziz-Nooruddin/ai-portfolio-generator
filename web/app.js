@@ -313,72 +313,23 @@ async function handleModalSignin(event) {
 // Open a template specimen directly in studio
 function openStudioWithTemplate(templateId) {
   const templateMap = {
-    'eco-tech-steampunk': {
-      name: 'Sarah Jenkins',
-      role: 'Eco-Tech Developer & Systems Architect',
-      bio: 'Fusing organic nature with steampunk technology, sustainable software engineering, and resilient decentralized architectures.',
-      skills: ['TypeScript', 'Node.js', 'Python', 'Three.js', 'Clean Tech APIs', 'WebGL'],
-      theme: 'eco-tech-steampunk'
+    'jack-3d-creator': {
+      name: 'Jack Vance',
+      role: 'Creative Developer & 3D WebGL Engineer',
+      bio: 'Crafting spatial web experiments, interactive 3D simulations, and high-performance WebGL architectures.',
+      skills: ['TypeScript', 'Three.js', 'React', 'WebGL', 'GLSL Shaders', 'Node.js'],
+      theme: 'jack-3d-creator'
     },
-    'cosmic-astronaut': {
-      name: 'Alex Vance',
-      role: 'Full Stack & 3D Spatial Engineer',
-      bio: 'Architecting distributed platforms, spatial WebGL interfaces, and intelligent software systems.',
-      skills: ['TypeScript', 'Three.js', 'React', 'Node.js', 'WebGL', 'Cloud Architecture'],
-      theme: 'cosmic-astronaut'
-    },
-    'cyber-crystal': {
-      name: 'Elena Rostova',
-      role: 'Staff Systems & AI Architect',
-      bio: 'Engineering high-throughput systems, crystalline UI architectures, and resilient compute runtimes.',
-      skills: ['Rust', 'Python', 'CUDA', 'FastAPI', 'Three.js', 'WebGPU'],
-      theme: 'cyber-crystal'
-    },
-    'bioluminescent-wireframe': {
-      name: 'Kiran Patel',
-      role: 'Eco-Tech & AI Systems Engineer',
-      bio: 'Developing sustainable compute infrastructure, telemetry pipelines, and reactive client experiences.',
-      skills: ['Python', 'PyTorch', 'TypeScript', 'React', 'Docker', 'GraphQL'],
-      theme: 'bioluminescent-wireframe'
-    },
-    'botanical-woodcraft': {
-      name: 'Siddharth Roy',
-      role: 'Lead UI/UX Engineer & Craft Specialist',
-      bio: 'Crafting thoughtful typography systems, organic user experiences, and high-performance digital products.',
-      skills: ['Design Systems', 'React', 'CSS Architecture', 'Figma', 'TypeScript', 'Next.js'],
-      theme: 'botanical-woodcraft'
-    },
-    'bio-digital-fusion': {
-      name: 'Marcus Chen',
-      role: 'Bio-Digital Solutions Architect',
-      bio: 'Synthesizing low-latency distributed networks, modern interfaces, and modular software pipelines.',
-      skills: ['Go', 'TypeScript', 'React', 'Kubernetes', 'WebSockets', 'Tailwind'],
-      theme: 'bio-digital-fusion'
-    },
-    'swiss-editorial-monograph': {
-      name: 'Julian Thorne',
-      role: 'Principal Design Technologist & Typographer',
-      bio: 'Authoring rigorous typographic systems, archival digital monographs, and high-fashion museum digital exhibitions.',
-      skills: ['Editorial Design', 'Typography', 'Web Architecture', 'Design Systems', 'WebGL', 'Creative Direction'],
-      theme: 'swiss-editorial-monograph'
-    },
-    'solarpunk-horizon': {
-      name: 'Rowan Vance',
-      role: 'Clean Energy & Climate Systems Engineer',
-      bio: 'Developing biophilic software ecosystems, solar telemetry platforms, and resilient carbon-negative web applications.',
-      skills: ['Climate APIs', 'Python', 'React', 'TypeScript', 'Clean Tech', 'IoT Telemetry'],
-      theme: 'solarpunk-horizon'
-    },
-    'cyber-architect-sprawl': {
-      name: 'Vector Vance',
-      role: 'Staff Cyber-Architect & Systems Core Engineer',
-      bio: 'Architecting high-throughput distributed systems, cyber iris telemetry, and holographic WebGL control planes.',
-      skills: ['Rust', 'Go', 'WebAssembly', 'Three.js', 'WebGPU', 'Distributed Systems'],
-      theme: 'cyber-architect-sprawl'
+    'nadia-brand': {
+      name: 'Nadia Okonjo',
+      role: 'Keynote Speaker, Strategic Advisor & Author',
+      bio: 'Helping large organisations make decisions faster without making them worse.',
+      skills: ['Strategic Advisory', 'Keynote Speaking', 'Executive Coaching', 'Organizational Design', 'Author'],
+      theme: 'nadia-brand'
     }
   };
 
-  const selected = templateMap[templateId] || templateMap['eco-tech-steampunk'];
+  const selected = templateMap[templateId] || templateMap['jack-3d-creator'];
   loadSampleProfile({
     name: selected.name,
     role: selected.role,

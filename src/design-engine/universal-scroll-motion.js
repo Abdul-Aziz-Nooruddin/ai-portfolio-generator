@@ -11,41 +11,20 @@ class UniversalScrollMotion {
    * @param {string} templateId Template identifier for specialized theme accents
    * @returns {string} HTML with full motion and 3D scrollytelling engine wired
    */
-  static injectScrollMotion(html, templateId = 'cosmic-astronaut') {
+  static injectScrollMotion(html, templateId = 'jack-3d-creator') {
     if (!html || typeof html !== 'string') return html;
 
     // Check if already injected
     if (html.includes('id="universal-scroll-motion-engine"')) return html;
 
     const themeColors = {
-      'cyber-architect-sprawl': '#00F0FF',
-      'swiss-editorial-monograph': '#FF3B30',
-      'solarpunk-horizon': '#10B981',
-      'chrono-obsidian-sanctuary': '#D4AF37',
-      'neon-aurora-cyber': '#8B5CF6',
-      'circuit-core': '#14B8A6',
-      'kinetic-brutalism': '#FDE047',
-      'stealth-node': '#22C55E',
-      'abyssal-ascent': '#EAB308',
-      'stellar-architect': '#38BDF8',
-      'cosmic-cyber-geometry': '#A855F7',
-      'engineering-archive': '#EE6C4D',
-      'system-awakening': '#8B5CF6',
-      'cosmic-astronaut': '#8B5CF6',
-      'cyber-crystal': '#A855F7',
-      'bioluminescent-wireframe': '#00F5D4',
-      'botanical-woodcraft': '#D4A373',
-      'bio-digital-fusion': '#06B6D4',
-      'eco-tech-steampunk': '#10B981',
-      'emerald-cyber-sanctuary': '#10B981',
-      'pristine-white-crystal': '#0EA5E9',
-      'abyssal-quantum-jellyfish': '#22D3EE',
-      'mahogany-brass-steampunk': '#D97706',
-      'lavender-cyber-bridge': '#C084FC',
-      'sand-parchment-botanical': '#558B2F'
+      'jack-3d-creator': '#00F0FF',
+      '3d-creator': '#00F0FF',
+      'nadia-brand': '#FF4D30',
+      'nadia-personal-brand': '#FF4D30'
     };
 
-    const accentColor = themeColors[templateId] || '#8B5CF6';
+    const accentColor = themeColors[templateId] || '#00F0FF';
 
     const motionHeadAssets = `
   <!-- Smooth Inertia Scroll (Lenis) & GSAP Motion Ecosystem -->

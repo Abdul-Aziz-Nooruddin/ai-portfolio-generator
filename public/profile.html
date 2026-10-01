@@ -24,26 +24,26 @@
 
   <style>
     :root {
-      --mf-bg-primary: #050817;
-      --mf-bg-secondary: #07112B;
-      --mf-surface: #0B1638;
-      --mf-surface-glass: rgba(11, 22, 56, 0.75);
-      --mf-surface-glass-elevated: rgba(15, 30, 75, 0.85);
-      --mf-border: rgba(255, 255, 255, 0.10);
-      --mf-border-strong: rgba(255, 255, 255, 0.18);
-      --mf-text-primary: #F5F7FF;
-      --mf-text-secondary: #A8B2CC;
-      --mf-text-muted: #6F7A96;
-      --mf-accent-blue: #6EA8FF;
-      --mf-accent-violet: #9B7CFF;
-      --mf-success: #65D6A0;
-      --mf-error: #FF6F7D;
+      --mf-bg-primary: #0A0A0A;
+      --mf-bg-secondary: #111111;
+      --mf-surface: #141414;
+      --mf-surface-glass: #141414;
+      --mf-surface-glass-elevated: #181818;
+      --mf-border: #242424;
+      --mf-border-strong: #333333;
+      --mf-text-primary: #F4F1E8;
+      --mf-text-secondary: #A0A0A0;
+      --mf-text-muted: #666666;
+      --mf-accent-blue: #5FA5F9;
+      --mf-accent-violet: #818CF8;
+      --mf-success: #22C55E;
+      --mf-error: #EF4444;
       --mf-radius-sm: 8px;
       --mf-radius-md: 12px;
       --mf-radius-lg: 16px;
       --mf-radius-xl: 20px;
-      --mf-font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
-      --mf-font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mf-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mf-font-display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --mf-font-mono: 'JetBrains Mono', monospace;
     }
 
@@ -52,8 +52,8 @@
     }
 
     html, body {
-      background-color: #050817 !important;
-      color: #F5F7FF !important;
+      background-color: #0A0A0A !important;
+      color: #F4F1E8 !important;
       font-family: var(--mf-font-sans) !important;
       min-height: 100vh;
       margin: 0;
@@ -61,16 +61,14 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Atmospheric Dark Spatial Glow */
+    /* Atmospheric Dark Vignette */
     .mf-atmospheric-bg {
       position: fixed;
       inset: 0;
       z-index: 0;
       background: 
-        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(110, 168, 255, 0.12) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 50% at 100% 20%, rgba(155, 124, 255, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 60% 50% at 0% 80%, rgba(82, 223, 255, 0.05) 0%, transparent 60%),
-        linear-gradient(180deg, #050817 0%, #07112B 100%);
+        radial-gradient(ellipse 90% 60% at 50% -15%, rgba(95, 165, 249, 0.05) 0%, transparent 65%),
+        linear-gradient(180deg, #0A0A0A 0%, #111111 100%);
       pointer-events: none;
     }
 
@@ -103,28 +101,28 @@
     .mf-label {
       font-size: 13px;
       font-weight: 600;
-      color: var(--mf-text-secondary, #A8B2CC);
+      color: var(--mf-text-secondary, #A0A0A0);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
     .mf-input, .mf-textarea {
       width: 100%;
-      background: rgba(8, 13, 32, 0.85);
-      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.12));
+      background: #141414;
+      border: 1px solid #282828;
       border-radius: var(--mf-radius-md, 12px);
       padding: 12px 16px;
-      font-family: var(--mf-font-sans, 'Plus Jakarta Sans', sans-serif);
+      font-family: var(--mf-font-sans, 'Inter', sans-serif);
       font-size: 14.5px;
-      color: var(--mf-text-primary, #F5F7FF);
+      color: var(--mf-text-primary, #F4F1E8);
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
       box-sizing: border-box;
     }
     .mf-input:focus, .mf-textarea:focus {
-      border-color: var(--mf-accent-blue, #6EA8FF);
-      background: rgba(11, 22, 56, 0.95);
-      box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.25);
+      border-color: #5FA5F9;
+      background: #161616;
+      box-shadow: 0 0 0 3px rgba(95, 165, 249, 0.15);
     }
     .mf-textarea {
       min-height: 96px;
@@ -139,8 +137,8 @@
       justify-content: center;
       gap: 8px;
       padding: 10px 20px;
-      border-radius: var(--mf-radius-md, 12px);
-      font-family: var(--mf-font-sans, 'Plus Jakarta Sans', sans-serif);
+      border-radius: 9999px;
+      font-family: var(--mf-font-sans, 'Inter', sans-serif);
       font-size: 13.5px;
       font-weight: 600;
       text-decoration: none;
@@ -149,32 +147,31 @@
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .mf-btn-primary {
-      background: linear-gradient(135deg, #6EA8FF 0%, #9B7CFF 100%);
-      color: #FFFFFF !important;
-      box-shadow: 0 4px 16px rgba(110, 168, 255, 0.35);
+      background: #FFFFFF;
+      color: #0A0A0A !important;
       border: none;
+      box-shadow: 0 4px 16px rgba(255, 255, 255, 0.12);
     }
     .mf-btn-primary:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 24px rgba(110, 168, 255, 0.5);
+      box-shadow: 0 6px 24px rgba(255, 255, 255, 0.25);
     }
     .mf-btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--mf-text-primary, #F5F7FF) !important;
-      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.15));
-      backdrop-filter: blur(8px);
+      background: #181818;
+      color: var(--mf-text-primary, #F4F1E8) !important;
+      border: 1px solid #282828;
     }
     .mf-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: #202020;
+      border-color: #383838;
     }
     .mf-btn-ghost {
       background: transparent;
-      color: var(--mf-text-secondary, #A8B2CC) !important;
+      color: var(--mf-text-secondary, #A0A0A0) !important;
       border: 1px solid transparent;
     }
     .mf-btn-ghost:hover {
-      background: rgba(255, 255, 255, 0.08);
+      background: #181818;
       color: #FFFFFF !important;
     }
     .mf-btn-danger {

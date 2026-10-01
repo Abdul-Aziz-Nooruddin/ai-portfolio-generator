@@ -59,11 +59,11 @@
       this.nodes = [];
 
       const colorPalette = [
-        new THREE.Color(0x00F0FF), // Electric Cyan
-        new THREE.Color(0x38BDF8), // Sky Cyber
-        new THREE.Color(0x8B5CF6), // Neon Violet
-        new THREE.Color(0xFF007A), // Neon Magenta
-        new THREE.Color(0xF8FAFC)  // Starlight White
+        new THREE.Color(0xFFFFFF), // Starlight White
+        new THREE.Color(0xE2E8F0), // Platinum
+        new THREE.Color(0xCBD5E1), // Titanium
+        new THREE.Color(0x94A3B8), // Slate Starlight
+        new THREE.Color(0xF59E0B)  // Warm Solar Ray
       ];
 
       for (let i = 0; i < nodeCount; i++) {
@@ -84,9 +84,9 @@
         this.nodes.push({
           x, y, z,
           originX: x, originY: y, originZ: z,
-          vx: (Math.random() - 0.5) * 0.04,
-          vy: (Math.random() - 0.5) * 0.04,
-          vz: (Math.random() - 0.5) * 0.04,
+          vx: (Math.random() - 0.5) * 0.03,
+          vy: (Math.random() - 0.5) * 0.03,
+          vz: (Math.random() - 0.5) * 0.03,
           pulseOffset: Math.random() * Math.PI * 2
         });
       }
@@ -102,19 +102,19 @@
       const ctx = canvas.getContext('2d');
       const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
       grad.addColorStop(0, 'rgba(255, 255, 255, 1)');
-      grad.addColorStop(0.25, 'rgba(56, 189, 248, 0.85)');
-      grad.addColorStop(0.65, 'rgba(139, 92, 246, 0.35)');
+      grad.addColorStop(0.25, 'rgba(241, 245, 249, 0.8)');
+      grad.addColorStop(0.65, 'rgba(148, 163, 184, 0.25)');
       grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, 64, 64);
       const starTexture = new THREE.CanvasTexture(canvas);
 
       const nodeMat = this.track(new THREE.PointsMaterial({
-        size: this.isMobile ? 2.4 : 3.6,
+        size: this.isMobile ? 2.0 : 2.8,
         map: starTexture,
         vertexColors: true,
         transparent: true,
-        opacity: 0.85,
+        opacity: 0.75,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       }));
@@ -134,7 +134,7 @@
       const linkMat = this.track(new THREE.LineBasicMaterial({
         vertexColors: true,
         transparent: true,
-        opacity: 0.45,
+        opacity: 0.22,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       }));
@@ -158,10 +158,10 @@
       this.gridGeom = gridGeom;
 
       const gridMat = this.track(new THREE.MeshBasicMaterial({
-        color: 0x00F0FF,
+        color: 0x334155, // Architectural titanium slate
         wireframe: true,
         transparent: true,
-        opacity: 0.18,
+        opacity: 0.12,
         blending: THREE.AdditiveBlending,
         depthWrite: false
       }));
@@ -172,16 +172,16 @@
 
     /* ─── 3. Floating Holographic Monoliths & Geometry Crystals ────────────── */
     buildHolographicMonoliths() {
-      // Waypoint Crystal Spans (Platonic Solids floating in deep space)
+      // Waypoint Crystal Spans (Framing the far peripheral flanks)
       const crystalConfigs = [
-        { type: 'icosa', pos: [-24, 7, 72],  scale: 4.5, color: 0x00F0FF, wire: 0x38BDF8 },
-        { type: 'octa',  pos: [26, 9, 44],   scale: 5.0, color: 0x8B5CF6, wire: 0xC084FC },
-        { type: 'dodeca',pos: [-22, 6, 12],  scale: 4.8, color: 0x00F0FF, wire: 0x67E8F9 },
-        { type: 'icosa', pos: [24, 7, -24],  scale: 5.2, color: 0xFF007A, wire: 0xF472B6 },
-        { type: 'octa',  pos: [-25, 8, -60], scale: 4.6, color: 0x10B981, wire: 0x6EE7B7 },
-        { type: 'dodeca',pos: [22, 9, -96],  scale: 5.5, color: 0xF59E0B, wire: 0xFDE68A },
-        { type: 'icosa', pos: [-20, 11, -135], scale: 6.0, color: 0x38BDF8, wire: 0x93C5FD },
-        { type: 'octa',  pos: [18, 14, -170],  scale: 6.5, color: 0xD946EF, wire: 0xF0ABFC }
+        { type: 'icosa', pos: [-68, 8, 40],   scale: 4.2, color: 0x1E293B, wire: 0x64748B },
+        { type: 'octa',  pos: [70, 10, 30],   scale: 4.5, color: 0x0F172A, wire: 0x94A3B8 },
+        { type: 'dodeca',pos: [-55, 6, -20],  scale: 4.5, color: 0x334155, wire: 0xE2E8F0 },
+        { type: 'icosa', pos: [55, 7, -45],   scale: 5.0, color: 0xF59E0B, wire: 0xFDE68A },
+        { type: 'octa',  pos: [-45, 9, -85],  scale: 4.6, color: 0x10B981, wire: 0x6EE7B7 },
+        { type: 'dodeca',pos: [45, 10, -120], scale: 5.2, color: 0x38BDF8, wire: 0xBAE6FD },
+        { type: 'icosa', pos: [-35, 12, -155], scale: 5.8, color: 0xE2E8F0, wire: 0xFFFFFF },
+        { type: 'octa',  pos: [35, 15, -190], scale: 6.2, color: 0x64748B, wire: 0xCBD5E1 }
       ];
 
       crystalConfigs.forEach((cfg) => {
@@ -191,15 +191,15 @@
         else geom = new THREE.DodecahedronGeometry(cfg.scale, 0);
         this.track(geom);
 
-        // Translucent holographic inner core
+        // Translucent architectural core
         const coreMat = this.track(new THREE.MeshStandardMaterial({
           color: cfg.color,
           emissive: cfg.color,
-          emissiveIntensity: 0.35,
-          roughness: 0.15,
-          metalness: 0.85,
+          emissiveIntensity: 0.15,
+          roughness: 0.25,
+          metalness: 0.8,
           transparent: true,
-          opacity: 0.38,
+          opacity: 0.35,
           wireframe: false,
           depthWrite: false
         }));
@@ -208,7 +208,7 @@
           color: cfg.wire,
           wireframe: true,
           transparent: true,
-          opacity: 0.75,
+          opacity: 0.45,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         }));
@@ -225,8 +225,8 @@
         this.floatingObjects.push({
           mesh: crystalGroup,
           baseY: cfg.pos[1],
-          rotSpeedX: 0.006 * (Math.random() > 0.5 ? 1 : -1),
-          rotSpeedY: 0.009,
+          rotSpeedX: 0.004 * (Math.random() > 0.5 ? 1 : -1),
+          rotSpeedY: 0.006,
           floatOffset: Math.random() * Math.PI * 2
         });
       });
@@ -234,10 +234,10 @@
 
     /* ─── 4. Orbital Data Rings & Gyroscopic Energy Rings ────────────────────── */
     buildOrbitalDataRings() {
+      // Pushed back into deep scroll chapters to keep hero typography completely unoccluded
       const ringConfigs = [
-        { pos: [0, 4, 38], radius: 14, tube: 0.14, color: 0x00F0FF, rotX: 1.2 },
-        { pos: [0, 5, -30], radius: 18, tube: 0.16, color: 0x8B5CF6, rotX: 0.8 },
-        { pos: [0, 8, -100], radius: 22, tube: 0.20, color: 0xFF007A, rotX: 1.4 }
+        { pos: [0, 8, -80], radius: 20, tube: 0.12, color: 0x475569, rotX: 0.8, opacity: 0.18 },
+        { pos: [0, 10, -160], radius: 24, tube: 0.15, color: 0x64748B, rotX: 1.4, opacity: 0.22 }
       ];
 
       ringConfigs.forEach((cfg) => {
@@ -245,7 +245,7 @@
         const ringMat = this.track(new THREE.MeshBasicMaterial({
           color: cfg.color,
           transparent: true,
-          opacity: 0.45,
+          opacity: cfg.opacity || 0.25,
           blending: THREE.AdditiveBlending,
           depthWrite: false
         }));

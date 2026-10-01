@@ -295,7 +295,6 @@ app.use(async (req, res, next) => {
         const activeUniverse = domainRecord?.universeKey || req.query.template || 'jack-3d-creator';
         const template = TemplateRegistry.templates[activeUniverse] ||
                          TemplateRegistry.templates['jack-3d-creator'] ||
-                         TemplateRegistry.templates['threeui-landscape'] ||
                          Object.values(TemplateRegistry.templates)[0];
 
         const abdulAzizProfile = {
@@ -731,7 +730,7 @@ app.post(
         siteId = `web-${crypto.randomUUID()}`;
       }
 
-      const chosenTemplate = templateId || data.templateId || data.template || (styleHint && TemplateRegistry.templates[styleHint] ? styleHint : (styleHint === 'light-swiss' ? 'engineering-archive' : null));
+      const chosenTemplate = templateId || data.templateId || data.template || (styleHint && TemplateRegistry.templates[styleHint] ? styleHint : 'jack-3d-creator');
       const enrichedData = { ...data, style_hint: styleHint, layout, templateId: chosenTemplate };
 
       // Automated Content Safety & TOS Policy Sentinel
@@ -1751,7 +1750,7 @@ app.post('/api/portfolio/publish', async (req, res) => {
     const effectiveHandle = (handle || meta.handle || 'abdulaziz').toLowerCase().trim();
     const effectiveUserId = req.user?.id || meta.userId || 'abdulaziz_founder';
     const isVipFounder = effectiveHandle === 'abdulaziz' || effectiveHandle === 'aziz' || effectiveUserId === 'abdulaziz_founder';
-    const universeKey = meta.universeKey || 'threeui-landscape';
+    const universeKey = meta.universeKey || 'jack-3d-creator';
 
     // Promote to published targets: /abdulaziz, /aziz, /<handle>
     const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', effectiveHandle]));
@@ -2253,7 +2252,11 @@ app.get(['/studio', '/webstudio', '/builder', '/generator'], (req, res) => {
   res.sendFile(getPagePath('studio.html'));
 });
 
-app.get(['/design-demo', '/universes', '/themes', '/gallery', '/jack-3d', '/portfolio-3d'], (req, res) => {
+app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], (req, res) => {
+  res.redirect('/studio');
+});
+
+app.get(['/jack-3d', '/portfolio-3d'], (req, res) => {
   res.sendFile(getPagePath('jack-3d-creator.html'));
 });
 
@@ -2289,11 +2292,6 @@ app.get(['/contact', '/contact-us', '/support'], (req, res) => {
 // Admin Panel
 app.get(['/admin', '/admin.html'], (req, res) => {
   res.sendFile(getPagePath('admin.html'));
-});
-
-// Design Resources Generator
-app.get(['/design-resources', '/resources'], (req, res) => {
-  res.sendFile(getPagePath('design-resources-generator.html'));
 });
 
 // Contact Form API — accepts form submissions from /contact page
@@ -2668,7 +2666,7 @@ app.get('/api/user/portfolios', AuthMiddleware.requireAuth, async (req, res) => 
               handle: meta.handle || (isFounder ? 'abdulaziz' : (user.username || 'developer')),
               subdomain: meta.subdomain || (isFounder ? `${user.username || 'abdulaziz'}.myfolio.tech` : null),
               previewUrl: `/p/${sid}`,
-              universeKey: meta.universeKey || 'cyber-architect-sprawl',
+              universeKey: meta.universeKey || 'jack-3d-creator',
               developerName: meta.developerName || prof.name || user.name || 'Developer',
               developerRole: meta.developerRole || prof.role || prof.title || 'Software Engineer',
               projectsCount: meta.projectsCount || prof.projects?.length || 6,
@@ -2729,7 +2727,7 @@ app.post('/api/user/portfolios/sync', AuthMiddleware.requireAuth, async (req, re
         siteId: sid,
         handle: item.handle || (isFounder ? 'abdulaziz' : (user.username || 'developer')),
         subdomain: item.subdomain || (isFounder ? `${user.username || 'abdulaziz'}.myfolio.tech` : null),
-        universeKey: item.universeKey || 'cyber-architect-sprawl',
+        universeKey: item.universeKey || 'jack-3d-creator',
         developerName: item.developerName || user.name || 'Developer',
         developerRole: item.developerRole || 'Software Engineer',
         projectsCount: item.projectsCount || 6,
@@ -2890,7 +2888,11 @@ app.get(['/dashboard', '/app'], (req, res) => {
   res.sendFile(path.join(webDir, 'dashboard.html'));
 });
 
-app.get(['/design-demo', '/universes', '/themes', '/gallery', '/jack-3d', '/portfolio-3d'], (req, res) => {
+app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], (req, res) => {
+  res.redirect('/studio');
+});
+
+app.get(['/jack-3d', '/portfolio-3d'], (req, res) => {
   res.sendFile(path.join(webDir, 'jack-3d-creator.html'));
 });
 
@@ -3126,11 +3128,11 @@ app.post('/api/vip/set-active-site', AuthMiddleware.requireAdmin, async (req, re
     let html = await hostingProvider.getSiteHtml(siteId);
     if (!html) {
       // Cloud ephemeral recovery: if container restarted and snapshot was cleared, dynamically synthesize from template
-      const universeKey = req.body.universeKey || (siteId.includes('hunter') ? 'system-awakening' : null);
+      const universeKey = req.body.universeKey || 'jack-3d-creator';
       if (universeKey || req.body.developerName) {
         try {
           const { TemplateRegistry } = require('./templates/template-registry');
-          const tKey = universeKey || 'stealth-node';
+          const tKey = universeKey || 'jack-3d-creator';
           const template = TemplateRegistry.templates[tKey] || Object.values(TemplateRegistry.templates)[0];
           if (template && typeof template.render === 'function') {
             const candidateProfile = {
@@ -3172,7 +3174,7 @@ app.post('/api/vip/set-active-site', AuthMiddleware.requireAdmin, async (req, re
       targetHandle = 'abdulaziz';
     }
 
-    const universeKey = req.body.universeKey || (siteId.includes('hunter') ? 'system-awakening' : null);
+    const universeKey = req.body.universeKey || 'jack-3d-creator';
     const targetSubdomain = `${targetHandle}.myfolio.tech`;
     const targetLocalDomain = `${targetHandle}.localhost`;
 
@@ -3191,7 +3193,7 @@ app.post('/api/vip/set-active-site', AuthMiddleware.requireAdmin, async (req, re
           domain: d,
           handle: 'abdulaziz',
           siteId: siteId,
-          universeKey: universeKey || customDomainService.domainCache[d]?.universeKey || 'threeui-landscape',
+          universeKey: universeKey || customDomainService.domainCache[d]?.universeKey || 'jack-3d-creator',
           userId: req.user?.id || 'abdulaziz_founder',
           type: 'subdomain',
           status: 'active',
@@ -3376,7 +3378,7 @@ app.get('/p/:siteId', async (req, res) => {
   if (!html && siteId === 'abdulaziz') {
     try {
       const { TemplateRegistry } = require('./templates/template-registry');
-      const stealthTemplate = TemplateRegistry.templates['stealth-node'] || TemplateRegistry.templates['cosmic-astronaut'] || Object.values(TemplateRegistry.templates)[0];
+      const stealthTemplate = TemplateRegistry.templates['jack-3d-creator'] || Object.values(TemplateRegistry.templates)[0];
       const abdulAzizProfile = {
         name: 'Abdul Aziz Nooruddin',
         title: 'Full-Stack Developer & AI Systems Specialist',
@@ -3523,8 +3525,8 @@ app.get('/p/:siteId', async (req, res) => {
             try { prof = JSON.parse(fs.readFileSync(profPath, 'utf8')); } catch (e) {}
           }
           const { TemplateRegistry } = require('./templates/template-registry');
-          const uKey = meta.universeKey || 'threeui-shelf';
-          const template = TemplateRegistry.templates[uKey] || TemplateRegistry.templates['threeui-shelf'] || Object.values(TemplateRegistry.templates)[0];
+          const uKey = meta.universeKey || 'jack-3d-creator';
+          const template = TemplateRegistry.templates[uKey] || TemplateRegistry.templates['jack-3d-creator'] || Object.values(TemplateRegistry.templates)[0];
           if (template) {
             const candidateProfile = {
               name: meta.developerName || prof.name || 'Abdul Aziz Nooruddin',

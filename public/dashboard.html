@@ -35,46 +35,34 @@
 
     /* Hero Command Object */
     .command-hero-card {
-      background: linear-gradient(135deg, rgba(11, 22, 56, 0.9) 0%, rgba(15, 30, 75, 0.8) 100%);
-      border: 1px solid var(--mf-border-strong);
-      border-radius: var(--mf-radius-xl, 20px);
+      background: #141414;
+      border: 1px solid #262626;
+      border-radius: 24px;
       padding: 2.25rem;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(5, 8, 23, 0.5), 0 0 30px rgba(110, 168, 255, 0.1);
-      backdrop-filter: blur(24px);
-    }
-
-    .command-hero-card::before {
-      content: '';
-      position: absolute;
-      top: -40%;
-      right: -10%;
-      width: 380px;
-      height: 380px;
-      background: radial-gradient(circle, rgba(110, 168, 255, 0.16) 0%, transparent 65%);
-      pointer-events: none;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
     }
 
     .hero-greeting-text {
-      font-family: var(--mf-font-mono, monospace);
-      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: var(--mf-accent-cyan, #52DFFF);
-      margin-bottom: 6px;
+      color: #5FA5F9;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .hero-headline {
-      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-family: 'Inter', -apple-system, sans-serif;
       font-size: 2.2rem;
       font-weight: 700;
-      letter-spacing: -0.025em;
+      letter-spacing: -0.03em;
       line-height: 1.2;
-      color: var(--mf-text-primary, #F5F7FF);
+      color: #FFFFFF;
       margin-bottom: 1.25rem;
     }
 
@@ -84,9 +72,9 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1.25rem;
-      background: rgba(5, 8, 23, 0.6);
-      border: 1px solid var(--mf-border);
-      border-radius: var(--mf-radius-lg, 16px);
+      background: #0E0E0E;
+      border: 1px solid #222222;
+      border-radius: 16px;
       padding: 1.25rem 1.5rem;
       position: relative;
       z-index: 2;
@@ -99,9 +87,9 @@
     }
 
     .hero-url-label {
-      font-size: 11.5px;
-      font-family: var(--mf-font-mono);
-      color: var(--mf-text-muted);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #888888;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       display: flex;
@@ -110,10 +98,10 @@
     }
 
     .hero-url-link {
-      font-family: var(--mf-font-mono);
-      font-size: 1.1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
       font-weight: 600;
-      color: var(--mf-accent-blue);
+      color: #5FA5F9;
       text-decoration: none;
     }
 
@@ -139,21 +127,20 @@
 
     /* Dominant Status Panel */
     .status-panel-card {
-      background: var(--mf-surface-glass);
-      border: 1px solid var(--mf-border);
-      border-radius: var(--mf-radius-lg);
+      background: #141414;
+      border: 1px solid #242424;
+      border-radius: 20px;
       padding: 1.75rem;
-      backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
     }
 
     .panel-section-title {
-      font-family: var(--mf-font-display);
+      font-family: 'Inter', -apple-system, sans-serif;
       font-size: 1.15rem;
       font-weight: 600;
-      color: var(--mf-text-primary);
+      color: #FFFFFF;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -166,9 +153,9 @@
     }
 
     .status-matrix-item {
-      background: rgba(8, 13, 32, 0.6);
-      border: 1px solid var(--mf-border);
-      border-radius: var(--mf-radius-md);
+      background: #181818;
+      border: 1px solid #282828;
+      border-radius: 12px;
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
@@ -177,8 +164,8 @@
 
     .status-item-label {
       font-size: 11px;
-      font-family: var(--mf-font-mono);
-      color: var(--mf-text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      color: #888888;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
@@ -186,7 +173,7 @@
     .status-item-val {
       font-size: 13.5px;
       font-weight: 600;
-      color: var(--mf-text-primary);
+      color: #F4F1E8;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -194,11 +181,10 @@
 
     /* Analytics Panel */
     .analytics-panel-card {
-      background: var(--mf-surface-glass);
-      border: 1px solid var(--mf-border);
-      border-radius: var(--mf-radius-lg);
+      background: #141414;
+      border: 1px solid #242424;
+      border-radius: 20px;
       padding: 1.75rem;
-      backdrop-filter: blur(18px);
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
@@ -211,19 +197,20 @@
     }
 
     .telemetry-stat-num {
-      font-family: var(--mf-font-display);
+      font-family: 'Inter', sans-serif;
       font-size: 2.2rem;
       font-weight: 700;
       line-height: 1;
-      color: var(--mf-accent-blue);
+      color: #FFFFFF;
     }
 
     .telemetry-stat-label {
-      font-size: 11.5px;
-      color: var(--mf-text-muted);
+      font-size: 11px;
+      color: #888888;
+      font-family: 'JetBrains Mono', monospace;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-top: 4px;
+      margin-top: 6px;
     }
 
     .analytics-chart-placeholder {
@@ -272,15 +259,15 @@
     }
 
     .portfolio-artifact-card:hover {
-      border-color: rgba(110, 168, 255, 0.4);
+      border-color: #383838;
       transform: translateY(-2px);
-      box-shadow: var(--mf-shadow-md);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
 
     .artifact-banner {
       height: 125px;
       position: relative;
-      background: #080D20;
+      background: #101010;
       overflow: hidden;
     }
 
@@ -289,7 +276,7 @@
       height: 100%;
       object-fit: cover;
       opacity: 0.85;
-      transition: transform 0.4s var(--mf-ease-out);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .portfolio-artifact-card:hover .artifact-banner img {
@@ -299,35 +286,36 @@
     .artifact-banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(8, 13, 32, 0.9) 0%, transparent 60%);
+      background: linear-gradient(to top, #141414 0%, transparent 60%);
     }
 
     .artifact-universe-badge {
       position: absolute;
       bottom: 10px;
       left: 12px;
-      font-family: var(--mf-font-mono);
-      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
       font-weight: 600;
       color: #FFF;
-      background: rgba(11, 22, 56, 0.75);
+      background: rgba(20, 20, 20, 0.85);
       backdrop-filter: blur(8px);
       padding: 3px 8px;
-      border-radius: 4px;
-      border: 1px solid var(--mf-border);
+      border-radius: 9999px;
+      border: 1px solid #333333;
     }
 
     .artifact-time-badge {
       position: absolute;
       top: 10px;
       right: 12px;
-      font-family: var(--mf-font-mono);
-      font-size: 11px;
-      color: #A8B2CC;
-      background: rgba(5, 8, 23, 0.7);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: #A0A0A0;
+      background: rgba(15, 15, 15, 0.85);
       backdrop-filter: blur(8px);
-      padding: 2px 7px;
-      border-radius: 4px;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      border: 1px solid #282828;
     }
 
     .artifact-body {
@@ -668,7 +656,8 @@
       const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
       const origin = window.location.origin;
-      currentSiteUrl = `${origin}/${handle}`;
+      const handle = user.username || (userEmail ? userEmail.split('@')[0] : 'preview');
+      currentSiteUrl = `${origin}/p/${handle}`;
 
       document.getElementById('portfolioUrlText').textContent = currentSiteUrl;
       document.getElementById('portfolioUrlText').href = currentSiteUrl;
@@ -687,17 +676,10 @@
       }
     }
 
-    const UNIVERSE_THUMBS = {
-      'threeui-shelf': '/assets/3d/threeui_shelf_3d.jpg',
-      'threeui-sylva': '/assets/3d/threeui_sylva_3d.jpg',
-      'threeui-kage': '/assets/3d/threeui_kage_3d.jpg',
-      'threeui-constellation': '/assets/3d/threeui_constellation_3d.jpg',
-      'threeui-liquid-metal': '/assets/3d/threeui_liquid_metal_3d.jpg',
-      'threeui-matrix': '/assets/3d/threeui_matrix_3d.jpg',
-      'threeui-sketchbook': '/assets/3d/threeui_sketchbook_3d.jpg',
-      'threeui-landscape': '/assets/3d/threeui_landscape_3d.jpg',
-      'spatial-depth-voyage': '/assets/3d/spatial_depth_voyage_3d.jpg',
-      'cyber-architect-sprawl': '/assets/3d/matrix_lightning_3d.jpg'
+    const TEMPLATE_THUMBS = {
+      'jack-3d-creator': '/assets/3d/ai_portfolio_generator_3d.jpg',
+      'nadia-brand': '/nadia_portrait_nobg.png',
+      'default': '/images/hero-base.webp'
     };
 
     async function loadCrossDevicePortfolios() {
@@ -762,16 +744,14 @@
         const sid = p.siteId || `site-${idx}`;
         const name = p.developerName || 'Developer';
         const role = p.developerRole || 'Software Engineer';
-        const universe = p.universeKey || 'threeui-shelf';
-        const timeStr = formatTimeAgo(p.timestamp || Date.now());
-        const thumbSrc = UNIVERSE_THUMBS[universe] || '/assets/3d/threeui_shelf_3d.jpg';
+        const thumbSrc = TEMPLATE_THUMBS[universe] || TEMPLATE_THUMBS['jack-3d-creator'] || '/images/hero-base.webp';
         const href = `/p/${sid}`;
         const isActive = sid === activeVipSite || idx === 0;
 
         return `
           <div class="portfolio-artifact-card">
             <div class="artifact-banner">
-              <img src="${thumbSrc}" alt="${universe}" onerror="this.src='/assets/3d/threeui_shelf_3d.jpg'">
+              <img src="${thumbSrc}" alt="${universe}" onerror="this.src='/images/hero-base.webp'">
               <div class="artifact-banner-overlay"></div>
               <span class="artifact-universe-badge">${universe.toUpperCase()}</span>
               <span class="artifact-time-badge">${timeStr}</span>

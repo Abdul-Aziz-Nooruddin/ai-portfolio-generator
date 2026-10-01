@@ -2005,9 +2005,7 @@ class HtmlRenderer {
             <span>Scroll Down</span>
           </a>
         </div>
-        <div id="hero-astronaut-stage" style="width: 100%; min-height: 420px; position: relative; display: flex; align-items: center; justify-content: center;">
-          ${Template3DVisuals.getCosmicHeroArtwork()}
-        </div>
+        <div id="hero-astronaut-stage" style="width: 100%; min-height: 420px; position: relative; display: flex; align-items: center; justify-content: center;"></div>
       </div>
     </section>
 

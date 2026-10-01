@@ -13,8 +13,9 @@ function injectSidebarStyles() {
       min-height: 100vh;
       width: 100%;
       position: relative;
-      background: var(--mf-bg-primary, #050817);
-      color: var(--mf-text-primary, #F5F7FF);
+      background: var(--mf-bg-primary, #0A0A0A);
+      color: var(--mf-text-primary, #F4F1E8);
+      font-family: var(--mf-font-sans, 'Inter', -apple-system, sans-serif);
     }
 
     .app-main-content {
@@ -28,31 +29,29 @@ function injectSidebarStyles() {
     }
 
     .app-sidebar {
-      width: 240px;
-      min-width: 240px;
-      max-width: 240px;
+      width: 250px;
+      min-width: 250px;
+      max-width: 250px;
       height: 100vh;
       position: sticky;
       top: 0;
-      background: rgba(8, 13, 32, 0.85);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border-right: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      background: #0A0A0A;
+      border-right: 1px solid #242424;
       display: flex;
       flex-direction: column;
       z-index: 1000;
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      font-family: var(--mf-font-sans, 'Plus Jakarta Sans', sans-serif);
-      color: var(--mf-text-primary, #F5F7FF);
+      font-family: var(--mf-font-sans, 'Inter', -apple-system, sans-serif);
+      color: #F4F1E8;
       overflow: hidden;
     }
 
     .sidebar-brand-header {
-      padding: 1.15rem 1.15rem;
+      padding: 1.25rem 1.25rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      border-bottom: 1px solid #242424;
       position: relative;
       z-index: 2;
     }
@@ -60,24 +59,30 @@ function injectSidebarStyles() {
     .brand-link {
       display: flex;
       align-items: center;
-      gap: 0.7rem;
+      gap: 0.75rem;
       text-decoration: none;
       color: inherit;
     }
 
-    .brand-logo-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #6EA8FF 0%, #9B7CFF 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1rem;
-      color: #FFFFFF;
-      box-shadow: 0 0 16px rgba(110, 168, 255, 0.35);
+    .brand-logo-mark {
+      width: 22px;
+      height: 22px;
+      position: relative;
+      transform: rotate(12deg);
+      flex-shrink: 0;
     }
+
+    .brand-logo-mark span {
+      position: absolute;
+      width: 9.5px;
+      height: 9.5px;
+      border-radius: 2.5px;
+    }
+
+    .brand-logo-mark .sq-1 { top: 0; left: 0; background: #FFFFFF; }
+    .brand-logo-mark .sq-2 { top: 0; right: 0; background: #5FA5F9; }
+    .brand-logo-mark .sq-3 { bottom: 0; left: 0; background: #8E8E93; }
+    .brand-logo-mark .sq-4 { bottom: 0; right: 0; background: #FFFFFF; }
 
     .brand-text-col {
       display: flex;
@@ -85,62 +90,66 @@ function injectSidebarStyles() {
     }
 
     .brand-name {
-      font-family: var(--mf-font-display, 'Space Grotesk', sans-serif);
+      font-family: 'Inter', -apple-system, sans-serif;
       font-weight: 700;
-      font-size: 1.05rem;
-      letter-spacing: -0.02em;
-      color: #F5F7FF;
+      font-size: 1.15rem;
+      letter-spacing: -0.03em;
+      color: #FFFFFF;
       display: flex;
       align-items: center;
-      gap: 6px;
+    }
+
+    .brand-name .brand-dot {
+      color: #5FA5F9;
     }
 
     .brand-subtitle {
       font-family: var(--mf-font-mono, monospace);
-      font-size: 0.62rem;
+      font-size: 0.6rem;
       font-weight: 600;
       letter-spacing: 0.12em;
-      color: #6EA8FF;
+      color: #8E8E93;
       text-transform: uppercase;
+      margin-top: 1px;
     }
 
     .sidebar-content {
       flex: 1;
-      padding: 1rem 0.75rem;
+      padding: 1.25rem 0.85rem;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
       position: relative;
       z-index: 2;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .sidebar-section-title {
       font-family: var(--mf-font-mono, monospace);
       font-size: 0.65rem;
       font-weight: 600;
-      letter-spacing: 0.1em;
-      color: #6F7A96;
-      padding: 0 0.55rem;
-      margin-bottom: 0.4rem;
+      letter-spacing: 0.12em;
+      color: #666666;
+      padding: 0 0.65rem;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
     }
 
     .sidebar-menu {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.3rem;
     }
 
     .sidebar-nav-item {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      padding: 0.55rem 0.7rem;
-      border-radius: 8px;
-      color: #A8B2CC;
+      gap: 0.75rem;
+      padding: 0.65rem 0.8rem;
+      border-radius: 9999px;
+      color: #A0A0A0;
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 500;
       transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
@@ -148,55 +157,54 @@ function injectSidebarStyles() {
     }
 
     .sidebar-nav-item:hover {
-      color: #F5F7FF;
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.05);
+      color: #FFFFFF;
+      background: #181818;
+      border-color: #262626;
       transform: translateX(2px);
     }
 
     .sidebar-nav-item.active {
       color: #FFFFFF;
-      background: rgba(110, 168, 255, 0.12);
-      border-color: rgba(110, 168, 255, 0.28);
+      background: #1C1C1C;
+      border-color: #333333;
       font-weight: 600;
-      box-shadow: 0 2px 10px rgba(110, 168, 255, 0.1);
     }
 
     .sidebar-nav-item.active .nav-icon {
-      color: #6EA8FF;
+      color: #5FA5F9;
     }
 
     .sidebar-nav-item .nav-icon {
-      color: #6F7A96;
+      color: #777777;
       transition: color 0.18s;
       flex-shrink: 0;
     }
 
     .sidebar-nav-item:hover .nav-icon {
-      color: #6EA8FF;
+      color: #5FA5F9;
     }
 
     .sidebar-footer-dock {
-      padding: 0.85rem;
-      border-top: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
+      padding: 1rem;
+      border-top: 1px solid #242424;
       position: relative;
       z-index: 2;
-      background: rgba(8, 13, 32, 0.95);
+      background: #0A0A0A;
       display: flex;
       flex-direction: column;
-      gap: 0.65rem;
+      gap: 0.75rem;
     }
 
     .plan-status-pill {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(11, 22, 56, 0.6);
-      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
-      border-radius: 8px;
-      padding: 6px 10px;
+      background: #141414;
+      border: 1px solid #262626;
+      border-radius: 9999px;
+      padding: 6px 12px;
       font-size: 11.5px;
-      color: #A8B2CC;
+      color: #A0A0A0;
     }
 
     .plan-pill-tag {
@@ -205,40 +213,40 @@ function injectSidebarStyles() {
       font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: rgba(110, 168, 255, 0.15);
-      color: #6EA8FF;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      background: rgba(95, 165, 249, 0.12);
+      color: #5FA5F9;
     }
 
     .user-dock-profile {
       display: flex;
       align-items: center;
-      gap: 0.65rem;
-      background: rgba(11, 22, 56, 0.6);
-      border: 1px solid var(--mf-border, rgba(255, 255, 255, 0.08));
-      border-radius: 10px;
-      padding: 0.5rem 0.65rem;
+      gap: 0.75rem;
+      background: #141414;
+      border: 1px solid #262626;
+      border-radius: 12px;
+      padding: 0.6rem 0.75rem;
       transition: border-color 0.2s;
     }
 
     .user-dock-profile:hover {
-      border-color: rgba(255, 255, 255, 0.16);
+      border-color: #383838;
     }
 
     .user-avatar-circle {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #6EA8FF, #9B7CFF);
+      background: #1E1E1E;
+      border: 1px solid #333333;
       color: #FFFFFF;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      box-shadow: 0 2px 8px rgba(110, 168, 255, 0.3);
     }
 
     .user-meta-wrap {
@@ -249,17 +257,17 @@ function injectSidebarStyles() {
     }
 
     .user-name-text {
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
-      color: #F5F7FF;
+      color: #F4F1E8;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .user-email-text {
-      font-size: 0.7rem;
-      color: #6F7A96;
+      font-size: 0.72rem;
+      color: #888888;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -268,10 +276,10 @@ function injectSidebarStyles() {
     .user-logout-btn {
       background: transparent;
       border: none;
-      color: #6F7A96;
+      color: #777777;
       cursor: pointer;
-      padding: 5px;
-      border-radius: 6px;
+      padding: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -279,30 +287,31 @@ function injectSidebarStyles() {
     }
 
     .user-logout-btn:hover {
-      color: #FF6F7D;
-      background: rgba(255, 111, 125, 0.1);
+      color: #FF5A65;
+      background: rgba(255, 90, 101, 0.1);
     }
 
     .sidebar-login-btn {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
       width: 100%;
-      background: rgba(110, 168, 255, 0.1);
-      border: 1px solid rgba(110, 168, 255, 0.25);
-      color: #6EA8FF;
-      padding: 0.6rem;
-      border-radius: 8px;
-      font-size: 0.82rem;
+      background: #181818;
+      border: 1px solid #282828;
+      color: #FFFFFF;
+      padding: 0.7rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s;
     }
 
     .sidebar-login-btn:hover {
-      background: rgba(110, 168, 255, 0.2);
-      color: #FFF;
+      background: #222222;
+      border-color: #383838;
+      color: #5FA5F9;
     }
 
     /* Mobile Responsive Shell */
@@ -480,13 +489,18 @@ function initUniversalSidebar(activePage) {
 
   mount.innerHTML = `
   <!-- Mobile Top Bar (< 960px) -->
-  <div class="mobile-top-bar">
+  <div class="mobile-top-bar" style="background:#0A0A0A !important; border-bottom:1px solid #242424 !important;">
     <a href="/" class="brand-link">
-      <div class="brand-logo-badge">M</div>
-      <span class="brand-name">MyFolio</span>
+      <div class="brand-logo-mark">
+        <span class="sq-1"></span>
+        <span class="sq-2"></span>
+        <span class="sq-3"></span>
+        <span class="sq-4"></span>
+      </div>
+      <span class="brand-name">myfolio<span class="brand-dot">.</span></span>
     </a>
-    <button id="sidebarToggleBtn" style="background:transparent; border:1px solid rgba(255,255,255,0.1); border-radius:6px; color:#A8B2CC; padding:6px; cursor:pointer;" onclick="toggleAppSidebar()" aria-label="Toggle Navigation">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <button id="sidebarToggleBtn" style="background:#181818; border:1px solid #282828; border-radius:8px; color:#F4F1E8; padding:7px; cursor:pointer;" onclick="toggleAppSidebar()" aria-label="Toggle Navigation">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
     </button>
   </div>
 
@@ -496,10 +510,15 @@ function initUniversalSidebar(activePage) {
   <aside id="mainAppSidebar" class="app-sidebar">
     <div class="sidebar-brand-header">
       <a href="/" class="brand-link">
-        <div class="brand-logo-badge">M</div>
+        <div class="brand-logo-mark">
+          <span class="sq-1"></span>
+          <span class="sq-2"></span>
+          <span class="sq-3"></span>
+          <span class="sq-4"></span>
+        </div>
         <div class="brand-text-col">
-          <span class="brand-name">MyFolio</span>
-          <span class="brand-subtitle">CREATIVE OS</span>
+          <span class="brand-name">myfolio<span class="brand-dot">.</span></span>
+          <span class="brand-subtitle">PLATFORM</span>
         </div>
       </a>
     </div>
@@ -524,11 +543,15 @@ function initUniversalSidebar(activePage) {
       </div>
 
       <div>
-        <div class="sidebar-section-title">DESIGN</div>
+        <div class="sidebar-section-title">TEMPLATES</div>
         <nav class="sidebar-menu">
-          <a href="/universes" class="sidebar-nav-item ${activeUniverses}">
-            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
-            <span>Universes</span>
+          <a href="/jack-3d" target="_blank" class="sidebar-nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 16 4-4-4-4"></path><path d="m6 8-4 4 4 4"></path><path d="m14.5 4-5 16"></path></svg>
+            <span>Jack 3D</span>
+          </a>
+          <a href="/nadia" target="_blank" class="sidebar-nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 16 16 16"></polygon></svg>
+            <span>Nadia Brand</span>
           </a>
         </nav>
       </div>

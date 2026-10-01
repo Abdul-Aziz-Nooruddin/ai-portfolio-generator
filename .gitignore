@@ -19,6 +19,9 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+.gemini/
+.gsd/
+.agent/
 
 # Build
 dist/

@@ -56,7 +56,7 @@ class ProjectArtworkSynthesizer {
    * Resolves a distinct, highly relevant 3D image for a project strictly aligned with the project title & domain.
    * Guarantees 0 duplicate matching images within the same portfolio, and ZERO recycling of design universe previews.
    */
-  static resolveProjectArtwork(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
+  static resolveProjectArtwork(project = {}, theme = 'jack-3d-creator', projectIndex = 0, usedAssets = null, userSeed = '') {
     const nameText = String(project.name || project.title || '').toLowerCase().trim();
     const descText = String(project.desc || project.description || project.problem || '').toLowerCase().trim();
     const categoryText = String(project.category || '').toLowerCase().trim();
@@ -64,7 +64,7 @@ class ProjectArtworkSynthesizer {
     const seed = String(userSeed || '').toLowerCase();
     const combinedText = `${seed} ${nameText} ${descText} ${categoryText} ${techText}`;
 
-    const isCyberTheme = (theme === 'cyber-architect-sprawl');
+    const isCyberTheme = (theme === 'jack-3d-creator');
 
     let catalog;
     if (isCyberTheme) {
@@ -177,7 +177,7 @@ class ProjectArtworkSynthesizer {
    * Generates a context-aware live 3D card tailored to the project's exact name & description.
    * Guarantees distinct, non-repeating visuals across project cards within the same portfolio.
    */
-  static generate3DProjectThumbnail(project = {}, theme = 'cosmic-astronaut', projectIndex = 0, usedAssets = null, userSeed = '') {
+  static generate3DProjectThumbnail(project = {}, theme = 'jack-3d-creator', projectIndex = 0, usedAssets = null, userSeed = '') {
     const artwork = this.resolveProjectArtwork(project, theme, projectIndex, usedAssets, userSeed);
     const imgSrc = artwork.src;
     const label = artwork.label;

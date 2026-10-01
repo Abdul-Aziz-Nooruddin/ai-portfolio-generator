@@ -1,0 +1,157 @@
+/* Lower-page chapters. Shared section primitives live in index.css. */
+.visitor-section {
+  color: var(--ink, #171817);
+  background: var(--paper, #f4f1e8);
+  font-size: 15px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.visitor-section .section-label { line-height: 1.5; }
+.visitor-section .section-label > :last-child { font-size: 14px; }
+.visitor-section .text-link { max-width: 100%; gap: 18px; font-size: 14px; line-height: 1.5; min-height: 44px; }
+.visitor-section :is(a, button, summary, input, select, textarea):focus-visible { outline: 2px solid #13708e; outline-offset: 5px; }
+.visitor-section :is(input, select, textarea):focus-visible { outline-offset: 3px; }
+.visitor-section :is(h3, h4) { font-weight: 500; }
+.visitor-section p { margin: 0; }
+.visitor-section .section-title { text-wrap: balance; }
+.visitor-heading-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); align-items: end; gap: 60px; margin-bottom: 52px; }
+.visitor-heading-row > p { max-width: 390px; color: #5a5d56; justify-self: end; }
+.visitor-kicker { display: block; font-size: 11px; font-weight: 500; line-height: 1.6; text-transform: uppercase; letter-spacing: .09em; }
+.visitor-button { display: inline-flex; justify-content: center; align-items: center; gap: 24px; min-height: 52px; max-width: 100%; padding: 14px 22px; border: 1px solid var(--ink, #171817); border-radius: 100px; color: var(--paper, #f4f1e8); background: var(--ink, #171817); font-size: 14px; font-weight: 500; line-height: 1.5; text-align: left; transition: background .2s, color .2s; }
+.visitor-button:hover { background: var(--paper, #f4f1e8); color: var(--ink, #171817); }
+
+/* Preview and publishing: one explicit offer, then the practical next steps. */
+.publishing-grid { display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); gap: clamp(28px, 5vw, 78px); align-items: start; }
+.publishing-preview { padding: clamp(25px, 3.5vw, 48px); border-radius: 3px; background: var(--sky, #75c5de); }
+.publishing-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 18px; }
+.publishing-preview .publishing-duration { display: flex; align-items: baseline; gap: 15px; margin: 30px 0 23px; font-size: clamp(82px, 9vw, 132px); font-weight: 500; letter-spacing: -.085em; line-height: 1; }
+.publishing-duration > span { font-size: 24px; letter-spacing: -.04em; }
+.publishing-preview h3 { font-size: clamp(25px, 2.3vw, 34px); letter-spacing: -.05em; line-height: 1.2; margin: 0 0 17px; }
+.visitor-checklist { display: grid; gap: 15px; list-style: none; padding: 24px 0; margin: 24px 0 28px; border-top: 1px solid #17181738; border-bottom: 1px solid #17181738; }
+.visitor-checklist li { display: flex; align-items: flex-start; gap: 12px; font-size: 14px; }
+.visitor-checklist svg { margin-top: 3px; }
+.publishing-preview .publishing-note { margin-top: 15px; font-size: 14px; line-height: 1.6; }
+.publishing-next { padding-top: 5px; }
+.publishing-next > h3 { font-size: clamp(27px, 2.8vw, 40px); letter-spacing: -.05em; line-height: 1.18; max-width: 420px; margin: 18px 0 31px; }
+.publishing-steps { list-style: none; padding: 0; margin: 0; }
+.publishing-steps > li { display: grid; grid-template-columns: 23px minmax(0, 1fr); gap: 17px; padding: 23px 0; border-top: 1px solid #1718172b; }
+.publishing-steps > li > span { font-size: 11px; color: #346476; padding-top: 3px; }
+.publishing-steps h4 { font-size: 19px; letter-spacing: -.025em; line-height: 1.35; margin: 0 0 10px; }
+.publishing-steps p { font-size: 14px; color: #5a5d56; }
+.publishing-steps .text-link { margin-top: 9px; }
+.publishing-footnotes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; margin-top: 52px; padding-top: 32px; border-top: 1px solid #1718172b; }
+.publishing-footnotes > article > svg { color: #346476; }
+.publishing-footnotes h3 { font-size: 20px; letter-spacing: -.035em; line-height: 1.35; margin: 18px 0 12px; }
+.publishing-footnotes p { color: #5a5d56; font-size: 14px; }
+.visitor-policy-links { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-top: 15px; }
+.visitor-policy-links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+
+/* Actual reading material, with native disclosure behavior. */
+.resources-section { background: #e8e7e1; }
+.resources-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr); gap: clamp(28px, 5vw, 78px); align-items: start; }
+.resource-guide { border-bottom: 1px solid #17181735; }
+.resource-guide:first-child { border-top: 1px solid #17181735; }
+.resource-guide summary { display: flex; align-items: flex-start; gap: 20px; padding: 26px 0; cursor: pointer; list-style: none; }
+.resource-guide summary::-webkit-details-marker { display: none; }
+.resource-guide summary::marker { content: ''; }
+.resource-number { font-size: 11px; color: #5a5d56; padding-top: 3px; }
+.resource-summary-copy { flex: 1; min-width: 0; }
+.resource-guide-title { display: block; font-size: 21px; font-weight: 500; letter-spacing: -.04em; line-height: 1.35; }
+.resource-guide-description { display: block; margin-top: 9px; font-size: 14px; line-height: 1.65; color: #5a5d56; }
+.resource-guide summary > svg { margin-top: 3px; transition: transform .2s; }
+.resource-guide[open] summary > svg { transform: rotate(45deg); }
+.resource-guide summary:hover .resource-guide-title { text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1px; }
+.resource-guide-content { padding: 0 0 28px 34px; font-size: 14px; }
+.resource-guide-content ul { list-style: disc; padding-left: 18px; margin: 0; }
+.resource-guide-content li { padding-left: 4px; margin-bottom: 15px; }
+.resource-guide-content .resource-takeaway { margin-top: 22px; padding: 16px 18px; border-left: 2px solid #346476; background: #f4f1e899; }
+.resource-mission { padding: clamp(25px, 3vw, 40px); border-radius: 3px; color: var(--paper, #f4f1e8); background: var(--ink, #171817); }
+.resource-mission .visitor-kicker { color: #bdc1b5; }
+.resource-star { font-size: 39px; line-height: 1; color: var(--sky, #75c5de); }
+.resource-mission h3 { font-size: clamp(27px, 2.7vw, 38px); letter-spacing: -.045em; line-height: 1.17; margin: 34px 0 23px; }
+.resource-mission p { color: #c5c7bd; font-size: 14px; margin-bottom: 18px; }
+.resource-mission-links { display: flex; align-items: flex-start; flex-direction: column; padding-top: 3px; }
+.resource-mission .text-link { border-color: #f4f1e84d; }
+.resource-mission .text-link:hover { color: var(--sky, #75c5de); }
+.resource-mission a:focus-visible { outline-color: var(--sky, #75c5de); }
+
+/* Email-draft composer. Nothing is submitted to a nonexistent API. */
+.contact-section { border-top: 1px solid #17181724; }
+.contact-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(34px, 7vw, 100px); align-items: start; }
+.contact-copy .visitor-intro { max-width: 420px; margin-top: 28px; color: #5a5d56; }
+.contact-channels { margin-top: 36px; }
+.contact-channels article { border-top: 1px solid #1718172b; padding: 22px 0; }
+.contact-channels .visitor-kicker { color: #5a5d56; margin-bottom: 10px; }
+.contact-channels article > a { display: inline-flex; align-items: center; gap: 14px; max-width: 100%; min-height: 44px; font-size: clamp(18px, 2vw, 25px); line-height: 1.35; font-weight: 500; letter-spacing: -.035em; }
+.contact-channels article > a:hover { text-decoration: underline; text-underline-offset: 5px; }
+.contact-channels article > p { max-width: 360px; margin-top: 7px; font-size: 14px; color: #5a5d56; }
+.contact-copy > .text-link { margin-top: 2px; }
+.contact-form { min-width: 0; padding: clamp(24px, 3vw, 42px); border: 1px solid #17181724; border-radius: 3px; background: #ebe8df; }
+.contact-form h3 { font-size: 27px; letter-spacing: -.045em; line-height: 1.2; margin: 0; }
+.contact-form #inquiry-help { margin: 16px 0 28px; font-size: 14px; color: #54574f; }
+.contact-field-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.contact-field { min-width: 0; margin-bottom: 20px; }
+.contact-field label, .contact-draft label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 9px; }
+.contact-form :is(input, select, textarea) { display: block; width: 100%; min-width: 0; max-width: 100%; border: 1px solid #85867b; border-radius: 2px; padding: 12px 13px; font: inherit; font-size: 16px; line-height: 1.5; background: var(--paper, #f4f1e8); color: var(--ink, #171817); }
+.contact-form :is(input, select) { min-height: 48px; }
+.contact-form select { cursor: pointer; }
+.contact-form textarea { resize: vertical; min-height: 140px; }
+.contact-form .contact-field-help { margin-top: 10px; font-size: 14px; line-height: 1.65; color: #54574f; }
+.contact-form .contact-recipient { font-size: 14px; margin: 5px 0 20px; }
+.contact-form :is(.contact-policy, .contact-recipient) a { text-decoration: underline; text-underline-offset: 3px; }
+.contact-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px 18px; }
+.contact-copy-button { display: inline-flex; align-items: center; gap: 8px; padding: 12px 0; border: 0; background: transparent; color: var(--ink, #171817); min-height: 44px; font-size: 14px; line-height: 1.5; }
+.contact-copy-button:hover { text-decoration: underline; text-underline-offset: 4px; }
+.contact-copy-button:disabled { color: #54574f; }
+.contact-form .contact-status { margin-top: 18px; font-size: 14px; line-height: 1.65; }
+.contact-form .contact-status:empty { margin-top: 0; }
+.contact-draft { margin-top: 18px; }
+.contact-draft summary { padding: 12px 0; min-height: 44px; cursor: pointer; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.contact-draft label { margin-top: 12px; }
+.contact-form .contact-policy { padding-top: 22px; margin-top: 22px; border-top: 1px solid #17181724; color: #54574f; font-size: 14px; line-height: 1.7; }
+
+@media (max-width: 1100px) {
+  .visitor-heading-row { gap: 35px; }
+  .publishing-footnotes { gap: 25px; }
+  .contact-field-row { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}
+
+@media (max-width: 850px) {
+  .visitor-heading-row { grid-template-columns: minmax(0, 1fr); gap: 24px; margin-bottom: 36px; }
+  .visitor-heading-row > p { max-width: 560px; justify-self: start; }
+  .publishing-grid, .resources-grid, .contact-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .publishing-preview { max-width: 620px; }
+  .publishing-preview .publishing-duration { font-size: 100px; }
+  .publishing-next > h3 { max-width: none; }
+  .publishing-footnotes { grid-template-columns: minmax(0, 1fr); gap: 26px; margin-top: 30px; }
+  .publishing-footnotes > article { max-width: 640px; }
+  .publishing-footnotes > article + article { padding-top: 26px; border-top: 1px solid #17181724; }
+  .publishing-footnotes h3 { margin-top: 13px; }
+  .resource-mission { max-width: 620px; }
+  .contact-copy .section-title { max-width: 650px; }
+  .contact-field-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+}
+
+@media (max-width: 480px) {
+  .visitor-section .section-label { align-items: flex-start; gap: 16px; }
+  .visitor-section .section-label > :last-child { max-width: 130px; text-align: right; font-size: 14px; }
+  .visitor-section .section-index { max-width: 140px; font-size: 10px; }
+  .visitor-section .section-title { font-size: clamp(39px, 10vw, 47px); }
+  .publishing-preview { padding: 25px 22px; }
+  .publishing-preview .publishing-duration { font-size: 88px; }
+  .publishing-preview .visitor-button { gap: 12px; padding: 13px 17px; }
+  .publishing-steps > li { gap: 11px; grid-template-columns: 20px minmax(0, 1fr); }
+  .resource-guide summary { gap: 12px; }
+  .resource-guide-title { font-size: 19px; }
+  .resource-guide-content { padding-left: 0; }
+  .resource-mission { padding: 28px 24px; }
+  .contact-form { padding: 25px 20px; }
+  .contact-field-row { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .contact-actions { align-items: stretch; flex-direction: column; gap: 4px; }
+  .contact-copy-button { justify-content: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .visitor-section .visitor-button, .visitor-section .resource-guide summary > svg { transition: none; }
+}
