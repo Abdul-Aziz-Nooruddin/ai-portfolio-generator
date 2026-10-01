@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="/auth.js" defer></script>
+  <script src="/auth.js?v=2026.3" defer></script>
   <script src="/analytics.js" defer></script>
 
   <style>
@@ -133,12 +133,21 @@
     }
     .auth-tab-btn {
       flex: 1; text-align: center; padding: 10px 16px; font-size: 13px; font-weight: 500;
-      border-radius: 100px; color: var(--muted); transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      border-radius: 100px; color: var(--muted); transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer; user-select: none;
+      background: transparent;
+      border: none;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .auth-tab-btn:hover {
+      color: var(--ink);
     }
     .auth-tab-btn.active {
-      background: #ffffff; color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      font-weight: 600;
+      background: #ffffff !important;
+      color: var(--ink) !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.10) !important;
+      font-weight: 600 !important;
     }
 
     /* Google OAuth Button */
@@ -422,28 +431,60 @@
 
   <script>
     function switchAuthTab(view) {
-      if (typeof window.switchView === 'function') {
-        window.switchView(view);
-      }
       const tabLogin = document.getElementById('tabLogin');
       const tabSignup = document.getElementById('tabSignup');
-      if (tabLogin && tabSignup) {
-        if (view === 'login') {
-          tabLogin.classList.add('active');
-          tabSignup.classList.remove('active');
-        } else if (view === 'signup') {
-          tabSignup.classList.add('active');
-          tabLogin.classList.remove('active');
-        }
+      const viewLogin = document.getElementById('viewLogin');
+      const viewSignup = document.getElementById('viewSignup');
+      const viewForgot = document.getElementById('viewForgot');
+
+      if (view === 'signup') {
+        if (tabLogin) tabLogin.classList.remove('active');
+        if (tabSignup) tabSignup.classList.add('active');
+        if (viewLogin) viewLogin.classList.remove('active');
+        if (viewSignup) viewSignup.classList.add('active');
+        if (viewForgot) viewForgot.classList.remove('active');
+      } else if (view === 'login') {
+        if (tabSignup) tabSignup.classList.remove('active');
+        if (tabLogin) tabLogin.classList.add('active');
+        if (viewSignup) viewSignup.classList.remove('active');
+        if (viewLogin) viewLogin.classList.add('active');
+        if (viewForgot) viewForgot.classList.remove('active');
+      } else if (view === 'forgot') {
+        if (tabLogin) tabLogin.classList.remove('active');
+        if (tabSignup) tabSignup.classList.remove('active');
+        if (viewLogin) viewLogin.classList.remove('active');
+        if (viewSignup) viewSignup.classList.remove('active');
+        if (viewForgot) viewForgot.classList.add('active');
+      }
+
+      if (typeof window.switchView === 'function') {
+        try { window.switchView(view); } catch (e) {}
       }
     }
     window.switchAuthTab = switchAuthTab;
 
-    if (window.location.pathname.includes('signup') || window.location.pathname.includes('register')) {
-      window.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabLogin = document.getElementById('tabLogin');
+      const tabSignup = document.getElementById('tabSignup');
+      if (tabLogin) {
+        tabLogin.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchAuthTab('login');
+        });
+      }
+      if (tabSignup) {
+        tabSignup.addEventListener('click', (e) => {
+          e.preventDefault();
+          switchAuthTab('signup');
+        });
+      }
+
+      const path = window.location.pathname.toLowerCase();
+      const search = window.location.search.toLowerCase();
+      if (path.includes('signup') || path.includes('register') || search.includes('view=signup')) {
         switchAuthTab('signup');
-      });
-    }
+      }
+    });
   </script>
 </body>
 </html>

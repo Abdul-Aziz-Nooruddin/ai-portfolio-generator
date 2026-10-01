@@ -2274,6 +2274,9 @@ app.get(['/', '/index', '/home'], (req, res) => {
 });
 
 app.get(['/login', '/signin', '/signup', '/register', '/auth', '/forgot-password', '/reset-password', '/verify-email'], (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
   res.sendFile(getPagePath('auth.html'));
 });
 
@@ -2901,17 +2904,7 @@ app.post('/api/sites/:siteId/analytics', async (req, res) => {
 // ==========================================
 const webDir = path.join(process.cwd(), 'web');
 
-app.get(['/login', '/signin'], (req, res) => {
-  res.sendFile(path.join(webDir, 'auth.html'));
-});
 
-app.get(['/signup', '/register'], (req, res) => {
-  res.sendFile(path.join(webDir, 'auth.html'));
-});
-
-app.get(['/auth'], (req, res) => {
-  res.sendFile(path.join(webDir, 'auth.html'));
-});
 
 app.get(['/studio', '/webstudio', '/generator'], (req, res) => {
   res.sendFile(path.join(webDir, 'studio.html'));
