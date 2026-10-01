@@ -1516,10 +1516,13 @@ app.post(
       const chosenTemplate = (input.preferences?.theme && input.preferences.theme !== 'auto') ? input.preferences.theme : null;
       const selectedTemplate = TemplateRegistry.selectTemplate(chosenTemplate, normalized);
 
+      const isSitePaid = Boolean(isVipFounder && shouldPublishLive);
       const siteGen = new SiteGenerator();
       const siteResult = await siteGen.generateSite({
         id: siteId,
-        status: 'active'
+        status: isSitePaid ? 'active' : 'draft',
+        isPaid: isSitePaid,
+        isPreview: !isSitePaid
       }, { ...normalized, templateId: selectedTemplate.id }, {
         theme: selectedTemplate.id,
         templateId: selectedTemplate.id,
@@ -3734,58 +3737,63 @@ app.get('/p/:siteId', async (req, res) => {
     dbService.recordAnalyticsEvent(siteId, 'page_view', visitorHash, req.headers['referer'] || null).catch(() => {});
   } catch (e) {}
 
-  // Check if site is paid / active or VIP Founder with strict 400ms timeout
-  let isPaid = siteId === 'abdulaziz' || req.user?.email === 'abdulaziznoor9876@gmail.com';
+  // Check if site is paid (only true if site record is paid or canonical founder root)
+  let isPaid = siteId === 'abdulaziz';
   try {
     const siteQueryPromise = dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
     const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 400));
     const result = await Promise.race([siteQueryPromise, timeoutPromise]);
     const siteRecord = result?.data;
-    if (siteRecord && (siteRecord.status === 'active' || siteRecord.status === 'paid')) {
+    if (siteRecord && (siteRecord.status === 'paid' || siteRecord.plan === 'lifetime' || siteRecord.plan === 'pro_domain' || siteRecord.is_paid === true)) {
       isPaid = true;
     }
   } catch (e) {
     // Unpaid preview
   }
 
-  if (!isPaid) {
+  if (!isPaid && !html.includes('id="preview-watermark-overlay"')) {
     const watermarkHtml = `
-    <!-- DIAGONAL LIVE PREVIEW BACKGROUND WATERMARK -->
-    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; opacity: 0.18; user-select: none;">
-      <!-- TOP DIAGONAL WATERMARK RIBBON -->
-      <div class="watermark-peripheral-text" style="white-space: nowrap; transform: rotate(-26deg) scale(1.35); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4vw, 3.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.7);">
-        LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D
+    <!-- DIAGONAL PREVIEW ONLY // MYFOLIO.TECH PROMINENT WATERMARK OVERLAY -->
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-around; user-select: none; opacity: 0.38;">
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
+        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
       </div>
 
-      <!-- MAIN DIAGONAL FRAMED STAMP BOX -->
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
+        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+      </div>
+
       <div style="display: flex; justify-content: center; align-items: center;">
-        <div class="watermark-stamp-box" style="transform: rotate(-26deg); border: 3.5px solid rgba(232, 163, 61, 0.7); border-radius: 18px; padding: 22px 50px; text-align: center; max-width: 92vw; background: rgba(5, 8, 10, 0.35); color: #E8A33D; box-sizing: border-box; backdrop-filter: blur(2px);">
-          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.25rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 8px;">
-            ✦ OFFICIAL 3D DEMO SHOWCASE ✦
+        <div class="watermark-stamp-box" style="transform: rotate(-30deg); border: 6px solid #ffffff; border-radius: 28px; padding: 32px 64px; text-align: center; max-width: 94vw; background: rgba(0, 0, 0, 0.55); color: #ffffff; box-sizing: border-box; backdrop-filter: blur(4px); box-shadow: 0 15px 50px rgba(0,0,0,0.6);">
+          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1rem, 2.2vw, 1.45rem); font-weight: 800; letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 10px;">
+            ✦ 24-HOUR EVALUATION PREVIEW ✦
           </div>
-          <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 950; letter-spacing: 0.22em; line-height: 1; text-transform: uppercase; border-top: 3px solid currentColor; border-bottom: 3px solid currentColor; padding: 14px 28px; margin: 8px 0; white-space: nowrap;">
-            LIVE PREVIEW
+          <div class="watermark-main-title" style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(4.2rem, 11vw, 8.5rem); font-weight: 950; letter-spacing: 0.22em; line-height: 1; text-transform: uppercase; border-top: 5px solid currentColor; border-bottom: 5px solid currentColor; padding: 18px 40px; margin: 12px 0; white-space: nowrap;">
+            PREVIEW ONLY
           </div>
-          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(0.85rem, 1.8vw, 1.2rem); font-weight: 800; letter-spacing: 0.28em; text-transform: uppercase; margin-top: 8px;">
-            MYFOLIO SPATIAL UNIVERSE • MYFOLIO.TECH
+          <div style="font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4.5vw, 3.5rem); font-weight: 900; letter-spacing: 0.32em; text-transform: uppercase; margin-top: 12px; color: #75c5de;">
+            MYFOLIO.TECH
           </div>
         </div>
       </div>
 
-      <!-- BOTTOM DIAGONAL WATERMARK RIBBON -->
-      <div class="watermark-peripheral-text" style="white-space: nowrap; transform: rotate(-26deg) scale(1.35); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.8rem, 4vw, 3.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(255,255,255,0.7);">
-        LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D • LIVE PREVIEW • MYFOLIO 3D
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
+        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
+      </div>
+
+      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-30deg) scale(1.8); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(2.4rem, 6vw, 4.8rem); font-weight: 900; letter-spacing: 0.28em; text-transform: uppercase; color: #ffffff; text-shadow: 0 0 20px rgba(0,0,0,0.6);">
+        PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH • PREVIEW ONLY • MYFOLIO.TECH
       </div>
     </div>
 
     <!-- FLOATING BOTTOM CONVERSION & UNLOCK BAR -->
-    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 40px rgba(0,0,0,0.6); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 18px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
+    <div id="preview-floating-bar" style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 999998; background: rgba(15, 23, 42, 0.96); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 20px 45px rgba(0,0,0,0.7); border-radius: 9999px; padding: 12px 28px; display: flex; align-items: center; gap: 16px; color: #ffffff; font-family: system-ui, -apple-system, sans-serif; max-width: 94vw; flex-wrap: wrap; justify-content: center;">
       <div style="font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;">
-        <span style="display:inline-block; width:10px; height:10px; background:#38bdf8; border-radius:50%;"></span>
-        <span>🔒 <strong>Preview Mode</strong> (24-Hour Timer Active) • Created with MyFolio 3D</span>
+        <span style="display:inline-block; width:10px; height:10px; background:#75c5de; border-radius:50%; box-shadow: 0 0 8px #75c5de;"></span>
+        <span>🔒 <strong>Preview Only</strong> (24h Evaluation Window) • Powered by MyFolio</span>
       </div>
-      <a href="/subscribe?siteId=${siteId}" style="background: #22c55e; color: #000000; font-weight: 800; font-size: 0.88rem; padding: 10px 22px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
-        💳 Buy Subscription & Remove Watermark (From ₹149/mo) ➔
+      <a href="/#pricing" style="background: linear-gradient(135deg, #75c5de, #13708e); color: #08171c; font-weight: 800; font-size: 0.88rem; padding: 9px 20px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(117,197,222,0.4); transition: transform 0.2s ease;">
+        <span>Buy Build & Remove Watermark (From ₹149) ➔</span>
       </a>
     </div>
 
@@ -3806,14 +3814,16 @@ app.get('/p/:siteId', async (req, res) => {
             } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
               isLight = true;
             }
-            var targetColor = isLight ? 'rgba(0, 0, 0, 0.28)' : 'rgba(255, 255, 255, 0.28)';
+            var targetColor = isLight ? 'rgba(15, 23, 42, 0.44)' : 'rgba(255, 255, 255, 0.42)';
+            var boxBg = isLight ? 'rgba(255, 255, 255, 0.75)' : 'rgba(0, 0, 0, 0.60)';
             var box = overlay.querySelector('.watermark-stamp-box');
             if (box) {
               box.style.color = targetColor;
               box.style.borderColor = targetColor;
+              box.style.background = boxBg;
             }
-            var tickers = overlay.querySelectorAll('.watermark-peripheral-text');
-            tickers.forEach(function(el) { el.style.color = targetColor; });
+            var strips = overlay.querySelectorAll('.watermark-diagonal-strip');
+            strips.forEach(function(el) { el.style.color = targetColor; });
           } catch (e) {}
         }
         if (document.readyState === 'loading') {
@@ -3821,6 +3831,7 @@ app.get('/p/:siteId', async (req, res) => {
         } else {
           updateWatermarkLuminance();
         }
+        window.addEventListener('resize', updateWatermarkLuminance);
       })();
     </script>
     `;

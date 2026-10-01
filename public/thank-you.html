@@ -61,21 +61,9 @@
       color: #0A0A0A;
     }
 
-    .brand-mark {
-      width: 24px; height: 24px;
-      position: relative;
-      transform: rotate(12deg);
-      flex-shrink: 0;
-    }
-    .brand-mark span {
-      position: absolute;
-      width: 10.5px; height: 10.5px;
-      border-radius: 2.5px;
-    }
-    .brand-mark .sq-1 { top: 0; left: 0; background: #0A0A0A; }
-    .brand-mark .sq-2 { top: 0; right: 0; background: #5FA5F9; }
-    .brand-mark .sq-3 { bottom: 0; left: 0; background: #8E8E93; }
-    .brand-mark .sq-4 { bottom: 0; right: 0; background: #0A0A0A; }
+    .brand-logo-wrap { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-logo-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; }
+    .header-bar:hover .brand-logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 16px rgba(117, 197, 222, 0.5); }
 
     .brand-text {
       font-size: 1.25rem;
@@ -295,12 +283,12 @@
 
   <!-- Brand Masthead Link -->
   <a href="/" class="header-bar">
-    <div class="brand-mark">
-      <span class="sq-1"></span>
-      <span class="sq-2"></span>
-      <span class="sq-3"></span>
-      <span class="sq-4"></span>
-    </div>
+    <span class="brand-logo-wrap" aria-hidden="true">
+      <picture>
+        <source srcset="/assets/logo-3d.webp" type="image/webp">
+        <img src="/assets/logo-3d.png" alt="MyFolio logo" class="brand-logo-img" width="34" height="34" />
+      </picture>
+    </span>
     <div class="brand-text">myfolio<span>.</span></div>
   </a>
 

@@ -248,10 +248,10 @@ class HostingProvider {
       let html = fs.readFileSync(indexPath, 'utf8');
       
       // Strip watermark overlay and floating bar
-      html = html.replace(/<!-- DIAGONAL FRAMED BOX WATERMARK WITH SURROUNDING BOT USERNAME -->[\s\S]*?<!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->[\s\S]*?<\/script>/i, '');
-      html = html.replace(/<div id="preview-watermark-overlay"[\s\S]*?<\/div>\s*<\/div>/i, '');
-      html = html.replace(/<div id="preview-floating-bar"[\s\S]*?<\/div>/i, '');
-      html = html.replace(/<script>[\s\S]*?updateWatermarkLuminance[\s\S]*?<\/script>/i, '');
+      html = html.replace(/<!--[\s\S]*?WATERMARK OVERLAY[\s\S]*?-->[\s\S]*?<\/script>/gi, '');
+      html = html.replace(/<div id="preview-watermark-overlay"[\s\S]*?<\/div>\s*<\/div>/gi, '');
+      html = html.replace(/<div id="preview-floating-bar"[\s\S]*?<\/div>/gi, '');
+      html = html.replace(/<script>[\s\S]*?updateWatermarkLuminance[\s\S]*?<\/script>/gi, '');
 
       fs.writeFileSync(indexPath, html, 'utf8');
 
