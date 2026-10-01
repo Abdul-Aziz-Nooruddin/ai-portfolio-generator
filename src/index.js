@@ -218,6 +218,46 @@ app.use('/assets', (req, res, next) => {
   next();
 });
 
+// Dedicated High-Priority Favicon Middleware
+// Ensures the official MyFolio 3D logo is always served unconditionally with correct MIME types
+app.get([
+  '/favicon.ico',
+  '/assets/favicon.ico',
+  '/favicon.png',
+  '/favicon-32x32.png',
+  '/favicon-16x16.png',
+  '/favicon-48x48.png',
+  '/favicon.svg',
+  '/assets/favicon.png',
+  '/apple-touch-icon.png',
+  '/apple-touch-icon-precomposed.png'
+], (req, res) => {
+  const reqName = path.basename(req.path);
+  const candidates = [
+    path.join(process.cwd(), 'public', reqName),
+    path.join(process.cwd(), 'web', reqName),
+    path.join(process.cwd(), 'public', 'assets', reqName),
+    path.join(process.cwd(), 'web', 'assets', reqName)
+  ];
+
+  let filePath = candidates.find(f => fs.existsSync(f));
+  if (!filePath) {
+    filePath = path.join(process.cwd(), 'public', 'favicon.ico');
+  }
+
+  if (reqName.endsWith('.ico')) {
+    res.setHeader('Content-Type', 'image/x-icon');
+  } else if (reqName.endsWith('.png')) {
+    res.setHeader('Content-Type', 'image/png');
+  } else if (reqName.endsWith('.svg')) {
+    res.setHeader('Content-Type', 'image/svg+xml');
+  }
+
+  res.setHeader('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  return res.sendFile(filePath);
+});
+
 // Serve assets directly from web/assets and public/assets before domain rewrites
 app.use('/assets', express.static(path.join(process.cwd(), 'web', 'assets'), {
   maxAge: '30d',

@@ -307,9 +307,16 @@ class TemplateRegistry {
       // Graceful fallback if universal-scroll-motion is optional
     }
 
-    // Automatically inject official myfolio favicon if missing
-    if (html && !html.includes('rel="icon"')) {
-      html = html.replace('</head>', '  <link rel="icon" type="image/png" href="/assets/favicon.png">\n  <link rel="apple-touch-icon" href="/assets/favicon.png">\n</head>');
+    // Automatically inject official myfolio favicon into every template unconditionally
+    const officialFaviconTags = `  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">`;
+
+    if (html) {
+      // Remove any conflicting icon tags
+      html = html.replace(/<link[^>]*rel="[^"]*icon[^"]*"[^>]*>\s*/gi, '');
+      html = html.replace('</head>', `${officialFaviconTags}\n</head>`);
     }
 
     // Inject universal mobile responsive CSS into template
@@ -328,7 +335,15 @@ class TemplateRegistry {
    * Render Dedicated 404 Error State Page
    */
   static render404Page(siteId = '', candidateProfile = {}) {
-    return Jack3DCreatorTemplate.render404Page(siteId, candidateProfile);
+    let pageHtml = Jack3DCreatorTemplate.render404Page(siteId, candidateProfile);
+    const officialFaviconTags = `  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">`;
+    if (pageHtml && !pageHtml.includes('/favicon.ico')) {
+      pageHtml = pageHtml.replace('</head>', `${officialFaviconTags}\n</head>`);
+    }
+    return pageHtml;
   }
 }
 
