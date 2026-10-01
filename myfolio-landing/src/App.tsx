@@ -123,17 +123,28 @@ function Brand({ footer = false }: { footer?: boolean }) {
   return (
     <a className={`brand${footer ? ' brand-footer' : ''}`} href="#home" aria-label="MyFolio home">
       <span className="brand-logo-wrap" aria-hidden="true">
-        <picture>
-          <source srcSet="/assets/logo-3d.webp" type="image/webp" />
+        <video
+          className="brand-logo-img brand-logo-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          poster="/assets/logo-3d.png"
+          width="34"
+          height="34"
+          aria-hidden="true"
+        >
+          <source src="/assets/logo-animated.webm" type="video/webm" />
+          <source src="/assets/logo-animated.mp4" type="video/mp4" />
           <img
-            src="/assets/logo-3d.png"
+            src="/assets/logo-animated.webp"
             alt="MyFolio logo"
             className="brand-logo-img"
             width="34"
             height="34"
             loading="eager"
           />
-        </picture>
+        </video>
       </span>
       <span aria-hidden="true">myfolio<span className="brand-period">.</span></span>
     </a>
