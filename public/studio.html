@@ -993,6 +993,196 @@
       pointer-events: auto;
     }
 
+    /* ==============================
+       Username Selection Modal
+       ============================== */
+    #usernamePickerModal {
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      background: rgba(4, 6, 18, 0.9);
+      backdrop-filter: blur(18px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #usernamePickerModal.show {
+      display: flex;
+      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .upm-card {
+      background: linear-gradient(135deg, rgba(10, 16, 42, 0.98) 0%, rgba(4, 8, 28, 0.99) 100%);
+      border: 1px solid rgba(110, 168, 255, 0.5);
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 28px 70px rgba(0,0,0,0.9), 0 0 50px rgba(110, 168, 255, 0.2);
+      position: relative;
+    }
+    .upm-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.2), rgba(251, 191, 36, 0.1));
+      border: 1px solid rgba(234, 179, 8, 0.5);
+      color: #FCD34D;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      padding: 4px 10px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .upm-title {
+      font-family: var(--mf-font-display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .upm-sub {
+      font-size: 13px;
+      color: var(--mf-text-secondary);
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .upm-domain-row {
+      display: flex;
+      align-items: center;
+      background: rgba(5, 8, 23, 0.9);
+      border: 1.5px solid var(--mf-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    .upm-domain-row:focus-within {
+      border-color: rgba(110, 168, 255, 0.7);
+      box-shadow: 0 0 0 3px rgba(110, 168, 255, 0.12);
+    }
+    .upm-domain-prefix {
+      padding: 12px 14px;
+      font-family: var(--mf-font-mono);
+      font-size: 12.5px;
+      color: var(--mf-text-muted);
+      border-right: 1px solid var(--mf-border);
+      white-space: nowrap;
+      user-select: none;
+    }
+    #upmUsernameInput {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      padding: 12px 14px;
+      font-family: var(--mf-font-mono);
+      font-size: 13.5px;
+      color: #e2e8f0;
+      min-width: 0;
+    }
+    .upm-domain-suffix {
+      padding: 12px 14px;
+      font-family: var(--mf-font-mono);
+      font-size: 12.5px;
+      color: var(--mf-text-muted);
+      border-left: 1px solid var(--mf-border);
+      white-space: nowrap;
+      user-select: none;
+    }
+    .upm-check-btn {
+      width: 100%;
+      padding: 11px;
+      background: rgba(110, 168, 255, 0.12);
+      border: 1px solid rgba(110, 168, 255, 0.35);
+      border-radius: 10px;
+      color: #6EA8FF;
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 12px;
+      letter-spacing: 0.5px;
+    }
+    .upm-check-btn:hover { background: rgba(110, 168, 255, 0.22); border-color: rgba(110,168,255,0.6); }
+    .upm-status {
+      min-height: 20px;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: none;
+    }
+    .upm-status.available {
+      display: block;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+    }
+    .upm-status.taken {
+      display: block;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+    }
+    .upm-status.checking {
+      display: block;
+      background: rgba(110, 168, 255, 0.08);
+      border: 1px solid rgba(110, 168, 255, 0.25);
+      color: #93c5fd;
+    }
+    .upm-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    #upmConfirmBtn {
+      flex: 1;
+      padding: 13px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    #upmConfirmBtn.unlocked {
+      opacity: 1;
+      pointer-events: auto;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+    }
+    #upmConfirmBtn.unlocked:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.55);
+    }
+    #upmSkipBtn {
+      padding: 13px 18px;
+      background: transparent;
+      border: 1px solid var(--mf-border);
+      border-radius: 12px;
+      color: var(--mf-text-muted);
+      font-size: 12.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #upmSkipBtn:hover { border-color: rgba(255,255,255,0.2); color: #e2e8f0; }
+    .upm-note {
+      font-size: 11px;
+      color: var(--mf-text-muted);
+      text-align: center;
+      margin-top: 16px;
+      line-height: 1.5;
+    }
+
     /* Modal Toast for Synthesis Complete */
     .studio-toast-modal {
       position: fixed;
@@ -1119,12 +1309,11 @@
   <header class="studio-topbar">
     <div class="topbar-left">
       <a href="/dashboard" class="topbar-brand" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFF;">
-        <div class="brand-logo-mark" style="width:20px;height:20px;position:relative;transform:rotate(12deg);flex-shrink:0;">
-          <span style="position:absolute;top:0;left:0;width:8.5px;height:8.5px;border-radius:2px;background:#FFFFFF;"></span>
-          <span style="position:absolute;top:0;right:0;width:8.5px;height:8.5px;border-radius:2px;background:#5FA5F9;"></span>
-          <span style="position:absolute;bottom:0;left:0;width:8.5px;height:8.5px;border-radius:2px;background:#8E8E93;"></span>
-          <span style="position:absolute;bottom:0;right:0;width:8.5px;height:8.5px;border-radius:2px;background:#FFFFFF;"></span>
-        </div>
+        <video class="brand-logo-video" autoplay loop muted playsinline webkit-playsinline poster="/assets/logo-3d.png" width="24" height="24" aria-hidden="true" style="border-radius:50%; object-fit:cover; display:block; flex-shrink:0;">
+          <source src="/assets/logo-animated.webm" type="video/webm">
+          <source src="/assets/logo-animated.mp4" type="video/mp4">
+          <img src="/assets/logo-3d.png" alt="MyFolio logo" width="24" height="24" style="border-radius:50%;" />
+        </video>
         <span style="font-family:'Inter',sans-serif;font-weight:700;font-size:14px;letter-spacing:-0.02em;">myfolio<span style="color:#5FA5F9;">.</span> <span style="font-weight:400;color:#A0A0A0;font-size:11.5px;letter-spacing:0.04em;">STUDIO</span></span>
       </a>
       <span style="color:#333333; font-size:12px;">/</span>
@@ -1685,6 +1874,38 @@
             <span>Open Live Portfolio</span> &nearr;
           </a>
         </div>
+      </div>
+    </div>
+
+    <!-- Username Picker Modal (₹149/month Pro Plan) -->
+    <div id="usernamePickerModal" onclick="if(event.target===this) closeUsernamePicker()">
+      <div class="upm-card">
+        <div class="upm-badge">✦ Pro Plan · ₹149/month</div>
+        <div class="upm-title">Claim Your Custom Domain</div>
+        <p class="upm-sub">Choose your unique handle. Your portfolio will be permanently live at <strong style="color:#6EA8FF;">yourname.myfolio.tech</strong></p>
+
+        <div class="upm-domain-row">
+          <span class="upm-domain-prefix">https://</span>
+          <input type="text" id="upmUsernameInput" placeholder="yourname" maxlength="30"
+            oninput="onUpmInput()"
+            onkeydown="if(event.key==='Enter') checkUsernameAvailability()"
+          />
+          <span class="upm-domain-suffix">.myfolio.tech</span>
+        </div>
+        <button type="button" class="upm-check-btn" onclick="checkUsernameAvailability()">
+          Check Availability →
+        </button>
+        <div id="upmStatus" class="upm-status"></div>
+
+        <div class="upm-actions">
+          <button type="button" id="upmConfirmBtn" onclick="confirmUsernameAndPublish()">
+            Lock Username &amp; Publish Live
+          </button>
+          <button type="button" id="upmSkipBtn" onclick="skipUsernameAndPublish()">
+            Skip for now
+          </button>
+        </div>
+        <p class="upm-note">You can always claim your custom domain later from Profile → Settings.<br>Your portfolio will publish to a temporary URL if you skip.</p>
       </div>
     </div>
 
@@ -2316,57 +2537,108 @@
       }
     }
 
-    async function publishDraftPortfolio() {
+    // ── Username Picker State ────────────────────────────────────────
+    let _upmConfirmedUsername = null;
+    let _upmResolve = null;
+
+    function openUsernamePicker() {
+      _upmConfirmedUsername = null;
+      const inp = document.getElementById('upmUsernameInput');
+      const status = document.getElementById('upmStatus');
+      const confirm = document.getElementById('upmConfirmBtn');
+      if (inp) inp.value = '';
+      if (status) { status.className = 'upm-status'; status.textContent = ''; }
+      if (confirm) confirm.classList.remove('unlocked');
+      document.getElementById('usernamePickerModal').classList.add('show');
+      setTimeout(() => inp && inp.focus(), 100);
+      return new Promise(resolve => { _upmResolve = resolve; });
+    }
+
+    function closeUsernamePicker(result) {
+      document.getElementById('usernamePickerModal').classList.remove('show');
+      if (_upmResolve) { _upmResolve(result); _upmResolve = null; }
+    }
+
+    function onUpmInput() {
+      _upmConfirmedUsername = null;
+      const confirm = document.getElementById('upmConfirmBtn');
+      const status = document.getElementById('upmStatus');
+      if (confirm) confirm.classList.remove('unlocked');
+      if (status) { status.className = 'upm-status'; status.textContent = ''; }
+    }
+
+    async function checkUsernameAvailability() {
+      const inp = document.getElementById('upmUsernameInput');
+      const status = document.getElementById('upmStatus');
+      const confirm = document.getElementById('upmConfirmBtn');
+      const rawVal = (inp?.value || '').trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
+
+      if (!rawVal || rawVal.length < 3) {
+        if (status) { status.className = 'upm-status taken'; status.textContent = '⚠ Username must be at least 3 characters.'; }
+        return;
+      }
+      if (status) { status.className = 'upm-status checking'; status.textContent = '⏳ Checking availability...'; }
+      if (confirm) confirm.classList.remove('unlocked');
+      _upmConfirmedUsername = null;
+
+      try {
+        const r = await fetch(`/api/domain/verify-username?username=${encodeURIComponent(rawVal)}&siteId=${encodeURIComponent(currentDraftSiteId || '')}`, { credentials: 'include' });
+        const d = await r.json();
+        if (d.available) {
+          _upmConfirmedUsername = rawVal;
+          if (status) { status.className = 'upm-status available'; status.textContent = `✓ "${rawVal}.myfolio.tech" is available!`; }
+          if (confirm) confirm.classList.add('unlocked');
+        } else {
+          _upmConfirmedUsername = null;
+          if (status) { status.className = 'upm-status taken'; status.textContent = d.error || `✗ "${rawVal}" is not available.`; }
+          if (confirm) confirm.classList.remove('unlocked');
+        }
+      } catch (err) {
+        if (status) { status.className = 'upm-status taken'; status.textContent = '✗ Could not check availability. Try again.'; }
+      }
+    }
+
+    function confirmUsernameAndPublish() {
+      if (!_upmConfirmedUsername) return;
+      closeUsernamePicker({ username: _upmConfirmedUsername, skip: false });
+    }
+
+    function skipUsernameAndPublish() {
+      closeUsernamePicker({ username: null, skip: true });
+    }
+
+    // ── Core Execute Publish ─────────────────────────────────────────
+    async function _executePublish(chosenUsername) {
       const btn = document.getElementById('btnSubmitGenerate');
       const fluidBtnText = document.getElementById('fluidBtnText');
       const fluidBtnIcon = document.getElementById('fluidBtnIcon');
-
-      // If no draft generated yet, prompt user or trigger preview generation
-      if (!currentDraftSiteId) {
-        showToast('Generating portfolio preview first...', 'info');
-        const form = document.getElementById('portfolioGenerationForm');
-        if (form) form.requestSubmit();
-        return;
-      }
-
       try {
         if (btn) btn.disabled = true;
         if (fluidBtnText) fluidBtnText.textContent = 'Publishing...';
         if (fluidBtnIcon) fluidBtnIcon.textContent = '···';
         showToast('Publishing live...', 'info');
 
+        const payload = { siteId: currentDraftSiteId, handle: currentDraftSiteId || 'portfolio' };
+        if (chosenUsername) payload.customUsername = chosenUsername;
+
         const res = await fetch('/api/portfolio/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({
-            siteId: currentDraftSiteId,
-            handle: currentDraftSiteId || 'portfolio'
-          })
+          body: JSON.stringify(payload)
         });
-
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to publish live.');
 
         isPortfolioPublished = true;
         const liveSubdomain = data.liveUrl || (window.location.origin + (data.previewUrl || '/jack-3d'));
 
-        // Stepper: mark Step 5 PUBLISH completed
         const sPub = document.getElementById('stepIndicatorPublish');
-        if (sPub) {
-          sPub.classList.remove('ready-to-publish');
-          sPub.classList.add('completed');
-        }
-
-        // Update button to Live & Deployed
-        if (btn) {
-          btn.classList.remove('ready-to-publish');
-          btn.classList.add('fully-filled');
-        }
+        if (sPub) { sPub.classList.remove('ready-to-publish'); sPub.classList.add('completed'); }
+        if (btn) { btn.classList.remove('ready-to-publish'); btn.classList.add('fully-filled'); }
         if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
         if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
 
-        // Update URL bar to Live
         const urlDisplay = document.getElementById('generatedUrlText');
         if (urlDisplay) {
           urlDisplay.innerHTML = `<span style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">● LIVE</span> ${liveSubdomain}`;
@@ -2374,7 +2646,6 @@
         const openLiveBtn = document.getElementById('btnOpenGeneratedLive');
         if (openLiveBtn) openLiveBtn.href = liveSubdomain;
 
-        // Update draft banner in edit panel
         const draftBanner = document.getElementById('draftPublishBanner');
         if (draftBanner) {
           draftBanner.innerHTML = `
@@ -2387,12 +2658,9 @@
             </p>
           `;
         }
-
-        // Celebrate!
         if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 85 });
         showSynthesisModal(liveSubdomain);
-        showToast(' Successfully published live to ' + liveSubdomain + '!', 'success');
-
+        showToast('✦ Successfully published live to ' + liveSubdomain + '!', 'success');
       } catch (err) {
         if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
         if (fluidBtnIcon) fluidBtnIcon.textContent = '';
@@ -2400,6 +2668,34 @@
       } finally {
         if (btn) btn.disabled = false;
       }
+    }
+
+    async function publishDraftPortfolio() {
+      if (!currentDraftSiteId) {
+        showToast('Generating portfolio preview first...', 'info');
+        const form = document.getElementById('portfolioGenerationForm');
+        if (form) form.requestSubmit();
+        return;
+      }
+
+      // Show username picker for Pro plan users without a custom domain
+      let chosenUsername = null;
+      try {
+        const profileRes = await fetch('/api/user/profile', { credentials: 'include' });
+        if (profileRes.ok) {
+          const profile = await profileRes.json();
+          const isPro = profile?.plan === 'pro' || profile?.plan === 'all_access' ||
+                        profile?.subscription_status === 'active' ||
+                        profile?.allowance?.plan === 'pro';
+          const hasCustomDomain = !!profile?.customDomain;
+          if (isPro && !hasCustomDomain) {
+            const result = await openUsernamePicker();
+            chosenUsername = result?.username || null;
+          }
+        }
+      } catch (e) { /* proceed without picker on error */ }
+
+      await _executePublish(chosenUsername);
     }
 
     function handleTopPublishClick() {
@@ -2412,6 +2708,8 @@
         if (form) form.requestSubmit();
       }
     }
+
+
 
     window.addEventListener('DOMContentLoaded', () => {
       // Connect iframe to same-origin portfolio route on load

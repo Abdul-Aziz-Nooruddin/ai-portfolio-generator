@@ -670,27 +670,28 @@
         greetingEl.textContent = `COMMAND CENTER // ${displayName.toUpperCase()}`;
       }
 
-      // Check if user has generated or published any portfolio
-      const hasLivePortfolio = Boolean((portfolios && portfolios.length > 0) || (data.siteId && data.siteId !== 'null'));
+      // A portfolio is truly "live" only if it has a real custom subdomain (not just a /p/ preview URL)
+      const hasAnyPortfolio = Boolean(portfolios && portfolios.length > 0);
+      const hasLivePortfolio = hasAnyPortfolio && portfolios.some(p => p.subdomain && !p.subdomain.startsWith('/'));
+      const firstLive = hasLivePortfolio ? portfolios.find(p => p.subdomain && !p.subdomain.startsWith('/')) : null;
+      const firstDraft = hasAnyPortfolio ? portfolios[0] : null;
+
       const heroLive = document.getElementById('heroLiveArtifact');
       const heroEmpty = document.getElementById('heroEmptyArtifact');
       const heroHeadline = document.getElementById('heroHeadline');
       const origin = window.location.origin;
 
       if (hasLivePortfolio) {
-        const activeSite = (portfolios && portfolios.length > 0) ? portfolios[0] : null;
-        const siteHandle = activeSite?.handle || activeSite?.siteId || data.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
-        currentSiteUrl = `${origin}/p/${siteHandle}`;
+        const activeSite = firstLive;
+        const siteHandle = activeSite?.handle || activeSite?.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
+        currentSiteUrl = activeSite?.subdomain?.startsWith('http') ? activeSite.subdomain : `https://${activeSite.subdomain || siteHandle + '.myfolio.tech'}`;
 
         if (heroHeadline) heroHeadline.textContent = 'Your portfolio is live.';
         if (heroLive) heroLive.style.display = 'flex';
         if (heroEmpty) heroEmpty.style.display = 'none';
 
         const urlTextEl = document.getElementById('portfolioUrlText');
-        if (urlTextEl) {
-          urlTextEl.textContent = currentSiteUrl;
-          urlTextEl.href = currentSiteUrl;
-        }
+        if (urlTextEl) { urlTextEl.textContent = currentSiteUrl; urlTextEl.href = currentSiteUrl; }
         const openBtn = document.getElementById('btnOpenLive');
         if (openBtn) openBtn.href = currentSiteUrl;
 
@@ -698,17 +699,37 @@
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
 
         const subVal = document.getElementById('statusSubdomainVal');
-        if (subVal) {
-          subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
-        }
+        if (subVal) subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
         const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) {
-          uniVal.textContent = activeSite?.universeKey || 'Jack 3D / Nadia';
-        }
+        if (uniVal) uniVal.textContent = activeSite?.universeKey || 'Jack 3D / Nadia';
         const readyVal = document.getElementById('statusReadinessVal');
-        if (readyVal) {
-          readyVal.textContent = '100% Ready';
-        }
+        if (readyVal) readyVal.textContent = '100% Ready';
+
+      } else if (hasAnyPortfolio) {
+        // Has a draft/preview but not yet published to a live subdomain
+        const draft = firstDraft;
+        const draftHandle = draft?.siteId || draft?.handle || 'preview';
+        currentSiteUrl = `${origin}/p/${draftHandle}`;
+
+        if (heroHeadline) heroHeadline.textContent = 'Draft preview ready — publish to go live.';
+        if (heroLive) heroLive.style.display = 'flex';
+        if (heroEmpty) heroEmpty.style.display = 'none';
+
+        const urlTextEl = document.getElementById('portfolioUrlText');
+        if (urlTextEl) { urlTextEl.textContent = currentSiteUrl + ' (Preview)'; urlTextEl.href = currentSiteUrl; }
+        const openBtn = document.getElementById('btnOpenLive');
+        if (openBtn) openBtn.href = currentSiteUrl;
+
+        const deleteBtn = document.getElementById('btnDeletePortfolio');
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+
+        const subVal = document.getElementById('statusSubdomainVal');
+        if (subVal) subVal.textContent = 'Pending publish';
+        const uniVal = document.getElementById('statusUniverseVal');
+        if (uniVal) uniVal.textContent = draft?.universeKey || 'Jack 3D / Nadia';
+        const readyVal = document.getElementById('statusReadinessVal');
+        if (readyVal) readyVal.textContent = 'Draft Ready';
+
       } else {
         if (heroHeadline) heroHeadline.textContent = 'Build your 3D portfolio.';
         if (heroLive) heroLive.style.display = 'none';

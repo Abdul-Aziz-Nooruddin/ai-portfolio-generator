@@ -1770,7 +1770,7 @@ app.post(
 // Dedicated Publish Endpoint: Promotes a generated preview draft to live production
 app.post('/api/portfolio/publish', async (req, res) => {
   try {
-    const { siteId, handle } = req.body;
+    const { siteId, handle, customUsername } = req.body;
     if (!siteId) {
       return res.status(400).json({ error: 'siteId is required to publish.' });
     }
@@ -1807,13 +1807,19 @@ app.post('/api/portfolio/publish', async (req, res) => {
       return res.status(500).json({ error: 'Draft index.html is missing.' });
     }
 
-    const effectiveHandle = (handle || meta.handle || 'abdulaziz').toLowerCase().trim();
-    const effectiveUserId = req.user?.id || meta.userId || 'abdulaziz_founder';
-    const isVipFounder = effectiveHandle === 'abdulaziz' || effectiveHandle === 'aziz' || effectiveUserId === 'abdulaziz_founder';
+    const userEmail = (req.user?.email || '').toLowerCase().trim();
+    const isVipFounder = userEmail === 'abdulaziznoor9876@gmail.com' || req.user?.id === 'abdulaziz_founder';
+    // customUsername (from Pro plan username picker) takes priority over handle/meta fields
+    const rawHandle = customUsername || handle || meta.handle || req.user?.username || (isVipFounder ? 'abdulaziz' : siteId);
+    const effectiveHandle = String(rawHandle).toLowerCase().trim().replace(/[^a-z0-9-_]/g, '').slice(0, 30) || siteId;
+    const effectiveUserId = req.user?.id || meta.userId || (isVipFounder ? 'abdulaziz_founder' : 'user_' + siteId);
     const universeKey = meta.universeKey || 'jack-3d-creator';
 
-    // Promote to published targets: /abdulaziz, /aziz, /<handle>
-    const handlesToSync = Array.from(new Set(['abdulaziz', 'aziz', effectiveHandle]));
+    // Promote to published targets: founder gets abdulaziz & aziz; other users ONLY get their chosen effectiveHandle
+    const handlesToSync = isVipFounder 
+      ? Array.from(new Set(['abdulaziz', 'aziz', effectiveHandle]))
+      : [effectiveHandle];
+
     for (const h of handlesToSync) {
       const hDir = path.join(sitesBaseDir, h);
       await fs.promises.mkdir(hDir, { recursive: true });
@@ -1835,26 +1841,28 @@ app.post('/api/portfolio/publish', async (req, res) => {
     }
 
     // Deploy to hosting provider
-    await hostingProvider.deploy('abdulaziz', siteHtml, profile, true).catch(() => {});
-    if (effectiveHandle !== 'abdulaziz') {
+    if (isVipFounder) {
+      await hostingProvider.deploy('abdulaziz', siteHtml, profile, true).catch(() => {});
+      if (effectiveHandle !== 'abdulaziz') {
+        await hostingProvider.deploy(effectiveHandle, siteHtml, profile, true).catch(() => {});
+      }
+    } else {
       await hostingProvider.deploy(effectiveHandle, siteHtml, profile, true).catch(() => {});
     }
 
     // Update custom domain service
     if (customDomainService) {
-      const targetDomains = [
-        'abdulaziz.myfolio.tech',
-        'aziz.myfolio.tech',
-        'abdulaziz.localhost',
-        'aziz.localhost'
-      ];
-      if (effectiveHandle !== 'abdulaziz') {
+      const targetDomains = [];
+      if (isVipFounder) {
+        targetDomains.push('abdulaziz.myfolio.tech', 'aziz.myfolio.tech', 'abdulaziz.localhost', 'aziz.localhost');
+      }
+      if (!isVipFounder || effectiveHandle !== 'abdulaziz') {
         targetDomains.push(`${effectiveHandle}.myfolio.tech`, `${effectiveHandle}.localhost`);
       }
       for (const d of targetDomains) {
         customDomainService.domainCache[d] = {
           domain: d,
-          handle: 'abdulaziz',
+          handle: effectiveHandle,
           siteId: siteId,
           universeKey: universeKey,
           userId: effectiveUserId,
@@ -2102,10 +2110,64 @@ app.post('/api/web/verify-payment', async (req, res) => {
       all_access: 14900
     };
     const expectedAmount = PRICING_MAP[String(plan).toLowerCase()] || 14900;
+    const requestedUsername = (req.body.username || req.body.chosenSubdomain || '').toLowerCase().trim().replace(/[^a-z0-9-_]/g, '');
+
+    // Helper: binds custom <username>.myfolio.tech domain and updates filesystem & cache
+    const bindSubdomain = async (targetSiteId, usernameHandle, ownerUserId) => {
+      if (!usernameHandle || usernameHandle.length < 2) return null;
+      try {
+        if (customDomainService) {
+          await customDomainService.claimSubdomain(targetSiteId, usernameHandle, ownerUserId);
+        }
+        const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+        const srcDir = path.join(sitesBaseDir, targetSiteId);
+        const targetDir = path.join(sitesBaseDir, usernameHandle);
+        if (fs.existsSync(srcDir)) {
+          await fs.promises.mkdir(targetDir, { recursive: true });
+          if (fs.existsSync(path.join(srcDir, 'index.html'))) {
+            await fs.promises.copyFile(path.join(srcDir, 'index.html'), path.join(targetDir, 'index.html'));
+          }
+          if (fs.existsSync(path.join(srcDir, 'profile.json'))) {
+            await fs.promises.copyFile(path.join(srcDir, 'profile.json'), path.join(targetDir, 'profile.json'));
+          }
+          const metaPath = path.join(srcDir, 'meta.json');
+          let meta = {};
+          if (fs.existsSync(metaPath)) {
+            try { meta = JSON.parse(fs.readFileSync(metaPath, 'utf8')); } catch (e) {}
+          }
+          meta.isPaid = true;
+          meta.isPublished = true;
+          meta.handle = usernameHandle;
+          meta.subdomain = `${usernameHandle}.myfolio.tech`;
+          await fs.promises.writeFile(metaPath, JSON.stringify(meta, null, 2), 'utf8');
+          await fs.promises.writeFile(path.join(targetDir, 'meta.json'), JSON.stringify(meta, null, 2), 'utf8');
+        }
+
+        if (dbService?.client) {
+          await dbService.client.from('sites').upsert({
+            provider_site_id: targetSiteId,
+            custom_domain: `${usernameHandle}.myfolio.tech`,
+            user_id: ownerUserId,
+            status: 'active',
+            updated_at: new Date().toISOString()
+          }).catch(() => {});
+        }
+
+        return `https://${usernameHandle}.myfolio.tech`;
+      } catch (err) {
+        console.warn('[BIND SUBDOMAIN ERROR]', err.message);
+        return null;
+      }
+    };
 
     // Test runner mock payment support
     if ((process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') && razorpay_payment_id.startsWith('pay_mock_')) {
       const deployResult = await hostingProvider.approveAndUnwatermark(siteId);
+      let liveUrl = deployResult.deployUrl || `/p/${siteId}`;
+      if (requestedUsername) {
+        const bound = await bindSubdomain(siteId, requestedUsername, req.user?.id || 'mock_user');
+        if (bound) liveUrl = bound;
+      }
       return res.json({
         success: true,
         approved: true,
@@ -2113,7 +2175,8 @@ app.post('/api/web/verify-payment', async (req, res) => {
         paymentId: razorpay_payment_id,
         amount: expectedAmount,
         plan,
-        liveUrl: deployResult.deployUrl || `/p/${siteId}`,
+        liveUrl,
+        domain: requestedUsername ? `${requestedUsername}.myfolio.tech` : null,
         siteId
       });
     }
@@ -2121,11 +2184,17 @@ app.post('/api/web/verify-payment', async (req, res) => {
     if (!razorpayService) {
       // Mock / Dev approval fallback
       const unwatermarked = await hostingProvider.approveAndUnwatermark(siteId);
+      let liveUrl = unwatermarked.deployUrl || `/p/${siteId}`;
+      if (requestedUsername) {
+        const bound = await bindSubdomain(siteId, requestedUsername, req.user?.id || 'dev_user');
+        if (bound) liveUrl = bound;
+      }
       return res.json({
         success: true,
         approved: true,
         message: 'Payment approved (Development Mode)',
-        liveUrl: unwatermarked.deployUrl || `/p/${siteId}`,
+        liveUrl,
+        domain: requestedUsername ? `${requestedUsername}.myfolio.tech` : null,
         plan
       });
     }
@@ -2163,20 +2232,136 @@ app.post('/api/web/verify-payment', async (req, res) => {
 
     // 3. Remove preview watermark and re-deploy cleanly
     const deployResult = await hostingProvider.approveAndUnwatermark(siteId);
+    let finalLiveUrl = deployResult.deployUrl || `/p/${siteId}`;
+
+    if (requestedUsername) {
+      const bound = await bindSubdomain(siteId, requestedUsername, userId);
+      if (bound) finalLiveUrl = bound;
+    }
 
     res.json({
       success: true,
       approved: true,
-      message: 'Payment verified and approved! Preview watermark has been removed.',
+      message: 'Payment verified and approved! Your portfolio is live.',
       paymentId: verification.paymentId,
       amount: verification.amount,
       plan: verification.plan,
-      liveUrl: deployResult.deployUrl || `/p/${siteId}`,
+      liveUrl: finalLiveUrl,
+      domain: requestedUsername ? `${requestedUsername}.myfolio.tech` : null,
       siteId
     });
   } catch (err) {
     console.error('[WEB API] verify-payment error:', err.message);
     res.status(400).json({ error: err.message || 'Payment verification failed' });
+  }
+});
+
+// ==========================================
+// Subdomain Availability Verification API
+// ==========================================
+app.all(['/api/domain/verify-username', '/api/user/check-username'], async (req, res) => {
+  try {
+    const rawUsername = req.query.username || req.body?.username || '';
+    const cleanHandle = String(rawUsername).toLowerCase().trim()
+      .replace(/[^a-z0-9-_]/g, '')
+      .replace(/^[-_]+|[-_]+$/g, '');
+
+    if (!cleanHandle || cleanHandle.length === 0) {
+      return res.status(200).json({
+        available: false,
+        error: 'Username cannot be empty.'
+      });
+    }
+
+    if (cleanHandle.length < 3) {
+      return res.status(200).json({
+        available: false,
+        error: 'Username must be at least 3 characters.'
+      });
+    }
+
+    if (cleanHandle.length > 30) {
+      return res.status(200).json({
+        available: false,
+        error: 'Username cannot exceed 30 characters.'
+      });
+    }
+
+    const reserved = [
+      'admin', 'api', 'www', 'mail', 'ftp', 'app', 'cname', 'dev', 'test',
+      'status', 'auth', 'login', 'signup', 'dashboard', 'studio', 'profile',
+      'nadia', 'jack-3d', 'alex-rivers', 'alex', 'root', 'support', 'billing', 'myfolio'
+    ];
+
+    if (reserved.includes(cleanHandle)) {
+      return res.status(200).json({
+        available: false,
+        error: `"${cleanHandle}" is a reserved address. Please choose another handle.`
+      });
+    }
+
+    const isFounder = req.user?.email && req.user.email.toLowerCase().trim() === 'abdulaziznoor9876@gmail.com';
+    if ((cleanHandle === 'abdulaziz' || cleanHandle === 'aziz') && !isFounder) {
+      return res.status(200).json({
+        available: false,
+        error: `"${cleanHandle}" is reserved for the founder.`
+      });
+    }
+
+    // Check DB users table
+    if (dbService?.getUserByUsername) {
+      const existingUser = await dbService.getUserByUsername(cleanHandle);
+      if (existingUser && req.user && existingUser.id !== req.user.id) {
+        return res.status(200).json({
+          available: false,
+          error: `"${cleanHandle}" is already taken by another registered user.`
+        });
+      }
+    }
+
+    // Check custom domain cache
+    if (customDomainService?.domainCache) {
+      const fullDomain = `${cleanHandle}.myfolio.tech`;
+      const locDomain = `${cleanHandle}.localhost`;
+      const cached = customDomainService.domainCache[fullDomain] || customDomainService.domainCache[locDomain];
+      if (cached) {
+        const isOwner = req.user && cached.userId === req.user.id;
+        const isSiteOwner = req.query.siteId && cached.siteId === req.query.siteId;
+        if (!isOwner && !isSiteOwner) {
+          return res.status(200).json({
+            available: false,
+            error: `"${cleanHandle}.myfolio.tech" is already registered by another portfolio.`
+          });
+        }
+      }
+    }
+
+    // Check public/sites directory
+    const sitesBaseDir = path.join(process.cwd(), 'public', 'sites');
+    const targetDir = path.join(sitesBaseDir, cleanHandle);
+    if (fs.existsSync(targetDir)) {
+      try {
+        const metaPath = path.join(targetDir, 'meta.json');
+        if (fs.existsSync(metaPath)) {
+          const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+          if (meta.userId && req.user && meta.userId !== req.user.id) {
+            return res.status(200).json({
+              available: false,
+              error: `"${cleanHandle}.myfolio.tech" is already taken.`
+            });
+          }
+        }
+      } catch (e) {}
+    }
+
+    return res.json({
+      available: true,
+      username: cleanHandle,
+      domain: `${cleanHandle}.myfolio.tech`,
+      message: `✓ "${cleanHandle}.myfolio.tech" is available!`
+    });
+  } catch (err) {
+    return res.status(500).json({ available: false, error: err.message });
   }
 });
 
