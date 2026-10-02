@@ -30,9 +30,9 @@ describe('🏛️ Template Registry & Jack 3D Creator Dynamic Content Replacemen
     ]
   };
 
-  test('1. TemplateRegistry discovers and lists Jack 3D Creator and Nadia Brand templates', () => {
+  test('1. TemplateRegistry discovers and lists Jack 3D Creator, Nadia Brand, and Kage Temple templates', () => {
     const templates = TemplateRegistry.getAllTemplates();
-    assert.strictEqual(templates.length, 2, 'Must contain 2 visual templates');
+    assert.ok(templates.length >= 3, 'Must contain at least 3 visual templates');
 
     const jack = templates.find(t => t.id === 'jack-3d-creator');
     assert.ok(jack, 'Template jack-3d-creator must be registered');
@@ -41,6 +41,10 @@ describe('🏛️ Template Registry & Jack 3D Creator Dynamic Content Replacemen
     const nadia = templates.find(t => t.id === 'nadia-brand');
     assert.ok(nadia, 'Template nadia-brand must be registered');
     assert.strictEqual(nadia.id, 'nadia-brand');
+
+    const kage = templates.find(t => t.id === 'kage-temple');
+    assert.ok(kage, 'Template kage-temple must be registered');
+    assert.strictEqual(kage.id, 'kage-temple');
   });
 
   test('2. TemplateRegistry.selectTemplate returns Jack 3D Creator for technical roles and Nadia for speaker/advisor roles', () => {

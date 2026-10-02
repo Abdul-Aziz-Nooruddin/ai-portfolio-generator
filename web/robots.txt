@@ -8,11 +8,13 @@ Allow: /$
 Allow: /studio
 Allow: /jack-3d
 Allow: /nadia
+Allow: /kage
 Allow: /about
 Allow: /contact
 Allow: /terms
 Allow: /privacy
 Allow: /assets/
+Allow: /landing-pages/
 Allow: /sitemap.xml
 Allow: /llms.txt
 
@@ -53,11 +55,13 @@ Allow: /$
 Allow: /studio
 Allow: /jack-3d
 Allow: /nadia
+Allow: /kage
 Allow: /about
 Allow: /contact
 Allow: /terms
 Allow: /privacy
 Allow: /assets/
+Allow: /landing-pages/
 Allow: /sitemap.xml
 Disallow: /api/
 Disallow: /auth
@@ -82,11 +86,13 @@ Allow: /$
 Allow: /studio
 Allow: /jack-3d
 Allow: /nadia
+Allow: /kage
 Allow: /about
 Allow: /contact
 Allow: /terms
 Allow: /privacy
 Allow: /assets/
+Allow: /landing-pages/
 Allow: /sitemap.xml
 
 # AI & Generative Search Engines (GEO - ChatGPT Search, Perplexity, Claude)

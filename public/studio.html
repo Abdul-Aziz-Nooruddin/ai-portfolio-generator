@@ -1405,7 +1405,7 @@
         <div class="readiness-box" style="flex-direction:column; align-items:stretch; gap:6px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <span style="font-size:10.5px; font-family:var(--mf-font-mono); color:var(--mf-text-muted);">BUILD ALLOWANCE</span>
-            <span id="allowanceCountText" style="font-size:11px; font-weight:700; color:var(--mf-accent-blue);">5 / 5 Builds</span>
+            <span id="allowanceCountText" style="font-size:11px; font-weight:700; color:var(--mf-accent-blue);">3 / 3 Builds</span>
           </div>
           <div style="height:4px; background:rgba(255,255,255,0.08); border-radius:2px; overflow:hidden;">
             <div id="allowanceProgressBar" style="width:100%; height:100%; background:linear-gradient(90deg, #6EA8FF, #9B7CFF); border-radius:2px; transition:width 0.3s;"></div>
@@ -1930,9 +1930,55 @@
     let isPortfolioPublished = false;
     const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
     const ALLOWANCE_CONFIG = {
-      WEEKLY_TOTAL: 5,
+      WEEKLY_TOTAL: 3,
       CYCLE_DURATION_MS: 7 * 24 * 60 * 60 * 1000
     };
+
+    function getAllowanceState() {
+      try {
+        const raw = localStorage.getItem('myfolio_weekly_allowance_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          const now = Date.now();
+          if (now - (parsed.cycleStart || 0) < ALLOWANCE_CONFIG.CYCLE_DURATION_MS) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+      const fresh = { used: 0, cycleStart: Date.now() };
+      try { localStorage.setItem('myfolio_weekly_allowance_v1', JSON.stringify(fresh)); } catch (e) {}
+      return fresh;
+    }
+
+    function updateAllowanceUI() {
+      const state = getAllowanceState();
+      const total = ALLOWANCE_CONFIG.WEEKLY_TOTAL;
+      const used = Math.min(total, state.used || 0);
+      const remaining = Math.max(0, total - used);
+      const pct = Math.round((remaining / total) * 100);
+
+      const countText = document.getElementById('allowanceCountText');
+      const bar = document.getElementById('allowanceProgressBar');
+
+      if (countText) {
+        countText.textContent = `${remaining} / ${total} Builds`;
+      }
+      if (bar) {
+        bar.style.width = `${pct}%`;
+        if (pct < 30) {
+          bar.style.background = 'linear-gradient(90deg, #FF5A65, #FF8E96)';
+        } else {
+          bar.style.background = 'linear-gradient(90deg, #6EA8FF, #9B7CFF)';
+        }
+      }
+    }
+
+    function recordBuildUsage() {
+      const state = getAllowanceState();
+      state.used = (state.used || 0) + 1;
+      try { localStorage.setItem('myfolio_weekly_allowance_v1', JSON.stringify(state)); } catch (e) {}
+      updateAllowanceUI();
+    }
 
     function setDeviceView(mode, btn) {
       const screen = document.getElementById('viewportScreen');
@@ -2120,6 +2166,8 @@
       const sk = document.getElementById('manualSkills')?.value.trim();
       const role = document.getElementById('manualRole')?.value.trim();
       const bio = document.getElementById('manualBio')?.value.trim();
+      const hasResume = !!uploadedResumeBase64;
+      const hasGh = !!gh;
 
       const chkGh = document.getElementById('chkGithub');
       const chkProj = document.getElementById('chkProjects');
@@ -2129,24 +2177,29 @@
 
       let completedCount = 0;
 
+      // 1. GitHub connected check
       if (chkGh) {
-        if (gh) { chkGh.classList.add('checked'); completedCount++; }
+        if (hasGh) { chkGh.classList.add('checked'); completedCount++; }
         else { chkGh.classList.remove('checked'); }
       }
+      // 2. Projects found check (from manual inputs, parsed resume, or GitHub profile ingest)
       if (chkProj) {
-        if (p1) { chkProj.classList.add('checked'); completedCount++; }
+        if (p1 || hasResume || hasGh) { chkProj.classList.add('checked'); completedCount++; }
         else { chkProj.classList.remove('checked'); }
       }
+      // 3. Skills detected check (from manual skills, parsed resume, or GitHub language detection)
       if (chkSk) {
-        if (sk) { chkSk.classList.add('checked'); completedCount++; }
+        if (sk || hasResume || hasGh) { chkSk.classList.add('checked'); completedCount++; }
         else { chkSk.classList.remove('checked'); }
       }
+      // 4. Experience detected check (from manual role, parsed resume, or GitHub profile activity)
       if (chkExp) {
-        if (role) { chkExp.classList.add('checked'); completedCount++; }
+        if (role || hasResume || hasGh) { chkExp.classList.add('checked'); completedCount++; }
         else { chkExp.classList.remove('checked'); }
       }
+      // 5. Resume / narrative bio analyzed check
       if (chkRes) {
-        if (uploadedResumeBase64 || bio) { chkRes.classList.add('checked'); completedCount++; }
+        if (hasResume || bio || hasGh) { chkRes.classList.add('checked'); completedCount++; }
         else { chkRes.classList.remove('checked'); }
       }
 
@@ -2210,6 +2263,7 @@
         const fullDataUrl = e.target.result;
         uploadedResumeBase64 = fullDataUrl.split(',')[1] || fullDataUrl;
         uploadedResumeMime = file.type || 'application/pdf';
+        updateConfirmationChecks();
 
         try {
           const res = await fetch('/api/web/parse-resume', {
@@ -2226,39 +2280,52 @@
             const d = json.data || {};
             if (d.name && document.getElementById('manualFullName')) document.getElementById('manualFullName').value = d.name;
             if ((d.title || d.role) && document.getElementById('manualRole')) document.getElementById('manualRole').value = d.title || d.role;
-            if ((d.bio || d.summary) && document.getElementById('manualBio')) document.getElementById('manualBio').value = d.bio || d.summary;
-            if (Array.isArray(d.skills) && document.getElementById('manualSkills')) document.getElementById('manualSkills').value = d.skills.join(', ');
-
-            if (Array.isArray(d.projects) && d.projects.length > 0) {
-              if (d.projects[0]) {
-                if (d.projects[0].name && document.getElementById('proj1Name')) document.getElementById('proj1Name').value = d.projects[0].name;
-                if (d.projects[0].tech && document.getElementById('proj1Tech')) document.getElementById('proj1Tech').value = Array.isArray(d.projects[0].tech) ? d.projects[0].tech.join(', ') : d.projects[0].tech;
-                if (d.projects[0].desc && document.getElementById('proj1Desc')) document.getElementById('proj1Desc').value = d.projects[0].desc;
-              }
-              if (d.projects[1]) {
-                if (d.projects[1].name && document.getElementById('proj2Name')) document.getElementById('proj2Name').value = d.projects[1].name;
-                if (d.projects[1].tech && document.getElementById('proj2Tech')) document.getElementById('proj2Tech').value = Array.isArray(d.projects[1].tech) ? d.projects[1].tech.join(', ') : d.projects[1].tech;
-                if (d.projects[1].desc && document.getElementById('proj2Desc')) document.getElementById('proj2Desc').value = d.projects[1].desc;
-              }
-              if (d.projects[2]) {
-                if (d.projects[2].name && document.getElementById('proj3Name')) document.getElementById('proj3Name').value = d.projects[2].name;
-                if (d.projects[2].tech && document.getElementById('proj3Tech')) document.getElementById('proj3Tech').value = Array.isArray(d.projects[2].tech) ? d.projects[2].tech.join(', ') : d.projects[2].tech;
-                if (d.projects[2].desc && document.getElementById('proj3Desc')) document.getElementById('proj3Desc').value = d.projects[2].desc;
-              }
+            if ((d.bio || d.summary || d.tagline) && document.getElementById('manualBio')) document.getElementById('manualBio').value = d.bio || d.summary || d.tagline;
+            
+            // Extract and format skills
+            let skillsText = '';
+            if (Array.isArray(d.skills)) {
+              skillsText = d.skills.join(', ');
+            } else if (typeof d.tech_stack === 'string' && d.tech_stack) {
+              skillsText = d.tech_stack;
+            } else if (d.skills_by_category && typeof d.skills_by_category === 'object') {
+              skillsText = Object.values(d.skills_by_category).flat().join(', ');
+            }
+            if (skillsText && document.getElementById('manualSkills')) {
+              document.getElementById('manualSkills').value = skillsText;
             }
 
-            if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
-            if (help) help.innerHTML = `<span style="color:var(--mf-success);">✦ AI Extracted &amp; Populated</span>`;
+            // Extract and populate projects
+            if (Array.isArray(d.projects) && d.projects.length > 0) {
+              d.projects.forEach((proj, idx) => {
+                const i = idx + 1;
+                const nameEl = document.getElementById(`proj${i}Name`);
+                const techEl = document.getElementById(`proj${i}Tech`);
+                const descEl = document.getElementById(`proj${i}Desc`);
+                const ghEl = document.getElementById(`proj${i}Github`);
+                const liveEl = document.getElementById(`proj${i}Live`);
+                if (nameEl && (proj.name || proj.title)) nameEl.value = proj.name || proj.title;
+                if (techEl && (proj.tech_stack || proj.tech)) techEl.value = Array.isArray(proj.tech_stack || proj.tech) ? (proj.tech_stack || proj.tech).join(', ') : (proj.tech_stack || proj.tech);
+                if (descEl && (proj.description || proj.desc)) descEl.value = proj.description || proj.desc;
+                if (ghEl && (proj.github || proj.repo)) ghEl.value = proj.github || proj.repo;
+                if (liveEl && (proj.live || proj.url || proj.demo)) liveEl.value = proj.live || proj.url || proj.demo;
+              });
+            }
+
+            if (label) label.innerHTML = `<strong>${file.name}</strong>`;
+            if (help) help.innerHTML = `<span style="color:var(--mf-success, #22c55e);">✦ AI Extracted &amp; Populated</span>`;
             showToast(`Resume "${file.name}" parsed! Skills & projects updated.`, 'success');
           } else {
-            if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
+            if (label) label.innerHTML = `<strong>${file.name}</strong>`;
             if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
             showToast(`Resume "${file.name}" attached successfully!`, 'info');
           }
         } catch (err) {
-          if (label) label.innerHTML = ` <strong>${file.name}</strong>`;
+          if (label) label.innerHTML = `<strong>${file.name}</strong>`;
           if (help) help.innerHTML = `<span style="color:var(--mf-accent-cyan, #38bdf8);">Attached for synthesis</span>`;
           showToast(`Resume "${file.name}" attached!`, 'info');
+        } finally {
+          updateConfirmationChecks();
         }
       };
       reader.readAsDataURL(file);
@@ -2501,6 +2568,7 @@
         // Store draft site ID
         currentDraftSiteId = data.siteId;
         isPortfolioPublished = false;
+        recordBuildUsage();
 
         // Reset progress bar & transition to "Publish Live" state
         clearInterval(progressInterval);
@@ -2737,6 +2805,9 @@
       if (iframe) {
         iframe.src = '/jack-3d?embed=1';
       }
+
+      // Initialize weekly allowance meter
+      updateAllowanceUI();
 
       // Initial validation of confirmation summary checklist
       updateConfirmationChecks();

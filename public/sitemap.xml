@@ -43,12 +43,24 @@
   <!-- Live Template Demo: Nadia Personal Brand (Speaker & Advisor) -->
   <url>
     <loc>https://myfolio.tech/nadia</loc>
-    <lastmod>2026-09-29</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
     <image:image>
       <image:loc>https://myfolio.tech/assets/nadia_bio.jpg</image:loc>
       <image:title>Nadia Personal Brand Executive Template</image:title>
+    </image:image>
+  </url>
+
+  <!-- Live Template Demo: Kage Kyoto Temple (ThreeUI Shinto Mountain Sanctuary) -->
+  <url>
+    <loc>https://myfolio.tech/kage</loc>
+    <lastmod>2026-10-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://myfolio.tech/landing-pages/secret-pathways-assets/temple_entrance.webp</image:loc>
+      <image:title>Kage Kyoto Temple 3D Spatial Portfolio Template</image:title>
     </image:image>
   </url>
 

@@ -12,10 +12,10 @@ test('⚡ Weekly Allowance Engine & Generated Projects Below Generate Button', a
     assert.ok(studioHtml.includes('id="allowanceRemainingText"'), 'Must have #allowanceRemainingText');
     assert.ok(studioHtml.includes('id="allowanceResetCountdown"'), 'Must have #allowanceResetCountdown');
     assert.ok(studioHtml.includes('id="allowanceProgressBar"'), 'Must have #allowanceProgressBar');
-    assert.ok(studioHtml.includes('id="btnSubmitGenerate"'), 'Must have #btnSubmitGenerate');
+    assert.ok(studioHtml.includes('id="btnMainGenerateAction"') || studioHtml.includes('id="btnSubmitGenerate"'), 'Must have generate button');
 
     const meterIdx = studioHtml.indexOf('id="allowanceMeterCard"');
-    const btnIdx = studioHtml.indexOf('id="btnSubmitGenerate"');
+    const btnIdx = studioHtml.indexOf('id="btnMainGenerateAction"');
     assert.ok(meterIdx < btnIdx, 'Allowance Meter must be placed above the Generate button');
   });
 
@@ -29,7 +29,7 @@ test('⚡ Weekly Allowance Engine & Generated Projects Below Generate Button', a
   });
 
   await t.test('3. Allowance Lifecycle Engine decrements allowance and resets after exactly 1 week', () => {
-    const WEEKLY_TOTAL = 5;
+    const WEEKLY_TOTAL = 3;
     const CYCLE_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
 
     // Simulation of client state engine
@@ -64,7 +64,7 @@ test('⚡ Weekly Allowance Engine & Generated Projects Below Generate Button', a
     // Gen 1:
     simulateGenerate(t0);
     assert.strictEqual(state.used, 1, 'First generation uses 1');
-    assert.strictEqual(state.totalLimit - state.used, 4, '4 remaining after first generation');
+    assert.strictEqual(state.totalLimit - state.used, 2, '2 remaining after first generation');
     assert.strictEqual(state.firstGenTimestamp, t0, 'Cycle timestamp initialized');
     assert.strictEqual(state.resetTimestamp, t0 + CYCLE_DURATION_MS, 'Reset timestamp is exactly 7 days later');
 
@@ -72,25 +72,23 @@ test('⚡ Weekly Allowance Engine & Generated Projects Below Generate Button', a
     const t1 = t0 + (2 * 24 * 60 * 60 * 1000);
     simulateGenerate(t1);
     assert.strictEqual(state.used, 2, 'Second generation uses 2');
-    assert.strictEqual(state.totalLimit - state.used, 3, '3 remaining');
+    assert.strictEqual(state.totalLimit - state.used, 1, '1 remaining');
     assert.strictEqual(state.resetTimestamp, t0 + CYCLE_DURATION_MS, 'Cycle reset timestamp remains pegged to first generation');
 
-    // Gen 3, 4, 5:
+    // Gen 3:
     simulateGenerate(t1 + 1000);
-    simulateGenerate(t1 + 2000);
-    simulateGenerate(t1 + 3000);
-    assert.strictEqual(state.used, 5, 'All 5 generations used');
+    assert.strictEqual(state.used, 3, 'All 3 generations used');
     assert.strictEqual(state.totalLimit - state.used, 0, '0 remaining');
 
     // Check 6 days later (before 1 week):
     const tBeforeReset = t0 + (6 * 24 * 60 * 60 * 1000);
     simulateCheck(tBeforeReset);
-    assert.strictEqual(state.used, 5, 'Still 5 used before 7 days');
+    assert.strictEqual(state.used, 3, 'Still 3 used before 7 days');
 
     // Check after 7 full days (1 week since first generation):
     const tAfterReset = t0 + CYCLE_DURATION_MS + 1000;
     simulateCheck(tAfterReset);
-    assert.strictEqual(state.used, 0, 'Weekly allowance automatically resets back to 0 used (5 available) after 1 week');
+    assert.strictEqual(state.used, 0, 'Weekly allowance automatically resets back to 0 used (3 available) after 1 week');
     assert.strictEqual(state.firstGenTimestamp, null, 'Cycle ready for fresh restart');
   });
 
