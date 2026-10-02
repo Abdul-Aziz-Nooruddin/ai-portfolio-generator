@@ -2533,6 +2533,19 @@ app.get(['/nadia', '/nadia-brand', '/nadia-speaker', '/speaker-brand'], (req, re
   res.sendFile(getPagePath('nadia-brand.html'));
 });
 
+app.get(['/kage', '/kage-temple', '/kyoto-temple', '/kage-landing-page'], (req, res) => {
+  const kageCandidates = [
+    path.join(process.cwd(), 'web', 'landing-pages', 'kage.html'),
+    path.join(process.cwd(), 'public', 'landing-pages', 'kage.html'),
+    path.join(__dirname, '..', 'web', 'landing-pages', 'kage.html'),
+    path.join(__dirname, '..', 'public', 'landing-pages', 'kage.html')
+  ];
+  for (const p of kageCandidates) {
+    if (fs.existsSync(p)) return res.sendFile(p);
+  }
+  res.redirect('/landing-pages/kage.html');
+});
+
 app.get(['/profile', '/settings', '/account'], (req, res) => {
   res.sendFile(getPagePath('profile.html'));
 });

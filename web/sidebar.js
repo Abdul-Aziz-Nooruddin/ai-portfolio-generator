@@ -562,6 +562,10 @@ function initUniversalSidebar(activePage) {
             <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 8 8 16 16 16"></polygon></svg>
             <span>Nadia Brand</span>
           </a>
+          <a href="/kage" target="_blank" class="sidebar-nav-item">
+            <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21V11l3-2 3 2v10"></path></svg>
+            <span>Kage Temple</span>
+          </a>
         </nav>
       </div>
 

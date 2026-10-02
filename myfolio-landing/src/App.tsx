@@ -59,8 +59,21 @@ const templates = [
     image: '/images/template-nadia.webp',
     alt: 'Nadia portfolio preview with a portrait, expressive white typography, and coral accents',
     href: `${SITE}/nadia`,
-    studio: `${SITE}/studio`,
+    studio: `${SITE}/studio?template=nadia-brand`,
     className: 'template-nadia',
+  },
+  {
+    name: 'Kage',
+    category: 'Developers',
+    description: 'An atmospheric Kyoto mountain sanctuary with live Shinto Sanmon, vermilion blood moon, and living foreground planes.',
+    bestFor: 'Systems architects, WebGL developers, creative technologists, and 3D engineers.',
+    includes: ['Live 3D Shinto temple world', 'Dynamic Japanese typography', 'Interactive garden windows'],
+    tags: ['3D / WebGL', 'Kyoto sanctuary'],
+    image: '/landing-pages/secret-pathways-assets/generated/kage-sanmon-preview.webp',
+    alt: 'Kage Kyoto temple portfolio preview with 3D Sanmon pagoda and vermilion blood moon',
+    href: `${SITE}/kage`,
+    studio: `${SITE}/studio?template=kage-temple`,
+    className: 'template-kage',
   },
 ];
 
