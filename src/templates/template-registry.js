@@ -7,13 +7,17 @@
 
 const { Jack3DCreatorTemplate } = require('./jack-3d-creator');
 const { NadiaBrandTemplate } = require('./nadia-brand');
+const { KageTempleTemplate } = require('./kage-temple');
 
 class TemplateRegistry {
   static _templates = {
     'jack-3d-creator': Jack3DCreatorTemplate,
     '3d-creator': Jack3DCreatorTemplate,
     'nadia-brand': NadiaBrandTemplate,
-    'nadia-personal-brand': NadiaBrandTemplate
+    'nadia-personal-brand': NadiaBrandTemplate,
+    'kage-temple': KageTempleTemplate,
+    'kage': KageTempleTemplate,
+    'kage-landing-page': KageTempleTemplate
   };
 
   static templates = new Proxy(TemplateRegistry._templates, {
@@ -57,7 +61,8 @@ class TemplateRegistry {
   // Active curated visual templates present in Web Studio
   static studioTemplateIds = [
     'jack-3d-creator',
-    'nadia-brand'
+    'nadia-brand',
+    'kage-temple'
   ];
 
   /**
@@ -103,7 +108,7 @@ class TemplateRegistry {
   }
 
   /**
-   * Universal template selector — routes to Jack 3D Creator or Nadia Personal Brand
+   * Universal template selector — routes to Jack 3D Creator, Nadia Personal Brand, or Kage Temple
    */
   static selectTemplate(requestedId = null, candidateProfile = null, userId = null) {
     if (requestedId && this._templates[requestedId]) {
@@ -112,6 +117,9 @@ class TemplateRegistry {
     const role = (candidateProfile?.role || candidateProfile?.title || '').toLowerCase();
     if (role.includes('speaker') || role.includes('advisor') || role.includes('writer') || role.includes('author') || role.includes('consultant')) {
       return this._templates['nadia-brand'];
+    }
+    if (role.includes('temple') || role.includes('zen') || role.includes('kyoto') || role.includes('game') || role.includes('spatial') || role.includes('graphics') || role.includes('3d')) {
+      return this._templates['kage-temple'];
     }
     return this._templates['jack-3d-creator'];
   }
@@ -370,7 +378,9 @@ class TemplateRegistry {
 
 module.exports = new Proxy({
   TemplateRegistry,
-  Jack3DCreatorTemplate
+  Jack3DCreatorTemplate,
+  KageTempleTemplate,
+  NadiaBrandTemplate
 }, {
   get(target, prop) {
     if (prop in target) return target[prop];

@@ -276,6 +276,14 @@ app.use('/web', express.static(path.join(process.cwd(), 'public', 'web'), {
   maxAge: '30d'
 }));
 
+// Serve ThreeUI landing pages directly for /landing-pages/* paths
+app.use('/landing-pages', express.static(path.join(process.cwd(), 'web', 'landing-pages'), {
+  maxAge: '1d'
+}));
+app.use('/landing-pages', express.static(path.join(process.cwd(), 'public', 'landing-pages'), {
+  maxAge: '1d'
+}));
+
 // Dynamic Custom Domain & Subdomain Hostname Router
 app.use(async (req, res, next) => {
   const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];

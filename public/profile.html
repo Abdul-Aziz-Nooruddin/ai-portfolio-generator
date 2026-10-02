@@ -489,29 +489,28 @@
           <div class="identity-main-info">
             <div class="avatar-wrapper">
               <div class="profile-avatar-xl" id="profileAvatarLarge">
-                <span id="userAvatarChar">A</span>
+                <span id="userAvatarChar">?</span>
               </div>
             </div>
             <div class="identity-text-col">
               <div class="identity-name-row">
-                <h1 class="identity-full-name" id="profileFullName">Alex Rivers</h1>
-                <span class="mf-badge mf-badge-vip" id="profilePlanBadge"><svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><polygon points="6 3 18 3 22 9 12 22 2 9 6 3"/></svg>VIP MASTER</span>
+                <h1 class="identity-full-name" id="profileFullName">Loading profile...</h1>
+                <span class="mf-badge" id="profilePlanBadge" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA; font-weight:600; font-size:11px; padding:3px 8px; border-radius:9999px;">STARTER FREE</span>
               </div>
               <div class="identity-meta-row">
-                <span id="profileUsername">@alex-rivers</span>
+                <span id="profileUsername">@developer</span>
                 <span>•</span>
-                <span id="profileEmail">alex.rivers@example.com</span>
+                <span id="profileEmail">loading...</span>
                 <span>•</span>
-                <span class="mf-badge mf-badge-success">
-                  <span class="mf-pulse-dot"></span>
-                  <span id="profileStatusBadge">LIVE SUBDOMAIN</span>
+                <span class="mf-badge" id="profileStatusBadgeContainer" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA; font-size:10px; font-weight:600; padding:2px 8px; border-radius:9999px;">
+                  <span id="profileStatusBadge">PENDING BUILD</span>
                 </span>
               </div>
             </div>
           </div>
 
           <div class="identity-actions-dock">
-            <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenLiveSite">
+            <a href="/studio" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnOpenLiveSite" style="display:none;">
               <span>Open Live Portfolio</span> &nearr;
             </a>
             <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
@@ -642,18 +641,10 @@
             <h2 class="section-card-title">Live Portfolio Domain</h2>
             <p class="section-card-desc">Your portfolio is hosted on edge CDN and served via HTTPS.</p>
 
-            <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-              <div>
-                <div style="font-family:var(--mf-font-mono); font-size:15px; font-weight:600; color:var(--mf-accent-blue);">
-                  https://alex-rivers.myfolio.tech
-                </div>
-                <div style="font-size:12px; color:var(--mf-text-muted); margin-top:4px;">
-                  301 Redirect configured for legacy paths • Edge SSL Active
-                </div>
+            <div id="portfolioDomainCardWrap">
+              <div style="background:rgba(8,13,32,0.4); border:1px dashed rgba(255,255,255,0.12); border-radius:var(--mf-radius-md); padding:26px 20px; text-align:center; margin-bottom:1.5rem;">
+                <div style="font-size:14px; font-weight:600; color:#E4E4E7; margin-bottom:6px;">Loading Domain Status...</div>
               </div>
-              <a href="/jack-3d" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm">
-                <span>Visit Domain</span> &nearr;
-              </a>
             </div>
           </section>
         </div>
@@ -693,12 +684,14 @@
             <h2 class="section-card-title">Current Plan</h2>
             <p class="section-card-desc">Your generation allowance and VIP status.</p>
 
-            <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
-              <div>
-                <div style="font-size:1.25rem; font-weight:700; color:#FCD34D;">VIP Founder / Master Edition</div>
-                <div style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">Unlimited weekly builds • Subdomain routing enabled</div>
+            <div id="planDetailsCardWrap">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+                <div>
+                  <div style="font-size:1.25rem; font-weight:700; color:#FFFFFF;">Free Starter Tier</div>
+                  <div style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">Free portfolio builds • Upgrade to Pro Domain (₹149/mo) for custom subdomain &amp; edge hosting.</div>
+                </div>
+                <span class="mf-badge" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA;">FREE</span>
               </div>
-              <span class="mf-badge mf-badge-vip">ACTIVE</span>
             </div>
           </section>
         </div>
@@ -780,18 +773,136 @@
         const data = await res.json();
         currentUserData = data.user || data;
 
-        const name = currentUserData.name || 'Alex Rivers';
-        const email = currentUserData.email || 'alex.rivers@example.com';
-        const username = currentUserData.username || 'alex-rivers';
+        const email = (currentUserData.email || '').toLowerCase().trim();
+        const name = currentUserData.name || currentUserData.username || (email ? email.split('@')[0] : 'Engineer');
+        const username = currentUserData.username || (email ? email.split('@')[0] : 'developer');
+        const isVip = email === 'abdulaziznoor9876@gmail.com';
 
         document.getElementById('profileFullName').textContent = name;
         document.getElementById('profileUsername').textContent = `@${username}`;
         document.getElementById('profileEmail').textContent = email;
         document.getElementById('userAvatarChar').textContent = name.charAt(0).toUpperCase();
 
-        document.getElementById('inputName').value = name;
+        document.getElementById('inputName').value = currentUserData.name || '';
         document.getElementById('inputEmail').value = email;
         document.getElementById('inputUsername').value = username;
+
+        // Plan Badge
+        const planBadge = document.getElementById('profilePlanBadge');
+        if (planBadge) {
+          if (isVip) {
+            planBadge.className = 'mf-badge mf-badge-vip';
+            planBadge.style.cssText = '';
+            planBadge.innerHTML = `<svg class="w-3.5 h-3.5 inline mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;"><polygon points="6 3 18 3 22 9 12 22 2 9 6 3"/></svg>VIP MASTER`;
+          } else {
+            planBadge.className = 'mf-badge';
+            planBadge.style.cssText = 'background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA; font-weight:600; font-size:11px; padding:3px 8px; border-radius:9999px;';
+            planBadge.textContent = 'STARTER FREE';
+          }
+        }
+
+        // Fetch User Portfolios
+        let activeSite = null;
+        try {
+          const pRes = await fetch('/api/user/portfolios', { credentials: 'include' });
+          if (pRes.ok) {
+            const pData = await pRes.json();
+            const list = pData.portfolios || [];
+            if (list.length > 0) activeSite = list[0];
+          }
+        } catch (e) {
+          console.warn('Failed to load user portfolios:', e);
+        }
+
+        const statusBadgeContainer = document.getElementById('profileStatusBadgeContainer');
+        const statusBadge = document.getElementById('profileStatusBadge');
+        const btnOpenLive = document.getElementById('btnOpenLiveSite');
+        const domainCardWrap = document.getElementById('portfolioDomainCardWrap');
+
+        if (activeSite) {
+          const domainUrl = activeSite.subdomain ? (activeSite.subdomain.startsWith('http') ? activeSite.subdomain : `https://${activeSite.subdomain}`) : (activeSite.handle ? `https://${activeSite.handle}.myfolio.tech` : window.location.origin + activeSite.previewUrl);
+          if (statusBadgeContainer && statusBadge) {
+            statusBadgeContainer.className = 'mf-badge mf-badge-success';
+            statusBadgeContainer.style.cssText = '';
+            statusBadgeContainer.innerHTML = `<span class="mf-pulse-dot"></span><span id="profileStatusBadge">LIVE SUBDOMAIN</span>`;
+          }
+          if (btnOpenLive) {
+            btnOpenLive.style.display = 'inline-flex';
+            btnOpenLive.href = domainUrl;
+          }
+          if (domainCardWrap) {
+            domainCardWrap.innerHTML = `
+              <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:16px 20px; display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:12px;">
+                <div>
+                  <div style="font-family:var(--mf-font-mono); font-size:15px; font-weight:600; color:var(--mf-accent-blue);">
+                    ${domainUrl}
+                  </div>
+                  <div style="font-size:12px; color:var(--mf-text-muted); margin-top:4px;">
+                    Hosted on global edge CDN • Automated Edge SSL Active
+                  </div>
+                </div>
+                <a href="${domainUrl}" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-secondary mf-btn-sm">
+                  <span>Visit Domain</span> &nearr;
+                </a>
+              </div>
+            `;
+          }
+        } else {
+          if (statusBadgeContainer && statusBadge) {
+            statusBadgeContainer.className = 'mf-badge';
+            statusBadgeContainer.style.cssText = 'background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA; font-size:10px; font-weight:600; padding:2px 8px; border-radius:9999px;';
+            statusBadgeContainer.innerHTML = `<span id="profileStatusBadge">PENDING BUILD</span>`;
+          }
+          if (btnOpenLive) {
+            btnOpenLive.style.display = 'none';
+          }
+          if (domainCardWrap) {
+            domainCardWrap.innerHTML = `
+              <div style="background:rgba(8,13,32,0.4); border:1px dashed rgba(255,255,255,0.12); border-radius:var(--mf-radius-md); padding:26px 20px; text-align:center; margin-bottom:1.5rem;">
+                <div style="font-size:14px; font-weight:600; color:#E4E4E7; margin-bottom:6px;">No Active Domain Yet</div>
+                <div style="font-size:12px; color:var(--mf-text-muted); max-width:440px; margin:0 auto 16px; line-height:1.5;">
+                  You haven't generated or published a live portfolio yet. Open Studio to assemble your 3D portfolio and link your custom <code style="color:#38bdf8;">${username}.myfolio.tech</code> domain.
+                </div>
+                <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="display:inline-flex; align-items:center; gap:6px;">
+                  <span>Open Web Studio</span> &rarr;
+                </a>
+              </div>
+            `;
+          }
+        }
+
+        // Plan tab content
+        const planWrap = document.getElementById('planDetailsCardWrap');
+        if (planWrap) {
+          if (isVip) {
+            planWrap.innerHTML = `
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem;">
+                <div>
+                  <div style="font-size:1.25rem; font-weight:700; color:#FCD34D;">VIP Founder / Master Edition</div>
+                  <div style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">Unlimited weekly builds • Subdomain routing enabled</div>
+                </div>
+                <span class="mf-badge mf-badge-vip">ACTIVE</span>
+              </div>
+            `;
+          } else {
+            planWrap.innerHTML = `
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+                <div>
+                  <div style="font-size:1.25rem; font-weight:700; color:#FFFFFF;">Free Starter Tier</div>
+                  <div style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">
+                    Free preview builds • Upgrade to Pro Domain (₹149/mo) for your personal branded subdomain & edge hosting.
+                  </div>
+                </div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span class="mf-badge" style="background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); color:#A1A1AA;">FREE</span>
+                  <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+                    <span>Upgrade to Pro (₹149/mo)</span> &rarr;
+                  </a>
+                </div>
+              </div>
+            `;
+          }
+        }
 
         const statusGoogle = document.getElementById('statusGoogle');
         if (statusGoogle) {

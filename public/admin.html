@@ -354,12 +354,11 @@
   <header style="background: #0A0A0A; border-bottom: 1px solid #242424; padding: 1.1rem 2rem; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100;">
     <div style="display: flex; align-items: center; gap: 0.85rem;">
       <a href="/" style="display:flex;align-items:center;gap:10px;text-decoration:none;color:#FFF;">
-        <div class="brand-logo-mark">
-          <span class="sq-1"></span>
-          <span class="sq-2"></span>
-          <span class="sq-3"></span>
-          <span class="sq-4"></span>
-        </div>
+        <video class="brand-logo-video" autoplay loop muted playsinline webkit-playsinline poster="/assets/logo-3d.png" width="28" height="28" aria-hidden="true" style="border-radius:50%; object-fit:cover; display:block; flex-shrink:0;">
+          <source src="/assets/logo-animated.webm" type="video/webm">
+          <source src="/assets/logo-animated.mp4" type="video/mp4">
+          <img src="/assets/logo-3d.png" alt="MyFolio logo" width="28" height="28" style="border-radius:50%;" />
+        </video>
         <span style="font-size:1.15rem;font-weight:700;letter-spacing:-0.03em;">myfolio<span style="color:#5FA5F9;">.</span></span>
       </a>
       <span style="background: #181818; border: 1px solid #2A2A2A; color: #5FA5F9; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 9999px; letter-spacing: 0.08em; text-transform: uppercase;">ADMIN SUITE</span>
