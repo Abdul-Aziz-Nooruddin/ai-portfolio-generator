@@ -4,6 +4,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.clearScrollMemory('manual');
+  if ('scrollRestoration' in history) {
+    history.scrollRestoration = 'manual';
+  }
 }
 
 export function useGsapAnimations() {

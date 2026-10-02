@@ -46,6 +46,16 @@
     <link rel="preload" href="/images/hero-base.webp" as="image" />
     <link rel="preload" href="/assets/logo-3d.webp" as="image" />
 
+    <!-- Clean Scroll Restoration (Starts from top on reload if no anchor hash) -->
+    <script>
+      if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      if (!window.location.hash) {
+        window.scrollTo(0, 0);
+      }
+    </script>
+
     <!-- Anti-Extension Injected DOM Shield (Careerflow / third-party overlay suppression) -->
     <style id="anti-extension-shield">#careerflow-extension,[id*=careerflow i],[class*=careerflow i],[data-careerflow],careerflow-extension,careerflow-app,careerflow-copilot,#cf-root,#cf-sidebar,#cf-sidebar-container,#cf-injected-tab,.cf-sidebar-container,.cf-tab,.cf-button,[id^=cf-],[class^=cf-],[id*=-cf- i],[class*=-cf- i],[data-cf],cf-root,cf-app,cf-sidebar,img[alt*=Careerflow i],img[src*=careerflow i],iframe[src*=careerflow i],iframe[src*="chrome-extension://"]{visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}div:has(>img[alt*=Careerflow i]){visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}div:has(>img[src*=careerflow i]){visibility:hidden!important;opacity:0!important;pointer-events:none!important;clip:rect(0, 0, 0, 0)!important;z-index:-99999!important;width:0!important;height:0!important;display:none!important;position:absolute!important;top:-9999px!important;left:-9999px!important;overflow:hidden!important}</style>
     <script>
@@ -173,11 +183,10 @@
       ]
     }
     </script>
-    <script type="module" crossorigin src="/assets/index-yQEsPq_M.js"></script>
+    <script type="module" crossorigin src="/assets/index-DMHsLdNL.js"></script>
     <link rel="stylesheet" crossorigin href="/assets/index-DXRQ6TqR.css">
   </head>
   <body>
     <div id="root"></div>
-    <div id="sticky-mobile-cta-bar" class="sticky-mobile-cta-bar" style="display:none;"></div>
   </body>
 </html>

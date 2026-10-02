@@ -46,6 +46,16 @@
     <link rel="preload" href="/images/hero-base.webp" as="image" />
     <link rel="preload" href="/assets/logo-3d.webp" as="image" />
 
+    <!-- Clean Scroll Restoration (Starts from top on reload if no anchor hash) -->
+    <script>
+      if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      if (!window.location.hash) {
+        window.scrollTo(0, 0);
+      }
+    </script>
+
     <!-- Anti-Extension Injected DOM Shield (Careerflow / third-party overlay suppression) -->
     <style id="anti-extension-shield">
       #careerflow-extension, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow],

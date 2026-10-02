@@ -185,6 +185,12 @@ export function App() {
   useGsapAnimations();
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && 'scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    if (!window.location.hash) {
+      window.scrollTo(0, 0);
+    }
     const updateHeader = () => setHeaderScrolled(window.scrollY > 64);
     updateHeader();
     window.addEventListener('scroll', updateHeader, { passive: true });
