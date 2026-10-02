@@ -183,12 +183,12 @@ if (signupForm) {
     e.preventDefault();
     hideAlert();
 
-    const name = document.getElementById('signupName').value.trim();
-    const email = document.getElementById('signupEmail').value.trim();
-    const username = document.getElementById('signupUsername').value.trim();
-    const password = document.getElementById('signupPassword').value;
-    const confirmPassword = document.getElementById('signupConfirmPassword').value;
-    const termsAccepted = document.getElementById('termsAccepted').checked;
+    const name = document.getElementById('signupName')?.value?.trim() || '';
+    const email = document.getElementById('signupEmail')?.value?.trim() || '';
+    const username = document.getElementById('signupUsername')?.value?.trim() || (email ? email.split('@')[0] : '');
+    const password = document.getElementById('signupPassword')?.value || '';
+    const confirmPassword = document.getElementById('signupConfirmPassword')?.value || '';
+    const termsAccepted = document.getElementById('termsAccepted')?.checked;
     const btn = document.getElementById('btnSignupSubmit');
 
     if (!termsAccepted) {

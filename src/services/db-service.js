@@ -1052,14 +1052,27 @@ class DatabaseService {
         } catch (e) {}
       }
 
-      // Fallback: check candidate directory names
+      // Fallback: check candidate directory names, ensuring strict ownership verification
       if (!hasSite && user) {
-        const candidateNames = [isVipFounder ? 'abdulaziz' : null, user.username, user.name?.toLowerCase().replace(/\s+/g, '-'), user.id].filter(Boolean);
+        const candidateNames = [isVipFounder ? 'abdulaziz' : null, user.id, user.username].filter(Boolean);
         for (const cand of candidateNames) {
-          if (fs.existsSync(path.join(sitesBaseDir, cand, 'index.html'))) {
-            siteId = cand;
-            hasSite = true;
-            break;
+          const candDir = path.join(sitesBaseDir, cand);
+          if (fs.existsSync(path.join(candDir, 'index.html'))) {
+            const metaFile = path.join(candDir, 'meta.json');
+            let isOwner = isVipFounder;
+            if (!isOwner && fs.existsSync(metaFile)) {
+              try {
+                const meta = JSON.parse(fs.readFileSync(metaFile, 'utf8'));
+                if (meta.userId === user.id || (meta.userEmail && meta.userEmail.toLowerCase().trim() === userEmail)) {
+                  isOwner = true;
+                }
+              } catch (e) {}
+            }
+            if (isOwner) {
+              siteId = cand;
+              hasSite = true;
+              break;
+            }
           }
         }
       }

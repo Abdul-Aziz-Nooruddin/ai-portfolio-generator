@@ -454,23 +454,24 @@
         <section class="command-hero-card">
           <div class="hero-greeting-text">
             <span class="mf-pulse-dot"></span>
-            <span id="userGreeting">COMMAND CENTER // ABDUL AZIZ</span>
+            <span id="userGreeting">COMMAND CENTER</span>
           </div>
-          <h1 class="hero-headline">Your portfolio is live.</h1>
+          <h1 class="hero-headline" id="heroHeadline">Build your 3D portfolio.</h1>
 
-          <div class="hero-live-artifact">
+          <!-- Live Artifact Dock (Active when a portfolio is published) -->
+          <div class="hero-live-artifact" id="heroLiveArtifact" style="display:none;">
             <div class="hero-url-block">
               <div class="hero-url-label">
-                <span id="lifecycleBadge" class="mf-badge mf-badge-vip">VIP ACTIVE</span>
+                <span id="lifecycleBadge" class="mf-badge mf-badge-secondary">STARTER FREE</span>
                 <span>Active Edge Domain</span>
               </div>
-              <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
-                https://www.myfolio.tech/abdulaziz
+              <a href="#" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
+                Loading...
               </a>
             </div>
 
             <div class="hero-actions-dock">
-              <a href="/abdulaziz" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
+              <a href="#" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
                 <span>Open Portfolio</span> &nearr;
               </a>
               <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
@@ -482,6 +483,18 @@
               <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" id="btnDeletePortfolio" onclick="deleteCurrentPortfolio()" title="Delete active portfolio" style="display:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
               </button>
+            </div>
+          </div>
+
+          <!-- Empty State Dock (Active when user hasn't generated a portfolio yet) -->
+          <div class="hero-empty-artifact" id="heroEmptyArtifact" style="display:flex; flex-direction:column; gap:1.25rem; margin-top:0.75rem;">
+            <p style="color:var(--mf-text-secondary); font-size:14px; max-width:600px; line-height:1.6; margin:0;">
+              Your workspace is ready. Ingest your GitHub repositories or upload your resume in the Studio to generate a live, interactive 3D WebGL developer portfolio in 60 seconds.
+            </p>
+            <div style="display:flex; gap:10px; align-items:center;">
+              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+                <span>Launch Studio to Build Portfolio</span> &rarr;
+              </a>
             </div>
           </div>
         </section>
@@ -498,11 +511,11 @@
             <div class="status-matrix-grid">
               <div class="status-matrix-item">
                 <span class="status-item-label">Active Universe</span>
-                <span class="status-item-val" id="statusUniverseVal">Synaptic Constellation</span>
+                <span class="status-item-val" id="statusUniverseVal">Choose in Studio</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Subdomain Routing</span>
-                <span class="status-item-val" style="color:var(--mf-accent-blue);">abdulaziz.myfolio.tech</span>
+                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--mf-accent-blue);">Pending Build</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Authentication Mode</span>
@@ -510,7 +523,7 @@
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Readiness Score</span>
-                <span class="status-item-val" style="color:var(--mf-accent-cyan);">94% Ready</span>
+                <span class="status-item-val" id="statusReadinessVal" style="color:var(--mf-accent-cyan);">Ready to Build</span>
               </div>
             </div>
 
@@ -524,7 +537,7 @@
           </section>
 
           <!-- Analytics & Recruiter Traffic -->
-          <section class="analytics-panel-card">
+          <section class="analytics-panel-card" id="analytics">
             <div class="panel-section-title">
               <span>Recruiter Traffic</span>
               <span class="mf-badge mf-badge-accent">Live Telemetry</span>
@@ -566,13 +579,13 @@
         <section class="status-panel-card" style="flex-direction:row; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.25rem;">
           <div>
             <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Account Tier</div>
-            <div style="font-size:1.15rem; font-weight:700; color:#FCD34D;" id="planName">VIP Founder / Unlimited</div>
-            <div style="font-size:12px; color:var(--mf-text-secondary);" id="billingDetails">High-speed global edge distribution with custom subdomain mapping.</div>
+            <div style="font-size:1.15rem; font-weight:700; color:#5FA5F9;" id="planName">Free Starter Tier</div>
+            <div style="font-size:12px; color:var(--mf-text-secondary);" id="billingDetails">Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.</div>
           </div>
           <div>
             <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Generation Allowance</div>
-            <div style="font-size:1.15rem; font-weight:700; color:var(--mf-accent-blue);" id="regenCounter">Unlimited Builds Active</div>
-            <div style="font-size:12px; color:var(--mf-text-secondary);" id="regenDetails">Generate bespoke 3D variations anytime.</div>
+            <div style="font-size:1.15rem; font-weight:700; color:var(--mf-accent-blue);" id="regenCounter">3 Builds Remaining</div>
+            <div style="font-size:12px; color:var(--mf-text-secondary);" id="regenDetails">3 free builds available per week.</div>
           </div>
         </section>
 
@@ -617,6 +630,7 @@
     let currentSiteUrl = `${window.location.origin}/p/preview`;
     let currentSiteId = null;
     let currentUser = null;
+    let cachedDashData = null;
 
     async function initDashboard() {
       try {
@@ -629,55 +643,138 @@
         const meData = await meRes.json();
         currentUser = meData.user || meData;
 
-        if (currentUser && currentUser.name) {
-          const name = currentUser.name.split(' ')[0];
-          document.getElementById('userGreeting').textContent = `COMMAND CENTER // ${currentUser.name.toUpperCase()}`;
-        }
-
         try {
           const dashRes = await fetch('/api/web/dashboard', { credentials: 'include' });
           if (dashRes.ok) {
             const dashData = await dashRes.json();
             if (dashData.success) {
-              renderDashboard(dashData);
-              loadCrossDevicePortfolios();
-              return;
+              cachedDashData = dashData;
             }
           }
         } catch (e) {}
 
-        renderDashboard({ success: true, user: currentUser });
-        loadCrossDevicePortfolios();
+        await loadCrossDevicePortfolios();
       } catch (e) {
-        renderDashboard({ success: true, user: currentUser || {} });
-        loadCrossDevicePortfolios();
+        await loadCrossDevicePortfolios();
       }
     }
 
-    function renderDashboard(data = {}) {
-      const conv = data.conversation || {};
+    function renderDashboard(data = {}, portfolios = []) {
       const user = data.user || currentUser || {};
       const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
+      const displayName = user.name || user.username || (userEmail ? userEmail.split('@')[0] : 'Engineer');
+      
+      const greetingEl = document.getElementById('userGreeting');
+      if (greetingEl) {
+        greetingEl.textContent = `COMMAND CENTER // ${displayName.toUpperCase()}`;
+      }
+
+      // Check if user has generated or published any portfolio
+      const hasLivePortfolio = Boolean((portfolios && portfolios.length > 0) || (data.siteId && data.siteId !== 'null'));
+      const heroLive = document.getElementById('heroLiveArtifact');
+      const heroEmpty = document.getElementById('heroEmptyArtifact');
+      const heroHeadline = document.getElementById('heroHeadline');
       const origin = window.location.origin;
-      const handle = user.username || (userEmail ? userEmail.split('@')[0] : 'preview');
-      currentSiteUrl = `${origin}/p/${handle}`;
 
-      document.getElementById('portfolioUrlText').textContent = currentSiteUrl;
-      document.getElementById('portfolioUrlText').href = currentSiteUrl;
-      document.getElementById('btnOpenLive').href = currentSiteUrl;
+      if (hasLivePortfolio) {
+        const activeSite = (portfolios && portfolios.length > 0) ? portfolios[0] : null;
+        const siteHandle = activeSite?.handle || activeSite?.siteId || data.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
+        currentSiteUrl = `${origin}/p/${siteHandle}`;
 
-      const deleteBtn = document.getElementById('btnDeletePortfolio');
-      if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        if (heroHeadline) heroHeadline.textContent = 'Your portfolio is live.';
+        if (heroLive) heroLive.style.display = 'flex';
+        if (heroEmpty) heroEmpty.style.display = 'none';
 
-      const analytics = data.analytics || {};
-      document.getElementById('statViews').textContent = analytics.totalViews || 0;
-      document.getElementById('statVisitors').textContent = analytics.uniqueVisitors || 0;
+        const urlTextEl = document.getElementById('portfolioUrlText');
+        if (urlTextEl) {
+          urlTextEl.textContent = currentSiteUrl;
+          urlTextEl.href = currentSiteUrl;
+        }
+        const openBtn = document.getElementById('btnOpenLive');
+        if (openBtn) openBtn.href = currentSiteUrl;
+
+        const deleteBtn = document.getElementById('btnDeletePortfolio');
+        if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+
+        const subVal = document.getElementById('statusSubdomainVal');
+        if (subVal) {
+          subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
+        }
+        const uniVal = document.getElementById('statusUniverseVal');
+        if (uniVal) {
+          uniVal.textContent = activeSite?.universeKey || 'Jack 3D / Nadia';
+        }
+        const readyVal = document.getElementById('statusReadinessVal');
+        if (readyVal) {
+          readyVal.textContent = '100% Ready';
+        }
+      } else {
+        if (heroHeadline) heroHeadline.textContent = 'Build your 3D portfolio.';
+        if (heroLive) heroLive.style.display = 'none';
+        if (heroEmpty) heroEmpty.style.display = 'flex';
+
+        const deleteBtn = document.getElementById('btnDeletePortfolio');
+        if (deleteBtn) deleteBtn.style.display = 'none';
+
+        const subVal = document.getElementById('statusSubdomainVal');
+        if (subVal) subVal.textContent = 'Pending Build';
+        const uniVal = document.getElementById('statusUniverseVal');
+        if (uniVal) uniVal.textContent = 'Choose in Studio';
+        const readyVal = document.getElementById('statusReadinessVal');
+        if (readyVal) readyVal.textContent = 'Ready to Build';
+      }
+
+      // STRICT VIP Founder logic: Only abdulaziznoor9876@gmail.com gets VIP tags/features!
+      const lifecycleBadge = document.getElementById('lifecycleBadge');
+      const planNameEl = document.getElementById('planName');
+      const billingDetailsEl = document.getElementById('billingDetails');
+      const regenCounterEl = document.getElementById('regenCounter');
+      const regenDetailsEl = document.getElementById('regenDetails');
 
       if (isVip) {
-        document.getElementById('planName').textContent = 'VIP Founder / Master Edition';
-        document.getElementById('regenCounter').textContent = 'Unlimited Builds Active';
+        if (lifecycleBadge) {
+          lifecycleBadge.textContent = 'VIP ACTIVE';
+          lifecycleBadge.className = 'mf-badge mf-badge-vip';
+        }
+        if (planNameEl) {
+          planNameEl.textContent = 'VIP Founder / Master Edition';
+          planNameEl.style.color = '#FCD34D';
+        }
+        if (billingDetailsEl) {
+          billingDetailsEl.textContent = 'Master admin access with unlimited high-speed global edge distribution.';
+        }
+        if (regenCounterEl) {
+          regenCounterEl.textContent = 'Unlimited Builds Active';
+        }
+        if (regenDetailsEl) {
+          regenDetailsEl.textContent = 'Generate bespoke 3D variations anytime.';
+        }
+      } else {
+        if (lifecycleBadge) {
+          lifecycleBadge.textContent = 'STARTER FREE';
+          lifecycleBadge.className = 'mf-badge mf-badge-secondary';
+        }
+        if (planNameEl) {
+          planNameEl.textContent = 'Free Starter Tier';
+          planNameEl.style.color = '#5FA5F9';
+        }
+        if (billingDetailsEl) {
+          billingDetailsEl.textContent = 'Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.';
+        }
+        if (regenCounterEl) {
+          regenCounterEl.textContent = '3 Builds Remaining';
+        }
+        if (regenDetailsEl) {
+          regenDetailsEl.textContent = '3 free builds available per week.';
+        }
       }
+
+      const analytics = data.analytics || {};
+      const viewsEl = document.getElementById('statViews');
+      if (viewsEl) viewsEl.textContent = analytics.totalViews || 0;
+      const visitorsEl = document.getElementById('statVisitors');
+      if (visitorsEl) visitorsEl.textContent = analytics.uniqueVisitors || 0;
     }
 
     const TEMPLATE_THUMBS = {
@@ -718,8 +815,10 @@
         const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         if (badge) badge.textContent = `SYNCED (${merged.length})`;
 
+        renderDashboard(cachedDashData || { success: true, user: currentUser }, merged);
         renderSyncedPortfolios(merged);
       } catch (err) {
+        renderDashboard(cachedDashData || { success: true, user: currentUser }, []);
         grid.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--mf-text-muted);grid-column:1 / -1;">No portfolios available.</div>`;
       }
     }

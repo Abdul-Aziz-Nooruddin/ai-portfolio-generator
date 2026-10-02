@@ -412,6 +412,16 @@ function toggleAppSidebar(forceState) {
   }
 }
 
+function scrollToSection(id, event) {
+  const el = document.getElementById(id);
+  if (el) {
+    if (event) event.preventDefault();
+    try { history.pushState(null, '', '#' + id); } catch (e) {}
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+window.scrollToSection = scrollToSection;
+
 async function hydrateSidebarUser() {
   const dock = document.getElementById('sidebarUserCard');
   if (!dock) return;
@@ -423,20 +433,23 @@ async function hydrateSidebarUser() {
       const user = data.user || data;
       const displayName = user.name || user.username || (user.email ? user.email.split('@')[0] : 'Engineer');
       const email = (user.email || '').toLowerCase().trim();
-      const username = user.username || (email ? email.split('@')[0] : 'abdulaziz');
+      const username = user.username || (email ? email.split('@')[0] : 'developer');
       const initial = displayName.charAt(0).toUpperCase();
+      const isVip = email === 'abdulaziznoor9876@gmail.com';
 
       try {
         localStorage.setItem('myfolio_user', JSON.stringify(user));
-        if (email === 'abdulaziznoor9876@gmail.com') {
+        if (isVip) {
           localStorage.setItem('myfolio_vip_admin', 'true');
+        } else {
+          localStorage.removeItem('myfolio_vip_admin');
         }
       } catch (e) {}
 
       dock.innerHTML = `
         <div class="plan-status-pill">
           <span>Weekly Builds</span>
-          <span class="plan-pill-tag">Starter Free</span>
+          <span class="plan-pill-tag" style="${isVip ? 'color:#FCD34D; background:rgba(252,211,77,0.15);' : ''}">${isVip ? 'VIP Founder' : 'Starter Free'}</span>
         </div>
         <div class="user-dock-profile">
           <a href="/profile" class="user-avatar-circle" title="View Profile" style="text-decoration: none;">${initial}</a>
@@ -482,21 +495,18 @@ function initUniversalSidebar(activePage) {
   const activeDashboard = activePage === 'dashboard' ? 'active' : '';
   const activePortfolios = activePage === 'portfolios' ? 'active' : '';
   const activeAnalytics = activePage === 'analytics' ? 'active' : '';
-  const activeUniverses = (activePage === 'universes' || activePage === 'design') ? 'active' : '';
   const activeProfile = activePage === 'profile' ? 'active' : '';
   const activeSettings = activePage === 'settings' ? 'active' : '';
-  const activeAuth = activePage === 'auth' ? 'active' : '';
 
   mount.innerHTML = `
   <!-- Mobile Top Bar (< 960px) -->
   <div class="mobile-top-bar" style="background:#0A0A0A !important; border-bottom:1px solid #242424 !important;">
-    <a href="/" class="brand-link">
-      <div class="brand-logo-mark">
-        <span class="sq-1"></span>
-        <span class="sq-2"></span>
-        <span class="sq-3"></span>
-        <span class="sq-4"></span>
-      </div>
+    <a href="/" class="brand-link" style="display:flex; align-items:center; gap:0.65rem; text-decoration:none;">
+      <video class="brand-logo-video" autoplay loop muted playsinline webkit-playsinline poster="/assets/logo-3d.png" width="28" height="28" aria-hidden="true" style="border-radius:50%; object-fit:cover; display:block; flex-shrink:0;">
+        <source src="/assets/logo-animated.webm" type="video/webm">
+        <source src="/assets/logo-animated.mp4" type="video/mp4">
+        <img src="/assets/logo-3d.png" alt="MyFolio logo" width="28" height="28" style="border-radius:50%;" />
+      </video>
       <span class="brand-name">myfolio<span class="brand-dot">.</span></span>
     </a>
     <button id="sidebarToggleBtn" style="background:#181818; border:1px solid #282828; border-radius:8px; color:#F4F1E8; padding:7px; cursor:pointer;" onclick="toggleAppSidebar()" aria-label="Toggle Navigation">
@@ -509,13 +519,12 @@ function initUniversalSidebar(activePage) {
   <!-- Left Sidebar Shell -->
   <aside id="mainAppSidebar" class="app-sidebar">
     <div class="sidebar-brand-header">
-      <a href="/" class="brand-link">
-        <div class="brand-logo-mark">
-          <span class="sq-1"></span>
-          <span class="sq-2"></span>
-          <span class="sq-3"></span>
-          <span class="sq-4"></span>
-        </div>
+      <a href="/" class="brand-link" style="display:flex; align-items:center; gap:0.75rem; text-decoration:none;">
+        <video class="brand-logo-video" autoplay loop muted playsinline webkit-playsinline poster="/assets/logo-3d.png" width="32" height="32" aria-hidden="true" style="border-radius:50%; object-fit:cover; display:block; flex-shrink:0;">
+          <source src="/assets/logo-animated.webm" type="video/webm">
+          <source src="/assets/logo-animated.mp4" type="video/mp4">
+          <img src="/assets/logo-3d.png" alt="MyFolio logo" width="32" height="32" style="border-radius:50%;" />
+        </video>
         <div class="brand-text-col">
           <span class="brand-name">myfolio<span class="brand-dot">.</span></span>
           <span class="brand-subtitle">PLATFORM</span>
@@ -531,11 +540,11 @@ function initUniversalSidebar(activePage) {
             <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
             <span>Studio</span>
           </a>
-          <a href="/dashboard#portfolios" class="sidebar-nav-item ${activePortfolios}">
+          <a href="/dashboard#portfolios" onclick="scrollToSection('portfolios', event)" class="sidebar-nav-item ${activePortfolios}">
             <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
             <span>Portfolios</span>
           </a>
-          <a href="/dashboard#analytics" class="sidebar-nav-item ${activeAnalytics}">
+          <a href="/dashboard#analytics" onclick="scrollToSection('analytics', event)" class="sidebar-nav-item ${activeAnalytics}">
             <svg class="nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
             <span>Analytics</span>
           </a>
