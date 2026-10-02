@@ -18,7 +18,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — MyFolio</title>
-  <meta name="description" content="Manage your live 3D developer portfolio, edge subdomain, telemetry, and synchronized versions in your unified dashboard.">
+  <meta name="description" content="Manage your live 3D developer portfolio, connected GitHub profile, active subdomain, and generated versions.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="/web/app-tokens.css">
   <link rel="stylesheet" href="/app-tokens.css">
@@ -28,20 +28,24 @@
 
   <style>
     :root {
-      --dash-bg: #0A0A0A;
-      --dash-surface: rgba(18, 20, 26, 0.75);
-      --dash-surface-elevated: rgba(26, 29, 38, 0.85);
+      --dash-bg: #0C0D0C;
+      --dash-surface: rgba(22, 24, 22, 0.75);
+      --dash-surface-elevated: rgba(30, 32, 30, 0.85);
       --dash-border: rgba(255, 255, 255, 0.08);
-      --dash-border-hover: rgba(56, 189, 248, 0.35);
-      --dash-accent-cyan: #38BDF8;
+      --dash-border-subtle: rgba(255, 255, 255, 0.05);
+      --dash-border-hover: rgba(117, 197, 222, 0.4);
+      --dash-accent-sky: #75C5DE;
       --dash-accent-blue: #5FA5F9;
-      --dash-accent-violet: #818CF8;
-      --dash-success: #22C55E;
+      --dash-accent-cyan: #38BDF8;
+      --dash-accent-coral: #FF4D30;
+      --dash-success: #10B981;
       --dash-warning: #F59E0B;
       --dash-error: #EF4444;
       --dash-text-primary: #F4F1E8;
-      --dash-text-secondary: #9CA3AF;
-      --dash-text-muted: #6B7280;
+      --dash-text-secondary: #9D9E95;
+      --dash-text-muted: #6B6D65;
+      --dash-paper: #F4F1E8;
+      --dash-ink: #171817;
     }
 
     *, *::before, *::after {
@@ -53,26 +57,26 @@
     body {
       background-color: var(--dash-bg);
       color: var(--dash-text-primary);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Spatial Background */
+    /* Ambient Spatial Background matching Landing Page */
     .mf-atmospheric-bg {
       position: fixed;
       inset: 0;
       z-index: -1;
       background: 
-        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 90% 20%, rgba(129, 140, 248, 0.05) 0%, transparent 50%),
-        linear-gradient(180deg, #0A0A0A 0%, #0D0F14 100%);
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(117, 197, 222, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 20%, rgba(255, 77, 48, 0.03) 0%, transparent 50%),
+        linear-gradient(180deg, #0C0D0C 0%, #121312 100%);
       pointer-events: none;
     }
 
     .dash-container {
-      max-width: 1200px;
+      max-width: 1180px;
       width: 100%;
       margin: 0 auto;
       padding: 2.5rem 2rem 6rem;
@@ -91,34 +95,44 @@
     .section-label {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
       font-weight: 600;
-      color: var(--dash-accent-cyan);
+      color: var(--dash-accent-sky);
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
 
     .section-label .section-index {
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      padding: 2px 8px;
+      background: rgba(117, 197, 222, 0.12);
+      border: 1px solid rgba(117, 197, 222, 0.25);
+      padding: 3px 9px;
       border-radius: 9999px;
+      color: var(--dash-accent-sky);
     }
 
     /* Hero Command Object */
     .command-hero-card {
-      background: radial-gradient(ellipse 70% 60% at 85% -10%, rgba(56, 189, 248, 0.12) 0%, transparent 70%),
-                  radial-gradient(ellipse 50% 50% at 10% 110%, rgba(129, 140, 248, 0.08) 0%, transparent 60%),
-                  linear-gradient(180deg, rgba(22, 25, 33, 0.85) 0%, rgba(14, 16, 22, 0.95) 100%);
+      background: rgba(22, 24, 22, 0.85);
       border: 1px solid var(--dash-border);
       border-radius: 24px;
-      padding: 2.5rem;
+      padding: 2.5rem 2.75rem;
       position: relative;
       overflow: hidden;
       box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(20px);
+    }
+
+    .command-hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 400px;
+      height: 300px;
+      background: radial-gradient(circle at 100% 0%, rgba(117, 197, 222, 0.08), transparent 70%);
+      pointer-events: none;
     }
 
     .hero-greeting-text {
@@ -126,8 +140,8 @@
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      color: var(--dash-accent-cyan);
-      margin-bottom: 10px;
+      color: var(--dash-accent-sky);
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -149,13 +163,13 @@
     }
 
     .hero-headline {
-      font-family: 'Inter', -apple-system, sans-serif;
-      font-size: 2.25rem;
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.2;
-      color: #FFFFFF;
-      margin-bottom: 1.5rem;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 2.35rem;
+      font-weight: 600;
+      letter-spacing: -0.04em;
+      line-height: 1.15;
+      color: #F4F1E8;
+      margin-bottom: 1.25rem;
     }
 
     .hero-live-artifact {
@@ -164,20 +178,20 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1.25rem;
-      background: rgba(10, 12, 16, 0.75);
+      background: rgba(14, 15, 14, 0.9);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 18px;
-      padding: 1.25rem 1.5rem;
+      border-radius: 20px;
+      padding: 1.25rem 1.75rem;
       position: relative;
       z-index: 2;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .hero-url-block {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
 
     .hero-url-label {
@@ -195,7 +209,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.05rem;
       font-weight: 600;
-      color: var(--dash-accent-cyan);
+      color: var(--dash-accent-sky);
       text-decoration: none;
       display: flex;
       align-items: center;
@@ -204,7 +218,7 @@
     }
 
     .hero-url-link:hover {
-      color: #7DD3FC;
+      color: #A5E4F5;
       text-decoration: underline;
     }
 
@@ -215,10 +229,10 @@
       flex-wrap: wrap;
     }
 
-    /* Grid Layout for Status & Analytics */
+    /* Grid Layout for Status & Capabilities */
     .dash-sections-grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
     }
 
@@ -228,7 +242,7 @@
       }
     }
 
-    /* Status Panel Card */
+    /* Panel Card */
     .status-panel-card {
       background: var(--dash-surface);
       border: 1px solid var(--dash-border);
@@ -247,13 +261,14 @@
     }
 
     .panel-section-title {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       font-size: 1.15rem;
       font-weight: 600;
-      color: #FFFFFF;
+      color: #F4F1E8;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      letter-spacing: -0.02em;
     }
 
     .status-matrix-grid {
@@ -263,10 +278,10 @@
     }
 
     .status-matrix-item {
-      background: rgba(12, 14, 18, 0.65);
+      background: rgba(16, 17, 16, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 14px;
-      padding: 13px 15px;
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -275,7 +290,7 @@
 
     .status-matrix-item:hover {
       border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(16, 19, 25, 0.85);
+      background: rgba(22, 24, 22, 0.95);
     }
 
     .status-item-label {
@@ -295,63 +310,72 @@
       gap: 6px;
     }
 
-    /* Analytics Panel */
-    .analytics-panel-card {
-      background: var(--dash-surface);
-      border: 1px solid var(--dash-border);
-      border-radius: 20px;
-      padding: 1.75rem;
+    /* Template Showcase Row */
+    .templates-showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
+    @media (max-width: 840px) {
+      .templates-showcase-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .template-item-card {
+      background: rgba(16, 17, 16, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(16px);
-      transition: border-color 0.2s ease;
+      transition: all 0.25s ease;
+      text-decoration: none;
     }
 
-    .analytics-panel-card:hover {
-      border-color: rgba(255, 255, 255, 0.14);
+    .template-item-card:hover {
+      border-color: rgba(117, 197, 222, 0.3);
+      transform: translateY(-2px);
     }
 
-    .telemetry-numbers-row {
-      display: flex;
-      gap: 2.25rem;
-      margin-top: 4px;
-    }
-
-    .telemetry-stat-num {
-      font-family: 'Inter', sans-serif;
-      font-size: 2.35rem;
-      font-weight: 700;
-      line-height: 1;
-      color: #FFFFFF;
-      letter-spacing: -0.02em;
-    }
-
-    .telemetry-stat-label {
-      font-size: 11px;
-      color: var(--dash-text-muted);
-      font-family: 'JetBrains Mono', monospace;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin-top: 8px;
-    }
-
-    .analytics-chart-placeholder {
-      height: 95px;
-      width: 100%;
+    .template-thumb-box {
+      height: 110px;
+      background: #111211;
       position: relative;
-      margin-top: 8px;
-      background: rgba(10, 12, 16, 0.5);
-      border-radius: 12px;
-      padding: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
+      overflow: hidden;
     }
 
-    .analytics-chart-svg {
+    .template-thumb-box img {
       width: 100%;
       height: 100%;
-      overflow: visible;
+      object-fit: cover;
+      opacity: 0.85;
+      transition: transform 0.4s ease;
+    }
+
+    .template-item-card:hover .template-thumb-box img {
+      transform: scale(1.04);
+      opacity: 1;
+    }
+
+    .template-card-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .template-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #F4F1E8;
+    }
+
+    .template-card-desc {
+      font-size: 12px;
+      color: var(--dash-text-secondary);
+      line-height: 1.5;
     }
 
     /* Portfolio Library Shelf */
@@ -391,13 +415,13 @@
     .portfolio-artifact-card:hover {
       border-color: var(--dash-border-hover);
       transform: translateY(-3px);
-      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.12);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(117, 197, 222, 0.12);
     }
 
     .artifact-banner {
       height: 140px;
       position: relative;
-      background: #0D0F14;
+      background: #111211;
       overflow: hidden;
     }
 
@@ -416,7 +440,7 @@
     .artifact-banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(18, 20, 26, 0.95) 0%, rgba(18, 20, 26, 0.2) 60%, transparent 100%);
+      background: linear-gradient(to top, rgba(22, 24, 22, 0.95) 0%, rgba(22, 24, 22, 0.2) 60%, transparent 100%);
     }
 
     .artifact-universe-badge {
@@ -426,8 +450,8 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
       font-weight: 600;
-      color: #FFFFFF;
-      background: rgba(14, 16, 22, 0.85);
+      color: #F4F1E8;
+      background: rgba(18, 20, 18, 0.85);
       backdrop-filter: blur(10px);
       padding: 4px 10px;
       border-radius: 9999px;
@@ -442,7 +466,7 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 10px;
       color: var(--dash-text-secondary);
-      background: rgba(10, 12, 16, 0.85);
+      background: rgba(14, 15, 14, 0.85);
       backdrop-filter: blur(10px);
       padding: 3px 9px;
       border-radius: 9999px;
@@ -458,10 +482,10 @@
     }
 
     .artifact-title {
-      font-family: 'Inter', sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       font-size: 1.15rem;
-      font-weight: 700;
-      color: #FFFFFF;
+      font-weight: 600;
+      color: #F4F1E8;
       letter-spacing: -0.02em;
     }
 
@@ -474,9 +498,9 @@
     .artifact-url-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
-      color: var(--dash-accent-cyan);
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.15);
+      color: var(--dash-accent-sky);
+      background: rgba(117, 197, 222, 0.08);
+      border: 1px solid rgba(117, 197, 222, 0.2);
       padding: 5px 10px;
       border-radius: 8px;
       word-break: break-all;
@@ -491,18 +515,18 @@
       border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
 
-    /* Buttons */
+    /* Pill Buttons matching Landing Page */
     .mf-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      font-family: 'Inter', sans-serif;
-      font-size: 13px;
-      font-weight: 600;
+      gap: 8px;
+      font-family: 'Inter', system-ui, sans-serif;
+      font-size: 13.5px;
+      font-weight: 500;
       text-decoration: none;
-      border-radius: 10px;
-      padding: 8px 14px;
+      border-radius: 9999px;
+      padding: 10px 18px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       border: 1px solid transparent;
@@ -510,39 +534,42 @@
     }
 
     .mf-btn-primary {
-      background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
-      color: #FFFFFF;
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+      background: var(--dash-accent-sky);
+      color: var(--dash-ink);
+      font-weight: 600;
+      border-color: var(--dash-accent-sky);
+      box-shadow: 0 4px 14px rgba(117, 197, 222, 0.25);
     }
 
     .mf-btn-primary:hover {
-      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
-      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+      background: #8ED8EE;
+      border-color: #8ED8EE;
+      box-shadow: 0 6px 20px rgba(117, 197, 222, 0.4);
       transform: translateY(-1px);
     }
 
     .mf-btn-secondary {
-      background: rgba(255, 255, 255, 0.06);
-      color: #FFFFFF;
-      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+      color: #F4F1E8;
+      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .mf-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.24);
       transform: translateY(-1px);
     }
 
     .mf-btn-ghost {
       background: transparent;
       color: var(--dash-text-secondary);
-      border-color: transparent;
+      border-color: rgba(255, 255, 255, 0.08);
     }
 
     .mf-btn-ghost:hover {
-      color: #FFFFFF;
+      color: #F4F1E8;
       background: rgba(255, 255, 255, 0.06);
+      border-color: rgba(255, 255, 255, 0.16);
     }
 
     .mf-btn-danger {
@@ -558,9 +585,9 @@
     }
 
     .mf-btn-sm {
-      padding: 6px 12px;
-      font-size: 12px;
-      border-radius: 8px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      border-radius: 9999px;
     }
 
     .mf-badge {
@@ -583,15 +610,15 @@
     }
 
     .mf-badge-success {
-      background: rgba(34, 197, 94, 0.15);
+      background: rgba(16, 185, 129, 0.15);
       color: #34D399;
-      border: 1px solid rgba(34, 197, 94, 0.3);
+      border: 1px solid rgba(16, 185, 129, 0.3);
     }
 
     .mf-badge-accent {
-      background: rgba(56, 189, 248, 0.14);
-      color: #38BDF8;
-      border: 1px solid rgba(56, 189, 248, 0.3);
+      background: rgba(117, 197, 222, 0.14);
+      color: #75C5DE;
+      border: 1px solid rgba(117, 197, 222, 0.3);
     }
 
     .mf-badge-vip {
@@ -606,14 +633,14 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: rgba(14, 16, 22, 0.95);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: #FFFFFF;
+      background: rgba(18, 20, 18, 0.95);
+      border: 1px solid rgba(117, 197, 222, 0.35);
+      color: #F4F1E8;
       padding: 12px 20px;
       border-radius: 12px;
       font-size: 13.5px;
       font-weight: 600;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.15);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(117, 197, 222, 0.15);
       backdrop-filter: blur(16px);
       opacity: 0;
       transform: translateY(10px);
@@ -634,20 +661,20 @@
         gap: 1.25rem !important;
       }
       .command-hero-card {
-        padding: 1.25rem 1rem !important;
-        border-radius: 16px !important;
+        padding: 1.5rem 1.25rem !important;
+        border-radius: 18px !important;
       }
       .hero-greeting-text {
         font-size: 10.5px !important;
       }
       .hero-headline {
-        font-size: 1.6rem !important;
-        line-height: 1.25 !important;
+        font-size: 1.65rem !important;
+        line-height: 1.2 !important;
       }
       .hero-live-artifact {
         flex-direction: column !important;
         align-items: stretch !important;
-        padding: 1rem !important;
+        padding: 1.15rem !important;
         gap: 1rem !important;
       }
       .hero-url-block {
@@ -707,7 +734,7 @@
         <section class="command-hero-card">
           <div class="hero-greeting-text">
             <span class="mf-pulse-dot"></span>
-            <span id="userGreeting">COMMAND CENTER</span>
+            <span id="userGreeting">DASHBOARD // DEVELOPER</span>
           </div>
           <h1 class="hero-headline" id="heroHeadline">Build your 3D portfolio.</h1>
 
@@ -730,8 +757,12 @@
               <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
                 <span>Edit in Studio</span> &rarr;
               </a>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="exportCurrentSiteZip()" title="Download Full Standalone Source ZIP">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Export ZIP</span>
+              </button>
               <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyPortfolioUrl()" title="Copy live link">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
               </button>
               <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" id="btnDeletePortfolio" onclick="deleteCurrentPortfolio()" title="Delete active portfolio" style="display:none;">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -741,24 +772,27 @@
 
           <!-- Empty State Dock (Active when user hasn't generated a portfolio yet) -->
           <div class="hero-empty-artifact" id="heroEmptyArtifact" style="display:flex; flex-direction:column; gap:1.25rem; margin-top:0.75rem;">
-            <p style="color:var(--dash-text-secondary); font-size:14px; max-width:600px; line-height:1.6; margin:0;">
-              Your workspace is ready. Ingest your GitHub repositories or upload your resume in the Studio to generate a live, interactive 3D WebGL developer portfolio in 60 seconds.
+            <p style="color:var(--dash-text-secondary); font-size:14.5px; max-width:620px; line-height:1.7; margin:0;">
+              Your workspace is ready. Ingest your GitHub repositories or upload your resume in the Studio to generate a live, interactive 3D WebGL developer portfolio in 60 seconds. Includes full standalone source code download.
             </p>
-            <div style="display:flex; gap:10px; align-items:center;">
-              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:10px 18px;">
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+              <a href="/studio" class="mf-btn mf-btn-primary" style="padding:11px 22px;">
                 <span>Launch Studio to Build Portfolio</span> &rarr;
+              </a>
+              <a href="/studio#themes" class="mf-btn mf-btn-secondary">
+                <span>Explore 3D Universes</span>
               </a>
             </div>
           </div>
         </section>
 
-        <!-- Status & Telemetry Bento Grid -->
+        <!-- Real Infrastructure & Connected Services Bento Grid -->
         <div class="dash-sections-grid">
-          <!-- Dominant Status Panel -->
+          <!-- Real Deployment & Domain Configuration -->
           <section class="status-panel-card">
             <div class="panel-section-title">
-              <span>System &amp; Deployment Status</span>
-              <span class="mf-badge mf-badge-success">Operational</span>
+              <span>Connected Infrastructure</span>
+              <span class="mf-badge mf-badge-success" id="sslBadge">TLS 1.3 Secured</span>
             </div>
 
             <div class="status-matrix-grid">
@@ -767,78 +801,98 @@
                 <span class="status-item-val" id="statusUniverseVal">Choose in Studio</span>
               </div>
               <div class="status-matrix-item">
-                <span class="status-item-label">Subdomain Routing</span>
-                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--dash-accent-cyan);">Pending Build</span>
+                <span class="status-item-label">Edge Subdomain</span>
+                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--dash-accent-sky);">Pending Build</span>
               </div>
               <div class="status-matrix-item">
-                <span class="status-item-label">Authentication Mode</span>
-                <span class="status-item-val" style="color:var(--dash-success);">Email &amp; Google OAuth</span>
+                <span class="status-item-label">GitHub Integration</span>
+                <span class="status-item-val" id="statusGithubVal" style="color:var(--dash-text-primary);">Auto-Sync Enabled</span>
               </div>
               <div class="status-matrix-item">
-                <span class="status-item-label">Readiness Score</span>
-                <span class="status-item-val" id="statusReadinessVal" style="color:var(--dash-accent-cyan);">Ready to Build</span>
+                <span class="status-item-label">Source Code Export</span>
+                <span class="status-item-val" id="statusExportVal" style="color:var(--dash-success);">Standalone ZIP</span>
               </div>
             </div>
 
-            <div style="background:rgba(12,14,18,0.65); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="background:rgba(16,17,16,0.75); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
               <div>
-                <div style="font-size:12.5px; font-weight:600; color:var(--dash-text-primary);">Security &amp; Sessions</div>
-                <div style="font-size:11.5px; color:var(--dash-text-muted);">Encrypted tokens • Current device active</div>
+                <div style="font-size:13px; font-weight:600; color:var(--dash-text-primary);">Session &amp; Security</div>
+                <div style="font-size:12px; color:var(--dash-text-muted);" id="userSecurityInfo">Authenticated session active</div>
               </div>
               <a href="/profile#security" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Manage &rarr;</a>
             </div>
           </section>
 
-          <!-- Analytics & Recruiter Traffic -->
-          <section class="analytics-panel-card" id="analytics">
+          <!-- Real Account Plan & Generation Allowance -->
+          <section class="status-panel-card">
             <div class="panel-section-title">
-              <span>Recruiter Traffic</span>
-              <span class="mf-badge mf-badge-accent">Live Telemetry</span>
+              <span>Account &amp; Weekly Allowance</span>
+              <span class="mf-badge mf-badge-accent" id="tierBadge">Starter Free</span>
             </div>
 
-            <div class="telemetry-numbers-row">
-              <div>
-                <div class="telemetry-stat-num" id="statViews">0</div>
-                <div class="telemetry-stat-label">Total Views</div>
+            <div class="status-matrix-grid">
+              <div class="status-matrix-item">
+                <span class="status-item-label">Weekly Allowance</span>
+                <span class="status-item-val" id="regenCounter" style="color:var(--dash-accent-sky);">3 Builds Remaining</span>
               </div>
-              <div>
-                <div class="telemetry-stat-num" id="statVisitors" style="color:var(--dash-success);">0</div>
-                <div class="telemetry-stat-label">Unique Visitors</div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">Build Reset</span>
+                <span class="status-item-val" id="regenDetails">Every Sunday midnight</span>
+              </div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">Code Ownership</span>
+                <span class="status-item-val" style="color:var(--dash-success);">100% Exportable</span>
+              </div>
+              <div class="status-matrix-item">
+                <span class="status-item-label">Custom Domain</span>
+                <span class="status-item-val" id="customDomainStatus">Available (₹149/mo)</span>
               </div>
             </div>
 
-            <!-- Single Elegant Sparkline Curve -->
-            <div class="analytics-chart-placeholder">
-              <svg class="analytics-chart-svg" viewBox="0 0 300 70" preserveAspectRatio="none">
-                <defs>
-                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.35"/>
-                    <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <path d="M0,55 Q50,45 100,50 T200,30 T300,18 L300,70 L0,70 Z" fill="url(#chartGrad)"/>
-                <path d="M0,55 Q50,45 100,50 T200,30 T300,18" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--dash-text-muted); margin-top:auto;">
-              <span>Real-time recruiter engagement</span>
-              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" style="padding:4px 8px; font-size:11.5px; color:var(--dash-accent-cyan);" onclick="copyPortfolioUrl()">Share Link ↗</button>
+            <div style="background:rgba(16,17,16,0.75); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <div>
+                <div style="font-size:13px; font-weight:600; color:var(--dash-text-primary);">Lifetime Deployment</div>
+                <div style="font-size:12px; color:var(--dash-text-muted);">Netlify hosting for ₹149 one-time • zero lock-in</div>
+              </div>
+              <a href="/studio" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px; color:var(--dash-accent-sky);">Upgrade in Studio &rarr;</a>
             </div>
           </section>
         </div>
 
-        <!-- Plan & Allowance Strip -->
-        <section class="status-panel-card" style="flex-direction:row; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.25rem;">
-          <div>
-            <div style="font-size:11px; font-family:'JetBrains Mono', monospace; color:var(--dash-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Account Tier</div>
-            <div style="font-size:1.15rem; font-weight:700; color:var(--dash-accent-cyan); margin-top:2px;" id="planName">Free Starter Tier</div>
-            <div style="font-size:12px; color:var(--dash-text-secondary); margin-top:2px;" id="billingDetails">Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.</div>
+        <!-- 3D Spatial Universes Showcase -->
+        <section class="status-panel-card" style="gap:1rem;">
+          <div class="panel-section-title">
+            <span>3D Spatial Templates</span>
+            <a href="/studio" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Open Studio &rarr;</a>
           </div>
-          <div>
-            <div style="font-size:11px; font-family:'JetBrains Mono', monospace; color:var(--dash-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Generation Allowance</div>
-            <div style="font-size:1.15rem; font-weight:700; color:var(--dash-accent-cyan); margin-top:2px;" id="regenCounter">3 Builds Remaining</div>
-            <div style="font-size:12px; color:var(--dash-text-secondary); margin-top:2px;" id="regenDetails">3 free builds available per week.</div>
+          <div class="templates-showcase-grid">
+            <a href="/studio?template=jack-3d-creator" class="template-item-card">
+              <div class="template-thumb-box">
+                <img src="/assets/3d/ai_portfolio_generator_3d.jpg" alt="Jack 3D Space">
+              </div>
+              <div class="template-card-body">
+                <div class="template-card-title">Jack 3D Space</div>
+                <div class="template-card-desc">Interactive WebGL developer room with living 3D character, project chests, and terminal dock.</div>
+              </div>
+            </a>
+            <a href="/studio?template=nadia-brand" class="template-item-card">
+              <div class="template-thumb-box">
+                <img src="/nadia_portrait_nobg.png" alt="Nadia Brand" style="object-fit:contain; padding:8px;">
+              </div>
+              <div class="template-card-body">
+                <div class="template-card-title">Nadia Editorial Brand</div>
+                <div class="template-card-desc">High-contrast Swiss editorial brutalism with bold typography for advisors, speakers, and creators.</div>
+              </div>
+            </a>
+            <a href="/studio?template=kage-temple" class="template-item-card">
+              <div class="template-thumb-box">
+                <img src="/landing-pages/secret-pathways-assets/generated/kage-sanmon-preview.webp" alt="Kage Kyoto Temple">
+              </div>
+              <div class="template-card-body">
+                <div class="template-card-title">Kage Kyoto Temple</div>
+                <div class="template-card-desc">Atmospheric Kyoto mountain sanctuary with live Shinto Sanmon, vermilion blood moon, and zen koi.</div>
+              </div>
+            </a>
           </div>
         </section>
 
@@ -846,10 +900,10 @@
         <section class="library-section" id="portfolios">
           <div class="library-header">
             <div>
-              <h2 style="font-family:'Inter', sans-serif; font-size:1.35rem; font-weight:700; color:#FFFFFF; letter-spacing:-0.02em;">
+              <h2 style="font-family:'Inter', system-ui, sans-serif; font-size:1.35rem; font-weight:600; color:#F4F1E8; letter-spacing:-0.03em;">
                 Portfolio Library
               </h2>
-              <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:2px;">
+              <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:3px;">
                 Historical and cloud-synchronized 3D versions tied to your identity.
               </p>
             </div>
@@ -920,7 +974,23 @@
       
       const greetingEl = document.getElementById('userGreeting');
       if (greetingEl) {
-        greetingEl.textContent = `COMMAND CENTER // ${displayName.toUpperCase()}`;
+        greetingEl.textContent = `DASHBOARD // ${displayName.toUpperCase()}`;
+      }
+
+      const secInfo = document.getElementById('userSecurityInfo');
+      if (secInfo && userEmail) {
+        secInfo.textContent = `${userEmail} • Encrypted session`;
+      }
+
+      // Check for connected GitHub username
+      const ghUsername = user.github_username || user.github || (localStorage.getItem('myfolio_gh_user') || '');
+      const ghVal = document.getElementById('statusGithubVal');
+      if (ghVal) {
+        if (ghUsername) {
+          ghVal.innerHTML = `<a href="https://github.com/${ghUsername}" target="_blank" style="color:var(--dash-accent-sky); text-decoration:none;">@${ghUsername} ↗</a>`;
+        } else {
+          ghVal.textContent = 'Auto-Detect on Build';
+        }
       }
 
       // A portfolio is truly "live" only if it has a real custom subdomain (not just a /p/ preview URL)
@@ -936,6 +1006,7 @@
 
       if (hasLivePortfolio) {
         const activeSite = firstLive;
+        currentSiteId = activeSite?.siteId || activeSite?.handle;
         const siteHandle = activeSite?.handle || activeSite?.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
         currentSiteUrl = activeSite?.subdomain?.startsWith('http') ? activeSite.subdomain : `https://${activeSite.subdomain || siteHandle + '.myfolio.tech'}`;
 
@@ -955,12 +1026,11 @@
         if (subVal) subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
         const uniVal = document.getElementById('statusUniverseVal');
         if (uniVal) uniVal.textContent = activeSite?.universeKey || 'Jack 3D Space';
-        const readyVal = document.getElementById('statusReadinessVal');
-        if (readyVal) readyVal.textContent = '100% Ready';
 
       } else if (hasAnyPortfolio) {
         // Has a draft/preview but not yet published to a live subdomain
         const draft = firstDraft;
+        currentSiteId = draft?.siteId || draft?.handle;
         const draftHandle = draft?.siteId || draft?.handle || 'preview';
         currentSiteUrl = `${origin}/p/${draftHandle}`;
 
@@ -980,10 +1050,9 @@
         if (subVal) subVal.textContent = 'Pending publish';
         const uniVal = document.getElementById('statusUniverseVal');
         if (uniVal) uniVal.textContent = draft?.universeKey || 'Jack 3D Space';
-        const readyVal = document.getElementById('statusReadinessVal');
-        if (readyVal) readyVal.textContent = 'Draft Ready';
 
       } else {
+        currentSiteId = null;
         if (heroHeadline) heroHeadline.textContent = 'Build your 3D portfolio.';
         if (heroLive) heroLive.style.display = 'none';
         if (heroEmpty) heroEmpty.style.display = 'flex';
@@ -995,14 +1064,11 @@
         if (subVal) subVal.textContent = 'Pending Build';
         const uniVal = document.getElementById('statusUniverseVal');
         if (uniVal) uniVal.textContent = 'Choose in Studio';
-        const readyVal = document.getElementById('statusReadinessVal');
-        if (readyVal) readyVal.textContent = 'Ready to Build';
       }
 
-      // STRICT VIP Founder logic: Only abdulaziznoor9876@gmail.com gets VIP tags/features!
+      // Tier logic: Only abdulaziznoor9876@gmail.com gets VIP tags/features!
       const lifecycleBadge = document.getElementById('lifecycleBadge');
-      const planNameEl = document.getElementById('planName');
-      const billingDetailsEl = document.getElementById('billingDetails');
+      const tierBadge = document.getElementById('tierBadge');
       const regenCounterEl = document.getElementById('regenCounter');
       const regenDetailsEl = document.getElementById('regenDetails');
 
@@ -1011,44 +1077,34 @@
           lifecycleBadge.textContent = 'VIP ACTIVE';
           lifecycleBadge.className = 'mf-badge mf-badge-vip';
         }
-        if (planNameEl) {
-          planNameEl.textContent = 'VIP Founder / Master Edition';
-          planNameEl.style.color = '#FCD34D';
-        }
-        if (billingDetailsEl) {
-          billingDetailsEl.textContent = 'Master admin access with unlimited high-speed global edge distribution.';
+        if (tierBadge) {
+          tierBadge.textContent = 'VIP Founder';
+          tierBadge.className = 'mf-badge mf-badge-vip';
         }
         if (regenCounterEl) {
-          regenCounterEl.textContent = 'Unlimited Builds Active';
+          regenCounterEl.textContent = 'Unlimited Builds';
+          regenCounterEl.style.color = '#FCD34D';
         }
         if (regenDetailsEl) {
-          regenDetailsEl.textContent = 'Generate bespoke 3D variations anytime.';
+          regenDetailsEl.textContent = 'Master admin access active';
         }
       } else {
         if (lifecycleBadge) {
           lifecycleBadge.textContent = 'STARTER FREE';
           lifecycleBadge.className = 'mf-badge mf-badge-secondary';
         }
-        if (planNameEl) {
-          planNameEl.textContent = 'Free Starter Tier';
-          planNameEl.style.color = '#38BDF8';
-        }
-        if (billingDetailsEl) {
-          billingDetailsEl.textContent = 'Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.';
+        if (tierBadge) {
+          tierBadge.textContent = 'Starter Free';
+          tierBadge.className = 'mf-badge mf-badge-secondary';
         }
         if (regenCounterEl) {
           regenCounterEl.textContent = '3 Builds Remaining';
+          regenCounterEl.style.color = 'var(--dash-accent-sky)';
         }
         if (regenDetailsEl) {
-          regenDetailsEl.textContent = '3 free builds available per week.';
+          regenDetailsEl.textContent = '3 free builds available per week';
         }
       }
-
-      const analytics = data.analytics || {};
-      const viewsEl = document.getElementById('statViews');
-      if (viewsEl) viewsEl.textContent = analytics.totalViews || 0;
-      const visitorsEl = document.getElementById('statVisitors');
-      if (visitorsEl) visitorsEl.textContent = analytics.uniqueVisitors || 0;
     }
 
     const TEMPLATE_THUMBS = {
@@ -1105,13 +1161,13 @@
 
       if (!portfolios || portfolios.length === 0) {
         grid.innerHTML = `
-          <div style="padding:3.5rem 1.5rem; text-align:center; background:rgba(14,16,22,0.6); border:1px dashed rgba(255,255,255,0.12); border-radius:20px; grid-column:1 / -1; backdrop-filter:blur(12px);">
-            <div style="width:48px; height:48px; border-radius:50%; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); color:#38BDF8; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:20px;">✦</div>
-            <h3 style="font-size:1.15rem; font-weight:700; color:#FFF; margin-bottom:6px;">No Portfolios Generated Yet</h3>
-            <p style="color:var(--dash-text-secondary); font-size:13px; max-width:420px; margin:0 auto 20px; line-height:1.5;">
+          <div style="padding:3.5rem 1.5rem; text-align:center; background:rgba(18,20,18,0.6); border:1px dashed rgba(255,255,255,0.12); border-radius:20px; grid-column:1 / -1; backdrop-filter:blur(12px);">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(117,197,222,0.1); border:1px solid rgba(117,197,222,0.25); color:#75C5DE; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:20px;">✦</div>
+            <h3 style="font-size:1.15rem; font-weight:600; color:#F4F1E8; margin-bottom:6px;">No Portfolios Generated Yet</h3>
+            <p style="color:var(--dash-text-secondary); font-size:13.5px; max-width:440px; margin:0 auto 20px; line-height:1.6;">
               Connect your GitHub or upload your resume in the Web Studio to generate your first bespoke 3D WebGL developer world.
             </p>
-            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:9px 18px;">Launch Web Studio &rarr;</a>
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:9px 20px;">Launch Web Studio &rarr;</a>
           </div>
         `;
         return;
@@ -1157,11 +1213,14 @@
                 <a href="/studio?template=${universe}&editSite=${sid}" class="mf-btn mf-btn-secondary mf-btn-sm" title="Edit in Studio">
                   <span>Edit</span>
                 </a>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="exportSiteZip('${sid}')" title="Download Full Standalone Source ZIP">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                </button>
                 <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy live link">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 </button>
                 <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" title="Delete portfolio version">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                 </button>
               </div>
             </div>
@@ -1188,6 +1247,39 @@
       const full = `${window.location.origin}${path}`;
       navigator.clipboard.writeText(full);
       showToast('Copied: ' + full);
+    }
+
+    async function exportCurrentSiteZip() {
+      if (!currentSiteId) {
+        showToast('Build your portfolio in Studio to export ZIP');
+        return;
+      }
+      exportSiteZip(currentSiteId);
+    }
+
+    async function exportSiteZip(siteId) {
+      try {
+        showToast('Preparing standalone ZIP export...');
+        const res = await fetch(`/api/portfolio/${encodeURIComponent(siteId)}/export`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        if (!res.ok) {
+          throw new Error('Export failed. Make sure your portfolio is saved.');
+        }
+        const blob = await res.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${siteId}-portfolio.zip`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        a.remove();
+        showToast('Standalone source ZIP downloaded!');
+      } catch (e) {
+        alert(e.message || 'Export failed');
+      }
     }
 
     async function refreshUserPortfolios() {
@@ -1254,6 +1346,8 @@
 
     window.copyPortfolioUrl = copyPortfolioUrl;
     window.copySiteLink = copySiteLink;
+    window.exportCurrentSiteZip = exportCurrentSiteZip;
+    window.exportSiteZip = exportSiteZip;
     window.refreshUserPortfolios = refreshUserPortfolios;
     window.setActiveVipDomain = setActiveVipDomain;
     window.deleteSyncedPortfolio = deleteSyncedPortfolio;
