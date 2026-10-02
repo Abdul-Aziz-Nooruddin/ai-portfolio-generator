@@ -17,8 +17,8 @@
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Command Center — MyFolio</title>
-  <meta name="description" content="Control your live 3D developer portfolio, edge subdomain, analytics, and library artifacts.">
+  <title>Dashboard — MyFolio</title>
+  <meta name="description" content="Manage your live 3D developer portfolio, edge subdomain, telemetry, and synchronized versions in your unified dashboard.">
   <meta name="robots" content="noindex, nofollow">
   <link rel="stylesheet" href="/web/app-tokens.css">
   <link rel="stylesheet" href="/app-tokens.css">
@@ -38,19 +38,73 @@
       --dash-accent-violet: #818CF8;
       --dash-success: #22C55E;
       --dash-warning: #F59E0B;
+      --dash-error: #EF4444;
       --dash-text-primary: #F4F1E8;
       --dash-text-secondary: #9CA3AF;
       --dash-text-muted: #6B7280;
     }
 
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--dash-bg);
+      color: var(--dash-text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Ambient Spatial Background */
+    .mf-atmospheric-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: 
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 90% 20%, rgba(129, 140, 248, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #0A0A0A 0%, #0D0F14 100%);
+      pointer-events: none;
+    }
+
     .dash-container {
-      max-width: 1180px;
+      max-width: 1200px;
       width: 100%;
       margin: 0 auto;
       padding: 2.5rem 2rem 6rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
+    }
+
+    /* Header & Eyebrow */
+    .dash-header-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--dash-accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .section-label .section-index {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 2px 8px;
+      border-radius: 9999px;
     }
 
     /* Hero Command Object */
@@ -174,7 +228,7 @@
       }
     }
 
-    /* Dominant Status Panel */
+    /* Status Panel Card */
     .status-panel-card {
       background: var(--dash-surface);
       border: 1px solid var(--dash-border);
@@ -552,20 +606,26 @@
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: rgba(11, 22, 56, 0.95);
-      border: 1px solid var(--mf-border-glow);
+      background: rgba(14, 16, 22, 0.95);
+      border: 1px solid rgba(56, 189, 248, 0.35);
       color: #FFFFFF;
       padding: 12px 20px;
-      border-radius: var(--mf-radius-md);
+      border-radius: 12px;
       font-size: 13.5px;
       font-weight: 600;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.15);
       backdrop-filter: blur(16px);
       opacity: 0;
       transform: translateY(10px);
       pointer-events: none;
-      transition: all 0.25s var(--mf-ease-out);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 10000;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     @media (max-width: 768px) {
@@ -635,6 +695,14 @@
 
     <div class="app-main-content">
       <main class="dash-container">
+        <!-- Section Eyebrow -->
+        <div class="dash-header-block">
+          <div class="section-label">
+            <span class="section-index">01 / DASHBOARD</span>
+            <span>DEVELOPER COMMAND CENTER</span>
+          </div>
+        </div>
+
         <!-- Hero Command Object -->
         <section class="command-hero-card">
           <div class="hero-greeting-text">
@@ -648,7 +716,7 @@
             <div class="hero-url-block">
               <div class="hero-url-label">
                 <span id="lifecycleBadge" class="mf-badge mf-badge-secondary">STARTER FREE</span>
-                <span>Active Edge Domain</span>
+                <span>Active Edge Subdomain</span>
               </div>
               <a href="#" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
                 Loading...
@@ -657,7 +725,7 @@
 
             <div class="hero-actions-dock">
               <a href="#" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
-                <span>Open Portfolio</span> &nearr;
+                <span>Visit Live Portfolio</span> &nearr;
               </a>
               <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
                 <span>Edit in Studio</span> &rarr;
@@ -673,49 +741,49 @@
 
           <!-- Empty State Dock (Active when user hasn't generated a portfolio yet) -->
           <div class="hero-empty-artifact" id="heroEmptyArtifact" style="display:flex; flex-direction:column; gap:1.25rem; margin-top:0.75rem;">
-            <p style="color:var(--mf-text-secondary); font-size:14px; max-width:600px; line-height:1.6; margin:0;">
+            <p style="color:var(--dash-text-secondary); font-size:14px; max-width:600px; line-height:1.6; margin:0;">
               Your workspace is ready. Ingest your GitHub repositories or upload your resume in the Studio to generate a live, interactive 3D WebGL developer portfolio in 60 seconds.
             </p>
             <div style="display:flex; gap:10px; align-items:center;">
-              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:10px 18px;">
                 <span>Launch Studio to Build Portfolio</span> &rarr;
               </a>
             </div>
           </div>
         </section>
 
-        <!-- Status & Telemetry Grid -->
+        <!-- Status & Telemetry Bento Grid -->
         <div class="dash-sections-grid">
           <!-- Dominant Status Panel -->
           <section class="status-panel-card">
             <div class="panel-section-title">
-              <span>System Status</span>
+              <span>System &amp; Deployment Status</span>
               <span class="mf-badge mf-badge-success">Operational</span>
             </div>
 
             <div class="status-matrix-grid">
               <div class="status-matrix-item">
-                <span class="status-item-label">Active Universe</span>
+                <span class="status-item-label">Active Template</span>
                 <span class="status-item-val" id="statusUniverseVal">Choose in Studio</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Subdomain Routing</span>
-                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--mf-accent-blue);">Pending Build</span>
+                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--dash-accent-cyan);">Pending Build</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Authentication Mode</span>
-                <span class="status-item-val" style="color:var(--mf-success);">Email &amp; Google OAuth</span>
+                <span class="status-item-val" style="color:var(--dash-success);">Email &amp; Google OAuth</span>
               </div>
               <div class="status-matrix-item">
                 <span class="status-item-label">Readiness Score</span>
-                <span class="status-item-val" id="statusReadinessVal" style="color:var(--mf-accent-cyan);">Ready to Build</span>
+                <span class="status-item-val" id="statusReadinessVal" style="color:var(--dash-accent-cyan);">Ready to Build</span>
               </div>
             </div>
 
-            <div style="background:rgba(8,13,32,0.6); border:1px solid var(--mf-border); border-radius:var(--mf-radius-md); padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+            <div style="background:rgba(12,14,18,0.65); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:12px 16px; display:flex; align-items:center; justify-content:space-between;">
               <div>
-                <div style="font-size:12px; font-weight:600; color:var(--mf-text-primary);">Security &amp; Sessions</div>
-                <div style="font-size:11.5px; color:var(--mf-text-muted);">Encrypted tokens • Current device active</div>
+                <div style="font-size:12.5px; font-weight:600; color:var(--dash-text-primary);">Security &amp; Sessions</div>
+                <div style="font-size:11.5px; color:var(--dash-text-muted);">Encrypted tokens • Current device active</div>
               </div>
               <a href="/profile#security" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Manage &rarr;</a>
             </div>
@@ -734,7 +802,7 @@
                 <div class="telemetry-stat-label">Total Views</div>
               </div>
               <div>
-                <div class="telemetry-stat-num" id="statVisitors" style="color:var(--mf-success);">0</div>
+                <div class="telemetry-stat-num" id="statVisitors" style="color:var(--dash-success);">0</div>
                 <div class="telemetry-stat-label">Unique Visitors</div>
               </div>
             </div>
@@ -744,18 +812,18 @@
               <svg class="analytics-chart-svg" viewBox="0 0 300 70" preserveAspectRatio="none">
                 <defs>
                   <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="#6EA8FF" stop-opacity="0.35"/>
-                    <stop offset="100%" stop-color="#6EA8FF" stop-opacity="0"/>
+                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#38BDF8" stop-opacity="0"/>
                   </linearGradient>
                 </defs>
                 <path d="M0,55 Q50,45 100,50 T200,30 T300,18 L300,70 L0,70 Z" fill="url(#chartGrad)"/>
-                <path d="M0,55 Q50,45 100,50 T200,30 T300,18" fill="none" stroke="#6EA8FF" stroke-width="2.5" stroke-linecap="round"/>
+                <path d="M0,55 Q50,45 100,50 T200,30 T300,18" fill="none" stroke="#38BDF8" stroke-width="2.5" stroke-linecap="round"/>
               </svg>
             </div>
 
-            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--mf-text-muted); margin-top:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--dash-text-muted); margin-top:auto;">
               <span>Real-time recruiter engagement</span>
-              <button type="button" class="link-btn" onclick="copyPortfolioUrl()">Share Link ↗</button>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" style="padding:4px 8px; font-size:11.5px; color:var(--dash-accent-cyan);" onclick="copyPortfolioUrl()">Share Link ↗</button>
             </div>
           </section>
         </div>
@@ -763,14 +831,14 @@
         <!-- Plan & Allowance Strip -->
         <section class="status-panel-card" style="flex-direction:row; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.25rem;">
           <div>
-            <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Account Tier</div>
-            <div style="font-size:1.15rem; font-weight:700; color:#5FA5F9;" id="planName">Free Starter Tier</div>
-            <div style="font-size:12px; color:var(--mf-text-secondary);" id="billingDetails">Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.</div>
+            <div style="font-size:11px; font-family:'JetBrains Mono', monospace; color:var(--dash-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Account Tier</div>
+            <div style="font-size:1.15rem; font-weight:700; color:var(--dash-accent-cyan); margin-top:2px;" id="planName">Free Starter Tier</div>
+            <div style="font-size:12px; color:var(--dash-text-secondary); margin-top:2px;" id="billingDetails">Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.</div>
           </div>
           <div>
-            <div style="font-size:12px; font-family:var(--mf-font-mono); color:var(--mf-text-muted); text-transform:uppercase;">Generation Allowance</div>
-            <div style="font-size:1.15rem; font-weight:700; color:var(--mf-accent-blue);" id="regenCounter">3 Builds Remaining</div>
-            <div style="font-size:12px; color:var(--mf-text-secondary);" id="regenDetails">3 free builds available per week.</div>
+            <div style="font-size:11px; font-family:'JetBrains Mono', monospace; color:var(--dash-text-muted); text-transform:uppercase; letter-spacing:0.06em;">Generation Allowance</div>
+            <div style="font-size:1.15rem; font-weight:700; color:var(--dash-accent-cyan); margin-top:2px;" id="regenCounter">3 Builds Remaining</div>
+            <div style="font-size:12px; color:var(--dash-text-secondary); margin-top:2px;" id="regenDetails">3 free builds available per week.</div>
           </div>
         </section>
 
@@ -778,14 +846,14 @@
         <section class="library-section" id="portfolios">
           <div class="library-header">
             <div>
-              <h2 style="font-family:var(--mf-font-display); font-size:1.35rem; font-weight:700; color:var(--mf-text-primary);">
+              <h2 style="font-family:'Inter', sans-serif; font-size:1.35rem; font-weight:700; color:#FFFFFF; letter-spacing:-0.02em;">
                 Portfolio Library
               </h2>
-              <p style="font-size:13px; color:var(--mf-text-secondary); margin-top:2px;">
+              <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:2px;">
                 Historical and cloud-synchronized 3D versions tied to your identity.
               </p>
             </div>
-            <div style="display:flex; gap:8px; align-items:center;">
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
               <span id="syncedCountBadge" class="mf-badge mf-badge-accent">SYNCED</span>
               <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="cleanDuplicatePortfolios()" title="Clean duplicate builds">
                 Clean Duplicates
@@ -800,7 +868,7 @@
           </div>
 
           <div id="syncedPortfoliosGrid" class="synced-portfolios-grid">
-            <div style="padding:3rem; text-align:center; color:var(--mf-text-muted); grid-column:1 / -1;">
+            <div style="padding:3rem; text-align:center; color:var(--dash-text-muted); grid-column:1 / -1;">
               Loading your portfolio library...
             </div>
           </div>
@@ -886,7 +954,7 @@
         const subVal = document.getElementById('statusSubdomainVal');
         if (subVal) subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
         const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) uniVal.textContent = activeSite?.universeKey || 'Jack 3D / Nadia';
+        if (uniVal) uniVal.textContent = activeSite?.universeKey || 'Jack 3D Space';
         const readyVal = document.getElementById('statusReadinessVal');
         if (readyVal) readyVal.textContent = '100% Ready';
 
@@ -911,7 +979,7 @@
         const subVal = document.getElementById('statusSubdomainVal');
         if (subVal) subVal.textContent = 'Pending publish';
         const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) uniVal.textContent = draft?.universeKey || 'Jack 3D / Nadia';
+        if (uniVal) uniVal.textContent = draft?.universeKey || 'Jack 3D Space';
         const readyVal = document.getElementById('statusReadinessVal');
         if (readyVal) readyVal.textContent = 'Draft Ready';
 
@@ -963,7 +1031,7 @@
         }
         if (planNameEl) {
           planNameEl.textContent = 'Free Starter Tier';
-          planNameEl.style.color = '#5FA5F9';
+          planNameEl.style.color = '#38BDF8';
         }
         if (billingDetailsEl) {
           billingDetailsEl.textContent = 'Includes 100% free live portfolio generation, 24-hour evaluation preview, and 3D templates.';
@@ -1027,7 +1095,7 @@
         renderSyncedPortfolios(merged);
       } catch (err) {
         renderDashboard(cachedDashData || { success: true, user: currentUser }, []);
-        grid.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--mf-text-muted);grid-column:1 / -1;">No portfolios available.</div>`;
+        grid.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--dash-text-muted);grid-column:1 / -1;">No portfolios available.</div>`;
       }
     }
 
