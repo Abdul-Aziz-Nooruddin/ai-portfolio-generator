@@ -276,12 +276,18 @@ app.use('/web', express.static(path.join(process.cwd(), 'public', 'web'), {
   maxAge: '30d'
 }));
 
-// Serve ThreeUI landing pages directly for /landing-pages/* paths
-app.use('/landing-pages', express.static(path.join(process.cwd(), 'web', 'landing-pages'), {
+// Serve ThreeUI landing pages directly for /landing-pages/* and /secret-pathways-assets/* paths
+app.use(['/landing-pages', '/secret-pathways-assets'], express.static(path.join(process.cwd(), 'web', 'landing-pages'), {
   maxAge: '1d'
 }));
-app.use('/landing-pages', express.static(path.join(process.cwd(), 'public', 'landing-pages'), {
+app.use(['/landing-pages', '/secret-pathways-assets'], express.static(path.join(process.cwd(), 'public', 'landing-pages'), {
   maxAge: '1d'
+}));
+app.use('/secret-pathways-assets', express.static(path.join(process.cwd(), 'web', 'landing-pages', 'secret-pathways-assets'), {
+  maxAge: '30d'
+}));
+app.use('/secret-pathways-assets', express.static(path.join(process.cwd(), 'public', 'landing-pages', 'secret-pathways-assets'), {
+  maxAge: '30d'
 }));
 
 // Dynamic Custom Domain & Subdomain Hostname Router
