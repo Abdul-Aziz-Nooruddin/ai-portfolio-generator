@@ -27,11 +27,27 @@
   <script src="/analytics.js" defer></script>
 
   <style>
+    :root {
+      --dash-bg: #0A0A0A;
+      --dash-surface: rgba(18, 20, 26, 0.75);
+      --dash-surface-elevated: rgba(26, 29, 38, 0.85);
+      --dash-border: rgba(255, 255, 255, 0.08);
+      --dash-border-hover: rgba(56, 189, 248, 0.35);
+      --dash-accent-cyan: #38BDF8;
+      --dash-accent-blue: #5FA5F9;
+      --dash-accent-violet: #818CF8;
+      --dash-success: #22C55E;
+      --dash-warning: #F59E0B;
+      --dash-text-primary: #F4F1E8;
+      --dash-text-secondary: #9CA3AF;
+      --dash-text-muted: #6B7280;
+    }
+
     .dash-container {
-      max-width: 1140px;
+      max-width: 1180px;
       width: 100%;
       margin: 0 auto;
-      padding: 2.25rem 2rem 5rem;
+      padding: 2.5rem 2rem 6rem;
       display: flex;
       flex-direction: column;
       gap: 2rem;
@@ -39,35 +55,53 @@
 
     /* Hero Command Object */
     .command-hero-card {
-      background: #141414;
-      border: 1px solid #262626;
+      background: radial-gradient(ellipse 70% 60% at 85% -10%, rgba(56, 189, 248, 0.12) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 50% at 10% 110%, rgba(129, 140, 248, 0.08) 0%, transparent 60%),
+                  linear-gradient(180deg, rgba(22, 25, 33, 0.85) 0%, rgba(14, 16, 22, 0.95) 100%);
+      border: 1px solid var(--dash-border);
       border-radius: 24px;
-      padding: 2.25rem;
+      padding: 2.5rem;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
     }
 
     .hero-greeting-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
+      font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: #5FA5F9;
-      margin-bottom: 8px;
+      letter-spacing: 0.12em;
+      color: var(--dash-accent-cyan);
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
+    .mf-pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--dash-success);
+      box-shadow: 0 0 10px var(--dash-success);
+      display: inline-block;
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
     .hero-headline {
       font-family: 'Inter', -apple-system, sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.25rem;
       font-weight: 700;
       letter-spacing: -0.03em;
       line-height: 1.2;
       color: #FFFFFF;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
     .hero-live-artifact {
@@ -76,37 +110,48 @@
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1.25rem;
-      background: #0E0E0E;
-      border: 1px solid #222222;
-      border-radius: 16px;
+      background: rgba(10, 12, 16, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
       padding: 1.25rem 1.5rem;
       position: relative;
       z-index: 2;
+      backdrop-filter: blur(12px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
     }
 
     .hero-url-block {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
     }
 
     .hero-url-label {
       font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
-      color: #888888;
+      color: var(--dash-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.08em;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
     }
 
     .hero-url-link {
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.05rem;
       font-weight: 600;
-      color: #5FA5F9;
+      color: var(--dash-accent-cyan);
       text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s ease;
+    }
+
+    .hero-url-link:hover {
+      color: #7DD3FC;
+      text-decoration: underline;
     }
 
     .hero-actions-dock {
@@ -123,7 +168,7 @@
       gap: 1.5rem;
     }
 
-    @media (max-width: 900px) {
+    @media (max-width: 960px) {
       .dash-sections-grid {
         grid-template-columns: 1fr;
       }
@@ -131,13 +176,20 @@
 
     /* Dominant Status Panel */
     .status-panel-card {
-      background: #141414;
-      border: 1px solid #242424;
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
       border-radius: 20px;
       padding: 1.75rem;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      transition: border-color 0.2s ease;
+    }
+
+    .status-panel-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .panel-section-title {
@@ -157,27 +209,33 @@
     }
 
     .status-matrix-item {
-      background: #181818;
-      border: 1px solid #282828;
-      border-radius: 12px;
-      padding: 12px 14px;
+      background: rgba(12, 14, 18, 0.65);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
+      padding: 13px 15px;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .status-matrix-item:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+      background: rgba(16, 19, 25, 0.85);
     }
 
     .status-item-label {
       font-size: 11px;
       font-family: 'JetBrains Mono', monospace;
-      color: #888888;
+      color: var(--dash-text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
     }
 
     .status-item-val {
       font-size: 13.5px;
       font-weight: 600;
-      color: #F4F1E8;
+      color: var(--dash-text-primary);
       display: flex;
       align-items: center;
       gap: 6px;
@@ -185,43 +243,55 @@
 
     /* Analytics Panel */
     .analytics-panel-card {
-      background: #141414;
-      border: 1px solid #242424;
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
       border-radius: 20px;
       padding: 1.75rem;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      transition: border-color 0.2s ease;
+    }
+
+    .analytics-panel-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
     }
 
     .telemetry-numbers-row {
       display: flex;
-      gap: 2rem;
+      gap: 2.25rem;
       margin-top: 4px;
     }
 
     .telemetry-stat-num {
       font-family: 'Inter', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2.35rem;
       font-weight: 700;
       line-height: 1;
       color: #FFFFFF;
+      letter-spacing: -0.02em;
     }
 
     .telemetry-stat-label {
       font-size: 11px;
-      color: #888888;
+      color: var(--dash-text-muted);
       font-family: 'JetBrains Mono', monospace;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-top: 6px;
+      letter-spacing: 0.06em;
+      margin-top: 8px;
     }
 
     .analytics-chart-placeholder {
-      height: 90px;
+      height: 95px;
       width: 100%;
       position: relative;
       margin-top: 8px;
+      background: rgba(10, 12, 16, 0.5);
+      border-radius: 12px;
+      padding: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
     }
 
     .analytics-chart-svg {
@@ -234,7 +304,7 @@
     .library-section {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.25rem;
     }
 
     .library-header {
@@ -247,31 +317,33 @@
 
     .synced-portfolios-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
     }
 
     .portfolio-artifact-card {
-      background: var(--mf-surface-glass);
-      border: 1px solid var(--mf-border);
-      border-radius: var(--mf-radius-lg);
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
+      border-radius: 20px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: all var(--mf-transition-normal);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
     }
 
     .portfolio-artifact-card:hover {
-      border-color: #383838;
-      transform: translateY(-2px);
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+      border-color: var(--dash-border-hover);
+      transform: translateY(-3px);
+      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(56, 189, 248, 0.12);
     }
 
     .artifact-banner {
-      height: 125px;
+      height: 140px;
       position: relative;
-      background: #101010;
+      background: #0D0F14;
       overflow: hidden;
     }
 
@@ -279,87 +351,200 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.85;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      opacity: 0.9;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .portfolio-artifact-card:hover .artifact-banner img {
-      transform: scale(1.04);
+      transform: scale(1.05);
     }
 
     .artifact-banner-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, #141414 0%, transparent 60%);
+      background: linear-gradient(to top, rgba(18, 20, 26, 0.95) 0%, rgba(18, 20, 26, 0.2) 60%, transparent 100%);
     }
 
     .artifact-universe-badge {
       position: absolute;
-      bottom: 10px;
-      left: 12px;
+      bottom: 12px;
+      left: 14px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 10.5px;
       font-weight: 600;
-      color: #FFF;
-      background: rgba(20, 20, 20, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 3px 8px;
+      color: #FFFFFF;
+      background: rgba(14, 16, 22, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 4px 10px;
       border-radius: 9999px;
-      border: 1px solid #333333;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      letter-spacing: 0.04em;
     }
 
     .artifact-time-badge {
       position: absolute;
-      top: 10px;
-      right: 12px;
+      top: 12px;
+      right: 14px;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      color: #A0A0A0;
-      background: rgba(15, 15, 15, 0.85);
-      backdrop-filter: blur(8px);
-      padding: 2px 8px;
+      font-size: 10px;
+      color: var(--dash-text-secondary);
+      background: rgba(10, 12, 16, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 3px 9px;
       border-radius: 9999px;
-      border: 1px solid #282828;
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .artifact-body {
-      padding: 1.25rem;
+      padding: 1.35rem;
       display: flex;
       flex-direction: column;
       flex: 1;
-      gap: 8px;
+      gap: 10px;
     }
 
     .artifact-title {
-      font-family: var(--mf-font-display);
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--mf-text-primary);
+      font-family: 'Inter', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #FFFFFF;
+      letter-spacing: -0.02em;
     }
 
     .artifact-role {
-      font-size: 12.5px;
-      color: var(--mf-text-secondary);
+      font-size: 13px;
+      color: var(--dash-text-secondary);
+      margin-top: -4px;
     }
 
     .artifact-url-tag {
-      font-family: var(--mf-font-mono);
+      font-family: 'JetBrains Mono', monospace;
       font-size: 11.5px;
-      color: var(--mf-accent-blue);
-      background: rgba(110, 168, 255, 0.1);
-      padding: 4px 8px;
-      border-radius: 6px;
+      color: var(--dash-accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+      border: 1px solid rgba(56, 189, 248, 0.15);
+      padding: 5px 10px;
+      border-radius: 8px;
       word-break: break-all;
-      margin-top: 4px;
     }
 
     .artifact-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       margin-top: auto;
-      padding-top: 12px;
-      border-top: 1px solid var(--mf-border);
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    /* Buttons */
+    .mf-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 10px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      border: 1px solid transparent;
+      outline: none;
+    }
+
+    .mf-btn-primary {
+      background: linear-gradient(135deg, #38BDF8 0%, #2563EB 100%);
+      color: #FFFFFF;
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
+    }
+
+    .mf-btn-primary:hover {
+      background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.45);
+      transform: translateY(-1px);
+    }
+
+    .mf-btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .mf-btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .mf-btn-ghost {
+      background: transparent;
+      color: var(--dash-text-secondary);
+      border-color: transparent;
+    }
+
+    .mf-btn-ghost:hover {
+      color: #FFFFFF;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .mf-btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+      color: #EF4444;
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .mf-btn-danger:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #F87171;
+    }
+
+    .mf-btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 8px;
+    }
+
+    .mf-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 9px;
+      border-radius: 9999px;
+    }
+
+    .mf-badge-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #D1D5DB;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .mf-badge-success {
+      background: rgba(34, 197, 94, 0.15);
+      color: #34D399;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+
+    .mf-badge-accent {
+      background: rgba(56, 189, 248, 0.14);
+      color: #38BDF8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .mf-badge-vip {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.3) 100%);
+      color: #FCD34D;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
     }
 
     /* Toast */
@@ -852,13 +1037,13 @@
 
       if (!portfolios || portfolios.length === 0) {
         grid.innerHTML = `
-          <div style="padding:3rem 1.5rem; text-align:center; background:rgba(8,13,32,0.5); border:1px dashed var(--mf-border); border-radius:16px; grid-column:1 / -1;">
-            <div style="font-size:2rem; margin-bottom:8px;"></div>
-            <h3 style="font-size:1.1rem; font-weight:700; color:#FFF; margin-bottom:4px;">No Portfolios Generated Yet</h3>
-            <p style="color:var(--mf-text-secondary); font-size:13px; max-width:400px; margin:0 auto 16px;">
-              Build your first bespoke 3D portfolio in the Studio with instant AI analysis.
+          <div style="padding:3.5rem 1.5rem; text-align:center; background:rgba(14,16,22,0.6); border:1px dashed rgba(255,255,255,0.12); border-radius:20px; grid-column:1 / -1; backdrop-filter:blur(12px);">
+            <div style="width:48px; height:48px; border-radius:50%; background:rgba(56,189,248,0.1); border:1px solid rgba(56,189,248,0.25); color:#38BDF8; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:20px;">✦</div>
+            <h3 style="font-size:1.15rem; font-weight:700; color:#FFF; margin-bottom:6px;">No Portfolios Generated Yet</h3>
+            <p style="color:var(--dash-text-secondary); font-size:13px; max-width:420px; margin:0 auto 20px; line-height:1.5;">
+              Connect your GitHub or upload your resume in the Web Studio to generate your first bespoke 3D WebGL developer world.
             </p>
-            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">Launch Studio</a>
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:9px 18px;">Launch Web Studio &rarr;</a>
           </div>
         `;
         return;
@@ -868,30 +1053,48 @@
 
       grid.innerHTML = portfolios.map((p, idx) => {
         const sid = p.siteId || `site-${idx}`;
-        const name = p.developerName || 'Developer';
-        const role = p.developerRole || 'Software Engineer';
+        const name = p.developerName || p.name || 'Developer';
+        const role = p.developerRole || p.title || 'Software Engineer';
+        const universe = p.universeKey || p.templateId || 'jack-3d-creator';
+        const timeStr = p.timestamp ? formatTimeAgo(p.timestamp) : 'Recent';
         const thumbSrc = TEMPLATE_THUMBS[universe] || TEMPLATE_THUMBS['jack-3d-creator'] || '/images/hero-base.webp';
         const href = `/p/${sid}`;
         const isActive = sid === activeVipSite || idx === 0;
 
+        const universeLabels = {
+          'jack-3d-creator': 'Jack 3D Space',
+          'nadia-brand': 'Nadia Brand',
+          'kage-temple': 'Kage Kyoto Temple',
+          'kage': 'Kage Kyoto Temple'
+        };
+        const universeDisplay = universeLabels[universe] || universe.toUpperCase();
+
         return `
           <div class="portfolio-artifact-card">
             <div class="artifact-banner">
-              <img src="${thumbSrc}" alt="${universe}" onerror="this.src='/images/hero-base.webp'">
+              <img src="${thumbSrc}" alt="${universeDisplay}" onerror="this.src='/images/hero-base.webp'">
               <div class="artifact-banner-overlay"></div>
-              <span class="artifact-universe-badge">${universe.toUpperCase()}</span>
+              <span class="artifact-universe-badge">${universeDisplay}</span>
               <span class="artifact-time-badge">${timeStr}</span>
             </div>
             <div class="artifact-body">
               <div class="artifact-title">${name}</div>
               <div class="artifact-role">${role}</div>
               <div class="artifact-url-tag">${href}</div>
-              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:4px;">Active Subdomain</span>' : ''}
+              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:2px;">Active Subdomain</span>' : ''}
               <div class="artifact-actions">
-                <a href="${href}" target="_blank" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;">View ↗</a>
-                <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="setActiveVipDomain('${sid}', '${universe}', '${name.replace(/'/g, "\\'")}', '${role.replace(/'/g, "\\'")}')" title="Set as live domain">Set Live</button>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy link"></button>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" style="color:var(--mf-error);" title="Delete version">️</button>
+                <a href="${href}" target="_blank" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;" title="Open live preview">
+                  <span>Open</span> &nearr;
+                </a>
+                <a href="/studio?template=${universe}&editSite=${sid}" class="mf-btn mf-btn-secondary mf-btn-sm" title="Edit in Studio">
+                  <span>Edit</span>
+                </a>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy live link">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                </button>
+                <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" title="Delete portfolio version">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
               </div>
             </div>
           </div>
