@@ -179,11 +179,15 @@ class AuthHandler {
         attempts: 0
       });
 
-      // Dispatch 6-digit alphanumeric OTP via email
-      this.email.sendSignupOtpEmail(email, {
-        name: cleanName,
-        otp
-      }).catch(e => console.warn('[SIGNUP OTP EMAIL WARN]', e.message));
+      // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      try {
+        await this.email.sendSignupOtpEmail(email, {
+          name: cleanName,
+          otp
+        });
+      } catch (e) {
+        console.warn('[SIGNUP OTP EMAIL WARN]', e.message);
+      }
 
       console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Code: ${otp}`);
 
@@ -316,10 +320,15 @@ class AuthHandler {
       pending.expiresAt = Date.now() + 10 * 60 * 1000;
       pending.attempts = 0;
 
-      this.email.sendSignupOtpEmail(pending.email, {
-        name: pending.name,
-        otp: newOtp
-      }).catch(e => console.warn('[RESEND SIGNUP OTP WARN]', e.message));
+      // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      try {
+        await this.email.sendSignupOtpEmail(pending.email, {
+          name: pending.name,
+          otp: newOtp
+        });
+      } catch (e) {
+        console.warn('[RESEND SIGNUP OTP WARN]', e.message);
+      }
 
       console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Code: ${newOtp}`);
 

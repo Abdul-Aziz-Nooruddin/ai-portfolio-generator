@@ -65,11 +65,17 @@ app.set('trust proxy', 1);
 
 // Instant 0ms Health Check for probes (Bypasses all heavy middleware, DB & auth)
 app.all(['/health', '/healthz', '/api/health', '/healthcheck', '/ping', '/ready'], (req, res) => {
+  const emailConfigured = Boolean(
+    (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) ||
+    (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD)
+  );
+
   res.status(200).json({
     status: 'healthy',
     ok: true,
     uptime: process.uptime(),
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    emailConfigured
   });
 });
 

@@ -69,7 +69,9 @@ class EmailService {
         errorMessage = err.message;
       }
     } else {
-      console.log(`[EMAIL SIMULATED (Dev Mode)] \n--- Subject: ${subject} ---\n${text || html}\n-------------------------`);
+      console.warn(`[EMAIL WARNING] Cannot send email to ${to}: SMTP credentials are not configured in process.env!`);
+      sendSuccess = false;
+      errorMessage = 'SMTP credentials not configured in production environment variables';
     }
 
     if (this.db && meta.user_id) {
