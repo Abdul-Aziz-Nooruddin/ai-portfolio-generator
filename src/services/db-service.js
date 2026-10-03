@@ -827,38 +827,83 @@ class DatabaseService {
     }
   }
 
-  async checkWeeklyLimit(userId, maxGenerations = 1) {
-    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data, error } = await this.client
-      .from('rate_limits')
-      .select('*')
-      .eq('identifier', userId)
-      .eq('action', 'weekly_preview_generation')
-      .gte('window_start', oneWeekAgo)
-      .single();
+  async checkWeeklyLimit(userId, maxGenerations = 3) {
+    if (!userId) return true;
+    const now = Date.now();
+    const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+    const oneWeekAgo = new Date(now - oneWeekMs).toISOString();
 
-    if (error && error.code !== 'PGRST116') throw error;
+    const memKey = `${userId}:weekly_preview_generation`;
+    let memRecord = this._memoryStore?.rateLimits?.get(memKey);
+    if (memRecord && (now - memRecord.windowStart > oneWeekMs)) {
+      memRecord = null;
+    }
 
-    if (!data) {
-      await this.client
-        .from('rate_limits')
-        .upsert({
-          identifier: userId,
-          action: 'weekly_preview_generation',
-          count: 1,
-          window_start: new Date().toISOString()
-        });
+    if (this.client && process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      try {
+        const { data, error } = await this.client
+          .from('rate_limits')
+          .select('*')
+          .eq('identifier', userId)
+          .eq('action', 'weekly_preview_generation')
+          .gte('window_start', oneWeekAgo)
+          .maybeSingle();
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        if (!data) {
+          await this.client
+            .from('rate_limits')
+            .upsert({
+              identifier: userId,
+              action: 'weekly_preview_generation',
+              count: 1,
+              window_start: new Date().toISOString()
+            });
+          if (this._memoryStore?.rateLimits) {
+            this._memoryStore.rateLimits.set(memKey, { count: 1, windowStart: now });
+          }
+          return true;
+        }
+
+        if (data.count >= maxGenerations) {
+          if (this._memoryStore?.rateLimits) {
+            this._memoryStore.rateLimits.set(memKey, { count: data.count, windowStart: new Date(data.window_start).getTime() });
+          }
+          return false;
+        }
+
+        await this.client
+          .from('rate_limits')
+          .update({ count: data.count + 1 })
+          .eq('identifier', userId)
+          .eq('action', 'weekly_preview_generation');
+
+        if (this._memoryStore?.rateLimits) {
+          this._memoryStore.rateLimits.set(memKey, { count: data.count + 1, windowStart: new Date(data.window_start).getTime() });
+        }
+        return true;
+      } catch (err) {
+        // Fall back to memoryStore if DB query fails
+      }
+    }
+
+    // In-memory fallback (when running with mock client or during local testing)
+    if (!memRecord) {
+      if (this._memoryStore?.rateLimits) {
+        this._memoryStore.rateLimits.set(memKey, { count: 1, windowStart: now });
+      }
       return true;
     }
 
-    if (data.count >= maxGenerations) return false;
+    if (memRecord.count >= maxGenerations) {
+      return false;
+    }
 
-    await this.client
-      .from('rate_limits')
-      .update({ count: data.count + 1 })
-      .eq('identifier', userId)
-      .eq('action', 'weekly_preview_generation');
-
+    memRecord.count += 1;
+    if (this._memoryStore?.rateLimits) {
+      this._memoryStore.rateLimits.set(memKey, memRecord);
+    }
     return true;
   }
 

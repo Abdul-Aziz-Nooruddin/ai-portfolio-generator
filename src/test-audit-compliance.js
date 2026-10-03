@@ -384,4 +384,80 @@ test('7. ZIP export: enforces is_paid authorization, rejecting unpaid previews w
   }
 });
 
+// =========================================================================
+// 8. SERVER-SIDE WEEKLY PREVIEW GENERATION LIMIT (3 BUILDS / 7-DAY CYCLE)
+// =========================================================================
+test('8. Server-side weekly limit: enforces 3 free builds per 7-day cycle keyed by verified user ID, rejecting 4th with 429', async () => {
+  const app = require('./index');
+  const dbService = app.dbService || new (require('./services/db-service').DatabaseService)();
+  const testUserId = `test-user-weekly-${Date.now()}`;
+
+  // 1. Direct dbService.checkWeeklyLimit unit test
+  const testId = `usr-limit-${Date.now()}`;
+  assert.equal(await dbService.checkWeeklyLimit(testId, 3), true, 'Build 1 must be allowed');
+  assert.equal(await dbService.checkWeeklyLimit(testId, 3), true, 'Build 2 must be allowed');
+  assert.equal(await dbService.checkWeeklyLimit(testId, 3), true, 'Build 3 must be allowed');
+  assert.equal(await dbService.checkWeeklyLimit(testId, 3), false, 'Build 4 must be blocked (limit=3)');
+
+  // 2. Integration test via POST /api/web/generate endpoint
+  const dispatchGenerate = (user) => new Promise((resolve) => {
+    const req = {
+      body: {
+        data: {
+          name: 'Quota Test User',
+          role: 'Engineer',
+          email: 'quota-test@example.com'
+        },
+        branch: 'A',
+        styleHint: 'light-swiss'
+      },
+      user,
+      ip: '198.51.100.42',
+      headers: {}
+    };
+    let statusCode = 200;
+    const res = {
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      json(data) {
+        resolve({ status: statusCode, data });
+      }
+    };
+
+    const routes = app._router.stack.filter(r => r.route && r.route.path === '/api/web/generate');
+    assert.ok(routes.length > 0, 'Route /api/web/generate exists');
+    const endpointHandler = routes[0].route.stack[routes[0].route.stack.length - 1].handle;
+    endpointHandler(req, res);
+  });
+
+  const verifiedUser = { id: testUserId, role: 'user', email: 'verified-user@test.org' };
+
+  // Build 1 -> 200 OK
+  const res1 = await dispatchGenerate(verifiedUser);
+  assert.equal(res1.status, 200, 'Build 1 should succeed');
+  assert.equal(res1.data.success, true);
+
+  // Build 2 -> 200 OK
+  const res2 = await dispatchGenerate(verifiedUser);
+  assert.equal(res2.status, 200, 'Build 2 should succeed');
+  assert.equal(res2.data.success, true);
+
+  // Build 3 -> 200 OK
+  const res3 = await dispatchGenerate(verifiedUser);
+  assert.equal(res3.status, 200, 'Build 3 should succeed');
+  assert.equal(res3.data.success, true);
+
+  // Build 4 -> 429 Too Many Requests
+  const res4 = await dispatchGenerate(verifiedUser);
+  assert.equal(res4.status, 429, 'Build 4 must be rejected with 429 Too Many Requests');
+  assert.equal(res4.data.code, 'WEEKLY_LIMIT_EXCEEDED');
+  assert.ok(res4.data.error.includes('Weekly generation limit reached'));
+
+  // Admin bypass
+  const adminRes = await dispatchGenerate({ id: testUserId, role: 'admin', email: 'admin@myfolio.tech' });
+  assert.equal(adminRes.status, 200, 'Admin can generate past weekly quota');
+});
+
 

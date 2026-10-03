@@ -705,6 +705,21 @@ app.post(
     try {
       const { data = {}, branch = 'A', styleHint = '', layout = 'auto-cycle', siteId: requestedSiteId, previousSiteId, regenerate = false, templateId } = req.body;
       
+      // Server-Side Weekly Preview Generation Quota (3 free builds per 7-day cycle)
+      const userEmail = (req.user?.email || req.user?.normalized_email || '').toLowerCase();
+      const isAdmin = req.user?.role === 'admin' || req.user?.is_admin === true || userEmail === 'abdulaziznoor9876@gmail.com';
+      if (!isAdmin) {
+        const generationIdentifier = req.user?.id || req.ip || req.headers?.['x-forwarded-for'] || 'anonymous';
+        const isWeeklyAllowed = await dbService.checkWeeklyLimit(generationIdentifier, 3);
+        if (!isWeeklyAllowed) {
+          return res.status(429).json({
+            error: 'Weekly generation limit reached: You have used your 3 free portfolio builds for this 7-day cycle. Upgrade to Lifetime Starter or Pro for unlimited builds.',
+            limit: 3,
+            code: 'WEEKLY_LIMIT_EXCEEDED'
+          });
+        }
+      }
+
       // Takedown & Purge: If regenerating or replacing a previous preview, take down the old site immediately
       const oldSiteToPurge = previousSiteId || (regenerate && requestedSiteId ? requestedSiteId : null);
       if (oldSiteToPurge) {
@@ -1450,6 +1465,21 @@ app.post(
     const isOverloadFastTrack = slot.isFastTrack;
     try {
       const input = req.body || {};
+
+      // Server-Side Weekly Preview Generation Quota (3 free builds per 7-day cycle)
+      const userEmail = (req.user?.email || req.user?.normalized_email || '').toLowerCase();
+      const isAdmin = req.user?.role === 'admin' || req.user?.is_admin === true || userEmail === 'abdulaziznoor9876@gmail.com';
+      if (!isAdmin) {
+        const generationIdentifier = req.user?.id || req.ip || req.headers?.['x-forwarded-for'] || 'anonymous';
+        const isWeeklyAllowed = await dbService.checkWeeklyLimit(generationIdentifier, 3);
+        if (!isWeeklyAllowed) {
+          return res.status(429).json({
+            error: 'Weekly generation limit reached: You have used your 3 free portfolio builds for this 7-day cycle. Upgrade to Lifetime Starter or Pro for unlimited builds.',
+            limit: 3,
+            code: 'WEEKLY_LIMIT_EXCEEDED'
+          });
+        }
+      }
 
       // 1. If GitHub username is provided, fetch complete GitHub profile & synthesize real case studies
       if (input.githubData?.username) {
@@ -4243,6 +4273,7 @@ if (require.main === module) {
 
 app.checkSitePaidStatus = checkSitePaidStatus;
 app.sitePaidStatusCache = sitePaidStatusCache;
+app.dbService = dbService;
 
 module.exports = app;
 
