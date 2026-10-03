@@ -47,7 +47,7 @@ function showAlert(message, type = 'error') {
   alert.className = `alert-box alert-${type}`;
   alert.textContent = message;
   alert.style.display = 'block';
-  alert.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  alert.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function hideAlert() {
@@ -239,13 +239,14 @@ if (signupForm) {
         } else {
           switchView('otp');
         }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         showAlert('Verification code sent to your email! Please check your inbox.', 'success');
         btn.disabled = false;
         btn.innerHTML = '<span>Create account</span> &rarr;';
         const otpInput = document.getElementById('otpInput');
         if (otpInput) {
           otpInput.value = '';
-          otpInput.focus();
+          setTimeout(() => otpInput.focus(), 150);
         }
         return;
       }
@@ -269,7 +270,8 @@ if (signupForm) {
         window.location.href = '/dashboard';
       }, 800);
     } catch (err) {
-      showAlert(err.message);
+      console.error('[AUTH SIGNUP ERROR]', err);
+      showAlert(err.message || 'An unexpected error occurred. Please try again.');
       btn.disabled = false;
       btn.innerHTML = '<span>Create account</span> &rarr;';
     }

@@ -99,6 +99,8 @@ class SecurityMiddleware {
       const envAllowed = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
       const allowedOrigins = new Set([
         hostUrl,
+        'https://myfolio.tech',
+        'https://www.myfolio.tech',
         `http://localhost:${port}`,
         `http://127.0.0.1:${port}`,
         'http://localhost:5050',
@@ -106,7 +108,13 @@ class SecurityMiddleware {
         ...envAllowed
       ]);
 
-      if (origin && allowedOrigins.has(origin)) {
+      const isMyFolioOrigin = origin && (
+        origin === 'https://myfolio.tech' ||
+        origin === 'https://www.myfolio.tech' ||
+        origin.endsWith('.myfolio.tech')
+      );
+
+      if (origin && (allowedOrigins.has(origin) || isMyFolioOrigin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         res.setHeader('Access-Control-Allow-Credentials', 'true');
         res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -139,11 +147,17 @@ class SecurityMiddleware {
       const origin = req.headers.origin;
       const referer = req.headers.referer;
 
+      const normalizeHost = (h) => (h || '').toLowerCase().replace(/^www\./, '').split(':')[0];
+      const currentHost = normalizeHost(host);
+
       if (origin) {
         try {
           const originUrl = new URL(origin);
-          const isLocalDev = (originUrl.hostname === 'localhost' || originUrl.hostname === '127.0.0.1');
-          if (originUrl.host !== host && !isLocalDev) {
+          const originHost = normalizeHost(originUrl.host);
+          const isLocalDev = (originHost === 'localhost' || originHost === '127.0.0.1');
+          const isSameDomain = (originHost === currentHost) || 
+                               (originHost.endsWith('myfolio.tech') && currentHost.endsWith('myfolio.tech'));
+          if (!isSameDomain && !isLocalDev) {
             return res.status(403).json({ error: 'CSRF Rejected: Invalid Origin' });
           }
         } catch (e) {
@@ -152,8 +166,11 @@ class SecurityMiddleware {
       } else if (referer) {
         try {
           const refererUrl = new URL(referer);
-          const isLocalDev = (refererUrl.hostname === 'localhost' || refererUrl.hostname === '127.0.0.1');
-          if (refererUrl.host !== host && !isLocalDev) {
+          const refererHost = normalizeHost(refererUrl.host);
+          const isLocalDev = (refererHost === 'localhost' || refererHost === '127.0.0.1');
+          const isSameDomain = (refererHost === currentHost) || 
+                               (refererHost.endsWith('myfolio.tech') && currentHost.endsWith('myfolio.tech'));
+          if (!isSameDomain && !isLocalDev) {
             return res.status(403).json({ error: 'CSRF Rejected: Invalid Referer' });
           }
         } catch (e) {
