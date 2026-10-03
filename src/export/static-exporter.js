@@ -116,6 +116,8 @@ class StaticExporter {
     clean = clean.replace(/<div[^>]*id="preview-floating-bar"[\s\S]*?<\/div>\s*<\/div>/gi, '');
     clean = clean.replace(/<div[^>]*id="preview-floating-bar"[\s\S]*?<\/div>/gi, '');
     clean = clean.replace(/<div[^>]*id="preview-watermark-overlay"[\s\S]*?<\/div>/gi, '');
+    clean = clean.replace(/<script id="preview-watermark-script"[\s\S]*?<\/script>/gi, '');
+    clean = clean.replace(/<script[\s\S]*?syncWatermarkTheme[\s\S]*?<\/script>/gi, '');
     clean = clean.replace(/<div[^>]*class="[^"]*watermark[^"]*"[\s\S]*?<\/div>/gi, '');
     clean = clean.replace(/<div[^>]*class="[^"]*preview-bar[^"]*"[\s\S]*?<\/div>/gi, '');
 

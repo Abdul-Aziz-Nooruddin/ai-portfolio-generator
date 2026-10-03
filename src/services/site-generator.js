@@ -73,26 +73,15 @@ class SiteGenerator {
     if (isPaid) return html;
 
     const watermarkHtml = `
-    <!-- DIAGONAL PREVIEW ONLY // MYFOLIO.TECH PROMINENT WATERMARK OVERLAY -->
-    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 4vh 0; user-select: none; opacity: 0.14;">
-      <span class="watermark-main-title" style="display:none;">PREVIEW ONLY</span>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
-      </div>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
-      </div>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
-      </div>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
-      </div>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
-      </div>
-      <div class="watermark-diagonal-strip" style="white-space: nowrap; transform: rotate(-25deg) scale(1.4); transform-origin: center; font-family: system-ui, -apple-system, sans-serif; font-size: clamp(1.1rem, 2.2vw, 1.8rem); font-weight: 800; letter-spacing: 0.4em; text-transform: uppercase; color: #ffffff;">
-        PREVIEW ONLY • MYFOLIO.TECH • 24-HOUR EVALUATION • NOT FOR PRODUCTION • PREVIEW ONLY • MYFOLIO.TECH
+    <!-- TOP PREVIEW ONLY // MYFOLIO.TECH PROMINENT WATERMARK OVERLAY (ABOVE PORTFOLIO) -->
+    <div id="preview-watermark-overlay" style="position: fixed; top: 12px; left: 0; right: 0; z-index: 999999; pointer-events: none; display: flex; justify-content: center; align-items: center; user-select: none;">
+      <div id="preview-watermark-pill" style="pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; border-radius: 9999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.22); background: rgba(12, 12, 12, 0.82); color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+        <span class="watermark-main-title" style="display:inline-flex; align-items:center; gap:6px;">
+          <span id="preview-watermark-dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background: currentColor; box-shadow: 0 0 6px currentColor; transition: background-color 0.25s ease;"></span>
+          <span style="letter-spacing: 0.04em; font-weight: 800;">myfolio.tech</span>
+        </span>
+        <span style="opacity: 0.4;">•</span>
+        <span style="font-weight: 700; letter-spacing: 0.1em;">PREVIEW ONLY</span>
       </div>
     </div>
 
@@ -107,34 +96,107 @@ class SiteGenerator {
       </a>
     </div>
 
-    <!-- DYNAMIC BACKGROUND LUMINANCE WATERMARK CONTROLLER -->
-    <script>
+    <!-- DYNAMIC BACKGROUND LUMINANCE & CONTRAST SYNC CONTROLLER -->
+    <script id="preview-watermark-script">
       (function() {
-        function updateWatermarkLuminance() {
-          try {
-            var bg = window.getComputedStyle(document.body).backgroundColor;
-            var overlay = document.getElementById('preview-watermark-overlay');
-            if (!overlay) return;
-            var rgb = bg.match(/\\d+/g);
-            var isLight = false;
-            if (rgb && rgb.length >= 3) {
-              var r = parseInt(rgb[0], 10), g = parseInt(rgb[1], 10), b = parseInt(rgb[2], 10);
-              var luminance = (0.299 * r + 0.587 * g + 0.114 * b);
-              isLight = luminance > 128;
-            } else if (bg.includes('rgba(0, 0, 0, 0)') || bg === 'transparent' || !bg) {
-              isLight = true;
+        function getLuminance(r, g, b) {
+          return 0.299 * r + 0.587 * g + 0.114 * b;
+        }
+
+        function parseRgb(colorStr) {
+          if (!colorStr) return null;
+          var match = colorStr.match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)/i);
+          if (match) {
+            return { r: parseInt(match[1], 10), g: parseInt(match[2], 10), b: parseInt(match[3], 10) };
+          }
+          if (colorStr.indexOf('#') === 0) {
+            var hex = colorStr.slice(1);
+            if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            if (hex.length >= 6) {
+              return {
+                r: parseInt(hex.substring(0, 2), 16),
+                g: parseInt(hex.substring(2, 4), 16),
+                b: parseInt(hex.substring(4, 6), 16)
+              };
             }
-            var targetColor = isLight ? 'rgba(15, 23, 42, 0.12)' : 'rgba(255, 255, 255, 0.13)';
-            var strips = overlay.querySelectorAll('.watermark-diagonal-strip');
-            strips.forEach(function(el) { el.style.color = targetColor; });
-          } catch (e) {}
+          }
+          return null;
         }
+
+        function getEffectiveBgAtPoint(x, y) {
+          var overlay = document.getElementById('preview-watermark-overlay');
+          var prevDisplay = '';
+          if (overlay) {
+            prevDisplay = overlay.style.display;
+            overlay.style.display = 'none';
+          }
+          var targetEl = document.elementFromPoint(x, y);
+          if (overlay) {
+            overlay.style.display = prevDisplay;
+          }
+
+          var curr = targetEl;
+          while (curr && curr !== document.documentElement) {
+            var style = window.getComputedStyle(curr);
+            var bg = style.backgroundColor;
+            var parsed = parseRgb(bg);
+            if (parsed && !bg.includes('rgba(0, 0, 0, 0)') && bg !== 'transparent') {
+              return parsed;
+            }
+            curr = curr.parentElement;
+          }
+
+          var bodyBg = parseRgb(window.getComputedStyle(document.body).backgroundColor);
+          return bodyBg || { r: 12, g: 12, b: 12 };
+        }
+
+        function syncWatermarkTheme() {
+          var pill = document.getElementById('preview-watermark-pill');
+          if (!pill) return;
+
+          var rect = pill.getBoundingClientRect();
+          var sampleX = rect.left + rect.width / 2;
+          var sampleY = rect.top + rect.height / 2;
+
+          var bgRgb = getEffectiveBgAtPoint(sampleX, sampleY);
+          var lum = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b);
+          var isLight = lum > 130; // true when background is white or light
+
+          if (isLight) {
+            // When background is white -> text is black
+            pill.style.color = '#000000';
+            pill.style.background = 'rgba(255, 255, 255, 0.88)';
+            pill.style.borderColor = 'rgba(0, 0, 0, 0.18)';
+            pill.style.boxShadow = '0 4px 18px rgba(0, 0, 0, 0.12)';
+          } else {
+            // When background is black -> text is white
+            pill.style.color = '#ffffff';
+            pill.style.background = 'rgba(12, 12, 12, 0.82)';
+            pill.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+            pill.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
+          }
+        }
+
+        var ticking = false;
+        function onScrollOrResize() {
+          if (!ticking) {
+            window.requestAnimationFrame(function() {
+              syncWatermarkTheme();
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }
+
+        window.addEventListener('scroll', onScrollOrResize, { passive: true });
+        window.addEventListener('resize', onScrollOrResize, { passive: true });
         if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', updateWatermarkLuminance);
+          document.addEventListener('DOMContentLoaded', syncWatermarkTheme);
         } else {
-          updateWatermarkLuminance();
+          syncWatermarkTheme();
         }
-        window.addEventListener('resize', updateWatermarkLuminance);
+        setTimeout(syncWatermarkTheme, 300);
+        setTimeout(syncWatermarkTheme, 1000);
       })();
     </script>
     `;
