@@ -844,6 +844,65 @@ app.post(
   }
 );
 
+// 4b. Real-time GitHub Profile Resolution & Pre-check for Web Studio
+app.get('/api/web/resolve-github', async (req, res) => {
+  try {
+    const q = req.query.q || req.query.username || '';
+    const name = req.query.name || '';
+    if (!q && !name) {
+      return res.status(400).json({ error: 'Username query or name is required.' });
+    }
+    const { GitHubClient } = require('./services/github/github-client');
+    const ghClient = new GitHubClient();
+    console.log('[RESOLVE-GH] Received query:', q, 'name:', name);
+    const resolvedUsername = await ghClient.resolveActualUsername(q, name);
+    console.log('[RESOLVE-GH] Resolved to:', resolvedUsername);
+    if (!resolvedUsername) {
+      return res.json({ found: false, query: q });
+    }
+    const raw = await ghClient.fetchCompleteProfile(resolvedUsername);
+    const { GitHubNormalizer } = require('./services/github/github-normalizer');
+    const { GitHubProfileSynthesizer } = require('./services/github-profile-synthesizer');
+    const norm = GitHubNormalizer.normalize(raw);
+    const synth = new GitHubProfileSynthesizer(null);
+    const role = synth.inferRoleFromLanguages(norm.skills.languages, norm.skills.web3, norm.projects);
+
+    const p = raw.profile || {};
+    res.json({
+      success: true,
+      found: true,
+      query: q,
+      username: p.login || resolvedUsername,
+      resolvedUsername: p.login || resolvedUsername,
+      name: p.name || p.login,
+      avatar_url: p.avatar_url,
+      bio: p.bio || '',
+      tagline: p.bio || `Engineering high-impact digital experiences in ${norm.skills.languages.slice(0, 3).join(', ')}.`,
+      inferredRole: role,
+      public_repos: p.public_repos || (raw.repositories ? raw.repositories.length : 0),
+      publicRepositories: p.public_repos || (raw.repositories ? raw.repositories.length : 0),
+      top_languages: norm.skills.languages,
+      skills: norm.skills,
+      profile: {
+        login: p.login || resolvedUsername,
+        name: p.name || p.login,
+        bio: p.bio || '',
+        public_repos: p.public_repos || (raw.repositories ? raw.repositories.length : 0)
+      },
+      repositories: (raw.repositories || []).slice(0, 6).map(r => ({
+        name: r.name,
+        desc: r.description,
+        tech: r.language || 'Code',
+        stars: r.stargazers_count,
+        live: r.homepage || r.html_url
+      })),
+      topRepositories: norm.projects.slice(0, 6)
+    });
+  } catch (err) {
+    res.json({ found: false, success: false, error: err.message });
+  }
+});
+
 // 5. GitHub Generation Job Status Endpoint
 app.get('/api/generate/github/status/:jobId', (req, res) => {
   const job = githubPipeline.getJob(req.params.jobId);
@@ -1317,7 +1376,14 @@ app.post(
           const parsed = GitHubParser.parse(input.githubData.username);
           if (parsed.valid) {
             const ghClient = new GitHubClient();
-            const rawGithub = await ghClient.fetchCompleteProfile(parsed.username);
+            const fullNameHint = input.name || input.fullName || input.manualFullName || input.resumeData?.fullName || input.resumeData?.name || '';
+            const rawGithub = await ghClient.fetchCompleteProfile(parsed.username, null, fullNameHint);
+            if (rawGithub?.profile?.login) {
+              input.githubData.username = rawGithub.profile.login;
+              if (rawGithub.profile.name && (!input.name || input.name === 'Creative Developer')) {
+                input.name = rawGithub.profile.name;
+              }
+            }
             const normGithub = GitHubNormalizer.normalize(rawGithub);
             const synth = new GitHubProfileSynthesizer(isOverloadFastTrack ? null : aiService);
             const synthesizedGithub = await synth.synthesize(normGithub);

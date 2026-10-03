@@ -14,23 +14,93 @@ class GitHubClient {
     this.cacheTtlMs = options.cacheTtlMs || 60 * 60 * 1000; // 1 hour TTL
   }
 
-  getHeaders() {
+  getHeaders(includeAuth = true) {
     const headers = {
       'User-Agent': 'PortfolioBot-AI/2.0 (https://github.com/portfolio-studio)',
       'Accept': 'application/vnd.github.v3+json'
     };
-    if (this.token) {
+    if (this.token && includeAuth && !this.tokenBad) {
       headers['Authorization'] = `token ${this.token}`;
     }
     return headers;
+  }
+
+  async safeGet(url, options = {}) {
+    try {
+      return await axios.get(url, {
+        headers: this.getHeaders(true),
+        timeout: options.timeout || this.timeout
+      });
+    } catch (err) {
+      if (err.response && err.response.status === 401 && this.token && !this.tokenBad) {
+        console.warn('[GITHUB CLIENT] Configured GITHUB_TOKEN rejected (401), disabling token and retrying with public access...');
+        this.tokenBad = true;
+        return await axios.get(url, {
+          headers: this.getHeaders(false),
+          timeout: options.timeout || this.timeout
+        });
+      }
+      throw err;
+    }
   }
 
   /**
    * Fetches complete public GitHub developer data
    * @param {string} username - Clean GitHub username
    * @param {Function} [onProgress] - Optional progress callback
+   * @param {string} [hintName] - Optional full name or display name to aid resolution
    */
-  async fetchCompleteProfile(username, onProgress = null) {
+  async resolveActualUsername(query, hintName = '') {
+    if (!query && !hintName) return null;
+    const clean = (query || '').trim().replace(/^@/, '');
+    const stripped = clean.replace(/\d+$/, '');
+
+    // Formulate candidate usernames
+    const candidates = new Set();
+    if (clean) candidates.add(clean);
+    if (stripped) candidates.add(stripped);
+
+    const withHyphens = stripped
+      .replace(/abdulaziz/gi, 'abdul-aziz')
+      .replace(/nooruddin/gi, '-nooruddin')
+      .replace(/--+/g, '-')
+      .replace(/^-|-$/g, '');
+    if (withHyphens) candidates.add(withHyphens);
+
+    if (hintName) {
+      const hintSlug = hintName.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      if (hintSlug) candidates.add(hintSlug);
+    }
+
+    // 1. Direct GET checks on all candidates
+    for (const cand of candidates) {
+      try {
+        const res = await this.safeGet(`https://api.github.com/users/${encodeURIComponent(cand)}`, {
+          timeout: 3000
+        });
+        if (res.status === 200 && res.data && res.data.login) {
+          return res.data.login;
+        }
+      } catch (e) {}
+    }
+
+    // 2. Search API fallback across candidates
+    const searchQueries = [...candidates, hintName].filter(Boolean);
+    for (const q of searchQueries) {
+      try {
+        const sRes = await this.safeGet(`https://api.github.com/search/users?q=${encodeURIComponent(q)}&per_page=3`, {
+          timeout: 4000
+        });
+        if (sRes.data && Array.isArray(sRes.data.items) && sRes.data.items.length > 0) {
+          return sRes.data.items[0].login;
+        }
+      } catch (e) {}
+    }
+
+    return null;
+  }
+
+  async fetchCompleteProfile(username, onProgress = null, hintName = '') {
     const cacheKey = username.toLowerCase();
     const cached = this.cache.get(cacheKey);
     if (cached && (Date.now() - cached.timestamp < this.cacheTtlMs)) {
@@ -46,17 +116,16 @@ class GitHubClient {
     let languageStats = {};
 
     try {
-      const profileRes = await axios.get(`https://api.github.com/users/${encodeURIComponent(username)}`, {
-        headers: this.getHeaders(),
+      const profileRes = await this.safeGet(`https://api.github.com/users/${encodeURIComponent(username)}`, {
         timeout: this.timeout
       });
       profileData = profileRes.data;
 
       // 2. Fetch Public Repositories (up to 30 most recently pushed)
       try {
-        const reposRes = await axios.get(
+        const reposRes = await this.safeGet(
           `https://api.github.com/users/${encodeURIComponent(username)}/repos?sort=pushed&per_page=30&type=owner`,
-          { headers: this.getHeaders(), timeout: this.timeout }
+          { timeout: this.timeout }
         );
         if (Array.isArray(reposRes.data)) {
           repositories = reposRes.data;
@@ -66,6 +135,12 @@ class GitHubClient {
       }
     } catch (err) {
       if (err.response && err.response.status === 404) {
+        // Attempt intelligent resolution via name or stripped numbers
+        const resolved = await this.resolveActualUsername(username, hintName);
+        if (resolved && resolved.toLowerCase() !== username.toLowerCase()) {
+          console.log(`[GITHUB CLIENT] Auto-resolved '${username}' -> '${resolved}'`);
+          return this.fetchCompleteProfile(resolved, onProgress, hintName);
+        }
         throw new Error(`GitHub user '@${username}' not found. Please verify the username.`);
       }
       

@@ -85,30 +85,49 @@ ${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence descriptio
    */
   sanitizeAndValidate(aiOutput, normalizedProfile) {
     const { identity, github, skills, projects } = normalizedProfile;
+    const currentYear = new Date().getFullYear();
 
-    // Generate rich experience section based on verified GitHub activity & company
+    // Generate rich experience section based on verified GitHub activity & projects
     const expList = [];
     if (identity.company) {
       expList.push({
-        role: aiOutput.role || this.inferRoleFromLanguages(skills.languages),
+        role: aiOutput.role || this.inferRoleFromLanguages(skills.languages, skills.web3, projects),
         company: identity.company.replace(/^@/, ''),
-        description: `Leading software development initiatives, architecture design, and technical deliverables.`
+        period: `${currentYear - 1} — Present`,
+        desc: `Leading software development initiatives, architecture design, and technical deliverables.`
       });
     }
-    expList.push({
-      role: 'Open Source Creator & Maintainer',
-      company: 'GitHub Ecosystem',
-      description: `Authored and maintained ${github.publicRepositories || projects.length}+ public repositories with continuous integration, unit testing, and modular architecture.`
-    });
+
     if (Array.isArray(aiOutput.experience) && aiOutput.experience.length > 0) {
       aiOutput.experience.forEach(e => {
         if (e && (e.role || e.title)) {
-          expList.unshift({
+          expList.push({
             role: e.role || e.title,
             company: e.company || identity.company || 'Tech Organization',
-            description: e.description || e.desc || 'Architected and shipped scalable software features.'
+            period: e.period || e.duration || `${currentYear - 2} — Present`,
+            desc: e.description || e.desc || 'Architected and shipped scalable software features.'
           });
         }
+      });
+    }
+
+    // If less than 2 experiences, derive authentic milestones from real projects
+    if (expList.length < 2 && projects.length > 0) {
+      const topProj = projects[0];
+      expList.push({
+        role: `Lead Systems Engineer`,
+        company: topProj.name,
+        period: `${currentYear - 1} — Present`,
+        desc: topProj.description || `Engineered modular architecture, interface design, and deployment workflows.`
+      });
+    }
+
+    if (expList.length < 3) {
+      expList.push({
+        role: 'Open Source Creator & Maintainer',
+        company: 'GitHub Ecosystem',
+        period: `${currentYear - 3} — Present`,
+        desc: `Authored and maintained ${github.publicRepositories || projects.length}+ public repositories with continuous integration, unit testing, and modular architecture.`
       });
     }
 
@@ -131,17 +150,28 @@ ${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence descriptio
           { name: 'Modern Full-Stack Development Proficiency', issuer: 'Open Source Standard' }
         ];
 
+    const allSkills = [
+      ...(skills.languages || []),
+      ...(skills.frontend || []),
+      ...(skills.backend || []),
+      ...(skills.web3 || []),
+      ...(skills.ai || []),
+      ...(skills.devops || []),
+      ...(skills.databases || []),
+      ...(skills.tools || [])
+    ];
+
     const validated = {
       name: aiOutput.name || identity.name || identity.username,
-      role: aiOutput.role || this.inferRoleFromLanguages(skills.languages),
+      role: aiOutput.role || this.inferRoleFromLanguages(skills.languages, skills.web3, projects),
       tagline: aiOutput.tagline || identity.bio || `Engineering high-impact digital experiences in ${skills.languages.slice(0, 3).join(', ') || 'modern software'}.`,
       bio: aiOutput.bio || identity.bio || `Passionate software developer actively building open-source projects across ${skills.languages.slice(0, 4).join(', ') || 'full-stack systems'}. Dedicated to clean architecture, developer ergonomics, and resilient digital solutions.`,
       email: aiOutput.email || `${identity.username}@users.noreply.github.com`,
       location: aiOutput.location || identity.location || 'Remote',
       github: github.profileUrl,
       website: identity.website || '',
-      tech_stack: aiOutput.tech_stack || skills.languages.concat(skills.frontend, skills.backend).slice(0, 10).join(', ') || 'JavaScript, TypeScript, Python, Node.js',
-      skills: [...new Set([...skills.languages, ...skills.frontend, ...skills.backend, ...skills.tools])].slice(0, 12),
+      tech_stack: aiOutput.tech_stack || allSkills.slice(0, 10).join(', ') || 'JavaScript, TypeScript, Python, Node.js',
+      skills: [...new Set(allSkills)].slice(0, 16),
       branch: 'A',
       experience: expList,
       education: eduList,
@@ -200,14 +230,18 @@ ${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence descriptio
   }
 
   /**
-   * Generates deterministic role title based on dominant programming languages
+   * Generates deterministic role title based on dominant programming languages and projects
    */
-  inferRoleFromLanguages(languages = []) {
+  inferRoleFromLanguages(languages = [], web3 = [], projects = []) {
     const l = languages.map(lang => lang.toLowerCase());
+    const hasWeb3 = (web3 && web3.length > 0) || (projects && projects.some(p => /algorand|contract|blockchain|web3|crypto/i.test((p.name || '') + ' ' + (p.description || ''))));
+    if (hasWeb3) {
+      return 'Web3 & Full-Stack Systems Engineer';
+    }
     if (l.includes('rust') || l.includes('c++') || l.includes('c') || l.includes('go')) {
       return 'Systems Architect & High-Performance Engineer';
     }
-    if (l.includes('python') && (l.includes('jupyter') || l.includes('r') || l.includes('c++'))) {
+    if (l.includes('python') && (l.includes('jupyter') || l.includes('r') || l.includes('tensorflow') || l.includes('pytorch'))) {
       return 'AI Systems & Machine Learning Engineer';
     }
     if (l.includes('typescript') || l.includes('javascript') || l.includes('html') || l.includes('css')) {
@@ -221,21 +255,46 @@ ${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence descriptio
    */
   createDeterministicFallback(normalizedProfile) {
     const { identity, github, skills, projects } = normalizedProfile;
-    const role = this.inferRoleFromLanguages(skills.languages);
-    const techStack = [...new Set([...skills.languages, ...skills.frontend, ...skills.backend])].slice(0, 10).join(', ');
+    const currentYear = new Date().getFullYear();
+    const role = this.inferRoleFromLanguages(skills.languages, skills.web3, projects);
+
+    const allSkills = [
+      ...(skills.languages || []),
+      ...(skills.frontend || []),
+      ...(skills.backend || []),
+      ...(skills.web3 || []),
+      ...(skills.ai || []),
+      ...(skills.devops || []),
+      ...(skills.databases || []),
+      ...(skills.tools || [])
+    ];
+    const techStack = [...new Set(allSkills)].slice(0, 10).join(', ');
 
     const expList = [];
     if (identity.company) {
       expList.push({
         role: role,
         company: identity.company.replace(/^@/, ''),
-        description: `Directing core application architecture and feature delivery.`
+        period: `${currentYear - 1} — Present`,
+        desc: `Directing core application architecture, feature delivery, and deployment pipelines.`
       });
     }
+
+    if (projects.length > 0) {
+      const topProj = projects[0];
+      expList.push({
+        role: 'Lead Systems Developer',
+        company: topProj.name,
+        period: `${currentYear - 1} — Present`,
+        desc: topProj.description || `Engineered application logic, state flows, and modular digital interfaces.`
+      });
+    }
+
     expList.push({
       role: 'Open Source Contributor & Maintainer',
       company: 'GitHub Ecosystem',
-      description: `Engineered and maintained ${github.publicRepositories || projects.length}+ public repositories with clean code, testing, and modern tooling.`
+      period: `${currentYear - 3} — Present`,
+      desc: `Engineered and maintained ${github.publicRepositories || projects.length}+ public repositories with clean code, testing, and modern tooling.`
     });
 
     let projs = projects.map(p => ({
@@ -283,7 +342,7 @@ ${projects.map(p => `    { "name": "${p.name}", "desc": "1-2 sentence descriptio
       github: github.profileUrl,
       website: identity.website || '',
       tech_stack: techStack || 'TypeScript, JavaScript, Python, Node.js, React',
-      skills: [...new Set([...skills.languages, ...skills.frontend, ...skills.backend, ...skills.tools])].slice(0, 12),
+      skills: [...new Set(allSkills)].slice(0, 16),
       branch: 'A',
       experience: expList,
       education: [

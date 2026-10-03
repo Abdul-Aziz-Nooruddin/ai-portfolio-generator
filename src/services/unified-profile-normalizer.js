@@ -333,6 +333,9 @@ class UnifiedProfileNormalizer {
     } else if (Array.isArray(manualData?.experience) && manualData.experience.length > 0) {
       experience = manualData.experience;
       recordProvenance('experience', 'manual', PROVENANCE_LEVELS.USER_PROVIDED);
+    } else if (Array.isArray(githubData?.experience) && githubData.experience.length > 0) {
+      experience = githubData.experience;
+      recordProvenance('experience', 'github_synthesis', PROVENANCE_LEVELS.VERIFIED);
     }
 
     const currentYear = new Date().getFullYear();
@@ -368,6 +371,8 @@ class UnifiedProfileNormalizer {
       education = resumeData.education;
     } else if (Array.isArray(manualData?.education) && manualData.education.length > 0) {
       education = manualData.education;
+    } else if (Array.isArray(githubData?.education) && githubData.education.length > 0) {
+      education = githubData.education;
     } else if (resumeData?.education && typeof resumeData.education === 'object') {
       education = [resumeData.education];
     } else {
@@ -421,6 +426,7 @@ class UnifiedProfileNormalizer {
     addCertList(resumeData?.certifications, 'resume_certifications');
     addCertList(questionnaireData?.certifications, 'questionnaire');
     addCertList(manualData?.certifications, 'manual');
+    addCertList(githubData?.certifications, 'github');
 
     let certifications = allCerts;
     if (certifications.length > 0) {

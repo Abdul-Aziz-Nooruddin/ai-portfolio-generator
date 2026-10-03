@@ -66,11 +66,13 @@ class GitHubNormalizer {
     // Rank top projects (preserve all repositories up to 20)
     const topProjects = GitHubProjectRanker.rankAndSelect(repos, 20);
 
-    // Categorize skills based on verified languages and topics
+    // Categorize skills based on verified languages, topics, bio, and repository descriptions
     const skills = {
       languages: sortedLanguages.slice(0, 10),
       frontend: [],
       backend: [],
+      web3: [],
+      ai: [],
       devops: [],
       databases: [],
       tools: []
@@ -78,17 +80,43 @@ class GitHubNormalizer {
 
     const frontendKeywords = ['react', 'vue', 'svelte', 'nextjs', 'tailwind', 'css', 'html', 'typescript', 'javascript', 'threejs', 'webgl'];
     const backendKeywords = ['nodejs', 'express', 'nest', 'django', 'fastapi', 'flask', 'spring', 'go', 'rust', 'ruby', 'rails', 'php', 'laravel'];
+    const web3Keywords = ['web3', 'solidity', 'blockchain', 'algorand', 'ethereum', 'polygon', 'smart contract', 'smart-contract', 'defi', 'ethers', 'crypto', 'escrow'];
+    const aiKeywords = ['ai', 'machine learning', 'machine-learning', 'deep learning', 'deep-learning', 'llm', 'nlp', 'pytorch', 'tensorflow', 'agent', 'rag', 'neural'];
     const devopsKeywords = ['docker', 'kubernetes', 'aws', 'gcp', 'terraform', 'ci-cd', 'github-actions', 'linux'];
     const dbKeywords = ['postgres', 'postgresql', 'mysql', 'mongodb', 'redis', 'sqlite', 'prisma', 'supabase', 'graphql'];
 
     allTopics.forEach(topic => {
       const t = topic.toLowerCase();
-      if (frontendKeywords.some(k => t.includes(k))) skills.frontend.push(topic);
+      if (web3Keywords.some(k => t.includes(k))) skills.web3.push(topic);
+      else if (aiKeywords.some(k => t.includes(k))) skills.ai.push(topic);
+      else if (frontendKeywords.some(k => t.includes(k))) skills.frontend.push(topic);
       else if (backendKeywords.some(k => t.includes(k))) skills.backend.push(topic);
       else if (devopsKeywords.some(k => t.includes(k))) skills.devops.push(topic);
       else if (dbKeywords.some(k => t.includes(k))) skills.databases.push(topic);
       else skills.tools.push(topic);
     });
+
+    // Extract technical domains from bio and repo descriptions
+    const corpusText = [
+      profile.bio || '',
+      ...repos.map(r => `${r.name} ${r.description || ''}`)
+    ].join(' ').toLowerCase();
+
+    if (/smart\s*contract/i.test(corpusText)) skills.web3.push('Smart Contracts');
+    if (/algorand/i.test(corpusText)) skills.web3.push('Algorand');
+    if (/polygon/i.test(corpusText)) skills.web3.push('Polygon');
+    if (/blockchain/i.test(corpusText)) skills.web3.push('Blockchain');
+    if (/defi/i.test(corpusText)) skills.web3.push('DeFi');
+    if (/web3/i.test(corpusText)) skills.web3.push('Web3');
+    if (/p2p|encrypted|cipher/i.test(corpusText)) skills.tools.push('P2P Encryption');
+    if (/three\.?js|webgl|shader|3d/i.test(corpusText)) skills.frontend.push('Three.js / WebGL');
+    if (/full-?\s*stack/i.test(corpusText)) skills.backend.push('Full-Stack Architecture');
+    if (/rest\s*api|graphql/i.test(corpusText)) skills.backend.push('RESTful APIs');
+
+    // Deduplicate all skill arrays
+    for (const k of Object.keys(skills)) {
+      skills[k] = [...new Set(skills[k])];
+    }
 
     // Build Verified Facts Evidence List
     const evidence = [
