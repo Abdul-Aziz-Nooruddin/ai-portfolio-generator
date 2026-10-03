@@ -61,9 +61,10 @@ global.__MYFOLIO_DRAFTS_CACHE = globalDraftsCache;
 
 const app = express();
 app.disable('x-powered-by');
+app.set('trust proxy', 1);
 
 // Instant 0ms Health Check for probes (Bypasses all heavy middleware, DB & auth)
-app.get(['/health', '/healthz', '/api/health'], (req, res) => {
+app.all(['/health', '/healthz', '/api/health', '/healthcheck', '/ping', '/ready'], (req, res) => {
   res.status(200).json({
     status: 'healthy',
     ok: true,
@@ -3918,18 +3919,27 @@ app.use(SecurityMiddleware.safeErrorHandler());
 
 // Start server if run directly
 if (require.main === module) {
-  let PORT = parseInt(process.env.PORT, 10) || 10000;
-  const HOST = '0.0.0.0';
+  const PORT = parseInt(process.env.PORT, 10) || 10000;
+  // If HOST is explicitly provided in env, honor it; otherwise omit host so Node.js binds to dual-stack '::' (accepts all IPv4 & IPv6 connections)
+  const HOST = process.env.HOST || null;
 
   function startServer(portToUse) {
-    const server = app.listen(portToUse, HOST, () => {
+    const listenArgs = [portToUse];
+    if (HOST) listenArgs.push(HOST);
+    listenArgs.push(() => {
       console.log(`🚀 MyFolio Platform Server running on port ${portToUse}`);
       console.log(`🌐 Local Studio:     http://localhost:${portToUse}`);
       console.log(`📱 Direct Previews:  http://localhost:${portToUse}/p/:siteId`);
     });
 
+    const server = app.listen(...listenArgs);
+
     server.on('error', (err) => {
       if (err.code === 'EADDRINUSE') {
+        if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+          console.error(`🚨 [FATAL PORT CONFLICT] Port ${portToUse} is in use in production. Exiting process so container orchestrator can restart cleanly.`);
+          process.exit(1);
+        }
         console.warn(`⚠️ [PORT CONFLICT] Port ${portToUse} is already in use by another project or process.`);
         const nextPort = portToUse + 1;
         console.log(`🔄 Automatically shifting Portfolio Studio to next available port: ${nextPort}...`);
