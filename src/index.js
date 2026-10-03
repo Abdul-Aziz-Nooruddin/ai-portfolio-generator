@@ -2610,6 +2610,14 @@ app.get(['/privacy', '/privacy-policy'], (req, res) => {
   res.sendFile(getPagePath('privacy.html'));
 });
 
+app.get(['/refund', '/refunds', '/cancellation', '/refund-policy', '/cancellation-policy'], (req, res) => {
+  res.sendFile(getPagePath('refund.html'));
+});
+
+app.get(['/faq', '/faqs', '/takedown', '/deletion-rules', '/help/faq'], (req, res) => {
+  res.sendFile(getPagePath('faq.html'));
+});
+
 app.get(['/thank-you', '/success'], (req, res) => {
   res.sendFile(getPagePath('thank-you.html'));
 });

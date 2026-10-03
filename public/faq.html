@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- MyFolio Official Favicon Suite -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frequently Asked Questions &amp; Takedown Rules — MyFolio</title>
+  <meta name="description" content="MyFolio FAQ: Learn about our 24-hour evaluation previews, 5-day grace periods, account deletion, copyright takedowns, and full source code export.">
+  <link rel="canonical" href="https://myfolio.tech/faq">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #171817;
+      background: #f4f1e8;
+      --paper: #f4f1e8;
+      --mist: #e4e4e4;
+      --ink: #171817;
+      --sky: #75c5de;
+      --muted: #60615b;
+      --border: rgba(23, 24, 23, 0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
+    body { min-height: 100vh; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; }
+
+    /* Header */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 40px;
+      background: rgba(244, 241, 232, 0.92);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-size: 26px; font-weight: 600; letter-spacing: -0.06em; line-height: 1;
+    }
+    .brand-logo-wrap { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-logo-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; }
+    .brand:hover .brand-logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 16px rgba(117, 197, 222, 0.5); }
+    .brand-footer .brand-logo-img { box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12); }
+
+    .header-nav { display: none; align-items: center; gap: 32px; font-size: 14px; font-weight: 500; }
+    @media (min-width: 860px) { .header-nav { display: flex; } }
+    .header-nav a:hover { color: #13708e; }
+
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .studio-link {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 10px 18px; border-radius: 9999px; font-size: 13px; font-weight: 500;
+      background: #ffffff; border: 1px solid var(--border); transition: all 0.2s ease;
+    }
+    .studio-link:hover { background: var(--ink); color: #ffffff; }
+
+    .burger-button {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: #ffffff; border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center;
+      transition: background 0.3s ease;
+    }
+    .burger-button span { width: 20px; height: 1.5px; background: var(--ink); transition: 0.3s ease; }
+    .burger-button:hover, .burger-button.open { background: var(--ink); }
+    .burger-button:hover span, .burger-button.open span { background: #ffffff; }
+    .burger-button.open span:first-child { transform: translateY(3.25px) rotate(45deg); }
+    .burger-button.open span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+
+    .menu-panel {
+      position: fixed; top: 12px; right: 12px; z-index: 103; width: calc(100% - 24px); max-width: 420px;
+      padding: 80px 36px 32px; background: rgba(23, 24, 23, 0.98);
+      backdrop-filter: blur(26px); border-radius: 20px; color: var(--paper);
+      opacity: 0; visibility: hidden; transform: translateY(-20px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .menu-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .menu-heading { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9d9e95; margin-bottom: 24px; }
+    .menu-panel nav { display: flex; flex-direction: column; gap: 6px; }
+    .menu-panel nav a {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 28px; font-weight: 500; letter-spacing: -0.04em; transition: color 0.2s;
+    }
+    .menu-panel nav a:hover { color: var(--sky); }
+    .menu-number { font-size: 11px; color: #9d9e95; font-family: monospace; }
+    .menu-bottom { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .menu-secondary { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; font-size: 13px; color: #9d9e95; }
+    .menu-secondary a:hover { color: #ffffff; }
+
+    /* Content Layout */
+    .faq-container {
+      max-width: 820px; margin: 0 auto; padding: 60px 24px 100px;
+    }
+    .legal-notice-badge {
+      display: inline-block; background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+      padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px;
+    }
+    .faq-header {
+      margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 32px;
+    }
+    .faq-title {
+      font-size: 44px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 12px;
+    }
+    .faq-meta {
+      font-size: 14px; color: var(--muted);
+    }
+    .faq-category {
+      margin-bottom: 48px;
+    }
+    .faq-category h2 {
+      font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 20px; color: var(--ink);
+      border-bottom: 2px solid var(--border); padding-bottom: 8px;
+    }
+    .faq-item {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 24px; margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .faq-question {
+      font-size: 17px; font-weight: 700; color: var(--ink); margin-bottom: 10px; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .faq-q-badge {
+      background: #171817; color: #ffffff; font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .faq-answer {
+      font-size: 15px; line-height: 1.7; color: #333430; padding-left: 28px;
+    }
+    .faq-answer ul {
+      margin: 8px 0 8px 18px;
+    }
+    .faq-answer li { margin-bottom: 6px; }
+
+    /* Footer */
+    .site-footer {
+      background: var(--ink); color: var(--paper); padding: 80px 40px 40px;
+    }
+    .footer-directory {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px;
+      padding-bottom: 60px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .footer-directory h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #9d9e95; margin-bottom: 20px; }
+    .footer-directory nav { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+    .footer-directory a { color: #d1d2cc; transition: color 0.2s; }
+    .footer-directory a:hover { color: #ffffff; }
+    .footer-bottom {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 20px; padding-top: 32px; font-size: 13px; color: #9d9e95;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <a href="/" class="brand" aria-label="MyFolio homepage">
+      <span class="brand-logo-wrap">
+        <img class="brand-logo-img" src="/assets/logo-3d.webp" alt="MyFolio" width="34" height="34">
+      </span>
+      <span>MyFolio</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/#templates">Templates</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/studio" class="studio-link">
+        <span>Web Studio</span>
+        <span style="font-size: 16px;">✦</span>
+      </a>
+      <button class="burger-button" id="burger-btn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Overlay Menu -->
+  <div class="menu-panel" id="menu-panel">
+    <div class="menu-heading">Directory</div>
+    <nav>
+      <a href="/"><span>Home</span><span class="menu-number">01</span></a>
+      <a href="/studio"><span>Studio</span><span class="menu-number">02</span></a>
+      <a href="/#templates"><span>Templates</span><span class="menu-number">03</span></a>
+      <a href="/#pricing"><span>Pricing</span><span class="menu-number">04</span></a>
+      <a href="/about"><span>About</span><span class="menu-number">05</span></a>
+      <a href="/faq"><span>FAQ</span><span class="menu-number">06</span></a>
+      <a href="/contact"><span>Contact</span><span class="menu-number">07</span></a>
+    </nav>
+    <div class="menu-bottom">
+      <div class="menu-secondary">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/refund">Refund Policy</a>
+        <a href="/faq">FAQ &amp; Deletion Rules</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ Body -->
+  <main class="faq-container">
+    <span class="legal-notice-badge">Plain Language Draft • Needs Legal Review</span>
+    
+    <header class="faq-header">
+      <h1 class="faq-title">Frequently Asked Questions &amp; Takedown Rules</h1>
+      <p class="faq-meta">Rules regarding 24h preview lifecycles, 5-day grace periods, account deletion, and copyright takedowns.</p>
+    </header>
+
+    <!-- Category 1: Evaluation & Lifecycle -->
+    <section class="faq-category">
+      <h2>1. Evaluation Previews &amp; Lifecycle Schedulers</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>How does the 24-hour preview evaluation work?</span>
+        </div>
+        <div class="faq-answer">
+          When you connect your GitHub handle or upload your resume, MyFolio synthesizes an interactive 3D WebGL website. You receive <strong>3 free builds every week</strong>. Each evaluation build remains active on our temporary staging servers for <strong>24 hours</strong>. During this window, you can view your site on desktop and mobile and customize it in Web Studio.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>What happens after the 24 hours expire?</span>
+        </div>
+        <div class="faq-answer">
+          After 24 hours without an active subscription or one-time build purchase, the temporary live link transitions to <strong>preview lapsed</strong> status. Visitors to the URL will see an expiration status notice. Your design state remains securely stored in your dashboard for <strong>5 days</strong> in case you wish to unlock it.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>What is the 5-day grace period?</span>
+        </div>
+        <div class="faq-answer">
+          If a monthly subscription payment is declined or a preview remains unpaid, we maintain a 5-day grace period. During this period, we send email reminders so you have time to update billing credentials. If no action is taken after 5 days, our automated lifecycle engine permanently purges the generated site directory and build artifacts from our servers to protect storage hygiene.
+        </div>
+      </div>
+    </section>
+
+    <!-- Category 2: Ownership & Code Export -->
+    <section class="faq-category">
+      <h2>2. Source Code Export &amp; Platform Independence</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>Do I own the code generated by MyFolio?</span>
+        </div>
+        <div class="faq-answer">
+          <strong>Yes, 100%.</strong> Unlike proprietary website builders (Wix, Squarespace, Webflow) that trap your data, every paid build on MyFolio includes a clean standalone source code export (ZIP download). You own the HTML, CSS, JavaScript, and WebGL shader code completely with zero vendor lock-in. You may self-host it on Vercel, Netlify, Cloudflare Pages, AWS, or any server.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>Are watermarks removed after payment?</span>
+        </div>
+        <div class="faq-answer">
+          Yes. Once you complete checkout for either the ₹149 Lifetime Starter or the ₹149/mo Pro Domain plan, all preview watermarks and evaluation banners are completely stripped from both the live hosted deployment and the exported ZIP source code.
+        </div>
+      </div>
+    </section>
+
+    <!-- Category 3: Account Deletion & Data Privacy -->
+    <section class="faq-category">
+      <h2>3. Account Deletion &amp; Data Erasure</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>How do I delete my account and all personal data?</span>
+        </div>
+        <div class="faq-answer">
+          You have the right to complete erasure at any time:
+          <ul>
+            <li><strong>Self-Service:</strong> Navigate to <a href="/profile" style="color: #13708e; text-decoration: underline;">Identity &amp; Control Room (/profile)</a> and click <em>Delete Account</em>.</li>
+            <li><strong>Automated Execution:</strong> This triggers an immediate, irreversible cascade purge: your account records, session tokens, design briefs, parsed resume text, uploaded avatars, and cloud hosting sites are erased within seconds.</li>
+            <li><strong>Email Request:</strong> You can also email <a href="mailto:support@myfolio.tech" style="color: #13708e; text-decoration: underline;">support@myfolio.tech</a> with the subject <code>Account Deletion Request</code>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>Does MyFolio sell my data to third parties?</span>
+        </div>
+        <div class="faq-answer">
+          <strong>Never.</strong> We do not sell, rent, or monetize your resume, GitHub repositories, or contact credentials. Your repository data is processed strictly in-memory and through encrypted API calls to generate your personal portfolio.
+        </div>
+      </div>
+    </section>
+
+    <!-- Category 4: Copyright & Takedown Rules -->
+    <section class="faq-category">
+      <h2>4. Copyright, DMCA &amp; Content Takedown Rules</h2>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>What should I do if a portfolio contains my copyrighted work or unauthorized personal information?</span>
+        </div>
+        <div class="faq-answer">
+          MyFolio respects intellectual property and identity privacy. If you believe a portfolio published on <code>*.myfolio.tech</code> infringes upon your copyright, uses your likeness without authorization, or contains sensitive personal data, you may submit an expedited takedown notice.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>What information is required in a Takedown Notice?</span>
+        </div>
+        <div class="faq-answer">
+          To file a valid takedown notice, email <strong>takedown@myfolio.tech</strong> or <strong>support@myfolio.tech</strong> with:
+          <ul>
+            <li>The exact URL of the offending portfolio (e.g. <code>https://username.myfolio.tech</code> or <code>https://myfolio.tech/p/siteId</code>).</li>
+            <li>Identification of the copyrighted work, personal likeness, or trademark claimed to be infringed, or proof of identity.</li>
+            <li>Sufficient contact information (name, address, telephone number, and email address).</li>
+            <li>A statement that you have a good-faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law.</li>
+            <li>A statement made under penalty of perjury that the information in the notification is accurate and that you are authorized to act.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question">
+          <span class="faq-q-badge">Q</span>
+          <span>How fast does MyFolio respond to takedown requests?</span>
+        </div>
+        <div class="faq-answer">
+          Upon receiving a bona fide takedown notice, our security operations team investigates and restricts or removes public access to the contested URL within <strong>24 to 48 business hours</strong>. If the infringement is severe (e.g. leaked private credentials or doxxing), immediate emergency unmounting is executed.
+        </div>
+      </div>
+    </section>
+
+    <!-- Category 5: Contact Coordinates -->
+    <section class="faq-category">
+      <h2>5. Support Coordinates</h2>
+      <p style="font-size: 15px; color: #333430;">
+        Have a question not answered here? Reach out directly:<br>
+        <strong>General Support:</strong> <a href="mailto:support@myfolio.tech" style="color: #13708e; text-decoration: underline;">support@myfolio.tech</a><br>
+        <strong>Takedowns &amp; Legal:</strong> <a href="mailto:takedown@myfolio.tech" style="color: #13708e; text-decoration: underline;">takedown@myfolio.tech</a><br>
+        <strong>Founder Direct:</strong> <a href="mailto:aziz@myfolio.tech" style="color: #13708e; text-decoration: underline;">aziz@myfolio.tech</a>
+      </p>
+    </section>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-directory">
+      <div>
+        <h3>Product</h3>
+        <nav>
+          <a href="/#features">Features</a>
+          <a href="/#templates">Templates</a>
+          <a href="/#pricing">Pricing &amp; plans</a>
+          <a href="/studio">Inside Web Studio</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <nav>
+          <a href="/jack-3d">Jack 3D demo</a>
+          <a href="/nadia">Nadia brand demo</a>
+          <a href="/kage">Kage Kyoto demo</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Resources</h3>
+        <nav>
+          <a href="/about">Our story</a>
+          <a href="/faq">FAQ &amp; deletion rules</a>
+          <a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener">Source on GitHub ↗</a>
+          <a href="/dashboard">Dashboard</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Company &amp; Legal</h3>
+        <nav>
+          <a href="/contact">Contact &amp; support</a>
+          <a href="/privacy">Privacy policy</a>
+          <a href="/terms">Terms of service</a>
+          <a href="/refund">Refund &amp; cancellation policy</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MyFolio. All rights reserved.</span>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms</a>
+        <a href="/refund">Refund Policy</a>
+        <a href="/faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const burger = document.getElementById('burger-btn');
+      const menu = document.getElementById('menu-panel');
+      let open = false;
+      if (burger && menu) {
+        burger.addEventListener('click', () => {
+          open = !open;
+          burger.classList.toggle('open', open);
+          menu.classList.toggle('open', open);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -91,9 +91,25 @@
   <!-- Privacy Policy -->
   <url>
     <loc>https://myfolio.tech/privacy</loc>
-    <lastmod>2026-09-29</lastmod>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.30</priority>
+  </url>
+
+  <!-- Refund & Cancellation Policy -->
+  <url>
+    <loc>https://myfolio.tech/refund</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.30</priority>
+  </url>
+
+  <!-- FAQ & Takedown Rules -->
+  <url>
+    <loc>https://myfolio.tech/faq</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.50</priority>
   </url>
 
 </urlset>

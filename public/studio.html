@@ -2102,6 +2102,14 @@
 
         </div>
 
+        <!-- Pre-Payment Disclaimer Checkbox -->
+        <div style="margin: 14px 0 10px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-align: left;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #cbd5e1; cursor: pointer; user-select: none;">
+            <input type="checkbox" id="studioPaymentDisclaimerCheck" style="margin-top: 2px; accent-color: #10B981; width: 16px; height: 16px; cursor: pointer;" />
+            <span>I have reviewed my portfolio preview and agree to the <a href="/terms" target="_blank" style="color: #75c5de; text-decoration: underline;">Terms</a>, <a href="/privacy" target="_blank" style="color: #75c5de; text-decoration: underline;">Privacy Policy</a>, and <a href="/refund" target="_blank" style="color: #75c5de; text-decoration: underline;">Refund Policy</a>.</span>
+          </label>
+        </div>
+
         <!-- VIP Founder Instant Free Launch -->
         <div id="vipFounderPublishSection" style="display:none; text-align:center; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
           <button type="button" onclick="publishVipFounderDirect()" style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.4); color:#facc15; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">
@@ -3142,6 +3150,13 @@
           }
         }
         customUsername = _upmConfirmedUsername;
+      }
+
+      const disclaimer = document.getElementById('studioPaymentDisclaimerCheck');
+      if (disclaimer && !disclaimer.checked) {
+        showToast('Please check the box to agree to the Terms, Privacy, and Refund Policy before checkout.', 'warning');
+        disclaimer.focus();
+        return;
       }
 
       const targetBtn = plan === 'pro' ? document.getElementById('upmConfirmBtn') : document.getElementById('btnLaunchStarter');

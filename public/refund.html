@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- MyFolio Official Favicon Suite -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Refund & Cancellation Policy — MyFolio</title>
+  <meta name="description" content="MyFolio Refund & Cancellation Policy: Plain-language terms regarding our 24-hour evaluation previews, subscription cancellations, and refund eligibility.">
+  <link rel="canonical" href="https://myfolio.tech/refund">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #171817;
+      background: #f4f1e8;
+      --paper: #f4f1e8;
+      --mist: #e4e4e4;
+      --ink: #171817;
+      --sky: #75c5de;
+      --muted: #60615b;
+      --border: rgba(23, 24, 23, 0.1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
+    body { min-height: 100vh; background: var(--paper); color: var(--ink); line-height: 1.6; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; }
+
+    /* Header */
+    .site-header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 24px 40px;
+      background: rgba(244, 241, 232, 0.92);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-size: 26px; font-weight: 600; letter-spacing: -0.06em; line-height: 1;
+    }
+    .brand-logo-wrap { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; flex-shrink: 0; }
+    .brand-logo-img { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; display: block; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.08); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease; }
+    .brand:hover .brand-logo-img { transform: scale(1.1) rotate(5deg); box-shadow: 0 6px 16px rgba(117, 197, 222, 0.5); }
+    .brand-footer .brand-logo-img { box-shadow: 0 3px 12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.12); }
+
+    .header-nav { display: none; align-items: center; gap: 32px; font-size: 14px; font-weight: 500; }
+    @media (min-width: 860px) { .header-nav { display: flex; } }
+    .header-nav a:hover { color: #13708e; }
+
+    .header-actions { display: flex; align-items: center; gap: 16px; }
+    .studio-link {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 10px 18px; border-radius: 9999px; font-size: 13px; font-weight: 500;
+      background: #ffffff; border: 1px solid var(--border); transition: all 0.2s ease;
+    }
+    .studio-link:hover { background: var(--ink); color: #ffffff; }
+
+    .burger-button {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: #ffffff; border: 1px solid var(--border);
+      display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center;
+      transition: background 0.3s ease;
+    }
+    .burger-button span { width: 20px; height: 1.5px; background: var(--ink); transition: 0.3s ease; }
+    .burger-button:hover, .burger-button.open { background: var(--ink); }
+    .burger-button:hover span, .burger-button.open span { background: #ffffff; }
+    .burger-button.open span:first-child { transform: translateY(3.25px) rotate(45deg); }
+    .burger-button.open span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+
+    .menu-panel {
+      position: fixed; top: 12px; right: 12px; z-index: 103; width: calc(100% - 24px); max-width: 420px;
+      padding: 80px 36px 32px; background: rgba(23, 24, 23, 0.98);
+      backdrop-filter: blur(26px); border-radius: 20px; color: var(--paper);
+      opacity: 0; visibility: hidden; transform: translateY(-20px);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .menu-panel.open { opacity: 1; visibility: visible; transform: translateY(0); }
+    .menu-heading { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #9d9e95; margin-bottom: 24px; }
+    .menu-panel nav { display: flex; flex-direction: column; gap: 6px; }
+    .menu-panel nav a {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 28px; font-weight: 500; letter-spacing: -0.04em; transition: color 0.2s;
+    }
+    .menu-panel nav a:hover { color: var(--sky); }
+    .menu-number { font-size: 11px; color: #9d9e95; font-family: monospace; }
+    .menu-bottom { margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+    .menu-secondary { display: flex; flex-direction: column; gap: 8px; margin-top: 20px; font-size: 13px; color: #9d9e95; }
+    .menu-secondary a:hover { color: #ffffff; }
+
+    /* Content Layout */
+    .policy-container {
+      max-width: 820px; margin: 0 auto; padding: 60px 24px 100px;
+    }
+    .legal-notice-badge {
+      display: inline-block; background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+      padding: 6px 14px; border-radius: 9999px; font-size: 12px; font-weight: 700;
+      letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px;
+    }
+    .policy-header {
+      margin-bottom: 48px; border-bottom: 1px solid var(--border); padding-bottom: 32px;
+    }
+    .policy-title {
+      font-size: 44px; font-weight: 700; letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 12px;
+    }
+    .policy-meta {
+      font-size: 14px; color: var(--muted);
+    }
+    .policy-section {
+      margin-bottom: 40px;
+    }
+    .policy-section h2 {
+      font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 16px; color: var(--ink);
+    }
+    .policy-section p {
+      font-size: 15px; line-height: 1.7; color: #333430; margin-bottom: 14px;
+    }
+    .policy-section ul {
+      margin: 12px 0 16px 24px; font-size: 15px; line-height: 1.7; color: #333430;
+    }
+    .policy-section li { margin-bottom: 8px; }
+    .highlight-card {
+      background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; margin: 20px 0;
+    }
+
+    /* Footer */
+    .site-footer {
+      background: var(--ink); color: var(--paper); padding: 80px 40px 40px;
+    }
+    .footer-directory {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 40px;
+      padding-bottom: 60px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .footer-directory h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #9d9e95; margin-bottom: 20px; }
+    .footer-directory nav { display: flex; flex-direction: column; gap: 10px; font-size: 14px; }
+    .footer-directory a { color: #d1d2cc; transition: color 0.2s; }
+    .footer-directory a:hover { color: #ffffff; }
+    .footer-bottom {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+      gap: 20px; padding-top: 32px; font-size: 13px; color: #9d9e95;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Site Header -->
+  <header class="site-header">
+    <a href="/" class="brand" aria-label="MyFolio homepage">
+      <span class="brand-logo-wrap">
+        <img class="brand-logo-img" src="/assets/logo-3d.webp" alt="MyFolio" width="34" height="34">
+      </span>
+      <span>MyFolio</span>
+    </a>
+    <nav class="header-nav">
+      <a href="/#templates">Templates</a>
+      <a href="/#pricing">Pricing</a>
+      <a href="/about">About</a>
+      <a href="/faq">FAQ</a>
+      <a href="/contact">Contact</a>
+    </nav>
+    <div class="header-actions">
+      <a href="/studio" class="studio-link">
+        <span>Web Studio</span>
+        <span style="font-size: 16px;">✦</span>
+      </a>
+      <button class="burger-button" id="burger-btn" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Overlay Menu -->
+  <div class="menu-panel" id="menu-panel">
+    <div class="menu-heading">Directory</div>
+    <nav>
+      <a href="/"><span>Home</span><span class="menu-number">01</span></a>
+      <a href="/studio"><span>Studio</span><span class="menu-number">02</span></a>
+      <a href="/#templates"><span>Templates</span><span class="menu-number">03</span></a>
+      <a href="/#pricing"><span>Pricing</span><span class="menu-number">04</span></a>
+      <a href="/about"><span>About</span><span class="menu-number">05</span></a>
+      <a href="/faq"><span>FAQ</span><span class="menu-number">06</span></a>
+      <a href="/contact"><span>Contact</span><span class="menu-number">07</span></a>
+    </nav>
+    <div class="menu-bottom">
+      <div class="menu-secondary">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms of Service</a>
+        <a href="/refund">Refund Policy</a>
+        <a href="/faq">FAQ &amp; Deletion Rules</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Policy Body -->
+  <main class="policy-container">
+    <span class="legal-notice-badge">Plain Language Draft • Needs Legal Review</span>
+    
+    <header class="policy-header">
+      <h1 class="policy-title">Refund &amp; Cancellation Policy</h1>
+      <p class="policy-meta">Last Updated: October 3, 2026 • Effective Date: October 3, 2026</p>
+    </header>
+
+    <div class="policy-section">
+      <h2>1. The 24-Hour Try-Before-You-Buy Model</h2>
+      <p>
+        At MyFolio, we believe you should never pay for something without knowing exactly what it looks and feels like. We provide <strong>3 free evaluation builds every week</strong>. Each evaluation build remains active for <strong>24 hours</strong> with full Web Studio customization and desktop/mobile 3D WebGL previewing.
+      </p>
+      <p>
+        During this 24-hour evaluation window, you can inspect your layout, verify project narratives, test color tokens, and ensure complete satisfaction before committing to any paid plan.
+      </p>
+    </div>
+
+    <div class="policy-section">
+      <h2>2. One-Time Builds (Lifetime Starter — ₹149)</h2>
+      <div class="highlight-card">
+        <p><strong>What is included:</strong> 1 permanent build deployed to a Netlify address, zero watermarks, and immediate access to full standalone source code (.ZIP download).</p>
+      </div>
+      <p>
+        Because the Lifetime Starter plan delivers immediate digital access to complete standalone source code and incurs immediate third-party infrastructure deployment costs, purchases are generally final once the source code ZIP has been downloaded or permanent deployment has completed.
+      </p>
+      <p>
+        <strong>Technical Failure Exceptions:</strong> If our platform fails to deploy your portfolio, or if you experience a verified technical defect that our engineering team cannot resolve within 48 hours of reporting, you are entitled to a <strong>100% full refund</strong> within 7 days of purchase.
+      </p>
+    </div>
+
+    <div class="policy-section">
+      <h2>3. Pro Custom Domain Subscriptions (₹149 / Month)</h2>
+      <div class="highlight-card">
+        <p><strong>What is included:</strong> Your branded custom vanity subdomain (<code>&lt;username&gt;.myfolio.tech</code>), zero watermarks, full source code export, priority CDN routing, and automated GitHub synchronization.</p>
+      </div>
+      <p>
+        <strong>Cancellation Anytime:</strong> You may cancel your Pro Domain monthly subscription at any time without fees or penalties directly from your <a href="/dashboard" style="text-decoration: underline; color: #13708e;">User Dashboard</a> or by sending an email to <a href="mailto:support@myfolio.tech" style="text-decoration: underline; color: #13708e;">support@myfolio.tech</a>.
+      </p>
+      <p>
+        Upon cancellation:
+      </p>
+      <ul>
+        <li>Your subscription will not renew at the end of your current paid billing period.</li>
+        <li>Your branded custom subdomain will remain active and published until the end of your current paid billing cycle.</li>
+        <li>You retain full rights to your exported source code ZIP indefinitely, allowing you to self-host your website on any hosting service (Vercel, Netlify, Cloudflare, AWS, or GitHub Pages) with zero lock-in.</li>
+      </ul>
+    </div>
+
+    <div class="policy-section">
+      <h2>4. Grace Period &amp; Data Deletion Policy</h2>
+      <p>
+        If a monthly subscription renews unsuccessfully or lapses:
+      </p>
+      <ul>
+        <li><strong>5-Day Grace Period:</strong> We provide a 5-day grace period during which we send reminders and attempt payment reconciliation. Your custom subdomain remains intact during this window.</li>
+        <li><strong>Lapsed State:</strong> After 5 days of unpaid status, the live subdomain route is unmounted and replaced with an expiration notice.</li>
+        <li><strong>Complete Account Deletion:</strong> You may request permanent deletion of your account and all associated profile data at any time via your Profile settings or by emailing <a href="mailto:support@myfolio.tech" style="text-decoration: underline; color: #13708e;">support@myfolio.tech</a>. Once triggered, all data, repository extracts, and build artifacts are irreversibly purged.</li>
+      </ul>
+    </div>
+
+    <div class="policy-section">
+      <h2>5. How to Request a Refund</h2>
+      <p>
+        To request a refund under the technical failure policy or report a billing discrepancy:
+      </p>
+      <ol style="margin-left: 24px; font-size: 15px; line-height: 1.7; color: #333430;">
+        <li>Email <strong>support@myfolio.tech</strong> with the subject line <code>Refund Request - [Your Order ID]</code>.</li>
+        <li>Include your registered email address, payment transaction ID (from Razorpay or card statement), and a brief description of the technical issue.</li>
+        <li>Our team will review and respond within 24–48 business hours. Approved refunds are credited back to the original payment method within 5–7 business days depending on your bank.</li>
+      </ol>
+    </div>
+
+    <div class="policy-section">
+      <h2>6. Contact &amp; Grievances</h2>
+      <p>
+        For any billing inquiries, cancellation requests, or questions regarding this policy:
+      </p>
+      <p>
+        <strong>Email:</strong> <a href="mailto:support@myfolio.tech" style="color: #13708e; text-decoration: underline;">support@myfolio.tech</a> or <a href="mailto:aziz@myfolio.tech" style="color: #13708e; text-decoration: underline;">aziz@myfolio.tech</a><br>
+        <strong>Founder:</strong> Abdul Aziz Nooruddin<br>
+        <strong>Platform:</strong> MyFolio (<a href="https://myfolio.tech" style="color: #13708e;">https://myfolio.tech</a>)
+      </p>
+    </div>
+  </main>
+
+  <!-- Site Footer -->
+  <footer class="site-footer">
+    <div class="footer-directory">
+      <div>
+        <h3>Product</h3>
+        <nav>
+          <a href="/#features">Features</a>
+          <a href="/#templates">Templates</a>
+          <a href="/#pricing">Pricing &amp; plans</a>
+          <a href="/studio">Inside Web Studio</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Explore</h3>
+        <nav>
+          <a href="/jack-3d">Jack 3D demo</a>
+          <a href="/nadia">Nadia brand demo</a>
+          <a href="/kage">Kage Kyoto demo</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Resources</h3>
+        <nav>
+          <a href="/about">Our story</a>
+          <a href="/faq">FAQ &amp; deletion rules</a>
+          <a href="https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech" target="_blank" rel="noopener">Source on GitHub ↗</a>
+          <a href="/dashboard">Dashboard</a>
+        </nav>
+      </div>
+      <div>
+        <h3>Company &amp; Legal</h3>
+        <nav>
+          <a href="/contact">Contact &amp; support</a>
+          <a href="/privacy">Privacy policy</a>
+          <a href="/terms">Terms of service</a>
+          <a href="/refund">Refund &amp; cancellation policy</a>
+          <a href="/faq">FAQ</a>
+        </nav>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 MyFolio. All rights reserved.</span>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+        <a href="/privacy">Privacy Policy</a>
+        <a href="/terms">Terms</a>
+        <a href="/refund">Refund Policy</a>
+        <a href="/faq">FAQ</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      const burger = document.getElementById('burger-btn');
+      const menu = document.getElementById('menu-panel');
+      let open = false;
+      if (burger && menu) {
+        burger.addEventListener('click', () => {
+          open = !open;
+          burger.classList.toggle('open', open);
+          menu.classList.toggle('open', open);
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

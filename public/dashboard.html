@@ -1112,6 +1112,18 @@
           <div id="container-d9f487de29cd049aad3613bb7eee1e66"></div>
         </div>
 
+        <!-- Dashboard Footer -->
+        <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.08); display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; font-size: 12px; color: var(--dash-text-muted);">
+          <div>© 2026 MyFolio • Your work. Your world.</div>
+          <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+            <a href="/privacy" style="color: var(--dash-text-secondary); text-decoration: none;">Privacy Policy</a>
+            <a href="/terms" style="color: var(--dash-text-secondary); text-decoration: none;">Terms of Service</a>
+            <a href="/refund" style="color: var(--dash-text-secondary); text-decoration: none;">Refund Policy</a>
+            <a href="/faq" style="color: var(--dash-text-secondary); text-decoration: none;">FAQ &amp; Deletion Rules</a>
+            <a href="/contact" style="color: var(--dash-text-secondary); text-decoration: none;">Contact Support</a>
+          </div>
+        </footer>
+
       </main>
     </div>
   </div>
@@ -1188,6 +1200,14 @@
             Choose Pro Subdomain (₹149/mo)
           </button>
         </div>
+      </div>
+
+      <!-- Pre-Payment Disclaimer Checkbox -->
+      <div style="margin: 16px 0 12px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-align: left;">
+        <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: var(--dash-text-secondary); cursor: pointer; user-select: none;">
+          <input type="checkbox" id="dashPaymentDisclaimerCheck" style="margin-top: 2px; accent-color: #10B981; width: 16px; height: 16px; cursor: pointer;" />
+          <span>I have reviewed my portfolio preview and agree to the <a href="/terms" target="_blank" style="color: var(--dash-accent-sky); text-decoration: underline;">Terms</a>, <a href="/privacy" target="_blank" style="color: var(--dash-accent-sky); text-decoration: underline;">Privacy Policy</a>, and <a href="/refund" target="_blank" style="color: var(--dash-accent-sky); text-decoration: underline;">Refund Policy</a>.</span>
+        </label>
       </div>
 
       <div style="display:flex; justify-content:center; width:100%;">
@@ -1789,6 +1809,13 @@
       const siteIdToPublish = currentSiteId || (window.cachedDashData && window.cachedDashData.siteId);
       if (!siteIdToPublish) {
         window.location.href = '/studio';
+        return;
+      }
+
+      const disclaimer = document.getElementById('dashPaymentDisclaimerCheck');
+      if (disclaimer && !disclaimer.checked) {
+        showToast('Please check the box to agree to the Terms, Privacy, and Refund Policy before checkout.', 'warning');
+        disclaimer.focus();
         return;
       }
       try {
