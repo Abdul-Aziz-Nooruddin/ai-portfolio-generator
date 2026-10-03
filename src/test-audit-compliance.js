@@ -597,4 +597,49 @@ test('9. Contact endpoints: dual rate limiting, honeypot protection, and recipie
   }
 });
 
+// =========================================================================
+// 10. SECRETS ON STARTUP & PRODUCTION ENV VAR VALIDATION
+// =========================================================================
+test('10. Secrets on startup: validates absence of hardcoded test-key fallbacks and proves startup failure on missing mandatory production env vars', () => {
+  const app = require('./index');
+  const { renderSubscribePage } = require('./templates/common/subscribe-page');
+
+  // 1. Confirm absence of hardcoded rzp_test_TS49yFRP3b8uZl fallback
+  const renderedWithoutKey = renderSubscribePage({ siteId: 'test-site', razorpayKeyId: '' });
+  assert.equal(renderedWithoutKey.includes('rzp_test_TS49yFRP3b8uZl'), false, 'Hardcoded test key must not appear in rendered subscribe page');
+
+  // 2. Production startup guard: fails and throws when required secrets are missing
+  const incompleteProdEnv = {
+    NODE_ENV: 'production',
+    RAZORPAY_KEY_ID: '', // missing
+    RAZORPAY_KEY_SECRET: 'secret',
+    SUPABASE_URL: 'https://example.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: '' // missing
+  };
+
+  assert.throws(
+    () => app.validateStartupEnv(incompleteProdEnv),
+    (err) => {
+      assert.equal(err.code, 'MISSING_ENV_VARS');
+      assert.ok(err.missing.includes('RAZORPAY_KEY_ID'));
+      assert.ok(err.missing.includes('SUPABASE_SERVICE_ROLE_KEY'));
+      return true;
+    },
+    'validateStartupEnv must throw and block startup when production secrets are absent'
+  );
+
+  // 3. Valid production env passes without error
+  const completeProdEnv = {
+    NODE_ENV: 'production',
+    RAZORPAY_KEY_ID: 'rzp_live_real_key_123',
+    RAZORPAY_KEY_SECRET: 'live_secret_456',
+    SUPABASE_URL: 'https://real.supabase.co',
+    SUPABASE_SERVICE_ROLE_KEY: 'ey_super_secret_jwt'
+  };
+
+  const passResult = app.validateStartupEnv(completeProdEnv);
+  assert.equal(passResult.valid, true);
+  assert.equal(passResult.missing.length, 0);
+});
+
 

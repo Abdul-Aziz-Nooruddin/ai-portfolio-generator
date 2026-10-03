@@ -4260,7 +4260,7 @@ app.get('/p/:siteId/*', (req, res) => {
 app.get(['/subscribe', '/pricing', '/payment/retry'], (req, res) => {
   const siteId = req.query.siteId || req.query.userId || 'demo';
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.send(renderSubscribePage({ siteId, razorpayKeyId: process.env.RAZORPAY_KEY_ID || 'rzp_test_TS49yFRP3b8uZl' }));
+  res.send(renderSubscribePage({ siteId, razorpayKeyId: process.env.RAZORPAY_KEY_ID || '' }));
 });
 
 
@@ -4304,8 +4304,35 @@ app.use((req, res) => {
 // Global Safe Error Handler (Never leaks SQL or stack traces)
 app.use(SecurityMiddleware.safeErrorHandler());
 
+// Production Environment & Secret Validation Guard
+function validateStartupEnv(env = process.env) {
+  const isProduction = env.NODE_ENV === 'production' || Boolean(env.RENDER);
+  const mandatoryVars = [
+    'RAZORPAY_KEY_ID',
+    'RAZORPAY_KEY_SECRET',
+    'SUPABASE_URL',
+    'SUPABASE_SERVICE_ROLE_KEY'
+  ];
+
+  const missing = mandatoryVars.filter(key => !env[key] || String(env[key]).trim() === '');
+  if (isProduction && missing.length > 0) {
+    const errorMsg = `🚨 [FATAL STARTUP GUARD] Missing mandatory production environment variables:\n  - ${missing.join('\n  - ')}\nPlatform startup aborted to prevent insecure fallback operation.`;
+    console.error(errorMsg);
+    const err = new Error(errorMsg);
+    err.code = 'MISSING_ENV_VARS';
+    err.missing = missing;
+    if (require.main === module) {
+      process.exit(1);
+    }
+    throw err;
+  }
+  return { valid: true, missing };
+}
+
 // Start server if run directly
 if (require.main === module) {
+  validateStartupEnv();
+
   const PORT = parseInt(process.env.PORT, 10) || 10000;
   // If HOST is explicitly provided in env, honor it; otherwise omit host so Node.js binds to dual-stack '::' (accepts all IPv4 & IPv6 connections)
   const HOST = process.env.HOST || null;
@@ -4345,6 +4372,7 @@ app.sitePaidStatusCache = sitePaidStatusCache;
 app.dbService = dbService;
 app.contactIpLimiter = contactIpLimiter;
 app.contactSiteLimiter = contactSiteLimiter;
+app.validateStartupEnv = validateStartupEnv;
 
 module.exports = app;
 

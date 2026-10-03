@@ -3,9 +3,9 @@
  * Rendered at /subscribe, /pricing, and /payment/retry
  */
 
-function renderSubscribePage({ siteId = 'demo', razorpayKeyId = 'rzp_test_TS49yFRP3b8uZl' } = {}) {
+function renderSubscribePage({ siteId = 'demo', razorpayKeyId = (process.env.RAZORPAY_KEY_ID || '') } = {}) {
   const safeSiteId = String(siteId).replace(/[^a-zA-Z0-9_\-\.]/g, '');
-  const safeKeyId = String(razorpayKeyId).replace(/[^a-zA-Z0-9_]/g, '');
+  const safeKeyId = String(razorpayKeyId || '').replace(/[^a-zA-Z0-9_]/g, '');
 
   return `<!DOCTYPE html>
 <html lang="en">
