@@ -642,4 +642,62 @@ test('10. Secrets on startup: validates absence of hardcoded test-key fallbacks 
   assert.equal(passResult.missing.length, 0);
 });
 
+// =========================================================================
+// 11. TOKEN BUCKET RATE LIMITER ALGORITHM (Zero-Cost Tiered Protection)
+// =========================================================================
+test('11. Token Bucket rate limiter: permits burst up to capacity and rejects excess with 429', async () => {
+  const { SecurityMiddleware } = require('./middleware/security-middleware');
+
+  // Configure Token Bucket: burst capacity = 3 tokens, refill rate = 5 tokens/sec
+  const limiter = SecurityMiddleware.tokenBucket({
+    capacity: 3,
+    refillRatePerSec: 5,
+    actionName: 'test_token_bucket'
+  });
+
+  const ip = '198.51.100.42';
+  const dispatch = () => new Promise((resolve) => {
+    const req = { ip, headers: {}, socket: { remoteAddress: ip } };
+    let statusCode = 200;
+    let headersSet = {};
+    const res = {
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      json(data) {
+        resolve({ status: statusCode, data, headers: headersSet });
+      },
+      setHeader(name, val) {
+        headersSet[name] = val;
+      }
+    };
+    limiter(req, res, () => {
+      resolve({ status: 200, headers: headersSet });
+    });
+  });
+
+  // 1. Initial burst: First 3 requests consume the 3 tokens in the bucket and must succeed
+  const r1 = await dispatch();
+  assert.equal(r1.status, 200, 'Token 1 should allow request');
+  const r2 = await dispatch();
+  assert.equal(r2.status, 200, 'Token 2 should allow request');
+  const r3 = await dispatch();
+  assert.equal(r3.status, 200, 'Token 3 should allow request');
+
+  // 2. 4th request: Bucket is now empty, must be rejected with 429
+  const r4 = await dispatch();
+  assert.equal(r4.status, 429, 'Empty bucket must return 429 Too Many Requests');
+  assert.equal(r4.data.code, 'TOKEN_BUCKET_EXHAUSTED');
+  assert.ok(r4.headers['Retry-After'] >= 1, 'Retry-After header must be set');
+
+  // 3. Wait for token refill: 250ms (refill rate = 5/sec -> at least 1 token generated)
+  await new Promise((resolve) => setTimeout(resolve, 250));
+
+  // 4. Next request succeeds using replenished token
+  const r5 = await dispatch();
+  assert.equal(r5.status, 200, 'Replenished token should allow request');
+});
+
+
 

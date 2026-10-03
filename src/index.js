@@ -167,6 +167,46 @@ if (!process.env.HOST_URL) {
   process.env.HOST_URL = process.env.NODE_ENV === 'production' ? 'https://myfolio.tech' : 'http://localhost:5050';
 }
 
+// =========================================================================
+// TOKEN BUCKET RATE LIMITING ARCHITECTURE (Multi-Tier Zero-Cost Protection)
+// =========================================================================
+// Tier 1: Heavy AI Portfolio Generation (5 burst capacity, 1 refill every 10s ~ 6/min)
+const aiGenLimiter = SecurityMiddleware.tokenBucket({
+  capacity: 5,
+  refillRatePerSec: 0.1,
+  actionName: 'ai_generation'
+});
+
+// Tier 2: Payment & Checkout Order Creation (6 burst capacity, 1 refill every 5s ~ 12/min)
+const checkoutLimiter = SecurityMiddleware.tokenBucket({
+  capacity: 6,
+  refillRatePerSec: 0.2,
+  actionName: 'checkout_order'
+});
+
+// Tier 3: Sensitive Authentication & OTP Operations (10 burst, 1 refill every 2s ~ 30/min)
+const authLimiter = SecurityMiddleware.tokenBucket({
+  capacity: 10,
+  refillRatePerSec: 0.5,
+  actionName: 'auth_strict'
+});
+
+// Tier 4: Global Baseline Shield (60 burst, 2 refills per sec ~ 120/min for general browsing)
+const globalTrafficLimiter = SecurityMiddleware.tokenBucket({
+  capacity: 60,
+  refillRatePerSec: 2,
+  actionName: 'global_traffic'
+});
+
+// Apply global baseline shield across dynamic application routes (exempting static cache-busting assets)
+app.use((req, res, next) => {
+  // Let static assets and favicons through without rate limit deduction
+  if (req.path.startsWith('/assets') || req.path.startsWith('/web/') || req.path.endsWith('.ico') || req.path.endsWith('.webp') || req.path.endsWith('.png') || req.path.endsWith('.css') || req.path.endsWith('.js')) {
+    return next();
+  }
+  return globalTrafficLimiter(req, res, next);
+});
+
 // Initialize core services
 const aiService = new AIService(process.env.GEMINI_API_KEY);
 const dbService = new DatabaseService(
@@ -696,9 +736,10 @@ app.get('/api/templates/count', (req, res) => {
   });
 });
 
-// 2. Web Instant Portfolio Generation (Protected with 10MB payload limit, per-user quota & AI Sanitization)
+// 2. Web Instant Portfolio Generation (Protected with Token Bucket, 10MB payload limit, per-user quota & AI Sanitization)
 app.post(
   '/api/web/generate',
+  aiGenLimiter,
   SecurityMiddleware.limitBodySize(10 * 1024 * 1024),
   AuthMiddleware.quotaLimiter(dbService, 'ai_generation', 10),
   async (req, res) => {
@@ -2153,8 +2194,8 @@ app.post('/api/figma/generate', async (req, res) => {
   }
 });
 
-// 3. Web Razorpay Payment Order
-app.post('/api/web/create-order', async (req, res) => {
+// 3. Web Razorpay Payment Order (Protected with Token Bucket Rate Limiting)
+app.post('/api/web/create-order', checkoutLimiter, async (req, res) => {
   try {
     const { siteId, plan = 'lite' } = req.body;
     const PRICING_MAP = {
@@ -2592,12 +2633,7 @@ app.use(SecurityMiddleware.csrfProtection());
 
 const authHandler = new AuthHandler(dbService, securityService, emailService, customDomainService);
 
-// Strict rate limiter for brute-force sensitive auth routes
-const authLimiter = SecurityMiddleware.rateLimiter({
-  max: 30,
-  windowMs: 15 * 60 * 1000,
-  actionName: 'auth_strict'
-});
+
 
 // Standard rate limiter for authenticated endpoints
 const standardApiLimiter = SecurityMiddleware.rateLimiter({
@@ -4372,6 +4408,10 @@ app.sitePaidStatusCache = sitePaidStatusCache;
 app.dbService = dbService;
 app.contactIpLimiter = contactIpLimiter;
 app.contactSiteLimiter = contactSiteLimiter;
+app.aiGenLimiter = aiGenLimiter;
+app.checkoutLimiter = checkoutLimiter;
+app.authLimiter = authLimiter;
+app.globalTrafficLimiter = globalTrafficLimiter;
 app.validateStartupEnv = validateStartupEnv;
 
 module.exports = app;

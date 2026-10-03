@@ -76,7 +76,15 @@ test('POST /api/web/create-order generates payment order response', async () => 
 
     const routes = app._router.stack.filter(r => r.route && r.route.path === '/api/web/create-order');
     assert.ok(routes.length > 0, 'Route /api/web/create-order exists');
-    routes[0].route.stack[0].handle(req, responseObj);
+    const layers = routes[0].route.stack;
+    let idx = 0;
+    const runNext = () => {
+      const layer = layers[idx++];
+      if (layer) {
+        layer.handle(req, responseObj, runNext);
+      }
+    };
+    runNext();
   });
 
   assert.equal(res.status, 200);

@@ -217,6 +217,80 @@ class SecurityMiddleware {
   }
 
   /**
+   * Token Bucket Rate Limiter
+   * 
+   * Concept & Algorithm:
+   * - Each client/IP has a virtual "bucket" holding up to `capacity` tokens (maximum burst limit).
+   * - Tokens continuously refill at `refillRatePerSec` tokens every second up to `capacity`.
+   * - When a request arrives, it attempts to consume `cost` tokens (default 1):
+   *     - If tokens >= cost: tokens are deducted, request proceeds with remaining tokens in headers.
+   *     - If tokens < cost: request is rejected with 429 and Retry-After = ceil((cost - tokens) / refillRatePerSec).
+   * - High performance: O(1) time and O(1) space per key using lazy timestamp delta evaluation:
+   *     tokens = min(capacity, currentTokens + elapsedSec * refillRatePerSec)
+   */
+  static tokenBucket({
+    capacity = 10,
+    refillRatePerSec = 1,
+    cost = 1,
+    keyGenerator = null,
+    actionName = 'token_bucket'
+  }) {
+    const buckets = new Map(); // key -> { tokens: number, lastRefill: number }
+
+    const middleware = async (req, res, next) => {
+      const ip = req.ip || req.headers?.['x-forwarded-for'] || req.socket?.remoteAddress || '127.0.0.1';
+      const key = keyGenerator ? keyGenerator(req) : `${actionName}:${ip}`;
+      const now = Date.now();
+
+      let bucket = buckets.get(key);
+      if (!bucket) {
+        bucket = { tokens: capacity, lastRefill: now };
+      } else {
+        const elapsedSec = (now - bucket.lastRefill) / 1000;
+        const replenished = elapsedSec * refillRatePerSec;
+        bucket.tokens = Math.min(capacity, bucket.tokens + replenished);
+        bucket.lastRefill = now;
+      }
+
+      if (bucket.tokens >= cost) {
+        bucket.tokens -= cost;
+        buckets.set(key, bucket);
+
+        if (typeof res.setHeader === 'function') {
+          res.setHeader('X-RateLimit-Limit', capacity);
+          res.setHeader('X-RateLimit-Remaining', Math.floor(bucket.tokens));
+          res.setHeader('X-RateLimit-Refill-Rate', `${refillRatePerSec}/sec`);
+        }
+        return next();
+      }
+
+      // Bucket exhausted
+      buckets.set(key, bucket);
+      const neededTokens = cost - bucket.tokens;
+      const retryAfterSec = Math.max(1, Math.ceil(neededTokens / refillRatePerSec));
+
+      if (typeof res.setHeader === 'function') {
+        res.setHeader('Retry-After', retryAfterSec);
+        res.setHeader('X-RateLimit-Limit', capacity);
+        res.setHeader('X-RateLimit-Remaining', 0);
+        res.setHeader('X-RateLimit-Refill-Rate', `${refillRatePerSec}/sec`);
+      }
+
+      return res.status(429).json({
+        error: 'Too Many Requests',
+        message: `Rate limit burst capacity exhausted. Please wait ${retryAfterSec} second(s) for token replenishment.`,
+        code: 'TOKEN_BUCKET_EXHAUSTED',
+        retryAfter: retryAfterSec
+      });
+    };
+
+    middleware.getBucket = (key) => buckets.get(key);
+    middleware.reset = (key) => key ? buckets.delete(key) : buckets.clear();
+
+    return middleware;
+  }
+
+  /**
    * Honeypot & Bot Trap Protection
    * Detects and neutralizes automated bots filling invisible honeypot fields
    */
