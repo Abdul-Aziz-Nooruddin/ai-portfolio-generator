@@ -225,12 +225,12 @@ function renderSubscribePage({ siteId = 'demo', razorpayKeyId = 'rzp_test_TS49yF
               <h3 class="plan-name">Lifetime Starter</h3>
               <div class="plan-price">₹149 <span>/ one-time</span></div>
               <ul class="plan-features">
+                <li>Permanent 24/7 Live Hosting (Never goes down after 24h)</li>
                 <li>Deployed &amp; Hosted on Netlify Edge CDN</li>
                 <li>Permanent Global Netlify Live Link</li>
                 <li>100% Watermark-Free Clean Website</li>
-                <li>Static Offline-Ready ZIP Export</li>
-                <li>Synchronized PDF Resume Codex</li>
-                <li>1 Free Content Re-generation</li>
+                <li>Static Standalone ZIP Code Export</li>
+                <li>Pay Once • Zero Recurring Subscriptions</li>
               </ul>
             </div>
             <button class="pay-btn pay-btn-starter" onclick="startPayment('starter', 14900)">Unlock Lifetime Link (₹149)</button>
@@ -243,12 +243,12 @@ function renderSubscribePage({ siteId = 'demo', razorpayKeyId = 'rzp_test_TS49yF
               <h3 class="plan-name">Pro Creator</h3>
               <div class="plan-price">₹149 <span>/ month</span></div>
               <ul class="plan-features">
-                <li>Personal Domain: <code>&lt;name&gt;.myfolio.tech</code></li>
+                <li>Permanent 24/7 Live Hosting (Never goes down)</li>
+                <li>Branded Subdomain: <code>&lt;username&gt;.myfolio.tech</code></li>
                 <li>Custom Domain Linking (<code>yourname.dev</code>)</li>
-                <li>Unlimited Edits &amp; GitHub Auto-Sync</li>
-                <li>Real-Time Email &amp; Recruiter Visitor Alerts</li>
-                <li>Recruiter Telemetry &amp; Analytics Dashboard</li>
-                <li>24/7 Priority Cloud Maintenance</li>
+                <li>Continuous Live GitHub Auto-Sync</li>
+                <li>100% Watermark-Free Clean Website</li>
+                <li>Static Standalone ZIP Code Export</li>
               </ul>
             </div>
             <button class="pay-btn pay-btn-pro" onclick="startPayment('pro', 14900)">Unlock Pro Domain (₹149/mo)</button>

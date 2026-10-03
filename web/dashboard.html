@@ -720,27 +720,89 @@
       font-size: 13px;
     }
 
-    /* Pro Feature Upgrade Modal */
-    .pro-features-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      text-align: left;
+    /* Publish Plans Dual Grid Modal */
+    .plans-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
       width: 100%;
       margin: 1.25rem 0;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 12px;
-      padding: 14px;
+      text-align: left;
     }
-    .pro-feature-item {
+    @media (max-width: 600px) {
+      .plans-dual-grid { grid-template-columns: 1fr; }
+    }
+    .plan-tier-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+    }
+    .plan-tier-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+      background: rgba(16, 185, 129, 0.04);
+    }
+    .plan-tier-card.featured {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.06);
+    }
+    .plan-tier-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      width: fit-content;
+      margin-bottom: 8px;
+    }
+    .plan-tier-badge.one-time {
+      background: rgba(117, 197, 222, 0.15);
+      color: #75C5DE;
+      border: 1px solid rgba(117, 197, 222, 0.3);
+    }
+    .plan-tier-badge.monthly {
+      background: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .plan-price-tag {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #F4F1E8;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+    .plan-price-tag span {
+      font-size: 12px;
+      color: var(--dash-text-muted);
+      font-weight: 400;
+    }
+    .plan-specs-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 14px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--dash-text-secondary);
+    }
+    .plan-specs-list li {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: #F4F1E8;
+      gap: 6px;
     }
-    .pro-feature-item span { color: #10B981; }
+    .plan-specs-list li span.check {
+      color: #10B981;
+      font-weight: 700;
+    }
 
     /* Live Preview Drawer */
     .preview-drawer-backdrop {
@@ -1073,42 +1135,58 @@
 
   <!-- Publish Permanent Live Site Modal -->
   <div class="modal-backdrop" id="proUpgradeModal" onclick="closeProModal(event)">
-    <div class="modal-card" onclick="event.stopPropagation()">
-      <div style="width:48px; height:48px; border-radius:50%; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:12px;">🚀</div>
-      <h3 style="font-size:1.25rem; font-weight:600; color:#F4F1E8;">Publish Permanent Live Website</h3>
-      <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:4px; line-height:1.5;">
-        Your 3D developer portfolio was generated in seconds and is currently in <strong>24-Hour Preview Mode</strong>. Publish permanently so your website stays live 24/7 and never goes down.
+    <div class="modal-card" style="max-width: 620px;" onclick="event.stopPropagation()">
+      <div style="width:48px; height:48px; border-radius:50%; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:10px;">🚀</div>
+      <h3 style="font-size:1.3rem; font-weight:600; color:#F4F1E8;">Publish Permanent Live Website</h3>
+      <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:4px; max-width:480px;">
+        Your 3D developer portfolio was generated in seconds and is currently in <strong>24-Hour Preview Mode</strong>. Choose your publishing model to go live permanently so your site never goes down:
       </p>
 
-      <div class="pro-features-list">
-        <div class="pro-feature-item">
-          <span>✓</span>
-          <span><strong>Permanent 24/7 Live Hosting</strong> (Never expires or goes down after 24 hours)</span>
+      <div class="plans-dual-grid">
+        <!-- Option 1: ₹149 One-Time -->
+        <div class="plan-tier-card">
+          <div>
+            <span class="plan-tier-badge one-time">LIFETIME STARTER</span>
+            <div class="plan-price-tag">₹149 <span>/ one-time</span></div>
+            <ul class="plan-specs-list">
+              <li><span class="check">✓</span> <span><strong>Permanent 24/7 Hosting</strong> (Never goes down)</span></li>
+              <li><span class="check">✓</span> <span><strong>Netlify Edge CDN Live Link</strong></span></li>
+              <li><span class="check">✓</span> <span><strong>100% Watermark-Free</strong></span></li>
+              <li><span class="check">✓</span> <span><strong>Standalone Source Code (.zip)</strong></span></li>
+              <li><span class="check">✓</span> <span><strong>Pay once</strong> • Zero subscriptions</span></li>
+            </ul>
+          </div>
+          <button type="button" class="mf-btn mf-btn-primary" style="width:100%; font-size:12.5px; padding:10px;" onclick="startPublishCheckout('starter')">
+            Choose One-Time (₹149)
+          </button>
         </div>
-        <div class="pro-feature-item">
-          <span>✓</span>
-          <span><strong>Personal Subdomain</strong> (e.g. yourname.myfolio.tech on Netlify Edge CDN)</span>
-        </div>
-        <div class="pro-feature-item">
-          <span>✓</span>
-          <span><strong>Zero Watermarks</strong> (Clean, professional presentation for recruiters & clients)</span>
-        </div>
-        <div class="pro-feature-item">
-          <span>✓</span>
-          <span><strong>Full Standalone Source Code (.zip)</strong> (Download and own 100% of your code)</span>
+
+        <!-- Option 2: ₹149 / Month -->
+        <div class="plan-tier-card featured">
+          <div>
+            <span class="plan-tier-badge monthly">PRO SUBDOMAIN</span>
+            <div class="plan-price-tag">₹149 <span>/ month</span></div>
+            <ul class="plan-specs-list">
+              <li><span class="check">✓</span> <span><strong>Permanent 24/7 Hosting</strong> (Never goes down)</span></li>
+              <li><span class="check">✓</span> <span><strong>Branded Subdomain</strong> (name.myfolio.tech)</span></li>
+              <li><span class="check">✓</span> <span><strong>Continuous Live GitHub Auto-Sync</strong></span></li>
+              <li><span class="check">✓</span> <span><strong>100% Watermark-Free</strong></span></li>
+              <li><span class="check">✓</span> <span><strong>Standalone Source Code (.zip)</strong></span></li>
+            </ul>
+          </div>
+          <button type="button" class="mf-btn mf-btn-primary" style="width:100%; font-size:12.5px; padding:10px; background:linear-gradient(135deg, #10B981, #059669); border-color:#059669;" onclick="startPublishCheckout('pro')">
+            Choose Pro Subdomain (₹149/mo)
+          </button>
         </div>
       </div>
 
-      <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
-        <button type="button" class="mf-btn mf-btn-primary" style="width:100%; background:linear-gradient(135deg, #10B981, #059669); border-color:#059669; color:#FFFFFF; font-weight:700; font-size:13.5px; padding:11px;" onclick="startPublishCheckout()">
-          🚀 Publish Permanent Live Site — ₹149 (One-Time)
-        </button>
-        <button type="button" class="mf-btn mf-btn-secondary" onclick="closeProModal()">
-          Continue in 24h Preview
+      <div style="display:flex; justify-content:center; width:100%;">
+        <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="closeProModal()">
+          Continue in 24-Hour Preview
         </button>
       </div>
-      <div style="font-size:11.5px; color:var(--dash-text-muted); margin-top:8px;">
-        One-time fee to keep your portfolio permanently live. No monthly subscriptions.
+      <div style="font-size:11.5px; color:var(--dash-text-muted); margin-top:10px;">
+        🔒 Secure checkout via Razorpay, UPI &amp; Cards • Instant permanent deployment
       </div>
     </div>
   </div>
@@ -1697,19 +1775,20 @@
       }
     }
 
-    async function startPublishCheckout() {
+    async function startPublishCheckout(plan = 'starter') {
       const siteIdToPublish = currentSiteId || (window.cachedDashData && window.cachedDashData.siteId);
       if (!siteIdToPublish) {
         window.location.href = '/studio';
         return;
       }
       try {
-        showToast('Initiating permanent live deployment...');
+        const planName = plan === 'starter' ? 'Lifetime Starter (₹149 one-time)' : 'Pro Subdomain (₹149/month)';
+        showToast(`Initiating checkout for ${planName}...`);
         const orderRes = await fetch('/api/web/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ siteId: siteIdToPublish, plan: 'pro' })
+          body: JSON.stringify({ siteId: siteIdToPublish, plan })
         });
         const orderData = await orderRes.json();
         if (orderData.isCustomCheckout && window.Razorpay) {
@@ -1718,7 +1797,7 @@
             amount: orderData.amount,
             currency: orderData.currency || 'INR',
             name: 'MyFolio Platform',
-            description: 'Publish Permanent Live Portfolio (₹149)',
+            description: plan === 'starter' ? 'Permanent Netlify Hosting (₹149 one-time)' : 'Pro Subdomain & Live Sync (₹149/mo)',
             order_id: orderData.orderId,
             handler: async function (paymentResponse) {
               showToast('Payment confirmed! Removing watermarks and deploying permanently...');
@@ -1732,7 +1811,7 @@
                     razorpay_payment_id: paymentResponse.razorpay_payment_id,
                     razorpay_signature: paymentResponse.razorpay_signature,
                     siteId: siteIdToPublish,
-                    plan: 'pro'
+                    plan: plan
                   })
                 });
                 const verifyData = await verifyRes.json();
@@ -1749,7 +1828,7 @@
               email: currentUser?.email || '',
               name: currentUser?.name || ''
             },
-            theme: { color: '#10b981' }
+            theme: { color: plan === 'pro' ? '#10b981' : '#75c5de' }
           };
           const rzp = new Razorpay(options);
           rzp.open();
