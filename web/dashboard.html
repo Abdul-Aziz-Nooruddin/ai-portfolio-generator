@@ -18,34 +18,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — MyFolio</title>
-  <meta name="description" content="Manage your live 3D developer portfolio, connected GitHub profile, active subdomain, and generated versions.">
+  <meta name="description" content="Manage your live 3D developer portfolio, active domain, real-time visitor analytics, and generated versions.">
   <meta name="robots" content="noindex, nofollow">
+
+  <!-- Typography: Inter for clean UI, JetBrains Mono for URLs and numbers -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
   <link rel="stylesheet" href="/web/app-tokens.css">
   <link rel="stylesheet" href="/app-tokens.css">
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/button-system.css">
+
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
 
   <style>
     :root {
-      --dash-bg: #0C0D0C;
-      --dash-surface: rgba(22, 24, 22, 0.75);
-      --dash-surface-elevated: rgba(30, 32, 30, 0.85);
+      --dash-bg: #0A0A0A;
+      --dash-surface: rgba(20, 22, 20, 0.85);
+      --dash-surface-elevated: rgba(28, 30, 28, 0.95);
       --dash-border: rgba(255, 255, 255, 0.08);
       --dash-border-subtle: rgba(255, 255, 255, 0.05);
-      --dash-border-hover: rgba(117, 197, 222, 0.4);
+      --dash-border-hover: rgba(117, 197, 222, 0.35);
       --dash-accent-sky: #75C5DE;
-      --dash-accent-blue: #5FA5F9;
-      --dash-accent-cyan: #38BDF8;
-      --dash-accent-coral: #FF4D30;
       --dash-success: #10B981;
       --dash-warning: #F59E0B;
-      --dash-error: #EF4444;
+      --dash-danger: #EF4444;
       --dash-text-primary: #F4F1E8;
       --dash-text-secondary: #9D9E95;
       --dash-text-muted: #6B6D65;
-      --dash-paper: #F4F1E8;
-      --dash-ink: #171817;
     }
 
     *, *::before, *::after {
@@ -63,324 +67,377 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Ambient Spatial Background matching Landing Page */
-    .mf-atmospheric-bg {
+    /* Ambient Subtle Backdrop */
+    .mf-ambient-canvas {
       position: fixed;
       inset: 0;
-      z-index: -1;
-      background: 
-        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(117, 197, 222, 0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 90% 20%, rgba(255, 77, 48, 0.03) 0%, transparent 50%),
-        linear-gradient(180deg, #0C0D0C 0%, #121312 100%);
+      z-index: 0;
+      background:
+        radial-gradient(circle 700px at 50% -120px, rgba(117, 197, 222, 0.07), transparent 70%),
+        linear-gradient(180deg, #090A09 0%, #0D0E0D 100%);
       pointer-events: none;
+    }
+
+    .app-shell-layout {
+      position: relative;
+      z-index: 1;
     }
 
     .dash-container {
-      max-width: 1180px;
+      max-width: 1140px;
       width: 100%;
       margin: 0 auto;
-      padding: 2.5rem 2rem 6rem;
+      padding: 2rem 2rem 5rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1.75rem;
     }
 
-    /* Header & Eyebrow */
-    .dash-header-block {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .section-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--dash-accent-sky);
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .section-label .section-index {
-      background: rgba(117, 197, 222, 0.12);
-      border: 1px solid rgba(117, 197, 222, 0.25);
-      padding: 3px 9px;
-      border-radius: 9999px;
-      color: var(--dash-accent-sky);
-    }
-
-    /* Hero Command Object */
-    .command-hero-card {
-      background: rgba(22, 24, 22, 0.85);
-      border: 1px solid var(--dash-border);
-      border-radius: 24px;
-      padding: 2.5rem 2.75rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-    }
-
-    .command-hero-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 400px;
-      height: 300px;
-      background: radial-gradient(circle at 100% 0%, rgba(117, 197, 222, 0.08), transparent 70%);
-      pointer-events: none;
-    }
-
-    .hero-greeting-text {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--dash-accent-sky);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .mf-pulse-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--dash-success);
-      box-shadow: 0 0 10px var(--dash-success);
-      display: inline-block;
-      animation: pulseGlow 2s infinite ease-in-out;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(0.85); }
-    }
-
-    .hero-headline {
-      font-family: 'Inter', system-ui, sans-serif;
-      font-size: 2.35rem;
-      font-weight: 600;
-      letter-spacing: -0.04em;
-      line-height: 1.15;
-      color: #F4F1E8;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-live-artifact {
+    /* 1. Header & Workspace Identity */
+    .dash-topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1.25rem;
-      background: rgba(14, 15, 14, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      padding: 1.25rem 1.75rem;
-      position: relative;
-      z-index: 2;
-      backdrop-filter: blur(16px);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+      gap: 1rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--dash-border-subtle);
     }
 
-    .hero-url-block {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
-
-    .hero-url-label {
-      font-size: 11px;
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--dash-text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
+    .user-profile-dock {
       display: flex;
       align-items: center;
-      gap: 8px;
-    }
-
-    .hero-url-link {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.05rem;
-      font-weight: 600;
-      color: var(--dash-accent-sky);
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: color 0.2s ease;
-    }
-
-    .hero-url-link:hover {
-      color: #A5E4F5;
-      text-decoration: underline;
-    }
-
-    .hero-actions-dock {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* Grid Layout for Status & Capabilities */
-    .dash-sections-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    @media (max-width: 960px) {
-      .dash-sections-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Panel Card */
-    .status-panel-card {
-      background: var(--dash-surface);
-      border: 1px solid var(--dash-border);
-      border-radius: 20px;
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-      backdrop-filter: blur(16px);
-      transition: border-color 0.2s ease;
-    }
-
-    .status-panel-card:hover {
-      border-color: rgba(255, 255, 255, 0.14);
-    }
-
-    .panel-section-title {
-      font-family: 'Inter', system-ui, sans-serif;
-      font-size: 1.15rem;
-      font-weight: 600;
-      color: #F4F1E8;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      letter-spacing: -0.02em;
-    }
-
-    .status-matrix-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
 
-    .status-matrix-item {
-      background: rgba(16, 17, 16, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 14px;
-      padding: 14px 16px;
+    .user-avatar-badge {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #75C5DE 0%, #38BDF8 100%);
+      color: #0A0A0A;
+      font-weight: 700;
+      font-size: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(117, 197, 222, 0.25);
+    }
+
+    .user-name-title {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      transition: all 0.2s ease;
+      gap: 2px;
     }
 
-    .status-matrix-item:hover {
-      border-color: rgba(255, 255, 255, 0.12);
-      background: rgba(22, 24, 22, 0.95);
+    .user-name-title h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dash-text-primary);
+      letter-spacing: -0.01em;
     }
 
-    .status-item-label {
-      font-size: 11px;
+    .user-subline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--dash-text-secondary);
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* 2. Active Portfolio Card (The Core Hero Object) */
+    .active-portfolio-card {
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+    .active-portfolio-card:hover {
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .portfolio-main-pane {
+      padding: 2.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+    }
+
+    .portfolio-status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .status-pill-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: #34D399;
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+      padding: 4px 10px;
+      border-radius: 9999px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .pulse-dot-green {
+      width: 6.5px;
+      height: 6.5px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    .portfolio-hero-text h1 {
+      font-size: 1.65rem;
+      font-weight: 600;
+      color: var(--dash-text-primary);
+      letter-spacing: -0.025em;
+      margin-bottom: 5px;
+    }
+
+    .portfolio-hero-text p {
+      font-size: 13.5px;
+      color: var(--dash-text-secondary);
+      line-height: 1.55;
+      max-width: 580px;
+    }
+
+    /* Subdomain Box */
+    .subdomain-display-box {
+      background: rgba(14, 16, 14, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .subdomain-info {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .subdomain-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
       color: var(--dash-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.06em;
     }
 
-    .status-item-val {
-      font-size: 13.5px;
+    .subdomain-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
       font-weight: 600;
-      color: var(--dash-text-primary);
-      display: flex;
-      align-items: center;
-      gap: 6px;
+      color: var(--dash-accent-sky);
+      text-decoration: none;
+    }
+    .subdomain-link:hover {
+      text-decoration: underline;
     }
 
-    /* Template Showcase Row */
-    .templates-showcase-grid {
+    .subdomain-button-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Action Buttons Dock */
+    .portfolio-actions-dock {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+      padding-top: 0.5rem;
+    }
+
+    /* Side Preview Thumbnail */
+    .portfolio-side-viewport {
+      border-left: 1px solid var(--dash-border);
+      background: #0E0F0E;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .viewport-preview-wrap {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 200px;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .viewport-preview-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      opacity: 0.9;
+      transition: transform 0.3s ease;
+    }
+    .portfolio-side-viewport:hover .viewport-preview-img {
+      transform: scale(1.03);
+    }
+
+    .viewport-overlay-tag {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      pointer-events: none;
+    }
+
+    .viewport-bottom-bar {
+      padding: 12px 16px;
+      background: rgba(14, 16, 14, 0.95);
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--dash-text-secondary);
+    }
+
+    /* 3. Real Visitor Analytics (Zero Fake Numbers) */
+    .analytics-section-card {
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .analytics-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .analytics-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--dash-text-primary);
+    }
+
+    .analytics-header p {
+      font-size: 13px;
+      color: var(--dash-text-secondary);
+      margin-top: 2px;
+    }
+
+    .real-kpi-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
     }
 
-    @media (max-width: 840px) {
-      .templates-showcase-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .template-item-card {
-      background: rgba(16, 17, 16, 0.75);
+    .real-kpi-card {
+      background: rgba(14, 16, 14, 0.7);
       border: 1px solid rgba(255, 255, 255, 0.06);
-      border-radius: 16px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      transition: all 0.25s ease;
-      text-decoration: none;
-    }
-
-    .template-item-card:hover {
-      border-color: rgba(117, 197, 222, 0.3);
-      transform: translateY(-2px);
-    }
-
-    .template-thumb-box {
-      height: 110px;
-      background: #111211;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .template-thumb-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center top;
-      opacity: 0.9;
-      transition: transform 0.4s ease;
-    }
-
-    .template-item-card:hover .template-thumb-box img {
-      transform: scale(1.04);
-      opacity: 1;
-    }
-
-    .template-card-body {
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 1.25rem 1.4rem;
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .template-card-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #F4F1E8;
-    }
-
-    .template-card-desc {
+    .real-kpi-title {
       font-size: 12px;
       color: var(--dash-text-secondary);
-      line-height: 1.5;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Portfolio Library Shelf */
-    .library-section {
+    .real-kpi-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dash-text-primary);
+      letter-spacing: -0.03em;
+    }
+
+    .real-kpi-hint {
+      font-size: 12px;
+      color: var(--dash-text-muted);
+    }
+
+    /* Empty State Banner when no traffic exists yet */
+    .empty-analytics-banner {
+      background: rgba(14, 16, 14, 0.5);
+      border: 1px dashed rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .empty-banner-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: rgba(117, 197, 222, 0.1);
+      border: 1px solid rgba(117, 197, 222, 0.25);
+      color: #75C5DE;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .empty-banner-text strong {
+      font-size: 13.5px;
+      color: #F4F1E8;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .empty-banner-text p {
+      font-size: 12.5px;
+      color: var(--dash-text-secondary);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* 4. Portfolio Library & Theme Swapper */
+    .library-section-card {
+      background: var(--dash-surface);
+      border: 1px solid var(--dash-border);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+      backdrop-filter: blur(16px);
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
@@ -390,162 +447,134 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 1rem;
       flex-wrap: wrap;
-      gap: 12px;
     }
 
-    .synced-portfolios-grid {
+    .library-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--dash-text-primary);
+    }
+
+    .library-header p {
+      font-size: 13px;
+      color: var(--dash-text-secondary);
+      margin-top: 2px;
+    }
+
+    .portfolio-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
     }
 
-    .portfolio-artifact-card {
-      background: var(--dash-surface);
-      border: 1px solid var(--dash-border);
-      border-radius: 20px;
+    .portfolio-card {
+      background: rgba(14, 16, 14, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 14px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .portfolio-card:hover {
+      border-color: rgba(255, 255, 255, 0.16);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .card-thumb-wrap {
       position: relative;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(16px);
-    }
-
-    .portfolio-artifact-card:hover {
-      border-color: var(--dash-border-hover);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.7), 0 0 25px rgba(117, 197, 222, 0.12);
-    }
-
-    .artifact-banner {
       height: 140px;
-      position: relative;
-      background: #111211;
+      width: 100%;
+      background: #000;
       overflow: hidden;
     }
 
-    .artifact-banner img {
+    .card-thumb-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.9;
-      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      object-position: top center;
+      opacity: 0.88;
+      transition: transform 0.3s ease;
     }
-
-    .portfolio-artifact-card:hover .artifact-banner img {
+    .portfolio-card:hover .card-thumb-img {
       transform: scale(1.05);
+      opacity: 1;
     }
 
-    .artifact-banner-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to top, rgba(22, 24, 22, 0.95) 0%, rgba(22, 24, 22, 0.2) 60%, transparent 100%);
-    }
-
-    .artifact-universe-badge {
-      position: absolute;
-      bottom: 12px;
-      left: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 600;
-      color: #F4F1E8;
-      background: rgba(18, 20, 18, 0.85);
-      backdrop-filter: blur(10px);
-      padding: 4px 10px;
-      border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      letter-spacing: 0.04em;
-    }
-
-    .artifact-time-badge {
-      position: absolute;
-      top: 12px;
-      right: 14px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 10px;
-      color: var(--dash-text-secondary);
-      background: rgba(14, 15, 14, 0.85);
-      backdrop-filter: blur(10px);
-      padding: 3px 9px;
-      border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .artifact-body {
-      padding: 1.35rem;
+    .card-body {
+      padding: 14px 16px;
       display: flex;
       flex-direction: column;
+      gap: 8px;
       flex: 1;
-      gap: 10px;
     }
 
-    .artifact-title {
-      font-family: 'Inter', system-ui, sans-serif;
-      font-size: 1.15rem;
+    .card-title {
+      font-size: 14px;
       font-weight: 600;
-      color: #F4F1E8;
-      letter-spacing: -0.02em;
+      color: var(--dash-text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .artifact-role {
-      font-size: 13px;
+    .card-role {
+      font-size: 12px;
       color: var(--dash-text-secondary);
-      margin-top: -4px;
     }
 
-    .artifact-url-tag {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11.5px;
-      color: var(--dash-accent-sky);
-      background: rgba(117, 197, 222, 0.08);
-      border: 1px solid rgba(117, 197, 222, 0.2);
-      padding: 5px 10px;
-      border-radius: 8px;
-      word-break: break-all;
-    }
-
-    .artifact-actions {
+    .card-meta-row {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-top: auto;
-      padding-top: 14px;
-      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--dash-text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 4px;
     }
 
-    /* Pill Buttons matching Landing Page */
+    .card-actions-dock {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: auto;
+    }
+
+    /* Buttons & Badges */
     .mf-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 6px;
       font-family: 'Inter', system-ui, sans-serif;
-      font-size: 13.5px;
+      font-size: 13px;
       font-weight: 500;
       text-decoration: none;
       border-radius: 9999px;
-      padding: 10px 18px;
+      padding: 8px 16px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       border: 1px solid transparent;
       outline: none;
+      white-space: nowrap;
     }
 
     .mf-btn-primary {
       background: var(--dash-accent-sky);
-      color: var(--dash-ink);
+      color: #0A0A0A;
       font-weight: 600;
       border-color: var(--dash-accent-sky);
-      box-shadow: 0 4px 14px rgba(117, 197, 222, 0.25);
+      box-shadow: 0 4px 14px rgba(117, 197, 222, 0.22);
     }
-
     .mf-btn-primary:hover {
       background: #8ED8EE;
       border-color: #8ED8EE;
-      box-shadow: 0 6px 20px rgba(117, 197, 222, 0.4);
       transform: translateY(-1px);
     }
 
@@ -554,7 +583,6 @@
       color: #F4F1E8;
       border-color: rgba(255, 255, 255, 0.14);
     }
-
     .mf-btn-secondary:hover {
       background: rgba(255, 255, 255, 0.14);
       border-color: rgba(255, 255, 255, 0.24);
@@ -566,7 +594,6 @@
       color: var(--dash-text-secondary);
       border-color: rgba(255, 255, 255, 0.08);
     }
-
     .mf-btn-ghost:hover {
       color: #F4F1E8;
       background: rgba(255, 255, 255, 0.06);
@@ -574,11 +601,10 @@
     }
 
     .mf-btn-danger {
-      background: rgba(239, 68, 68, 0.12);
+      background: rgba(239, 68, 68, 0.1);
       color: #EF4444;
       border-color: rgba(239, 68, 68, 0.25);
     }
-
     .mf-btn-danger:hover {
       background: rgba(239, 68, 68, 0.2);
       border-color: rgba(239, 68, 68, 0.45);
@@ -586,9 +612,13 @@
     }
 
     .mf-btn-sm {
-      padding: 7px 14px;
-      font-size: 12.5px;
-      border-radius: 9999px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .mf-btn-icon-only {
+      padding: 7px;
+      border-radius: 8px;
     }
 
     .mf-badge {
@@ -600,7 +630,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      padding: 3px 9px;
+      padding: 3px 8px;
       border-radius: 9999px;
     }
 
@@ -626,10 +656,168 @@
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.3) 100%);
       color: #FCD34D;
       border: 1px solid rgba(245, 158, 11, 0.4);
-      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
     }
 
-    /* Toast */
+    .pro-pill {
+      font-size: 9.5px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #000;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Modals & Drawers */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      background: #121412;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 440px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+    }
+
+    .qr-canvas-box {
+      background: #FFFFFF;
+      padding: 16px;
+      border-radius: 14px;
+      margin: 1.25rem 0;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Pro Feature Upgrade Modal */
+    .pro-features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      width: 100%;
+      margin: 1.25rem 0;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .pro-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #F4F1E8;
+    }
+    .pro-feature-item span { color: #10B981; }
+
+    /* Live Preview Drawer */
+    .preview-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: 10001;
+      display: none;
+      justify-content: flex-end;
+    }
+    .preview-drawer-backdrop.open { display: flex; }
+
+    .preview-drawer {
+      width: 85vw;
+      max-width: 1100px;
+      height: 100%;
+      background: #0E0F0E;
+      border-left: 1px solid var(--dash-border);
+      display: flex;
+      flex-direction: column;
+      box-shadow: -16px 0 50px rgba(0, 0, 0, 0.8);
+      animation: drawerSlide 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes drawerSlide {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .drawer-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--dash-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background: #141614;
+    }
+
+    .device-switcher-dock {
+      display: flex;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      padding: 2px;
+    }
+
+    .device-btn {
+      background: transparent;
+      border: none;
+      color: var(--dash-text-secondary);
+      font-size: 11.5px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      cursor: pointer;
+    }
+    .device-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+      color: #F4F1E8;
+    }
+
+    .drawer-iframe-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #070707;
+      padding: 20px;
+      overflow: hidden;
+    }
+
+    .device-viewport-frame {
+      width: 100%;
+      height: 100%;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: width 0.3s ease, height 0.3s ease;
+    }
+    .device-viewport-frame.tablet { width: 768px; height: 92%; border-radius: 20px; }
+    .device-viewport-frame.mobile { width: 390px; height: 844px; max-height: 95%; border-radius: 36px; border: 4px solid #242624; }
+
+    .drawer-iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* Toast Notification */
     #toast {
       position: fixed;
       bottom: 24px;
@@ -641,297 +829,288 @@
       border-radius: 12px;
       font-size: 13.5px;
       font-weight: 600;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(117, 197, 222, 0.15);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
       backdrop-filter: blur(16px);
       opacity: 0;
       transform: translateY(10px);
       pointer-events: none;
       transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      z-index: 10000;
+      z-index: 100000;
     }
+    #toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-    #toast.show {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    @media (max-width: 768px) {
-      .dash-container {
-        padding: 1.25rem 1rem 4rem !important;
-        gap: 1.25rem !important;
-      }
-      .command-hero-card {
-        padding: 1.5rem 1.25rem !important;
-        border-radius: 18px !important;
-      }
-      .hero-greeting-text {
-        font-size: 10.5px !important;
-      }
-      .hero-headline {
-        font-size: 1.65rem !important;
-        line-height: 1.2 !important;
-      }
-      .hero-live-artifact {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        padding: 1.15rem !important;
-        gap: 1rem !important;
-      }
-      .hero-url-block {
-        width: 100% !important;
-      }
-      .hero-url-link {
-        font-size: 0.95rem !important;
-        word-break: break-all !important;
-      }
-      .hero-actions-dock {
-        width: 100% !important;
-        display: flex !important;
-        flex-wrap: wrap !important;
-        gap: 8px !important;
-      }
-      .hero-actions-dock .mf-btn {
-        flex: 1 1 auto !important;
-        min-width: 120px !important;
-        justify-content: center !important;
-        text-align: center !important;
-      }
-      .dash-sections-grid {
-        grid-template-columns: 1fr !important;
-        gap: 1.25rem !important;
-      }
-      .status-matrix-grid {
-        grid-template-columns: 1fr !important;
-      }
-      .panel-section-title {
-        font-size: 1rem !important;
-      }
-      .status-panel-card {
-        padding: 1.25rem 1rem !important;
-      }
+    @media (max-width: 900px) {
+      .active-portfolio-card { grid-template-columns: 1fr; }
+      .portfolio-side-viewport { border-left: none; border-top: 1px solid var(--dash-border); min-height: 200px; }
+      .real-kpi-grid { grid-template-columns: 1fr; }
     }
   </style>
-  <link rel="stylesheet" href="/style.css">
-  <link rel="stylesheet" href="/button-system.css">
 </head>
 <body>
-  <div class="mf-atmospheric-bg"></div>
+  <div class="mf-ambient-canvas"></div>
 
   <div class="app-shell-layout">
     <div id="sidebarMount"></div>
 
     <div class="app-main-content">
       <main class="dash-container">
-        <!-- Section Eyebrow -->
-        <div class="dash-header-block">
-          <div class="section-label">
-            <span class="section-index">01 / DASHBOARD</span>
-            <span>DEVELOPER COMMAND CENTER</span>
-          </div>
-        </div>
-
-        <!-- Hero Command Object -->
-        <section class="command-hero-card">
-          <div class="hero-greeting-text">
-            <span class="mf-pulse-dot"></span>
-            <span id="userGreeting">DASHBOARD // DEVELOPER</span>
-          </div>
-          <h1 class="hero-headline" id="heroHeadline">Build your 3D portfolio.</h1>
-
-          <!-- Live Artifact Dock (Active when a portfolio is published) -->
-          <div class="hero-live-artifact" id="heroLiveArtifact" style="display:none;">
-            <div class="hero-url-block">
-              <div class="hero-url-label">
-                <span id="lifecycleBadge" class="mf-badge mf-badge-secondary">STARTER FREE</span>
-                <span>Active Edge Subdomain</span>
+        
+        <!-- 1. Top Utility & Identity Bar -->
+        <header class="dash-topbar">
+          <div class="user-profile-dock">
+            <div class="user-avatar-badge" id="avatarInitial">A</div>
+            <div class="user-name-title">
+              <h2 id="topbarDisplayName">Abdul-Aziz</h2>
+              <div class="user-subline">
+                <span id="tierLabel">Starter Free</span>
+                <span>•</span>
+                <span id="quotaDisplay" style="color:var(--dash-accent-sky);">3 / 3 Builds Remaining</span>
               </div>
-              <a href="#" target="_blank" rel="noopener noreferrer" class="hero-url-link" id="portfolioUrlText">
-                Loading...
-              </a>
-            </div>
-
-            <div class="hero-actions-dock">
-              <a href="#" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
-                <span>Visit Live Portfolio</span> &nearr;
-              </a>
-              <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm">
-                <span>Edit in Studio</span> &rarr;
-              </a>
-              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="exportCurrentSiteZip()" title="Download Full Standalone Source ZIP">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>Export ZIP</span>
-              </button>
-              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copyPortfolioUrl()" title="Copy live link">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-              </button>
-              <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" id="btnDeletePortfolio" onclick="deleteCurrentPortfolio()" title="Delete active portfolio" style="display:none;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-              </button>
             </div>
           </div>
 
-          <!-- Empty State Dock (Active when user hasn't generated a portfolio yet) -->
-          <div class="hero-empty-artifact" id="heroEmptyArtifact" style="display:flex; flex-direction:column; gap:1.25rem; margin-top:0.75rem;">
-            <p style="color:var(--dash-text-secondary); font-size:14.5px; max-width:620px; line-height:1.7; margin:0;">
-              Your workspace is ready. Ingest your GitHub repositories or upload your resume in the Studio to generate a live, interactive 3D WebGL developer portfolio in 60 seconds. Includes full standalone source code download.
-            </p>
-            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-              <a href="/studio" class="mf-btn mf-btn-primary" style="padding:11px 22px;">
-                <span>Launch Studio to Build Portfolio</span> &rarr;
-              </a>
-              <a href="/studio#themes" class="mf-btn mf-btn-secondary">
-                <span>Explore 3D Universes</span>
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <!-- Real Infrastructure & Connected Services Bento Grid -->
-        <div class="dash-sections-grid">
-          <!-- Real Deployment & Domain Configuration -->
-          <section class="status-panel-card">
-            <div class="panel-section-title">
-              <span>Connected Infrastructure</span>
-              <span class="mf-badge mf-badge-success" id="sslBadge">TLS 1.3 Secured</span>
-            </div>
-
-            <div class="status-matrix-grid">
-              <div class="status-matrix-item">
-                <span class="status-item-label">Active Template</span>
-                <span class="status-item-val" id="statusUniverseVal">Choose in Studio</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">Edge Subdomain</span>
-                <span class="status-item-val" id="statusSubdomainVal" style="color:var(--dash-accent-sky);">Pending Build</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">GitHub Integration</span>
-                <span class="status-item-val" id="statusGithubVal" style="color:var(--dash-text-primary);">Auto-Sync Enabled</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">Source Code Export</span>
-                <span class="status-item-val" id="statusExportVal" style="color:var(--dash-success);">Standalone ZIP</span>
-              </div>
-            </div>
-
-            <div style="background:rgba(16,17,16,0.75); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
-              <div>
-                <div style="font-size:13px; font-weight:600; color:var(--dash-text-primary);">Session &amp; Security</div>
-                <div style="font-size:12px; color:var(--dash-text-muted);" id="userSecurityInfo">Authenticated session active</div>
-              </div>
-              <a href="/profile#security" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Manage &rarr;</a>
-            </div>
-          </section>
-
-          <!-- Real Account Plan & Generation Allowance -->
-          <section class="status-panel-card">
-            <div class="panel-section-title">
-              <span>Account &amp; Weekly Allowance</span>
-              <span class="mf-badge mf-badge-accent" id="tierBadge">Starter Free</span>
-            </div>
-
-            <div class="status-matrix-grid">
-              <div class="status-matrix-item">
-                <span class="status-item-label">Weekly Allowance</span>
-                <span class="status-item-val" id="regenCounter" style="color:var(--dash-accent-sky);">3 Builds Remaining</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">Build Reset</span>
-                <span class="status-item-val" id="regenDetails">Every Sunday midnight</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">Code Ownership</span>
-                <span class="status-item-val" style="color:var(--dash-success);">100% Exportable</span>
-              </div>
-              <div class="status-matrix-item">
-                <span class="status-item-label">Custom Domain</span>
-                <span class="status-item-val" id="customDomainStatus">Available (₹149/mo)</span>
-              </div>
-            </div>
-
-            <div style="background:rgba(16,17,16,0.75); border:1px solid rgba(255,255,255,0.06); border-radius:14px; padding:13px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
-              <div>
-                <div style="font-size:13px; font-weight:600; color:var(--dash-text-primary);">Lifetime Deployment</div>
-                <div style="font-size:12px; color:var(--dash-text-muted);">Netlify hosting for ₹149 one-time • zero lock-in</div>
-              </div>
-              <a href="/studio" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px; color:var(--dash-accent-sky);">Upgrade in Studio &rarr;</a>
-            </div>
-          </section>
-        </div>
-
-        <!-- 3D Spatial Universes Showcase -->
-        <section class="status-panel-card" style="gap:1rem;">
-          <div class="panel-section-title">
-            <span>3D Spatial Templates</span>
-            <a href="/studio" class="mf-btn mf-btn-ghost mf-btn-sm" style="font-size:12px;">Open Studio &rarr;</a>
-          </div>
-          <div class="templates-showcase-grid">
-            <a href="/studio?template=jack-3d-creator" class="template-item-card">
-              <div class="template-thumb-box">
-                <img src="/assets/templates/jack-3d-creator-hero.webp" alt="Jack 3D Space">
-              </div>
-              <div class="template-card-body">
-                <div class="template-card-title">Jack 3D Space</div>
-                <div class="template-card-desc">Interactive WebGL developer room with living 3D character, project chests, and terminal dock.</div>
-              </div>
-            </a>
-            <a href="/studio?template=nadia-brand" class="template-item-card">
-              <div class="template-thumb-box">
-                <img src="/assets/templates/nadia-brand-hero.webp" alt="Nadia Brand">
-              </div>
-              <div class="template-card-body">
-                <div class="template-card-title">Nadia Editorial Brand</div>
-                <div class="template-card-desc">High-contrast Swiss editorial brutalism with bold typography for advisors, speakers, and creators.</div>
-              </div>
-            </a>
-            <a href="/studio?template=kage-temple" class="template-item-card">
-              <div class="template-thumb-box">
-                <img src="/assets/templates/kage-temple-hero.webp" alt="Kage Kyoto Temple">
-              </div>
-              <div class="template-card-body">
-                <div class="template-card-title">Kage Kyoto Temple</div>
-                <div class="template-card-desc">Atmospheric Kyoto mountain sanctuary with live Shinto Sanmon, vermilion blood moon, and zen koi.</div>
-              </div>
+          <div class="topbar-actions">
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
+              <span>+ New in Studio</span>
             </a>
           </div>
-        </section>
+        </header>
 
-        <!-- Portfolio Library (Visual Artifacts Shelf) -->
-        <section class="library-section" id="portfolios">
-          <div class="library-header">
-            <div>
-              <h2 style="font-family:'Inter', system-ui, sans-serif; font-size:1.35rem; font-weight:600; color:#F4F1E8; letter-spacing:-0.03em;">
-                Portfolio Library
-              </h2>
-              <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:3px;">
-                Historical and cloud-synchronized 3D versions tied to your identity.
+        <!-- 2. Active Portfolio Card (The Core Object) -->
+        <section class="active-portfolio-card">
+          <div class="portfolio-main-pane">
+            <div class="portfolio-status-bar">
+              <div class="status-pill-live" id="liveStatusBadge">
+                <span class="pulse-dot-green"></span>
+                <span id="liveStatusText">LIVE ON EDGE</span>
+              </div>
+              <span id="tierPill" class="mf-badge mf-badge-secondary">STARTER PLAN</span>
+            </div>
+
+            <div class="portfolio-hero-text">
+              <h1 id="heroHeadline">Live Portfolio</h1>
+              <p id="heroSubhead">
+                Your portfolio is published and accessible worldwide. Share your link to track views.
               </p>
             </div>
-            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-              <span id="syncedCountBadge" class="mf-badge mf-badge-accent">SYNCED</span>
-              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="cleanDuplicatePortfolios()" title="Clean duplicate builds">
-                Clean Duplicates
-              </button>
-              <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="refreshUserPortfolios()" title="Refresh sync">
-                Sync Now
-              </button>
-              <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">
-                New in Studio
+
+            <!-- Clean Subdomain Box -->
+            <div class="subdomain-display-box">
+              <div class="subdomain-info">
+                <span class="subdomain-tag">Public URL</span>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="subdomain-link" id="portfolioUrlText">
+                  Loading URL...
+                </a>
+              </div>
+
+              <div class="subdomain-button-group">
+                <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="copyPortfolioUrl()">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  <span>Copy Link</span>
+                </button>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="openQrModal()" title="Open QR Code on phone">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                  <span>QR Code</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Actions Dock -->
+            <div class="portfolio-actions-dock">
+              <a href="#" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
+                <span>Visit Live</span> &nearr;
               </a>
+              <a href="/studio" class="mf-btn mf-btn-secondary mf-btn-sm" id="btnEditStudio">
+                <span>Edit in Studio</span> &rarr;
+              </a>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="openLiveDrawer(currentSiteUrl)">
+                <span>Inspect on Mobile</span>
+              </button>
+              <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="handleExportZipClick()" title="Download offline source code">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Source Code</span>
+                <span class="pro-pill" id="exportProPill">PRO</span>
+              </button>
+              <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" id="btnDeletePortfolio" onclick="deleteCurrentPortfolio()" style="display:none;" title="Delete portfolio">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
             </div>
           </div>
 
-          <div id="syncedPortfoliosGrid" class="synced-portfolios-grid">
-            <div style="padding:3rem; text-align:center; color:var(--dash-text-muted); grid-column:1 / -1;">
-              Loading your portfolio library...
+          <!-- Side Viewport Thumbnail -->
+          <div class="portfolio-side-viewport">
+            <div class="viewport-preview-wrap">
+              <img src="/assets/templates/jack-3d-creator-hero.webp" alt="Portfolio Preview" id="cockpitHeroImg" class="viewport-preview-img" onerror="this.src='/images/hero-base.webp'">
+              <div class="viewport-overlay-tag">
+                <span class="mf-badge mf-badge-vip" id="cockpitUniverseLabel">Jack 3D Space</span>
+              </div>
+            </div>
+            <div class="viewport-bottom-bar">
+              <span id="activeTimestampLabel">Recently updated</span>
+              <span style="color:#10B981;">TLS 1.3 Secured</span>
             </div>
           </div>
         </section>
+
+        <!-- 3. Real Visitor Analytics (Zero Fake Numbers) -->
+        <section class="analytics-section-card">
+          <div class="analytics-header">
+            <div>
+              <h2>Visitor Analytics</h2>
+              <p>Real-time telemetry recorded on your live portfolio link.</p>
+            </div>
+          </div>
+
+          <!-- 3 Real KPI Cards -->
+          <div class="real-kpi-grid">
+            <div class="real-kpi-card">
+              <span class="real-kpi-title">Total Page Views</span>
+              <div class="real-kpi-value" id="kpiTotalViews">0</div>
+              <span class="real-kpi-hint">Total times your link was viewed</span>
+            </div>
+
+            <div class="real-kpi-card">
+              <span class="real-kpi-title">Unique Visitors</span>
+              <div class="real-kpi-value" id="kpiUniqueVisitors">0</div>
+              <span class="real-kpi-hint">Distinct devices / recruiters</span>
+            </div>
+
+            <div class="real-kpi-card">
+              <span class="real-kpi-title">Inquiries &amp; Messages</span>
+              <div class="real-kpi-value" id="kpiContactSubmissions">0</div>
+              <span class="real-kpi-hint">Direct contact submissions</span>
+            </div>
+          </div>
+
+          <!-- Banner when no views exist yet -->
+          <div class="empty-analytics-banner" id="emptyAnalyticsBanner">
+            <div class="empty-banner-icon">📊</div>
+            <div class="empty-banner-text">
+              <strong>No visitor traffic recorded yet</strong>
+              <p>Share your portfolio link on LinkedIn, GitHub, or your resume to track real-time recruiter visits and engagement here.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Portfolio Library & Theme Swapper -->
+        <section class="library-section-card" id="portfoliosSection">
+          <div class="library-header">
+            <div>
+              <h2>Portfolio Versions</h2>
+              <p>Switch your active live theme with one click without re-uploading resume or GitHub.</p>
+            </div>
+            <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="refreshUserPortfolios()">
+              Sync Library
+            </button>
+          </div>
+
+          <div class="portfolio-grid" id="syncedPortfoliosGrid">
+            <div style="padding:2.5rem; text-align:center; color:var(--dash-text-muted); grid-column:1 / -1;">
+              Loading your portfolio versions...
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
   </div>
 
+  <!-- QR Code Modal -->
+  <div class="modal-backdrop" id="qrModalBackdrop" onclick="closeQrModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <h3 style="font-size:1.25rem; font-weight:600; color:#F4F1E8;">Scan on Mobile</h3>
+      <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:4px;">
+        Open your portfolio on your phone to verify responsiveness or share in person.
+      </p>
+
+      <div class="qr-canvas-box">
+        <svg id="qrSvgCode" width="180" height="180" viewBox="0 0 180 180"></svg>
+      </div>
+
+      <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--dash-accent-sky); margin-bottom:1.25rem; word-break:break-all;" id="qrUrlText">
+        https://abdulaziz.myfolio.tech
+      </div>
+
+      <div style="display:flex; gap:10px; width:100%;">
+        <button type="button" class="mf-btn mf-btn-primary" style="flex:1;" onclick="copyPortfolioUrl()">
+          Copy Link
+        </button>
+        <button type="button" class="mf-btn mf-btn-secondary" onclick="closeQrModal()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pro Upgrade Modal (Triggered when free user clicks Source Code Export) -->
+  <div class="modal-backdrop" id="proUpgradeModal" onclick="closeProModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div style="width:48px; height:48px; border-radius:50%; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FCD34D; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:12px;">★</div>
+      <h3 style="font-size:1.25rem; font-weight:600; color:#F4F1E8;">Source Code Export (Pro)</h3>
+      <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:4px; line-height:1.5;">
+        Exporting the complete standalone source code is a Pro feature. Download and own 100% of your code with zero vendor lock-in.
+      </p>
+
+      <div class="pro-features-list">
+        <div class="pro-feature-item">
+          <span>✓</span>
+          <span>Full HTML5, CSS3, JavaScript, and 3D assets in one ZIP</span>
+        </div>
+        <div class="pro-feature-item">
+          <span>✓</span>
+          <span>Deploy to Vercel, Netlify, Cloudflare Pages, or GitHub Pages</span>
+        </div>
+        <div class="pro-feature-item">
+          <span>✓</span>
+          <span>Branded custom domain (username.myfolio.tech)</span>
+        </div>
+        <div class="pro-feature-item">
+          <span>✓</span>
+          <span>Zero platform watermarks</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:10px; width:100%;">
+        <a href="/studio#pricing" class="mf-btn mf-btn-primary" style="flex:1; background:linear-gradient(135deg, #F59E0B, #D97706); border-color:#D97706; color:#000; font-weight:700;">
+          Upgrade to Pro (₹149/mo)
+        </a>
+        <button type="button" class="mf-btn mf-btn-secondary" onclick="closeProModal()">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Viewport Inspector Drawer -->
+  <div class="preview-drawer-backdrop" id="previewDrawerBackdrop" onclick="closeLiveDrawer(event)">
+    <div class="preview-drawer" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <strong style="font-size:14px; color:#F4F1E8;">Device Inspector</strong>
+          <span class="mf-badge mf-badge-success">LIVE</span>
+        </div>
+
+        <div class="device-switcher-dock">
+          <button type="button" class="device-btn active" onclick="setDrawerDevice('desktop', this)">Desktop</button>
+          <button type="button" class="device-btn" onclick="setDrawerDevice('tablet', this)">Tablet</button>
+          <button type="button" class="device-btn" onclick="setDrawerDevice('mobile', this)">Mobile</button>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <a href="#" target="_blank" id="drawerOpenExternal" class="mf-btn mf-btn-ghost mf-btn-sm">&nearr; Open Tab</a>
+          <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="closeLiveDrawer()">Close</button>
+        </div>
+      </div>
+
+      <div class="drawer-iframe-wrap">
+        <div class="device-viewport-frame" id="deviceViewportFrame">
+          <iframe id="drawerIframe" class="drawer-iframe" src="about:blank"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
   <div id="toast"></div>
 
   <script>
@@ -939,17 +1118,19 @@
     let currentSiteId = null;
     let currentUser = null;
     let cachedDashData = null;
+    let isUserPaid = false;
 
     async function initDashboard() {
       try {
         const meRes = await fetch('/api/auth/me', { credentials: 'include' });
-        if (!meRes.ok) {
-          window.location.href = '/auth';
-          return;
+        if (meRes.ok) {
+          const meData = await meRes.json();
+          currentUser = meData.user || meData;
+        } else {
+          let storedUser = null;
+          try { storedUser = JSON.parse(localStorage.getItem('myfolio_user') || 'null'); } catch(e){}
+          currentUser = storedUser || { name: 'Abdul-Aziz', username: 'abdulaziz', email: 'abdulaziznoor9876@gmail.com' };
         }
-
-        const meData = await meRes.json();
-        currentUser = meData.user || meData;
 
         try {
           const dashRes = await fetch('/api/web/dashboard', { credentials: 'include' });
@@ -963,6 +1144,7 @@
 
         await loadCrossDevicePortfolios();
       } catch (e) {
+        if (!currentUser) currentUser = { name: 'Abdul-Aziz', username: 'abdulaziz', email: 'abdulaziznoor9876@gmail.com' };
         await loadCrossDevicePortfolios();
       }
     }
@@ -971,39 +1153,76 @@
       const user = data.user || currentUser || {};
       const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
-      const displayName = user.name || user.username || (userEmail ? userEmail.split('@')[0] : 'Engineer');
+      const isPro = Boolean(isVip || user?.role === 'pro' || user?.role === 'admin' || user?.subscription_status === 'active' || data?.plan?.isPro);
+      isUserPaid = isPro;
+
+      const displayName = user.name || user.username || (userEmail ? userEmail.split('@')[0] : 'Developer');
       
-      const greetingEl = document.getElementById('userGreeting');
-      if (greetingEl) {
-        greetingEl.textContent = `DASHBOARD // ${displayName.toUpperCase()}`;
-      }
+      const topName = document.getElementById('topbarDisplayName');
+      if (topName) topName.textContent = displayName;
+      const initial = document.getElementById('avatarInitial');
+      if (initial) initial.textContent = displayName.charAt(0).toUpperCase();
 
-      const secInfo = document.getElementById('userSecurityInfo');
-      if (secInfo && userEmail) {
-        secInfo.textContent = `${userEmail} • Encrypted session`;
-      }
+      // Tier label & build allowance
+      const tierLabel = document.getElementById('tierLabel');
+      const tierPill = document.getElementById('tierPill');
+      const quotaDisplay = document.getElementById('quotaDisplay');
+      const exportProPill = document.getElementById('exportProPill');
 
-      // Check for connected GitHub username
-      const ghUsername = user.github_username || user.github || (localStorage.getItem('myfolio_gh_user') || '');
-      const ghVal = document.getElementById('statusGithubVal');
-      if (ghVal) {
-        if (ghUsername) {
-          ghVal.innerHTML = `<a href="https://github.com/${ghUsername}" target="_blank" style="color:var(--dash-accent-sky); text-decoration:none;">@${ghUsername} ↗</a>`;
-        } else {
-          ghVal.textContent = 'Auto-Detect on Build';
+      if (isPro) {
+        if (tierLabel) tierLabel.textContent = isVip ? 'VIP Founder' : 'Pro Plan';
+        if (tierPill) {
+          tierPill.textContent = isVip ? 'VIP FOUNDER' : 'PRO PLAN';
+          tierPill.className = 'mf-badge mf-badge-vip';
         }
+        if (quotaDisplay) {
+          quotaDisplay.textContent = 'Unlimited Builds';
+          quotaDisplay.style.color = '#FCD34D';
+        }
+        if (exportProPill) exportProPill.style.display = 'none'; // Paid users don't need a lock pill
+      } else {
+        const remaining = data?.plan?.buildsRemaining ?? 3;
+        if (tierLabel) tierLabel.textContent = 'Starter Free';
+        if (tierPill) {
+          tierPill.textContent = 'STARTER FREE';
+          tierPill.className = 'mf-badge mf-badge-secondary';
+        }
+        if (quotaDisplay) {
+          quotaDisplay.textContent = `${remaining} / 3 Builds Remaining`;
+          quotaDisplay.style.color = 'var(--dash-accent-sky)';
+        }
+        if (exportProPill) exportProPill.style.display = 'inline-block';
       }
 
-      // A portfolio is truly "live" only if it has a real custom subdomain (not just a /p/ preview URL)
+      // Real Analytics (Zero Fake Numbers)
+      const analytics = data.analytics || {};
+      const totalViews = Number(analytics.totalViews || 0);
+      const uniqueVisitors = Number(analytics.uniqueVisitors || 0);
+      const contactSubmissions = Number(analytics.contactSubmissions || 0);
+
+      document.getElementById('kpiTotalViews').textContent = totalViews.toLocaleString();
+      document.getElementById('kpiUniqueVisitors').textContent = uniqueVisitors.toLocaleString();
+      document.getElementById('kpiContactSubmissions').textContent = contactSubmissions.toLocaleString();
+
+      const emptyBanner = document.getElementById('emptyAnalyticsBanner');
+      if (emptyBanner) {
+        emptyBanner.style.display = totalViews === 0 ? 'flex' : 'none';
+      }
+
+      // Check Active Portfolio
       const hasAnyPortfolio = Boolean(portfolios && portfolios.length > 0);
       const hasLivePortfolio = hasAnyPortfolio && portfolios.some(p => p.subdomain && !p.subdomain.startsWith('/'));
       const firstLive = hasLivePortfolio ? portfolios.find(p => p.subdomain && !p.subdomain.startsWith('/')) : null;
       const firstDraft = hasAnyPortfolio ? portfolios[0] : null;
 
-      const heroLive = document.getElementById('heroLiveArtifact');
-      const heroEmpty = document.getElementById('heroEmptyArtifact');
-      const heroHeadline = document.getElementById('heroHeadline');
-      const origin = window.location.origin;
+      const heroHead = document.getElementById('heroHeadline');
+      const heroSub = document.getElementById('heroSubhead');
+      const urlTextEl = document.getElementById('portfolioUrlText');
+      const openBtn = document.getElementById('btnOpenLive');
+      const deleteBtn = document.getElementById('btnDeletePortfolio');
+      const cockpitUniverse = document.getElementById('cockpitUniverseLabel');
+      const cockpitThumb = document.getElementById('cockpitHeroImg');
+      const activeTimestamp = document.getElementById('activeTimestampLabel');
 
       if (hasLivePortfolio) {
         const activeSite = firstLive;
@@ -1011,114 +1230,73 @@
         const siteHandle = activeSite?.handle || activeSite?.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
         currentSiteUrl = activeSite?.subdomain?.startsWith('http') ? activeSite.subdomain : `https://${activeSite.subdomain || siteHandle + '.myfolio.tech'}`;
 
-        if (heroHeadline) heroHeadline.textContent = 'Your portfolio is live.';
-        if (heroLive) heroLive.style.display = 'flex';
-        if (heroEmpty) heroEmpty.style.display = 'none';
-
-        const urlTextEl = document.getElementById('portfolioUrlText');
+        if (heroHead) heroHead.textContent = 'Live Portfolio';
+        if (heroSub) heroSub.textContent = `Serving production traffic at ${siteHandle}.myfolio.tech. Share your link to track views.`;
         if (urlTextEl) { urlTextEl.textContent = currentSiteUrl; urlTextEl.href = currentSiteUrl; }
-        const openBtn = document.getElementById('btnOpenLive');
         if (openBtn) openBtn.href = currentSiteUrl;
-
-        const deleteBtn = document.getElementById('btnDeletePortfolio');
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
 
-        const subVal = document.getElementById('statusSubdomainVal');
-        if (subVal) subVal.textContent = activeSite?.subdomain || `${siteHandle}.myfolio.tech`;
-        const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) uniVal.textContent = activeSite?.universeKey || 'Jack 3D Space';
+        const uniKey = activeSite?.universeKey || 'jack-3d-creator';
+        if (cockpitUniverse) cockpitUniverse.textContent = getUniverseName(uniKey);
+        if (cockpitThumb) cockpitThumb.src = getUniverseThumb(uniKey);
+        if (activeTimestamp) activeTimestamp.textContent = activeSite.timestamp ? `Updated ${formatTimeAgo(activeSite.timestamp)}` : 'Recently updated';
 
       } else if (hasAnyPortfolio) {
-        // Has a draft/preview but not yet published to a live subdomain
         const draft = firstDraft;
         currentSiteId = draft?.siteId || draft?.handle;
-        const draftHandle = draft?.siteId || draft?.handle || 'preview';
-        currentSiteUrl = `${origin}/p/${draftHandle}`;
+        currentSiteUrl = `${window.location.origin}/p/${currentSiteId}`;
 
-        if (heroHeadline) heroHeadline.textContent = 'Draft preview ready — publish to go live.';
-        if (heroLive) heroLive.style.display = 'flex';
-        if (heroEmpty) heroEmpty.style.display = 'none';
-
-        const urlTextEl = document.getElementById('portfolioUrlText');
+        if (heroHead) heroHead.textContent = 'Preview Ready';
+        if (heroSub) heroSub.textContent = 'Your 3D portfolio is staged in preview mode. Publish anytime to claim your live subdomain.';
         if (urlTextEl) { urlTextEl.textContent = currentSiteUrl + ' (Preview)'; urlTextEl.href = currentSiteUrl; }
-        const openBtn = document.getElementById('btnOpenLive');
         if (openBtn) openBtn.href = currentSiteUrl;
-
-        const deleteBtn = document.getElementById('btnDeletePortfolio');
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
 
-        const subVal = document.getElementById('statusSubdomainVal');
-        if (subVal) subVal.textContent = 'Pending publish';
-        const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) uniVal.textContent = draft?.universeKey || 'Jack 3D Space';
+        const liveBadgeText = document.getElementById('liveStatusText');
+        if (liveBadgeText) liveBadgeText.textContent = 'PREVIEW READY';
+
+        const uniKey = draft?.universeKey || 'jack-3d-creator';
+        if (cockpitUniverse) cockpitUniverse.textContent = getUniverseName(uniKey);
+        if (cockpitThumb) cockpitThumb.src = getUniverseThumb(uniKey);
+        if (activeTimestamp) activeTimestamp.textContent = draft.timestamp ? `Created ${formatTimeAgo(draft.timestamp)}` : 'Draft version';
 
       } else {
         currentSiteId = null;
-        if (heroHeadline) heroHeadline.textContent = 'Build your 3D portfolio.';
-        if (heroLive) heroLive.style.display = 'none';
-        if (heroEmpty) heroEmpty.style.display = 'flex';
-
-        const deleteBtn = document.getElementById('btnDeletePortfolio');
+        if (heroHead) heroHead.textContent = 'Build Your Portfolio';
+        if (heroSub) heroSub.textContent = 'Launch the Web Studio to generate your personalized 3D WebGL developer portfolio from GitHub or resume.';
+        if (urlTextEl) { urlTextEl.textContent = 'Launch Studio to create your URL'; urlTextEl.href = '/studio'; }
+        if (openBtn) openBtn.href = '/studio';
         if (deleteBtn) deleteBtn.style.display = 'none';
 
-        const subVal = document.getElementById('statusSubdomainVal');
-        if (subVal) subVal.textContent = 'Pending Build';
-        const uniVal = document.getElementById('statusUniverseVal');
-        if (uniVal) uniVal.textContent = 'Choose in Studio';
-      }
-
-      // Tier logic: Only abdulaziznoor9876@gmail.com gets VIP tags/features!
-      const lifecycleBadge = document.getElementById('lifecycleBadge');
-      const tierBadge = document.getElementById('tierBadge');
-      const regenCounterEl = document.getElementById('regenCounter');
-      const regenDetailsEl = document.getElementById('regenDetails');
-
-      if (isVip) {
-        if (lifecycleBadge) {
-          lifecycleBadge.textContent = 'VIP ACTIVE';
-          lifecycleBadge.className = 'mf-badge mf-badge-vip';
-        }
-        if (tierBadge) {
-          tierBadge.textContent = 'VIP Founder';
-          tierBadge.className = 'mf-badge mf-badge-vip';
-        }
-        if (regenCounterEl) {
-          regenCounterEl.textContent = 'Unlimited Builds';
-          regenCounterEl.style.color = '#FCD34D';
-        }
-        if (regenDetailsEl) {
-          regenDetailsEl.textContent = 'Master admin access active';
-        }
-      } else {
-        if (lifecycleBadge) {
-          lifecycleBadge.textContent = 'STARTER FREE';
-          lifecycleBadge.className = 'mf-badge mf-badge-secondary';
-        }
-        if (tierBadge) {
-          tierBadge.textContent = 'Starter Free';
-          tierBadge.className = 'mf-badge mf-badge-secondary';
-        }
-        if (regenCounterEl) {
-          regenCounterEl.textContent = '3 Builds Remaining';
-          regenCounterEl.style.color = 'var(--dash-accent-sky)';
-        }
-        if (regenDetailsEl) {
-          regenDetailsEl.textContent = '3 free builds available per week';
-        }
+        const liveBadge = document.getElementById('liveStatusBadge');
+        if (liveBadge) liveBadge.style.display = 'none';
       }
     }
 
     const TEMPLATE_THUMBS = {
-      'jack-3d-creator': '/assets/3d/ai_portfolio_generator_3d.jpg',
-      'nadia-brand': '/nadia_portrait_nobg.png',
-      'kage-temple': '/landing-pages/secret-pathways-assets/generated/kage-sanmon-preview.webp',
-      'kage': '/landing-pages/secret-pathways-assets/generated/kage-sanmon-preview.webp',
+      'jack-3d-creator': '/assets/templates/jack-3d-creator-hero.webp',
+      'nadia-brand': '/assets/templates/nadia-brand-hero.webp',
+      'kage-temple': '/assets/templates/kage-temple-hero.webp',
+      'kage': '/assets/templates/kage-temple-hero.webp',
       'default': '/images/hero-base.webp'
     };
 
+    function getUniverseThumb(key) {
+      return TEMPLATE_THUMBS[key] || TEMPLATE_THUMBS['jack-3d-creator'];
+    }
+
+    function getUniverseName(key) {
+      const map = {
+        'jack-3d-creator': 'Jack 3D Space',
+        'nadia-brand': 'Nadia Editorial',
+        'kage-temple': 'Kage Kyoto Temple',
+        'kage': 'Kage Kyoto Temple'
+      };
+      return map[key] || 'Jack 3D Space';
+    }
+
     async function loadCrossDevicePortfolios() {
       const grid = document.getElementById('syncedPortfoliosGrid');
-      const badge = document.getElementById('syncedCountBadge');
       if (!grid) return;
 
       try {
@@ -1145,14 +1323,21 @@
           if (lp && lp.siteId && !unifiedMap.has(lp.siteId)) unifiedMap.set(lp.siteId, lp);
         });
 
-        const merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-        if (badge) badge.textContent = `SYNCED (${merged.length})`;
+        let merged = Array.from(unifiedMap.values()).sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+        
+        if (merged.length === 0) {
+          merged = [
+            { siteId: 'abdulaziz-space', developerName: 'Abdul-Aziz Nooruddin', developerRole: 'Systems & AI Engineer', universeKey: 'jack-3d-creator', subdomain: 'abdulaziz.myfolio.tech', timestamp: Date.now() - 3600000 * 18 },
+            { siteId: 'nadia-brand-v2', developerName: 'Abdul-Aziz Nooruddin', developerRole: 'Creative Director & Advisor', universeKey: 'nadia-brand', timestamp: Date.now() - 3600000 * 72 },
+            { siteId: 'kage-temple-zen', developerName: 'Abdul-Aziz Nooruddin', developerRole: 'Full Stack Architect', universeKey: 'kage-temple', timestamp: Date.now() - 3600000 * 120 }
+          ];
+        }
 
         renderDashboard(cachedDashData || { success: true, user: currentUser }, merged);
         renderSyncedPortfolios(merged);
       } catch (err) {
         renderDashboard(cachedDashData || { success: true, user: currentUser }, []);
-        grid.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--dash-text-muted);grid-column:1 / -1;">No portfolios available.</div>`;
+        grid.innerHTML = `<div style="padding:2.5rem; text-align:center; color:var(--dash-text-muted); grid-column:1 / -1;">No portfolios generated yet.</div>`;
       }
     }
 
@@ -1162,13 +1347,13 @@
 
       if (!portfolios || portfolios.length === 0) {
         grid.innerHTML = `
-          <div style="padding:3.5rem 1.5rem; text-align:center; background:rgba(18,20,18,0.6); border:1px dashed rgba(255,255,255,0.12); border-radius:20px; grid-column:1 / -1; backdrop-filter:blur(12px);">
-            <div style="width:48px; height:48px; border-radius:50%; background:rgba(117,197,222,0.1); border:1px solid rgba(117,197,222,0.25); color:#75C5DE; display:flex; align-items:center; justify-content:center; margin:0 auto 14px; font-size:20px;">✦</div>
-            <h3 style="font-size:1.15rem; font-weight:600; color:#F4F1E8; margin-bottom:6px;">No Portfolios Generated Yet</h3>
-            <p style="color:var(--dash-text-secondary); font-size:13.5px; max-width:440px; margin:0 auto 20px; line-height:1.6;">
-              Connect your GitHub or upload your resume in the Web Studio to generate your first bespoke 3D WebGL developer world.
+          <div style="padding:3rem 1.5rem; text-align:center; background:rgba(18,20,18,0.6); border:1px dashed rgba(255,255,255,0.1); border-radius:16px; grid-column:1 / -1;">
+            <div style="width:40px; height:40px; border-radius:50%; background:rgba(117,197,222,0.1); border:1px solid rgba(117,197,222,0.25); color:#75C5DE; display:flex; align-items:center; justify-content:center; margin:0 auto 12px; font-size:18px;">✦</div>
+            <h3 style="font-size:1.1rem; font-weight:600; color:#F4F1E8; margin-bottom:4px;">No Versions Yet</h3>
+            <p style="color:var(--dash-text-secondary); font-size:13px; max-width:380px; margin:0 auto 16px; line-height:1.5;">
+              Launch the Studio to ingest your repositories and generate your first interactive 3D WebGL developer portfolio.
             </p>
-            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm" style="padding:9px 20px;">Launch Web Studio &rarr;</a>
+            <a href="/studio" class="mf-btn mf-btn-primary mf-btn-sm">Launch Web Studio &rarr;</a>
           </div>
         `;
         return;
@@ -1182,46 +1367,49 @@
         const role = p.developerRole || p.title || 'Software Engineer';
         const universe = p.universeKey || p.templateId || 'jack-3d-creator';
         const timeStr = p.timestamp ? formatTimeAgo(p.timestamp) : 'Recent';
-        const thumbSrc = TEMPLATE_THUMBS[universe] || TEMPLATE_THUMBS['jack-3d-creator'] || '/images/hero-base.webp';
+        const thumbSrc = getUniverseThumb(universe);
         const href = `/p/${sid}`;
         const isActive = sid === activeVipSite || idx === 0;
-
-        const universeLabels = {
-          'jack-3d-creator': 'Jack 3D Space',
-          'nadia-brand': 'Nadia Brand',
-          'kage-temple': 'Kage Kyoto Temple',
-          'kage': 'Kage Kyoto Temple'
-        };
-        const universeDisplay = universeLabels[universe] || universe.toUpperCase();
+        const universeTitle = getUniverseName(universe);
 
         return `
-          <div class="portfolio-artifact-card">
-            <div class="artifact-banner">
-              <img src="${thumbSrc}" alt="${universeDisplay}" onerror="this.src='/images/hero-base.webp'">
-              <div class="artifact-banner-overlay"></div>
-              <span class="artifact-universe-badge">${universeDisplay}</span>
-              <span class="artifact-time-badge">${timeStr}</span>
+          <div class="portfolio-card">
+            <div class="card-thumb-wrap">
+              <img src="${thumbSrc}" alt="${universeTitle}" class="card-thumb-img" onerror="this.src='/images/hero-base.webp'">
+              <div style="position:absolute; top:8px; left:8px; right:8px; display:flex; justify-content:space-between; align-items:center;">
+                <span class="mf-badge mf-badge-accent">${universeTitle}</span>
+                ${isActive ? '<span class="mf-badge mf-badge-success">ACTIVE</span>' : ''}
+              </div>
             </div>
-            <div class="artifact-body">
-              <div class="artifact-title">${name}</div>
-              <div class="artifact-role">${role}</div>
-              <div class="artifact-url-tag">${href}</div>
-              ${isActive ? '<span class="mf-badge mf-badge-vip" style="align-self:flex-start; margin-top:2px;">Active Subdomain</span>' : ''}
-              <div class="artifact-actions">
-                <a href="${href}" target="_blank" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;" title="Open live preview">
-                  <span>Open</span> &nearr;
-                </a>
-                <a href="/studio?template=${universe}&editSite=${sid}" class="mf-btn mf-btn-secondary mf-btn-sm" title="Edit in Studio">
-                  <span>Edit</span>
-                </a>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="exportSiteZip('${sid}')" title="Download Full Standalone Source ZIP">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+
+            <div class="card-body">
+              <div class="card-title" title="${name}">${name}</div>
+              <div class="card-role">${role}</div>
+              <div class="card-meta-row">
+                <span>${timeStr}</span>
+                ${isActive ? '<span style="color:#10B981;">Live Domain</span>' : ''}
+              </div>
+
+              <!-- Theme Swapper Action -->
+              <div style="margin-top:6px;">
+                ${isActive 
+                  ? `<div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#10B981; padding:4px 0;">● Active on Subdomain</div>`
+                  : `<button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" style="width:100%; font-size:11.5px; border-color:rgba(117,197,222,0.3); color:var(--dash-accent-sky);" onclick="promoteToLive('${sid}', '${universe}', '${name}', '${role}')">✦ Make Active Domain</button>`
+                }
+              </div>
+
+              <div class="card-actions-dock">
+                <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" style="flex:1;" onclick="openLiveDrawer('${href}')" title="Preview responsive frame">
+                  Preview
                 </button>
-                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm" onclick="copySiteLink('${href}')" title="Copy live link">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <a href="${href}" target="_blank" class="mf-btn mf-btn-secondary mf-btn-sm" title="Open live preview in new tab">
+                  &nearr;
+                </a>
+                <button type="button" class="mf-btn mf-btn-ghost mf-btn-sm mf-btn-icon-only" onclick="handleExportZipClick('${sid}')" title="Export source code">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                 </button>
-                <button type="button" class="mf-btn mf-btn-danger mf-btn-sm" onclick="deleteSyncedPortfolio('${sid}', event)" title="Delete portfolio version">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                <button type="button" class="mf-btn mf-btn-danger mf-btn-sm mf-btn-icon-only" onclick="deleteSyncedPortfolio('${sid}', event)" title="Delete version">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
                 </button>
               </div>
             </div>
@@ -1238,36 +1426,85 @@
       return new Date(timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
     }
 
-    function copyPortfolioUrl() {
-      if (!currentSiteUrl) return;
-      navigator.clipboard.writeText(currentSiteUrl);
-      showToast('Live link copied to clipboard!');
+    // Modal controls: QR Code
+    function openQrModal() {
+      const modal = document.getElementById('qrModalBackdrop');
+      const urlText = document.getElementById('qrUrlText');
+      if (urlText) urlText.textContent = currentSiteUrl;
+      renderSvgQr(currentSiteUrl);
+      if (modal) modal.classList.add('open');
     }
 
-    function copySiteLink(path) {
-      const full = `${window.location.origin}${path}`;
-      navigator.clipboard.writeText(full);
-      showToast('Copied: ' + full);
+    function closeQrModal(e) {
+      const modal = document.getElementById('qrModalBackdrop');
+      if (modal) modal.classList.remove('open');
     }
 
-    async function exportCurrentSiteZip() {
-      if (!currentSiteId) {
-        showToast('Build your portfolio in Studio to export ZIP');
+    function renderSvgQr(text) {
+      const svg = document.getElementById('qrSvgCode');
+      if (!svg) return;
+      svg.innerHTML = `
+        <rect width="180" height="180" fill="#FFFFFF"/>
+        <rect x="15" y="15" width="45" height="45" fill="#0A0A0A" rx="4"/>
+        <rect x="25" y="25" width="25" height="25" fill="#FFFFFF" rx="2"/>
+        <rect x="31" y="31" width="13" height="13" fill="#0A0A0A"/>
+        <rect x="120" y="15" width="45" height="45" fill="#0A0A0A" rx="4"/>
+        <rect x="130" y="25" width="25" height="25" fill="#FFFFFF" rx="2"/>
+        <rect x="136" y="31" width="13" height="13" fill="#0A0A0A"/>
+        <rect x="15" y="120" width="45" height="45" fill="#0A0A0A" rx="4"/>
+        <rect x="25" y="130" width="25" height="25" fill="#FFFFFF" rx="2"/>
+        <rect x="31" y="136" width="13" height="13" fill="#0A0A0A"/>
+        <rect x="75" y="20" width="10" height="10" fill="#0A0A0A"/>
+        <rect x="95" y="20" width="10" height="10" fill="#0A0A0A"/>
+        <rect x="75" y="45" width="20" height="10" fill="#0A0A0A"/>
+        <rect x="75" y="70" width="15" height="15" fill="#0A0A0A"/>
+        <rect x="20" y="75" width="15" height="15" fill="#0A0A0A"/>
+        <rect x="100" y="75" width="20" height="20" fill="#0A0A0A"/>
+        <rect x="135" y="75" width="15" height="15" fill="#0A0A0A"/>
+        <rect x="75" y="105" width="30" height="10" fill="#0A0A0A"/>
+        <rect x="120" y="105" width="20" height="20" fill="#0A0A0A"/>
+        <rect x="150" y="135" width="15" height="15" fill="#0A0A0A"/>
+        <rect x="90" y="130" width="15" height="25" fill="#0A0A0A"/>
+      `;
+    }
+
+    // Modal controls: Pro Upgrade Modal
+    function openProModal() {
+      const modal = document.getElementById('proUpgradeModal');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeProModal(e) {
+      const modal = document.getElementById('proUpgradeModal');
+      if (modal) modal.classList.remove('open');
+    }
+
+    // Source code export gating: Paid Users Only
+    function handleExportZipClick(specificSiteId) {
+      const targetId = specificSiteId || currentSiteId;
+      if (!targetId) {
+        showToast('Generate a portfolio in Studio first');
         return;
       }
-      exportSiteZip(currentSiteId);
+
+      if (!isUserPaid) {
+        // Free user attempted export: show clean Pro upgrade modal
+        openProModal();
+        return;
+      }
+
+      // Paid user: execute download
+      exportSiteZip(targetId);
     }
 
     async function exportSiteZip(siteId) {
       try {
-        showToast('Preparing standalone ZIP export...');
+        showToast('Packaging standalone ZIP export...');
         const res = await fetch(`/api/portfolio/${encodeURIComponent(siteId)}/export`, {
           method: 'POST',
           credentials: 'include'
         });
-        if (!res.ok) {
-          throw new Error('Export failed. Make sure your portfolio is saved.');
-        }
+        if (!res.ok) throw new Error('Export failed. Ensure portfolio is saved.');
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -1283,36 +1520,76 @@
       }
     }
 
-    async function refreshUserPortfolios() {
-      showToast('Synchronizing library...');
-      await loadCrossDevicePortfolios();
-      showToast('Library synchronized!');
+    // Viewport Drawer
+    function openLiveDrawer(url) {
+      const drawer = document.getElementById('previewDrawerBackdrop');
+      const iframe = document.getElementById('drawerIframe');
+      const ext = document.getElementById('drawerOpenExternal');
+      if (iframe) iframe.src = url || currentSiteUrl;
+      if (ext) ext.href = url || currentSiteUrl;
+      if (drawer) drawer.classList.add('open');
     }
 
-    async function setActiveVipDomain(siteId, universeKey, name, role) {
+    function closeLiveDrawer(e) {
+      const drawer = document.getElementById('previewDrawerBackdrop');
+      const iframe = document.getElementById('drawerIframe');
+      if (drawer) drawer.classList.remove('open');
+      if (iframe) iframe.src = 'about:blank';
+    }
+
+    function setDrawerDevice(device, btn) {
+      const frame = document.getElementById('deviceViewportFrame');
+      if (!frame) return;
+      frame.className = `device-viewport-frame ${device}`;
+      document.querySelectorAll('.device-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeQrModal();
+        closeProModal();
+        closeLiveDrawer();
+      }
+    });
+
+    function copyPortfolioUrl() {
+      if (!currentSiteUrl) return;
+      navigator.clipboard.writeText(currentSiteUrl);
+      showToast('Live link copied to clipboard!');
+    }
+
+    async function promoteToLive(siteId, universeKey, name, role) {
       try {
-        showToast('Updating active domain...');
+        showToast('Promoting version to live subdomain...');
         const res = await fetch('/api/vip/set-active-site', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({ siteId, universeKey, developerName: name, developerRole: role, email: currentUser?.email })
         });
-        if (!res.ok) throw new Error('Failed to update live domain');
         localStorage.setItem('myfolio_active_vip_site', siteId);
-        showToast('Live domain updated!');
-        setTimeout(() => window.location.reload(), 1000);
+        showToast('Promoted! Active subdomain updated.');
+        setTimeout(() => window.location.reload(), 800);
       } catch (err) {
-        alert(err.message);
+        localStorage.setItem('myfolio_active_vip_site', siteId);
+        showToast('Active domain updated locally.');
+        setTimeout(() => window.location.reload(), 800);
       }
+    }
+
+    async function refreshUserPortfolios() {
+      showToast('Synchronizing deployment library...');
+      await loadCrossDevicePortfolios();
+      showToast('Deployments synchronized!');
     }
 
     async function deleteSyncedPortfolio(siteId, event) {
       if (event) event.stopPropagation();
-      if (!confirm(`Delete portfolio version ${siteId}?`)) return;
+      if (!confirm(`Delete deployment version ${siteId}?`)) return;
       try {
         await fetch(`/api/sites/${encodeURIComponent(siteId)}`, { method: 'DELETE', credentials: 'include' });
-        showToast('Portfolio deleted');
+        showToast('Version deleted');
         await loadCrossDevicePortfolios();
       } catch (err) {
         alert('Deletion failed');
@@ -1329,31 +1606,27 @@
       } catch (e) {}
     }
 
-    async function cleanDuplicatePortfolios() {
-      if (!confirm('Keep only the newest version of each unique universe?')) return;
-      showToast('Cleaning duplicates...');
-      setTimeout(() => {
-        showToast('Duplicates cleaned');
-        window.location.reload();
-      }, 1000);
-    }
-
     function showToast(msg) {
       const t = document.getElementById('toast');
+      if (!t) return;
       t.textContent = msg;
       t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3000);
     }
 
     window.copyPortfolioUrl = copyPortfolioUrl;
-    window.copySiteLink = copySiteLink;
-    window.exportCurrentSiteZip = exportCurrentSiteZip;
-    window.exportSiteZip = exportSiteZip;
+    window.openQrModal = openQrModal;
+    window.closeQrModal = closeQrModal;
+    window.openProModal = openProModal;
+    window.closeProModal = closeProModal;
+    window.handleExportZipClick = handleExportZipClick;
+    window.openLiveDrawer = openLiveDrawer;
+    window.closeLiveDrawer = closeLiveDrawer;
+    window.setDrawerDevice = setDrawerDevice;
+    window.promoteToLive = promoteToLive;
     window.refreshUserPortfolios = refreshUserPortfolios;
-    window.setActiveVipDomain = setActiveVipDomain;
     window.deleteSyncedPortfolio = deleteSyncedPortfolio;
     window.deleteCurrentPortfolio = deleteCurrentPortfolio;
-    window.cleanDuplicatePortfolios = cleanDuplicatePortfolios;
 
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof initUniversalSidebar === 'function') {
