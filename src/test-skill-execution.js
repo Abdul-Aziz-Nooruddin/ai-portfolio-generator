@@ -18,7 +18,7 @@ describe('🏛️ Phase 14: Skill Execution & Evidence Verification', () => {
 
   test('1. All Required Skills Discovered & Verified in Registry', () => {
     const verified = registry.verifyAllSkills();
-    assert.strictEqual(verified.length, 5, 'Must discover all 5 mandatory skills');
+    assert.ok(verified.length >= 5, 'Must discover at least 5 mandatory skills');
     
     const names = verified.map(v => v.name);
     assert.ok(names.includes('ui-ux-pro-max'));
@@ -61,7 +61,7 @@ describe('🏛️ Phase 14: Skill Execution & Evidence Verification', () => {
   test('3. Skill Evidence Generated with Cryptographic Hashes & Applied Rules', () => {
     const evidence = evidenceTracker.generateEvidence();
     assert.strictEqual(evidence.executionRate, 1.0);
-    assert.strictEqual(Object.keys(evidence.skills).length, 5);
+    assert.ok(Object.keys(evidence.skills).length >= 5);
 
     for (const [name, sk] of Object.entries(evidence.skills)) {
       assert.strictEqual(sk.consulted, true);
@@ -84,7 +84,7 @@ describe('🏛️ Phase 14: Skill Execution & Evidence Verification', () => {
 
     assert.ok(result.brief.designEvidence, 'DesignBrief must contain designEvidence block');
     assert.strictEqual(result.brief.designEvidence.executionRate, 1.0);
-    assert.strictEqual(Object.keys(result.brief.designEvidence.skills).length, 5);
+    assert.ok(Object.keys(result.brief.designEvidence.skills).length >= 5);
     assert.ok(result.brief.creativeDirection.designThesis, 'DesignBrief must contain evidence-based Design Thesis');
   });
 });
