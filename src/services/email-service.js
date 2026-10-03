@@ -12,14 +12,20 @@ class EmailService {
     this.fromEmail = process.env.FROM_EMAIL || 'MyFolio <aziz@myfolio.tech>';
     
     // Support either full SMTP settings or direct Gmail / Google Workspace credentials
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
+    const smtpHost = process.env.SMTP_HOST || process.env.SMTP_SERVER;
+    const smtpUser = process.env.SMTP_USER || process.env.SMTP_USERNAME;
+    const smtpPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
+    const smtpPort = parseInt(process.env.SMTP_PORT || '465', 10);
+    const smtpSecure = process.env.SMTP_SECURE === 'true' || smtpPort === 465;
+
+    if (smtpHost && smtpUser && smtpPass) {
       this.transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: parseInt(process.env.SMTP_PORT || '587', 10),
-        secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
+        host: smtpHost,
+        port: smtpPort,
+        secure: smtpSecure,
         auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS
+          user: smtpUser,
+          pass: smtpPass
         }
       });
       this.isConfigured = true;
