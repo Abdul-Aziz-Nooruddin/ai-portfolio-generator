@@ -151,15 +151,7 @@ function renderExpiredPreviewPage() {
       <a href="/subscribe" class="btn-secondary">💎 Unlock Permanent Live Hosting (₹149 one-time)</a>
     </div>
 
-    <!-- Sponsored Tech Network (Adsterra Native Banner) -->
-    <div style="max-width:580px; width:100%; margin-top:16px; text-align:center;">
-      <script async="async" data-cfasync="false" src="https://pl31641041.profitableratecpmnetwork.com/d9f487de29cd049aad3613bb7eee1e66/invoke.js"></script>
-      <div id="container-d9f487de29cd049aad3613bb7eee1e66"></div>
-    </div>
-  </div>
 
-  <!-- Adsterra Social Bar -->
-  <!-- ADSTERRA-SOCIAL-BAR-PAUSED (re-enable after AdSense approval): <script src="https://pl31641042.profitableratecpmnetwork.com/a8/d8/14/a8d8145fb37ce3119ad7939df526b93b.js"></script> -->
 </body>
 </html>`;
 }
