@@ -148,7 +148,7 @@ class HostingProvider {
         const downloadPromise = this.supabase.storage
           .from('portfolios')
           .download(`${siteId}/index.html`);
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null, error: 'timeout' }), 600));
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null, error: 'timeout' }), 3000));
         const { data, error } = await Promise.race([downloadPromise, timeoutPromise]);
         if (data && !error && typeof data.text === 'function') {
           const html = await data.text();

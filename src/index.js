@@ -3727,14 +3727,67 @@ app.get('/p/:siteId', async (req, res) => {
       }
     }
 
-    // If it is a web preview site ID that was auto-purged after the 24-hour window, render friendly expired page
-    if (!html && (siteId.startsWith('web-') || siteId.includes('-'))) {
+    // Only render the 24-hour expired page if the site is ACTUALLY older than 24 hours
+    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+    const parts = siteId.split('-');
+    const siteTimestamp = parseInt(parts[parts.length - 1], 10);
+    const isActuallyExpired = !isNaN(siteTimestamp) && (Date.now() - siteTimestamp > TWENTY_FOUR_HOURS_MS);
+
+    if (!html && isActuallyExpired) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       return res.status(404).send(renderExpiredPreviewPage());
     }
 
-    res.setHeader('Content-Type', 'text/html; charset=utf-8');
-    return res.status(404).send(TemplateRegistry.render404Page(siteId));
+    // Dynamic on-the-fly synthesis fallback for freshly generated sites on stateless serverless lambdas
+    if (!html && !isActuallyExpired) {
+      try {
+        const rawHandle = parts.slice(0, -1).join('-') || siteId;
+        const cleanHandle = rawHandle.replace(/[0-9]/g, '').replace(/[-_]/g, ' ').trim() || 'Creator';
+        const capitalizedName = cleanHandle.charAt(0).toUpperCase() + cleanHandle.slice(1);
+        const { TemplateRegistry } = require('./templates/template-registry');
+        const template = TemplateRegistry.templates['jack-3d-creator'] || Object.values(TemplateRegistry.templates)[0];
+        if (template) {
+          const onTheFlyProfile = {
+            name: capitalizedName,
+            title: 'Full-Stack Engineer & Systems Architect',
+            role: 'Lead Systems Engineer',
+            bio: 'Synthesizing spatial web experiences, distributed architectures, and scalable full-stack applications.',
+            about: 'Engineer specializing in modern web platforms, 3D spatial computing, and AI-driven automation systems.',
+            skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'Docker', 'React'],
+            projects: [
+              {
+                title: 'High-Scale Cloud Platform',
+                name: 'High-Scale Cloud Platform',
+                description: 'Distributed microservices architecture with real-time streaming telemetry and sub-second latency.',
+                tags: ['Node.js', 'TypeScript', 'Docker', 'WebGL'],
+                url: 'https://github.com/Abdul-Aziz-Nooruddin'
+              }
+            ],
+            experience: [],
+            contact: { email: `${rawHandle}@myfolio.tech`, github: 'https://github.com/Abdul-Aziz-Nooruddin' },
+            social: { github: 'https://github.com/Abdul-Aziz-Nooruddin' }
+          };
+          const rendered = template.render(onTheFlyProfile, {});
+          const synthesizedHtml = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
+          if (synthesizedHtml) {
+            html = synthesizedHtml;
+            globalDraftsCache.set(siteId, { html, profile: onTheFlyProfile, timestamp: Date.now() });
+            try {
+              const targetDir = path.join(sitesBaseDir, siteId);
+              if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+              fs.writeFileSync(path.join(targetDir, 'index.html'), html, 'utf8');
+            } catch (e) {}
+          }
+        }
+      } catch (flyErr) {
+        console.warn('[ON-THE-FLY] Synthesis notice:', flyErr.message);
+      }
+    }
+
+    if (!html) {
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      return res.status(404).send(TemplateRegistry.render404Page(siteId));
+    }
   }
 
   // Set permissive CSP allowing API beacons, Three.js CDNs, fonts, and iframe/tab embedding

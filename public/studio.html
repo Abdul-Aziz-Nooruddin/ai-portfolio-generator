@@ -2663,11 +2663,16 @@
         if (fluidBtnIcon) fluidBtnIcon.textContent = '';
         if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
 
-        // Point live canvas iframe to the preview route
+        // Point live canvas iframe directly to generated HTML for instant 0ms preview without cross-container network race
         const iframe = document.getElementById('studioLiveIframe');
         if (iframe) {
-          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (data.siteId ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/jack-3d?embed=1&preview=1&t=${Date.now()}`);
-          iframe.src = previewSrc;
+          if (data.html) {
+            iframe.removeAttribute('src');
+            iframe.srcdoc = data.html;
+          } else {
+            const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (data.siteId ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/jack-3d?embed=1&preview=1&t=${Date.now()}`);
+            iframe.src = previewSrc;
+          }
         }
 
         // Update URL bar to display draft preview status (NEVER show custom domain before user selects and pays)
