@@ -116,6 +116,20 @@ app.use(SecurityMiddleware.corsConfig());
 app.use(express.json({ limit: '50mb', verify: (req, res, buf) => { req.rawBody = buf; } }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
+// Canonical Host & WWW 301 Redirect: Enforce single canonical host (myfolio.tech)
+app.use((req, res, next) => {
+  const host = (req.hostname || req.get('host') || '').toLowerCase().split(':')[0];
+  if (host === 'www.myfolio.tech') {
+    return res.redirect(301, `https://myfolio.tech${req.originalUrl}`);
+  }
+  // Enforce HTTPS 301 redirect in production if x-forwarded-proto is http
+  const proto = req.get('x-forwarded-proto');
+  if (process.env.NODE_ENV === 'production' && proto === 'http' && host === 'myfolio.tech') {
+    return res.redirect(301, `https://myfolio.tech${req.originalUrl}`);
+  }
+  next();
+});
+
 // Clean URL Normalizer: 301 Permanent Redirect for any .html requests (e.g. /studio.html -> /studio)
 app.use((req, res, next) => {
   if (req.method === 'GET' && req.path.endsWith('.html')) {
