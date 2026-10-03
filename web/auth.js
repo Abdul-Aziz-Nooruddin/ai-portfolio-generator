@@ -240,22 +240,13 @@ if (signupForm) {
           switchView('otp');
         }
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        showAlert('Verification code sent to your email! Please check your inbox.', 'success');
         btn.disabled = false;
         btn.innerHTML = '<span>Create account</span> &rarr;';
         const otpInput = document.getElementById('otpInput');
-
-        if (data.devOtp) {
-          showAlert(`Verification code: ${data.devOtp} (entered automatically below)`, 'success');
-          if (otpInput) {
-            otpInput.value = data.devOtp;
-            setTimeout(() => otpInput.focus(), 150);
-          }
-        } else {
-          showAlert('Verification code sent to your email! Please check your inbox.', 'success');
-          if (otpInput) {
-            otpInput.value = '';
-            setTimeout(() => otpInput.focus(), 150);
-          }
+        if (otpInput) {
+          otpInput.value = '';
+          setTimeout(() => otpInput.focus(), 150);
         }
         return;
       }
@@ -377,19 +368,11 @@ if (btnResendOtp) {
         throw new Error(data.error || 'Failed to resend code');
       }
 
+      showAlert('A fresh 6-character verification code has been sent to your email. Please check your inbox.', 'success');
       const otpInput = document.getElementById('otpInput');
-      if (data.devOtp) {
-        showAlert(`Verification code: ${data.devOtp} (entered automatically below)`, 'success');
-        if (otpInput) {
-          otpInput.value = data.devOtp;
-          otpInput.focus();
-        }
-      } else {
-        showAlert('A fresh 6-character verification code has been sent to your email.', 'success');
-        if (otpInput) {
-          otpInput.value = '';
-          otpInput.focus();
-        }
+      if (otpInput) {
+        otpInput.value = '';
+        setTimeout(() => otpInput.focus(), 150);
       }
     } catch (err) {
       showAlert(err.message, 'error');

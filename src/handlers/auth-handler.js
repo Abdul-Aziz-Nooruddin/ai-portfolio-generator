@@ -179,35 +179,38 @@ class AuthHandler {
         attempts: 0
       });
 
-      // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      // Dispatch 6-digit alphanumeric OTP strictly via email (awaited for serverless runtimes)
       let emailDispatched = false;
+      let emailError = null;
       try {
         const mailRes = await this.email.sendSignupOtpEmail(email, {
           name: cleanName,
           otp
         });
         emailDispatched = Boolean(mailRes && mailRes.success);
+        if (!emailDispatched) {
+          emailError = mailRes?.error || 'Email delivery failed';
+        }
       } catch (e) {
+        emailError = e.message;
         console.warn('[SIGNUP OTP EMAIL WARN]', e.message);
       }
 
-      console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Code: ${otp} | Sent: ${emailDispatched}`);
+      console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Sent: ${emailDispatched}`);
 
-      const responsePayload = {
+      if (!emailDispatched) {
+        this.pendingSignups.delete(normalizedEmail);
+        return res.status(500).json({
+          error: `Failed to deliver verification email to ${email}. Please check your email configuration or try again.`
+        });
+      }
+
+      res.status(200).json({
         success: true,
         requireOtp: true,
         email,
-        emailDelivered: emailDispatched,
-        message: emailDispatched
-          ? 'A 6-character verification code has been sent to your email. Please enter it to complete your registration.'
-          : 'Server email credentials are being configured. Your verification code is provided below.'
-      };
-
-      if (!emailDispatched) {
-        responsePayload.devOtp = otp;
-      }
-
-      res.status(200).json(responsePayload);
+        message: 'A 6-character verification code has been sent to your email. Please check your inbox.'
+      });
     } catch (err) {
       console.error('[SIGNUP ERROR]', err);
       res.status(500).json({ error: 'Registration failed. Please try again.' });
@@ -331,33 +334,35 @@ class AuthHandler {
       pending.expiresAt = Date.now() + 10 * 60 * 1000;
       pending.attempts = 0;
 
-      // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      // Dispatch 6-digit alphanumeric OTP strictly via email (awaited for serverless runtimes)
       let emailDispatched = false;
+      let emailError = null;
       try {
         const mailRes = await this.email.sendSignupOtpEmail(pending.email, {
           name: pending.name,
           otp: newOtp
         });
         emailDispatched = Boolean(mailRes && mailRes.success);
+        if (!emailDispatched) {
+          emailError = mailRes?.error || 'Email delivery failed';
+        }
       } catch (e) {
+        emailError = e.message;
         console.warn('[RESEND SIGNUP OTP WARN]', e.message);
       }
 
-      console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Code: ${newOtp} | Sent: ${emailDispatched}`);
-
-      const resendPayload = {
-        success: true,
-        emailDelivered: emailDispatched,
-        message: emailDispatched
-          ? 'A fresh 6-character verification code has been sent to your email.'
-          : 'Server email credentials are being configured. Your verification code is provided below.'
-      };
+      console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Sent: ${emailDispatched}`);
 
       if (!emailDispatched) {
-        resendPayload.devOtp = newOtp;
+        return res.status(500).json({
+          error: `Failed to resend verification email to ${pending.email}. Please check your email configuration or try again.`
+        });
       }
 
-      res.json(resendPayload);
+      res.json({
+        success: true,
+        message: 'A fresh 6-character verification code has been sent to your email. Please check your inbox.'
+      });
     } catch (err) {
       console.error('[RESEND SIGNUP OTP ERROR]', err);
       res.status(500).json({ error: 'Failed to resend verification code.' });
