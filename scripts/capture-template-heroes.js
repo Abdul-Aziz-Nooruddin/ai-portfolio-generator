@@ -21,11 +21,8 @@ async function captureTemplateHeroes() {
   // Render endpoints for each template
   app.get('/preview/:templateId', (req, res) => {
     const templateId = req.params.templateId;
-    const template = TemplateRegistry.getTemplate(templateId);
-    if (!template) {
-      return res.status(404).send('Template not found');
-    }
-    const html = template.render({}, { isStaticPreview: true });
+    const result = TemplateRegistry.render(templateId, {}, { isStaticPreview: true });
+    const html = typeof result === 'string' ? result : (result.html || '');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
   });
