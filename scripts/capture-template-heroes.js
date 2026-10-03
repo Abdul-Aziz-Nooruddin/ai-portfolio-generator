@@ -18,10 +18,47 @@ async function captureTemplateHeroes() {
   app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use(express.static(path.join(__dirname, '..', 'web')));
 
+  const templates = [
+    { 
+      id: 'jack-3d-creator', 
+      filename: 'jack-3d-creator-hero.webp', 
+      fallbackJpg: 'jack-3d-creator-hero.jpg',
+      profile: {
+        name: 'Jack',
+        role: 'Creative Developer & 3D Designer',
+        bio: 'Crafting spatial web experiences with WebGL, Three.js, and physics.'
+      },
+      urlQuery: ''
+    },
+    { 
+      id: 'nadia-brand', 
+      filename: 'nadia-brand-hero.webp', 
+      fallbackJpg: 'nadia-brand-hero.jpg',
+      profile: {
+        name: 'Nadia Okonjo',
+        role: 'Keynote Speaker · Executive Advisor · Author',
+        bio: 'I help large organisations make decisions faster without making them worse.'
+      },
+      urlQuery: ''
+    },
+    { 
+      id: 'kage-temple', 
+      filename: 'kage-temple-hero.webp', 
+      fallbackJpg: 'kage-temple-hero.jpg',
+      profile: {
+        name: 'Kage Kyoto',
+        role: 'Master Craftsman & Systems Technologist',
+        bio: 'Kyoto mountain sanctuary with live Shinto Sanmon, vermilion blood moon, and zen koi.'
+      },
+      urlQuery: '?shot=0'
+    }
+  ];
+
   // Render endpoints for each template
   app.get('/preview/:templateId', (req, res) => {
     const templateId = req.params.templateId;
-    const result = TemplateRegistry.render(templateId, {}, { isStaticPreview: true });
+    const config = templates.find(t => t.id === templateId) || {};
+    const result = TemplateRegistry.render(templateId, config.profile || {}, { isStaticPreview: true });
     const html = typeof result === 'string' ? result : (result.html || '');
     res.setHeader('Content-Type', 'text/html; charset=utf-8');
     res.send(html);
@@ -33,22 +70,17 @@ async function captureTemplateHeroes() {
 
   const browser = await puppeteer.launch({
     executablePath: chromePath,
-    headless: 'new',
+    headless: false, // Run with window context to ensure macOS Metal GPU WebGL acceleration
     args: [
       '--no-sandbox',
       '--disable-setuid-sandbox',
       '--window-size=1600,900',
       '--enable-webgl',
-      '--use-gl=swiftshader',
+      '--ignore-gpu-blocklist',
+      '--enable-gpu-rasterization',
       '--allow-file-access-from-files'
     ]
   });
-
-  const templates = [
-    { id: 'jack-3d-creator', filename: 'jack-3d-creator-hero.webp', fallbackJpg: 'jack-3d-creator-hero.jpg' },
-    { id: 'nadia-brand', filename: 'nadia-brand-hero.webp', fallbackJpg: 'nadia-brand-hero.jpg' },
-    { id: 'kage-temple', filename: 'kage-temple-hero.webp', fallbackJpg: 'kage-temple-hero.jpg' }
-  ];
 
   const targetDirs = [
     path.join(__dirname, '..', 'public', 'assets', 'templates'),
@@ -64,11 +96,28 @@ async function captureTemplateHeroes() {
     const page = await browser.newPage();
     await page.setViewport({ width: 1600, height: 900, deviceScaleFactor: 2 });
 
-    const url = `http://localhost:${PORT}/preview/${t.id}`;
-    await page.goto(url, { waitUntil: 'networkidle2', timeout: 30000 });
+    const url = `http://localhost:${PORT}/preview/${t.id}${t.urlQuery || ''}`;
+    await page.goto(url, { waitUntil: 'networkidle2', timeout: 35000 });
 
-    // Wait for fonts, images, WebGL canvases, and initial animations to mount
-    await new Promise((r) => setTimeout(r, 2500));
+    // Wait for fonts to be loaded
+    await page.evaluateHandle('document.fonts.ready').catch(() => {});
+
+    // Wait for all images in the page to complete loading
+    await page.waitForFunction(() => {
+      const imgs = Array.from(document.images);
+      return imgs.every(img => img.complete);
+    }, { timeout: 15000 }).catch(() => {});
+
+    // For Kage, wait for WebGL procedural engine to finish boot and paint multiple frames
+    if (t.id === 'kage-temple') {
+      console.log('Waiting for Kage WebGL engine to finish procedural generation & paint frames...');
+      await page.waitForFunction(() => window.__kage && window.__kage.renderer, { timeout: 30000 }).catch(() => {});
+      await new Promise((r) => setTimeout(r, 6500));
+    } else if (t.id === 'jack-3d-creator') {
+      await new Promise((r) => setTimeout(r, 4500));
+    } else {
+      await new Promise((r) => setTimeout(r, 4000));
+    }
 
     // Capture the top hero viewport
     for (const dir of targetDirs) {
