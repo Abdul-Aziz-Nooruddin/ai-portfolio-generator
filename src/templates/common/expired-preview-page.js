@@ -159,7 +159,7 @@ function renderExpiredPreviewPage() {
   </div>
 
   <!-- Adsterra Social Bar -->
-  <script src="https://pl31641042.profitableratecpmnetwork.com/a8/d8/14/a8d8145fb37ce3119ad7939df526b93b.js"></script>
+  <!-- ADSTERRA-SOCIAL-BAR-PAUSED (re-enable after AdSense approval): <script src="https://pl31641042.profitableratecpmnetwork.com/a8/d8/14/a8d8145fb37ce3119ad7939df526b93b.js"></script> -->
 </body>
 </html>`;
 }
