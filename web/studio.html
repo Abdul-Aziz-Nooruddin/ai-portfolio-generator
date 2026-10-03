@@ -28,6 +28,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
@@ -1028,10 +1029,18 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 24px;
       padding: 32px;
-      max-width: 500px;
+      max-width: 720px;
       width: 100%;
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.85), 0 0 40px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1);
       position: relative;
+    }
+    .launch-plan-card {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .launch-plan-card:hover {
+      border-color: rgba(56, 189, 248, 0.5) !important;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
     }
     .upm-badge {
       display: inline-flex;
@@ -1902,35 +1911,95 @@
       </div>
     </div>
 
-    <!-- Username Picker Modal (₹149/month Pro Plan) -->
+    <!-- Launch & Domain Modal: Starter (₹149 one-time Netlify) vs Pro (₹149/mo myfolio.tech) -->
     <div id="usernamePickerModal" onclick="if(event.target===this) closeUsernamePicker()">
       <div class="upm-card">
-        <div class="upm-badge">✦ Pro Plan · ₹149/month</div>
-        <div class="upm-title">Claim Your Custom Domain</div>
-        <p class="upm-sub">Choose your unique handle. Your portfolio will be permanently live at <strong style="color:#6EA8FF;">yourname.myfolio.tech</strong></p>
-
-        <div class="upm-domain-row">
-          <span class="upm-domain-prefix">https://</span>
-          <input type="text" id="upmUsernameInput" placeholder="yourname" maxlength="30"
-            oninput="onUpmInput()"
-            onkeydown="if(event.key==='Enter') checkUsernameAvailability()"
-          />
-          <span class="upm-domain-suffix">.myfolio.tech</span>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <div class="upm-badge" style="margin-bottom:0;">✦ Publish &amp; Remove Watermark</div>
+          <button type="button" onclick="closeUsernamePicker()" style="background:transparent; border:none; color:#9ca3af; font-size:22px; cursor:pointer; padding:2px 8px; border-radius:6px; line-height:1;">&times;</button>
         </div>
-        <button type="button" class="upm-check-btn" onclick="checkUsernameAvailability()">
-          Check Availability →
-        </button>
-        <div id="upmStatus" class="upm-status"></div>
+        
+        <div class="upm-title">Choose Your Launch Plan</div>
+        <p class="upm-sub">Select how you want to deploy your 3D digital world. Watermarks are permanently stripped upon launch.</p>
 
-        <div class="upm-actions">
-          <button type="button" id="upmConfirmBtn" onclick="confirmUsernameAndPublish()">
-            Lock Username &amp; Publish Live
-          </button>
-          <button type="button" id="upmSkipBtn" onclick="skipUsernameAndPublish()">
-            Skip for now
+        <!-- Dual Plan Grid -->
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px; margin-bottom:18px;">
+          
+          <!-- Plan A: Lifetime Starter (₹149 One-Time) -->
+          <div class="launch-plan-card" style="background:rgba(15,23,42,0.65); border:1px solid rgba(255,255,255,0.1); border-radius:18px; padding:20px; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:10.5px; font-weight:800; letter-spacing:1px; color:#38BDF8; background:rgba(56,189,248,0.12); padding:3px 8px; border-radius:100px; text-transform:uppercase;">One-Time Pay</span>
+                <span style="font-size:18px; font-weight:900; color:#fff;">₹149</span>
+              </div>
+              <h3 style="font-size:16px; font-weight:800; color:#fff; margin:0 0 6px 0;">Lifetime Starter</h3>
+              <p style="font-size:12px; color:#94a3b8; line-height:1.45; margin-bottom:12px;">
+                Permanent deployment on <strong>Netlify Edge CDN</strong>. Pay once, live forever.
+              </p>
+              <div style="background:rgba(0,0,0,0.3); border:1px dashed rgba(56,189,248,0.35); border-radius:10px; padding:8px 10px; margin-bottom:12px; font-family:var(--mf-font-mono, monospace); font-size:11.5px; color:#38bdf8;">
+                ⚡ https://<span id="starterNetlifyPreview">yourname</span>.netlify.app
+              </div>
+              <ul style="list-style:none; padding:0; margin:0 0 16px 0; font-size:12px; color:#cbd5e1; display:flex; flex-direction:column; gap:6px;">
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> 100% Watermark-Free</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> Netlify Edge Domain (Permanent)</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> Full Source Code ZIP Export</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> 1 Production Portfolio Build</li>
+              </ul>
+            </div>
+            <button type="button" class="btn-launch-starter" id="btnLaunchStarter" onclick="startStudioPayment('starter')" style="width:100%; padding:12px; background:linear-gradient(135deg, #0284c7, #0369a1); border:none; border-radius:12px; color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:all 0.2s; box-shadow:0 4px 14px rgba(2,132,199,0.3);">
+              Pay ₹149 &amp; Launch on Netlify ➔
+            </button>
+          </div>
+
+          <!-- Plan B: Pro Creator (₹149 / month) -->
+          <div class="launch-plan-card featured" style="background:rgba(22,25,33,0.88); border:1px solid rgba(56,189,248,0.4); border-radius:18px; padding:20px; display:flex; flex-direction:column; justify-content:space-between; position:relative; box-shadow:0 0 25px rgba(56,189,248,0.12);">
+            <div style="position:absolute; top:-10px; right:18px; background:linear-gradient(135deg, #10b981, #059669); color:#fff; font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:100px; text-transform:uppercase; letter-spacing:0.8px;">
+              Branded Domain
+            </div>
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <span style="font-size:10.5px; font-weight:800; letter-spacing:1px; color:#FCD34D; background:rgba(245,158,11,0.15); padding:3px 8px; border-radius:100px; text-transform:uppercase;">Monthly Pro</span>
+                <span style="font-size:18px; font-weight:900; color:#fff;">₹149<span style="font-size:11px; font-weight:500; color:#94a3b8;">/mo</span></span>
+              </div>
+              <h3 style="font-size:16px; font-weight:800; color:#fff; margin:0 0 6px 0;">Pro Custom Domain</h3>
+              <p style="font-size:12px; color:#94a3b8; line-height:1.45; margin-bottom:12px;">
+                Your custom address at <strong>yourname.myfolio.tech</strong>.
+              </p>
+
+              <!-- Domain input with availability check -->
+              <div class="upm-domain-row" style="margin-bottom:8px;">
+                <span class="upm-domain-prefix">https://</span>
+                <input type="text" id="upmUsernameInput" placeholder="yourname" maxlength="30"
+                  oninput="onUpmInput()"
+                  onkeydown="if(event.key==='Enter') checkUsernameAvailability()"
+                />
+                <span class="upm-domain-suffix">.myfolio.tech</span>
+              </div>
+              <button type="button" class="upm-check-btn" onclick="checkUsernameAvailability()" style="padding:7px; font-size:11.5px; margin-bottom:6px;">
+                Check Availability →
+              </button>
+              <div id="upmStatus" class="upm-status" style="margin-bottom:10px; padding:6px 10px; font-size:11.5px;"></div>
+
+              <ul style="list-style:none; padding:0; margin:0 0 16px 0; font-size:12px; color:#cbd5e1; display:flex; flex-direction:column; gap:6px;">
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> <strong>yourname.myfolio.tech</strong> Subdomain</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> 100% Watermark-Free</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> Unlimited Updates &amp; GitHub Sync</li>
+                <li style="display:flex; align-items:center; gap:6px;"><span style="color:#10b981;">✓</span> Priority 3D Canvas Edge CDN</li>
+              </ul>
+            </div>
+            <button type="button" id="upmConfirmBtn" onclick="startStudioPayment('pro')" style="width:100%; padding:12px; background:linear-gradient(135deg, #10B981, #059669); border:none; border-radius:12px; color:#fff; font-size:13px; font-weight:800; cursor:pointer; transition:all 0.2s;">
+              Claim Domain &amp; Pay ₹149/mo ➔
+            </button>
+          </div>
+
+        </div>
+
+        <!-- VIP Founder Instant Free Launch -->
+        <div id="vipFounderPublishSection" style="display:none; text-align:center; padding-top:12px; border-top:1px solid rgba(255,255,255,0.08);">
+          <button type="button" onclick="publishVipFounderDirect()" style="background:rgba(234,179,8,0.15); border:1px solid rgba(234,179,8,0.4); color:#facc15; padding:8px 16px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">
+            ✦ Founder VIP: Instant Publish to abdulaziz.myfolio.tech (Free)
           </button>
         </div>
-        <p class="upm-note">You can always claim your custom domain later from Profile → Settings.<br>Your portfolio will publish to a temporary URL if you skip.</p>
       </div>
     </div>
 
@@ -2600,11 +2669,37 @@
           iframe.src = previewSrc;
         }
 
-        // Update URL bar to display draft preview status
+        // Store draft site ID and raw HTML backup
+        currentDraftSiteId = data.siteId;
+        window.__lastDraftHtml = data.html || null;
+        isPortfolioPublished = false;
+        recordBuildUsage();
+
+        // Reset progress bar & transition to "Publish Live" state
+        clearInterval(progressInterval);
+        if (fluidLevel) fluidLevel.style.height = '100%';
+        if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
+        btn.classList.remove('fully-filled');
+        btn.classList.add('ready-to-publish');
+        if (fluidBtnIcon) fluidBtnIcon.textContent = '';
+        if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
+
+        // Point live canvas iframe to the preview route
+        const iframe = document.getElementById('studioLiveIframe');
+        if (iframe) {
+          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (data.siteId ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/jack-3d?embed=1&preview=1&t=${Date.now()}`);
+          iframe.src = previewSrc;
+        }
+
+        // Update URL bar to display draft preview status (NEVER show custom domain before user selects and pays)
         const urlDisplay = document.getElementById('generatedUrlText');
         if (urlDisplay) {
-          const displayUrl = data.liveUrl || (data.previewUrl ? `${window.location.origin}${data.previewUrl}` : `${window.location.origin}/p/${data.siteId}`);
+          const displayUrl = data.previewUrl ? `${window.location.origin}${data.previewUrl}` : `${window.location.origin}/p/${data.siteId}`;
           urlDisplay.innerHTML = `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid rgba(234,179,8,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">DRAFT PREVIEW</span> ${displayUrl}`;
+        }
+        const openLiveBtn = document.getElementById('btnOpenGeneratedLive');
+        if (openLiveBtn) {
+          openLiveBtn.href = data.previewUrl ? data.previewUrl : `/p/${data.siteId}`;
         }
 
         // Show draft banner in the editor pane
@@ -2623,7 +2718,7 @@
         if (sEdit) { sEdit.classList.add('active'); }
         if (sPub) { sPub.classList.remove('completed'); sPub.classList.add('ready-to-publish'); }
 
-        showToast('✦ Draft preview generated! Review on canvas, then click "Publish Live" to publish.', 'sparkle');
+        showToast('✦ Draft preview generated! Review on canvas, then click "Publish Live" to choose your plan and launch.', 'sparkle');
 
         // Transition to advanced editor view so user can review and tweak
         switchStudioMode('edit');
@@ -2639,18 +2734,37 @@
       }
     }
 
-    // ── Username Picker State ────────────────────────────────────────
+    // ── Username Picker & Launch State ───────────────────────────────
     let _upmConfirmedUsername = null;
     let _upmResolve = null;
 
     function openUsernamePicker() {
       _upmConfirmedUsername = null;
+      const ghUser = document.getElementById('ghUsername')?.value.trim() || '';
+      const fullName = document.getElementById('manualFullName')?.value.trim() || '';
+      const candidate = (ghUser || fullName.toLowerCase().replace(/[^a-z0-9]/g, '') || 'creator').slice(0, 24);
+
+      const netlifyPreview = document.getElementById('starterNetlifyPreview');
+      if (netlifyPreview) netlifyPreview.textContent = candidate;
+
       const inp = document.getElementById('upmUsernameInput');
       const status = document.getElementById('upmStatus');
       const confirm = document.getElementById('upmConfirmBtn');
-      if (inp) inp.value = '';
+      if (inp) {
+        inp.value = candidate;
+        checkUsernameAvailability();
+      }
       if (status) { status.className = 'upm-status'; status.textContent = ''; }
-      if (confirm) confirm.classList.remove('unlocked');
+
+      // Check VIP founder bypass
+      fetch('/api/user/profile', { credentials: 'include' })
+        .then(r => r.ok ? r.json() : {})
+        .then(p => {
+          const isFounder = p?.email === 'abdulaziznoor9876@gmail.com' || p?.role === 'admin';
+          const founderSec = document.getElementById('vipFounderPublishSection');
+          if (founderSec) founderSec.style.display = isFounder ? 'block' : 'none';
+        }).catch(() => {});
+
       document.getElementById('usernamePickerModal').classList.add('show');
       setTimeout(() => inp && inp.focus(), 100);
       return new Promise(resolve => { _upmResolve = resolve; });
@@ -2680,7 +2794,6 @@
         return;
       }
       if (status) { status.className = 'upm-status checking'; status.textContent = '⏳ Checking availability...'; }
-      if (confirm) confirm.classList.remove('unlocked');
       _upmConfirmedUsername = null;
 
       try {
@@ -2692,24 +2805,176 @@
           if (confirm) confirm.classList.add('unlocked');
         } else {
           _upmConfirmedUsername = null;
-          if (status) { status.className = 'upm-status taken'; status.textContent = d.error || `✗ "${rawVal}" is not available.`; }
+          if (status) { status.className = 'upm-status taken'; status.textContent = d.error || `✗ "${rawVal}" is taken.`; }
           if (confirm) confirm.classList.remove('unlocked');
         }
       } catch (err) {
-        if (status) { status.className = 'upm-status taken'; status.textContent = '✗ Could not check availability. Try again.'; }
+        if (status) { status.className = 'upm-status taken'; status.textContent = '✗ Check unavailable. Try again.'; }
       }
     }
 
-    function confirmUsernameAndPublish() {
-      if (!_upmConfirmedUsername) return;
-      closeUsernamePicker({ username: _upmConfirmedUsername, skip: false });
+    // ── Payment & Launch Handler (Starter ₹149 Netlify vs Pro ₹149/mo) ─
+    async function startStudioPayment(plan) {
+      if (!currentDraftSiteId) {
+        showToast('Please generate a portfolio preview first.', 'info');
+        closeUsernamePicker();
+        const form = document.getElementById('portfolioGenerationForm');
+        if (form) form.requestSubmit();
+        return;
+      }
+
+      let customUsername = null;
+      if (plan === 'pro') {
+        const inp = document.getElementById('upmUsernameInput');
+        const rawVal = (inp?.value || '').trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
+        if (!rawVal || rawVal.length < 3) {
+          showToast('Please enter an available username (minimum 3 characters).', 'warning');
+          inp?.focus();
+          return;
+        }
+        if (!_upmConfirmedUsername || _upmConfirmedUsername !== rawVal) {
+          await checkUsernameAvailability();
+          if (!_upmConfirmedUsername) {
+            showToast('Please choose an available username first.', 'warning');
+            return;
+          }
+        }
+        customUsername = _upmConfirmedUsername;
+      }
+
+      const targetBtn = plan === 'pro' ? document.getElementById('upmConfirmBtn') : document.getElementById('btnLaunchStarter');
+      const originalText = targetBtn ? targetBtn.textContent : '';
+      if (targetBtn) {
+        targetBtn.disabled = true;
+        targetBtn.textContent = 'Initializing Checkout...';
+      }
+
+      try {
+        const orderRes = await fetch('/api/web/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ siteId: currentDraftSiteId, plan })
+        });
+        const orderData = await orderRes.json();
+        if (!orderRes.ok) throw new Error(orderData.error || 'Failed to create payment order');
+
+        if (orderData.isCustomCheckout && window.Razorpay) {
+          const options = {
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: orderData.currency || 'INR',
+            name: 'MyFolio Studio',
+            description: plan === 'pro' ? `Pro Plan (${customUsername}.myfolio.tech)` : 'Lifetime Starter (Netlify Hosting)',
+            order_id: orderData.orderId,
+            handler: async function (paymentResponse) {
+              showToast('Payment confirmed! Removing watermark and launching...', 'info');
+              try {
+                const verifyRes = await fetch('/api/web/verify-payment', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    siteId: currentDraftSiteId,
+                    plan: plan,
+                    username: customUsername,
+                    siteHtml: window.__lastDraftHtml
+                  })
+                });
+                const verifyData = await verifyRes.json();
+                if (!verifyRes.ok) throw new Error(verifyData.error || 'Verification failed');
+                onPaymentPublishSuccess(verifyData);
+              } catch (vErr) {
+                showToast('Verification error: ' + vErr.message, 'error');
+              }
+            },
+            prefill: {
+              email: document.getElementById('editorEmail')?.value || '',
+              name: document.getElementById('manualFullName')?.value || ''
+            },
+            theme: { color: plan === 'pro' ? '#10b981' : '#0284c7' }
+          };
+          const rzp = new Razorpay(options);
+          rzp.on('payment.failed', function (resp) {
+            showToast('Payment incomplete or dismissed. Please try again.', 'error');
+          });
+          rzp.open();
+        } else if (orderData.paymentUrl) {
+          window.open(orderData.paymentUrl, '_blank');
+          showToast('Checkout opened in new window. Portfolio will launch once completed.', 'info');
+        } else {
+          throw new Error('Payment gateway temporarily unreachable.');
+        }
+      } catch (err) {
+        showToast('Checkout note: ' + err.message, 'error');
+      } finally {
+        if (targetBtn) {
+          targetBtn.disabled = false;
+          targetBtn.textContent = originalText;
+        }
+      }
     }
 
-    function skipUsernameAndPublish() {
-      closeUsernamePicker({ username: null, skip: true });
+    function onPaymentPublishSuccess(data) {
+      closeUsernamePicker();
+      isPortfolioPublished = true;
+      const liveUrl = data.liveUrl || (window.location.origin + `/p/${currentDraftSiteId}`);
+      const isNetlify = data.provider === 'netlify' || (liveUrl && liveUrl.includes('netlify.app'));
+
+      // Update iframe to clean unwatermarked site
+      const iframe = document.getElementById('studioLiveIframe');
+      if (iframe) iframe.src = `${liveUrl}?t=${Date.now()}`;
+
+      // Update top URL display bar
+      const urlDisplay = document.getElementById('generatedUrlText');
+      if (urlDisplay) {
+        const badgeText = isNetlify ? '● LIVE (NETLIFY)' : '● LIVE';
+        urlDisplay.innerHTML = `<span style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">${badgeText}</span> ${liveUrl}`;
+      }
+
+      // Update navbar Preview button to point to the live site
+      const openLiveBtn = document.getElementById('btnOpenGeneratedLive');
+      if (openLiveBtn) openLiveBtn.href = liveUrl;
+
+      // Update Generate/Publish live button
+      const btn = document.getElementById('btnSubmitGenerate');
+      const fluidBtnText = document.getElementById('fluidBtnText');
+      const fluidBtnIcon = document.getElementById('fluidBtnIcon');
+      if (btn) { btn.classList.remove('ready-to-publish'); btn.classList.add('fully-filled'); }
+      if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
+      if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
+
+      const sPub = document.getElementById('stepIndicatorPublish');
+      if (sPub) { sPub.classList.remove('ready-to-publish'); sPub.classList.add('completed'); }
+
+      // Update draft banner in editor
+      const draftBanner = document.getElementById('draftPublishBanner');
+      if (draftBanner) {
+        draftBanner.innerHTML = `
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="font-size:12px; font-weight:700; color:#10b981;">✓ PORTFOLIO LIVE &amp; UNWATERMARKED</span>
+            <a href="${liveUrl}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#38bdf8; font-weight:700; text-decoration:none;">View Live &nearr;</a>
+          </div>
+          <p style="font-size:11.5px; color:var(--mf-text-muted); margin-top:4px; margin-bottom:0;">
+            Live at <strong>${liveUrl}</strong>. ${isNetlify ? 'Hosted on high-speed Netlify Edge CDN.' : 'Connected to your custom branded domain.'}
+          </p>
+        `;
+      }
+
+      if (typeof confetti === 'function') confetti({ particleCount: 140, spread: 90 });
+      showSynthesisModal(liveUrl);
+      showToast('✦ Portfolio successfully published live to ' + liveUrl + '!', 'success');
     }
 
-    // ── Core Execute Publish ─────────────────────────────────────────
+    async function publishVipFounderDirect() {
+      closeUsernamePicker();
+      await _executePublish('abdulaziz');
+    }
+
+    // ── Core Execute Publish (Direct Publish for Subscribers & Founder) ─
     async function _executePublish(chosenUsername) {
       const btn = document.getElementById('btnSubmitGenerate');
       const fluidBtnText = document.getElementById('fluidBtnText');
@@ -2720,7 +2985,11 @@
         if (fluidBtnIcon) fluidBtnIcon.textContent = '···';
         showToast('Publishing live...', 'info');
 
-        const payload = { siteId: currentDraftSiteId, handle: currentDraftSiteId || 'portfolio' };
+        const payload = {
+          siteId: currentDraftSiteId,
+          handle: currentDraftSiteId || 'portfolio',
+          siteHtml: window.__lastDraftHtml || (document.getElementById('studioLiveIframe')?.contentDocument?.documentElement?.outerHTML || null)
+        };
         if (chosenUsername) payload.customUsername = chosenUsername;
 
         const res = await fetch('/api/portfolio/publish', {
@@ -2732,37 +3001,7 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to publish live.');
 
-        isPortfolioPublished = true;
-        const liveSubdomain = data.liveUrl || (window.location.origin + (data.previewUrl || '/jack-3d'));
-
-        const sPub = document.getElementById('stepIndicatorPublish');
-        if (sPub) { sPub.classList.remove('ready-to-publish'); sPub.classList.add('completed'); }
-        if (btn) { btn.classList.remove('ready-to-publish'); btn.classList.add('fully-filled'); }
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '✦';
-        if (fluidBtnText) fluidBtnText.textContent = 'Live & Deployed';
-
-        const urlDisplay = document.getElementById('generatedUrlText');
-        if (urlDisplay) {
-          urlDisplay.innerHTML = `<span style="background:rgba(16,185,129,0.2); color:#10b981; border:1px solid rgba(16,185,129,0.4); padding:2px 7px; border-radius:4px; font-size:10px; font-weight:700; margin-right:6px;">● LIVE</span> ${liveSubdomain}`;
-        }
-        const openLiveBtn = document.getElementById('btnOpenGeneratedLive');
-        if (openLiveBtn) openLiveBtn.href = liveSubdomain;
-
-        const draftBanner = document.getElementById('draftPublishBanner');
-        if (draftBanner) {
-          draftBanner.innerHTML = `
-            <div style="display:flex; align-items:center; justify-content:space-between;">
-              <span style="font-size:12px; font-weight:700; color:#10b981;">✓ PORTFOLIO PUBLISHED LIVE</span>
-              <a href="${liveSubdomain}" target="_blank" rel="noopener noreferrer" style="font-size:11px; color:#38bdf8; font-weight:700; text-decoration:none;">View Live &nearr;</a>
-            </div>
-            <p style="font-size:11.5px; color:var(--mf-text-muted); margin-top:4px; margin-bottom:0;">
-              Your 3D world is live at <strong>${liveSubdomain}</strong>. Any new changes will be saved as draft until you publish again.
-            </p>
-          `;
-        }
-        if (typeof confetti === 'function') confetti({ particleCount: 130, spread: 85 });
-        showSynthesisModal(liveSubdomain);
-        showToast('✦ Successfully published live to ' + liveSubdomain + '!', 'success');
+        onPaymentPublishSuccess(data);
       } catch (err) {
         if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
         if (fluidBtnIcon) fluidBtnIcon.textContent = '';
@@ -2780,25 +3019,34 @@
         return;
       }
 
-      // Show username picker for Pro plan users without a custom domain
-      let chosenUsername = null;
+      // Check if user is VIP founder or already an active subscriber
       try {
         const profileRes = await fetch('/api/user/profile', { credentials: 'include' });
         if (profileRes.ok) {
           const profile = await profileRes.json();
-          const isPro = profile?.plan === 'pro' || profile?.plan === 'all_access' ||
-                        profile?.subscription_status === 'active' ||
-                        profile?.allowance?.plan === 'pro';
-          const hasCustomDomain = !!profile?.customDomain;
-          if (isPro && !hasCustomDomain) {
-            const result = await openUsernamePicker();
-            chosenUsername = result?.username || null;
+          const isVipFounder = profile?.email === 'abdulaziznoor9876@gmail.com' || profile?.id === 'abdulaziz_founder';
+          if (isVipFounder) {
+            await _executePublish('abdulaziz');
+            return;
+          }
+          const isPaidActive = profile?.subscription_status === 'active' || profile?.plan === 'all_access';
+          if (isPaidActive && profile?.customDomain) {
+            await _executePublish(profile.customDomain.replace('.myfolio.tech', ''));
+            return;
           }
         }
-      } catch (e) { /* proceed without picker on error */ }
+      } catch (e) {}
 
-      await _executePublish(chosenUsername);
+      // For all non-paid users, open the Launch & Domain modal to choose Starter (Netlify) vs Pro (myfolio.tech)
+      openUsernamePicker();
     }
+
+    // Message listener: when preview iframe floating bar "Buy Build & Remove Watermark" is clicked
+    window.addEventListener('message', (event) => {
+      if (event.data?.type === 'OPEN_PUBLISH_MODAL') {
+        publishDraftPortfolio();
+      }
+    });
 
     function handleTopPublishClick() {
       if (currentDraftSiteId && !isPortfolioPublished) {

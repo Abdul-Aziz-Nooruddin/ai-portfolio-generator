@@ -7,7 +7,7 @@ class NetlifyDeployer {
   constructor(netlifyToken, supabaseUrl, supabaseKey) {
     this.token = netlifyToken;
     this.baseUrl = 'https://api.netlify.com/api/v1';
-    this.supabase = createClient(supabaseUrl, supabaseKey);
+    this.supabase = (supabaseUrl && supabaseKey) ? createClient(supabaseUrl, supabaseKey) : null;
   }
 
   cleanSlug(text) {

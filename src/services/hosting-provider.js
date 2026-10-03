@@ -11,9 +11,9 @@ const { NetlifyDeployer } = require('./netlify-deployer');
 class HostingProvider {
   constructor(netlifyToken = null, supabaseUrl = null, supabaseKey = null) {
     this.hostUrl = process.env.HOST_URL || 'http://localhost:5050';
-    this.useNetlify = process.env.USE_NETLIFY === 'true' && !!netlifyToken;
+    this.useNetlify = (process.env.USE_NETLIFY === 'true' || !!netlifyToken) && process.env.USE_NETLIFY !== 'false';
     
-    if (this.useNetlify) {
+    if (this.useNetlify && netlifyToken) {
       this.netlifyDeployer = new NetlifyDeployer(netlifyToken, supabaseUrl, supabaseKey);
     } else {
       this.netlifyDeployer = null;
@@ -240,29 +240,48 @@ class HostingProvider {
   /**
    * Approves paid portfolio and strips preview watermark overlay & bottom banner
    */
-  async approveAndUnwatermark(siteId, userData = {}) {
+  async approveAndUnwatermark(siteId, userData = {}, fallbackHtml = '') {
     const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
     const indexPath = path.join(siteDir, 'index.html');
+    let html = '';
     
     if (fs.existsSync(indexPath)) {
-      let html = fs.readFileSync(indexPath, 'utf8');
-      
+      html = fs.readFileSync(indexPath, 'utf8');
+    } else {
+      html = (await this.getSiteHtml(siteId)) || fallbackHtml || (global.__MYFOLIO_DRAFTS_CACHE && global.__MYFOLIO_DRAFTS_CACHE.get(siteId)?.html) || '';
+      if (html) {
+        try {
+          fs.mkdirSync(siteDir, { recursive: true });
+          fs.writeFileSync(indexPath, html, 'utf8');
+        } catch (e) {}
+      }
+    }
+
+    if (html) {
       // Strip watermark overlay and floating bar
       html = html.replace(/<!--[\s\S]*?WATERMARK OVERLAY[\s\S]*?-->[\s\S]*?<\/script>/gi, '');
       html = html.replace(/<div id="preview-watermark-overlay"[\s\S]*?<\/div>\s*<\/div>/gi, '');
       html = html.replace(/<div id="preview-floating-bar"[\s\S]*?<\/div>/gi, '');
       html = html.replace(/<script>[\s\S]*?updateWatermarkLuminance[\s\S]*?<\/script>/gi, '');
 
-      fs.writeFileSync(indexPath, html, 'utf8');
+      try {
+        fs.mkdirSync(siteDir, { recursive: true });
+        fs.writeFileSync(indexPath, html, 'utf8');
+      } catch (e) {}
+
+      // Keep cache updated
+      if (global.__MYFOLIO_DRAFTS_CACHE && global.__MYFOLIO_DRAFTS_CACHE.has(siteId)) {
+        global.__MYFOLIO_DRAFTS_CACHE.get(siteId).html = html;
+      }
 
       // Sync clean unwatermarked site to Supabase / Netlify for paid subscriber
       let css = '';
       let js = '';
       if (fs.existsSync(path.join(siteDir, 'style.css'))) {
-        css = fs.readFileSync(path.join(siteDir, 'style.css'), 'utf8');
+        try { css = fs.readFileSync(path.join(siteDir, 'style.css'), 'utf8'); } catch (e) {}
       }
       if (fs.existsSync(path.join(siteDir, 'script.js'))) {
-        js = fs.readFileSync(path.join(siteDir, 'script.js'), 'utf8');
+        try { js = fs.readFileSync(path.join(siteDir, 'script.js'), 'utf8'); } catch (e) {}
       }
 
       return await this.deploy(siteId, { html, css, js }, userData, true);

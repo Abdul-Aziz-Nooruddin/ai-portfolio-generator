@@ -54,6 +54,10 @@ const injectMobileCSS = (html) => html && html.includes('</body>')
   ? html.replace('</body>', `${TemplateRegistry.getMobileCSS()}\n</body>`)
   : html;
 
+// Universal In-Memory Draft Cache: ensures draft sites persist across all requests & cold-starts
+const globalDraftsCache = global.__MYFOLIO_DRAFTS_CACHE || new Map();
+global.__MYFOLIO_DRAFTS_CACHE = globalDraftsCache;
+
 const app = express();
 app.disable('x-powered-by');
 
@@ -1755,6 +1759,14 @@ app.post(
         isPublished: shouldPublishLive
       });
 
+      // Cache in-memory so preview & publish never hit 404 regardless of container isolation
+      globalDraftsCache.set(siteId, {
+        html: siteResult.html,
+        profile: normalized,
+        meta: metaPayload,
+        timestamp: Date.now()
+      });
+
       res.json({
         success: true,
         siteId,
@@ -1762,15 +1774,16 @@ app.post(
         handle: userHandle,
         previewUrl: `/p/${siteId}`,
         siteUrl: `/p/${siteId}`,
-        liveUrl: liveSubdomainUrl,
-        subdomain: isVipFounder ? customSubdomain : null,
-        customDomain: isVipFounder ? customSubdomain : null,
+        liveUrl: shouldPublishLive ? (isVipFounder ? 'https://abdulaziz.myfolio.tech' : liveSubdomainUrl) : null,
+        subdomain: shouldPublishLive ? (isVipFounder ? 'abdulaziz.myfolio.tech' : customSubdomain) : null,
+        customDomain: shouldPublishLive ? (isVipFounder ? 'abdulaziz.myfolio.tech' : customSubdomain) : null,
         isVip: isVipFounder,
         isPublished: shouldPublishLive,
         isDraft: !shouldPublishLive,
         profileData: normalized,
         vibeAudit,
-        designBlueprint: siteResult.designBlueprint
+        designBlueprint: siteResult.designBlueprint,
+        html: siteResult.html
       });
     } catch (err) {
       console.error('[API] /api/generate/unified error:', err);
@@ -1799,27 +1812,57 @@ app.post('/api/portfolio/publish', async (req, res) => {
       const tmpCandidate = path.join(require('os').tmpdir(), 'sites', siteId);
       if (fs.existsSync(tmpCandidate)) {
         draftDir = tmpCandidate;
-      } else {
-        return res.status(404).json({ error: `Draft site "${siteId}" not found.` });
       }
     }
 
-    // Read draft metadata and profile
+    // Read draft metadata, profile, and html
     let meta = {};
     let profile = {};
-    try {
-      meta = JSON.parse(fs.readFileSync(path.join(draftDir, 'meta.json'), 'utf8'));
-    } catch (e) {}
-    try {
-      profile = JSON.parse(fs.readFileSync(path.join(draftDir, 'profile.json'), 'utf8'));
-    } catch (e) {}
-
     let siteHtml = '';
-    try {
-      siteHtml = fs.readFileSync(path.join(draftDir, 'index.html'), 'utf8');
-    } catch (e) {
-      return res.status(500).json({ error: 'Draft index.html is missing.' });
+
+    if (fs.existsSync(draftDir)) {
+      try { meta = JSON.parse(fs.readFileSync(path.join(draftDir, 'meta.json'), 'utf8')); } catch (e) {}
+      try { profile = JSON.parse(fs.readFileSync(path.join(draftDir, 'profile.json'), 'utf8')); } catch (e) {}
+      try { siteHtml = fs.readFileSync(path.join(draftDir, 'index.html'), 'utf8'); } catch (e) {}
     }
+
+    // Fallback 1: Retrieve from in-memory global cache
+    if (!siteHtml && globalDraftsCache.has(siteId)) {
+      const cached = globalDraftsCache.get(siteId);
+      siteHtml = cached.html || '';
+      profile = cached.profile || profile;
+      meta = cached.meta || meta;
+    }
+
+    // Fallback 2: Retrieve from HostingProvider (Supabase storage or disk recovery)
+    if (!siteHtml) {
+      try {
+        siteHtml = await hostingProvider.getSiteHtml(siteId);
+      } catch (e) {}
+    }
+
+    // Fallback 3: Client payload direct backup
+    if (!siteHtml && req.body.siteHtml) {
+      siteHtml = req.body.siteHtml;
+    }
+
+    if (!siteHtml) {
+      return res.status(404).json({ error: `Draft site "${siteId}" not found. Please click Generate first.` });
+    }
+
+    // Ensure draft directory is saved locally so all subsequent reads succeed
+    try {
+      const safeDir = resolveSafeSiteDir(siteId);
+      if (!fs.existsSync(path.join(safeDir, 'index.html'))) {
+        await fs.promises.writeFile(path.join(safeDir, 'index.html'), siteHtml, 'utf8');
+      }
+      if (Object.keys(profile).length > 0 && !fs.existsSync(path.join(safeDir, 'profile.json'))) {
+        await fs.promises.writeFile(path.join(safeDir, 'profile.json'), JSON.stringify(profile, null, 2), 'utf8');
+      }
+      if (Object.keys(meta).length > 0 && !fs.existsSync(path.join(safeDir, 'meta.json'))) {
+        await fs.promises.writeFile(path.join(safeDir, 'meta.json'), JSON.stringify(meta, null, 2), 'utf8');
+      }
+    } catch (saveDraftErr) {}
 
     const userEmail = (req.user?.email || '').toLowerCase().trim();
     const isVipFounder = userEmail === 'abdulaziznoor9876@gmail.com' || req.user?.id === 'abdulaziz_founder';
@@ -2029,6 +2072,7 @@ app.post('/api/web/create-order', async (req, res) => {
     const { siteId, plan = 'lite' } = req.body;
     const PRICING_MAP = {
       lite: 14900,
+      starter: 14900,
       pro: 14900,
       all_access: 14900
     };
@@ -2120,6 +2164,7 @@ app.post('/api/web/verify-payment', async (req, res) => {
 
     const PRICING_MAP = {
       lite: 14900,
+      starter: 14900,
       pro: 14900,
       all_access: 14900
     };
@@ -2176,9 +2221,9 @@ app.post('/api/web/verify-payment', async (req, res) => {
 
     // Test runner mock payment support
     if ((process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') && razorpay_payment_id.startsWith('pay_mock_')) {
-      const deployResult = await hostingProvider.approveAndUnwatermark(siteId);
+      const deployResult = await hostingProvider.approveAndUnwatermark(siteId, { name: requestedUsername || siteId }, req.body.siteHtml || '');
       let liveUrl = deployResult.deployUrl || `/p/${siteId}`;
-      if (requestedUsername) {
+      if (requestedUsername && (plan === 'pro' || plan === 'all_access')) {
         const bound = await bindSubdomain(siteId, requestedUsername, req.user?.id || 'mock_user');
         if (bound) liveUrl = bound;
       }
@@ -2190,6 +2235,7 @@ app.post('/api/web/verify-payment', async (req, res) => {
         amount: expectedAmount,
         plan,
         liveUrl,
+        provider: deployResult.provider || (requestedUsername ? 'custom_subdomain' : 'netlify'),
         domain: requestedUsername ? `${requestedUsername}.myfolio.tech` : null,
         siteId
       });
@@ -2197,9 +2243,9 @@ app.post('/api/web/verify-payment', async (req, res) => {
 
     if (!razorpayService) {
       // Mock / Dev approval fallback
-      const unwatermarked = await hostingProvider.approveAndUnwatermark(siteId);
+      const unwatermarked = await hostingProvider.approveAndUnwatermark(siteId, { name: requestedUsername || siteId }, req.body.siteHtml || '');
       let liveUrl = unwatermarked.deployUrl || `/p/${siteId}`;
-      if (requestedUsername) {
+      if (requestedUsername && (plan === 'pro' || plan === 'all_access')) {
         const bound = await bindSubdomain(siteId, requestedUsername, req.user?.id || 'dev_user');
         if (bound) liveUrl = bound;
       }
@@ -2208,6 +2254,7 @@ app.post('/api/web/verify-payment', async (req, res) => {
         approved: true,
         message: 'Payment approved (Development Mode)',
         liveUrl,
+        provider: unwatermarked.provider || (requestedUsername ? 'custom_subdomain' : 'netlify'),
         domain: requestedUsername ? `${requestedUsername}.myfolio.tech` : null,
         plan
       });
@@ -2245,10 +2292,13 @@ app.post('/api/web/verify-payment', async (req, res) => {
     }
 
     // 3. Remove preview watermark and re-deploy cleanly
-    const deployResult = await hostingProvider.approveAndUnwatermark(siteId);
+    const deployResult = await hostingProvider.approveAndUnwatermark(siteId, {
+      name: requestedUsername || req.body.name || req.body.username || siteId,
+      role: req.body.role || ''
+    }, req.body.siteHtml || '');
     let finalLiveUrl = deployResult.deployUrl || `/p/${siteId}`;
 
-    if (requestedUsername) {
+    if (requestedUsername && (plan === 'pro' || plan === 'all_access')) {
       const bound = await bindSubdomain(siteId, requestedUsername, userId);
       if (bound) finalLiveUrl = bound;
     }
@@ -3667,8 +3717,8 @@ app.get('/p/:siteId', async (req, res) => {
     return res.status(400).send('Invalid portfolio identifier.');
   }
 
-  // Retrieve site HTML from disk or Supabase Storage recovery
-  let html = await hostingProvider.getSiteHtml(siteId);
+  // Retrieve site HTML from in-memory draft cache, disk, or Supabase Storage recovery
+  let html = globalDraftsCache.get(siteId)?.html || await hostingProvider.getSiteHtml(siteId);
 
   // VIP Founder Instant Synthesis Fallback: If abdulaziz site is not yet on disk, synthesize on the fly
   if (!html && siteId === 'abdulaziz') {
@@ -4082,7 +4132,7 @@ app.get('/p/:siteId', async (req, res) => {
         <span style="display:inline-block; width:8px; height:8px; background:#75c5de; border-radius:50%; box-shadow: 0 0 8px #75c5de;"></span>
         <span>🔒 <strong>Preview Only</strong> (24h Evaluation Window) • Powered by MyFolio</span>
       </div>
-      <a href="/#pricing" style="background: linear-gradient(135deg, #75c5de, #13708e); color: #08171c; font-weight: 800; font-size: 0.85rem; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(117,197,222,0.35); transition: transform 0.2s ease;">
+      <a href="/#pricing" onclick="if(window.parent&&window.parent!==window){window.parent.postMessage({type:'OPEN_PUBLISH_MODAL'},'*');return false;}" style="background: linear-gradient(135deg, #75c5de, #13708e); color: #08171c; font-weight: 800; font-size: 0.85rem; padding: 8px 18px; border-radius: 9999px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 14px rgba(117,197,222,0.35); transition: transform 0.2s ease;">
         <span>Buy Build & Remove Watermark (From ₹149) ➔</span>
       </a>
     </div>
