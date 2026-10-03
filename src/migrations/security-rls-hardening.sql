@@ -25,7 +25,9 @@ DROP POLICY IF EXISTS "Users can update own profile" ON users;
 DROP POLICY IF EXISTS "Allow service role full access users" ON users;
 DROP POLICY IF EXISTS "Allow service role full access sessions" ON sessions;
 DROP POLICY IF EXISTS "Allow service role full access tokens" ON verification_tokens;
+DROP POLICY IF EXISTS "Allow service role full access verification_tokens" ON verification_tokens;
 DROP POLICY IF EXISTS "Allow service role full access reset_tokens" ON password_reset_tokens;
+DROP POLICY IF EXISTS "Allow service role full access password_reset_tokens" ON password_reset_tokens;
 DROP POLICY IF EXISTS "Allow service role full access conversations" ON conversations;
 DROP POLICY IF EXISTS "Allow service role full access client_sites" ON client_sites;
 DROP POLICY IF EXISTS "Allow service role full access sites" ON sites;
@@ -38,8 +40,8 @@ DROP POLICY IF EXISTS "Allow service role full access site_analytics" ON site_an
 -- 3. Explicit Service Role bypass confirmation (defense in depth)
 CREATE POLICY "Allow service role full access users" ON users FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "Allow service role full access sessions" ON sessions FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "Allow service role full access tokens" ON verification_tokens FOR ALL TO service_role USING (true) WITH CHECK (true);
-CREATE POLICY "Allow service role full access reset_tokens" ON password_reset_tokens FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "Allow service role full access verification_tokens" ON verification_tokens FOR ALL TO service_role USING (true) WITH CHECK (true);
+CREATE POLICY "Allow service role full access password_reset_tokens" ON password_reset_tokens FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "Allow service role full access conversations" ON conversations FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "Allow service role full access client_sites" ON client_sites FOR ALL TO service_role USING (true) WITH CHECK (true);
 CREATE POLICY "Allow service role full access sites" ON sites FOR ALL TO service_role USING (true) WITH CHECK (true);
@@ -59,10 +61,9 @@ CREATE POLICY "Users can delete own sessions" ON sessions FOR DELETE TO authenti
 CREATE POLICY "Users can read own conversations" ON conversations FOR SELECT TO authenticated USING (auth.uid() = user_id);
 CREATE POLICY "Users can read own client_sites" ON client_sites FOR SELECT TO authenticated USING (auth.uid() = user_id);
 
--- 5. Public read-only access for published active portfolio metadata (zero write access for anon)
-CREATE POLICY "Public can view active client sites" ON client_sites FOR SELECT TO anon USING (status = 'active');
-CREATE POLICY "Public can view active sites" ON sites FOR SELECT TO anon USING (status = 'active');
-
--- 6. Direct access to payments, audit logs, reset tokens, and rate limits is strictly forbidden for anon & standard users
--- (No policies created for anon/authenticated on payments, verification_tokens, password_reset_tokens, admin_audit_logs, rate_limits)
--- They remain accessible exclusively to service_role via backend API.
+-- 5. Strict Zero-Trust PostgREST Lockdown for Anon
+-- Frontend clients communicate exclusively through the Express API layer (which runs under service_role).
+-- Direct PostgREST access via the public SUPABASE_ANON_KEY is strictly DENIED on all 12 tables:
+-- users, sessions, verification_tokens, password_reset_tokens, conversations,
+-- client_sites, sites, payments, admin_audit_logs, email_logs, rate_limits, site_analytics.
+-- (By enabling RLS and defining no policies for anon, PostgREST defaults to deny-all for anon callers).

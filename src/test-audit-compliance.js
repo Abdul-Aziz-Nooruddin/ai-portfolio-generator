@@ -232,3 +232,9 @@ test('4. Input Validation: verifies magic bytes and blocks spoofed or oversized 
   assert.equal(jpgRes.valid, true, 'Valid JPEG header accepted');
   assert.equal(jpgRes.format, 'jpeg');
 });
+
+test('5. Supabase RLS hardening enforces deny-all policy for anon role across all 12 tables', async () => {
+  const { runRlsDenyAudit } = require('../scripts/test-supabase-rls-deny');
+  await runRlsDenyAudit();
+});
+
