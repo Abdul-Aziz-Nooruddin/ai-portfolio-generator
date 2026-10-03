@@ -238,6 +238,47 @@ class LifecycleService {
   }
 
   /**
+   * Transition to lapsed preview state after 24-hour evaluation window expires
+   */
+  async transitionToLapsed(item, reason = 'unpaid_preview_24hr_timeout') {
+    const siteId = item.id;
+    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+
+    // Clean up temporary live preview directory so preview is no longer publicly served
+    if (fs.existsSync(siteDir)) {
+      try {
+        fs.rmSync(siteDir, { recursive: true, force: true });
+        console.log(`[LIFECYCLE] Unmounted expired preview directory: ${siteDir}`);
+      } catch (rmErr) {
+        console.warn(`[LIFECYCLE] Error removing preview directory ${siteDir}:`, rmErr.message);
+      }
+    }
+
+    // Update DB record to preview_lapsed
+    await this.db.updateConversation(siteId, {
+      status: 'preview_lapsed',
+      lifecycle_state: LIFECYCLE_STATES.PREVIEW_LAPSED,
+      state_entered_at: new Date().toISOString()
+    });
+
+    try {
+      await this.db.updateSiteByProviderId(siteId, {
+        status: 'preview_lapsed',
+        lifecycle_state: LIFECYCLE_STATES.PREVIEW_LAPSED
+      });
+    } catch (e) {}
+
+    // Audit log
+    await this.db.recordAuditLog({
+      admin_identifier: 'system_cron',
+      action: 'state_transition_lapsed',
+      target_user_id: item.user_id,
+      reason,
+      details: { siteId, previous_state: item.lifecycle_state || item.status }
+    });
+  }
+
+  /**
    * Transition to permanent deleted state and purge design/build artifact
    */
   async transitionToDeleted(item, reason = '') {
