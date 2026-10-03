@@ -3234,6 +3234,17 @@ app.post('/api/portfolio/:siteId/sync-github', async (req, res) => {
 app.use('/sites', express.static(path.join(process.cwd(), 'public', 'sites')));
 app.use('/sites', express.static(path.join(require('os').tmpdir(), 'sites')));
 
+// Google AdSense & Digital Ads Verification Route (ads.txt)
+app.get('/ads.txt', (req, res) => {
+  res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  const adsTxtPath = path.join(webDir, 'ads.txt');
+  if (fs.existsSync(adsTxtPath)) {
+    return res.sendFile(adsTxtPath);
+  }
+  res.send('google.com, pub-9804084236379215, DIRECT, f08c47fec0942fa0\n');
+});
+
 // Serve Static Web Assets with HTTP Cache-Control (7 days for JS/CSS/images/fonts, 0s for dynamic HTML)
 app.use(express.static(webDir, {
   extensions: ['html'],
