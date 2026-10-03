@@ -44,6 +44,10 @@ class EmailService {
       return { success: false, reason: 'invalid_email' };
     }
 
+    if (process.env.NODE_ENV === 'test' && !meta.force_test_dispatch) {
+      return { success: true, mocked: true };
+    }
+
     console.log(`[EMAIL DISPATCH] To: ${to} | Subject: "${subject}" | Type: ${meta.sequence_type || 'system'}`);
 
     let sendSuccess = true;
