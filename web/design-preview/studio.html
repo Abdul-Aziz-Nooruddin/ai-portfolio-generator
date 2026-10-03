@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Preview — MyFolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Landing page warm tokens */
+      --paper: #f4f1e8;
+      --paper-2: #eeebe1;
+      --paper-3: #e8e4d9;
+      --ink: #171817;
+      --ink-2: #222320;
+      --ink-3: #2e2e2b;
+      --sky: #75c5de;
+      --sky-dim: rgba(117,197,222,0.15);
+      --muted: #60615b;
+      --border: rgba(23,24,23,0.1);
+      --border-strong: rgba(23,24,23,0.18);
+      --white: #ffffff;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;overflow:hidden;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+
+    /* ─── Preview banner ─── */
+    .preview-bar{
+      height:33px;background:var(--ink);color:#fff;font-size:10px;font-weight:700;
+      letter-spacing:0.1em;text-transform:uppercase;padding:0 20px;
+      display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+      border-bottom:1px solid rgba(255,255,255,0.08);
+    }
+    .preview-bar a{color:var(--sky);text-decoration:none;font-weight:600;}
+
+    /* ─── Top Studio Bar ─── */
+    .studio-topbar{
+      height:50px;background:var(--paper);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;
+      padding:0 16px;flex-shrink:0;z-index:50;
+    }
+    .topbar-left{display:flex;align-items:center;gap:12px;}
+    .tb-brand{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;letter-spacing:-0.04em;color:var(--ink);text-decoration:none;}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .tb-divider{width:1px;height:20px;background:var(--border-strong);}
+    .tb-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+    .tb-filename{font-family:var(--font-mono);font-size:11px;color:var(--ink);font-weight:500;}
+    .tb-saved{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#22c55e;}
+    .tb-saved-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;}
+    .topbar-center{display:flex;align-items:center;gap:8px;}
+    /* Stepper */
+    .stepper{display:flex;align-items:center;gap:0;}
+    .step{display:flex;align-items:center;gap:6px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;transition:all 0.15s;cursor:pointer;}
+    .step:hover{color:var(--ink);}
+    .step.active{color:var(--ink);border-bottom-color:var(--sky);}
+    .step.done{color:var(--sky);}
+    .step-num{width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;}
+    .step.done .step-num{background:var(--sky);border-color:var(--sky);color:var(--ink);}
+    .step-arrow{color:var(--border-strong);font-size:12px;margin:0 -2px;}
+    .topbar-right{display:flex;align-items:center;gap:8px;}
+    .tb-btn{padding:7px 14px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+    .tb-btn-ghost{background:none;border:1px solid var(--border-strong);color:var(--muted);}
+    .tb-btn-ghost:hover{color:var(--ink);border-color:rgba(23,24,23,0.3);}
+    .tb-btn-solid{background:var(--ink);color:var(--paper);}
+    .tb-btn-solid:hover{opacity:0.88;}
+    .tb-btn-sky{background:var(--sky);color:var(--ink);font-weight:700;}
+    .tb-btn-sky:hover{opacity:0.9;}
+
+    /* ─── Workspace 3 columns ─── */
+    .workspace{flex:1;display:flex;overflow:hidden;min-height:0;}
+
+    /* ─── Left Panel ─── */
+    .col-left{
+      width:340px;min-width:320px;flex-shrink:0;
+      background:var(--paper-2);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    .panel-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--paper);flex-shrink:0;}
+    .ptab{flex:1;padding:11px 8px;text-align:center;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;letter-spacing:0.04em;transition:all 0.15s;}
+    .ptab.active{color:var(--ink);border-bottom-color:var(--sky);}
+    .panel-body{flex:1;overflow-y:auto;padding:16px;}
+    .panel-body::-webkit-scrollbar{width:3px;}
+    .panel-body::-webkit-scrollbar-track{background:transparent;}
+    .panel-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
+
+    /* Workflow cards */
+    .wcard{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;transition:border-color 0.2s,box-shadow 0.2s;}
+    .wcard:hover{border-color:rgba(117,197,222,0.4);box-shadow:0 3px 12px rgba(23,24,23,0.07);}
+    .wcard.active-step{border-color:rgba(117,197,222,0.5);box-shadow:0 0 0 3px rgba(117,197,222,0.08);}
+    .wcard-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+    .wcard-badge{display:flex;align-items:center;gap:5px;font-size:9px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--sky);}
+    .wcard-status{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;}
+    .wcard-status.done{background:rgba(34,197,94,0.1);color:#22c55e;}
+    .wcard-status.active{background:rgba(117,197,222,0.1);color:var(--sky);}
+    .wcard-status.pending{background:rgba(96,97,91,0.1);color:var(--muted);}
+    .wcard-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px;letter-spacing:-0.02em;}
+    .wcard-desc{font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:10px;}
+    label{display:block;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+    input[type=text],input[type=url],textarea{width:100%;padding:9px 11px;border:1.5px solid var(--border-strong);border-radius:7px;font-size:12.5px;font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+    input:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(117,197,222,0.1);}
+    textarea{resize:vertical;min-height:60px;font-size:12px;}
+    .wcard-action{width:100%;padding:9px;background:var(--ink);color:var(--paper);border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:-0.01em;transition:opacity 0.15s;margin-top:8px;}
+    .wcard-action:hover{opacity:0.85;}
+    .wcard-action.ghost{background:none;border:1px solid var(--border-strong);color:var(--ink);}
+    /* Universe picker */
+    .universe-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+    .ucard{border:1.5px solid var(--border);border-radius:8px;padding:10px 8px;cursor:pointer;transition:all 0.15s;text-align:center;background:var(--paper);}
+    .ucard:hover{border-color:var(--sky);background:#fff;}
+    .ucard.sel{border-color:var(--sky);background:#fff;box-shadow:0 0 0 3px rgba(117,197,222,0.12);}
+    .ucard-icon{font-size:22px;margin-bottom:4px;}
+    .ucard-name{font-size:10px;font-weight:700;color:var(--ink);letter-spacing:-0.01em;}
+    .ucard-cat{font-size:9px;color:var(--muted);}
+    /* GitHub input row */
+    .input-row{display:flex;gap:6px;}
+    .input-row input{flex:1;}
+    .fetch-btn{padding:9px 12px;background:var(--ink);color:var(--paper);border:none;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;}
+    /* Resume drop */
+    .drop-zone{border:2px dashed var(--border-strong);border-radius:9px;padding:20px;text-align:center;cursor:pointer;transition:border-color 0.2s,background 0.2s;background:var(--paper);}
+    .drop-zone:hover{border-color:var(--sky);background:#fff;}
+    .drop-icon{font-size:24px;margin-bottom:6px;}
+    .drop-label{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:3px;}
+    .drop-sub{font-size:10px;color:var(--muted);}
+    /* Readiness */
+    .readiness{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;}
+    .readiness-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+    .check-row{display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(23,24,23,0.05);}
+    .check-row:last-child{border-bottom:none;}
+    .chk{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;font-weight:700;}
+    .chk.ok{background:rgba(34,197,94,0.12);color:#22c55e;border:1.5px solid rgba(34,197,94,0.3);}
+    .chk.pending{background:rgba(96,97,91,0.08);color:var(--muted);border:1.5px solid rgba(96,97,91,0.2);}
+    .chk-label{font-size:11.5px;font-weight:500;color:var(--ink);}
+    .chk-sub{font-size:10px;color:var(--muted);margin-top:1px;}
+
+    /* Generate btn */
+    .generate-btn{
+      width:100%;padding:14px;
+      background:var(--ink);color:var(--paper);border:none;border-radius:10px;
+      font-size:14px;font-weight:700;cursor:pointer;letter-spacing:-0.02em;
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      transition:opacity 0.15s;margin-bottom:10px;
+    }
+    .generate-btn:hover{opacity:0.86;}
+    .generate-btn.ready{background:linear-gradient(135deg,#171817 0%,#2a3a2a 100%);box-shadow:0 4px 16px rgba(23,24,23,0.2);}
+
+    /* ─── Center viewport ─── */
+    .col-center{flex:1;display:flex;flex-direction:column;background:var(--paper-3);min-width:0;}
+    .viewport-toolbar{
+      height:42px;background:var(--paper);border-bottom:1px solid var(--border);
+      display:flex;align-items:center;justify-content:space-between;padding:0 14px;flex-shrink:0;
+    }
+    .device-dock{display:flex;align-items:center;gap:2px;background:var(--paper-2);border:1px solid var(--border);border-radius:7px;padding:2px;}
+    .dev-btn{background:none;border:none;padding:5px 10px;border-radius:5px;font-size:11px;font-weight:600;color:var(--muted);cursor:pointer;transition:all 0.15s;}
+    .dev-btn.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(23,24,23,0.1);}
+    .vp-url{font-family:var(--font-mono);font-size:10px;color:var(--muted);display:flex;align-items:center;gap:6px;}
+    .vp-url-dot{width:5px;height:5px;border-radius:50%;background:var(--border-strong);}
+    .vp-actions{display:flex;gap:6px;}
+    .vp-btn{padding:5px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--muted);transition:all 0.15s;}
+    .vp-btn:hover{color:var(--ink);border-color:var(--border-strong);}
+    .viewport-frame{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;position:relative;}
+    .screen{
+      width:100%;height:100%;border-radius:12px;
+      border:1px solid var(--border-strong);background:var(--ink);
+      box-shadow:0 20px 60px rgba(23,24,23,0.2),0 0 0 1px rgba(23,24,23,0.12);
+      overflow:hidden;position:relative;transition:max-width 0.3s cubic-bezier(0.16,1,0.3,1);
+      display:flex;align-items:center;justify-content:center;
+    }
+    /* Simulated portfolio inside viewport */
+    .mock-portfolio{width:100%;height:100%;background:var(--ink);position:relative;overflow:hidden;}
+    .mock-hero-text{
+      position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      text-align:center;color:rgba(255,255,255,0.08);
+      font-size:clamp(40px,8vw,120px);font-weight:700;letter-spacing:-0.07em;
+      user-select:none;pointer-events:none;white-space:nowrap;
+    }
+    .mock-grain{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");opacity:0.4;}
+    .mock-orb{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none;}
+    .orb-sky{width:300px;height:300px;background:rgba(117,197,222,0.06);top:-60px;right:-60px;}
+    .orb-amber{width:200px;height:200px;background:rgba(245,166,35,0.04);bottom:20px;left:-40px;}
+    .mock-nav{position:absolute;top:0;left:0;right:0;height:44px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);display:flex;align-items:center;padding:0 24px;gap:20px;}
+    .mock-nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(117,197,222,0.5);}
+    .mock-nav-bar{height:2px;border-radius:1px;background:rgba(255,255,255,0.08);}
+    .mock-project-cards{position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:10px;}
+    .mock-pcard{flex:1;height:60px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);}
+    /* Empty state */
+    .empty-viewport{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:12px;
+      color:var(--muted);text-align:center;padding:24px;
+    }
+    .empty-icon{font-size:32px;opacity:0.4;}
+    .empty-title{font-size:14px;font-weight:600;color:var(--muted);}
+    .empty-sub{font-size:12px;color:rgba(96,97,91,0.6);}
+
+    /* ─── Right Panel ─── */
+    .col-right{
+      width:300px;min-width:280px;flex-shrink:0;
+      background:var(--paper-2);border-left:1px solid var(--border);
+      display:flex;flex-direction:column;overflow:hidden;
+    }
+    .right-header{padding:14px 16px;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .right-title{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+    .right-sub{font-size:12px;color:var(--ink);font-weight:500;}
+    .right-body{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:12px;}
+    /* Edit section */
+    .edit-section{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;}
+    .es-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+    .color-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;}
+    .color-chip{width:28px;height:28px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+    .color-chip.active{border-color:var(--ink);transform:scale(1.15);}
+    .font-row{display:flex;gap:6px;flex-wrap:wrap;}
+    .font-tag{padding:5px 10px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.15s;}
+    .font-tag.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+    .font-tag:hover{border-color:var(--ink);}
+    /* URL display */
+    .url-display{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;}
+    .url-label{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+    .url-dot-green{width:5px;height:5px;border-radius:50%;background:#22c55e;}
+    .url-val{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--ink);word-break:break-all;margin-bottom:8px;}
+    .url-copy{width:100%;padding:7px;background:none;border:1px solid var(--border);border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;color:var(--ink);transition:all 0.15s;}
+    .url-copy:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    /* Publish panel */
+    .publish-panel{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px;}
+    .pp-title{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+    .pp-step{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(23,24,23,0.05);}
+    .pp-step:last-child{border-bottom:none;}
+    .pp-num{width:20px;height:20px;border-radius:50%;background:rgba(23,24,23,0.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--muted);flex-shrink:0;}
+    .pp-num.done{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:#22c55e;}
+    .pp-num.active{background:var(--sky-dim);border-color:rgba(117,197,222,0.4);color:var(--sky);}
+    .pp-text{font-size:11.5px;font-weight:500;color:var(--ink);}
+    .pp-sub{font-size:10px;color:var(--muted);}
+    .publish-btn{width:100%;margin-top:12px;padding:11px;background:var(--sky);color:var(--ink);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:-0.01em;transition:opacity 0.15s;}
+    .publish-btn:hover{opacity:0.88;}
+    /* Export */
+    .export-row{display:flex;gap:6px;}
+    .exp-btn{flex:1;padding:8px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;background:none;color:var(--muted);transition:all 0.15s;text-align:center;}
+    .exp-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+    /* Tablet/mobile viewport simulated */
+    .screen.tablet{max-width:700px;}
+    .screen.mobile{max-width:375px;}
+
+    /* Scrollbar */
+    .right-body::-webkit-scrollbar,.panel-body::-webkit-scrollbar{width:3px;}
+    .right-body::-webkit-scrollbar-track,.panel-body::-webkit-scrollbar-track{background:transparent;}
+    .right-body::-webkit-scrollbar-thumb,.panel-body::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:2px;}
+  </style>
+</head>
+<body>
+  <!-- Preview Banner -->
+  <div class="preview-bar">
+    <span>&#128065; Design Preview — Studio (3-Column Creative OS)</span>
+    <a href="/design-preview">&#8592; Back to Hub</a>
+  </div>
+
+  <!-- Top Studio Bar -->
+  <header class="studio-topbar">
+    <div class="topbar-left">
+      <a class="tb-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+      <div class="tb-divider"></div>
+      <span class="tb-label">Studio</span>
+      <div class="tb-divider"></div>
+      <span class="tb-filename">jack-3d-creator.folio</span>
+      <div class="tb-saved"><span class="tb-saved-dot"></span> Saved</div>
+    </div>
+    <div class="topbar-center">
+      <div class="stepper">
+        <div class="step done"><span class="step-num">&#10003;</span> GitHub</div>
+        <span class="step-arrow">&#8250;</span>
+        <div class="step done"><span class="step-num">&#10003;</span> Resume</div>
+        <span class="step-arrow">&#8250;</span>
+        <div class="step active"><span class="step-num">3</span> Universe</div>
+        <span class="step-arrow">&#8250;</span>
+        <div class="step pending"><span class="step-num">4</span> Generate</div>
+        <span class="step-arrow">&#8250;</span>
+        <div class="step pending"><span class="step-num">5</span> Publish</div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="tb-btn tb-btn-ghost">Preview &#8599;</button>
+      <button class="tb-btn tb-btn-ghost">Export ZIP</button>
+      <button class="tb-btn tb-btn-sky">Publish Live &#8599;</button>
+    </div>
+  </header>
+
+  <!-- 3-Column Workspace -->
+  <div class="workspace">
+
+    <!-- ─── LEFT PANEL: Inputs & Workflow ─── -->
+    <div class="col-left">
+      <div class="panel-tabs">
+        <div class="ptab active">Build</div>
+        <div class="ptab">Edit</div>
+        <div class="ptab">Assets</div>
+      </div>
+      <div class="panel-body">
+
+        <!-- Step 1: GitHub -->
+        <div class="wcard">
+          <div class="wcard-header">
+            <span class="wcard-badge">&#9312; GitHub Profile</span>
+            <span class="wcard-status done">&#10003; Linked</span>
+          </div>
+          <div class="wcard-title">Connect your GitHub</div>
+          <div class="wcard-desc">We pull your public repos, commit history, and README content to build your portfolio story.</div>
+          <label>GitHub Username</label>
+          <div class="input-row">
+            <input type="text" value="Abdul-Aziz-Nooruddin" placeholder="your-github-handle">
+            <button class="fetch-btn">Fetch &#8599;</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Resume -->
+        <div class="wcard">
+          <div class="wcard-header">
+            <span class="wcard-badge">&#9313; Resume / Bio</span>
+            <span class="wcard-status done">&#10003; Uploaded</span>
+          </div>
+          <div class="wcard-title">Upload your resume</div>
+          <div class="wcard-desc">PDF, DOCX, or paste your bio. Used for education, experience, and summary sections.</div>
+          <div class="drop-zone">
+            <div class="drop-icon">&#128196;</div>
+            <div class="drop-label">resume.pdf uploaded</div>
+            <div class="drop-sub">Click to replace &middot; PDF, DOCX, or plain text</div>
+          </div>
+        </div>
+
+        <!-- Step 3: Universe (active) -->
+        <div class="wcard active-step">
+          <div class="wcard-header">
+            <span class="wcard-badge">&#9314; Choose Universe</span>
+            <span class="wcard-status active">&#9679; Selecting</span>
+          </div>
+          <div class="wcard-title">Pick your 3D world</div>
+          <div class="wcard-desc">Each universe is a distinct visual identity. Choose the one that fits your work.</div>
+          <div class="universe-grid">
+            <div class="ucard sel">
+              <div class="ucard-icon">&#9673;</div>
+              <div class="ucard-name">Jack 3D</div>
+              <div class="ucard-cat">Engineers</div>
+            </div>
+            <div class="ucard">
+              <div class="ucard-icon">&#10024;</div>
+              <div class="ucard-name">Nadia Brand</div>
+              <div class="ucard-cat">Creators</div>
+            </div>
+            <div class="ucard">
+              <div class="ucard-icon">&#128421;</div>
+              <div class="ucard-name">Stealth Node</div>
+              <div class="ucard-cat">Security</div>
+            </div>
+            <div class="ucard">
+              <div class="ucard-icon">&#127758;</div>
+              <div class="ucard-name">Solarpunk</div>
+              <div class="ucard-cat">Climate</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Readiness -->
+        <div class="readiness">
+          <div class="readiness-title">Build Readiness</div>
+          <div class="check-row"><div class="chk ok">&#10003;</div><div><div class="chk-label">GitHub connected</div><div class="chk-sub">Abdul-Aziz-Nooruddin &middot; 12 repos</div></div></div>
+          <div class="check-row"><div class="chk ok">&#10003;</div><div><div class="chk-label">Resume uploaded</div><div class="chk-sub">resume.pdf &middot; 2.1 KB</div></div></div>
+          <div class="check-row"><div class="chk ok">&#10003;</div><div><div class="chk-label">Universe selected</div><div class="chk-sub">Jack 3D Creator</div></div></div>
+          <div class="check-row"><div class="chk pending">&#8943;</div><div><div class="chk-label">Generate portfolio</div><div class="chk-sub">Ready to build</div></div></div>
+        </div>
+
+        <!-- Generate -->
+        <button class="generate-btn ready">
+          <span>&#9889;</span>
+          Generate 3D Portfolio
+        </button>
+        <div style="text-align:center;font-size:11px;color:var(--muted);">3 of 3 free builds remaining this week</div>
+      </div>
+    </div>
+
+    <!-- ─── CENTER: Live Viewport ─── -->
+    <div class="col-center">
+      <div class="viewport-toolbar">
+        <div class="device-dock">
+          <button class="dev-btn active">Desktop</button>
+          <button class="dev-btn">Tablet</button>
+          <button class="dev-btn">Mobile</button>
+        </div>
+        <div class="vp-url">
+          <span class="vp-url-dot"></span>
+          <span>/p/preview &mdash; Jack 3D Creator</span>
+        </div>
+        <div class="vp-actions">
+          <button class="vp-btn">&#8635; Refresh</button>
+          <button class="vp-btn">&#8599; Open</button>
+        </div>
+      </div>
+      <div class="viewport-frame">
+        <div class="screen">
+          <!-- Simulated 3D portfolio inside viewport -->
+          <div class="mock-portfolio">
+            <div class="mock-grain"></div>
+            <div class="mock-orb orb-sky"></div>
+            <div class="mock-orb orb-amber"></div>
+            <div class="mock-nav">
+              <div class="mock-nav-dot"></div>
+              <div class="mock-nav-bar" style="width:40px;"></div>
+              <div class="mock-nav-bar" style="width:28px;"></div>
+              <div class="mock-nav-bar" style="width:34px;"></div>
+              <div style="margin-left:auto;width:24px;height:24px;border-radius:5px;background:rgba(117,197,222,0.2);"></div>
+            </div>
+            <div class="mock-hero-text">JACK</div>
+            <!-- Floating avatar hint -->
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:10px;z-index:2;">
+              <div style="width:72px;height:72px;border-radius:50%;background:rgba(117,197,222,0.12);border:2px solid rgba(117,197,222,0.25);"></div>
+              <div style="height:6px;width:120px;border-radius:3px;background:rgba(255,255,255,0.08);"></div>
+              <div style="height:4px;width:80px;border-radius:2px;background:rgba(255,255,255,0.05);"></div>
+            </div>
+            <div class="mock-project-cards">
+              <div class="mock-pcard"></div>
+              <div class="mock-pcard"></div>
+              <div class="mock-pcard"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── RIGHT PANEL: Edit & Publish ─── -->
+    <div class="col-right">
+      <div class="right-header">
+        <div class="right-title">Creative Director</div>
+        <div class="right-sub">Customise &amp; Publish</div>
+      </div>
+      <div class="right-body">
+
+        <!-- Colors -->
+        <div class="edit-section">
+          <div class="es-title">Accent Colour</div>
+          <div class="color-row">
+            <div class="color-chip active" style="background:#75c5de;" title="Sky"></div>
+            <div class="color-chip" style="background:#f5a623;" title="Gold"></div>
+            <div class="color-chip" style="background:#22c55e;" title="Emerald"></div>
+            <div class="color-chip" style="background:#a855f7;" title="Violet"></div>
+            <div class="color-chip" style="background:#ef4444;" title="Red"></div>
+            <div class="color-chip" style="background:#f97316;" title="Orange"></div>
+          </div>
+          <div class="es-title">Font Pairing</div>
+          <div class="font-row">
+            <div class="font-tag active">Inter</div>
+            <div class="font-tag">Syne</div>
+            <div class="font-tag">Outfit</div>
+            <div class="font-tag">Chakra</div>
+          </div>
+        </div>
+
+        <!-- Edit fields -->
+        <div class="edit-section">
+          <div class="es-title">Profile Copy</div>
+          <label>Display Name</label>
+          <input type="text" value="Abdul-Aziz Nooruddin">
+          <label style="margin-top:8px;">Headline</label>
+          <input type="text" value="Full-Stack Engineer &amp; Builder">
+          <label style="margin-top:8px;">Bio</label>
+          <textarea>Building production-grade tools at the intersection of AI and the open web.</textarea>
+        </div>
+
+        <!-- URL display -->
+        <div class="url-display">
+          <div class="url-label"><span class="url-dot-green"></span> Preview URL</div>
+          <div class="url-val">localhost:5050/p/preview</div>
+          <button class="url-copy">Copy link</button>
+        </div>
+
+        <!-- Publish steps -->
+        <div class="publish-panel">
+          <div class="pp-title">Publish Checklist</div>
+          <div class="pp-step"><div class="pp-num done">&#10003;</div><div><div class="pp-text">Portfolio generated</div><div class="pp-sub">Jack 3D Creator</div></div></div>
+          <div class="pp-step"><div class="pp-num done">&#10003;</div><div><div class="pp-text">Preview reviewed</div><div class="pp-sub">Looks good &#128640;</div></div></div>
+          <div class="pp-step"><div class="pp-num active">3</div><div><div class="pp-text">Claim username</div><div class="pp-sub">Pick username.myfolio.tech</div></div></div>
+          <div class="pp-step"><div class="pp-num pending">4</div><div><div class="pp-text">Go live</div><div class="pp-sub">Deploy to edge CDN</div></div></div>
+          <button class="publish-btn">Publish Live &#8594;</button>
+        </div>
+
+        <!-- Export -->
+        <div class="edit-section">
+          <div class="es-title">Export</div>
+          <div class="export-row">
+            <button class="exp-btn">&#128229; ZIP Code</button>
+            <button class="exp-btn">&#128196; Resume PDF</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.ptab').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.ptab').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+    // Device switching
+    document.querySelectorAll('.dev-btn').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.dev-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        const screen = document.querySelector('.screen');
+        screen.className = 'screen';
+        if (b.textContent.trim() === 'Tablet') screen.classList.add('tablet');
+        if (b.textContent.trim() === 'Mobile') screen.classList.add('mobile');
+      });
+    });
+    // Universe selection
+    document.querySelectorAll('.ucard').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.ucard').forEach(x => x.classList.remove('sel'));
+        c.classList.add('sel');
+      });
+    });
+    // Color chips
+    document.querySelectorAll('.color-chip').forEach(c => {
+      c.addEventListener('click', () => {
+        document.querySelectorAll('.color-chip').forEach(x => x.classList.remove('active'));
+        c.classList.add('active');
+      });
+    });
+    // Font tags
+    document.querySelectorAll('.font-tag').forEach(t => {
+      t.addEventListener('click', () => {
+        document.querySelectorAll('.font-tag').forEach(x => x.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

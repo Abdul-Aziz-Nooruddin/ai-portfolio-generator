@@ -36,7 +36,7 @@ const NadiaBrandTemplate = {
     'Design Directors'
   ],
   palette: ['#0F0F0F', '#F3F1EF', '#FF4D30', '#979491'],
-  thumbnail: '/assets/nadia_bio.jpg',
+  thumbnail: '/assets/templates/nadia-brand-hero.webp',
 
   render(rawCandidateData = {}, options = {}) {
     const data = TemplateHelper.normalize ? TemplateHelper.normalize(rawCandidateData) : rawCandidateData;

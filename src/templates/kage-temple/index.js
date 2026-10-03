@@ -58,7 +58,7 @@ const KageTempleTemplate = {
     'Founders who value deep craft, focus, and understated mastery'
   ],
   palette: ['#05070A', '#DFE7E0', '#E0231C', '#C9A24A'],
-  thumbnail: '/landing-pages/secret-pathways-assets/generated/kage-sanmon-preview.webp',
+  thumbnail: '/assets/templates/kage-temple-hero.webp',
 
   render(rawCandidateData = {}, options = {}) {
     const data = TemplateHelper.normalize ? TemplateHelper.normalize(rawCandidateData) : rawCandidateData;

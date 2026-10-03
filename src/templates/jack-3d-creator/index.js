@@ -125,7 +125,7 @@ const Jack3DCreatorTemplate = {
     'Systems Architects'
   ],
   palette: ['#0C0C0C', '#D7E2EA', '#B600A8', '#7621B0'],
-  thumbnail: '/assets/marquee/smart_contract_dapp_3d.webp',
+  thumbnail: '/assets/templates/jack-3d-creator-hero.webp',
 
   render(rawCandidateData = {}, options = {}) {
     const data = TemplateHelper.normalize ? TemplateHelper.normalize(rawCandidateData) : rawCandidateData;

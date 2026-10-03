@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Preview — MyFolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);--white:#ffffff;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    /* Top nav */
+    .top-nav{border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);position:sticky;top:36px;z-index:50;}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .nav-links{display:flex;align-items:center;gap:28px;}
+    .nav-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;transition:color 0.15s;}
+    .nav-link:hover,.nav-link.active{color:var(--ink);}
+    .nav-link.active{font-weight:600;}
+    .nav-right{display:flex;align-items:center;gap:12px;}
+    .avatar{width:32px;height:32px;border-radius:50%;background:var(--mist,#e4e4e4);border:1.5px solid rgba(23,24,23,0.15);}
+    .btn-primary{padding:8px 16px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
+    /* Main layout */
+    .main{max-width:1200px;margin:0 auto;padding:48px 40px 80px;}
+    /* Hero banner */
+    .hero-banner{background:var(--ink);color:var(--paper);border-radius:16px;padding:40px 48px;margin-bottom:40px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative;overflow:hidden;}
+    .hero-banner::after{content:'';position:absolute;right:-60px;top:-60px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(117,197,222,0.08) 0%,transparent 70%);}
+    .hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--sky);margin-bottom:14px;display:flex;align-items:center;gap:6px;}
+    .hero-title{font-size:clamp(24px,2.8vw,38px);font-weight:500;letter-spacing:-0.05em;line-height:1.1;margin-bottom:12px;}
+    .hero-sub{font-size:14px;color:rgba(244,241,232,0.6);line-height:1.6;margin-bottom:24px;max-width:380px;}
+    .hero-url{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 14px;font-size:12px;color:rgba(244,241,232,0.8);font-weight:500;}
+    .hero-url-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+    .btn-sky{padding:10px 20px;background:var(--sky);color:var(--ink);border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:-0.01em;}
+    .btn-ghost{padding:10px 20px;background:rgba(255,255,255,0.08);color:var(--paper);border:1px solid rgba(255,255,255,0.15);border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;}
+    /* Stat cards */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:40px;}
+    .stat-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px 24px;}
+    .stat-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+    .stat-val{font-size:26px;font-weight:600;letter-spacing:-0.05em;line-height:1;margin-bottom:4px;}
+    .stat-sub{font-size:12px;color:var(--muted);}
+    /* Section */
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .section-title{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px;}
+    .section-title::after{content:'';width:40px;height:1px;background:var(--border);}
+    .btn-sm{padding:7px 14px;border:1px solid var(--border);border-radius:7px;font-size:11px;font-weight:600;color:var(--ink);background:none;cursor:pointer;text-decoration:none;display:inline-block;transition:background 0.15s,border-color 0.15s;}
+    .btn-sm:hover{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+    /* Portfolio grid */
+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:48px;}
+    .portfolio-card{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:transform 0.2s cubic-bezier(0.16,1,0.3,1),box-shadow 0.2s ease;}
+    .portfolio-card:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(23,24,23,0.1);}
+    .pc-thumb{height:140px;background:var(--ink);display:flex;align-items:center;justify-content:center;position:relative;}
+    .pc-thumb-label{font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.2);}
+    .pc-badge{position:absolute;top:12px;right:12px;font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:4px 8px;border-radius:5px;background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}
+    .pc-badge.draft{background:rgba(245,166,35,0.15);color:#f5a623;border-color:rgba(245,166,35,0.3);}
+    .pc-body{padding:18px 20px;}
+    .pc-name{font-size:15px;font-weight:600;letter-spacing:-0.03em;margin-bottom:4px;}
+    .pc-role{font-size:12px;color:var(--muted);margin-bottom:12px;}
+    .pc-meta{display:flex;align-items:center;justify-content:space-between;}
+    .pc-url{font-size:11px;color:var(--sky);font-weight:500;}
+    .pc-actions{display:flex;gap:6px;}
+    .pc-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background 0.15s;}
+    .pc-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    /* Plan card */
+    .plan-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:48px;}
+    @media(max-width:700px){.plan-row{grid-template-columns:1fr;}}
+    .plan-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;}
+    .plan-name{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+    .plan-tier{font-size:20px;font-weight:600;letter-spacing:-0.04em;margin-bottom:6px;}
+    .plan-detail{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:16px;}
+    .plan-upgrade{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — Dashboard</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <div class="nav-links">
+      <a class="nav-link active" href="#">Dashboard</a>
+      <a class="nav-link" href="#">Studio</a>
+      <a class="nav-link" href="#">Profile</a>
+    </div>
+    <div class="nav-right">
+      <div class="avatar"></div>
+      <a class="btn-primary" href="#">New Build</a>
+    </div>
+  </nav>
+  <main class="main">
+    <!-- Hero -->
+    <div class="hero-banner">
+      <div>
+        <div class="hero-eyebrow"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;display:inline-block;"></span> Portfolio Live</div>
+        <h1 class="hero-title">Your portfolio is live.</h1>
+        <p class="hero-sub">Your 3D spatial world is deployed and active. Share it, customise it, or start a new build anytime.</p>
+        <div class="hero-url"><span class="hero-url-dot"></span> abdulaziz.myfolio.tech</div>
+        <div class="hero-actions">
+          <button class="btn-sky">Open Live ↗</button>
+          <button class="btn-ghost">Open Studio</button>
+        </div>
+      </div>
+    </div>
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Active Builds</div><div class="stat-val">3</div><div class="stat-sub">across 2 templates</div></div>
+      <div class="stat-card"><div class="stat-label">Live Subdomain</div><div class="stat-val" style="font-size:16px;margin-top:4px;">abdulaziz<br>.myfolio.tech</div></div>
+      <div class="stat-card"><div class="stat-label">Template</div><div class="stat-val" style="font-size:18px;">Jack 3D</div><div class="stat-sub">Creator Universe</div></div>
+      <div class="stat-card"><div class="stat-label">Plan</div><div class="stat-val" style="font-size:18px;">Pro</div><div class="stat-sub">&#8377;149/month</div></div>
+    </div>
+    <!-- Portfolio library -->
+    <div class="section-header">
+      <div class="section-title">Portfolio Library</div>
+      <div style="display:flex;gap:8px;">
+        <a class="btn-sm" href="#">Sync</a>
+        <a class="btn-sm" href="/studio">+ New in Studio</a>
+      </div>
+    </div>
+    <div class="portfolio-grid">
+      <div class="portfolio-card">
+        <div class="pc-thumb"><span class="pc-thumb-label">Jack 3D</span><span class="pc-badge">&#9679; Live</span></div>
+        <div class="pc-body">
+          <div class="pc-name">Abdul-Aziz Nooruddin</div>
+          <div class="pc-role">Full-Stack Engineer &amp; Builder</div>
+          <div class="pc-meta">
+            <span class="pc-url">abdulaziz.myfolio.tech</span>
+            <div class="pc-actions"><button class="pc-btn">&#9998;</button><button class="pc-btn">↗</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-card">
+        <div class="pc-thumb" style="background:#1a2234;"><span class="pc-thumb-label">Nadia Brand</span><span class="pc-badge draft">Draft</span></div>
+        <div class="pc-body">
+          <div class="pc-name">Abdul-Aziz Nooruddin</div>
+          <div class="pc-role">Personal Brand Edition</div>
+          <div class="pc-meta">
+            <span class="pc-url" style="color:#f5a623;">/p/preview ↗</span>
+            <div class="pc-actions"><button class="pc-btn">&#9998;</button><button class="pc-btn">&#9650;</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="portfolio-card" style="border-style:dashed;border-color:rgba(23,24,23,0.15);background:transparent;display:flex;align-items:center;justify-content:center;min-height:200px;cursor:pointer;">
+        <div style="text-align:center;color:var(--muted);">
+          <div style="font-size:28px;margin-bottom:8px;">+</div>
+          <div style="font-size:13px;font-weight:500;">New build in Studio</div>
+        </div>
+      </div>
+    </div>
+    <!-- Plan -->
+    <div class="section-header"><div class="section-title">Account &amp; Plan</div></div>
+    <div class="plan-row">
+      <div class="plan-card">
+        <div class="plan-name">Current Plan</div>
+        <div class="plan-tier">Pro Domain</div>
+        <div class="plan-detail">&#8377;149/month &middot; username.myfolio.tech &middot; Unlimited rebuilds &middot; Watermark-free</div>
+        <button class="plan-upgrade">Manage Plan &#8599;</button>
+      </div>
+      <div class="plan-card">
+        <div class="plan-name">Builds This Week</div>
+        <div class="plan-tier">Unlimited</div>
+        <div class="plan-detail">Pro plan includes unlimited studio rebuilds and edits for your active domain.</div>
+        <button class="plan-upgrade" style="background:none;color:var(--ink);border:1px solid var(--border);">Open Studio</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

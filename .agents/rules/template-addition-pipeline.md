@@ -20,4 +20,8 @@ Whenever creating or adding a new visual template to the MyFolio platform:
 7. **Strict Project Visual Domain Relevancy & Zero Universe Preview Recycling**:
    - Project cards MUST NEVER recycle or display design template / universe preview thumbnails.
    - All project visuals MUST be strictly and contextually relevant to the project's title and actual technical domain (e.g., Note/Messenger projects receive encrypted message dispatch visuals; LMS/Management projects receive database & user directory system architecture visuals; Algorand/Web3 projects receive cryptographic ledger/smart contract visuals; AI/LLM projects receive neural inference/edge compute visuals; Developer Tools/CLI receive code IDE/workstation visuals).
+8. **Template Hero Section Preview Standard (Strict Zero AI-Generated Images for Templates)**:
+   - **Never generate AI images for template thumbnails/previews**: Under NO circumstances should `generate_image` or synthetic AI images be used for template previews.
+   - **Authentic Hero Section Capture**: Every template preview/thumbnail (current and future) MUST be an authentic screenshot/capture of the template's actual **Hero Section**.
+   - **Storage**: Save to `/assets/templates/<template-id>-hero.webp` (and `.jpg`) across `public/assets/templates/` and `web/assets/templates/`.
 

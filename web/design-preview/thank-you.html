@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You're Live — MyFolio Design Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    .top-nav{border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .main{flex:1;display:flex;align-items:center;justify-content:center;padding:60px 24px;}
+    .card{max-width:560px;width:100%;text-align:center;}
+    .success-icon{width:72px;height:72px;border-radius:50%;background:rgba(117,197,222,0.1);border:2px solid rgba(117,197,222,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 32px;animation:pop 0.5s cubic-bezier(0.16,1,0.3,1) 0.2s both;}
+    @keyframes pop{from{transform:scale(0.6);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .success-icon svg{width:28px;height:28px;color:var(--sky);}
+    .eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--sky);margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px;}
+    .eyebrow::before,.eyebrow::after{content:'';width:20px;height:1px;background:rgba(117,197,222,0.4);}
+    h1{font-size:clamp(32px,5vw,52px);font-weight:500;letter-spacing:-0.06em;line-height:1.06;margin-bottom:16px;}
+    .sub{font-size:16px;color:var(--muted);line-height:1.65;margin-bottom:40px;}
+    /* URL reveal */
+    .url-box{background:#fff;border:1.5px solid rgba(23,24,23,0.12);border-radius:12px;padding:20px 24px;margin-bottom:32px;text-align:left;}
+    .url-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+    .url-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;}
+    .url-value{font-size:18px;font-weight:600;letter-spacing:-0.04em;color:var(--ink);word-break:break-all;}
+    .url-value a{color:var(--sky);text-decoration:none;}
+    /* Actions */
+    .actions{display:flex;flex-direction:column;gap:12px;margin-bottom:40px;}
+    .btn-main{padding:15px 28px;background:var(--ink);color:var(--paper);border:none;border-radius:11px;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:opacity 0.15s;}
+    .btn-main:hover{opacity:0.86;}
+    .btn-row{display:flex;gap:10px;}
+    .btn-secondary{flex:1;padding:12px;border:1.5px solid var(--border);border-radius:10px;background:#fff;font-size:13px;font-weight:600;color:var(--ink);cursor:pointer;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px;transition:background 0.15s,border-color 0.15s;}
+    .btn-secondary:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    /* Checklist */
+    .checklist{text-align:left;background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:32px;}
+    .checklist-title{font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+    .check-item{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid rgba(23,24,23,0.06);}
+    .check-item:last-child{border-bottom:none;}
+    .check-icon{width:20px;height:20px;border-radius:50%;background:rgba(34,197,94,0.1);border:1.5px solid rgba(34,197,94,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#22c55e;font-weight:700;}
+    .check-text{font-size:13px;font-weight:500;}
+    .check-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+    .footer-note{font-size:12px;color:var(--muted);line-height:1.5;}
+    .footer-note a{color:var(--ink);font-weight:600;}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — Thank You</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <a href="/dashboard" style="padding:8px 16px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);text-decoration:none;">Dashboard</a>
+  </nav>
+  <main class="main">
+    <div class="card">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="eyebrow">Portfolio Deployed</div>
+      <h1>You&#8217;re live.</h1>
+      <p class="sub">Your 3D spatial portfolio is compiled, deployed, and reachable right now. Share the link anywhere you would.</p>
+
+      <div class="url-box">
+        <div class="url-label"><span class="url-dot"></span> Live address</div>
+        <div class="url-value"><a href="#">abdulaziz.myfolio.tech</a></div>
+      </div>
+
+      <div class="checklist">
+        <div class="checklist-title">What&#8217;s included</div>
+        <div class="check-item"><div class="check-icon">&#10003;</div><div><div class="check-text">Three.js WebGL 3D world deployed</div><div class="check-sub">Interactive, spatial, and mobile-friendly</div></div></div>
+        <div class="check-item"><div class="check-icon">&#10003;</div><div><div class="check-text">GitHub sync active</div><div class="check-sub">Auto-rebuilds when you push new repositories</div></div></div>
+        <div class="check-item"><div class="check-icon">&#10003;</div><div><div class="check-text">Watermarks removed</div><div class="check-sub">Clean, branded, zero MyFolio attribution required</div></div></div>
+        <div class="check-item"><div class="check-icon">&#10003;</div><div><div class="check-text">Source code exported</div><div class="check-sub">ZIP download available in your dashboard</div></div></div>
+      </div>
+
+      <div class="actions">
+        <a class="btn-main" href="#">Open abdulaziz.myfolio.tech &#8599;</a>
+        <div class="btn-row">
+          <a class="btn-secondary" href="#">&#128279; Copy link</a>
+          <a class="btn-secondary" href="/studio">&#9998; Edit in Studio</a>
+          <a class="btn-secondary" href="/dashboard">&#9776; Dashboard</a>
+        </div>
+      </div>
+      <p class="footer-note">Want to change your URL or start a new build? Head to your <a href="/studio">Studio</a> or <a href="/dashboard">Dashboard</a> anytime.</p>
+    </div>
+  </main>
+</body>
+</html>

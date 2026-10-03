@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — MyFolio Design Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    .top-nav{border-bottom:1px solid var(--border);padding:0 max(24px,calc((100vw - 1200px)/2));height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .nav-links{display:flex;gap:24px;}
+    .nav-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;}
+    .nav-link:hover{color:var(--ink);}
+    .hero{border-bottom:1px solid var(--border);padding:80px max(24px,calc((100vw - 1200px)/2)) 64px;}
+    .hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+    .hero-eyebrow::before{content:'';width:20px;height:1px;background:var(--muted);}
+    .hero-title{font-size:clamp(40px,5.5vw,80px);font-weight:500;letter-spacing:-0.06em;line-height:1.03;margin-bottom:20px;}
+    .hero-sub{font-size:16px;color:var(--muted);max-width:460px;line-height:1.65;}
+    .content{padding:72px max(24px,calc((100vw - 1200px)/2)) 100px;display:grid;grid-template-columns:1fr 1fr;gap:80px;}
+    @media(max-width:780px){.content{grid-template-columns:1fr;gap:48px;}}
+    .contact-info h2{font-size:18px;font-weight:600;letter-spacing:-0.03em;margin-bottom:24px;}
+    .contact-method{display:flex;align-items:flex-start;gap:16px;padding:20px 0;border-bottom:1px solid var(--border);}
+    .contact-method:first-of-type{border-top:1px solid var(--border);}
+    .cm-icon{width:36px;height:36px;border-radius:8px;background:rgba(23,24,23,0.05);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+    .cm-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+    .cm-val{font-size:14px;font-weight:500;color:var(--ink);}
+    .cm-sub{font-size:12px;color:var(--muted);margin-top:2px;}
+    .social-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;}
+    .social-link{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);text-decoration:none;background:#fff;transition:background 0.15s,border-color 0.15s;}
+    .social-link:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    /* Form */
+    .form-section h2{font-size:18px;font-weight:600;letter-spacing:-0.03em;margin-bottom:24px;}
+    label{display:block;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:18px;}
+    label:first-of-type{margin-top:0;}
+    input,textarea,select{width:100%;padding:12px 14px;border:1.5px solid rgba(23,24,23,0.14);border-radius:9px;font-size:14px;font-family:'Inter',sans-serif;background:#fff;color:var(--ink);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+    input:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(117,197,222,0.12);}
+    textarea{resize:vertical;min-height:120px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .submit-btn{margin-top:24px;width:100%;padding:14px;background:var(--ink);color:var(--paper);border:none;border-radius:10px;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:-0.02em;transition:opacity 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .submit-btn:hover{opacity:0.86;}
+    .form-note{margin-top:14px;font-size:12px;color:var(--muted);text-align:center;}
+    footer{border-top:1px solid var(--border);padding:32px max(24px,calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .footer-links{display:flex;gap:20px;}
+    .footer-link{font-size:12px;color:var(--muted);text-decoration:none;}
+    .footer-link:hover{color:var(--ink);}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — Contact</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <div class="nav-links">
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/studio">Studio</a>
+    </div>
+    <a href="/auth" style="padding:8px 16px;background:var(--ink);color:var(--paper);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Get Started</a>
+  </nav>
+  <div class="hero">
+    <div class="hero-eyebrow">Contact</div>
+    <h1 class="hero-title">Let&#8217;s talk.</h1>
+    <p class="hero-sub">Have a question, a partnership idea, or just want to say hello? We&#8217;re a small team and we read everything.</p>
+  </div>
+  <div class="content">
+    <div class="contact-info">
+      <h2>How to reach us</h2>
+      <div class="contact-method">
+        <div class="cm-icon">&#9993;</div>
+        <div><div class="cm-label">Email</div><div class="cm-val">hello@myfolio.tech</div><div class="cm-sub">We reply within 24 hours</div></div>
+      </div>
+      <div class="contact-method">
+        <div class="cm-icon">&#128640;</div>
+        <div><div class="cm-label">Product feedback</div><div class="cm-val">feedback@myfolio.tech</div><div class="cm-sub">Feature requests &amp; bug reports</div></div>
+      </div>
+      <div class="contact-method">
+        <div class="cm-icon">&#128279;</div>
+        <div><div class="cm-label">GitHub</div><div class="cm-val">Abdul-Aziz-Nooruddin/myfolio.tech</div><div class="cm-sub">Open source, issues welcome</div></div>
+      </div>
+      <div class="social-links">
+        <a class="social-link" href="#">&#128296; GitHub</a>
+        <a class="social-link" href="#">&#128241; Twitter</a>
+        <a class="social-link" href="#">&#128188; LinkedIn</a>
+        <a class="social-link" href="#">&#127918; Product Hunt</a>
+      </div>
+    </div>
+    <div class="form-section">
+      <h2>Send us a message</h2>
+      <form>
+        <div class="form-row">
+          <div><label>Name</label><input type="text" placeholder="Your name"></div>
+          <div><label>Email</label><input type="email" placeholder="you@example.com"></div>
+        </div>
+        <label>Subject</label>
+        <input type="text" placeholder="What&#8217;s this about?">
+        <label>Message</label>
+        <textarea placeholder="Tell us what&#8217;s on your mind..."></textarea>
+        <button class="submit-btn" type="submit">Send message &#8594;</button>
+        <p class="form-note">We don&#8217;t share your email with anyone. Ever.</p>
+      </form>
+    </div>
+  </div>
+  <footer>
+    <span style="font-size:13px;font-weight:600;letter-spacing:-0.02em;">MyFolio</span>
+    <div class="footer-links">
+      <a class="footer-link" href="/privacy">Privacy</a>
+      <a class="footer-link" href="/terms">Terms</a>
+      <a class="footer-link" href="/about">About</a>
+    </div>
+    <span style="font-size:12px;color:var(--muted);">&#169; 2026 MyFolio</span>
+  </footer>
+</body>
+</html>

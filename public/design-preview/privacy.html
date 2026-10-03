@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy — MyFolio Design Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    .top-nav{border-bottom:1px solid var(--border);padding:0 max(24px,calc((100vw - 1200px)/2));height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .page-hero{padding:64px max(24px,calc((100vw - 1200px)/2)) 48px;border-bottom:1px solid var(--border);}
+    .hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+    .hero-title{font-size:clamp(36px,4.5vw,60px);font-weight:500;letter-spacing:-0.055em;line-height:1.05;margin-bottom:16px;}
+    .hero-meta{font-size:12px;color:var(--muted);}
+    /* Layout */
+    .layout{display:grid;grid-template-columns:220px 1fr;gap:60px;padding:60px max(24px,calc((100vw - 1200px)/2)) 100px;max-width:1400px;margin:0 auto;}
+    @media(max-width:800px){.layout{grid-template-columns:1fr;}}
+    /* TOC */
+    .toc{position:sticky;top:80px;align-self:start;}
+    .toc-label{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;}
+    .toc-list{display:flex;flex-direction:column;gap:4px;}
+    .toc-link{font-size:13px;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:6px;transition:background 0.15s,color 0.15s;}
+    .toc-link:hover,.toc-link.active{background:rgba(23,24,23,0.07);color:var(--ink);font-weight:500;}
+    /* Content */
+    .prose h2{font-size:22px;font-weight:600;letter-spacing:-0.04em;margin-top:48px;margin-bottom:16px;padding-top:48px;border-top:1px solid var(--border);}
+    .prose h2:first-child{margin-top:0;padding-top:0;border-top:none;}
+    .prose p{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:14px;}
+    .prose ul{margin:14px 0 14px 20px;display:flex;flex-direction:column;gap:8px;}
+    .prose li{font-size:15px;color:var(--muted);line-height:1.65;}
+    .prose strong{color:var(--ink);font-weight:600;}
+    .prose a{color:var(--ink);font-weight:500;text-decoration:underline;text-underline-offset:2px;}
+    .highlight-box{background:#fff;border:1px solid var(--border);border-radius:10px;padding:20px 24px;margin:24px 0;border-left:3px solid var(--sky);}
+    .highlight-box p{margin:0;color:var(--ink);}
+    footer{border-top:1px solid var(--border);padding:32px max(24px,calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .footer-link{font-size:12px;color:var(--muted);text-decoration:none;margin-left:20px;}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — Privacy</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <a href="/auth" style="padding:8px 16px;background:var(--ink);color:var(--paper);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Get Started</a>
+  </nav>
+  <div class="page-hero">
+    <div class="hero-eyebrow">Legal</div>
+    <h1 class="hero-title">Privacy Policy</h1>
+    <p class="hero-meta">Last updated: October 2, 2026 &middot; Effective immediately</p>
+  </div>
+  <div class="layout">
+    <aside class="toc">
+      <div class="toc-label">On this page</div>
+      <div class="toc-list">
+        <a class="toc-link active" href="#overview">Overview</a>
+        <a class="toc-link" href="#data">What we collect</a>
+        <a class="toc-link" href="#use">How we use it</a>
+        <a class="toc-link" href="#sharing">Data sharing</a>
+        <a class="toc-link" href="#retention">Retention</a>
+        <a class="toc-link" href="#rights">Your rights</a>
+        <a class="toc-link" href="#contact">Contact</a>
+      </div>
+    </aside>
+    <div class="prose">
+      <div class="highlight-box"><p><strong>Short version:</strong> We collect what we need to run MyFolio. We don&#8217;t sell your data. You can delete your account anytime and we&#8217;ll remove everything.</p></div>
+      <h2 id="overview">Overview</h2>
+      <p>MyFolio (&#8220;we&#8221;, &#8220;us&#8221;, &#8220;our&#8221;) operates the myfolio.tech platform. This Privacy Policy explains how we collect, use, and protect your personal information when you use our service.</p>
+      <p>By using MyFolio, you agree to the collection and use of information in accordance with this policy. If you disagree with any part of this policy, please do not use our service.</p>
+      <h2 id="data">What we collect</h2>
+      <p>We collect information you provide directly, information from connected services (GitHub, Google), and basic usage analytics. Specifically:</p>
+      <ul>
+        <li><strong>Account information:</strong> Name, email address, profile picture (from Google OAuth)</li>
+        <li><strong>GitHub data:</strong> Public repository metadata, commit history, README content &mdash; only what&#8217;s publicly available</li>
+        <li><strong>Resume content:</strong> Text you paste or upload for portfolio generation (processed and stored only for your builds)</li>
+        <li><strong>Usage data:</strong> Pages visited, features used, build counts (anonymised, via GA4)</li>
+        <li><strong>Payment data:</strong> Handled entirely by Razorpay &mdash; we never store card details</li>
+      </ul>
+      <h2 id="use">How we use it</h2>
+      <p>Your data is used solely to provide and improve the MyFolio service:</p>
+      <ul>
+        <li>Generating your 3D portfolio from GitHub and resume data</li>
+        <li>Hosting your portfolio on our servers and CDN</li>
+        <li>Sending transactional emails (build confirmations, account updates)</li>
+        <li>Improving the generation engine based on aggregate, anonymised usage patterns</li>
+      </ul>
+      <h2 id="sharing">Data sharing</h2>
+      <p>We do not sell, rent, or trade your personal data. We share data only with:</p>
+      <ul>
+        <li><strong>Netlify / Cloudflare:</strong> Hosting infrastructure for your published portfolio</li>
+        <li><strong>Supabase:</strong> Database and auth provider (EU region)</li>
+        <li><strong>Razorpay:</strong> Payment processing (PCI DSS compliant)</li>
+        <li><strong>Google Analytics:</strong> Anonymised usage analytics</li>
+      </ul>
+      <h2 id="rights">Your rights</h2>
+      <p>You have the right to access, correct, or delete your personal data at any time. Go to <strong>Account &rarr; Profile</strong> to update your information, or email us at <a href="mailto:privacy@myfolio.tech">privacy@myfolio.tech</a> to request complete data deletion.</p>
+    </div>
+  </div>
+  <footer>
+    <a class="nav-brand" href="/" style="text-decoration:none;color:var(--ink);font-size:14px;font-weight:600;letter-spacing:-0.03em;display:flex;align-items:center;gap:8px;"><span style="width:6px;height:6px;border-radius:50%;background:#75c5de;display:inline-block;"></span>MyFolio</a>
+    <div>
+      <a class="footer-link" href="/terms">Terms</a>
+      <a class="footer-link" href="/contact">Contact</a>
+    </div>
+    <span style="font-size:12px;color:var(--muted);">&#169; 2026 MyFolio</span>
+  </footer>
+</body>
+</html>

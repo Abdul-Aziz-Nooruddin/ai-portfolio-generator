@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — MyFolio Design Preview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    .top-nav{border-bottom:1px solid var(--border);padding:0 max(24px,calc((100vw - 1200px)/2));height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .nav-links{display:flex;gap:24px;}
+    .nav-link{font-size:13px;color:var(--muted);text-decoration:none;font-weight:500;}
+    /* Ink hero */
+    .ink-hero{background:var(--ink);color:var(--paper);padding:100px max(24px,calc((100vw - 1200px)/2)) 80px;position:relative;overflow:hidden;}
+    .ink-hero::after{content:'';position:absolute;right:-100px;bottom:-100px;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(117,197,222,0.06) 0%,transparent 70%);}
+    .hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--sky);margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+    .hero-eyebrow span{width:20px;height:1px;background:currentColor;display:inline-block;}
+    .hero-title{font-size:clamp(44px,6vw,88px);font-weight:500;letter-spacing:-0.065em;line-height:1.02;max-width:800px;margin-bottom:32px;}
+    .hero-desc{font-size:17px;color:rgba(244,241,232,0.65);line-height:1.7;max-width:560px;margin-bottom:40px;}
+    .hero-cta{display:inline-flex;align-items:center;gap:8px;padding:14px 24px;background:var(--sky);color:var(--ink);border-radius:10px;font-size:14px;font-weight:700;text-decoration:none;transition:opacity 0.15s;}
+    .hero-cta:hover{opacity:0.85;}
+    /* Content */
+    .section{padding:80px max(24px,calc((100vw - 1200px)/2));}
+    .section-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;}
+    .section-title{font-size:clamp(32px,4vw,56px);font-weight:500;letter-spacing:-0.055em;line-height:1.06;margin-bottom:28px;}
+    .section-body{font-size:16px;color:var(--muted);line-height:1.75;max-width:640px;}
+    .section-body p{margin-bottom:16px;}
+    /* 2-col */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:80px;border-top:1px solid var(--border);}
+    @media(max-width:780px){.two-col{grid-template-columns:1fr;gap:48px;}}
+    /* Values */
+    .values-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px;margin-top:48px;}
+    .value-card{border:1px solid var(--border);border-radius:12px;padding:28px;background:#fff;}
+    .value-num{font-size:10px;font-weight:700;letter-spacing:0.12em;color:var(--muted);margin-bottom:16px;}
+    .value-title{font-size:18px;font-weight:600;letter-spacing:-0.04em;margin-bottom:10px;}
+    .value-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+    /* Timeline */
+    .timeline{margin-top:48px;display:flex;flex-direction:column;gap:0;}
+    .tl-item{display:flex;gap:24px;padding:24px 0;border-bottom:1px solid var(--border);}
+    .tl-year{font-size:12px;font-weight:700;color:var(--muted);width:60px;flex-shrink:0;padding-top:2px;}
+    .tl-title{font-size:15px;font-weight:600;letter-spacing:-0.02em;margin-bottom:4px;}
+    .tl-desc{font-size:13px;color:var(--muted);line-height:1.5;}
+    footer{border-top:1px solid var(--border);padding:32px max(24px,calc((100vw - 1200px)/2));display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+    .footer-link{font-size:12px;color:var(--muted);text-decoration:none;margin-left:20px;}
+    .footer-link:hover{color:var(--ink);}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — About</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <div class="nav-links">
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/contact">Contact</a>
+    </div>
+    <a href="/auth" style="padding:8px 16px;background:var(--ink);color:var(--paper);border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Get Started</a>
+  </nav>
+
+  <div class="ink-hero">
+    <div class="hero-eyebrow"><span></span> About MyFolio</div>
+    <h1 class="hero-title">We think your work deserves better than a template.</h1>
+    <p class="hero-desc">MyFolio exists because the standard portfolio is broken. Static pages, buried in a sea of identical Canva exports. We built something different.</p>
+    <a class="hero-cta" href="/studio">Build yours free &#8594;</a>
+  </div>
+
+  <div class="section" style="border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">The idea</div>
+    <h2 class="section-title">Built by a developer,<br>for developers.</h2>
+    <div class="section-body">
+      <p>MyFolio was born out of frustration. After spending hours tweaking yet another theme-based portfolio, the question was simple: why does this have to be so hard?</p>
+      <p>Your GitHub already has everything &mdash; the projects, the commits, the evidence. We just needed to build the engine that translates that into something spatial, interactive, and worth showing.</p>
+      <p>Today, MyFolio generates fully personalised Three.js WebGL portfolio worlds from your actual data. No templates in the bad sense &mdash; every output is shaped by what you&#8217;ve actually built.</p>
+    </div>
+  </div>
+
+  <div class="section" style="border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Our values</div>
+    <h2 class="section-title">What we believe.</h2>
+    <div class="values-grid">
+      <div class="value-card"><div class="value-num">01</div><div class="value-title">No lock-in</div><div class="value-desc">Every paid build includes full source code export. Your work is yours. Always.</div></div>
+      <div class="value-card"><div class="value-num">02</div><div class="value-title">Evidence, not flair</div><div class="value-desc">We pull from your real GitHub. No dummy projects, no fabricated achievements.</div></div>
+      <div class="value-card"><div class="value-num">03</div><div class="value-title">Small &amp; honest</div><div class="value-desc">We&#8217;re a tiny team. No VC pressure. No growth-at-all-costs. Just a good product.</div></div>
+      <div class="value-card"><div class="value-num">04</div><div class="value-title">Free to explore</div><div class="value-desc">3 builds per week, no card needed. We want you to actually try it before paying.</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="border-bottom:1px solid var(--border);">
+    <div class="section-eyebrow">Timeline</div>
+    <h2 class="section-title">How we got here.</h2>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-year">2025</div><div><div class="tl-title">The first prototype</div><div class="tl-desc">Built in a weekend. A Node.js script that scraped a GitHub profile and spat out a Three.js scene.</div></div></div>
+      <div class="tl-item"><div class="tl-year">2026 Q1</div><div><div class="tl-title">Jack 3D &amp; Nadia go live</div><div class="tl-desc">The first two template universes ship. 200 portfolios generated in the first month.</div></div></div>
+      <div class="tl-item"><div class="tl-year">2026 Q2</div><div><div class="tl-title">Web Studio &amp; live editing</div><div class="tl-desc">Real-time studio editor launches, with drag-and-drop resume parsing and GitHub sync.</div></div></div>
+      <div class="tl-item"><div class="tl-year">Now</div><div><div class="tl-title">Pro domains &amp; beyond</div><div class="tl-desc">username.myfolio.tech, unlimited rebuilds, and more templates in the pipeline.</div></div></div>
+    </div>
+  </div>
+
+  <footer>
+    <a class="nav-brand" href="/" style="text-decoration:none;color:var(--ink);font-size:14px;font-weight:600;letter-spacing:-0.03em;"><span style="width:6px;height:6px;border-radius:50%;background:#75c5de;display:inline-block;margin-right:8px;"></span>MyFolio</a>
+    <div>
+      <a class="footer-link" href="/privacy">Privacy</a>
+      <a class="footer-link" href="/terms">Terms</a>
+      <a class="footer-link" href="/contact">Contact</a>
+    </div>
+    <span style="font-size:12px;color:var(--muted);">&#169; 2026 MyFolio</span>
+  </footer>
+</body>
+</html>

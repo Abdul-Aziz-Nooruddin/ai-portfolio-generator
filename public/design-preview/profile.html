@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Preview — MyFolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--paper:#f4f1e8;--ink:#171817;--sky:#75c5de;--muted:#60615b;--border:rgba(23,24,23,0.1);}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);min-height:100vh;-webkit-font-smoothing:antialiased;}
+    .preview-bar{background:#171817;color:#fff;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;padding:8px 20px;display:flex;align-items:center;justify-content:space-between;}
+    .preview-bar a{color:#75c5de;text-decoration:none;}
+    .top-nav{border-bottom:1px solid var(--border);padding:0 40px;height:56px;display:flex;align-items:center;justify-content:space-between;background:var(--paper);}
+    .nav-brand{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;letter-spacing:-0.04em;text-decoration:none;color:var(--ink);}
+    .brand-dot{width:7px;height:7px;border-radius:50%;background:var(--sky);}
+    .btn-ghost-nav{padding:8px 16px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:600;color:var(--ink);background:none;cursor:pointer;text-decoration:none;transition:background 0.15s;}
+    .btn-ghost-nav:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    .btn-primary{padding:8px 16px;background:var(--ink);color:var(--paper);border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;}
+    .page-header{border-bottom:1px solid var(--border);padding:40px;max-width:1200px;margin:0 auto;}
+    .page-eyebrow{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
+    .page-title{font-size:32px;font-weight:500;letter-spacing:-0.05em;margin-bottom:6px;}
+    .page-sub{font-size:14px;color:var(--muted);}
+    .main{max-width:1200px;margin:0 auto;padding:48px 40px 80px;display:grid;grid-template-columns:1fr 340px;gap:32px;}
+    @media(max-width:900px){.main{grid-template-columns:1fr;}}
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:28px 32px;margin-bottom:20px;}
+    .card-title{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+    label{display:block;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;margin-top:18px;}
+    label:first-of-type{margin-top:0;}
+    input[type=text],input[type=email],select,textarea{width:100%;padding:11px 13px;border:1.5px solid rgba(23,24,23,0.14);border-radius:8px;font-size:14px;font-family:'Inter',sans-serif;background:#faf9f5;color:var(--ink);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+    input:focus,select:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(117,197,222,0.12);}
+    textarea{resize:vertical;min-height:80px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+    .save-btn{margin-top:24px;padding:12px 24px;background:var(--ink);color:var(--paper);border:none;border-radius:9px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:-0.01em;transition:opacity 0.15s;}
+    .save-btn:hover{opacity:0.85;}
+    /* Avatar */
+    .avatar-section{display:flex;align-items:center;gap:20px;margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--border);}
+    .avatar-wrap{width:72px;height:72px;border-radius:50%;background:rgba(23,24,23,0.08);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+    .avatar-meta h3{font-size:16px;font-weight:600;letter-spacing:-0.03em;margin-bottom:4px;}
+    .avatar-meta p{font-size:12px;color:var(--muted);margin-bottom:10px;}
+    .upload-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-weight:600;color:var(--ink);cursor:pointer;transition:background 0.15s,border-color 0.15s;background:none;}
+    .upload-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink);}
+    /* Sidebar */
+    .sidebar-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:16px;}
+    .sidebar-card-title{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .conn-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(23,24,23,0.06);}
+    .conn-item:last-child{border-bottom:none;}
+    .conn-info{display:flex;align-items:center;gap:10px;}
+    .conn-icon{width:32px;height:32px;border-radius:7px;background:rgba(23,24,23,0.06);display:flex;align-items:center;justify-content:center;font-size:16px;}
+    .conn-name{font-size:13px;font-weight:500;}
+    .conn-status{font-size:11px;color:var(--muted);}
+    .conn-status.linked{color:#22c55e;font-weight:600;}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;}
+    .badge-sky{background:rgba(117,197,222,0.12);color:var(--sky);border:1px solid rgba(117,197,222,0.25);}
+    .badge-gold{background:rgba(245,166,35,0.12);color:#f5a623;border:1px solid rgba(245,166,35,0.3);}
+    .danger-zone{border:1px solid rgba(239,68,68,0.2);border-radius:10px;padding:18px 20px;margin-top:8px;}
+    .danger-title{font-size:12px;font-weight:700;color:#ef4444;margin-bottom:6px;}
+    .danger-desc{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+    .danger-btn{padding:8px 14px;background:rgba(239,68,68,0.06);color:#ef4444;border:1px solid rgba(239,68,68,0.25);border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <div class="preview-bar"><span>&#128065; Design Preview — Profile</span><a href="/design-preview">&#8592; Hub</a></div>
+  <nav class="top-nav">
+    <a class="nav-brand" href="/"><span class="brand-dot"></span> MyFolio</a>
+    <div style="display:flex;gap:10px;">
+      <a class="btn-ghost-nav" href="/dashboard">Dashboard</a>
+      <a class="btn-primary" href="/studio">Open Studio</a>
+    </div>
+  </nav>
+  <div class="page-header">
+    <div class="page-eyebrow">Settings</div>
+    <h1 class="page-title">Account &amp; Profile</h1>
+    <p class="page-sub">Manage your identity, connections, and plan preferences.</p>
+  </div>
+  <div class="main">
+    <div>
+      <!-- Avatar -->
+      <div class="card">
+        <div class="card-title">Identity</div>
+        <div class="avatar-section">
+          <div class="avatar-wrap">&#128100;</div>
+          <div class="avatar-meta">
+            <h3>Abdul-Aziz Nooruddin</h3>
+            <p>abdulaziznoor9876@gmail.com</p>
+            <button class="upload-btn">&#8593; Upload Photo</button>
+          </div>
+        </div>
+        <div class="form-row">
+          <div><label>First Name</label><input type="text" value="Abdul-Aziz"></div>
+          <div><label>Last Name</label><input type="text" value="Nooruddin"></div>
+        </div>
+        <label>Professional Title</label>
+        <input type="text" value="Full-Stack Engineer &amp; Builder">
+        <label>Bio</label>
+        <textarea>Building the web, one commit at a time. Interested in AI, WebGL, and developer tooling.</textarea>
+        <label>Location</label>
+        <input type="text" value="India">
+        <button class="save-btn">Save Changes &#10003;</button>
+      </div>
+      <!-- GitHub -->
+      <div class="card">
+        <div class="card-title">GitHub Integration</div>
+        <div class="conn-item">
+          <div class="conn-info">
+            <div class="conn-icon">&#128296;</div>
+            <div><div class="conn-name">GitHub</div><div class="conn-status linked">&#9679; Abdul-Aziz-Nooruddin</div></div>
+          </div>
+          <button class="upload-btn">Reconnect</button>
+        </div>
+        <label>GitHub Username (override)</label>
+        <input type="text" value="Abdul-Aziz-Nooruddin" placeholder="your-github-handle">
+        <button class="save-btn" style="margin-top:16px;">Update GitHub</button>
+      </div>
+    </div>
+    <!-- Sidebar -->
+    <div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Current Plan</div>
+        <div style="margin-bottom:12px;"><span class="badge badge-gold">&#9733; Pro Domain</span></div>
+        <div style="font-size:22px;font-weight:600;letter-spacing:-0.04em;margin-bottom:4px;">&#8377;149<span style="font-size:13px;font-weight:400;color:var(--muted);">/month</span></div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.5;">username.myfolio.tech &middot; Unlimited rebuilds &middot; No watermarks &middot; Full code export</div>
+        <button class="save-btn" style="margin-top:0;width:100%;padding:10px;">Manage Subscription &#8599;</button>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Connections</div>
+        <div class="conn-item">
+          <div class="conn-info"><div class="conn-icon">G</div><div><div class="conn-name">Google</div><div class="conn-status linked">&#9679; Linked</div></div></div>
+          <span class="badge badge-sky">Active</span>
+        </div>
+        <div class="conn-item">
+          <div class="conn-info"><div class="conn-icon">&#128296;</div><div><div class="conn-name">GitHub</div><div class="conn-status linked">&#9679; Linked</div></div></div>
+          <span class="badge badge-sky">Active</span>
+        </div>
+      </div>
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Danger Zone</div>
+        <div class="danger-zone">
+          <div class="danger-title">Delete Account</div>
+          <div class="danger-desc">Permanently delete your account, all portfolios, and associated data. This cannot be undone.</div>
+          <button class="danger-btn">Delete Account</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

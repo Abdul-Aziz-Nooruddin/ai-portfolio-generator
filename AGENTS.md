@@ -90,6 +90,12 @@ You MUST strictly consult and apply the following three authoritative design and
       - Climate & Geospatial -> MUST display planetary geospatial telemetry sensors (`forest_fire_climate_3d.jpg`).
     - **Semantic Relevancy Matching Guarantee**: The system must enforce high-affinity keyword and title classification matching. If a project title mentions notes/messaging, it receives messaging artwork; if it mentions portfolio/generator, it receives developer tooling artwork; if it mentions smart contracts/crypto, it receives blockchain ledger artwork. Zero visual-semantic mismatch.
 
+12. **Template Hero Section Preview Standard (Strict Zero Generated / Mismatched AI Images for Templates - MANDATORY)**:
+    - **NEVER GENERATE AI IMAGES FOR TEMPLATES**: Under NO circumstances should AI image generation tools (`generate_image`, etc.) be used to create synthetic, abstract, or fantasy preview thumbnails for portfolio templates in Web Studio, Dashboard, template showcases, or registries.
+    - **AUTHENTIC HERO SECTION AS TEMPLATE IMAGE**: For ALL templates (both current and any implemented in the future), the template showcase image, thumbnail, and catalog card MUST be an authentic screenshot/capture of the template's actual **Hero Section** (the top hero fold as rendered in the browser).
+    - **Standardized Asset Storage**: All template hero preview captures must be saved to `/assets/templates/<template-id>-hero.webp` (with high-quality `.jpg` fallback) synchronized across both `public/assets/templates/` and `web/assets/templates/`.
+    - **Template Addition Protocol**: Whenever a new template is created or implemented, immediately capture its real hero section (via automated headless capture or high-fidelity viewport screenshot) and bind it directly to the template's `thumbnail` property, Web Studio cards, and Dashboard showcases.
+
 ## Standard Operating Procedure for Template Additions
 
 For **ANY** future template addition or redesign, you MUST strictly follow this mandatory pipeline:
