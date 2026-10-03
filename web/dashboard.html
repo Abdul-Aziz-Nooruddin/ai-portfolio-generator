@@ -25,6 +25,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   
   <link rel="stylesheet" href="/web/app-tokens.css">
   <link rel="stylesheet" href="/app-tokens.css">
@@ -931,6 +932,9 @@
 
             <!-- Actions Dock -->
             <div class="portfolio-actions-dock">
+              <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" id="btnPublishPermanent" onclick="openProModal()" style="display:none; background:linear-gradient(135deg, #10B981, #059669); border-color:#059669; color:#fff; font-weight:600;">
+                <span>🚀 Publish Permanent Live Site (₹149)</span>
+              </button>
               <a href="#" target="_blank" rel="noopener noreferrer" class="mf-btn mf-btn-primary mf-btn-sm" id="btnOpenLive">
                 <span>Visit Live</span> &nearr;
               </a>
@@ -1067,41 +1071,44 @@
     </div>
   </div>
 
-  <!-- Pro Upgrade Modal (Triggered when free user clicks Source Code Export) -->
+  <!-- Publish Permanent Live Site Modal -->
   <div class="modal-backdrop" id="proUpgradeModal" onclick="closeProModal(event)">
     <div class="modal-card" onclick="event.stopPropagation()">
-      <div style="width:48px; height:48px; border-radius:50%; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); color:#FCD34D; display:flex; align-items:center; justify-content:center; font-size:22px; margin-bottom:12px;">★</div>
-      <h3 style="font-size:1.25rem; font-weight:600; color:#F4F1E8;">Source Code Export (Pro)</h3>
+      <div style="width:48px; height:48px; border-radius:50%; background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.3); color:#10B981; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:12px;">🚀</div>
+      <h3 style="font-size:1.25rem; font-weight:600; color:#F4F1E8;">Publish Permanent Live Website</h3>
       <p style="font-size:13px; color:var(--dash-text-secondary); margin-top:4px; line-height:1.5;">
-        Exporting the complete standalone source code is a Pro feature. Download and own 100% of your code with zero vendor lock-in.
+        Your 3D developer portfolio was generated in seconds and is currently in <strong>24-Hour Preview Mode</strong>. Publish permanently so your website stays live 24/7 and never goes down.
       </p>
 
       <div class="pro-features-list">
         <div class="pro-feature-item">
           <span>✓</span>
-          <span>Full HTML5, CSS3, JavaScript, and 3D assets in one ZIP</span>
+          <span><strong>Permanent 24/7 Live Hosting</strong> (Never expires or goes down after 24 hours)</span>
         </div>
         <div class="pro-feature-item">
           <span>✓</span>
-          <span>Deploy to Vercel, Netlify, Cloudflare Pages, or GitHub Pages</span>
+          <span><strong>Personal Subdomain</strong> (e.g. yourname.myfolio.tech on Netlify Edge CDN)</span>
         </div>
         <div class="pro-feature-item">
           <span>✓</span>
-          <span>Branded custom domain (username.myfolio.tech)</span>
+          <span><strong>Zero Watermarks</strong> (Clean, professional presentation for recruiters & clients)</span>
         </div>
         <div class="pro-feature-item">
           <span>✓</span>
-          <span>Zero platform watermarks</span>
+          <span><strong>Full Standalone Source Code (.zip)</strong> (Download and own 100% of your code)</span>
         </div>
       </div>
 
-      <div style="display:flex; gap:10px; width:100%;">
-        <a href="/studio#pricing" class="mf-btn mf-btn-primary" style="flex:1; background:linear-gradient(135deg, #F59E0B, #D97706); border-color:#D97706; color:#000; font-weight:700;">
-          Upgrade to Pro (₹149/mo)
-        </a>
-        <button type="button" class="mf-btn mf-btn-secondary" onclick="closeProModal()">
-          Cancel
+      <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+        <button type="button" class="mf-btn mf-btn-primary" style="width:100%; background:linear-gradient(135deg, #10B981, #059669); border-color:#059669; color:#FFFFFF; font-weight:700; font-size:13.5px; padding:11px;" onclick="startPublishCheckout()">
+          🚀 Publish Permanent Live Site — ₹149 (One-Time)
         </button>
+        <button type="button" class="mf-btn mf-btn-secondary" onclick="closeProModal()">
+          Continue in 24h Preview
+        </button>
+      </div>
+      <div style="font-size:11.5px; color:var(--dash-text-muted); margin-top:8px;">
+        One-time fee to keep your portfolio permanently live. No monthly subscriptions.
       </div>
     </div>
   </div>
@@ -1194,29 +1201,38 @@
       const quotaDisplay = document.getElementById('quotaDisplay');
       const exportProPill = document.getElementById('exportProPill');
 
+      const btnPublishPermanent = document.getElementById('btnPublishPermanent');
+
       if (isPro) {
-        if (tierLabel) tierLabel.textContent = isVip ? 'VIP Founder' : 'Pro Plan';
+        if (tierLabel) tierLabel.textContent = isVip ? 'VIP Founder' : 'Permanent Live Website';
         if (tierPill) {
-          tierPill.textContent = isVip ? 'VIP FOUNDER' : 'PRO PLAN';
-          tierPill.className = 'mf-badge mf-badge-vip';
+          tierPill.textContent = 'PERMANENT LIVE';
+          tierPill.className = 'mf-badge mf-badge-success';
         }
         if (quotaDisplay) {
-          quotaDisplay.textContent = 'Unlimited Builds';
-          quotaDisplay.style.color = '#FCD34D';
+          quotaDisplay.textContent = 'Live on Edge CDN';
+          quotaDisplay.style.color = '#10B981';
         }
-        if (exportProPill) exportProPill.style.display = 'none'; // Paid users don't need a lock pill
+        if (exportProPill) exportProPill.style.display = 'none'; // Permanent sites have unlocked export
+        if (btnPublishPermanent) btnPublishPermanent.style.display = 'none';
       } else {
         const remaining = data?.plan?.buildsRemaining ?? 3;
-        if (tierLabel) tierLabel.textContent = 'Starter Free';
+        if (tierLabel) tierLabel.textContent = '24-Hour Preview Pass';
         if (tierPill) {
-          tierPill.textContent = 'STARTER FREE';
-          tierPill.className = 'mf-badge mf-badge-secondary';
+          tierPill.textContent = '24H PREVIEW MODE';
+          tierPill.className = 'mf-badge mf-badge-warning';
         }
         if (quotaDisplay) {
           quotaDisplay.textContent = `${remaining} / 3 Builds Remaining`;
           quotaDisplay.style.color = 'var(--dash-accent-sky)';
         }
-        if (exportProPill) exportProPill.style.display = 'inline-block';
+        if (exportProPill) {
+          exportProPill.style.display = 'inline-block';
+          exportProPill.textContent = 'PUBLISH';
+        }
+        if (btnPublishPermanent) {
+          btnPublishPermanent.style.display = hasAnyPortfolio ? 'inline-flex' : 'none';
+        }
       }
 
       // Real Analytics (Zero Fake Numbers)
@@ -1236,8 +1252,8 @@
 
       // Check Active Portfolio
       const hasAnyPortfolio = Boolean(portfolios && portfolios.length > 0);
-      const hasLivePortfolio = hasAnyPortfolio && portfolios.some(p => p.subdomain && !p.subdomain.startsWith('/'));
-      const firstLive = hasLivePortfolio ? portfolios.find(p => p.subdomain && !p.subdomain.startsWith('/')) : null;
+      const hasLivePortfolio = hasAnyPortfolio && (isPro || portfolios.some(p => p.subdomain && !p.subdomain.startsWith('/')));
+      const firstLive = hasLivePortfolio ? portfolios.find(p => p.subdomain && !p.subdomain.startsWith('/')) || portfolios[0] : null;
       const firstDraft = hasAnyPortfolio ? portfolios[0] : null;
 
       const heroHead = document.getElementById('heroHeadline');
@@ -1249,17 +1265,18 @@
       const cockpitThumb = document.getElementById('cockpitHeroImg');
       const activeTimestamp = document.getElementById('activeTimestampLabel');
 
-      if (hasLivePortfolio) {
+      if (hasLivePortfolio && isPro) {
         const activeSite = firstLive;
         currentSiteId = activeSite?.siteId || activeSite?.handle;
         const siteHandle = activeSite?.handle || activeSite?.siteId || user.username || (userEmail ? userEmail.split('@')[0] : 'portfolio');
         currentSiteUrl = activeSite?.subdomain?.startsWith('http') ? activeSite.subdomain : `https://${activeSite.subdomain || siteHandle + '.myfolio.tech'}`;
 
         if (heroHead) heroHead.textContent = 'Live Portfolio';
-        if (heroSub) heroSub.textContent = `Serving production traffic at ${siteHandle}.myfolio.tech. Share your link to track views.`;
+        if (heroSub) heroSub.textContent = `Serving permanent production traffic at ${siteHandle}.myfolio.tech. Your site is live 24/7 and never goes down.`;
         if (urlTextEl) { urlTextEl.textContent = currentSiteUrl; urlTextEl.href = currentSiteUrl; }
-        if (openBtn) openBtn.href = currentSiteUrl;
+        if (openBtn) { openBtn.href = currentSiteUrl; openBtn.innerHTML = '<span>Visit Live</span> &nearr;'; }
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        if (btnPublishPermanent) btnPublishPermanent.style.display = 'none';
 
         const uniKey = activeSite?.universeKey || 'jack-3d-creator';
         if (cockpitUniverse) cockpitUniverse.textContent = getUniverseName(uniKey);
@@ -1271,14 +1288,15 @@
         currentSiteId = draft?.siteId || draft?.handle;
         currentSiteUrl = `${window.location.origin}/p/${currentSiteId}`;
 
-        if (heroHead) heroHead.textContent = 'Preview Ready';
-        if (heroSub) heroSub.textContent = 'Your 3D portfolio is staged in preview mode. Publish anytime to claim your live subdomain.';
-        if (urlTextEl) { urlTextEl.textContent = currentSiteUrl + ' (Preview)'; urlTextEl.href = currentSiteUrl; }
-        if (openBtn) openBtn.href = currentSiteUrl;
+        if (heroHead) heroHead.textContent = '24-Hour Preview Mode';
+        if (heroSub) heroSub.textContent = 'Your 3D portfolio was generated in seconds and is active on a temporary 24-hour preview link. Publish to make it permanent so it never goes down.';
+        if (urlTextEl) { urlTextEl.textContent = currentSiteUrl + ' (24h Preview)'; urlTextEl.href = currentSiteUrl; }
+        if (openBtn) { openBtn.href = currentSiteUrl; openBtn.innerHTML = '<span>Open Preview (24h)</span> &nearr;'; }
         if (deleteBtn) deleteBtn.style.display = 'inline-flex';
+        if (btnPublishPermanent) btnPublishPermanent.style.display = 'inline-flex';
 
         const liveBadgeText = document.getElementById('liveStatusText');
-        if (liveBadgeText) liveBadgeText.textContent = 'PREVIEW READY';
+        if (liveBadgeText) liveBadgeText.textContent = '24H PREVIEW PASS';
 
         const uniKey = draft?.universeKey || 'jack-3d-creator';
         if (cockpitUniverse) cockpitUniverse.textContent = getUniverseName(uniKey);
@@ -1679,6 +1697,72 @@
       }
     }
 
+    async function startPublishCheckout() {
+      const siteIdToPublish = currentSiteId || (window.cachedDashData && window.cachedDashData.siteId);
+      if (!siteIdToPublish) {
+        window.location.href = '/studio';
+        return;
+      }
+      try {
+        showToast('Initiating permanent live deployment...');
+        const orderRes = await fetch('/api/web/create-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ siteId: siteIdToPublish, plan: 'pro' })
+        });
+        const orderData = await orderRes.json();
+        if (orderData.isCustomCheckout && window.Razorpay) {
+          const options = {
+            key: orderData.keyId,
+            amount: orderData.amount,
+            currency: orderData.currency || 'INR',
+            name: 'MyFolio Platform',
+            description: 'Publish Permanent Live Portfolio (₹149)',
+            order_id: orderData.orderId,
+            handler: async function (paymentResponse) {
+              showToast('Payment confirmed! Removing watermarks and deploying permanently...');
+              try {
+                const verifyRes = await fetch('/api/web/verify-payment', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  credentials: 'include',
+                  body: JSON.stringify({
+                    razorpay_order_id: paymentResponse.razorpay_order_id,
+                    razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                    razorpay_signature: paymentResponse.razorpay_signature,
+                    siteId: siteIdToPublish,
+                    plan: 'pro'
+                  })
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyData.success) {
+                  showToast('🚀 Your permanent live website is now deployed 24/7!');
+                  setTimeout(() => window.location.reload(), 1200);
+                }
+              } catch (vErr) {
+                showToast('Verification notice: ' + vErr.message);
+                setTimeout(() => window.location.reload(), 1500);
+              }
+            },
+            prefill: {
+              email: currentUser?.email || '',
+              name: currentUser?.name || ''
+            },
+            theme: { color: '#10b981' }
+          };
+          const rzp = new Razorpay(options);
+          rzp.open();
+        } else if (orderData.paymentUrl) {
+          window.location.href = orderData.paymentUrl;
+        } else {
+          window.location.href = `/studio?publish=${encodeURIComponent(siteIdToPublish)}`;
+        }
+      } catch (err) {
+        window.location.href = `/studio?publish=${encodeURIComponent(siteIdToPublish)}`;
+      }
+    }
+
     async function deleteCurrentPortfolio() {
       if (!confirm('Permanently delete your current active portfolio?')) return;
       try {
@@ -1710,6 +1794,7 @@
     window.refreshUserPortfolios = refreshUserPortfolios;
     window.deleteSyncedPortfolio = deleteSyncedPortfolio;
     window.deleteCurrentPortfolio = deleteCurrentPortfolio;
+    window.startPublishCheckout = startPublishCheckout;
 
     window.addEventListener('DOMContentLoaded', () => {
       if (typeof initUniversalSidebar === 'function') {
