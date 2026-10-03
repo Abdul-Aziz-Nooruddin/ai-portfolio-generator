@@ -2606,6 +2606,21 @@ const standardApiLimiter = SecurityMiddleware.rateLimiter({
   actionName: 'standard_api'
 });
 
+// Strict rate limiter for contact form submissions per IP (max 5 per 15 min)
+const contactIpLimiter = SecurityMiddleware.rateLimiter({
+  max: 5,
+  windowMs: 15 * 60 * 1000,
+  actionName: 'contact_ip'
+});
+
+// Per-site rate limiter to prevent spamming individual portfolio creators (max 10 per hour per site)
+const contactSiteLimiter = SecurityMiddleware.rateLimiter({
+  max: 10,
+  windowMs: 60 * 60 * 1000,
+  keyGenerator: (req) => `contact_site:${req.params?.siteId || 'general'}`,
+  actionName: 'contact_site'
+});
+
 // Automatically redirect any request ending in .html to clean extensionless URL (301 Permanent Redirect)
 app.use((req, res, next) => {
   if (req.method === 'GET' && req.path.endsWith('.html')) {
@@ -2738,21 +2753,50 @@ app.get(['/admin', '/admin.html'], (req, res) => {
   res.sendFile(getPagePath('admin.html'));
 });
 
-// Contact Form API — accepts form submissions from /contact page
-app.post('/api/contact', async (req, res) => {
-  try {
-    const { name, email, type, message } = req.body;
-    if (!name || !email || !message) {
-      return res.status(400).json({ error: 'Name, email, and message are required.' });
+// Contact Form API — accepts form submissions from /contact page (hardened with body size, honeypot, IP rate limit)
+app.post(
+  '/api/contact',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  SecurityMiddleware.botTrap(undefined, { silentSuccess: true, successMessage: 'Thank you! We will respond within 24 hours.' }),
+  contactIpLimiter,
+  async (req, res) => {
+    try {
+      const { name, email, type, message } = req.body || {};
+      if (!name || !email || !message) {
+        return res.status(400).json({ error: 'Name, email, and message are required.' });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(String(email).trim())) {
+        return res.status(400).json({ error: 'Invalid email address format.' });
+      }
+
+      const safeName = TemplateHelper.escapeHtml(String(name).trim().substring(0, 100));
+      const safeEmail = TemplateHelper.escapeHtml(String(email).trim().substring(0, 100));
+      const safeMessage = TemplateHelper.escapeHtml(String(message).trim().substring(0, 5000));
+      const safeType = TemplateHelper.escapeHtml(String(type || 'general').trim().substring(0, 50));
+
+      // Strictly logged and delivered to internal platform support, never client-supplied recipients
+      console.log(`[CONTACT FORM] ${new Date().toISOString()} | ${safeType} | ${safeName} <${safeEmail}>: ${safeMessage.substring(0, 100)}`);
+      
+      if (emailService) {
+        const supportEmail = process.env.SUPPORT_EMAIL || 'support@myfolio.tech';
+        await emailService.sendMail({
+          to: supportEmail,
+          replyTo: String(email).trim(),
+          subject: `[Support Inquiry] ${safeType}: ${safeName}`,
+          text: `From: ${safeName} <${safeEmail}>\nType: ${safeType}\n\nMessage:\n${safeMessage}`,
+          meta: { sequence_type: 'platform_support' }
+        }).catch(err => console.warn('[CONTACT EMAIL ERROR]', err.message));
+      }
+
+      res.json({ success: true, message: 'Thank you! We will respond within 24 hours.' });
+    } catch (err) {
+      console.error('[CONTACT] Error:', err);
+      res.status(500).json({ error: 'Failed to process contact form.' });
     }
-    // Log the contact submission
-    console.log(`[CONTACT FORM] ${new Date().toISOString()} | ${type || 'general'} | ${name} <${email}>: ${message.substring(0, 100)}`);
-    res.json({ success: true, message: 'Thank you! We will respond within 24 hours.' });
-  } catch (err) {
-    console.error('[CONTACT] Error:', err);
-    res.status(500).json({ error: 'Failed to process contact form.' });
   }
-});
+);
 
 // ==========================================
 // Authentication REST API Endpoints
@@ -3217,100 +3261,125 @@ app.post('/api/user/portfolios/sync', AuthMiddleware.requireAuth, async (req, re
 });
 
 // ==========================================
-// Pro Portfolio: Contact Lead & Analytics Beacon
-// ==========================================
-app.post('/api/sites/:siteId/contact', async (req, res) => {
-  try {
-    const { siteId } = req.params;
-    const { name, email, message, subject } = req.body;
-
-    // Record lead in analytics events
-    await dbService.recordAnalyticsEvent(siteId, 'contact_submit', null, null, { name, email, message, subject });
-
-    const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
-
-    // Send direct email notification to the portfolio owner
-    let ownerEmail = null;
-    let ownerName = 'Portfolio Creator';
-
-    // A. Lookup from database by provider_site_id or custom_domain
+// Pro Portfolio: Contact Lead & Analytics Beacon (hardened with body size, honeypot, IP limit, site limit, recipient lockdown)
+app.post(
+  '/api/sites/:siteId/contact',
+  SecurityMiddleware.limitBodySize(50 * 1024),
+  SecurityMiddleware.botTrap(undefined, { silentSuccess: true, successMessage: 'Message delivered directly to creator!' }),
+  contactIpLimiter,
+  contactSiteLimiter,
+  async (req, res) => {
     try {
-      if (dbService?.client) {
-        const { data: siteRecord } = await dbService.client
-          .from('sites')
-          .select('*, users(*)')
-          .or(`provider_site_id.eq.${siteId},custom_domain.eq.${siteId}`)
-          .limit(1)
-          .maybeSingle();
-        if (siteRecord?.users?.email) {
-          ownerEmail = siteRecord.users.email;
-          ownerName = siteRecord.users.name || siteRecord.users.username || ownerName;
-        }
+      const { siteId } = req.params;
+      const { name, email, message, subject } = req.body || {};
+
+      if (!name || !email || !message) {
+        return res.status(400).json({ error: 'Name, email, and message are required.' });
       }
-    } catch (e) {}
 
-    // B. Lookup from siteDir meta.json (saved at portfolio generation)
-    if (!ownerEmail && fs.existsSync(path.join(siteDir, 'meta.json'))) {
-      try {
-        const meta = JSON.parse(fs.readFileSync(path.join(siteDir, 'meta.json'), 'utf8'));
-        if (meta.userEmail) ownerEmail = meta.userEmail;
-        if (meta.developerName) ownerName = meta.developerName;
-      } catch (e) {}
-    }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(String(email).trim())) {
+        return res.status(400).json({ error: 'Invalid email address format.' });
+      }
 
-    // C. Lookup from siteDir profile.json fallback
-    if (!ownerEmail && fs.existsSync(path.join(siteDir, 'profile.json'))) {
-      try {
-        const profile = JSON.parse(fs.readFileSync(path.join(siteDir, 'profile.json'), 'utf8'));
-        ownerEmail = profile.email || profile.identity?.email || profile.contact?.email;
-        ownerName = profile.name || profile.identity?.name || ownerName;
-      } catch (e) {}
-    }
-
-    if (ownerEmail && emailService) {
-      const safeOwnerName = TemplateHelper.escapeHtml(ownerName || 'Portfolio Creator');
-      const safeName = TemplateHelper.escapeHtml(name || 'Recruiter / Client');
-      const safeEmail = TemplateHelper.escapeHtml(email || '');
-      const safeSubject = subject ? TemplateHelper.escapeHtml(subject) : '';
-      const safeMessage = TemplateHelper.escapeHtml(message || '');
-      const mailtoEmail = encodeURIComponent(email || '');
-      const mailtoSubject = encodeURIComponent(`Re: Portfolio Inquiry${subject ? ` - ${subject}` : ''}`);
-      const mailtoReplyName = TemplateHelper.escapeHtml(name || 'Sender');
-
-      await emailService.sendMail({
-        to: ownerEmail,
-        replyTo: email || undefined,
-        subject: `📬 New Inquiry from your Portfolio: ${safeName}`,
-        html: `
-          <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; background: #0B0F19; color: #FFFFFF; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
-            <div style="font-size: 0.85rem; color: #38BDF8; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Portfolio Lead Alert</div>
-            <h2 style="color: #FFFFFF; margin: 0 0 16px 0; font-size: 1.5rem;">📬 New Message from your Portfolio</h2>
-            <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.5;">Hi <strong>${safeOwnerName}</strong>, someone just reached out to you through your online portfolio!</p>
-            
-            <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #38BDF8;">
-              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>From / Recruiter:</strong> ${safeName}</p>
-              <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Email:</strong> <a href="mailto:${mailtoEmail}" style="color: #38BDF8; text-decoration: none;">${safeEmail}</a></p>
-              ${safeSubject ? `<p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Subject:</strong> ${safeSubject}</p>` : ''}
-              <p style="margin: 0 0 6px 0; font-size: 0.95rem;"><strong>Message:</strong></p>
-              <p style="margin: 0; color: #E2E8F0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px;">${safeMessage}</p>
-            </div>
-            
-            <div style="text-align: center; margin-top: 24px;">
-              <a href="mailto:${mailtoEmail}?subject=${mailtoSubject}" style="display: inline-block; background: #22C55E; color: #000000; font-weight: 800; font-size: 0.95rem; padding: 12px 28px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
-                Reply Directly to ${mailtoReplyName} ➔
-              </a>
-            </div>
-          </div>
-        `,
-        meta: { sequence_type: 'portfolio_contact_lead' }
+      // Record lead in analytics events
+      await dbService.recordAnalyticsEvent(siteId, 'contact_submit', null, null, {
+        name: String(name).substring(0, 100),
+        email: String(email).substring(0, 100),
+        subject: subject ? String(subject).substring(0, 200) : null
       });
-    }
 
-    res.json({ success: true, message: 'Message delivered directly to creator!' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+      const siteDir = path.join(process.cwd(), 'public', 'sites', siteId);
+
+      // Send direct email notification to the verified portfolio owner ONLY
+      let ownerEmail = null;
+      let ownerName = 'Portfolio Creator';
+
+      // A. Lookup from database by provider_site_id or custom_domain
+      try {
+        if (dbService?.client) {
+          const { data: siteRecord } = await dbService.client
+            .from('sites')
+            .select('*, users(*)')
+            .or(`provider_site_id.eq.${siteId},custom_domain.eq.${siteId}`)
+            .limit(1)
+            .maybeSingle();
+          if (siteRecord?.users?.email) {
+            ownerEmail = siteRecord.users.email;
+            ownerName = siteRecord.users.name || siteRecord.users.username || ownerName;
+          }
+        }
+      } catch (e) {}
+
+      // B. Lookup from siteDir meta.json (saved at portfolio generation)
+      if (!ownerEmail && fs.existsSync(path.join(siteDir, 'meta.json'))) {
+        try {
+          const meta = JSON.parse(fs.readFileSync(path.join(siteDir, 'meta.json'), 'utf8'));
+          if (meta.userEmail) ownerEmail = meta.userEmail;
+          if (meta.developerName) ownerName = meta.developerName;
+        } catch (e) {}
+      }
+
+      // C. Lookup from siteDir profile.json fallback
+      if (!ownerEmail && fs.existsSync(path.join(siteDir, 'profile.json'))) {
+        try {
+          const profile = JSON.parse(fs.readFileSync(path.join(siteDir, 'profile.json'), 'utf8'));
+          ownerEmail = profile.email || profile.identity?.email || profile.contact?.email;
+          ownerName = profile.name || profile.identity?.name || ownerName;
+        } catch (e) {}
+      }
+
+      // Recipient Lockdown: recipient MUST be the verified owner of the site.
+      // Under no circumstances can client specify recipient email.
+      if (!ownerEmail) {
+        return res.status(404).json({ error: 'Portfolio creator contact channel unavailable.' });
+      }
+
+      if (emailService) {
+        const safeOwnerName = TemplateHelper.escapeHtml(ownerName || 'Portfolio Creator');
+        const safeName = TemplateHelper.escapeHtml(String(name).trim().substring(0, 100));
+        const safeEmail = TemplateHelper.escapeHtml(String(email).trim().substring(0, 100));
+        const safeSubject = subject ? TemplateHelper.escapeHtml(String(subject).trim().substring(0, 200)) : '';
+        const safeMessage = TemplateHelper.escapeHtml(String(message).trim().substring(0, 5000));
+        const mailtoEmail = encodeURIComponent(String(email).trim());
+        const mailtoSubject = encodeURIComponent(`Re: Portfolio Inquiry${safeSubject ? ` - ${safeSubject}` : ''}`);
+        const mailtoReplyName = safeName;
+
+        await emailService.sendMail({
+          to: ownerEmail,
+          replyTo: String(email).trim(),
+          subject: `📬 New Inquiry from your Portfolio: ${safeName}`,
+          html: `
+            <div style="font-family: system-ui, -apple-system, sans-serif; max-width: 600px; margin: 0 auto; padding: 28px; background: #0B0F19; color: #FFFFFF; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+              <div style="font-size: 0.85rem; color: #38BDF8; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Portfolio Lead Alert</div>
+              <h2 style="color: #FFFFFF; margin: 0 0 16px 0; font-size: 1.5rem;">📬 New Message from your Portfolio</h2>
+              <p style="color: #94A3B8; font-size: 0.95rem; line-height: 1.5;">Hi <strong>${safeOwnerName}</strong>, someone just reached out to you through your online portfolio!</p>
+              
+              <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin: 24px 0; border-left: 4px solid #38BDF8;">
+                <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>From / Recruiter:</strong> ${safeName}</p>
+                <p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Email:</strong> <a href="mailto:${mailtoEmail}" style="color: #38BDF8; text-decoration: none;">${safeEmail}</a></p>
+                ${safeSubject ? `<p style="margin: 0 0 10px 0; font-size: 0.95rem;"><strong>Subject:</strong> ${safeSubject}</p>` : ''}
+                <p style="margin: 0 0 6px 0; font-size: 0.95rem;"><strong>Message:</strong></p>
+                <p style="margin: 0; color: #E2E8F0; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px;">${safeMessage}</p>
+              </div>
+              
+              <div style="text-align: center; margin-top: 24px;">
+                <a href="mailto:${mailtoEmail}?subject=${mailtoSubject}" style="display: inline-block; background: #22C55E; color: #000000; font-weight: 800; font-size: 0.95rem; padding: 12px 28px; border-radius: 9999px; text-decoration: none; box-shadow: 0 4px 14px rgba(34,197,94,0.4);">
+                  Reply Directly to ${mailtoReplyName} ➔
+                </a>
+              </div>
+            </div>
+          `,
+          meta: { sequence_type: 'portfolio_contact_lead' }
+        });
+      }
+
+      res.json({ success: true, message: 'Message delivered directly to creator!' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
   }
-});
+);
 
 app.post('/api/sites/:siteId/analytics', async (req, res) => {
   try {
@@ -4274,6 +4343,8 @@ if (require.main === module) {
 app.checkSitePaidStatus = checkSitePaidStatus;
 app.sitePaidStatusCache = sitePaidStatusCache;
 app.dbService = dbService;
+app.contactIpLimiter = contactIpLimiter;
+app.contactSiteLimiter = contactSiteLimiter;
 
 module.exports = app;
 

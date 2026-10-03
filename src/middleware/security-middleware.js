@@ -218,12 +218,20 @@ class SecurityMiddleware {
 
   /**
    * Honeypot & Bot Trap Protection
-   * Rejects automated bots filling invisible honeypot fields
+   * Detects and neutralizes automated bots filling invisible honeypot fields
    */
-  static botTrap(honeypotField = '_hp_security_check') {
+  static botTrap(trapFields = ['website', 'honeypot', '_gotcha', 'bot_trap', 'hp_trap', '_hp_security_check'], options = {}) {
+    const fields = Array.isArray(trapFields) ? trapFields : [trapFields];
     return (req, res, next) => {
-      if (req.body && req.body[honeypotField]) {
-        return res.status(400).json({ error: 'Automated request rejected.' });
+      if (req.body) {
+        for (const field of fields) {
+          if (req.body[field] && String(req.body[field]).trim().length > 0) {
+            if (options.silentSuccess) {
+              return res.json({ success: true, message: options.successMessage || 'Message received.' });
+            }
+            return res.status(400).json({ error: 'Automated submission rejected by honeypot defense.' });
+          }
+        }
       }
       next();
     };

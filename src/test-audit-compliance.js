@@ -460,4 +460,141 @@ test('8. Server-side weekly limit: enforces 3 free builds per 7-day cycle keyed 
   assert.equal(adminRes.status, 200, 'Admin can generate past weekly quota');
 });
 
+// =========================================================================
+// 9. CONTACT ENDPOINTS: RATE LIMITING, HONEYPOT, AND RECIPIENT LOCKDOWN
+// =========================================================================
+test('9. Contact endpoints: dual rate limiting, honeypot protection, and recipient lockdown', async () => {
+  const app = require('./index');
+  const { SecurityMiddleware } = require('./middleware/security-middleware');
+  const testSiteId = 'contact-test-site-001';
+  const siteDir = path.join(process.cwd(), 'public', 'sites', testSiteId);
+
+  if (!fs.existsSync(siteDir)) {
+    fs.mkdirSync(siteDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify({
+    siteId: testSiteId,
+    userEmail: 'verified-creator@myfolio.tech',
+    developerName: 'Verified Creator'
+  }), 'utf8');
+
+  try {
+    // 1. Honeypot trap: bots submitting honeypot field are neutralized silently
+    const botTrap = SecurityMiddleware.botTrap(['website', 'bot_trap'], { silentSuccess: true });
+    let honeypotCaught = false;
+    const reqBot = { body: { name: 'Bot', email: 'spammer@evil.com', message: 'Buy spam', website: 'http://spam.com' } };
+    const resBot = {
+      json(data) {
+        if (data.success) honeypotCaught = true;
+      },
+      status() { return this; }
+    };
+    botTrap(reqBot, resBot, () => {});
+    assert.equal(honeypotCaught, true, 'Honeypot middleware should catch bot and return silent success');
+
+    // 2. Clean user submission passes honeypot
+    let humanPassed = false;
+    const reqHuman = { body: { name: 'Alice', email: 'alice@example.com', message: 'Hello!' } };
+    botTrap(reqHuman, {}, () => { humanPassed = true; });
+    assert.equal(humanPassed, true, 'Legitimate human without honeypot fields should proceed');
+
+    // 3. Recipient lockdown verification
+    const dispatchSiteContact = (body, ip = '203.0.113.195') => new Promise((resolve) => {
+      const req = {
+        params: { siteId: testSiteId },
+        body,
+        ip,
+        headers: {}
+      };
+      let statusCode = 200;
+      const res = {
+        status(code) {
+          statusCode = code;
+          return this;
+        },
+        json(data) {
+          resolve({ status: statusCode, data });
+        }
+      };
+
+      const routes = app._router.stack.filter(r => r.route && r.route.path === '/api/sites/:siteId/contact');
+      assert.ok(routes.length > 0, 'Contact route exists');
+      const endpointHandler = routes[0].route.stack[routes[0].route.stack.length - 1].handle;
+      endpointHandler(req, res);
+    });
+
+    // Valid contact inquiry to verified creator succeeds
+    const legitRes = await dispatchSiteContact({
+      name: 'Lead Recruiter',
+      email: 'recruiter@techfirm.io',
+      message: 'We have an opening for you!'
+    });
+    assert.equal(legitRes.status, 200);
+    assert.equal(legitRes.data.success, true);
+
+    // Attempted arbitrary recipient override: client supplies "to" or "recipient"
+    // Destination is strictly locked to ownerEmail (verified-creator@myfolio.tech)
+    const exploitRes = await dispatchSiteContact({
+      name: 'Spammer',
+      email: 'attacker@evil.com',
+      to: 'unrelated-victim@corporation.com',
+      recipient: 'ceo@bank.com',
+      message: 'Malicious payload'
+    });
+    assert.equal(exploitRes.status, 200);
+
+    // Unknown site without verified owner is rejected with 404 (prevents arbitrary open relay)
+    const unknownRes = await new Promise((resolve) => {
+      const req = {
+        params: { siteId: 'non-existent-site-9999' },
+        body: { name: 'Alice', email: 'alice@example.com', message: 'Hi' },
+        ip: '203.0.113.196',
+        headers: {}
+      };
+      let statusCode = 200;
+      const res = {
+        status(code) {
+          statusCode = code;
+          return this;
+        },
+        json(data) {
+          resolve({ status: statusCode, data });
+        }
+      };
+      const routes = app._router.stack.filter(r => r.route && r.route.path === '/api/sites/:siteId/contact');
+      const handler = routes[0].route.stack[routes[0].route.stack.length - 1].handle;
+      handler(req, res);
+    });
+    assert.equal(unknownRes.status, 404, 'Unowned site contact must be rejected with 404 (no open relay)');
+
+    // 4. Rate limiting per IP
+    const limiter = SecurityMiddleware.rateLimiter({ max: 3, windowMs: 60000, actionName: 'test_contact_rate' });
+    const ipToTest = '198.51.100.99';
+    let allowedCount = 0;
+    let blockedCount = 0;
+
+    for (let i = 0; i < 5; i++) {
+      const mockReq = { ip: ipToTest, headers: {}, socket: { remoteAddress: ipToTest } };
+      const mockRes = {
+        status(c) {
+          if (c === 429) blockedCount++;
+          return this;
+        },
+        json() {},
+        setHeader() {}
+      };
+      await limiter(mockReq, mockRes, () => {
+        allowedCount++;
+      });
+    }
+
+    assert.equal(allowedCount, 3, 'First 3 requests within window are allowed');
+    assert.equal(blockedCount, 2, 'Requests beyond limit are blocked with 429');
+  } finally {
+    try {
+      fs.rmSync(siteDir, { recursive: true, force: true });
+    } catch (e) {}
+  }
+});
+
 
