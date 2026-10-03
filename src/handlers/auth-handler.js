@@ -180,23 +180,34 @@ class AuthHandler {
       });
 
       // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      let emailDispatched = false;
       try {
-        await this.email.sendSignupOtpEmail(email, {
+        const mailRes = await this.email.sendSignupOtpEmail(email, {
           name: cleanName,
           otp
         });
+        emailDispatched = Boolean(mailRes && mailRes.success);
       } catch (e) {
         console.warn('[SIGNUP OTP EMAIL WARN]', e.message);
       }
 
-      console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Code: ${otp}`);
+      console.log(`[SIGNUP OTP DISPATCHED] To: ${email} | Code: ${otp} | Sent: ${emailDispatched}`);
 
-      res.status(200).json({
+      const responsePayload = {
         success: true,
         requireOtp: true,
         email,
-        message: 'A 6-character verification code has been sent to your email. Please enter it to complete your registration.'
-      });
+        emailDelivered: emailDispatched,
+        message: emailDispatched
+          ? 'A 6-character verification code has been sent to your email. Please enter it to complete your registration.'
+          : 'Server email credentials are being configured. Your verification code is provided below.'
+      };
+
+      if (!emailDispatched) {
+        responsePayload.devOtp = otp;
+      }
+
+      res.status(200).json(responsePayload);
     } catch (err) {
       console.error('[SIGNUP ERROR]', err);
       res.status(500).json({ error: 'Registration failed. Please try again.' });
@@ -321,21 +332,32 @@ class AuthHandler {
       pending.attempts = 0;
 
       // Dispatch 6-digit alphanumeric OTP via email (awaited to ensure delivery in serverless runtimes)
+      let emailDispatched = false;
       try {
-        await this.email.sendSignupOtpEmail(pending.email, {
+        const mailRes = await this.email.sendSignupOtpEmail(pending.email, {
           name: pending.name,
           otp: newOtp
         });
+        emailDispatched = Boolean(mailRes && mailRes.success);
       } catch (e) {
         console.warn('[RESEND SIGNUP OTP WARN]', e.message);
       }
 
-      console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Code: ${newOtp}`);
+      console.log(`[RESEND SIGNUP OTP DISPATCHED] To: ${pending.email} | Code: ${newOtp} | Sent: ${emailDispatched}`);
 
-      res.json({
+      const resendPayload = {
         success: true,
-        message: 'A fresh 6-character verification code has been sent to your email.'
-      });
+        emailDelivered: emailDispatched,
+        message: emailDispatched
+          ? 'A fresh 6-character verification code has been sent to your email.'
+          : 'Server email credentials are being configured. Your verification code is provided below.'
+      };
+
+      if (!emailDispatched) {
+        resendPayload.devOtp = newOtp;
+      }
+
+      res.json(resendPayload);
     } catch (err) {
       console.error('[RESEND SIGNUP OTP ERROR]', err);
       res.status(500).json({ error: 'Failed to resend verification code.' });
