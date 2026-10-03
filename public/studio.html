@@ -1437,7 +1437,7 @@
       </div>
 
       <!-- Main Form Container -->
-      <form id="portfolioGenerationForm" onsubmit="handleStudioGenerate(event)" style="display:flex; flex-direction:column; gap:1.25rem;">
+      <form id="portfolioGenerationForm" onsubmit="event.preventDefault(); handleStudioGenerate(event); return false;" style="display:flex; flex-direction:column; gap:1.25rem;">
         
         <!-- FAST CREATE VIEW CONTAINER -->
         <div id="viewCreateMode" style="display:flex; flex-direction:column; gap:1.25rem;">
@@ -1623,7 +1623,7 @@
               <span>Your portfolio is ready to generate.</span>
             </div>
 
-            <button type="submit" form="portfolioGenerationForm" class="primary-generate-btn" id="btnMainGenerateAction">
+            <button type="button" onclick="handleStudioGenerate(event)" class="primary-generate-btn" id="btnMainGenerateAction">
               <span>Generate My Portfolio &rarr;</span>
             </button>
           </div>
@@ -1758,7 +1758,7 @@
           </div>
 
           <!-- Quick Apply Button inside Editor -->
-          <button type="submit" form="portfolioGenerationForm" class="primary-generate-btn" style="margin-top:4px;">
+          <button type="button" onclick="handleStudioGenerate(event)" class="primary-generate-btn" style="margin-top:4px;">
             <span>Update Portfolio &amp; Refresh Preview ↺</span>
           </button>
         </div>
@@ -2647,27 +2647,6 @@
 
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Failed to generate preview');
-
-        // Store draft site ID
-        currentDraftSiteId = data.siteId;
-        isPortfolioPublished = false;
-        recordBuildUsage();
-
-        // Reset progress bar & transition to "Publish Live" state
-        clearInterval(progressInterval);
-        if (fluidLevel) fluidLevel.style.height = '100%';
-        if (fluidBtnPercent) fluidBtnPercent.style.display = 'none';
-        btn.classList.remove('fully-filled');
-        btn.classList.add('ready-to-publish');
-        if (fluidBtnIcon) fluidBtnIcon.textContent = '';
-        if (fluidBtnText) fluidBtnText.textContent = 'Publish Live';
-
-        // Point live canvas iframe to the preview route
-        const iframe = document.getElementById('studioLiveIframe');
-        if (iframe) {
-          const previewSrc = data.previewUrl ? `${data.previewUrl}?embed=1&preview=1&t=${Date.now()}` : (data.siteId ? `/p/${data.siteId}?embed=1&preview=1&t=${Date.now()}` : `/jack-3d?embed=1&preview=1&t=${Date.now()}`);
-          iframe.src = previewSrc;
-        }
 
         // Store draft site ID and raw HTML backup
         currentDraftSiteId = data.siteId;
