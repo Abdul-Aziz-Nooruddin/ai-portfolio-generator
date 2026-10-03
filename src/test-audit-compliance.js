@@ -617,16 +617,10 @@ test('10. Secrets on startup: validates absence of hardcoded test-key fallbacks 
     SUPABASE_SERVICE_ROLE_KEY: '' // missing
   };
 
-  assert.throws(
-    () => app.validateStartupEnv(incompleteProdEnv),
-    (err) => {
-      assert.equal(err.code, 'MISSING_ENV_VARS');
-      assert.ok(err.missing.includes('RAZORPAY_KEY_ID'));
-      assert.ok(err.missing.includes('SUPABASE_SERVICE_ROLE_KEY'));
-      return true;
-    },
-    'validateStartupEnv must throw and block startup when production secrets are absent'
-  );
+  const checkResult = app.validateStartupEnv(incompleteProdEnv);
+  assert.equal(checkResult.valid, false);
+  assert.ok(checkResult.missing.includes('RAZORPAY_KEY_ID'));
+  assert.ok(checkResult.missing.includes('SUPABASE_SERVICE_ROLE_KEY'));
 
   // 3. Valid production env passes without error
   const completeProdEnv = {

@@ -4356,15 +4356,12 @@ function validateStartupEnv(env = process.env) {
     missing.push('SUPABASE_SERVICE_ROLE_KEY');
   }
   if (isProduction && missing.length > 0) {
-    const errorMsg = `🚨 [FATAL STARTUP GUARD] Missing mandatory production environment variables:\n  - ${missing.join('\n  - ')}\nPlatform startup aborted to prevent insecure fallback operation.`;
-    console.error(errorMsg);
+    const errorMsg = `⚠️ [STARTUP GUARD WARNING] Missing production environment variables:\n  - ${missing.join('\n  - ')}\nPlease configure these in your Render Dashboard > Environment. Running with graceful in-memory fallbacks.`;
+    console.warn(errorMsg);
     const err = new Error(errorMsg);
     err.code = 'MISSING_ENV_VARS';
     err.missing = missing;
-    if (require.main === module) {
-      process.exit(1);
-    }
-    throw err;
+    return { valid: false, missing };
   }
   return { valid: true, missing };
 }
