@@ -142,13 +142,13 @@ function renderExpiredPreviewPage() {
 
     <div class="features-list">
       <div class="feature-row"><span>✓</span> <b>Instant Re-activation:</b> Re-launch fresh 3D preview in 1 click in Web Studio.</div>
-      <div class="feature-row"><span>✓</span> <b>Lifetime Starter (₹149):</b> 24/7 Permanent Netlify CDN hosting + ZIP export.</div>
+      <div class="feature-row"><span>✓</span> <b>Lifetime Starter (₹149):</b> 24/7 Permanent Global Edge CDN hosting + ZIP export.</div>
       <div class="feature-row"><span>✓</span> <b>Zero Watermarks:</b> Clean production domain for recruiters and clients.</div>
     </div>
 
     <div class="btn-actions">
       <a href="/studio.html" class="btn-primary">⚡ Re-activate Fresh 3D Studio Preview</a>
-      <a href="/subscribe" class="btn-secondary">💎 Unlock Permanent Netlify Hosting (₹149 one-time)</a>
+      <a href="/subscribe" class="btn-secondary">💎 Unlock Permanent Live Hosting (₹149 one-time)</a>
     </div>
   </div>
 </body>
