@@ -31,6 +31,37 @@ class AuthHandler {
   }
 
   /**
+   * Evaluates if an email domain belongs to a temporary or disposable email service
+   */
+  static isDisposableEmail(email) {
+    if (!email || typeof email !== 'string' || !email.includes('@')) return false;
+    const domain = email.split('@').pop().toLowerCase().trim();
+    
+    // Set of common disposable, burner, and temporary email domains
+    const DISPOSABLE_DOMAINS = new Set([
+      'mailinator.com', 'guerrillamail.com', 'guerrillamail.net', 'guerrillamail.org',
+      'tempmail.com', 'temp-mail.org', '10minutemail.com', '10minutemail.net',
+      'trashmail.com', 'trashmail.net', 'dispostable.com', 'throwawaymail.com',
+      'sharklasers.com', 'getairmail.com', 'yopmail.com', 'yopmail.fr', 'yopmail.net',
+      'mohmal.com', 'generator.email', 'crazymailing.com', 'nada.ltd',
+      'tempmailo.com', 'fakemailgenerator.com', 'emailondeck.com', 'burnermail.io',
+      'mytemp.email', 'mytempmail.com', 'temp-mail.io', 'inboxkitten.com',
+      'maildrop.cc', 'harakirimail.com', 'dropmail.me', 'fakeinbox.com',
+      'getnada.com', 'disposablemail.com', 'burneremail.com', 'tempinbox.com',
+      'mintemail.com', 'trashmail.org', 'throwawayemailaddress.com', 'tempr.email'
+    ]);
+
+    if (DISPOSABLE_DOMAINS.has(domain)) return true;
+
+    // Check for common disposable keywords in domain
+    if (domain.includes('tempmail') || domain.includes('disposable') || domain.includes('throwaway') || domain.includes('fakeinbox') || domain.includes('trashmail')) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Helper to set secure session cookie
    */
   _setSessionCookie(res, rawToken, maxAgeMs = 7 * 24 * 60 * 60 * 1000) {
@@ -89,6 +120,12 @@ class AuthHandler {
 
       if (!email || typeof email !== 'string' || !email.includes('@') || email.length > 254) {
         return res.status(400).json({ error: 'Please enter a valid email address.' });
+      }
+
+      if (AuthHandler.isDisposableEmail(email)) {
+        return res.status(400).json({
+          error: 'Disposable and temporary email addresses are not permitted. Please use a permanent email address to create your account.'
+        });
       }
 
       if (!password || typeof password !== 'string') {

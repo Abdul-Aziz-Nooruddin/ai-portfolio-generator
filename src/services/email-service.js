@@ -9,16 +9,26 @@ const nodemailer = require('nodemailer');
 class EmailService {
   constructor(dbService = null) {
     this.db = dbService;
-    this.fromEmail = process.env.FROM_EMAIL || 'Portfolio Bot <hello@devfolio.live>';
+    this.fromEmail = process.env.FROM_EMAIL || 'MyFolio <aziz@myfolio.tech>';
     
+    // Support either full SMTP settings or direct Gmail / Google Workspace credentials
     if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
       this.transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST,
         port: parseInt(process.env.SMTP_PORT || '587', 10),
-        secure: process.env.SMTP_SECURE === 'true',
+        secure: process.env.SMTP_SECURE === 'true' || process.env.SMTP_PORT === '465',
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS
+        }
+      });
+      this.isConfigured = true;
+    } else if (process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD) {
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.GMAIL_USER,
+          pass: process.env.GMAIL_APP_PASSWORD
         }
       });
       this.isConfigured = true;

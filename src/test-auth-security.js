@@ -268,4 +268,19 @@ describe('🛡️ Authorization, IDOR & Access Control Matrix', () => {
     csrfGuard(attackerReq, res, () => {});
     assert.equal(status, 403, 'Cross-origin mutating request must be rejected with 403 Forbidden');
   });
+
+  it('should detect and block disposable / temporary email domains', () => {
+    const { AuthHandler } = require('./handlers/auth-handler');
+    assert.equal(AuthHandler.isDisposableEmail('test@mailinator.com'), true);
+    assert.equal(AuthHandler.isDisposableEmail('burner@tempmail.com'), true);
+    assert.equal(AuthHandler.isDisposableEmail('user@10minutemail.com'), true);
+    assert.equal(AuthHandler.isDisposableEmail('user@guerrillamail.com'), true);
+    assert.equal(AuthHandler.isDisposableEmail('user@throwawaymail.com'), true);
+    
+    // Legitimate domains should be allowed
+    assert.equal(AuthHandler.isDisposableEmail('alex@gmail.com'), false);
+    assert.equal(AuthHandler.isDisposableEmail('founder@myfolio.tech'), false);
+    assert.equal(AuthHandler.isDisposableEmail('engineer@outlook.com'), false);
+    assert.equal(AuthHandler.isDisposableEmail('student@mit.edu'), false);
+  });
 });
