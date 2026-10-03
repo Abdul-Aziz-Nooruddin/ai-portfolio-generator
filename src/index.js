@@ -363,6 +363,7 @@ app.use(async (req, res, next) => {
     if (!html) {
       try {
         const { TemplateRegistry } = require('./templates/template-registry');
+        const { DEFAULT_FOUNDER_PROFILE } = require('./data/default-founder-profile');
         const domainRecord = customDomainService?.domainCache?.[host] ||
                              customDomainService?.domainCache?.['abdulaziz.myfolio.tech'] ||
                              customDomainService?.domainCache?.['aziz.myfolio.tech'];
@@ -371,96 +372,7 @@ app.use(async (req, res, next) => {
                          TemplateRegistry.templates['jack-3d-creator'] ||
                          Object.values(TemplateRegistry.templates)[0];
 
-        const abdulAzizProfile = {
-          name: 'Abdul Aziz Nooruddin',
-          role: 'Smart Contract Developer & Full-Stack AI Engineer',
-          title: 'Smart Contract Developer & Full-Stack AI Engineer',
-          tagline: 'AI Student & Smart Contract Developer | Building Real-World Web3 Products | Blockchain • DeFi • RegTech 🇮🇳',
-          bio: 'Computer Science & Artificial Intelligence student actively engineering open-source Web3 protocols, smart contracts on Algorand and Polygon, and immersive 3D developer experiences. Bridging cutting-edge research with shipped software.',
-          about: 'Specialized in decentralized systems, cryptographic verification, and spatial 3D WebGL interfaces. Architect of ConsentChain Algorand (DPDP Act 2023 compliance with automated micro-payment escrow) and creator of MyFolio. Committed to high-throughput, security-first architectures with zero boilerplate and mathematical precision.',
-          email: 'abdulaziznoor9876@gmail.com',
-          location: 'Hyderabad, India • Remote Web3',
-          skills: [
-            'Python', 'TypeScript', 'JavaScript', 'Solidity', 'Algorand (PyTeal)', 
-            'Smart Contracts', 'Web3.js & Ethers.js', 'Three.js & WebGL', 'Node.js & Express', 
-            'React', 'Docker & Cloud Architecture', 'PostgreSQL', 'Git & CI/CD', 'DPDP Compliance'
-          ],
-          projects: [
-            {
-              name: 'ConsentChain Algorand',
-              title: 'ConsentChain Algorand',
-              description: 'A decentralized Consent Management application powered by the Algorand blockchain, enabling DPDP Act 2023 compliance with an escrow-based data micro-payment system.',
-              tags: ['Algorand', 'Smart Contracts', 'TypeScript', 'Blockchain', 'RegTech'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/ConsentChain-Algorand',
-              live: 'https://consent-chain-algorand.vercel.app'
-            },
-            {
-              name: 'AI Portfolio Generator',
-              title: 'AI Portfolio Generator',
-              description: 'Turn your GitHub repositories & resume into bespoke 3D WebGL developer portfolios with AI in seconds. Interactive spatial worlds and high-impact scrollytelling.',
-              tags: ['WebGL', 'Three.js', 'Node.js', 'JavaScript', 'AI'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/myfolio.tech',
-              live: 'https://myfolio.tech'
-            },
-            {
-              name: 'Pass A Note',
-              title: 'Pass A Note',
-              description: 'High-performance interactive communication tool engineered for seamless zero-latency peer data transfer with secure encrypted messaging.',
-              tags: ['HTML', 'JavaScript', 'CSS', 'P2P', 'Encryption'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/pass-a-note',
-              live: 'https://pass-a-note-iota.vercel.app'
-            },
-            {
-              name: 'LMS User Management',
-              title: 'LMS User Management',
-              description: 'Enterprise-grade role-based access control and user management system engineered with strict security guarantees and database integrity.',
-              tags: ['Node.js', 'Express', 'PostgreSQL', 'Security', 'RBAC'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/lms-user-management',
-              live: 'https://github.com/Abdul-Aziz-Nooruddin/lms-user-management'
-            },
-            {
-              name: 'Dual-Chain Web3 Portfolio',
-              title: 'Dual-Chain Web3 Portfolio',
-              description: 'Personal developer showcase featuring glassmorphism design, particle animations, and multi-chain protocol verification across Polygon & Algorand.',
-              tags: ['TypeScript', 'CSS', 'Polygon', 'Algorand', 'Web3'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/portfolio',
-              live: 'https://portfolio-nine-tawny-39.vercel.app'
-            },
-            {
-              name: 'Algorand Python Smart Contracts',
-              title: 'Algorand Python Smart Contracts',
-              description: 'Production PyTeal and Python smart contract implementations for Algorand escrow, token distribution, and verifiable state transitions.',
-              tags: ['Python', 'Algorand', 'PyTeal', 'Smart Contracts'],
-              github: 'https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts',
-              live: 'https://github.com/Abdul-Aziz-Nooruddin/Algorand-Python-Smart-Contracts'
-            }
-          ],
-          experience: [
-            {
-              role: 'Web3 & Smart Contract Developer',
-              company: 'Independent & Open Source',
-              period: '2024 - Present',
-              desc: 'Architecting decentralized applications and smart contracts on Algorand and Polygon. Engineered DPDP Act 2023 compliance escrow micro-payment protocols and high-performance WebGL developer tools.'
-            },
-            {
-              role: 'AI & Software Systems Engineer',
-              company: 'Academic & Research Projects',
-              period: '2023 - 2024',
-              desc: 'Designed full-stack architectures, RESTful API services, role-based access control engines, and distributed communication platforms with automated CI/CD deployments.'
-            }
-          ],
-          education: [],
-          certifications: [],
-          contact: {
-            email: 'abdulaziznoor9876@gmail.com',
-            github: 'https://github.com/Abdul-Aziz-Nooruddin',
-            linkedin: 'https://www.linkedin.com/in/abdul-aziz-nooruddin'
-          },
-          social: {
-            github: 'https://github.com/Abdul-Aziz-Nooruddin',
-            linkedin: 'https://www.linkedin.com/in/abdul-aziz-nooruddin'
-          }
-        };
+        const abdulAzizProfile = { ...DEFAULT_FOUNDER_PROFILE };
         const rendered = template.render(abdulAzizProfile, {});
         html = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
         // Cache to public/sites/abdulaziz so subsequent requests don't need re-rendering
@@ -3374,8 +3286,8 @@ app.get(['/abdulaziz', '/u/abdulaziz', '/aziz', '/u/aziz', '/u/:handle', '/:hand
   // 1. When embedded in an iframe or requested with embed query, serve directly on same origin
   let siteId = (handle === 'aziz') ? 'abdulaziz' : handle;
   let html = await hostingProvider.getSiteHtml(siteId);
-  if (!html) {
-    html = await hostingProvider.getSiteHtml('abdulaziz') || await hostingProvider.getSiteHtml('aziz');
+  if (!html && (handle === 'abdulaziz' || handle === 'aziz')) {
+    html = await hostingProvider.getSiteHtml('aziz') || await hostingProvider.getSiteHtml('abdulaziz');
   }
 
   if (req.query.embed === '1' || req.query.preview === '1' || req.headers['sec-fetch-dest'] === 'iframe') {
@@ -3424,25 +3336,16 @@ app.post('/api/vip/set-active-site', AuthMiddleware.requireAdmin, async (req, re
       if (universeKey || req.body.developerName) {
         try {
           const { TemplateRegistry } = require('./templates/template-registry');
+          const { DEFAULT_FOUNDER_PROFILE } = require('./data/default-founder-profile');
           const tKey = universeKey || 'jack-3d-creator';
           const template = TemplateRegistry.templates[tKey] || Object.values(TemplateRegistry.templates)[0];
           if (template && typeof template.render === 'function') {
             const candidateProfile = {
-              name: req.body.developerName || 'Abdul Aziz Nooruddin',
-              title: req.body.developerRole || 'AI Systems & Machine Learning Researcher',
-              role: req.body.developerRole || 'AI Systems Specialist',
-              headline: req.body.developerRole || 'AI Systems & Machine Learning Researcher',
-              bio: 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
-              skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
-              projects: [
-                {
-                  title: 'MyFolio Platform',
-                  name: 'MyFolio Platform',
-                  description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
-                  tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
-                  url: 'https://myfolio.tech'
-                }
-              ]
+              ...DEFAULT_FOUNDER_PROFILE,
+              name: req.body.developerName || DEFAULT_FOUNDER_PROFILE.name,
+              title: req.body.developerRole || DEFAULT_FOUNDER_PROFILE.title,
+              role: req.body.developerRole || DEFAULT_FOUNDER_PROFILE.role,
+              headline: req.body.developerRole || DEFAULT_FOUNDER_PROFILE.headline
             };
             const rendered = template.render(candidateProfile, {});
             html = injectMobileCSS(typeof rendered === 'string' ? rendered : (rendered?.html || ''));
@@ -3672,46 +3575,9 @@ app.get('/p/:siteId', async (req, res) => {
   if (!html && siteId === 'abdulaziz') {
     try {
       const { TemplateRegistry } = require('./templates/template-registry');
+      const { DEFAULT_FOUNDER_PROFILE } = require('./data/default-founder-profile');
       const stealthTemplate = TemplateRegistry.templates['jack-3d-creator'] || Object.values(TemplateRegistry.templates)[0];
-      const abdulAzizProfile = {
-        name: 'Abdul Aziz Nooruddin',
-        title: 'Full-Stack Developer & AI Systems Specialist',
-        headline: 'AI Systems & Machine Learning Researcher',
-        role: 'AI Systems Specialist',
-        bio: 'Building intelligent developer tools, high-performance WebGL interfaces, and scalable backend infrastructure.',
-        about: 'Lead architect of MyFolio. Full-stack engineer specializing in modern web platforms, 3D spatial computing, and AI-driven automation systems.',
-        skills: ['TypeScript', 'JavaScript', 'Node.js', 'Python', 'Three.js', 'WebGL', 'React', 'Docker', 'PostgreSQL'],
-        projects: [
-          {
-            title: 'MyFolio Platform',
-            name: 'MyFolio Platform',
-            description: 'AI-Powered 3D WebGL Portfolio Generation Platform synthesizing GitHub repositories and resumes into bespoke interactive experiences.',
-            tags: ['WebGL', 'Three.js', 'Node.js', 'AI'],
-            url: 'https://myfolio.tech'
-          },
-          {
-            title: 'Autonomous AI Synthesis Engine',
-            name: 'Autonomous AI Synthesis Engine',
-            description: 'Conversational portfolio generator engine with real-time interactive generation telemetry and streaming pipeline.',
-            tags: ['Node.js', 'AI Systems', 'Automation'],
-            url: 'https://myfolio.tech'
-          },
-          {
-            title: '3D Spatial Visual Universe Engine',
-            name: '3D Spatial Visual Universe Engine',
-            description: 'Procedurally generated Three.js spatial environments with particle dynamics, orbital controls, and mobile GPU optimization.',
-            tags: ['Three.js', 'GLSL', 'WebGL', 'Performance'],
-            url: 'https://myfolio.tech'
-          }
-        ],
-        contact: {
-          email: 'abdulaziznoor9876@gmail.com',
-          github: 'https://github.com/Abdul-Aziz-Nooruddin'
-        },
-        social: {
-          github: 'https://github.com/Abdul-Aziz-Nooruddin'
-        }
-      };
+      const abdulAzizProfile = { ...DEFAULT_FOUNDER_PROFILE };
       const siteGen = new SiteGenerator();
       const generated = await siteGen.generateSite({ id: 'abdulaziz', status: 'active' }, abdulAzizProfile, { theme: stealthTemplate.id, creative_mode: stealthTemplate.id });
       html = generated.html || generated;
@@ -4036,7 +3902,7 @@ app.get('/p/:siteId', async (req, res) => {
     isPaid = cachedStatus.isPaid;
   } else if (!isPaid) {
     try {
-      const siteQueryPromise = dbService.client.from('sites').select('*, users(*)').eq('provider_site_id', siteId).single();
+      const siteQueryPromise = dbService.client.from('sites').select('status, plan, is_paid').eq('provider_site_id', siteId).single();
       const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 200));
       const result = await Promise.race([siteQueryPromise, timeoutPromise]);
       const siteRecord = result?.data;
