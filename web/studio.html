@@ -2105,9 +2105,51 @@
         <!-- Pre-Payment Disclaimer Checkbox -->
         <div style="margin: 14px 0 10px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; text-align: left;">
           <label style="display: flex; align-items: flex-start; gap: 10px; font-size: 12px; color: #cbd5e1; cursor: pointer; user-select: none;">
-            <input type="checkbox" id="studioPaymentDisclaimerCheck" style="margin-top: 2px; accent-color: #10B981; width: 16px; height: 16px; cursor: pointer;" />
-            <span>I have reviewed my portfolio preview and agree to the <a href="/terms" target="_blank" style="color: #75c5de; text-decoration: underline;">Terms</a>, <a href="/privacy" target="_blank" style="color: #75c5de; text-decoration: underline;">Privacy Policy</a>, and <a href="/refund" target="_blank" style="color: #75c5de; text-decoration: underline;">Refund Policy</a>.</span>
+            <input type="checkbox" id="studioPaymentDisclaimerCheck" checked style="margin-top: 2px; accent-color: #10B981; width: 16px; height: 16px; cursor: pointer;" />
+            <span>I have reviewed my preview and agree to the <a href="/terms" target="_blank" style="color: #75c5de; text-decoration: underline;">Terms</a>, <a href="/privacy" target="_blank" style="color: #75c5de; text-decoration: underline;">Privacy</a>, and <a href="/refund" target="_blank" style="color: #75c5de; text-decoration: underline;">Refund Policy</a> (strictly non-refundable digital fulfillment).</span>
           </label>
+        </div>
+
+        <!-- Pre-Checkout Legal Confirmation Modal -->
+        <div class="modal-backdrop" id="preCheckoutLegalModal" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); align-items:center; justify-content:center; padding:16px;">
+          <div style="background:#0F172A; border:1px solid rgba(255,255,255,0.15); border-radius:18px; max-width:520px; width:100%; padding:24px; color:#F8FAFC; text-align:left; box-shadow:0 24px 60px rgba(0,0,0,0.9); max-height:90vh; overflow-y:auto;">
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px;">
+              <span style="font-size:24px;">⚖️</span>
+              <div>
+                <h3 style="font-size:18px; font-weight:800; color:#fff; margin:0;">Important Legal &amp; Policy Notice</h3>
+                <p style="font-size:11.5px; color:#94A3B8; margin:0;">Please review and confirm before completing your purchase</p>
+              </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; margin:16px 0; font-size:12.5px; line-height:1.55; color:#CBD5E1;">
+              <div style="background:rgba(239,68,68,0.08); border-left:3px solid #EF4444; padding:10px 12px; border-radius:6px;">
+                <strong style="color:#FCA5A5;">1. Strictly 100% Non-Refundable</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#E2E8F0;">Digital source code, custom domains, and watermark-free infrastructure are provisioned immediately upon transaction confirmation. Because you have full access to our 24-hour evaluation preview prior to checkout, all sales are final with zero refunds.</p>
+              </div>
+
+              <div style="background:rgba(245,158,11,0.08); border-left:3px solid #F59E0B; padding:10px 12px; border-radius:6px;">
+                <strong style="color:#FCD34D;">2. Zero-Tolerance Abuse &amp; Instant Takedown</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#E2E8F0;">We reserve the unconditional right to immediately unmount and permanently delete any portfolio, subdomain, or account without prior notice and without refund if any phishing, malware, malicious code, unlawful material, harassment, intellectual property infringement, or platform abuse is detected.</p>
+              </div>
+
+              <div style="background:rgba(56,189,248,0.08); border-left:3px solid #38BDF8; padding:10px 12px; border-radius:6px;">
+                <strong style="color:#7DD3FC;">3. Complete Indemnification &amp; "AS-IS" Terms</strong>
+                <p style="margin:4px 0 0; font-size:12px; color:#E2E8F0;">You agree to defend, indemnify, and hold harmless MyFolio and its founder <strong>Abdul Aziz Nooruddin</strong> from any third-party claims, liabilities, or legal expenses arising from your content or use of the service. The service is provided "AS-IS" without warranties.</p>
+              </div>
+            </div>
+
+            <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1); border-radius:10px; padding:12px; margin-bottom:18px;">
+              <label style="display:flex; align-items:flex-start; gap:10px; font-size:12px; color:#F1F5F9; cursor:pointer;">
+                <input type="checkbox" id="preCheckoutAckCheck" style="margin-top:2px; accent-color:#10B981; width:16px; height:16px; cursor:pointer;" />
+                <span>I understand and explicitly agree that this purchase is <strong>strictly non-refundable</strong>, that my portfolio can be <strong>taken down immediately upon abuse</strong>, and I agree to the <a href="/terms" target="_blank" style="color:#38BDF8; text-decoration:underline;">Terms</a> and <a href="/refund" target="_blank" style="color:#38BDF8; text-decoration:underline;">Refund Policy</a>.</span>
+              </label>
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+              <button type="button" class="mf-btn mf-btn-secondary mf-btn-sm" onclick="closePreCheckoutLegalModal()" style="font-size:12px;">Cancel</button>
+              <button type="button" class="mf-btn mf-btn-primary mf-btn-sm" id="btnConfirmProceedPayment" onclick="onConfirmLegalProceedPayment()" style="background:#10B981; border-color:#059669; font-size:12px; font-weight:700;">Confirm &amp; Proceed to Payment ➔</button>
+            </div>
+          </div>
         </div>
 
         <!-- VIP Founder Instant Free Launch -->
@@ -3159,6 +3201,19 @@
         return;
       }
 
+      // Explicit pre-checkout legal confirmation modal
+      if (!window.__legalTermsConfirmed) {
+        window.__pendingStudioPaymentPlan = plan;
+        window.__pendingStudioUsername = customUsername;
+        const modal = document.getElementById('preCheckoutLegalModal');
+        if (modal) {
+          modal.style.display = 'flex';
+          const ack = document.getElementById('preCheckoutAckCheck');
+          if (ack) ack.checked = false;
+          return;
+        }
+      }
+
       const targetBtn = plan === 'pro' ? document.getElementById('upmConfirmBtn') : document.getElementById('btnLaunchStarter');
       const originalText = targetBtn ? targetBtn.textContent : '';
       if (targetBtn) {
@@ -3234,6 +3289,26 @@
         }
       }
     }
+
+    function closePreCheckoutLegalModal() {
+      const modal = document.getElementById('preCheckoutLegalModal');
+      if (modal) modal.style.display = 'none';
+      window.__legalTermsConfirmed = false;
+    }
+
+    function onConfirmLegalProceedPayment() {
+      const ack = document.getElementById('preCheckoutAckCheck');
+      if (!ack || !ack.checked) {
+        showToast('Please check the acknowledgment box to confirm non-refundable terms and policies.', 'warning');
+        ack?.focus();
+        return;
+      }
+      window.__legalTermsConfirmed = true;
+      closePreCheckoutLegalModal();
+      const plan = window.__pendingStudioPaymentPlan || 'starter';
+      startStudioPayment(plan);
+    }
+
 
     function onPaymentPublishSuccess(data) {
       closeUsernamePicker();

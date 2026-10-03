@@ -255,6 +255,16 @@ function renderSubscribePage({ siteId = 'demo', razorpayKeyId = (process.env.RAZ
           </div>
         </div>
 
+        <!-- Pre-Payment Disclaimer Notice -->
+        <div style="margin: 20px auto; max-width: 640px; padding: 14px 18px; background: rgba(15,23,42,0.65); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; text-align: left; font-size: 0.85rem; color: #cbd5e1;">
+          <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer;">
+            <input type="checkbox" id="subscribeLegalCheck" checked style="margin-top: 3px; accent-color: #2563eb; width: 16px; height: 16px;" />
+            <span>
+              I understand that purchases are <strong>strictly 100% non-refundable</strong> once provisioned, and portfolios are subject to <strong>immediate takedown upon abuse or malicious content</strong>. I agree to the <a href="/terms" target="_blank" style="color: #38bdf8; text-decoration: underline;">Terms</a>, <a href="/privacy" target="_blank" style="color: #38bdf8; text-decoration: underline;">Privacy</a>, and <a href="/refund" target="_blank" style="color: #38bdf8; text-decoration: underline;">Refund Policy</a>.
+            </span>
+          </label>
+        </div>
+
         <div style="color: #94a3b8; font-size: 0.85rem; text-align: center;">
           🔒 100% Secure Checkout via Razorpay, UPI &amp; Cards • Instant Automated Activation
         </div>
@@ -271,6 +281,13 @@ function renderSubscribePage({ siteId = 'demo', razorpayKeyId = (process.env.RAZ
     });
 
     async function startPayment(plan, amount) {
+      const chk = document.getElementById('subscribeLegalCheck');
+      if (chk && !chk.checked) {
+        alert('Please review and check the acknowledgment box confirming the non-refundable terms and policies before checkout.');
+        chk.focus();
+        return;
+      }
+
       const btn = event?.target;
       const originalText = btn ? btn.textContent : '';
       if (btn) {
