@@ -209,9 +209,10 @@ app.use((req, res, next) => {
 
 // Initialize core services
 const aiService = new AIService(process.env.GEMINI_API_KEY);
+const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY;
 const dbService = new DatabaseService(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  supabaseServiceRoleKey
 );
 const emailService = new EmailService(dbService);
 const siteGenerator = new SiteGenerator();
@@ -219,10 +220,10 @@ const customDomainService = new CustomDomainService(dbService);
 const hostingProvider = new HostingProvider(
   process.env.NETLIFY_TOKEN,
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  supabaseServiceRoleKey
 );
 const netlifyDeployer = process.env.NETLIFY_TOKEN
-  ? new NetlifyDeployer(process.env.NETLIFY_TOKEN, process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
+  ? new NetlifyDeployer(process.env.NETLIFY_TOKEN, process.env.SUPABASE_URL, supabaseServiceRoleKey)
   : null;
 const { GitHubAutoSyncService } = require('./services/github-auto-sync');
 const gitHubAutoSync = new GitHubAutoSyncService();
@@ -4343,14 +4344,17 @@ app.use(SecurityMiddleware.safeErrorHandler());
 // Production Environment & Secret Validation Guard
 function validateStartupEnv(env = process.env) {
   const isProduction = env.NODE_ENV === 'production' || Boolean(env.RENDER);
+  const supabaseKey = env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_KEY;
   const mandatoryVars = [
     'RAZORPAY_KEY_ID',
     'RAZORPAY_KEY_SECRET',
-    'SUPABASE_URL',
-    'SUPABASE_SERVICE_ROLE_KEY'
+    'SUPABASE_URL'
   ];
 
   const missing = mandatoryVars.filter(key => !env[key] || String(env[key]).trim() === '');
+  if (!supabaseKey || String(supabaseKey).trim() === '') {
+    missing.push('SUPABASE_SERVICE_ROLE_KEY');
+  }
   if (isProduction && missing.length > 0) {
     const errorMsg = `🚨 [FATAL STARTUP GUARD] Missing mandatory production environment variables:\n  - ${missing.join('\n  - ')}\nPlatform startup aborted to prevent insecure fallback operation.`;
     console.error(errorMsg);
