@@ -12,6 +12,30 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      fetch('/api/auth/me', { credentials: 'include' })
+        .then(function(res) {
+          if (!res.ok) {
+            window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+            return;
+          }
+          return res.json();
+        })
+        .then(function(data) {
+          if (!data) return;
+          var u = data.user || data;
+          var adminEmails = ['abdulaziznoor9876@gmail.com'];
+          var isAdmin = u.role === 'admin' || u.is_admin === true || (u.email && adminEmails.indexOf(u.email.toLowerCase()) !== -1);
+          if (!isAdmin) {
+            window.location.replace('/dashboard');
+          }
+        })
+        .catch(function() {
+          window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+        });
+    })();
+  </script>
   <style>
     :root {
       --bg: #0A0A0A;

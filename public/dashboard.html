@@ -36,6 +36,19 @@
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
+  <script>
+    (function() {
+      fetch('/api/auth/me', { credentials: 'include' })
+        .then(function(res) {
+          if (!res.ok) {
+            window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+          }
+        })
+        .catch(function() {
+          window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+        });
+    })();
+  </script>
 
   <style>
     :root {
@@ -1301,9 +1314,8 @@
           const meData = await meRes.json();
           currentUser = meData.user || meData;
         } else {
-          let storedUser = null;
-          try { storedUser = JSON.parse(localStorage.getItem('myfolio_user') || 'null'); } catch(e){}
-          currentUser = storedUser || { name: 'Abdul-Aziz', username: 'abdulaziz', email: 'abdulaziznoor9876@gmail.com' };
+          window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+          return;
         }
 
         try {
@@ -1318,8 +1330,8 @@
 
         await loadCrossDevicePortfolios();
       } catch (e) {
-        if (!currentUser) currentUser = { name: 'Abdul-Aziz', username: 'abdulaziz', email: 'abdulaziznoor9876@gmail.com' };
-        await loadCrossDevicePortfolios();
+        window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
+        return;
       }
     }
 

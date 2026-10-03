@@ -283,4 +283,50 @@ describe('🛡️ Authorization, IDOR & Access Control Matrix', () => {
     assert.equal(AuthHandler.isDisposableEmail('engineer@outlook.com'), false);
     assert.equal(AuthHandler.isDisposableEmail('student@mit.edu'), false);
   });
+
+  it('should redirect unauthenticated users from protected pages to /login?redirect=...', () => {
+    let redirectUrl = null;
+    const req = { user: null, originalUrl: '/dashboard', url: '/dashboard' };
+    const res = {
+      redirect: (url) => { redirectUrl = url; }
+    };
+    let nextCalled = false;
+
+    AuthMiddleware.requirePageAuth(req, res, () => { nextCalled = true; });
+    assert.equal(nextCalled, false, 'next() must not be called when unauthenticated');
+    assert.equal(redirectUrl, '/login?redirect=%2Fdashboard', 'Must redirect to login with encoded redirect param');
+
+    // When authenticated
+    redirectUrl = null;
+    nextCalled = false;
+    const authReq = { user: { id: 'u1', email: 'user@example.com' }, originalUrl: '/dashboard' };
+    AuthMiddleware.requirePageAuth(authReq, res, () => { nextCalled = true; });
+    assert.equal(nextCalled, true, 'next() must be called when authenticated');
+    assert.equal(redirectUrl, null, 'Must not redirect when authenticated');
+  });
+
+  it('should enforce admin authorization on requirePageAdmin', () => {
+    let redirectUrl = null;
+    let nextCalled = false;
+    const res = { redirect: (url) => { redirectUrl = url; } };
+
+    // Unauthenticated
+    AuthMiddleware.requirePageAdmin({ user: null, originalUrl: '/admin' }, res, () => { nextCalled = true; });
+    assert.equal(nextCalled, false);
+    assert.equal(redirectUrl, '/login?redirect=%2Fadmin');
+
+    // Regular authenticated user
+    redirectUrl = null;
+    nextCalled = false;
+    AuthMiddleware.requirePageAdmin({ user: { id: 'u2', email: 'regular@example.com', role: 'user' } }, res, () => { nextCalled = true; });
+    assert.equal(nextCalled, false);
+    assert.equal(redirectUrl, '/dashboard', 'Non-admin user must be redirected to /dashboard');
+
+    // Admin user
+    redirectUrl = null;
+    nextCalled = false;
+    AuthMiddleware.requirePageAdmin({ user: { id: 'u3', email: 'abdulaziznoor9876@gmail.com', role: 'admin' } }, res, () => { nextCalled = true; });
+    assert.equal(nextCalled, true, 'Admin user must be allowed through');
+    assert.equal(redirectUrl, null);
+  });
 });

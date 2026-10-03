@@ -172,6 +172,42 @@ class AuthMiddleware {
   }
 
   /**
+   * Guard for browser pages: Redirects unauthenticated users to /login?redirect=...
+   */
+  static requirePageAuth(req, res, next) {
+    if (!req.user) {
+      const target = encodeURIComponent(req.originalUrl || req.url || '/dashboard');
+      return res.redirect(`/login?redirect=${target}`);
+    }
+    next();
+  }
+
+  /**
+   * Guard for admin browser pages: Redirects to /login if unauthenticated, or to /dashboard if non-admin
+   */
+  static requirePageAdmin(req, res, next) {
+    if (!req.user) {
+      const target = encodeURIComponent(req.originalUrl || req.url || '/admin');
+      return res.redirect(`/login?redirect=${target}`);
+    }
+
+    const adminEmails = (process.env.ADMIN_EMAILS || 'abdulaziznoor9876@gmail.com')
+      .split(',')
+      .map(e => e.trim().toLowerCase());
+
+    const userEmail = (req.user.email || req.user.normalized_email || '').toLowerCase();
+    const isAdmin =
+      req.user.role === 'admin' ||
+      req.user.is_admin === true ||
+      (userEmail && adminEmails.includes(userEmail));
+
+    if (!isAdmin) {
+      return res.redirect('/dashboard');
+    }
+    next();
+  }
+
+  /**
    * IDOR Defense Guard: Verifies ownership of requested resource
    * @param {Function} getResourceOwnerIdFn - (req) => Promise<string|null>
    */

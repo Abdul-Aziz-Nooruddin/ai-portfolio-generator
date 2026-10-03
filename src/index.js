@@ -2723,21 +2723,25 @@ app.get('/ads.txt', (req, res) => {
 });
 
 app.get(['/login', '/signin', '/signup', '/register', '/auth', '/forgot-password', '/reset-password', '/verify-email'], (req, res) => {
+  if (req.user && ['/login', '/signin', '/signup', '/register', '/auth'].includes(req.path)) {
+    const target = req.query.redirect && req.query.redirect.startsWith('/') ? req.query.redirect : '/dashboard';
+    return res.redirect(target);
+  }
   res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
   res.setHeader('Pragma', 'no-cache');
   res.setHeader('Expires', '0');
   res.sendFile(getPagePath('auth.html'));
 });
 
-app.get(['/dashboard', '/app', '/dash'], (req, res) => {
+app.get(['/dashboard', '/app', '/dash'], AuthMiddleware.requirePageAuth, (req, res) => {
   res.sendFile(getPagePath('dashboard.html'));
 });
 
-app.get(['/studio', '/webstudio', '/builder', '/generator'], (req, res) => {
+app.get(['/studio', '/webstudio', '/builder', '/generator'], AuthMiddleware.requirePageAuth, (req, res) => {
   res.sendFile(getPagePath('studio.html'));
 });
 
-app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], (req, res) => {
+app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], AuthMiddleware.requirePageAuth, (req, res) => {
   res.redirect('/studio');
 });
 
@@ -2762,7 +2766,7 @@ app.get(['/kage', '/kage-temple', '/kyoto-temple', '/kage-landing-page'], (req, 
   res.redirect('/landing-pages/kage.html');
 });
 
-app.get(['/profile', '/settings', '/account'], (req, res) => {
+app.get(['/profile', '/settings', '/account'], AuthMiddleware.requirePageAuth, (req, res) => {
   res.sendFile(getPagePath('profile.html'));
 });
 
@@ -2796,7 +2800,7 @@ app.get(['/contact', '/contact-us', '/support'], (req, res) => {
 });
 
 // Admin Panel
-app.get(['/admin', '/admin.html'], (req, res) => {
+app.get(['/admin', '/admin.html'], AuthMiddleware.requirePageAdmin, (req, res) => {
   res.sendFile(getPagePath('admin.html'));
 });
 
