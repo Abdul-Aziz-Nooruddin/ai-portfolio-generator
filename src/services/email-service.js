@@ -11,11 +11,11 @@ class EmailService {
     this.db = dbService;
     this.fromEmail = process.env.FROM_EMAIL || 'MyFolio <aziz@myfolio.tech>';
     
-    // Support either full SMTP settings or direct Gmail / Google Workspace credentials
-    const smtpHost = process.env.SMTP_HOST || process.env.SMTP_SERVER;
-    const smtpUser = process.env.SMTP_USER || process.env.SMTP_USERNAME;
-    const smtpPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD;
-    const smtpPort = parseInt(process.env.SMTP_PORT || '465', 10);
+    // Support full SMTP settings, Titan Email, or direct Gmail credentials
+    const smtpHost = process.env.SMTP_HOST || process.env.SMTP_SERVER || process.env.MAIL_HOST || process.env.EMAIL_HOST || process.env.TITAN_HOST;
+    const smtpUser = process.env.SMTP_USER || process.env.SMTP_USERNAME || process.env.MAIL_USER || process.env.EMAIL_USER || process.env.TITAN_USER || process.env.SUPPORT_EMAIL;
+    const smtpPass = process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.MAIL_PASS || process.env.MAIL_PASSWORD || process.env.EMAIL_PASS || process.env.TITAN_PASS;
+    const smtpPort = parseInt(process.env.SMTP_PORT || process.env.MAIL_PORT || process.env.EMAIL_PORT || '465', 10);
     const smtpSecure = process.env.SMTP_SECURE === 'true' || smtpPort === 465;
 
     if (smtpHost && smtpUser && smtpPass) {

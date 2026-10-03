@@ -65,11 +65,16 @@ app.set('trust proxy', 1);
 
 // Instant 0ms Health Check for probes (Bypasses all heavy middleware, DB & auth)
 app.all(['/health', '/healthz', '/api/health', '/healthcheck', '/ping', '/ready'], (req, res) => {
-  const smtpHost = Boolean(process.env.SMTP_HOST || process.env.SMTP_SERVER);
-  const smtpUser = Boolean(process.env.SMTP_USER || process.env.SMTP_USERNAME);
-  const smtpPass = Boolean(process.env.SMTP_PASS || process.env.SMTP_PASSWORD);
+  const smtpHost = Boolean(process.env.SMTP_HOST || process.env.SMTP_SERVER || process.env.MAIL_HOST || process.env.EMAIL_HOST || process.env.TITAN_HOST);
+  const smtpUser = Boolean(process.env.SMTP_USER || process.env.SMTP_USERNAME || process.env.MAIL_USER || process.env.EMAIL_USER || process.env.TITAN_USER || process.env.SUPPORT_EMAIL);
+  const smtpPass = Boolean(process.env.SMTP_PASS || process.env.SMTP_PASSWORD || process.env.MAIL_PASS || process.env.MAIL_PASSWORD || process.env.EMAIL_PASS || process.env.TITAN_PASS);
   const gmailConfigured = Boolean(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD);
   const emailConfigured = (smtpHost && smtpUser && smtpPass) || gmailConfigured;
+
+  // Safe list of configured key names (names only, no secrets or values)
+  const detectedEmailKeys = Object.keys(process.env).filter(k => 
+    /^(SMTP|MAIL|TITAN|EMAIL|GMAIL)/i.test(k)
+  );
 
   res.status(200).json({
     status: 'healthy',
@@ -80,7 +85,8 @@ app.all(['/health', '/healthz', '/api/health', '/healthcheck', '/ping', '/ready'
     emailDiagnostics: {
       has_host: smtpHost,
       has_user: smtpUser,
-      has_pass: smtpPass
+      has_pass: smtpPass,
+      detectedKeys: detectedEmailKeys
     }
   });
 });
