@@ -9,7 +9,6 @@ const path = require('path');
 const { LifecycleService, LIFECYCLE_STATES } = require('./services/lifecycle-service');
 const { EmailService } = require('./services/email-service');
 const { DatabaseService } = require('./services/db-service');
-const { ConversationEngine, PRICING, STATES } = require('./conversation-engine');
 
 test('Email normalization strips plus tags and lowercases', () => {
   assert.equal(DatabaseService.normalizeEmail('User+Test1@Gmail.com'), 'user@gmail.com');
@@ -127,32 +126,4 @@ test('LifecycleService admin manual overrides work and record audit trail', asyn
   assert.ok(updatedConv.updates.state_entered_at);
   assert.equal(auditRecord.action, 'override_grace_period');
   assert.equal(auditRecord.admin_identifier, 'admin-abdulaziz');
-});
-
-test('ConversationEngine enforces weekly limits and clean slate on reset', async () => {
-  let updatedData = null;
-  const mockDb = {
-    checkWeeklyLimit: async (userId, maxLimit) => false, // simulate limit hit
-    updateConversation: async (id, updates) => {
-      updatedData = updates;
-    },
-    getSiteAnalytics: async () => ({ totalViews: 42, uniqueVisitors: 28, contactSubmissions: 3 })
-  };
-
-  const engine = new ConversationEngine({}, mockDb);
-
-  // 1. Reset cleans state
-  const resetRes = await engine.handleState({ id: 'c1' }, 'RESET', null);
-  assert.equal(resetRes.action, 'reply');
-  assert.equal(updatedData.design_brief, null);
-  assert.equal(updatedData.taste_skill_dials, null);
-
-  // 2. Weekly limit message
-  const blockedRes = await engine.handleConfirmation({ id: 'c2', user_id: 'u2', phone_number: '111', branch: 'A', extracted_data: {} }, 'YES');
-  assert.ok(blockedRes.message.includes('Weekly Free Preview Limit Reached'));
-
-  // 3. Stats command
-  const statsRes = await engine.handleState({ id: 'c3' }, 'STATS', null);
-  assert.ok(statsRes.message.includes('42'));
-  assert.ok(statsRes.message.includes('28'));
 });

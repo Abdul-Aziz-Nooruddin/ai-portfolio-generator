@@ -16,7 +16,6 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
-const { ConversationEngine } = require('./conversation-engine');
 const { AIService } = require('./services/ai-service');
 const { DatabaseService } = require('./services/db-service');
 const { SiteGenerator } = require('./services/site-generator');
@@ -554,15 +553,6 @@ app.use(async (req, res, next) => {
 const razorpayService = (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET)
   ? new RazorpayService(process.env.RAZORPAY_KEY_ID, process.env.RAZORPAY_KEY_SECRET, process.env.RAZORPAY_WEBHOOK_SECRET)
   : null;
-
-const conversationEngine = new ConversationEngine(
-  aiService,
-  dbService,
-  siteGenerator,
-  netlifyDeployer,
-  razorpayService,
-  emailService
-);
 
 const lifecycleService = new LifecycleService(dbService, emailService, null, hostingProvider);
 if (require.main === module) {
@@ -2581,7 +2571,7 @@ app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], (re
   res.redirect('/studio');
 });
 
-app.get(['/jack-3d', '/portfolio-3d'], (req, res) => {
+app.get(['/jack-3d', '/portfolio-3d', '/jack-3d-creator', '/jack', '/abdul-aziz', '/portfolio-jack'], (req, res) => {
   res.sendFile(getPagePath('jack-3d-creator.html'));
 });
 
@@ -3221,48 +3211,6 @@ app.post('/api/sites/:siteId/analytics', async (req, res) => {
 // Clean Semantic Routes (Extensionless URLs)
 // ==========================================
 const webDir = path.join(process.cwd(), 'web');
-
-
-
-app.get(['/studio', '/webstudio', '/generator'], (req, res) => {
-  res.sendFile(path.join(webDir, 'studio.html'));
-});
-
-app.get(['/dashboard', '/app'], (req, res) => {
-  res.sendFile(path.join(webDir, 'dashboard.html'));
-});
-
-app.get(['/universes', '/themes', '/gallery', '/design-demo', '/templates'], (req, res) => {
-  res.redirect('/studio');
-});
-
-app.get(['/jack-3d', '/portfolio-3d'], (req, res) => {
-  res.sendFile(path.join(webDir, 'jack-3d-creator.html'));
-});
-
-app.get(['/nadia', '/nadia-brand', '/nadia-speaker', '/speaker-brand'], (req, res) => {
-  res.sendFile(path.join(webDir, 'nadia-brand.html'));
-});
-
-app.get(['/profile', '/settings', '/account'], (req, res) => {
-  res.sendFile(path.join(webDir, 'profile.html'));
-});
-
-app.get(['/terms', '/tos', '/terms-of-service'], (req, res) => {
-  res.sendFile(path.join(webDir, 'terms.html'));
-});
-
-app.get(['/privacy', '/privacy-policy'], (req, res) => {
-  res.sendFile(path.join(webDir, 'privacy.html'));
-});
-
-app.get(['/thank-you', '/success'], (req, res) => {
-  res.sendFile(path.join(webDir, 'thank-you.html'));
-});
-
-app.get(['/abdul-aziz', '/jack', '/jack-3d-creator', '/portfolio-jack'], (req, res) => {
-  res.sendFile(path.join(webDir, 'jack-3d-creator.html'));
-});
 
 // =========================================================================
 // GITHUB AUTO-SYNC & RECONCILIATION ENGINE ROUTES
@@ -4553,15 +4501,7 @@ app.get(['/subscribe', '/pricing', '/payment/retry'], (req, res) => {
 </html>`);
 });
 
-// Health check (Instant 200 OK for probes)
-app.get(['/health', '/healthz', '/api/health'], (req, res) => {
-  res.status(200).json({
-    status: 'healthy',
-    ok: true,
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString()
-  });
-});
+
 
 // Deep diagnostic check (Optional)
 app.get('/health/deep', async (req, res) => {
