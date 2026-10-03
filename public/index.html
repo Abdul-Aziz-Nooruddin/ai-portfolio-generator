@@ -66,7 +66,7 @@
           );
           for (var i = 0; i < targets.length; i++) {
             var n = targets[i];
-            var p = n.closest('div[style*="fixed"], div[style*="absolute"], aside, section, [id^="cf-"], [class^="cf-"]') || n;
+            var p = n.closest('#cf-root, #cf-sidebar, #cf-sidebar-container, .cf-sidebar-container, [id^="cf-"], [class^="cf-"], careerflow-extension, careerflow-app, careerflow-copilot') || n;
             try { p.remove(); } catch(e) {}
           }
         }

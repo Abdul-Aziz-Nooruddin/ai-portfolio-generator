@@ -89,24 +89,42 @@
 
     function purge() {
       injectShield();
+      // Target specific injected third-party extension elements only - never touch application containers
       const targets = document.querySelectorAll(
         '#cf-root, #cf-sidebar, #cf-sidebar-container, #cf-injected-tab, .cf-sidebar-container, .cf-tab, .cf-button, [id^="cf-"], [class^="cf-"], [id*="-cf-" i], [class*="-cf-" i], [data-cf], cf-root, cf-app, cf-sidebar, [id*="careerflow" i], [class*="careerflow" i], [data-careerflow], careerflow-extension, careerflow-app, careerflow-copilot, img[alt*="Careerflow" i], img[src*="careerflow" i], iframe[src*="careerflow" i], iframe[src*="chrome-extension://"]'
       );
       targets.forEach((n) => {
-        const p = n.closest('div[style*="fixed"], div[style*="absolute"], aside, section, [id^="cf-"], [class^="cf-"]') || n;
+        // Never remove or climb out of legitimate application containers
+        if (n.closest('.studio-workspace-container, .studio-topbar, .studio-workflow-stepper, #portfolioGenerationForm, #studioLiveIframe, main, nav, header')) {
+          return;
+        }
+        const p = n.closest('#cf-root, #cf-sidebar, #cf-sidebar-container, .cf-sidebar-container, [id^="cf-"], [class^="cf-"], careerflow-extension, careerflow-app, careerflow-copilot') || n;
         try { p.remove(); } catch(e) {}
       });
+
+      // On body direct children, only remove if the child itself is directly a rogue extension root
+      // NEVER inspect outerHTML, which could match template code, iframes, or text content inside legitimate containers
       if (document.body) {
         Array.from(document.body.children).forEach((el) => {
-          if (el.id === 'root' || el.id === 'main' || el.tagName === 'SCRIPT' || el.tagName === 'STYLE' || el.tagName === 'LINK') return;
-          const html = (el.outerHTML || '').toLowerCase();
-          const idClass = ((el.id || '') + ' ' + (el.className || '')).toLowerCase();
+          if (!el || !el.tagName) return;
+          const tag = el.tagName.toLowerCase();
+          const id = (el.id || '').toLowerCase();
+          const cls = (el.className || '').toString().toLowerCase();
+
+          // Explicit whitelist of legitimate application structures
           if (
-            idClass.includes('careerflow') ||
-            idClass.includes('cf-') ||
-            el.tagName.toLowerCase().startsWith('cf-') ||
-            html.includes('careerflow') ||
-            html.includes('chrome-extension://')
+            tag === 'script' || tag === 'style' || tag === 'link' || tag === 'header' || tag === 'nav' || tag === 'main' || tag === 'aside' || tag === 'footer' ||
+            id === 'root' || id === 'main' || id === 'app' || id === 'portfolioGenerationForm' || id === 'studioToastBanner' || id === 'studioToastModal' || id === 'usernamePickerModal' || id === 'myfolioCookieBanner' ||
+            cls.includes('studio') || cls.includes('mf-') || cls.includes('workflow') || cls.includes('spatial') || cls.includes('razorpay')
+          ) {
+            return;
+          }
+
+          // Only purge if element itself is an extension root
+          if (
+            tag.startsWith('cf-') || tag.startsWith('careerflow') ||
+            id.startsWith('cf-') || id === 'cf-root' || id.includes('careerflow') ||
+            cls.includes('careerflow') || cls.split(/\s+/).some(c => c.startsWith('cf-'))
           ) {
             try { el.remove(); } catch(e) {}
           }
