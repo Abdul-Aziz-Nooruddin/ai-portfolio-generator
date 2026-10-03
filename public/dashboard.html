@@ -1024,7 +1024,7 @@
       </p>
 
       <div class="qr-canvas-box">
-        <svg id="qrSvgCode" width="180" height="180" viewBox="0 0 180 180"></svg>
+        <img id="qrImgElement" src="" alt="Live Portfolio QR Code" width="180" height="180" style="display:block; border-radius:4px; object-fit:contain;" />
       </div>
 
       <div style="font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--dash-accent-sky); margin-bottom:1.25rem; word-break:break-all;" id="qrUrlText">
@@ -1360,6 +1360,8 @@
       }
 
       const activeVipSite = localStorage.getItem('myfolio_active_vip_site') || '';
+      const hasActiveMatch = portfolios.some(p => (p.siteId || '') === activeVipSite);
+      const activeTargetId = hasActiveMatch ? activeVipSite : (portfolios[0]?.siteId || '');
 
       grid.innerHTML = portfolios.map((p, idx) => {
         const sid = p.siteId || `site-${idx}`;
@@ -1369,7 +1371,7 @@
         const timeStr = p.timestamp ? formatTimeAgo(p.timestamp) : 'Recent';
         const thumbSrc = getUniverseThumb(universe);
         const href = `/p/${sid}`;
-        const isActive = sid === activeVipSite || idx === 0;
+        const isActive = sid === activeTargetId;
         const universeTitle = getUniverseName(universe);
 
         return `
@@ -1441,31 +1443,10 @@
     }
 
     function renderSvgQr(text) {
-      const svg = document.getElementById('qrSvgCode');
-      if (!svg) return;
-      svg.innerHTML = `
-        <rect width="180" height="180" fill="#FFFFFF"/>
-        <rect x="15" y="15" width="45" height="45" fill="#0A0A0A" rx="4"/>
-        <rect x="25" y="25" width="25" height="25" fill="#FFFFFF" rx="2"/>
-        <rect x="31" y="31" width="13" height="13" fill="#0A0A0A"/>
-        <rect x="120" y="15" width="45" height="45" fill="#0A0A0A" rx="4"/>
-        <rect x="130" y="25" width="25" height="25" fill="#FFFFFF" rx="2"/>
-        <rect x="136" y="31" width="13" height="13" fill="#0A0A0A"/>
-        <rect x="15" y="120" width="45" height="45" fill="#0A0A0A" rx="4"/>
-        <rect x="25" y="130" width="25" height="25" fill="#FFFFFF" rx="2"/>
-        <rect x="31" y="136" width="13" height="13" fill="#0A0A0A"/>
-        <rect x="75" y="20" width="10" height="10" fill="#0A0A0A"/>
-        <rect x="95" y="20" width="10" height="10" fill="#0A0A0A"/>
-        <rect x="75" y="45" width="20" height="10" fill="#0A0A0A"/>
-        <rect x="75" y="70" width="15" height="15" fill="#0A0A0A"/>
-        <rect x="20" y="75" width="15" height="15" fill="#0A0A0A"/>
-        <rect x="100" y="75" width="20" height="20" fill="#0A0A0A"/>
-        <rect x="135" y="75" width="15" height="15" fill="#0A0A0A"/>
-        <rect x="75" y="105" width="30" height="10" fill="#0A0A0A"/>
-        <rect x="120" y="105" width="20" height="20" fill="#0A0A0A"/>
-        <rect x="150" y="135" width="15" height="15" fill="#0A0A0A"/>
-        <rect x="90" y="130" width="15" height="25" fill="#0A0A0A"/>
-      `;
+      const img = document.getElementById('qrImgElement');
+      if (!img) return;
+      const cleanUrl = text || (window.currentSiteUrl || window.location.origin);
+      img.src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&margin=8&data=${encodeURIComponent(cleanUrl)}`;
     }
 
     // Modal controls: Pro Upgrade Modal
