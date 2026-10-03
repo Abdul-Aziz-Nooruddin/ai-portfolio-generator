@@ -74,14 +74,22 @@ class SiteGenerator {
 
     const watermarkHtml = `
     <!-- TOP PREVIEW ONLY // MYFOLIO.TECH PROMINENT WATERMARK OVERLAY (ABOVE PORTFOLIO) -->
-    <div id="preview-watermark-overlay" style="position: fixed; top: 12px; left: 0; right: 0; z-index: 999999; pointer-events: none; display: flex; justify-content: center; align-items: center; user-select: none;">
-      <div id="preview-watermark-pill" style="pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; border-radius: 9999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.22); background: rgba(12, 12, 12, 0.82); color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
-        <span class="watermark-main-title" style="display:inline-flex; align-items:center; gap:6px;">
-          <span id="preview-watermark-dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background: currentColor; box-shadow: 0 0 6px currentColor; transition: background-color 0.25s ease;"></span>
-          <span style="letter-spacing: 0.04em; font-weight: 800;">myfolio.tech</span>
-        </span>
-        <span style="opacity: 0.4;">•</span>
-        <span style="font-weight: 700; letter-spacing: 0.1em;">PREVIEW ONLY</span>
+    <div id="preview-watermark-overlay" style="position: fixed; inset: 0; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; user-select: none;">
+      <!-- TOP FLOATING PILL BADGE -->
+      <div style="width: 100%; display: flex; justify-content: center; padding-top: 12px;">
+        <div id="preview-watermark-pill" style="pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; padding: 6px 18px; border-radius: 9999px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.22); background: rgba(12, 12, 12, 0.82); color: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+          <span class="watermark-main-title" style="display:inline-flex; align-items:center; gap:6px;">
+            <span id="preview-watermark-dot" style="display:inline-block; width:7px; height:7px; border-radius:50%; background: currentColor; box-shadow: 0 0 6px currentColor; transition: background-color 0.25s ease;"></span>
+            <span style="letter-spacing: 0.04em; font-weight: 800;">myfolio.tech</span>
+          </span>
+          <span style="opacity: 0.4;">•</span>
+          <span style="font-weight: 700; letter-spacing: 0.1em;">PREVIEW ONLY</span>
+        </div>
+      </div>
+
+      <!-- ONE BIG BOLD DIAGONAL PREVIEW ONLY WATERMARK -->
+      <div id="preview-big-diagonal" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-28deg); white-space: nowrap; pointer-events: none; user-select: none; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: clamp(3.5rem, 11vw, 10rem); font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255, 255, 255, 0.08); transition: color 0.25s ease; text-align: center; width: 100%;">
+        PREVIEW ONLY
       </div>
     </div>
 
@@ -152,6 +160,7 @@ class SiteGenerator {
 
         function syncWatermarkTheme() {
           var pill = document.getElementById('preview-watermark-pill');
+          var bigDiagonal = document.getElementById('preview-big-diagonal');
           if (!pill) return;
 
           var rect = pill.getBoundingClientRect();
@@ -168,12 +177,14 @@ class SiteGenerator {
             pill.style.background = 'rgba(255, 255, 255, 0.88)';
             pill.style.borderColor = 'rgba(0, 0, 0, 0.18)';
             pill.style.boxShadow = '0 4px 18px rgba(0, 0, 0, 0.12)';
+            if (bigDiagonal) bigDiagonal.style.color = 'rgba(0, 0, 0, 0.06)';
           } else {
             // When background is black -> text is white
             pill.style.color = '#ffffff';
             pill.style.background = 'rgba(12, 12, 12, 0.82)';
             pill.style.borderColor = 'rgba(255, 255, 255, 0.2)';
             pill.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.4)';
+            if (bigDiagonal) bigDiagonal.style.color = 'rgba(255, 255, 255, 0.08)';
           }
         }
 
