@@ -1023,6 +1023,67 @@ async function verifySiteOwnership(req, siteId) {
   return { allowed: true };
 }
 
+// Centralized Site Paid Status Checker (TTL cached + meta.json + DB verification)
+const sitePaidStatusCache = new Map();
+
+async function checkSitePaidStatus(siteId) {
+  if (!siteId) return false;
+  if (siteId === 'abdulaziz') return true;
+
+  const now = Date.now();
+  const cached = sitePaidStatusCache.get(siteId);
+  if (cached && (now - cached.cachedAt < 60000)) {
+    return cached.isPaid;
+  }
+
+  let isPaid = false;
+
+  // 1. Check meta.json on disk
+  const metaPath = path.join(process.cwd(), 'public', 'sites', siteId, 'meta.json');
+  if (fs.existsSync(metaPath)) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+      if (meta.isPaid === true || meta.is_paid === true || meta.status === 'paid' || meta.plan === 'lifetime' || meta.plan === 'pro') {
+        isPaid = true;
+      }
+    } catch (e) {}
+  }
+
+  // 2. Check DB sites table
+  if (!isPaid && dbService?.client) {
+    try {
+      const siteQueryPromise = dbService.client
+        .from('sites')
+        .select('status, plan, is_paid')
+        .or(`provider_site_id.eq.${siteId},id.eq.${siteId}`)
+        .maybeSingle();
+      const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 300));
+      const result = await Promise.race([siteQueryPromise, timeoutPromise]);
+      const siteRecord = result?.data;
+      if (siteRecord && (siteRecord.status === 'paid' || siteRecord.plan === 'lifetime' || siteRecord.plan === 'pro_domain' || siteRecord.is_paid === true)) {
+        isPaid = true;
+      }
+    } catch (e) {}
+  }
+
+  // 3. Check DB conversations table
+  if (!isPaid && dbService?.client) {
+    try {
+      const { data: conv } = await dbService.client
+        .from('conversations')
+        .select('status')
+        .eq('id', siteId)
+        .maybeSingle();
+      if (conv && conv.status === 'paid') {
+        isPaid = true;
+      }
+    } catch (e) {}
+  }
+
+  sitePaidStatusCache.set(siteId, { isPaid, cachedAt: now });
+  return isPaid;
+}
+
 // 6. Portfolio Customizer State Endpoint (GET)
 app.get('/api/portfolio/:siteId/customizer', AuthMiddleware.requireAuth, async (req, res) => {
   try {
@@ -1138,6 +1199,17 @@ app.post('/api/portfolio/:siteId/export', AuthMiddleware.requireAuth, async (req
     if (!ownership.allowed) {
       return res.status(ownership.status).json({ error: ownership.error });
     }
+
+    // Enforce is_paid: static ZIP export requires a paid plan (or admin bypass)
+    const isPaid = await checkSitePaidStatus(siteId);
+    if (!isPaid && !ownership.isAdmin) {
+      return res.status(402).json({
+        error: 'Payment required: Exporting static source code ZIP requires a paid plan (Lifetime Starter or Pro).',
+        is_paid: false,
+        code: 'PAYMENT_REQUIRED'
+      });
+    }
+
     const state = getOrInitPortfolioState(siteId);
     if (!state) {
       return res.status(404).json({ error: 'Portfolio not found or expired.' });
@@ -3660,7 +3732,6 @@ async function handlePermanentSiteDelete(req, res) {
 // Injects Diagonal Watermark & Floating Bar for Unpaid Previews
 // Serves Clean, Pristine Website for Subscribed/Paid Users
 // ==========================================
-const sitePaidStatusCache = new Map();
 
 app.get('/p/:siteId', async (req, res) => {
   const siteId = req.params.siteId;
@@ -3903,25 +3974,7 @@ app.get('/p/:siteId', async (req, res) => {
   } catch (e) {}
 
   // Check if site is paid (with O(1) in-memory TTL caching, avoiding 400ms DB latency on page reloads)
-  let isPaid = siteId === 'abdulaziz';
-  const now = Date.now();
-  const cachedStatus = sitePaidStatusCache.get(siteId);
-  if (cachedStatus && (now - cachedStatus.cachedAt < 60000)) {
-    isPaid = cachedStatus.isPaid;
-  } else if (!isPaid) {
-    try {
-      const siteQueryPromise = dbService.client.from('sites').select('status, plan, is_paid').eq('provider_site_id', siteId).single();
-      const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ data: null }), 200));
-      const result = await Promise.race([siteQueryPromise, timeoutPromise]);
-      const siteRecord = result?.data;
-      if (siteRecord && (siteRecord.status === 'paid' || siteRecord.plan === 'lifetime' || siteRecord.plan === 'pro_domain' || siteRecord.is_paid === true)) {
-        isPaid = true;
-      }
-      sitePaidStatusCache.set(siteId, { isPaid, cachedAt: now });
-    } catch (e) {
-      sitePaidStatusCache.set(siteId, { isPaid: false, cachedAt: now });
-    }
-  }
+  const isPaid = await checkSitePaidStatus(siteId);
 
   if (!isPaid) {
     // If the HTML has old watermark structure without preview-big-diagonal or with old diagonal strips, clean it to upgrade
@@ -4187,6 +4240,9 @@ if (require.main === module) {
 
   startServer(PORT);
 }
+
+app.checkSitePaidStatus = checkSitePaidStatus;
+app.sitePaidStatusCache = sitePaidStatusCache;
 
 module.exports = app;
 

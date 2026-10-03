@@ -293,4 +293,95 @@ test('6. XSS URL defense: allows only http(s) URLs in template links and neutral
   assert.equal(jackHtml.includes('onclick="window.open'), false, 'Jack 3D must not render onclick="window.open');
 });
 
+// =========================================================================
+// 7. STATIC ZIP EXPORT AUTHORIZATION: IS_PAID ENFORCEMENT
+// =========================================================================
+test('7. ZIP export: enforces is_paid authorization, rejecting unpaid previews with 402 and allowing paid sites', async () => {
+  const app = require('./index');
+  const testSiteId = 'test-export-gate-001';
+  const siteDir = path.join(process.cwd(), 'public', 'sites', testSiteId);
+
+  // Setup mock portfolio directory with index.html
+  if (!fs.existsSync(siteDir)) {
+    fs.mkdirSync(siteDir, { recursive: true });
+  }
+  fs.writeFileSync(path.join(siteDir, 'index.html'), '<html><body><h1>Export Test</h1></body></html>', 'utf8');
+  fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify({
+    siteId: testSiteId,
+    userId: 'user-export-001',
+    isPaid: false
+  }), 'utf8');
+
+  // Clear cache
+  app.sitePaidStatusCache.delete(testSiteId);
+
+  // Helper to dispatch through the route stack
+  const dispatchExport = (user, query = {}) => new Promise((resolve) => {
+    const req = {
+      params: { siteId: testSiteId },
+      query,
+      user,
+      headers: {}
+    };
+    let statusCode = 200;
+    const res = {
+      status(code) {
+        statusCode = code;
+        return this;
+      },
+      json(data) {
+        resolve({ status: statusCode, data });
+      },
+      setHeader() {},
+      send(buf) {
+        resolve({ status: statusCode, data: buf });
+      }
+    };
+
+    const routes = app._router.stack.filter(r => r.route && r.route.path === '/api/portfolio/:siteId/export');
+    assert.ok(routes.length > 0, 'Export route exists');
+    const endpointHandler = routes[0].route.stack[routes[0].route.stack.length - 1].handle;
+    endpointHandler(req, res);
+  });
+
+  try {
+    // 1. Unpaid owner tries to export -> Rejected 402 Payment Required
+    const unpaidRes = await dispatchExport({ id: 'user-export-001', role: 'user' });
+    assert.equal(unpaidRes.status, 402, 'Unpaid site export must return 402 Payment Required');
+    assert.equal(unpaidRes.data.is_paid, false);
+    assert.ok(unpaidRes.data.error.includes('Payment required'));
+
+    // 2. Paid owner tries to export -> Succeeds (returns 200 and zip metadata or buffer)
+    fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify({
+      siteId: testSiteId,
+      userId: 'user-export-001',
+      isPaid: true
+    }), 'utf8');
+    app.sitePaidStatusCache.delete(testSiteId);
+
+    const paidRes = await dispatchExport({ id: 'user-export-001', role: 'user' }, { format: 'json' });
+    assert.equal(paidRes.status, 200, 'Paid site export must return 200 OK');
+    assert.equal(paidRes.data.success, true);
+    assert.ok(paidRes.data.sizeBytes > 0);
+
+    // 3. Admin bypass allowed on unpaid site
+    fs.writeFileSync(path.join(siteDir, 'meta.json'), JSON.stringify({
+      siteId: testSiteId,
+      userId: 'user-export-001',
+      isPaid: false
+    }), 'utf8');
+    app.sitePaidStatusCache.delete(testSiteId);
+
+    const adminRes = await dispatchExport({ id: 'admin-user', role: 'admin' }, { format: 'json' });
+    assert.equal(adminRes.status, 200, 'Admin can export unpaid site');
+    assert.equal(adminRes.data.success, true);
+  } finally {
+    // Cleanup test artifacts
+    try {
+      fs.rmSync(siteDir, { recursive: true, force: true });
+    } catch (e) {}
+    app.sitePaidStatusCache.delete(testSiteId);
+  }
+});
+
 
