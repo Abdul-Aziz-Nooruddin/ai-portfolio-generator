@@ -222,7 +222,7 @@ const KageTempleTemplate = {
         const cardsHtml = projects.slice(0, 3).map((p, idx) => {
           const pTitle = TemplateHelper.escapeHtml(p.name || p.title || `Project ${idx + 1}`);
           const pDesc = TemplateHelper.escapeHtml((p.description || p.desc || '').slice(0, 70));
-          const pLink = p.link || p.url || p.github || '#lessons';
+          const pLink = TemplateHelper.sanitizeUrl(p.link || p.url || p.github || '#lessons');
           const jpGlyphs = ['風の庭', '影の道', '月の水'][idx % 3];
           const glowStyles = [
             '--gx:80.2%; --gy:23.9%; --gr:22%; --gt:6.1s; --gt2:9.7s; --gc1:rgba(255,142,108,.50); --gc2:rgba(212,56,38,.24)',
@@ -232,14 +232,14 @@ const KageTempleTemplate = {
           const flameClass = idx === 1 ? ' glow--flame' : '';
 
           return `
-    <article class="card" data-rv="up" data-view="${idx}" data-cursor onclick="window.open('${TemplateHelper.escapeHtml(pLink)}', '_blank')">
+    <a href="${pLink}" target="_blank" rel="noopener noreferrer" class="card" data-rv="up" data-view="${idx}" data-cursor style="text-decoration:none; color:inherit; display:block;">
       <div class="card-fr" data-frame>
         <span class="card-ar"><svg viewBox="0 0 14 14" fill="none"><path d="M3 11 11 3M5 3h6v6" stroke="#dfe7e0" stroke-width="1.3"/></svg></span>
         <i class="glow${flameClass}" style="${glowStyles}"></i>
         <div class="card-lab"><b>${pTitle}</b><span class="jp">${jpGlyphs}</span></div>
       </div>
       <div class="card-meta"><span>${pDesc}</span><span>0${idx + 1} / 0${Math.min(projects.length, 3)}</span></div>
-    </article>`;
+    </a>`;
         }).join('\n');
 
         html = html.slice(0, cardsStart + 'class="cards" id="cards">'.length) +
@@ -258,15 +258,15 @@ const KageTempleTemplate = {
           const pTitle = TemplateHelper.escapeHtml(p.name || p.title || `System ${pNum}`);
           const pDesc = TemplateHelper.escapeHtml(p.description || p.desc || 'Technical case study and distributed software architecture.');
           const pTech = Array.isArray(p.tags) ? p.tags.join(' / ') : (p.tech || 'Production');
-          const pLink = p.link || p.url || p.github || '#eternity';
+          const pLink = TemplateHelper.sanitizeUrl(p.link || p.url || p.github || '#eternity');
           const glyph = ['本殿', '庭園', '焼杉', '灯籠', '朱月', '玄門', '天守'][idx % 7];
           return `
-    <div class="les" data-les="${idx}" data-cursor onclick="window.open('${TemplateHelper.escapeHtml(pLink)}', '_blank')">
+    <a href="${pLink}" target="_blank" rel="noopener noreferrer" class="les" data-les="${idx}" data-cursor style="text-decoration:none; color:inherit; display:flex;">
       <span class="k">${pNum}</span>
       <h3>${pTitle}<em class="jp">${glyph}</em></h3>
       <p>${pDesc}</p>
       <span class="t">${pTech}</span><i class="bar"></i>
-    </div>`;
+    </a>`;
         }).join('\n');
 
         html = html.slice(0, curStart + 'class="cur" id="cur">'.length) +

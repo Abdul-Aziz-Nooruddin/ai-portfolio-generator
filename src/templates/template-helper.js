@@ -25,6 +25,37 @@ class TemplateHelper {
       .replace(/`/g, "\\`");
   }
 
+  /**
+   * Strictly sanitizes external URLs to prevent XSS (javascript:, data:, vbscript:)
+   * Allows only http://, https://, safe relative paths, or mailto/tel.
+   */
+  static sanitizeUrl(url, fallback = '#') {
+    if (!url || typeof url !== 'string') return fallback;
+    const trimmed = url.trim();
+    if (!trimmed || trimmed === '#' || trimmed.startsWith('#')) return trimmed || fallback;
+    // Reject dangerous executable schemes
+    if (/^(javascript|data|vbscript|file|about):/i.test(trimmed)) {
+      return fallback;
+    }
+    // Strictly allow http:// and https://
+    if (/^https?:\/\/[^\s"'`<>]+$/i.test(trimmed)) {
+      return this.escapeHtml(trimmed);
+    }
+    // Allow safe relative paths
+    if (/^\/[a-zA-Z0-9_\-./?&=#%]*$/.test(trimmed) && !trimmed.startsWith('//')) {
+      return this.escapeHtml(trimmed);
+    }
+    // Allow safe mailto
+    if (/^mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(trimmed)) {
+      return this.escapeHtml(trimmed);
+    }
+    // Allow safe tel
+    if (/^tel:\+?[0-9\- ]+$/i.test(trimmed)) {
+      return this.escapeHtml(trimmed);
+    }
+    return fallback;
+  }
+
   static normalize(candidateData = {}) {
     // 1. Identity & Name
     const rawName = candidateData.name ||
@@ -82,9 +113,14 @@ class TemplateHelper {
       if (!url || typeof url !== 'string') return '';
       const trimmed = url.trim();
       if (!trimmed || trimmed === '#' || trimmed === '/') return '';
-      if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
-      if (fallbackHost && !trimmed.includes('/')) return `${fallbackHost}${trimmed.replace(/^@/, '')}`;
-      return `https://${trimmed.replace(/^\/\//, '')}`;
+      if (/^(javascript|data|vbscript|file|about):/i.test(trimmed)) return '';
+      if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+        return TemplateHelper.sanitizeUrl(trimmed, '');
+      }
+      if (fallbackHost && !trimmed.includes('/')) {
+        return TemplateHelper.sanitizeUrl(`${fallbackHost}${trimmed.replace(/^@/, '')}`, '');
+      }
+      return TemplateHelper.sanitizeUrl(`https://${trimmed.replace(/^\/\//, '')}`, '');
     };
 
     const email = contact.email ||

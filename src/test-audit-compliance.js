@@ -238,3 +238,59 @@ test('5. Supabase RLS hardening enforces deny-all policy for anon role across al
   await runRlsDenyAudit();
 });
 
+test('6. XSS URL defense: allows only http(s) URLs in template links and neutralizes javascript: and data: payloads', () => {
+  const { TemplateHelper } = require('./templates/template-helper');
+  const { KageTempleTemplate } = require('./templates/kage-temple');
+  const { Jack3DCreatorTemplate } = require('./templates/jack-3d-creator');
+
+  // A. Unit tests on TemplateHelper.sanitizeUrl
+  assert.equal(TemplateHelper.sanitizeUrl('javascript:alert(1)'), '#', 'javascript: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('JaVaScRiPt:alert(document.cookie)'), '#', 'Mixed-case javascript: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=='), '#', 'data: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('vbscript:msgbox(1)'), '#', 'vbscript: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('file:///etc/passwd'), '#', 'file: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('about:blank'), '#', 'about: must be neutralized');
+  assert.equal(TemplateHelper.sanitizeUrl('https://github.com/myfolio-dev/core'), 'https://github.com/myfolio-dev/core', 'Valid https:// URL preserved');
+  assert.equal(TemplateHelper.sanitizeUrl('http://insecure.example.com/demo'), 'http://insecure.example.com/demo', 'Valid http:// URL preserved');
+  assert.equal(TemplateHelper.sanitizeUrl('/dashboard'), '/dashboard', 'Safe relative path preserved');
+  assert.equal(TemplateHelper.sanitizeUrl('mailto:user@example.com'), 'mailto:user@example.com', 'Safe mailto preserved');
+
+  // B. Full Template Rendering with injected malicious links
+  const attackData = {
+    name: 'Malicious Injected Candidate',
+    role: 'Security Tester',
+    github: 'javascript:alert("pwned_profile")',
+    linkedin: 'data:text/html,<script>alert(1)</script>',
+    projects: [
+      {
+        name: 'Evil Project 1',
+        description: 'Testing link injection',
+        link: 'javascript:alert("pwned_link")',
+        github: 'data:text/html,malicious',
+        live: 'javascript:void(0)'
+      },
+      {
+        name: 'Evil Project 2',
+        description: 'Testing secondary link injection',
+        link: 'JaVaScRiPt:alert(document.domain)',
+        github: 'vbscript:exploit',
+        live: 'data:application/javascript,alert(1)'
+      }
+    ]
+  };
+
+  // Render Kage Temple
+  const kageRendered = KageTempleTemplate.render(attackData);
+  const kageHtml = typeof kageRendered === 'string' ? kageRendered : (kageRendered.html || '');
+  assert.equal(kageHtml.includes('javascript:alert'), false, 'Kage Temple must not contain javascript: URL');
+  assert.equal(kageHtml.includes('window.open('), false, 'Kage Temple must not contain inline window.open');
+  assert.equal(kageHtml.includes('onclick='), false, 'Kage Temple must not contain inline onclick handlers');
+
+  // Render Jack 3D Creator
+  const jackHtml = Jack3DCreatorTemplate.render(attackData);
+  assert.equal(jackHtml.includes('href="javascript:'), false, 'Jack 3D must not render href="javascript:');
+  assert.equal(jackHtml.includes('href="data:'), false, 'Jack 3D must not render href="data:');
+  assert.equal(jackHtml.includes('onclick="window.open'), false, 'Jack 3D must not render onclick="window.open');
+});
+
+

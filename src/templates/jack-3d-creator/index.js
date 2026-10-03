@@ -145,8 +145,8 @@ const Jack3DCreatorTemplate = {
     );
     const safeLocation = TemplateHelper.escapeHtml(data.location || 'Remote / Worldwide');
     const safeEmail = TemplateHelper.escapeHtml(data.email || data.contact?.email || '');
-    const safeGithub = TemplateHelper.escapeHtml(data.github || data.socialLinks?.github || (data.githubData?.username ? 'https://github.com/' + data.githubData.username : ''));
-    const safeLinkedin = TemplateHelper.escapeHtml(data.linkedin || data.socialLinks?.linkedin || '');
+    const safeGithub = TemplateHelper.sanitizeUrl(data.github || data.socialLinks?.github || (data.githubData?.username ? 'https://github.com/' + data.githubData.username : ''), '');
+    const safeLinkedin = TemplateHelper.sanitizeUrl(data.linkedin || data.socialLinks?.linkedin || '', '');
 
     // Candidate Avatar: user photo / avatar if available, or signature stylized 3D avatar
     const candidateAvatar = data.avatar || data.photoUrl || data.githubData?.avatar_url || data.githubData?.avatarUrl || 'https://shrug-person-78902957.figma.site/_components/v2/d24c01ad3a56fc65e942a1f501eb73db42d7cf9a/Rectangle_40443.81459862.png';
@@ -593,14 +593,14 @@ ${COMPILED_CSS}
                     </div>
                     
                     <div class="flex items-center gap-3 self-start md:self-auto">
-                      ${p.github ? `
-                        <a href="${p.github}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full border border-white/20 text-xs text-[#D7E2EA] hover:bg-white/10 uppercase tracking-wider flex items-center gap-2 transition-colors">
+                      ${p.github && TemplateHelper.sanitizeUrl(p.github) !== '#' ? `
+                        <a href="${TemplateHelper.sanitizeUrl(p.github)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full border border-white/20 text-xs text-[#D7E2EA] hover:bg-white/10 uppercase tracking-wider flex items-center gap-2 transition-colors">
                           <span>Code</span>
                           <span>&nearr;</span>
                         </a>
                       ` : ''}
-                      ${p.live ? `
-                        <a href="${p.live}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-white text-black text-xs font-medium hover:bg-white/90 uppercase tracking-wider flex items-center gap-2 transition-colors">
+                      ${p.live && TemplateHelper.sanitizeUrl(p.live) !== '#' ? `
+                        <a href="${TemplateHelper.sanitizeUrl(p.live)}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-full bg-white text-black text-xs font-medium hover:bg-white/90 uppercase tracking-wider flex items-center gap-2 transition-colors">
                           <span>Live</span>
                           <span>&nearr;</span>
                         </a>
