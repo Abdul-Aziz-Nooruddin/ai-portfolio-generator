@@ -33,19 +33,7 @@
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
   <script src="/thinking-orbs.js"></script>
-  <script>
-    (function() {
-      fetch('/api/auth/me', { credentials: 'include' })
-        .then(function(res) {
-          if (!res.ok) {
-            window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
-          }
-        })
-        .catch(function() {
-          window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
-        });
-    })();
-  </script>
+
 
   <style>
     *, *::before, *::after {

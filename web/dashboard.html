@@ -36,19 +36,6 @@
   <script src="/sidebar.js"></script>
   <script src="/cookie-banner.js" defer></script>
   <script src="/analytics.js" defer></script>
-  <script>
-    (function() {
-      fetch('/api/auth/me', { credentials: 'include' })
-        .then(function(res) {
-          if (!res.ok) {
-            window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
-          }
-        })
-        .catch(function() {
-          window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
-        });
-    })();
-  </script>
 
   <style>
     :root {
@@ -1313,7 +1300,7 @@
         if (meRes.ok) {
           const meData = await meRes.json();
           currentUser = meData.user || meData;
-        } else {
+        } else if (meRes.status === 401) {
           window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
           return;
         }
@@ -1326,16 +1313,18 @@
               cachedDashData = dashData;
             }
           }
-        } catch (e) {}
+        } catch (e) {
+          console.warn('[DASHBOARD DATA FETCH WARN]', e);
+        }
 
         await loadCrossDevicePortfolios();
       } catch (e) {
-        window.location.replace('/login?redirect=' + encodeURIComponent(window.location.pathname + window.location.search));
-        return;
+        console.error('[DASHBOARD INIT ERROR]', e);
       }
     }
 
     function renderDashboard(data = {}, portfolios = []) {
+      const hasAnyPortfolio = Boolean(portfolios && portfolios.length > 0);
       const user = data.user || currentUser || {};
       const userEmail = (user.email || '').toLowerCase().trim();
       const isVip = userEmail === 'abdulaziznoor9876@gmail.com';
@@ -1405,7 +1394,6 @@
       }
 
       // Check Active Portfolio
-      const hasAnyPortfolio = Boolean(portfolios && portfolios.length > 0);
       const hasLivePortfolio = hasAnyPortfolio && (isPro || portfolios.some(p => p.subdomain && !p.subdomain.startsWith('/')));
       const firstLive = hasLivePortfolio ? portfolios.find(p => p.subdomain && !p.subdomain.startsWith('/')) || portfolios[0] : null;
       const firstDraft = hasAnyPortfolio ? portfolios[0] : null;
