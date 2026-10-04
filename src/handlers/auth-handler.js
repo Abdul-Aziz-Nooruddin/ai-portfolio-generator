@@ -201,7 +201,7 @@ class AuthHandler {
       if (!emailDispatched) {
         this.pendingSignups.delete(normalizedEmail);
         return res.status(500).json({
-          error: `Failed to deliver verification email to ${email}. Please check your email configuration or try again.`
+          error: `Failed to deliver verification email: ${emailError || 'Please check your email configuration or try again.'}`
         });
       }
 
@@ -355,7 +355,7 @@ class AuthHandler {
 
       if (!emailDispatched) {
         return res.status(500).json({
-          error: `Failed to resend verification email to ${pending.email}. Please check your email configuration or try again.`
+          error: `Failed to resend verification email: ${emailError || 'Please check your email configuration or try again.'}`
         });
       }
 

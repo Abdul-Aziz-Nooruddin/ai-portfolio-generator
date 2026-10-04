@@ -244,6 +244,16 @@ const netlifyDeployer = process.env.NETLIFY_TOKEN
 const { GitHubAutoSyncService } = require('./services/github-auto-sync');
 const gitHubAutoSync = new GitHubAutoSyncService();
 
+// Email connection diagnostic endpoint
+app.get('/api/email/verify-connection', async (req, res) => {
+  const result = await emailService.verifyConnection();
+  res.status(result.success ? 200 : 500).json({
+    ...result,
+    fromEmail: emailService.fromEmail,
+    isConfigured: emailService.isConfigured
+  });
+});
+
 // Authenticate session early across all endpoints & API routers
 app.use(AuthMiddleware.authenticate(dbService, securityService));
 

@@ -18,6 +18,9 @@ class EmailService {
     const smtpPort = parseInt(process.env.SMTP_PORT || process.env.MAIL_PORT || process.env.EMAIL_PORT || '465', 10);
     const smtpSecure = process.env.SMTP_SECURE === 'true' || smtpPort === 465;
 
+    // Sender MUST match authenticated mailbox in Titan Email / SMTP providers
+    this.fromEmail = process.env.FROM_EMAIL || (smtpUser ? `MyFolio <${smtpUser}>` : 'MyFolio <support@myfolio.tech>');
+
     if (smtpHost && smtpUser && smtpPass) {
       this.transporter = nodemailer.createTransport({
         host: smtpHost,
@@ -26,6 +29,12 @@ class EmailService {
         auth: {
           user: smtpUser,
           pass: smtpPass
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000,
+        tls: {
+          rejectUnauthorized: false
         }
       });
       this.isConfigured = true;
@@ -35,12 +44,27 @@ class EmailService {
         auth: {
           user: process.env.GMAIL_USER,
           pass: process.env.GMAIL_APP_PASSWORD
-        }
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 15000
       });
       this.isConfigured = true;
     } else {
       this.transporter = null;
       this.isConfigured = false;
+    }
+  }
+
+  async verifyConnection() {
+    if (!this.transporter) {
+      return { success: false, error: 'Transporter not configured' };
+    }
+    try {
+      await this.transporter.verify();
+      return { success: true };
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   }
 
